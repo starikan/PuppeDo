@@ -1,7 +1,7 @@
-var CSON = require('cson')
-const cson = CSON.load('./test.cson');
+// var CSON = require('cson')
+// const cson = CSON.load('./test.cson');
 
-const env = require('./env');
+// const env = require('./env');
 
 const { typeInput, buttonClick, init, start, end, log, wait } = require('./helpers');
 
@@ -18,4 +18,4 @@ const findWare = async () => {
   await end();
 }
 
-findWare()
+findWare();
