@@ -1,0 +1,24 @@
+root:
+  test: "fastrun"
+  steps: [
+    test: "init"
+    args:
+      name: 'findWare'
+  ,
+    test: "start"
+  ,
+    ext: 'login'
+    args:
+      from: './tests'
+  ,
+    test: 'typeInput'
+    args:
+      text: 'Печенье'
+      selCSS: '#Spwares_search_data'
+  ,
+    test: 'buttonClick'
+    args:
+      selCSS: '#search_start'
+  ,
+    test: 'end'
+  ]
