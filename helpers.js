@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer');
 
 const env = require('./env')
 
-const {log, createHTML} = require('./logger');
+const { log } = require('./logger');
 
 async function typeInput({ selCSS = "", selXPath = "", text = "", pageNum = 0, waitTime = 0, isScreenshot = false, isFullScreenshot = false } = {}) {
   if (_.get(env, ['pages', pageNum])) {
@@ -39,6 +39,8 @@ async function init({ output = 'output', name = 'test' } = {}) {
 
   env.set("outDir", outDir);
   env.set("outName", name);
+
+  fs.createReadStream('./logger/output.html').pipe(fs.createWriteStream(path.join(outDir, 'output.html')));
 }
 
 async function start({} = {}) {
@@ -65,7 +67,6 @@ async function start({} = {}) {
 async function end() {
   await log({ text: 'END' });
   await env.browser.close();
-  await createHTML()
 }
 
 async function wait ({time = 0, timeout = 0, pageNum = 0, selector = false, selectorVisible = false, selectorHidden = false, navigation = false} = {}) {

@@ -26,48 +26,6 @@ async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
   };
 };
 
-async function createHTML({} = {}) {
-  const logs = env.get('log');
-
-  let html = `
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table td, table th {
-      border: 1px solid #000000;
-    }
-  </style>
-  <table>`;
-
-  _.forEach(logs, (v, i) => {
-    const text = _.get(v, 'text');
-    const screenshots = _.get(v, "screenshots");
-
-    html += `
-      <tr> 
-        <td>${i}</td>
-        <td>${v.time}</td>
-        <td><p>${text}</p>
-    `;
-
-    _.forEach(screenshots, src => {
-      html += `<img src=${src}>`
-    })
-
-    html += '</td>'
-  })
-
-  html += '</table>'
-
-  await fs.appendFileSync(path.join(env.get('outDir'), env.get('outName') + '.html'), html, function (err) {
-    if (err) {
-      return console.log(err);
-    }
-  });
-}
-
 async function log({ text = '', pageNum = 0, stdOut = true, selCSS = [], isScreenshot = false, isFullScreenshot = false } = {}) {
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
   const logStringNoTime = `${pageNum} - ${text}`;
@@ -95,14 +53,19 @@ async function log({ text = '', pageNum = 0, stdOut = true, selCSS = [], isScree
     //     screenshots.push(src);
     //   }
     // }
+    
+    env.push('log', { text: logStringNoTime, time: now, screenshots: screenshots });
 
-    await fs.appendFileSync(path.join(env.get('outDir'), env.get('outName') + '.log'), logString + '\n', function (err) {
+    await fs.appendFileSync(path.join(env.get('outDir'), 'output.log'), logString + '\n', function (err) {
       if (err) {
         return console.log(err);
       }
     });
 
-    env.push('log', { text: logStringNoTime, time: now, screenshots: screenshots });
+    // Export JSON log every step
+    const exportJson = JSON.stringify(env.get('log'));
+    await fs.writeFileSync(path.join(env.get('outDir'), 'output.json'), exportJson);
+
   };
 
   if (stdOut) {
@@ -111,6 +74,5 @@ async function log({ text = '', pageNum = 0, stdOut = true, selCSS = [], isScree
 }
 
 module.exports = {
-  log,
-  createHTML
+  log
 };
