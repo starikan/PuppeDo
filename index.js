@@ -3,7 +3,8 @@
 
 // const env = require('./env');
 
-const { typeInput, buttonClick, init, start, end, log, wait } = require('./helpers');
+const { typeInput, buttonClick, init, start, end, wait } = require('./helpers');
+const { log } = require('./logger');
 
 const { login } = require('./tests');
 

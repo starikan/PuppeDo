@@ -1,12 +1,8 @@
 const _ = require('lodash');
 
-const env = require('./env')
-const {
-  log,
-  typeInput,
-  buttonClick,
-  wait
-} = require('./helpers')
+const env = require('./env');
+const { typeInput, buttonClick, wait } = require('./helpers');
+const { log } = require('./logger');
 
 async function login({pageNum = 0} = {}) {
   await log({ text: 'LOGIN', isScreenshot: true });
