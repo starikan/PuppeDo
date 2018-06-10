@@ -1,8 +1,9 @@
 const _ = require('lodash');
 
-const env = require('./env');
-const { typeInput, buttonClick, wait } = require('./helpers');
-const { log } = require('./logger');
+const env = require('../env');
+const { wait } = require('../helpers');
+const { typeInput, buttonClick } = require('../atoms');
+const { log } = require('../logger/logger');
 
 async function login({pageNum = 0} = {}) {
   await log({ text: 'LOGIN', isScreenshot: true });
@@ -18,6 +19,4 @@ async function login({pageNum = 0} = {}) {
   await log({ text: 'LOGIN DONE', isScreenshot: true });
 }
 
-module.exports = {
-  login
-};
+module.exports = login;

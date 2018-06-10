@@ -3,10 +3,10 @@
 
 // const env = require('./env');
 
-const { typeInput, buttonClick, init, start, end, wait } = require('./helpers');
-const { log } = require('./logger');
-
+const { init, start, end, wait } = require('./helpers');
+const { typeInput, buttonClick } = require('./atoms')
 const { login } = require('./tests');
+const { log } = require('./logger/logger');
 
 const findWare = async () => {
   await init({ name: 'findWare' });

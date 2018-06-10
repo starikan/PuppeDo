@@ -4,7 +4,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment')
 
-const env = require('./env')
+const env = require('../env')
 
 async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');

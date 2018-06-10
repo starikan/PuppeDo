@@ -1,6 +1,8 @@
 # PuppeDo
 Puppeteer tests flow with node.js
 
+Imstall NodeJS v10.4.0
+
 ```
 npm install
 ```
