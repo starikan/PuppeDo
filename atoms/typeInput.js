@@ -2,7 +2,22 @@ const env = require('../env')
 
 const { log } = require('../logger/logger');
 
-async function typeInput({ selCSS = "", selXPath = "", text = "", pageNum = 0, waitTime = 0, isScreenshot = false, isFullScreenshot = false } = {}) {
+async function typeInput(
+  { 
+    selCSS = "", 
+    selXPath = "", 
+    text = "", 
+    pageNum = 0, 
+    waitTime = 0, 
+    isScreenshot = false,
+    isFullScreenshot = false 
+  } = {}, 
+  {
+    // repeat = 1,
+    data = []
+  } = {}
+) {
+
   page = env.get(`pages.${pageNum}`);
 
   if (page) {

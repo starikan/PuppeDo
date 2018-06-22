@@ -12,11 +12,19 @@ const findWare = async () => {
   await init({ name: 'findWare' });
   await start();
   await login();
-    await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data', isScreenshot: true });
+    await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data', isScreenshot: true }, {data: ["click"]});
     await buttonClick({ selCSS: '#search_start', isScreenshot: true });
     await wait({ selector: '.cursor_wait', selectorHidden: true });
     await log({ text: 'Товар отфильтрован', isScreenshot: true });
   await end();
 }
 
-findWare();
+try {
+  findWare();
+} catch (error) {
+}
+
+process.on('unhandledRejection', async (error, p) => {
+  await log({ text: `Global: ${error.message}`, type: 'error', isScreenshot: true })
+  process.exit(1);
+});

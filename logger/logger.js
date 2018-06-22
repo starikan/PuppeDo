@@ -26,7 +26,15 @@ async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
   };
 };
 
-async function log({ text = '', pageNum = 0, stdOut = true, selCSS = [], isScreenshot = false, isFullScreenshot = false } = {}) {
+async function log({ 
+    text = '', 
+    pageNum = 0, 
+    stdOut = true, 
+    selCSS = [], 
+    isScreenshot = false, 
+    isFullScreenshot = false, 
+    type = 'info' 
+  } = {}) {
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
   const logStringNoTime = `${pageNum} - ${text}`;
   const logString = `${now} - ${logStringNoTime}`;
@@ -54,7 +62,12 @@ async function log({ text = '', pageNum = 0, stdOut = true, selCSS = [], isScree
     //   }
     // }
     
-    env.push('log', { text: logStringNoTime, time: now, screenshots: screenshots });
+    env.push('log', { 
+      text: logStringNoTime, 
+      time: now, screenshots: 
+      screenshots, 
+      type: type 
+    });
 
     await fs.appendFileSync(path.join(env.get('outDir'), 'output.log'), logString + '\n', function (err) {
       if (err) {
