@@ -12,8 +12,8 @@ const findWare = async () => {
   await init({ name: 'findWare' });
   await start();
   await login();
-    await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data', isScreenshot: true }, {data: ["click"]});
-    await buttonClick({ selCSS: '#search_start', isScreenshot: true });
+    await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
+    await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
     await wait({ selector: '.cursor_wait', selectorHidden: true });
     await log({ text: 'Товар отфильтрован', isScreenshot: true });
   await end();

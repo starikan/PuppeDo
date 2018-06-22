@@ -36,7 +36,7 @@ async function log({
     type = 'info' 
   } = {}) {
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-  const logStringNoTime = `${pageNum} - ${text}`;
+  const logStringNoTime = `${type} - ${pageNum} - ${text}`;
   const logString = `${now} - ${logStringNoTime}`;
   const screenshots = [];
 
