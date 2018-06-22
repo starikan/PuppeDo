@@ -5,7 +5,7 @@ function bind(f) {
     try {
       return await f.apply(this, arguments);
     } catch (error) {
-      log({ text: `Test: ${f.name} - ${error.message}`, type: 'error' })
+      log({ text: `Test: ${f.name} - ${error.message}`, level: 'error' })
       throw error;
     }
   }

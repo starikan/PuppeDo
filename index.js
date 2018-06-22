@@ -25,6 +25,6 @@ try {
 }
 
 process.on('unhandledRejection', async (error, p) => {
-  await log({ text: `Global: ${error.message}`, type: 'error', isScreenshot: true })
+  await log({ text: `Global: ${error.message}`, level: 'error', isScreenshot: true })
   process.exit(1);
 });

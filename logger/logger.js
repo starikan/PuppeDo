@@ -8,7 +8,7 @@ const env = require('../env')
 
 async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-  const name = `${now}_${pageNum}_${env.get("outName")}.jpg`;
+  const name = `${now}_${pageNum}_${env.get('outName')}.jpg`;
 
   const pathScreenshot = path.join(env.get('outDir'), name);
   const page = env.get(`pages.${pageNum}`)
@@ -27,16 +27,38 @@ async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
 };
 
 async function log({ 
-    text = '', 
-    pageNum = 0, 
-    stdOut = true, 
-    selCSS = [], 
-    isScreenshot = false, 
-    isFullScreenshot = false, 
-    type = 'info' 
-  } = {}) {
+  text = '', 
+  pageNum = 0, 
+  stdOut = true, 
+  selCSS = [], 
+  isScreenshot = false, 
+  isFullScreenshot = false, 
+  level = 'info' 
+} = {}) {
+
+  const levels = {
+    0: 'debug',
+    1: 'info',
+    2: 'error',
+    'debug': 0,
+    'info': 1,
+    'error': 2,
+  }
+  let globalLevel = env.get('logLevel', 0);
+  if (!_.isNumber(globalLevel)) {
+    globalLevel = _.get(levels, globalLevel, 0);
+  }
+  if (!_.isNumber(level)) {
+    level = _.get(levels, level, 0);
+  }
+
+  if (globalLevel > level) {
+    return;
+  }
+
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-  const logStringNoTime = `${type} - ${pageNum} - ${text}`;
+
+  const logStringNoTime = `${level} - ${pageNum} - ${text}`;
   const logString = `${now} - ${logStringNoTime}`;
   const screenshots = [];
 
@@ -66,7 +88,7 @@ async function log({
       text: logStringNoTime, 
       time: now, screenshots: 
       screenshots, 
-      type: type 
+      level: level 
     });
 
     await fs.appendFileSync(path.join(env.get('outDir'), 'output.log'), logString + '\n', function (err) {

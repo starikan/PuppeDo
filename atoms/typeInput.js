@@ -31,7 +31,7 @@ async function typeInput(
       selCSS: [selCSS],  
       isScreenshot: isScreenshot, 
       isFullScreenshot: isFullScreenshot,
-      type: 'debug'
+      level: 'debug'
      });
   };
 };

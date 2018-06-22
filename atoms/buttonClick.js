@@ -23,7 +23,7 @@ async function buttonClick(
       selCSS: [selCSS], 
       isScreenshot: isScreenshot, 
       isFullScreenshot: isFullScreenshot,
-      type: 'debug'
+      level: 'debug'
      });
     await page.click(selCSS);
   }
