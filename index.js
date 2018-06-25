@@ -11,6 +11,7 @@ const { log } = require('./logger/logger');
 const findWare = async () => {
   await init({ name: 'findWare' });
   await start();
+  await log({ level: 'env' });
   await login();
     await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
     await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });

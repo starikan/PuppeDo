@@ -40,9 +40,11 @@ async function log({
     0: 'debug',
     1: 'info',
     2: 'error',
+    3: 'env',
     'debug': 0,
     'info': 1,
     'error': 2,
+    'env': 3
   }
   let globalLevel = env.get('logLevel', 0);
   if (!_.isNumber(globalLevel)) {
@@ -58,7 +60,7 @@ async function log({
 
   const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
-  const logStringNoTime = `${level} - ${pageNum} - ${text}`;
+  const logStringNoTime = `${levels[level]} - ${pageNum} - ${text}`;
   const logString = `${now} - ${logStringNoTime}`;
   const screenshots = [];
 
@@ -77,6 +79,10 @@ async function log({
       }
     }
     
+    if (levels[level] == 'env'){
+      console.log(env);
+    }
+
     // if (isFullScreenshot) {
     //   const src = await saveScreenshot({ pageNum: pageNum });
     //   if (src) {
