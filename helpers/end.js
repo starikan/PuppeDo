@@ -1,8 +1,10 @@
 const env = require('../env')
+const { log } = require('../logger/logger');
 
-async function end() {
+async function end( {envName} = {} ) {
   await log({ text: 'END' });
-  await env.browser.close();
+  let browser = env.getCurr().browser;
+  await browser.close();
 }
 
 module.exports = end;

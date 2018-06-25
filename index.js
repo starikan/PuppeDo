@@ -3,21 +3,22 @@
 
 // const env = require('./env');
 
-const { init, start, end, wait } = require('./helpers');
-const { typeInput, buttonClick } = require('./atoms')
+const { initTest, start, end, wait } = require('./helpers');
+const { typeInput, buttonClick, goTo } = require('./atoms')
 const { login } = require('./tests');
 const { log } = require('./logger/logger');
 
 const findWare = async () => {
-  await init({ name: 'findWare' });
-  await start();
+  await initTest({ name: 'findWare',  });
+  await start({ envName: 'cloud' });
+  await goTo({  })
   await log({ level: 'env' });
-  await login();
-    await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
-    await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
-    await wait({ selector: '.cursor_wait', selectorHidden: true });
-    await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  await end();
+  // await login();
+  //   await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
+  //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
+  //   await wait({ selector: '.cursor_wait', selectorHidden: true });
+  //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
+  // await end({ envName: 'cloud' });
 }
 
 try {

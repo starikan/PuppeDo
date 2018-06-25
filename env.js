@@ -22,8 +22,8 @@ let envDefault = {
   },
 }
 
-const envJson = _.get(args, '--env') ? require(_.get(args, '--env')) : {}
-const selectorsJson = _.get(args, '--selectors') ? require(_.get(args, '--selectors')) : {}
+const envJson = _.get(args, '--env') ? require(_.get(args, '--env')) : {};
+// const selectorsJson = _.get(args, '--selectors') ? require(_.get(args, '--selectors')) : {}
 
 let env = Object.assign(envDefault, envJson);
 
@@ -35,12 +35,23 @@ env.get = function (name, def = false) {
   return _.get(this, name, def);
 }
 
+env.getCurr = function () {
+  let data = {};
+  let envName = this.get("current.envName");
+  let pageNum = this.get("current.pageNum");
+  data.browser = this.get(`browsers.${envName}.browser`);
+  data.page = this.get(`browsers.${envName}.pages.${pageNum}`);
+  data.data = this.get(`data.${envName}`);
+  data.selectors = this.get(`selectors.${envName}`);
+  return data;
+}
+
 env.push = function (name, data) {
   let arr = _.clone(this.get(name, []));
   arr.push(data);
   return _.set(this, name, arr);
 }
 
-env.set("selectors", selectorsJson);
+// env.set("selectors", selectorsJson);
 
 module.exports = env;

@@ -12,7 +12,7 @@ function bind(f) {
 }
 
 module.exports = {
-  'init': bind(require('./init')),
+  'initTest': bind(require('./initTest')),
   'start': bind(require('./start')),
   'end': bind(require('./end')),
   'wait': bind(require('./wait')),
