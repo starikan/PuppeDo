@@ -1,0 +1,17 @@
+Вход
+  Данные
+    Data
+    Selectors (брать из окружения)
+  Env
+    CurrEnv
+    Repeat
+  Results callback
+
+1. Проверка env
+2. Валидация selector
+3. Валидация данных
+4. Init test если нужно
+5. Start browser если нужно
+6. Сам тест
+7. Афтер тест
+8. Данные на запись.
