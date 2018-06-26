@@ -76,13 +76,15 @@ class Envs {
     this.envs = {};
     this.data = {};
     this.selectors = {};
-    this.current = null;
+    this.current = {};
+    this.results = {};
     this.output = {};
   }
 
-  setEnv (name){
+  setEnv (name, page = null){
     if (name && Object.keys(this.envs).includes(name)) {
-      this.current = name;
+      this.current.name = name;
+      this.current.page = page;
     }
   }
 
@@ -101,20 +103,20 @@ class Envs {
     }
   }
 
-  async initTest({ output = 'output', name = 'test' } = {}) {
+  async initTest({ output = 'output', test = 'test' } = {}) {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     };
     
     const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
     
-    const folder = path.join(output, `/${name}_${now}`);
+    const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
     
     fs.createReadStream('./logger/output.html').pipe(fs.createWriteStream(path.join(folder, 'output.html')));
 
     this.output.output = output;
-    this.output.name = name;
+    this.output.name = test;
     this.output.folder = folder;
   }  
 
@@ -159,7 +161,7 @@ class Envs {
   }
 }
 
-let test = _.get(args, '--test', 'Test');
+let test = _.get(args, '--test', 'test');
 let output = _.get(args, '--output', 'output');
 let files = JSON.parse(_.get(args, '--envs', []));
 

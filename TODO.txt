@@ -10,8 +10,17 @@
 1. Проверка env
 2. Валидация selector
 3. Валидация данных
-4. Init test если нужно
-5. Start browser если нужно
+4. Проверка браузера
+5. Проверка page
 6. Сам тест
 7. Афтер тест
 8. Данные на запись.
+
+Отрефакторить log в конфигах
+
+"logging":
+{
+  level: "debug",
+  isScreenshot: false,
+  isFullScreenshot: false
+}

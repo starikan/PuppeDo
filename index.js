@@ -7,15 +7,17 @@ const { typeInput, buttonClick, goTo } = require('./atoms')
 const { login } = require('./tests');
 const { log } = require('./logger/logger');
 
-const test = async () => {}
+const Test = require('./abstractTest');
+new Test();
+
+// const test = async () => {
+
+// }
 
 const main = async () => {
   const env = await require('./env.js')();
   console.log(1)
-  await test();
-  await env.closeBrowsers()
-  // await initTest({ name: 'findWare',  });
-  // await start({ envName: 'cloud' });
+  // await test();
   // await goTo({  })
   // await log({ level: 'env' });
   // await login();
@@ -23,7 +25,7 @@ const main = async () => {
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
   //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  // await end({ envName: 'cloud' });
+  await env.closeBrowsers()
 }
 
 try {

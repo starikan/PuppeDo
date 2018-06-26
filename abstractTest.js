@@ -1,52 +1,120 @@
-const env = require('../env')
+const envGlobal = require('./env')
+const _ = require('lodash');
 
-const { log } = require('../logger/logger');
+const { log } = require('./logger/logger');
 
-async function abstractTest(
-  {
-    // Если null то не какие данные не биндим
-    // Если строка то выжираем м env
-    // Если объект то используется только он для данных
-    data = null,
-    // Если null то не какие данные не биндим
-    // Если строка то выжираем м env
-    // Если объект то используется только он
-    selectors = null, 
-  } = {},
-  { 
-    envName,
-    repeat = 1,
-    pageNum = 0, 
-    waitTime = 0, 
-    isScreenshot = false,
-    isFullScreenshot = false 
-  } = {}
-) {
+class Test {
+  constructor(
+    {
+      // Прямой проброс данных
+      // {} - данные
+      // [{}] - много данных для посторения repeat
+      data = {},
+      // Прямоцй проброс селекторов
+      selectors = {},
+      // Биндинги даты
+      // 1. Смотрим на локальные данные this.data
+      // 2. Смотрим на данные в глобальной env.outputs
+      // 2. Смотрим на данные в глобальной env.data
+      // 3. Смотрим на данные в env[envName].data
+      bindingsData = {},
+      // Биндинги селекторов
+      // 1. Смотрим на локальные данные this.selectors
+      // 2. Смотрим на данные в глобальной env.selectors
+      // 3. Смотрим на данные в env[envName].selectors
+      bindingsSelectors = {},
+      ...dataExt
+    } = {},
+    {
+      // Имя env 
+      envName = null,
+      // Колличество повторений
+      repeat = 1,
 
-  if (envName) {
-    e = env.get('envName')
+      beforeTest = async function(){},
+      runTest = async function(){},
+      afterTest = async function(){},
+      // logLevel = 'debug',
+      ...envExt
+    } = {},
+    {
+      ...resultsExt
+    } = {},
+  ){
+    // Получаем активную env
+    // let envGlobal = 
+
+
+    // this.env = {
+    //   logLevel: _.get(envExt, 'logLevel', )
+    // }
   }
 
-  // require browser type
-  // require exists browser and page
-  // require env
-
-  page = env.get(`pages.${pageNum}`);
-
-  if (page) {
-    if (selCSS) {
-      await page.type(selCSS, text);
+  setThis({name, value} = {}){
+    if (name && _.isString(name)){
+      _.set(this, name, value);
     }
-    await page.waitFor(waitTime);
+  }
 
-    await log({ 
-      text: `Ввод текста в INPUT = ${selCSS}, TEXT = ${text}`, 
-      selCSS: [selCSS],  
-      isScreenshot: isScreenshot, 
-      isFullScreenshot: isFullScreenshot,
-      level: 'debug'
-     });
-  };
-};
+  setAvailableEnvs(envs){
 
-module.exports = typeInput;
+  }
+
+  setAvailableBrowsers(browsers){
+
+  }
+
+  setSelectors(selectors = {}, bindings = {}){
+
+  }
+}
+
+
+// async function abstractTest(
+//   {
+//     // Если null то не какие данные не биндим
+//     // Если строка то выжираем м env
+//     // Если объект то используется только он для данных
+//     data = null,
+//     // Если null то не какие данные не биндим
+//     // Если строка то выжираем м env
+//     // Если объект то используется только он
+//     selectors = null, 
+//   } = {},
+//   { 
+//     envName,
+//     repeat = 1,
+//     pageNum = 0, 
+//     waitTime = 0, 
+//     isScreenshot = false,
+//     isFullScreenshot = false 
+//   } = {}
+// ) {
+
+//   if (envName) {
+//     e = env.get('envName')
+//   }
+
+//   // require browser type
+//   // require exists browser and page
+//   // require env
+
+//   page = env.get(`pages.${pageNum}`);
+
+//   if (page) {
+//     if (selCSS) {
+//       await page.type(selCSS, text);
+//     }
+//     await page.waitFor(waitTime);
+
+//     await log({ 
+//       text: `Ввод текста в INPUT = ${selCSS}, TEXT = ${text}`, 
+//       selCSS: [selCSS],  
+//       isScreenshot: isScreenshot, 
+//       isFullScreenshot: isFullScreenshot,
+//       level: 'debug'
+//      });
+//   };
+// };
+
+module.exports = Test;
