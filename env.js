@@ -17,7 +17,6 @@ async function runPuppeteer(browserSettings){
     slowMo: _.get(browserSettings, "slowMo", 0),
     args: _.get(browserSettings, "args", [])
   });
-
   
   const page = await browser.newPage();
   const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
@@ -84,7 +83,15 @@ class Envs {
   setEnv (name, page = null){
     if (name && Object.keys(this.envs).includes(name)) {
       this.current.name = name;
-      this.current.page = page;
+      if (page && _.get(this.envs[name], `state.pages.${page}`)){
+        this.current.page = page;
+      }
+      else if (_.get(this.envs[name], 'state.pages.main')) {
+        this.current.page = 'main';
+      }
+      else {
+        this.current.page = null;
+      }
     }
   }
 
@@ -128,14 +135,11 @@ class Envs {
       const type = _.get(env, 'env.browser.type');
       const runtime = _.get(env, 'env.browser.runtime');
       const browserSettings = _.get(env, 'env.browser');
-
       
-      console.log(env)
-
       if (type === 'api'){}
+
       if (type === 'puppeteer'){
         if (runtime === 'run'){
-          console.log("run")
           const {browser, pages} = await runPuppeteer(browserSettings)
           env.state = Object.assign(env.state, {browser, pages})
         }
@@ -159,18 +163,20 @@ class Envs {
       catch (exc) {}
     }
   }
+
+  async init(){
+    let test = _.get(args, '--test', 'test');
+    let output = _.get(args, '--output', 'output');
+    let files = JSON.parse(_.get(args, '--envs', []));
+    await this.initTest({test, output})
+    for (let i = 0; i < files.length; i++) {
+      await this.createEnv({file: files[i]});
+    }
+    await this.runBrowsers();
+  }
+
 }
 
-let test = _.get(args, '--test', 'test');
-let output = _.get(args, '--output', 'output');
-let files = JSON.parse(_.get(args, '--envs', []));
+let env = new Envs();;
 
-module.exports = async function () {
-  let env = new Envs();
-  await env.initTest({test, output})
-  for (let i = 0; i < files.length; i++) {
-    await env.createEnv({file: files[i]});
-  }
-  await env.runBrowsers();
-  return env;
-};
+module.exports = env;

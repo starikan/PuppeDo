@@ -10,19 +10,19 @@ class Test {
       // {} - данные
       // [{}] - много данных для посторения repeat
       data = {},
-      // Прямоцй проброс селекторов
+      // Прямой проброс селекторов
       selectors = {},
       // Биндинги даты
       // 1. Смотрим на локальные данные this.data
       // 2. Смотрим на данные в глобальной env.outputs
       // 2. Смотрим на данные в глобальной env.data
       // 3. Смотрим на данные в env[envName].data
-      bindingsData = {},
+      bindData = {},
       // Биндинги селекторов
       // 1. Смотрим на локальные данные this.selectors
       // 2. Смотрим на данные в глобальной env.selectors
       // 3. Смотрим на данные в env[envName].selectors
-      bindingsSelectors = {},
+      bindSelectors = {},
       ...dataExt
     } = {},
     {
@@ -41,6 +41,8 @@ class Test {
       ...resultsExt
     } = {},
   ){
+    this.canReuse; // Есть ли зависимости от окружения, типа переключений.
+    this.typeTest; // atom, test
     // Получаем активную env
     // let envGlobal = 
 
