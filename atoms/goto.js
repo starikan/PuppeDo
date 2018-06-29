@@ -1,25 +1,39 @@
 
-const { log } = require('../logger/logger');
-const env = require('../env')
+// const { log } = require('../logger/logger');
+const env = require('../env');
+const Test = require('../abstractTest');
 
-async function goTo(
-  { 
-    data = [],
-    url = ''
-  } = {}, 
+const test = new Test(
   {
-    waitTime = 0, 
-    isScreenshot = false, 
-    isFullScreenshot = false,
-  } = {}
-) {
-  // let browser = env.getCurr();
-  // let baseUrl = browser.data.baseUrl + url;
+    name: 'goTo',
+    type: 'atom',
+    runTest: async function(){
+      // console.log(this)
+    }
+  }
+)
 
-  // if (browser.page && baseUrl) {
-  //   await browser.page.goto(baseUrl);
-  //   await log({ text: `Go to: ${baseUrl}` });
-  // }
+console.log(test.run)
+// async function goTo(
+//   { 
+//     data = [],
+//     url = ''
+//   } = {}, 
+//   {
+//     waitTime = 0, 
+//     isScreenshot = false, 
+//     isFullScreenshot = false,
+//   } = {}
+// ) {
+//   // let browser = env.getCurr();
+//   // let baseUrl = browser.data.baseUrl + url;
+
+//   // if (browser.page && baseUrl) {
+//   //   await browser.page.goto(baseUrl);
+//   //   await log({ text: `Go to: ${baseUrl}` });
+//   // }
+// };
+
+module.exports = {
+  goTo: test.run
 };
-
-module.exports = goTo;

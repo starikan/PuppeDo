@@ -59,13 +59,19 @@ class Env {
     return _.get(this.env, name, def);
   }
   
-  getCurr () {
+  getState () {
     return this.state;
   }
   
   push (name, data) {
     let arr = _.clone(this.get(name, []));
-    arr.push(data);
+    try {
+      arr.push(data);
+    }
+    catch (err) {
+      console.log('class Env -> push');
+      console.log(err);
+    }
     return _.set(this.env, name, arr);
   }
 }
@@ -78,6 +84,23 @@ class Envs {
     this.current = {};
     this.results = {};
     this.output = {};
+    this.log = [];
+  }
+
+  get(name, def = null){
+    return _.get(this, name, def);
+  }
+
+  push (name, data) {
+    let arr = _.clone(this.get(name, []));
+    try {
+      arr.push(data);
+    }
+    catch (err) {
+      console.log('class Envs -> push');
+      console.log(err);
+    }
+    return _.set(this, name, arr);
   }
 
   setEnv (name, page = null){
@@ -96,7 +119,10 @@ class Envs {
   }
 
   getEnv (name){
-    return _.get(this.envs, name);
+    if (!name){
+      name = _.get(this, 'current.name')
+    }
+    return _.get(this.envs, name, {});
   }
 
   async createEnv ({env = {}, file = null, name = null} = {}){
@@ -168,6 +194,7 @@ class Envs {
     let test = _.get(args, '--test', 'test');
     let output = _.get(args, '--output', 'output');
     let files = JSON.parse(_.get(args, '--envs', []));
+
     await this.initTest({test, output})
     for (let i = 0; i < files.length; i++) {
       await this.createEnv({file: files[i]});

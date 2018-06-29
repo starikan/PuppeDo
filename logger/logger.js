@@ -6,98 +6,148 @@ const moment = require('moment')
 
 const env = require('../env')
 
-async function saveScreenshot({ pageNum = 0, selCSS = false } = {}) {
-  const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-  const name = `${now}_${pageNum}_${env.get('outName')}.jpg`;
+async function saveScreenshot({ selCSS = false, fullpage = false } = {}) {
 
-  const pathScreenshot = path.join(env.get('outDir'), name);
-  const page = env.get(`pages.${pageNum}`)
+  try {
+    // Active ENV log settings
+    let activeEnv = env.getEnv();
+    let activeLog = _.get(activeEnv, 'env.log', {});
+    let current = env.get('current');
+    let pageName = env.get('current.page');
+  
+    const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+    //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
+    const name = `${now}.jpg`;
+  
+    if (!env.get('output.folder')) return;
 
-  if (_.get(env, 'screenshots.isScreenshot') && _.get(env, 'outDir') && _.get(env, ['pages', pageNum])) {
-    if (selCSS) {
-      const element = await page.$(selCSS);
-      await element.screenshot({ path: pathScreenshot });
+    const pathScreenshot = path.join(env.get('output.folder'), name);
+    const page = _.get(activeEnv, `state.pages.${pageName}`)
+  
+    //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
+    if (_.isObject(page)) {
+      if (selCSS) {
+        const element = await page.$(selCSS);
+        await element.screenshot({ path: pathScreenshot });
+      }
+      if (fullpage) {
+        await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
+      }
+      return name;
     } else {
-      await page.screenshot({ path: pathScreenshot, fullPage: env.get('screenshots.fullPage') });
-    }
-    return name;
-  } else {
-    return false;
-  };
+      return false;
+    };
+  }
+  catch (err){
+    console.log(err);
+    debugger;
+  }
 };
 
-async function log({ 
+function getLevel(level){
+
+  const levels = {
+    0: 'raw',
+    1: 'debug',
+    2: 'info',
+    3: 'error',
+    4: 'env',
+    'raw': 0,
+    'debug': 1,
+    'info': 2,
+    'error': 3,
+    'env': 4
+  }
+
+  let defaultLevel = 1;
+
+  // Active ENV log settings
+  let activeEnv = env.getEnv();
+  let activeLog = _.get(activeEnv, 'env.log', {});
+  
+  let envLevel =_.get(activeLog, 'level', defaultLevel);
+  envLevel = _.isNumber(envLevel) ? envLevel : _.get(levels, envLevel, defaultLevel)
+  let inputLevel = level;
+  inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel)
+
+  let envLevelText = levels[envLevel];
+  let inputLevelText = levels[inputLevel];
+
+  // If input level higher or equal then global env level thqn logging
+  if (envLevel > inputLevel) {
+    return false;
+  }
+  else {
+    return inputLevelText;
+  }
+}
+
+async function _log({ 
   text = '', 
   pageNum = 0, 
   stdOut = true, 
   selCSS = [], 
-  isScreenshot = false, 
-  isFullScreenshot = false, 
+  screenshot = false, 
+  fullpage = false, 
   level = 'info' 
 } = {}) {
+  try {
 
-  const levels = {
-    0: 'debug',
-    1: 'info',
-    2: 'error',
-    3: 'env',
-    'debug': 0,
-    'info': 1,
-    'error': 2,
-    'env': 3
-  }
-  let globalLevel = env.get('logLevel', 0);
-  if (!_.isNumber(globalLevel)) {
-    globalLevel = _.get(levels, globalLevel, 0);
-  }
-  if (!_.isNumber(level)) {
-    level = _.get(levels, level, 0);
-  }
+    let activeEnv = env.getEnv();
+    let activeLog = _.get(activeEnv, 'env.log', {});
 
-  if (globalLevel > level) {
-    return;
-  }
+    const screenshots = [];
+    const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+  
+    screenshot = _.get(activeLog, 'screenshot', screenshot);
+    fullpage = _.get(activeLog, 'fullpage', fullpage);
 
-  const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+    // LEVEL RULES
+    level = getLevel(level);
+    if (!level) return;
 
-  const logStringNoTime = `${levels[level]} - ${pageNum} - ${text}`;
-  const logString = `${now} - ${logStringNoTime}`;
-  const screenshots = [];
+    // LOG STRINGS
+    //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
+    const logStringNoTime = `${level} - ${pageNum} - ${text}`;
+    const logString = `${now} - ${logStringNoTime}`;
+    
+    // STDOUT
+    if (stdOut) console.log(logString);
+    if (level == 'env') {
+      console.log(env);
+      debugger;
+    }
 
-  if (env.get('outDir') && env.get('outName')) {
-    if (_.isArray(selCSS) && !_.isEmpty(selCSS) && isScreenshot) {
-      for (let css in selCSS) {
-        const src = await saveScreenshot({ selCSS: selCSS[css], pageNum: pageNum });
+    // SCRENSHOTS
+    let outputFolder = env.get('output.folder')
+    if (!outputFolder) return;
+
+    
+    if (screenshot) {
+      if (_.isArray(selCSS)){
+        for (let css in selCSS) {
+          const src = await saveScreenshot({ selCSS: selCSS[css] });
+          if (src) {
+            screenshots.push(src);
+          }
+        }
+      }
+      if (fullpage) {
+        const src = await saveScreenshot({ fullpage: fullpage });
         if (src) {
           screenshots.push(src);
         }
       }
-    } else if (isScreenshot) {
-      const src = await saveScreenshot({ pageNum: pageNum });
-      if (src) {
-        screenshots.push(src);
-      }
-    }
-    
-    if (levels[level] == 'env'){
-      console.log(env);
     }
 
-    // if (isFullScreenshot) {
-    //   const src = await saveScreenshot({ pageNum: pageNum });
-    //   if (src) {
-    //     screenshots.push(src);
-    //   }
-    // }
-    
     env.push('log', { 
       text: logStringNoTime, 
-      time: now, screenshots: 
-      screenshots, 
+      time: now, 
+      screenshots: screenshots, 
       level: level 
     });
-
-    await fs.appendFileSync(path.join(env.get('outDir'), 'output.log'), logString + '\n', function (err) {
+        
+    await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
       if (err) {
         return console.log(err);
       }
@@ -105,15 +155,13 @@ async function log({
 
     // Export JSON log every step
     const exportJson = JSON.stringify(env.get('log'));
-    await fs.writeFileSync(path.join(env.get('outDir'), 'output.json'), exportJson);
-
-  };
-
-  if (stdOut) {
-    console.log(logString)
+    await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
+  }
+  catch (err){
+    console.log(err)
   }
 }
 
 module.exports = {
-  log
+  log: _log
 };
