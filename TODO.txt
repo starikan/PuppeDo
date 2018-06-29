@@ -19,17 +19,6 @@
 
 ==================
 
-Отрефакторить log в конфигах
-
-"logging":
-{
-  level: "debug",
-  isScreenshot: false,
-  isFullScreenshot: false
-}
-
-==================
-
 init
 setEnv("cloud")
 login

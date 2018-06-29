@@ -1,6 +1,7 @@
 const { log } = require('../logger/logger');
 
 function bind(f) {
+  console.log('f', f)
   return async function() {
     try {
       return await f.apply(this, arguments);
@@ -14,5 +15,5 @@ function bind(f) {
 module.exports = {
   'typeInput': bind(require('./typeInput')),
   'buttonClick': bind(require('./buttonClick')),
-  'goTo': bind(require('./goTo')),
+  'goTo': require('./goTo'),
 };

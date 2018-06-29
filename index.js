@@ -16,7 +16,7 @@ console.log(log)
 const test = async () => {
   env.setEnv('cloud');
   await log({screenshot: true, stdOut: true})
-  console.log(env)
+  // console.log(env)
   await goTo()
   // await test();
   // await goTo({  })

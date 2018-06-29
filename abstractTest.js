@@ -63,17 +63,10 @@ class Test {
     //   data: {}
     // }
     this.runTest = runTest;
-    console.log("NEW")
+    console.log("NEW", this)
 
     // this.canReuse; // Есть ли зависимости от окружения, типа переключений.
     // this.typeTest; // atom, test
-    // Получаем активную env
-    // let envGlobal = 
-
-
-    // this.env = {
-    //   logLevel: _.get(envExt, 'logLevel', )
-    // }
   }
 
   setThis({name, value} = {}){
@@ -104,8 +97,9 @@ class Test {
   } = {}){
     // let foo = 'bar';
     // this = Object.assign(this, args);
-    console.log('RUN')
-    // await this.runTest()
+    console.log('RUN', this)
+    debugger;
+    await this.runTest()
   }
 }
 

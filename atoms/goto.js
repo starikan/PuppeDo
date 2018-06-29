@@ -8,7 +8,7 @@ const test = new Test(
     name: 'goTo',
     type: 'atom',
     runTest: async function(){
-      // console.log(this)
+      console.log('runTest', this)
     }
   }
 )
@@ -34,6 +34,4 @@ console.log(test.run)
 //   // }
 // };
 
-module.exports = {
-  goTo: test.run
-};
+module.exports = test.run;
