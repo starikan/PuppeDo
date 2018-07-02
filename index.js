@@ -1,7 +1,6 @@
 // var CSON = require('cson')
 // const cson = CSON.load('./test.cson');
 
-
 // const { initTest, start, end, wait } = require('./helpers');
 // const { typeInput, buttonClick, goTo } = require('./atoms')
 // const { login } = require('./tests');
@@ -9,13 +8,10 @@ const { goTo } = require('./atoms')
 const { log } = require('./logger/logger');
 
 const env = require('./env.js');
-console.log(log)
-// const Test = require('./abstractTest');
-// new Test();
 
 const test = async () => {
   env.setEnv('cloud');
-  await log({screenshot: true, stdOut: true})
+  // await log({screenshot: true, stdOut: true})
   // console.log(env)
   await goTo()
   // await test();
