@@ -23,7 +23,7 @@ const test = new Test(
   {
     name: 'typeInput',
     type: 'atom',
-    envNames: ['cloud'],
+    needEnv: ['cloud'],
     needSelectors: ['input'],
     needData: ['text'],
     beforeTest: beforeTest,

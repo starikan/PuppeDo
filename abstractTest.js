@@ -18,7 +18,7 @@ class Test {
       // ДОступные типы env
       // Если тест работает с несколькими env то проверять входные env
       // и активную на совпадение с этим делом
-      needEnvTypes = [],
+      needEnv = [],
       needData = [],
       needSelectors = [],
 
@@ -56,13 +56,17 @@ class Test {
     } = {}
   ){
 
+    this.needEnv = needEnv;
+    this.needData = needData;
+    this.needSelectors = needSelectors;
+
     this.data = data;
     this.bindData = bindData;
 
     this.selectors = selectors; 
     this.bindSelectors = bindSelectors;
 
-    this.envNames = envNames;
+    // this.envNames = envNames;
     // this.envName = envName;
 
     this.beforeTest = beforeTest;
@@ -83,13 +87,26 @@ class Test {
     ) => {
 
       try {
+
+        // CURRENT ENV
         const envName = envs.get('current.name');
-        //TODO: 2018-07-03 S.Starodubov проверка на envsNames, енсли пусто то пох
+
+        if (_.isArray(this.needEnv)){
+          if (this.needEnv.length && !this.needEnv.includes(envName)){
+            throw({message: `Wrong Environment, local env = ${envName}`});
+          }
+        }
+        else {
+          throw({message: "needEnv wrong format, need array"});
+        }
+
+        // CURRENT PAGE NAME
         const envPageName = envs.get('current.page');
   
         const env = envs.get(`envs.${envName}`);
         const browser = env.getState('browser');
         const page =  env.getState(`pages.${envPageName}`);
+        //TODO: 2018-07-03 S.Starodubov если нет page то может это API
   
         let dataLocal = {};
         dataLocal = Object.assign(dataLocal, envs.get('results'));
@@ -126,7 +143,7 @@ class Test {
           }
         }
         
-        debugger;
+        // debugger;
 
         //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
         // если что ронять с исключнием
