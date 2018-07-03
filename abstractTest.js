@@ -18,9 +18,9 @@ class Test {
       // ДОступные типы env
       // Если тест работает с несколькими env то проверять входные env
       // и активную на совпадение с этим делом
-      avaiableEnvTypes = [],
-      availableData = [],
-      availableSelectors = [],
+      needEnvTypes = [],
+      needData = [],
+      needSelectors = [],
 
       // Прямой проброс данных
       // {} - данные
@@ -72,9 +72,9 @@ class Test {
     this.repeat = repeat;
 
     this.run = async (
-      data = {},
-      selectors = {},
       {
+        data = {},
+        selectors = {},
         bindData = {},
         bindSelectors = {},
       // envName,
@@ -115,6 +115,19 @@ class Test {
         selectorsLocal = Object.assign(selectorsLocal, this.selectors);
         selectorsLocal = Object.assign(selectorsLocal, selectors);
   
+        
+        let bindSelectorsLocal = {};
+        bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
+        bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
+        
+        for (const key in bindSelectorsLocal){
+          if (!_.get(selectorsLocal, key)){
+            selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+          }
+        }
+        
+        debugger;
+
         //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
         // если что ронять с исключнием
         const args = {

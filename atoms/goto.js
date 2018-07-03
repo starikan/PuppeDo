@@ -1,6 +1,5 @@
 
 const { log } = require('../logger/logger');
-// const env = require('../env');
 const Test = require('../abstractTest');
 
 const beforeTest = async function ({}) {

@@ -87,9 +87,10 @@ async function _log({
   pageNum = 0, 
   stdOut = true, 
   selCSS = [], 
-  screenshot = false, 
-  fullpage = false, 
-  level = 'info' 
+  screenshot = null, 
+  fullpage = null, 
+  level = 'info',
+  debug = false,
 } = {}) {
   try {
 
@@ -99,8 +100,12 @@ async function _log({
     const screenshots = [];
     const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
   
-    screenshot = _.get(activeLog, 'screenshot', screenshot);
-    fullpage = _.get(activeLog, 'fullpage', fullpage);
+    if (!_.isBoolean(screenshot)){
+      screenshot = _.get(activeLog, 'screenshot', false);
+    }
+    if (!_.isBoolean(fullpage)){
+      fullpage = _.get(activeLog, 'fullpage', false);
+    }
 
     // LEVEL RULES
     level = getLevel(level);
@@ -124,6 +129,11 @@ async function _log({
 
     
     if (screenshot) {
+
+      if (_.isString(selCSS)){
+        selCSS = [selCSS]
+      }
+      
       if (_.isArray(selCSS)){
         for (let css in selCSS) {
           const src = await saveScreenshot({ selCSS: selCSS[css] });
@@ -132,6 +142,7 @@ async function _log({
           }
         }
       }
+
       if (fullpage) {
         const src = await saveScreenshot({ fullpage: fullpage });
         if (src) {
@@ -156,6 +167,10 @@ async function _log({
     // Export JSON log every step
     const exportJson = JSON.stringify(envs.get('log'));
     await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
+
+    if (debug){
+      debugger;
+    }
   }
   catch (err){
     console.log(err)

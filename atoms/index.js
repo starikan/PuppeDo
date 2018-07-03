@@ -12,7 +12,7 @@ function bind(f) {
 }
 
 module.exports = {
-  // 'typeInput': bind(require('./typeInput')),
+  'typeInput': require('./typeInput'),
   // 'buttonClick': bind(require('./buttonClick')),
   'goTo': require('./goTo'),
 };

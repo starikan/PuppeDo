@@ -4,7 +4,7 @@
 // const { initTest, start, end, wait } = require('./helpers');
 // const { typeInput, buttonClick, goTo } = require('./atoms')
 // const { login } = require('./tests');
-const { goTo } = require('./atoms')
+const { goTo, typeInput } = require('./atoms')
 const { log } = require('./logger/logger');
 
 const envs = require('./env.js');
@@ -19,6 +19,14 @@ const test = async () => {
   // await log({screenshot: true, stdOut: true})
   // console.log(env)
   await goTo()
+  await typeInput({
+    bindData: { text: 'auth.login'},
+    bindSelectors: { input: 'auth.inputLogin' }
+  });
+  await typeInput({
+    bindData: { text: 'auth.password'},
+    bindSelectors: { input: 'auth.inputPassword' }
+  });
   // await test();
   // await goTo({  })
   // await log({ level: 'env' });
