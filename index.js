@@ -22,13 +22,12 @@ const test = async () => {
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
   //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  debugger;
   await env.closeBrowsers()
 }
 
 const main = async () => {
   await env.init();
-  // Тут генерация теста из yaml
+  //TODO: 2018-07-03 S.Starodubov Тут генерация теста из yaml
   await test();
 }
 

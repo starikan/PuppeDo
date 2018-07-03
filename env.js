@@ -31,7 +31,7 @@ class Env {
   constructor(name, env = {}){
     this.name = name;
     this.state = {
-      // тут браузер, страницы, куки
+    // тут браузер, страницы, куки
     }
     this.env = {
       name: name,
@@ -59,7 +59,10 @@ class Env {
     return _.get(this.env, name, def);
   }
   
-  getState () {
+  getState (value = null) {
+    if (value){
+      return _.get(this, `state.${value}`)
+    }
     return this.state;
   }
   

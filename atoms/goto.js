@@ -1,37 +1,36 @@
 
-// const { log } = require('../logger/logger');
-const env = require('../env');
+const { log } = require('../logger/logger');
+// const env = require('../env');
 const Test = require('../abstractTest');
+
+const beforeTest = async function ({}) {
+  // console.log('beforeTest')
+}
+
+const runTest = async function ({env, browser, page, data}) {
+  await page.goto(data.url);
+  await log({ text: `Go to: ${data.url}` });
+}
+
+const afterTest = async function ({}) {
+  // console.log('afterTest')
+}
+
+const errorTest = async function() {
+
+}
 
 const test = new Test(
   {
     name: 'goTo',
     type: 'atom',
-    runTest: async function(){
-      console.log('runTest', this)
-    }
+    envNames: ['cloud'],
+    bindData: {'url': 'baseUrl'},
+    beforeTest: beforeTest,
+    runTest: runTest,
+    afterTest: afterTest,
+    errorTest: errorTest,
   }
 )
-
-console.log(test.run)
-// async function goTo(
-//   { 
-//     data = [],
-//     url = ''
-//   } = {}, 
-//   {
-//     waitTime = 0, 
-//     isScreenshot = false, 
-//     isFullScreenshot = false,
-//   } = {}
-// ) {
-//   // let browser = env.getCurr();
-//   // let baseUrl = browser.data.baseUrl + url;
-
-//   // if (browser.page && baseUrl) {
-//   //   await browser.page.goto(baseUrl);
-//   //   await log({ text: `Go to: ${baseUrl}` });
-//   // }
-// };
 
 module.exports = test.run;
