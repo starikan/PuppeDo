@@ -126,21 +126,29 @@ class Test {
         }
   
         let selectorsLocal = {};
-        selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
-        selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
-        selectorsLocal = Object.assign(selectorsLocal, env.get('selectors'));
-        selectorsLocal = Object.assign(selectorsLocal, this.selectors);
-        selectorsLocal = Object.assign(selectorsLocal, selectors);
-  
-        
-        let bindSelectorsLocal = {};
-        bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
-        bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
-        
-        for (const key in bindSelectorsLocal){
-          if (!_.get(selectorsLocal, key)){
-            selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+
+        if (page){
+          selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
+          selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
+          selectorsLocal = Object.assign(selectorsLocal, env.get('selectors'));
+          selectorsLocal = Object.assign(selectorsLocal, this.selectors);
+          selectorsLocal = Object.assign(selectorsLocal, selectors);
+    
+          // BINDING SELECTORS
+          let bindSelectorsLocal = {};
+          bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
+          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
+          
+          for (const key in bindSelectorsLocal){
+            if (!_.get(selectorsLocal, key)){
+              selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+            }
           }
+
+          for (const sel in needSelectors){
+            if (!Object.keys(selectorsLocal).includes())
+          }
+
         }
         
         // debugger;

@@ -4,7 +4,7 @@
 // const { initTest, start, end, wait } = require('./helpers');
 // const { typeInput, buttonClick, goTo } = require('./atoms')
 // const { login } = require('./tests');
-const { goTo, typeInput } = require('./atoms')
+const { goTo, typeInput, buttonClick } = require('./atoms')
 const { log } = require('./logger/logger');
 
 const envs = require('./env.js');
@@ -27,6 +27,9 @@ const test = async () => {
     bindData: { text: 'auth.password'},
     bindSelectors: { input: 'auth.inputPassword' }
   });
+  await buttonClick({
+    bindSelectors: { button: 'auth.submit' }
+  });
   // await test();
   // await goTo({  })
   // await log({ level: 'env' });
@@ -42,6 +45,7 @@ const main = async () => {
   await envs.init();
   //TODO: 2018-07-03 S.Starodubov Тут генерация теста из yaml
   await test();
+  
 }
 
 try {
