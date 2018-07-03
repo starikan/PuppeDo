@@ -7,10 +7,15 @@
 const { goTo } = require('./atoms')
 const { log } = require('./logger/logger');
 
-const env = require('./env.js');
+const envs = require('./env.js');
+
+const debugOnError = true;
+if (debugOnError){
+  envs.set('debugOnError', debugOnError);
+}
 
 const test = async () => {
-  env.setEnv('cloud');
+  envs.setEnv('cloud');
   // await log({screenshot: true, stdOut: true})
   // console.log(env)
   await goTo()
@@ -22,11 +27,11 @@ const test = async () => {
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
   //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  await env.closeBrowsers()
+  await envs.closeBrowsers()
 }
 
 const main = async () => {
-  await env.init();
+  await envs.init();
   //TODO: 2018-07-03 S.Starodubov Тут генерация теста из yaml
   await test();
 }

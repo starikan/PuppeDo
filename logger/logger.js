@@ -4,24 +4,24 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment')
 
-const env = require('../env')
+const envs = require('../env')
 
 async function saveScreenshot({ selCSS = false, fullpage = false } = {}) {
 
   try {
     // Active ENV log settings
-    let activeEnv = env.getEnv();
+    let activeEnv = envs.getEnv();
     let activeLog = _.get(activeEnv, 'env.log', {});
-    let current = env.get('current');
-    let pageName = env.get('current.page');
+    let current = envs.get('current');
+    let pageName = envs.get('current.page');
   
     const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
     //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
     const name = `${now}.jpg`;
   
-    if (!env.get('output.folder')) return;
+    if (!envs.get('output.folder')) return;
 
-    const pathScreenshot = path.join(env.get('output.folder'), name);
+    const pathScreenshot = path.join(envs.get('output.folder'), name);
     const page = _.get(activeEnv, `state.pages.${pageName}`)
   
     //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
@@ -62,7 +62,7 @@ function getLevel(level){
   let defaultLevel = 1;
 
   // Active ENV log settings
-  let activeEnv = env.getEnv();
+  let activeEnv = envs.getEnv();
   let activeLog = _.get(activeEnv, 'env.log', {});
   
   let envLevel =_.get(activeLog, 'level', defaultLevel);
@@ -93,7 +93,7 @@ async function _log({
 } = {}) {
   try {
 
-    let activeEnv = env.getEnv();
+    let activeEnv = envs.getEnv();
     let activeLog = _.get(activeEnv, 'env.log', {});
 
     const screenshots = [];
@@ -114,12 +114,12 @@ async function _log({
     // STDOUT
     if (stdOut) console.log(logString);
     if (level == 'env') {
-      console.log(env);
+      console.log(envs);
       debugger;
     }
 
     // SCRENSHOTS
-    let outputFolder = env.get('output.folder')
+    let outputFolder = envs.get('output.folder')
     if (!outputFolder) return;
 
     
@@ -140,7 +140,7 @@ async function _log({
       }
     }
 
-    env.push('log', { 
+    envs.push('log', { 
       text: logStringNoTime, 
       time: now, 
       screenshots: screenshots, 
@@ -154,7 +154,7 @@ async function _log({
     });
 
     // Export JSON log every step
-    const exportJson = JSON.stringify(env.get('log'));
+    const exportJson = JSON.stringify(envs.get('log'));
     await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
   }
   catch (err){

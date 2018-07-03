@@ -94,6 +94,10 @@ class Envs {
     return _.get(this, name, def);
   }
 
+  set (name, data) {
+    return _.set(this, name, data);
+  }
+
   push (name, data) {
     let arr = _.clone(this.get(name, []));
     try {

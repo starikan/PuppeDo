@@ -1,4 +1,4 @@
-const envGlobal = require('./env')
+const envs = require('./env')
 const _ = require('lodash');
 
 const { log } = require('./logger/logger');
@@ -83,17 +83,17 @@ class Test {
     ) => {
 
       try {
-        const envName = envGlobal.get('current.name');
+        const envName = envs.get('current.name');
         //TODO: 2018-07-03 S.Starodubov проверка на envsNames, енсли пусто то пох
-        const envPageName = envGlobal.get('current.page');
+        const envPageName = envs.get('current.page');
   
-        const env = envGlobal.get(`envs.${envName}`);
+        const env = envs.get(`envs.${envName}`);
         const browser = env.getState('browser');
         const page =  env.getState(`pages.${envPageName}`);
   
         let dataLocal = {};
-        dataLocal = Object.assign(dataLocal, envGlobal.get('results'));
-        dataLocal = Object.assign(dataLocal, envGlobal.get('data'));
+        dataLocal = Object.assign(dataLocal, envs.get('results'));
+        dataLocal = Object.assign(dataLocal, envs.get('data'));
         dataLocal = Object.assign(dataLocal, env.get('data'));
         dataLocal = Object.assign(dataLocal, this.data);
         dataLocal = Object.assign(dataLocal, data);
@@ -108,10 +108,9 @@ class Test {
           }
         }
   
-        console.log(dataLocal.url)
         let selectorsLocal = {};
-        selectorsLocal = Object.assign(selectorsLocal, envGlobal.get('results'));
-        selectorsLocal = Object.assign(selectorsLocal, envGlobal.get('selectors'));
+        selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
+        selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
         selectorsLocal = Object.assign(selectorsLocal, env.get('selectors'));
         selectorsLocal = Object.assign(selectorsLocal, this.selectors);
         selectorsLocal = Object.assign(selectorsLocal, selectors);
@@ -131,8 +130,6 @@ class Test {
         await this.beforeTest(args);
   
         await this.runTest(args);
-  
-        debugger;
   
         await this.afterTest(args);
       }
