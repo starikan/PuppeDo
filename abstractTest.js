@@ -146,7 +146,9 @@ class Test {
           }
 
           for (const sel in needSelectors){
-            if (!Object.keys(selectorsLocal).includes())
+            if (!Object.keys(selectorsLocal).includes()){
+              //TODO: 2018-07-04 S.Starodubov todo
+            }
           }
 
         }

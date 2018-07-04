@@ -1,0 +1,76 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "async-await"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "globals": {
+    "jQuery": true,
+    "angular": true,
+    "console": true,
+    "$": true,
+    "_": true,
+    "moment": true,
+    "describe": true,
+    "beforeEach": true,
+    "beforeAll": true,
+    "afterAll": true,
+    "module": true,
+    "inject": true,
+    "it": true,
+    "expect": true,
+    "xdescribe": true,
+    "xit": true,
+    "spyOn": true,
+    "lbUiSelectBindings": true,
+    "lbUiSelectTemplateUrl": true,
+    "ActiveXObject": true,
+    "BigNumber": true
+  },
+  "rules": {
+    "async-await/space-after-async": 2,
+    "async-await/space-after-await": 2,
+    "no-bitwise": 2,
+    "camelcase": 2,
+    "curly": 2,
+    "eqeqeq": 2,
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": 1
+      }
+    ],
+    "no-use-before-define": [
+      2,
+      {
+        "functions": false
+      }
+    ],
+    "new-cap": 2,
+    "no-caller": 2,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "no-undef": 2,
+    "no-unused-vars": 2,
+    "strict": [
+      2,
+      "function"
+    ],
+    "semi": "error"
+  }
+}

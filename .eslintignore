@@ -1,0 +1,8 @@
+scripts/**
+node_modules/**
+bower_components/**
+Gruntfile.js
+app/**/*-spec.js
+doc/**/*.*
+e2e-test/**/*.*
+e2e-start.js
