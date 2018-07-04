@@ -124,7 +124,16 @@ class Test {
             dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
           }
         }
-  
+
+        // CHECK NEED DATA
+        _.forEach(needData, d => {
+          if (!_.get(dataLocal, d)){
+            throw({
+              message: `Error: can't find data parametr "${d}" in ${this.name} test`
+            })
+          }
+        })
+
         let selectorsLocal = {};
 
         if (page){
@@ -145,12 +154,14 @@ class Test {
             }
           }
 
-          for (const sel in needSelectors){
-            if (!Object.keys(selectorsLocal).includes()){
-              //TODO: 2018-07-04 S.Starodubov todo
+          // CHECK NEED SELECTORS
+          _.forEach(needSelectors, d => {
+            if (!_.get(selectorsLocal, d)){
+              throw({
+                message: `Error: can't find selector "${d}" in ${this.name} test`
+              })
             }
-          }
-
+          })
         }
         
         // debugger;

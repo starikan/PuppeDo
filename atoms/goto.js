@@ -24,7 +24,7 @@ const test = new Test(
     name: 'goTo',
     type: 'atom',
     envNames: ['cloud'],
-    bindData: {'url': 'baseUrl'},
+    needData: ['url'],
     beforeTest: beforeTest,
     runTest: runTest,
     afterTest: afterTest,

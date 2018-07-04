@@ -4,10 +4,6 @@ const Test = require('../abstractTest');
 const beforeTest = async function ({}) {}
 
 const runTest = async function ({env, browser, page, data, selectors}) {
-  await page.click(selectors.button);
-}
-
-const afterTest = async function ({env, browser, page, data, selectors}) {
   await log({ 
     text: `Нажата кнопка = ${selectors.button}`,
     screenshot: true,
@@ -15,7 +11,10 @@ const afterTest = async function ({env, browser, page, data, selectors}) {
     selCSS: [selectors.button],
     level: 'debug'
   });
+  await page.click(selectors.button);
 }
+
+const afterTest = async function ({env, browser, page, data, selectors}) {}
 
 const errorTest = async function() {}
 

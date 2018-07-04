@@ -1,10 +1,7 @@
 // var CSON = require('cson')
 // const cson = CSON.load('./test.cson');
 
-// const { initTest, start, end, wait } = require('./helpers');
-// const { typeInput, buttonClick, goTo } = require('./atoms')
-// const { login } = require('./tests');
-const { goTo, typeInput, buttonClick } = require('./atoms')
+const { login } = require('./tests');
 const { log } = require('./logger/logger');
 
 const envs = require('./env.js');
@@ -16,24 +13,7 @@ if (debugOnError){
 
 const test = async () => {
   envs.setEnv('cloud');
-  // await log({screenshot: true, stdOut: true})
-  // console.log(env)
-  await goTo()
-  await typeInput({
-    bindData: { text: 'auth.login'},
-    bindSelectors: { input: 'auth.inputLogin' }
-  });
-  await typeInput({
-    bindData: { text: 'auth.password'},
-    bindSelectors: { input: 'auth.inputPassword' }
-  });
-  await buttonClick({
-    bindSelectors: { button: 'auth.submit' }
-  });
-  // await test();
-  // await goTo({  })
-  // await log({ level: 'env' });
-  // await login();
+  await login();
   //   await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
