@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const yaml = require('js-yaml');
 const _ = require('lodash');
 const moment = require('moment')
 const puppeteer = require('puppeteer');
@@ -133,8 +134,8 @@ class Envs {
   }
 
   async createEnv ({env = {}, file = null, name = null} = {}){
-    if (file) {
-      env = await require(file);
+    if (file && file.endsWith('.yaml')) {
+      env = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
       name = env.name;
     }
     

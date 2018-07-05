@@ -7,7 +7,7 @@ const beforeTest = async function ({}) {
     text: `TEST LOGIN START`,
     screenshot: true,
     fullpage: true,
-    level: 'info'
+    level: 'test'
   });
 }
 
@@ -33,7 +33,7 @@ const afterTest = async function ({}) {
     text: `TEST LOGIN END`,
     screenshot: true,
     fullpage: true,
-    level: 'info'
+    level: 'test'
   });
 }
 

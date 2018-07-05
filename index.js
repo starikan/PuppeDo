@@ -1,6 +1,3 @@
-// var CSON = require('cson')
-// const cson = CSON.load('./test.cson');
-
 const { login } = require('./tests');
 const { log } = require('./logger/logger');
 

@@ -50,13 +50,15 @@ function getLevel(level){
     0: 'raw',
     1: 'debug',
     2: 'info',
-    3: 'error',
-    4: 'env',
+    3: 'test',
+    4: 'error',
+    5: 'env',
     'raw': 0,
     'debug': 1,
     'info': 2,
-    'error': 3,
-    'env': 4
+    'test': 3,
+    'error': 4,
+    'env': 5
   }
 
   let defaultLevel = 1;
