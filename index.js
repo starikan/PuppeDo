@@ -1,5 +1,6 @@
 const { login } = require('./tests');
 const { log } = require('./logger/logger');
+const { yaml2json, getFullDepthJSON } = require('./yaml/yaml2json');
 
 const envs = require('./env.js');
 
@@ -20,6 +21,10 @@ const test = async () => {
 
 const main = async () => {
   await envs.init();
+
+  const full = await getFullDepthJSON(envs.get('args.testFile'));
+  console.log(full);
+  debugger;
   //TODO: 2018-07-03 S.Starodubov Тут генерация теста из yaml
   await test();
   

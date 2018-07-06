@@ -29,10 +29,10 @@ runTest:
   buttonClick:
     bindSelectors:
       button: auth.submit
+  login
 afterTest:
   log:
     text: TEST LOGIN END
     screenshot: true
     fullpage: true
     level: info
-errorTest: errorTest

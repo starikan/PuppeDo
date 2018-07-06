@@ -16,7 +16,7 @@ npm install
       "program": "${workspaceFolder}\\index.js",
       "args": [
         "--envs=[\"./json/envCloud.yaml\", \"./json/envElectron.yaml\", \"./json/envApi.yaml\"]",
-        "--test=test",
+        "--test=./tests/login.yaml",
         "--output=output",
       ]
     }

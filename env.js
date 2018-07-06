@@ -199,14 +199,20 @@ class Envs {
   }
 
   async init(){
-    let test = _.get(args, '--test', 'test');
-    let output = _.get(args, '--output', 'output');
-    let files = JSON.parse(_.get(args, '--envs', []));
+    let testFile = _.get(args, '--test', 'test');
+    let outputFolder = _.get(args, '--output', 'output');
+    let envFiles = JSON.parse(_.get(args, '--envs', []));
+    let testName = testFile.split('/')[testFile.split('/').length - 1];
+    let testsFolder = '../tests/';
 
-    await this.initTest({test, output})
-    for (let i = 0; i < files.length; i++) {
-      await this.createEnv({file: files[i]});
+    this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
+
+    await this.initTest({test: testName, output: outputFolder})
+
+    for (let i = 0; i < envFiles.length; i++) {
+      await this.createEnv({file: envFiles[i]});
     }
+
     await this.runBrowsers();
   }
 
