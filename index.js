@@ -1,6 +1,7 @@
 const { login } = require('./tests');
 const { log } = require('./logger/logger');
-const { yaml2json, getFullDepthJSON } = require('./yaml/yaml2json');
+const { getFullDepthJSON } = require('./yaml/yaml2json');
+const { getTest } = require('./yaml/getTest');
 
 const envs = require('./env.js');
 
@@ -10,24 +11,23 @@ if (debugOnError){
 }
 
 const test = async () => {
-  envs.setEnv('cloud');
+  // envs.setEnv('cloud');
   await login();
   //   await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
   //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  await envs.closeBrowsers()
+  // await envs.closeBrowsers()
 }
 
 const main = async () => {
   await envs.init();
+  envs.setEnv('cloud');
   console.log(envs)
-
   const full = await getFullDepthJSON(envs.get('args.testFile'));
-  console.log(full);
-  //TODO: 2018-07-03 S.Starodubov Тут генерация теста из json
-  debugger;
-  // await test();
+  // const test = getTest(full);
+  await test();
+  await envs.closeBrowsers()
   
 }
 

@@ -40,4 +40,3 @@ afterTest:
   screenshot: true
   fullpage: true
   level: info
-errorTest: []
