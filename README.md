@@ -98,3 +98,45 @@ log:
   screenshot: true
   fullpage: true
 ```
+
+```
+---
+name: login
+type: test
+needEnv:
+- cloud
+needData:
+- baseUrl
+- auth.login
+- auth.password
+needSelectors:
+- auth.inputLogin
+- auth.inputPassword
+- auth.submit
+beforeTest:
+- name: log
+  text: TEST LOGIN START
+  screenshot: true
+  fullpage: true
+  level: info
+runTest:
+- goTo:
+    bindData: { url: baseUrl }
+- typeInput:
+    bindData: { text: auth.login }
+    bindSelectors: { input: auth.inputLogin }
+- name: typeInput
+  bindData:
+    text: auth.password
+  bindSelectors:
+    input: auth.inputPassword
+- name: buttonClick
+  bindSelectors:
+    button: auth.submit
+afterTest:
+- name: log
+  text: TEST LOGIN END
+  screenshot: true
+  fullpage: true
+  level: info
+```

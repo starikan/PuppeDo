@@ -13,5 +13,10 @@ app.commandLine.appendSwitch('remote-debugging-port', '8315');
 https://www.browserless.io/
 
 18-07-09
+- if или case
+- results
+- web server front
 - Импорт как yaml так и json так и js
-- 
+- linter
+- Автогенерация needData, needSelectors
+- TS

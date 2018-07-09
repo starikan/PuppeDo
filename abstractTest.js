@@ -13,7 +13,7 @@ class Test {
 
       // Тип теста atom, test, multiEnv
       // Если atom то обязательный прямой проброс данных
-      type,
+      type = 'test',
 
       // ДОступные типы env
       // Если тест работает с несколькими env то проверять входные env
@@ -91,13 +91,16 @@ class Test {
         // CURRENT ENV
         const envName = envs.get('current.name');
 
+        if (_.isString(this.needEnv)) {
+          this.needEnv = [this.needEnv]
+        }
         if (_.isArray(this.needEnv)){
           if (this.needEnv.length && !this.needEnv.includes(envName)){
             throw({message: `Wrong Environment, local env = ${envName}`});
           }
         }
         else {
-          throw({message: "needEnv wrong format, need array"});
+          throw({message: "needEnv wrong format, need array or string"});
         }
 
         // CURRENT PAGE NAME
