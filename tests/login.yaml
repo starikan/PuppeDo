@@ -18,14 +18,11 @@ beforeTest:
   fullpage: true
   level: info
 runTest:
-- name: goTo
-  bindData:
-    url: baseUrl
-- name: typeInput
-  bindData:
-    text: auth.login
-  bindSelectors:
-    input: auth.inputLogin
+- goTo:
+    bindData: { url: baseUrl }
+- typeInput:
+    bindData: { text: auth.login }
+    bindSelectors: { input: auth.inputLogin }
 - name: typeInput
   bindData:
     text: auth.password

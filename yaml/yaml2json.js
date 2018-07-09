@@ -25,6 +25,18 @@ const yaml2json = async function(filePath){
     filePath = path.join(envs.get('args.testsFolder'), path.basename(filePath));
   }
 
+  if (filePath.endsWith('.json')){
+    try {
+      var full = require(filePath);
+      const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+      const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+      return { full, functions, values };
+    } catch (e) {
+      throw(e);
+    }
+  }
+
+  // todo 
   if (filePath.endsWith('.js')){
     return { full: filePath, functions: {}, values: {} };
   }
@@ -69,8 +81,14 @@ const getFullDepthJSON = async function(filePath, breadcrumbs){
     
     for (const key in func) {
       let test = _.clone(func[key]);
-      const name = _.get(test, 'name');
+      let name = _.get(test, 'name');
       
+      if (!name && Object.keys(test).length === 1){
+        name = Object.keys(test)[0];
+        test = test[Object.keys(test)[0]];
+        test.name = name;
+      }
+
       if (!name){
         throw ({ message: 'Any test must be named' })
       }

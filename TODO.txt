@@ -1,29 +1,17 @@
-Вход
-  Данные
-    Data
-    Selectors (брать из окружения)
-  Env
-    CurrEnv
-    Repeat
-  Results callback
-
-1. Проверка env, передавать контекст в тест [env1, env2] в тесте проверка типов этих env
-2. Валидация selector
-3. Валидация данных
-4. Проверка браузера
-5. Проверка page
-6. Сам тест
-7. Афтер тест
 8. Данные на запись.
-
 
 ==================
 
-init
-setEnv("cloud")
-login
-  
 goto профиль
 перейти в управление кассами
 зайти в настройки кассы
 проверить наличие чекбокса
+
+
+app.commandLine.appendSwitch('remote-debugging-port', '8315');
+
+https://www.browserless.io/
+
+18-07-09
+- Импорт как yaml так и json так и js
+- 
