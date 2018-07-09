@@ -1,0 +1,5 @@
+---
+name: testGlob
+type: test
+runTest:
+- name: login

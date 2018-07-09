@@ -12,27 +12,32 @@ needSelectors:
 - auth.inputPassword
 - auth.submit
 beforeTest:
-  log:
-    text: TEST LOGIN START
-    screenshot: true
-    fullpage: true
-    level: info
+- name: log
+  text: TEST LOGIN START
+  screenshot: true
+  fullpage: true
+  level: info
 runTest:
-  goTo:
-    bindData:
-      url: baseUrl
-  typeInput:
-    bindData:
-      text: auth.password
-    bindSelectors:
-      input: auth.inputPassword
-  buttonClick:
-    bindSelectors:
-      button: auth.submit
-  login
+- name: goTo
+  bindData:
+    url: baseUrl
+- name: typeInput
+  bindData:
+    text: auth.login
+  bindSelectors:
+    input: auth.inputLogin
+- name: typeInput
+  bindData:
+    text: auth.password
+  bindSelectors:
+    input: auth.inputPassword
+- name: buttonClick
+  bindSelectors:
+    button: auth.submit
 afterTest:
-  log:
-    text: TEST LOGIN END
-    screenshot: true
-    fullpage: true
-    level: info
+- name: log
+  text: TEST LOGIN END
+  screenshot: true
+  fullpage: true
+  level: info
+errorTest: []

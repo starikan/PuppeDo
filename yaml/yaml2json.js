@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const _ = require('lodash');
 const yaml = require('js-yaml');
@@ -8,20 +9,29 @@ const envs = require('../env.js');
 const atoms = Object.keys(require('../atoms'));
 atoms.push('log');
 
-const yaml2json = async function(path){
-  if (!_.isString(path)){
+const yaml2json = async function(filePath){
+
+  if (!_.isString(filePath)){
     throw({
-      message: `YAML/JSON: Incorrect file name YAML/JSON - ${path}`
+      message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
     });
   }
   
-  if (path.split('/').length === 1){
-    path = envs.get('args.testsFolder') + path;
+  if (!path.extname(filePath)){
+    filePath += '.yaml';
+  }
+
+  if (path.dirname(filePath) === '.'){
+    filePath = path.join(envs.get('args.testsFolder'), path.basename(filePath));
+  }
+
+  if (filePath.endsWith('.js')){
+    return { full: filePath, functions: {}, values: {} };
   }
   
-  if (path.endsWith('.yaml')){
+  if (filePath.endsWith('.yaml')){
     try {
-      var full = yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+      var full = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
       
       const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
@@ -32,28 +42,44 @@ const yaml2json = async function(path){
     }
   }
   
-  if (path.endsWith('.json')){
-    return { full: path };
-  }
-  
   throw({
-    message: `YAML/JSON: Incorrect file name YAML/JSON - ${path}`
+    message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
   });
 }
 
-const getFullDepthJSON = async function(path){
-  console.log(path);
-  if (!_.isString(path)) {
+const getFullDepthJSON = async function(filePath, result = []){
+
+  if (!_.isString(filePath)) {
     throw({
-      message: `YAML/JSON: Incorrect file name YAML/JSON - ${path}`
+      message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
     });
   }
 
-  const { full } = await yaml2json(path);
-  for (const key in full.runTest) {
-    console.log(key)
-    if (key && !atoms.includes(key)){
-      full.runTest[key] = await getFullDepthJSON(full.runTest[key]);
+  const { full, functions, values } = await yaml2json(filePath);
+
+  for (const funcKey of Object.keys(functions)){
+
+    const func = _.get(functions, funcKey);
+
+    full[funcKey] = [];
+
+    for (const key in func) {
+      let test = _.clone(func[key]);
+      const name = _.get(test, 'name');
+      
+      if (name && !atoms.includes(name)){
+        test.breadcrumbs = _.get(test, 'breadcrumbs', []);
+        test.breadcrumbs.push(name);
+        test.type = 'test';
+        test = await getFullDepthJSON(name);
+        full[funcKey].push(test);
+      }
+  
+      if (name && atoms.includes(name)){
+        test.type = 'atom';
+        full[funcKey].push(test);
+      }
+
     }
   }
 

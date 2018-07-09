@@ -203,7 +203,7 @@ class Envs {
     let outputFolder = _.get(args, '--output', 'output');
     let envFiles = JSON.parse(_.get(args, '--envs', []));
     let testName = testFile.split('/')[testFile.split('/').length - 1];
-    let testsFolder = '../tests/';
+    let testsFolder = './tests/';
 
     this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
 
