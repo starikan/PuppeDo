@@ -21,12 +21,12 @@ const test = async () => {
 
 const main = async () => {
   await envs.init();
-  // console.log(envs)
+  console.log(envs)
 
   const full = await getFullDepthJSON(envs.get('args.testFile'));
   console.log(full);
   //TODO: 2018-07-03 S.Starodubov Тут генерация теста из json
-  // debugger;
+  debugger;
   // await test();
   
 }

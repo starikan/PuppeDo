@@ -47,7 +47,7 @@ const yaml2json = async function(filePath){
   });
 }
 
-const getFullDepthJSON = async function(filePath, result = []){
+const getFullDepthJSON = async function(filePath, breadcrumbs){
 
   if (!_.isString(filePath)) {
     throw({
@@ -55,33 +55,45 @@ const getFullDepthJSON = async function(filePath, result = []){
     });
   }
 
+  if (!breadcrumbs){
+    breadcrumbs = [filePath]
+  }
+
   const { full, functions, values } = await yaml2json(filePath);
-
+  
   for (const funcKey of Object.keys(functions)){
-
+    
     const func = _.get(functions, funcKey);
-
+    
     full[funcKey] = [];
-
+    
     for (const key in func) {
       let test = _.clone(func[key]);
       const name = _.get(test, 'name');
       
-      if (name && !atoms.includes(name)){
-        test.breadcrumbs = _.get(test, 'breadcrumbs', []);
-        test.breadcrumbs.push(name);
+      if (!name){
+        throw ({ message: 'Any test must be named' })
+      }
+
+      const localBreadcrumbs = _.clone(breadcrumbs);
+      localBreadcrumbs.push(name);
+      
+      if (!atoms.includes(name)){
+        test = await getFullDepthJSON(name, localBreadcrumbs);
         test.type = 'test';
-        test = await getFullDepthJSON(name);
-        full[funcKey].push(test);
       }
-  
-      if (name && atoms.includes(name)){
+      
+      if (atoms.includes(name)){
         test.type = 'atom';
-        full[funcKey].push(test);
       }
+
+      test.breadcrumbs = _.clone(localBreadcrumbs);
+      full[funcKey].push(test);
 
     }
   }
+
+  full.breadcrumbs = breadcrumbs;
 
   return full;
 }

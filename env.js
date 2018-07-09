@@ -214,6 +214,9 @@ class Envs {
     }
 
     await this.runBrowsers();
+
+    // If already init do nothing
+    this.init = async function() {};
   }
 
 }
