@@ -10,22 +10,24 @@ if (debugOnError){
   envs.set('debugOnError', debugOnError);
 }
 
-const test = async () => {
+// const test = async () => {
   // envs.setEnv('cloud');
-  await login();
+  // await login();
   //   await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
   //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
   //   await wait({ selector: '.cursor_wait', selectorHidden: true });
   //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
   // await envs.closeBrowsers()
-}
+// }
 
 const main = async () => {
   await envs.init();
   envs.setEnv('cloud');
   console.log(envs)
   const full = await getFullDepthJSON(envs.get('args.testFile'));
-  // const test = getTest(full);
+  const test = getTest(full);
+  console.log(full);
+  debugger;
   await test();
   await envs.closeBrowsers()
   

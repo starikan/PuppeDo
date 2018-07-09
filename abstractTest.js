@@ -178,11 +178,32 @@ class Test {
           selectors: selectorsLocal
         };
   
-        await this.beforeTest(args);
-  
-        await this.runTest(args);
-  
-        await this.afterTest(args);
+        if (_.isFunction(this.beforeTest)){
+          await this.beforeTest(args);
+        }
+        else if (_.isArray(this.beforeTest)){
+          for (const fun of this.beforeTest){
+            await fun(args)
+          }
+        }
+        
+        if (_.isFunction(this.runTest)){
+          await this.runTest(args);
+        }
+        else if (_.isArray(this.runTest)){
+          for (const fun of this.runTest){
+            await fun(args)
+          }
+        }
+
+        if (_.isFunction(this.afterTest)){
+          await this.afterTest(args);
+        }
+        else if (_.isArray(this.afterTest)){
+          for (const fun of this.afterTest){
+            await fun(args)
+          }
+        }  
       }
       catch (err){
         log({level: 'error', text: `Test ${name} = ${err.message}`, screenshot: false});

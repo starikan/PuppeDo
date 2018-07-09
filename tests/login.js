@@ -2,14 +2,14 @@ const { log } = require('../logger/logger');
 const Test = require('../abstractTest');
 const { goTo, typeInput, buttonClick } = require('../atoms')
 
-const beforeTest = async function ({}) {
+const beforeTest = [async function ({}) {
   await log({ 
     text: `TEST LOGIN START`,
     screenshot: true,
     fullpage: true,
     level: 'test'
   });
-}
+}]
 
 const runTest = async function ({}) {
   await goTo({

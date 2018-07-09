@@ -4,8 +4,6 @@ const { log } = require('../logger/logger');
 const Test = require('../abstractTest');
 const atoms = require('../atoms');
 
-// console.log(atoms)
-
 const getTest = function(testJson){
 
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
@@ -13,26 +11,21 @@ const getTest = function(testJson){
 
   for (let funcKey in functions) {
     testJson[funcKey] = [];
-    
-    for (let test of functions[funcKey]){
-      // console.log(funcKey, test)
 
+    for (let test of functions[funcKey]){
 
       if (test.type === 'test'){
-        testJson[funcKey] = async () => { getTest(test) };
+        testJson[funcKey].push(  getTest(test) );
       }
       if (test.name === 'log'){
-        testJson[funcKey] = async () => { log(test) };
+        testJson[funcKey].push( async () => { await log(test) });
       }
       if (test.type === 'atom' && test.name !== 'log'){
-        testJson[funcKey] = async () => { atoms[test.name](test) };
+        testJson[funcKey].push( async () => { await atoms[test.name](test) });
       }
-      // console.log(funcKey, testKey)
+
     }
   }
-
-  // console.log(testJson);
-  // debugger;
 
   const test = new Test( testJson );
   return test.run;
