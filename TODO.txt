@@ -15,8 +15,10 @@ https://www.browserless.io/
 18-07-09
 - if или case
 - results
+- debugger + env snapshots
 - web server front
 - Импорт как yaml так и json так и js
 - linter
 - Автогенерация needData, needSelectors
 - TS
+- Color console

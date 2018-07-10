@@ -15,7 +15,7 @@ const getTest = function(testJson){
     for (let test of functions[funcKey]){
 
       if (test.type === 'test'){
-        testJson[funcKey].push(  getTest(test) );
+        testJson[funcKey].push( getTest(test) );
       }
       if (test.name === 'log'){
         testJson[funcKey].push( async () => { await log(test) });

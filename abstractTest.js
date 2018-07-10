@@ -1,6 +1,7 @@
-const envs = require('./env')
 const _ = require('lodash');
+const math = require('mathjs');
 
+const envs = require('./env')
 const { log } = require('./logger/logger');
 
 class Test {
@@ -55,6 +56,8 @@ class Test {
       errorTest = async function(){},
     } = {}
   ){
+    this.name = name;
+    this.type = type;
 
     this.needEnv = needEnv;
     this.needData = needData;
@@ -81,6 +84,7 @@ class Test {
         selectors = {},
         bindData = {},
         bindSelectors = {},
+        ...args
       // envName,
       // repeat,
       } = {}
@@ -180,7 +184,20 @@ class Test {
           data: dataLocal,
           selectors: selectorsLocal
         };
-  
+
+        // IF
+        let expr = _.get(args, 'expr');
+        if (this.name === 'if' && !expr){
+          throw({
+            message: 'IF must contain "expr" param'
+          })
+        }
+        if (expr){
+          expr = math.eval(expr, dataLocal);
+          console.log(expr)
+        }
+
+        // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){
           await this.beforeTest(args);
         }

@@ -7,6 +7,12 @@ beforeTest:
     screenshot: true
     fullpage: true
     level: info
+afterTest:
+- log:
+    text: TEST LOGIN END
+    screenshot: true
+    fullpage: true
+    level: info
 runTest:
 - goTo:
     bindData: { url: baseUrl }
@@ -16,12 +22,9 @@ runTest:
 - typeInput:
     bindData: { text: auth.password }
     bindSelectors: { input: auth.inputPassword }
-- name: buttonClick
-  bindSelectors:
-    button: auth.submit
-afterTest:
-- log:
-    text: TEST LOGIN END
-    screenshot: true
-    fullpage: true
-    level: info
+- if:
+    expr: auth.login == 'admin@starodubov.ru'
+    runTest:
+    - name: buttonClick
+    bindSelectors:
+        button: auth.submit
