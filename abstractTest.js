@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const math = require('mathjs');
 const safeEval = require('safe-eval')
 
 const envs = require('./env')
@@ -188,15 +187,12 @@ class Test {
 
         // IF
         let expr = _.get(inputArgs, 'if');
-        let exprResult = false;
         if (expr){
             let exprResult = safeEval(expr, dataLocal);
-            console.log(exprResult)
+            if (!exprResult) {
+              return;
+            }
         }
-        if (expr && !exprResult) {
-          return;
-        }
-        // debugger;
 
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){

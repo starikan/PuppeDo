@@ -44,14 +44,23 @@ const yaml2json = async function(filePath){
       }
     }
     catch (err) {}
-    
+  }
+
+  let full = {};
+  let functions = {};
+  let values = {};
+
+  if (!testFile){
+    full = { name: testFile };
+    values = { name: testFile };
+    return { full, functions, values };
   }
 
   if (testFile && testFile.endsWith('.json')){
     try {
-      var full = require(testFile);
-      const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+      full = require(testFile);
+      functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+      values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       return { full, functions, values };
     } catch (e) {
       throw(e);
@@ -65,11 +74,9 @@ const yaml2json = async function(filePath){
   
   if (testFile && testFile.endsWith('.yaml')){
     try {
-      var full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
-
-      const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      
+      full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
+      functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+      values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       return { functions, values, full };
     } catch (e) {
       throw(e);
@@ -94,7 +101,7 @@ const getFullDepthJSON = async function(filePath, breadcrumbs){
   }
 
   const { full, functions, values } = await yaml2json(filePath);
-  
+
   for (const funcKey of Object.keys(functions)){
     
     const func = _.get(functions, funcKey);
@@ -118,16 +125,28 @@ const getFullDepthJSON = async function(filePath, breadcrumbs){
       const localBreadcrumbs = _.clone(breadcrumbs);
       localBreadcrumbs.push(name);
       
+      // let fullTest = {};
+
       if (!atoms.includes(name)){
         test = await getFullDepthJSON(name, localBreadcrumbs);
         test.type = 'test';
       }
-      
+
       if (atoms.includes(name)){
         test.type = 'atom';
       }
-
+      // else {
+      //   // console.log(name)
+      //   fullTest = await getFullDepthJSON(name, localBreadcrumbs);
+      //   test.type = 'test';
+      //   console.log(test)
+      //   debugger;
+      // }
+      
       test.breadcrumbs = _.clone(localBreadcrumbs);
+
+      // test = Object.assign(test, fullTest);
+
       full[funcKey].push(test);
 
     }

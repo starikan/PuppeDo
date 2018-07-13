@@ -14,6 +14,10 @@ afterTest:
     fullpage: true
     level: info
 runTest:
+# - if:
+#     runTest:
+#     - goTo:
+#         bindData: { url: baseUrl }
 - goTo:
     bindData: { url: baseUrl }
 - typeInput:
@@ -22,13 +26,12 @@ runTest:
 - typeInput:
     bindData: { text: auth.password }
     bindSelectors: { input: auth.inputPassword }
-- if:
-    # if: auth.login == "admin@starodubov.ru"
-    runTest:
-    - buttonClick:
-        bindSelectors: { button: auth.submit }
-
-# - buttonClick:
-#     if: auth.login == "admin@starodubov.ru"
-#     bindSelectors:
-#         button: auth.submit
+- buttonClick:
+    if: auth.login == "admin@starodubov.ru"
+    bindSelectors:
+        button: auth.submit
+# - if:
+#     # if: auth.login == "admin@starodubov.ru"
+#     runTest:
+#     - buttonClick:
+#         bindSelectors: { button: auth.submit }
