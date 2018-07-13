@@ -11,8 +11,8 @@
   "dependencies": {
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.10",
-    "mathjs": "^5.0.2",
     "moment": "^2.22.2",
-    "puppeteer": "^1.5.0"
+    "puppeteer": "^1.5.0",
+    "safe-eval": "^0.3.0"
   }
 }

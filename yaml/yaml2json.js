@@ -13,21 +13,43 @@ const yaml2json = async function(filePath){
 
   if (!_.isString(filePath)){
     throw({
-      message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
+      message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`
     });
   }
   
-  if (!path.extname(filePath)){
-    filePath += '.yaml';
+  let isTestExist = fs.existsSync(filePath);
+
+  let testsFolders = envs.get('args.testsFolders');
+  let exts = ['.yaml', '.json', '.js'];
+  let files = [];
+  let testFile = null;
+
+  if (!isTestExist){
+    [filePath, path.basename(filePath)].forEach(file => {
+      files.push(file);
+      exts.forEach(ext => {
+        files.push(file + ext);
+        testsFolders.forEach(folder => {
+          files.push('.\\' + path.join(folder, file + ext));
+        })
+      })
+    })
   }
 
-  if (path.dirname(filePath) === '.'){
-    filePath = path.join(envs.get('args.testsFolder'), path.basename(filePath));
-  }
-
-  if (filePath.endsWith('.json')){
+  for (let file of files) {
     try {
-      var full = require(filePath);
+      if (fs.existsSync(file)) {
+        testFile = file;
+        break;
+      }
+    }
+    catch (err) {}
+    
+  }
+
+  if (testFile && testFile.endsWith('.json')){
+    try {
+      var full = require(testFile);
       const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       return { full, functions, values };
@@ -37,14 +59,14 @@ const yaml2json = async function(filePath){
   }
 
   // todo 
-  if (filePath.endsWith('.js')){
-    return { full: filePath, functions: {}, values: {} };
+  if (testFile && testFile.endsWith('.js')){
+    return { full: testFile, functions: {}, values: {} };
   }
   
-  if (filePath.endsWith('.yaml')){
+  if (testFile && testFile.endsWith('.yaml')){
     try {
-      var full = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
-      
+      var full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
+
       const functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       const values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
       
@@ -55,7 +77,7 @@ const yaml2json = async function(filePath){
   }
   
   throw({
-    message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
+    message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}`
   });
 }
 
@@ -63,7 +85,7 @@ const getFullDepthJSON = async function(filePath, breadcrumbs){
 
   if (!_.isString(filePath)) {
     throw({
-      message: `YAML/JSON: Incorrect file name YAML/JSON - ${filePath}`
+      message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`
     });
   }
 

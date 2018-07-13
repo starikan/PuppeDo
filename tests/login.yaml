@@ -23,8 +23,12 @@ runTest:
     bindData: { text: auth.password }
     bindSelectors: { input: auth.inputPassword }
 - if:
-    expr: auth.login == 'admin@starodubov.ru'
+    # if: auth.login == "admin@starodubov.ru"
     runTest:
-    - name: buttonClick
-    bindSelectors:
-        button: auth.submit
+    - buttonClick:
+        bindSelectors: { button: auth.submit }
+
+# - buttonClick:
+#     if: auth.login == "admin@starodubov.ru"
+#     bindSelectors:
+#         button: auth.submit

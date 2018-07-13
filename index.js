@@ -26,7 +26,7 @@ const main = async () => {
   console.log(envs)
   const full = await getFullDepthJSON(envs.get('args.testFile'));
   const test = getTest(full);
-  console.log(full);
+  console.log(full, test);
   // debugger;
   await test();
   await envs.closeBrowsers()

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const math = require('mathjs');
+const safeEval = require('safe-eval')
 
 const envs = require('./env')
 const { log } = require('./logger/logger');
@@ -84,7 +85,7 @@ class Test {
         selectors = {},
         bindData = {},
         bindSelectors = {},
-        ...args
+        ...inputArgs
       // envName,
       // repeat,
       } = {}
@@ -186,16 +187,16 @@ class Test {
         };
 
         // IF
-        let expr = _.get(args, 'expr');
-        if (this.name === 'if' && !expr){
-          throw({
-            message: 'IF must contain "expr" param'
-          })
-        }
+        let expr = _.get(inputArgs, 'if');
+        let exprResult = false;
         if (expr){
-          expr = math.eval(expr, dataLocal);
-          console.log(expr)
+            let exprResult = safeEval(expr, dataLocal);
+            console.log(exprResult)
         }
+        if (expr && !exprResult) {
+          return;
+        }
+        // debugger;
 
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){
