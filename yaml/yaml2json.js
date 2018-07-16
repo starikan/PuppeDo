@@ -80,7 +80,7 @@ const yaml2json = async function(filePath){
   });
 }
 
-const getFullDepthJSON = async function(filePath, testBody){
+const getFullDepthJSON = async function(filePath, testBody, breadcrumbs){
 
   if (filePath && !_.isString(filePath)) {
     throw({ message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` });
@@ -90,13 +90,12 @@ const getFullDepthJSON = async function(filePath, testBody){
     throw({ message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` });
   };
 
-  // if (!breadcrumbs){
-  //   breadcrumbs = [filePath]
-  // };
-
+  
   let full = {};
   full = filePath ? (await yaml2json(filePath)).json : full;
   full = testBody ? Object.assign(full, testBody) : full;
+
+  full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
 
   const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest']
   
@@ -117,24 +116,33 @@ const getFullDepthJSON = async function(filePath, testBody){
     for (let runnerNum in _.get(full, runnerBlock, [])){
       let runner = _.get(full, [runnerBlock, runnerNum], {})
       let keys = Object.keys(runner);
+      let name = null;
       let newRunner = {};
 
       if (keys && keys.length == 1) {
-        let name = keys[0];
-        newRunner = _.clone(runner[keys[0]]) || newRunner;
-        newRunner.name = keys[0];
-        newRunner.type = 'test';
-        if (atoms.includes(name)){
-          newRunner.type = 'atom';
-        }        
-        if (name == 'log'){
-          newRunner.type = 'log';
-        }
+        name = keys[0];
+        newRunner = _.clone(runner[name]) || newRunner;
+        newRunner.name = name;
       }
 
       name = _.get(newRunner, 'name', null);
-
+      
       if (name) {
+
+        let breadcrumbs = _.clone(full.breadcrumbs);
+        breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`)
+        newRunner.breadcrumbs = breadcrumbs;
+
+        newRunner.type = 'test';
+
+        if (atoms.includes(name)){
+          newRunner.type = 'atom';
+        }     
+
+        if (name == 'log'){
+          newRunner.type = 'log';
+        }
+
         full[runnerBlock][runnerNum] = await getFullDepthJSON(name, newRunner)
       }
     }
