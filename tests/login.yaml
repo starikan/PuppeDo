@@ -14,12 +14,13 @@ afterTest:
     fullpage: true
     level: info
 runTest:
-# - if:
-#     runTest:
-#     - goTo:
-#         bindData: { url: baseUrl }
-- goTo:
-    bindData: { url: baseUrl }
+- pipipi:
+    if: auth.login == "admin@starodubov.ru"
+    runTest:
+    - goTo:
+        bindData: { url: baseUrl }
+# - goTo:
+#     bindData: { url: baseUrl }
 - typeInput:
     bindData: { text: auth.login }
     bindSelectors: { input: auth.inputLogin }

@@ -7,7 +7,6 @@ const yaml = require('js-yaml');
 const envs = require('../env.js');
 
 const atoms = Object.keys(require('../atoms'));
-atoms.push('log');
 
 const yaml2json = async function(filePath){
 
@@ -47,21 +46,16 @@ const yaml2json = async function(filePath){
   }
 
   let full = {};
-  let functions = {};
-  let values = {};
 
   if (!testFile){
     full = { name: testFile };
-    values = { name: testFile };
-    return { full, functions, values };
+    return { json: full };
   }
 
   if (testFile && testFile.endsWith('.json')){
     try {
       full = require(testFile);
-      functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      return { full, functions, values };
+      return { json: full };
     } catch (e) {
       throw(e);
     }
@@ -69,15 +63,13 @@ const yaml2json = async function(filePath){
 
   // todo 
   if (testFile && testFile.endsWith('.js')){
-    return { full: testFile, functions: {}, values: {} };
+    return { json: testFile };
   }
   
   if (testFile && testFile.endsWith('.yaml')){
     try {
       full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
-      functions = _.pick(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      values = _.omit(full, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-      return { functions, values, full };
+      return { json: full };
     } catch (e) {
       throw(e);
     }
@@ -88,75 +80,120 @@ const yaml2json = async function(filePath){
   });
 }
 
-const getFullDepthJSON = async function(filePath, breadcrumbs){
+const getFullDepthJSON = async function(filePath, testBody){
 
-  if (!_.isString(filePath)) {
-    throw({
-      message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`
-    });
-  }
+  if (filePath && !_.isString(filePath)) {
+    throw({ message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` });
+  };
 
-  if (!breadcrumbs){
-    breadcrumbs = [filePath]
-  }
+  if (testBody && !_.isObject(testBody)) {
+    throw({ message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` });
+  };
 
-  const { full, functions, values } = await yaml2json(filePath);
+  // if (!breadcrumbs){
+  //   breadcrumbs = [filePath]
+  // };
 
-  for (const funcKey of Object.keys(functions)){
-    
-    const func = _.get(functions, funcKey);
-    
-    full[funcKey] = [];
-    
-    for (const key in func) {
-      let test = _.clone(func[key]);
-      let name = _.get(test, 'name');
-      
-      if (!name && Object.keys(test).length === 1){
-        name = Object.keys(test)[0];
-        test = test[Object.keys(test)[0]];
-        test.name = name;
+  let full = {};
+  full = filePath ? (await yaml2json(filePath)).json : full;
+  full = testBody ? Object.assign(full, testBody) : full;
+
+  const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest']
+  
+  // Структура
+
+  // runTest:
+  // - testName:
+  //     other: other
+  
+  // runTest:
+  // - name: testName
+  //   other: other
+
+  // т.е. массив из объектов у которых только один ключ который является именем
+  // или полный тест с полем имени
+
+  for (const runnerBlock of runnerBlockNames){
+    for (let runnerNum in _.get(full, runnerBlock, [])){
+      let runner = _.get(full, [runnerBlock, runnerNum], {})
+      let keys = Object.keys(runner);
+      let newRunner = {};
+
+      if (keys && keys.length == 1) {
+        let name = keys[0];
+        newRunner = _.clone(runner[keys[0]]) || newRunner;
+        newRunner.name = keys[0];
+        newRunner.type = 'test';
+        if (atoms.includes(name)){
+          newRunner.type = 'atom';
+        }        
+        if (name == 'log'){
+          newRunner.type = 'log';
+        }
       }
 
-      if (!name){
-        throw ({ message: 'Any test must be named' })
+      name = _.get(newRunner, 'name', null);
+
+      if (name) {
+        full[runnerBlock][runnerNum] = await getFullDepthJSON(name, newRunner)
       }
-
-      const localBreadcrumbs = _.clone(breadcrumbs);
-      localBreadcrumbs.push(name);
-      
-      // let fullTest = {};
-
-      if (!atoms.includes(name)){
-        test = await getFullDepthJSON(name, localBreadcrumbs);
-        test.type = 'test';
-      }
-
-      if (atoms.includes(name)){
-        test.type = 'atom';
-      }
-      // else {
-      //   // console.log(name)
-      //   fullTest = await getFullDepthJSON(name, localBreadcrumbs);
-      //   test.type = 'test';
-      //   console.log(test)
-      //   debugger;
-      // }
-      
-      test.breadcrumbs = _.clone(localBreadcrumbs);
-
-      // test = Object.assign(test, fullTest);
-
-      full[funcKey].push(test);
-
     }
   }
 
-  full.breadcrumbs = breadcrumbs;
+  // debugger;
+    
+  //   const func = _.get(functions, funcKey);
+    
+  //   full[funcKey] = [];
+    
+  //   for (const key in func) {
+  //     let test = _.clone(func[key]);
+  //     let name = _.get(test, 'name');
+      
+  //     if (!name && Object.keys(test).length === 1){
+  //       name = Object.keys(test)[0];
+  //       test = test[Object.keys(test)[0]];
+  //       test.name = name;
+  //     }
+
+  //     if (!name){
+  //       throw ({ message: 'Any test must be named' })
+  //     }
+
+  //     const localBreadcrumbs = _.clone(breadcrumbs);
+  //     localBreadcrumbs.push(name);
+      
+  //     // let fullTest = {};
+
+  //     if (!atoms.includes(name)){
+  //       test = await getFullDepthJSON(name, full, localBreadcrumbs);
+  //       test.type = 'test';
+  //     }
+
+  //     if (atoms.includes(name)){
+  //       test.type = 'atom';
+  //     }
+  //     // else {
+  //     //   // console.log(name)
+  //     //   fullTest = await getFullDepthJSON(name, localBreadcrumbs);
+  //     //   test.type = 'test';
+  //     //   console.log(test)
+  //     //   debugger;
+  //     // }
+      
+  //     test.breadcrumbs = _.clone(localBreadcrumbs);
+
+  //     // test = Object.assign(test, fullTest);
+
+  //     full[funcKey].push(test);
+
+  //   }
+  // }
+
+  // full.breadcrumbs = breadcrumbs;
 
   return full;
 }
-
 
 
 module.exports = { yaml2json, getFullDepthJSON };

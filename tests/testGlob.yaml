@@ -1,5 +1,9 @@
 ---
-name: testGlob
-type: test
+# name: testGlob
+# type: test
 runTest:
-- name: login
+- login:
+# name: testGlob
+# type: test
+# runTest:
+# - name: login

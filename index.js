@@ -25,9 +25,9 @@ const main = async () => {
   envs.setEnv('cloud');
   console.log(envs)
   const full = await getFullDepthJSON(envs.get('args.testFile'));
-  const test = getTest(full);
   console.log(full);
   // debugger;
+  const test = getTest(full);
   await test();
   await envs.closeBrowsers()
 }
