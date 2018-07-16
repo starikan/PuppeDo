@@ -7,6 +7,10 @@ beforeTest:
     screenshot: true
     fullpage: true
     level: info
+- checkSelector:
+    bindSelectors: { selector: auth.inputLogin }
+    bindResult: {  }
+
 afterTest:
 - log:
     text: TEST LOGIN END

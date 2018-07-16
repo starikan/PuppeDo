@@ -13,7 +13,6 @@ app.commandLine.appendSwitch('remote-debugging-port', '8315');
 https://www.browserless.io/
 
 18-07-09
-- if или case
 - results
 - debugger + env snapshots
 - web server front

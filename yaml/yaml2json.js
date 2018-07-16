@@ -148,58 +148,6 @@ const getFullDepthJSON = async function(filePath, testBody, breadcrumbs){
     }
   }
 
-  // debugger;
-    
-  //   const func = _.get(functions, funcKey);
-    
-  //   full[funcKey] = [];
-    
-  //   for (const key in func) {
-  //     let test = _.clone(func[key]);
-  //     let name = _.get(test, 'name');
-      
-  //     if (!name && Object.keys(test).length === 1){
-  //       name = Object.keys(test)[0];
-  //       test = test[Object.keys(test)[0]];
-  //       test.name = name;
-  //     }
-
-  //     if (!name){
-  //       throw ({ message: 'Any test must be named' })
-  //     }
-
-  //     const localBreadcrumbs = _.clone(breadcrumbs);
-  //     localBreadcrumbs.push(name);
-      
-  //     // let fullTest = {};
-
-  //     if (!atoms.includes(name)){
-  //       test = await getFullDepthJSON(name, full, localBreadcrumbs);
-  //       test.type = 'test';
-  //     }
-
-  //     if (atoms.includes(name)){
-  //       test.type = 'atom';
-  //     }
-  //     // else {
-  //     //   // console.log(name)
-  //     //   fullTest = await getFullDepthJSON(name, localBreadcrumbs);
-  //     //   test.type = 'test';
-  //     //   console.log(test)
-  //     //   debugger;
-  //     // }
-      
-  //     test.breadcrumbs = _.clone(localBreadcrumbs);
-
-  //     // test = Object.assign(test, fullTest);
-
-  //     full[funcKey].push(test);
-
-  //   }
-  // }
-
-  // full.breadcrumbs = breadcrumbs;
-
   return full;
 }
 

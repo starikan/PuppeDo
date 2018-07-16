@@ -200,7 +200,7 @@ class Test {
         }
         else if (_.isArray(this.beforeTest)){
           for (const fun of this.beforeTest){
-            await fun(args)
+            let { result } = await fun(args) || {};
           }
         }
         
@@ -209,7 +209,7 @@ class Test {
         }
         else if (_.isArray(this.runTest)){
           for (const fun of this.runTest){
-            await fun(args)
+            let { result } = await fun(args) || {};
           }
         }
 
@@ -218,7 +218,7 @@ class Test {
         }
         else if (_.isArray(this.afterTest)){
           for (const fun of this.afterTest){
-            await fun(args)
+            let { result } = await fun(args) || {};
           }
         }  
       }
