@@ -7,7 +7,6 @@ const atoms = require('../atoms');
 const getTest = function(testJson){
 
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-  const values = _.omit(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
 
   for (let funcKey in functions) {
     testJson[funcKey] = [];

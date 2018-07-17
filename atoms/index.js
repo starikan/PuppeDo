@@ -5,4 +5,5 @@ module.exports = {
   'buttonClick': require('./buttonClick'),
   'goTo': require('./goTo'),
   'checkSelector': require('./checkSelector'),
+  'if': require('./if'),
 };

@@ -201,6 +201,43 @@ class Test {
             }
         }
 
+        // ERROR
+        let errorExpr = _.get(inputArgs, 'errorIf');
+        if (errorExpr){
+            let exprResult = false;
+            
+            try {
+              exprResult = safeEval(errorExpr, dataLocal);
+            }
+            catch (err) {
+              if (err.name == 'ReferenceError'){
+                await log({
+                  level: 'error',
+                  screenshot: true,
+                  fullpage: true,
+                  text: `errorIf can't evaluate = ${err.message}`
+                })
+              }
+              else {
+                throw(err)
+              }
+            }
+
+            if (exprResult) {
+              await log({
+                level: 'error',
+                screenshot: true,
+                fullpage: true,
+                text: `Test stoped with error = ${errorExpr}`
+              })
+              throw({
+                message: `Test stoped with error = ${errorExpr}`
+              })
+            }
+        }
+
+        // debugger;
+
         // BIND RESULTS
         let bindResultsLocal = {};
         bindResultsLocal = Object.assign(bindResultsLocal, this.bindResults);

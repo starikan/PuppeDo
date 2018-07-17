@@ -21,6 +21,8 @@ runTest:
 - checkSelector:
     bindSelectors: { selector: auth.inputLogin }
     bindResults: { exists: loginPageValid }
+- if:
+    errorIf: "loginPageValid != true"
 - typeInput:
     bindData: { text: auth.login }
     bindSelectors: { input: auth.inputLogin }
