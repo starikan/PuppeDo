@@ -1,16 +1,5 @@
-goto профиль
-перейти в управление кассами
-зайти в настройки кассы
-проверить наличие чекбокса
-
-
-app.commandLine.appendSwitch('remote-debugging-port', '8315');
-
-https://www.browserless.io/
-
-18-07-09
-- прерывание теста по if например
 - автогенерация atoms.js
+- атомы в yaml
 - debugger + env snapshots
 - web server front
 - Импорт как yaml так и json так и js
@@ -19,3 +8,16 @@ https://www.browserless.io/
 - версионирование тестов, зависимость от версии программы
 - TS
 - Color console
+- Подмена куков
+
+
+
+
+
+
+
+
+
+app.commandLine.appendSwitch('remote-debugging-port', '8315');
+
+https://www.browserless.io/
