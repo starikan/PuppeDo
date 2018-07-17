@@ -13,6 +13,10 @@
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "puppeteer": "^1.5.0",
-    "safe-eval": "^0.3.0"
+    "safe-eval": "^0.3.0",
+    "walk-sync": "^0.3.2"
+  },
+  "devDependencies": {
+    "prettier": "^1.13.7"
   }
 }
