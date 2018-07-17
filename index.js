@@ -34,8 +34,8 @@ const main = async () => {
 
 try {
   main();
-} catch (error) {
-}
+} 
+catch (error) {}
 
 process.on('unhandledRejection', async (error, p) => {
   await log({ text: `Global: ${error.message}`, level: 'error', isScreenshot: true })

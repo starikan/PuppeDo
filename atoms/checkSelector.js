@@ -8,13 +8,25 @@ const beforeTest = async function ({env, browser, page, data, selectors}) {
   });
 }
 
-const runTest = async function ({env, browser, page, data, selectors}) {
+const runTest = async function ({env, browser, page, data, selectors, results}) {
   let selector = await page.$(selectors.selector);
   if (selector) {
-    console.log(selector)
+    await log({ 
+      text: `Селектор найден = ${selectors.selector}`,
+      level: 'raw'
+    });
+    return {
+      exists: true
+    }
   }
   else {
-    console.log('No', selector)
+    await log({ 
+      text: `Селектор НЕ найден = ${selectors.selector}`,
+      level: 'raw'
+    });
+    return {
+      exists: false
+    }
   }
 }
 
@@ -28,7 +40,7 @@ const test = new Test(
     type: 'atom',
     needEnv: ['cloud'],
     needSelectors: ['selector'],
-    needData: ['selector'],
+    allowResults: ['exists'],
 
     beforeTest: beforeTest,
     runTest: runTest,

@@ -1,7 +1,3 @@
-8. Данные на запись.
-
-==================
-
 goto профиль
 перейти в управление кассами
 зайти в настройки кассы
@@ -13,11 +9,13 @@ app.commandLine.appendSwitch('remote-debugging-port', '8315');
 https://www.browserless.io/
 
 18-07-09
-- results
+- прерывание теста по if например
+- автогенерация atoms.js
 - debugger + env snapshots
 - web server front
 - Импорт как yaml так и json так и js
 - linter
 - Автогенерация needData, needSelectors
+- версионирование тестов, зависимость от версии программы
 - TS
 - Color console

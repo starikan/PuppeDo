@@ -22,6 +22,7 @@ class Test {
       needEnv = [],
       needData = [],
       needSelectors = [],
+      allowResults = [],
 
       // Прямой проброс данных
       // {} - данные
@@ -42,6 +43,8 @@ class Test {
       // 2. Смотрим на данные в глобальной env.selectors
       // 3. Смотрим на данные в env[envName].selectors
       bindSelectors = {},
+      
+      bindResult = {},
 
       // Имя env 
       envNames = [], // Для тестов в которых переключается env
@@ -68,6 +71,8 @@ class Test {
 
     this.selectors = selectors; 
     this.bindSelectors = bindSelectors;
+    this.allowResults = allowResults;
+    this.bindResult = bindResult;
 
     // this.envNames = envNames;
     // this.envName = envName;
@@ -84,6 +89,7 @@ class Test {
         selectors = {},
         bindData = {},
         bindSelectors = {},
+        bindResults = {},
         ...inputArgs
       // envName,
       // repeat,
@@ -182,7 +188,8 @@ class Test {
           browser, 
           page, 
           data: dataLocal,
-          selectors: selectorsLocal
+          selectors: selectorsLocal,
+          results: this.allowResults
         };
 
         // IF
@@ -194,36 +201,60 @@ class Test {
             }
         }
 
+        // BIND RESULTS
+        let bindResultsLocal = {};
+        bindResultsLocal = Object.assign(bindResultsLocal, this.bindResults);
+        bindResultsLocal = Object.assign(bindResultsLocal, bindResults);
+        
+        let result = {};
+        
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){
-          await this.beforeTest(args);
+          this.beforeTest = [this.beforeTest];
         }
-        else if (_.isArray(this.beforeTest)){
+        
+        if (_.isArray(this.beforeTest)){
           for (const fun of this.beforeTest){
-            let { result } = await fun(args) || {};
+            let funResult = await fun(args) || {};
+            result = Object.assign(result, funResult);
           }
         }
         
         if (_.isFunction(this.runTest)){
-          await this.runTest(args);
+          this.runTest = [this.runTest];
         }
-        else if (_.isArray(this.runTest)){
+        
+        if (_.isArray(this.runTest)){
           for (const fun of this.runTest){
-            let { result } = await fun(args) || {};
+            let funResult = await fun(args) || {};
+            result = Object.assign(result, funResult);
           }
         }
-
+        
         if (_.isFunction(this.afterTest)){
-          await this.afterTest(args);
+          this.afterTest = [this.afterTest];
         }
-        else if (_.isArray(this.afterTest)){
+        if (_.isArray(this.afterTest)){
           for (const fun of this.afterTest){
-            let { result } = await fun(args) || {};
+            let funResult = await fun(args) || {};
+            result = Object.assign(result, funResult);
           }
         }  
+
+        // todo
+        // выкидывать предупреждение если пришло в результатах то чего нет в allowResults
+        // или если не пришло то чего нужно
+
+        // RESULTS
+        Object.keys(result).forEach(key => {
+          let bindKey = _.get(bindResultsLocal, key);
+          if (bindKey && this.allowResults.includes(key)) {
+            envs.set(`results.${bindKey}`, result[key]);
+          }
+        })
       }
       catch (err){
-        log({level: 'error', text: `Test ${name} = ${err.message}`, screenshot: false});
+        log({level: 'error', text: `Test ${this.name} = ${err.message}`, screenshot: false});
         await errorTest();
         throw(err);
       }

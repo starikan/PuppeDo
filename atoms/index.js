@@ -4,4 +4,5 @@ module.exports = {
   'typeInput': require('./typeInput'),
   'buttonClick': require('./buttonClick'),
   'goTo': require('./goTo'),
+  'checkSelector': require('./checkSelector'),
 };

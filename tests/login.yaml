@@ -7,9 +7,6 @@ beforeTest:
     screenshot: true
     fullpage: true
     level: info
-- checkSelector:
-    bindSelectors: { selector: auth.inputLogin }
-    bindResult: {  }
 
 afterTest:
 - log:
@@ -17,14 +14,13 @@ afterTest:
     screenshot: true
     fullpage: true
     level: info
+
 runTest:
-- pipipi:
-    if: auth.login == "admin@starodubov.ru"
-    runTest:
-    - goTo:
-        bindData: { url: baseUrl }
-# - goTo:
-#     bindData: { url: baseUrl }
+- goTo:
+    bindData: { url: baseUrl }
+- checkSelector:
+    bindSelectors: { selector: auth.inputLogin }
+    bindResults: { exists: loginPageValid }
 - typeInput:
     bindData: { text: auth.login }
     bindSelectors: { input: auth.inputLogin }
@@ -32,11 +28,5 @@ runTest:
     bindData: { text: auth.password }
     bindSelectors: { input: auth.inputPassword }
 - buttonClick:
-    if: auth.login == "admin@starodubov.ru"
     bindSelectors:
         button: auth.submit
-# - if:
-#     # if: auth.login == "admin@starodubov.ru"
-#     runTest:
-#     - buttonClick:
-#         bindSelectors: { button: auth.submit }
