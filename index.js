@@ -1,4 +1,3 @@
-const { login } = require('./tests');
 const { log } = require('./logger/logger');
 const { getFullDepthJSON } = require('./yaml/yaml2json');
 const { getTest } = require('./yaml/getTest');
@@ -10,15 +9,10 @@ if (debugOnError){
   envs.set('debugOnError', debugOnError);
 }
 
-// const test = async () => {
-  // envs.setEnv('cloud');
-  // await login();
-  //   await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
-  //   await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
-  //   await wait({ selector: '.cursor_wait', selectorHidden: true });
-  //   await log({ text: 'Товар отфильтрован', isScreenshot: true });
-  // await envs.closeBrowsers()
-// }
+// await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
+// await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
+// await wait({ selector: '.cursor_wait', selectorHidden: true });
+// await log({ text: 'Товар отфильтрован', isScreenshot: true });
 
 const main = async () => {
   await envs.init();
