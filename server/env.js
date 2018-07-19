@@ -154,7 +154,7 @@ class Envs {
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
     
-    fs.createReadStream('./logger/output.html').pipe(fs.createWriteStream(path.join(folder, 'output.html')));
+    fs.createReadStream('./server/logger/output.html').pipe(fs.createWriteStream(path.join(folder, 'output.html')));
 
     this.output.output = output;
     this.output.name = test;

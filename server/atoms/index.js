@@ -2,7 +2,7 @@ const _ = require('lodash');
 const walkSync = require('walk-sync');
 
 let atoms = {};
-var paths = walkSync('./atoms');
+var paths = walkSync('./server/atoms');
 
 paths.forEach(p => {
   let nameFile = p.split('.')[0];
