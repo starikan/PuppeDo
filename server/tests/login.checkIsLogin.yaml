@@ -1,0 +1,22 @@
+---
+name: login.checkIsLogin
+needEnv: cloud
+
+beforeTest:
+- log:
+    text: CHECK IS LOGIN START
+    screenshot: false
+    level: debug
+
+runTest:
+- checkSelector:
+    bindSelectors: { selector: auth.authDoneCheck }
+    bindResults: { exists: authDoneCheck }
+- if:
+    errorIfStart: "authDoneCheck == true"
+
+afterTest:
+- log:
+    text: CHECK IS LOGIN END
+    screenshot: false
+    level: debug

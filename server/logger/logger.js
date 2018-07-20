@@ -43,7 +43,7 @@ class Logger {
     }
     catch (err){
       console.log(err);
-      debugger;
+      // debugger;
     }
   };
   

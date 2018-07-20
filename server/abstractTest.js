@@ -212,7 +212,7 @@ class Test {
         }
 
         // ERROR
-        let errorExpr = _.get(inputArgs, 'errorIf');
+        let errorExpr = _.get(inputArgs, 'errorIfStart');
         if (errorExpr){
             let exprResult = false;
             
@@ -301,8 +301,10 @@ class Test {
         })
       }
       catch (err){
+        err.envsId = envsId;
         log({level: 'error', text: `Test ${this.name} = ${err.message}`, screenshot: false});
         await errorTest();
+        console.log(err)
         throw(err);
       }
     }

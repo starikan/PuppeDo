@@ -3,3 +3,4 @@ name: testGlob
 type: test
 runTest:
 - login:
+- открытьУправлениеМагазином:

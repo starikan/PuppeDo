@@ -2,21 +2,21 @@ const Test = require('../abstractTest');
 
 const runTest = async function ({env, browser, page, data, selectors, log}) {
   await log({ 
-    text: `Нажата кнопка = ${selectors.button}`,
+    text: `Нажат селектор = ${selectors.selector}`,
     screenshot: true,
     fullpage: false,
-    selCSS: [selectors.button],
+    selCSS: [selectors.selector],
     level: 'debug'
   });
-  await page.click(selectors.button);
+  await page.click(selectors.selector);
 }
 
 const test = new Test(
   {
-    name: 'buttonClick',
+    name: 'clickSelector',
     type: 'atom',
     needEnv: ['cloud'],
-    needSelectors: ['button'],
+    needSelectors: ['selector'],
     runTest: runTest,
   }
 )

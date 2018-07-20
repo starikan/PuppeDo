@@ -4,11 +4,11 @@ needEnv: cloud
 beforeTest:
 - log:
     text: TEST LOGIN START
-    screenshot: true
-    fullpage: true
+    screenshot: false
     level: info
 
 afterTest:
+- login.checkIsLogin:
 - log:
     text: TEST LOGIN END
     screenshot: true
@@ -22,13 +22,14 @@ runTest:
     bindSelectors: { selector: auth.inputLogin }
     bindResults: { exists: loginPageValid }
 - if:
-    errorIf: "loginPageValid != true"
+    errorIfStart: "loginPageValid != true"
 - typeInput:
     bindData: { text: auth.login }
     bindSelectors: { input: auth.inputLogin }
 - typeInput:
     bindData: { text: auth.password }
     bindSelectors: { input: auth.inputPassword }
-- buttonClick:
+- clickSelector:
     bindSelectors:
-        button: auth.submit
+        selector: auth.submit
+- waitLoadPage:

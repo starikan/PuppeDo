@@ -3,6 +3,7 @@ const Test = require('../abstractTest');
 const beforeTest = async function ({env, browser, page, data, selectors, log}) {
   await log({ 
     text: `Проверка наличия селектора = ${selectors.selector}`,
+    screenshot: false,
     level: 'raw'
   });
 }
@@ -12,6 +13,7 @@ const runTest = async function ({env, browser, page, data, selectors, results, l
   if (selector) {
     await log({ 
       text: `Селектор найден = ${selectors.selector}`,
+      screenshot: false,
       level: 'raw'
     });
     return {
@@ -21,6 +23,7 @@ const runTest = async function ({env, browser, page, data, selectors, results, l
   else {
     await log({ 
       text: `Селектор НЕ найден = ${selectors.selector}`,
+      screenshot: false,
       level: 'raw'
     });
     return {
