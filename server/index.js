@@ -22,10 +22,7 @@ const main = async () => {
     envs: envs,
     filePath: envs.get('args.testFile'),
   });
-  console.log(full)
   let test = getTest(full, envsId);
-  console.log(test)
-  debugger
   await test();
   await envs.closeBrowsers()
 }

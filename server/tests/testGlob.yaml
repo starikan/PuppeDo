@@ -1,5 +1,5 @@
 ---
-# name: testGlob
-# type: test
+name: testGlob
+type: test
 runTest:
 - login:
