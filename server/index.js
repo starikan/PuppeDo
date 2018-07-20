@@ -1,13 +1,6 @@
-const { log } = require('./logger/logger');
-const { getFullDepthJSON } = require('./yaml/yaml2json');
+// const { envs, log } = require('./env.js');
+const { getFullDepthJSON } = require('./yaml/getFullDepthJSON');
 const { getTest } = require('./yaml/getTest');
-
-const envs = require('./env.js');
-
-const debugOnError = true;
-if (debugOnError){
-  envs.set('debugOnError', debugOnError);
-}
 
 // await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
 // await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
@@ -15,13 +8,24 @@ if (debugOnError){
 // await log({ text: 'Товар отфильтрован', isScreenshot: true });
 
 const main = async () => {
+
+  const { envsId, envs, log } = require('./env.js')();
+
+  const debugOnError = true;
+  if (debugOnError){
+    envs.set('debugOnError', debugOnError);
+  }
+
   await envs.init();
   envs.setEnv('cloud');
-  console.log(envs)
-  const full = await getFullDepthJSON(envs.get('args.testFile'));
-  console.log(full);
-  // debugger;
-  const test = getTest(full);
+  const full = await getFullDepthJSON({
+    envs: envs,
+    filePath: envs.get('args.testFile'),
+  });
+  console.log(full)
+  let test = getTest(full, envsId);
+  console.log(test)
+  debugger
   await test();
   await envs.closeBrowsers()
 }

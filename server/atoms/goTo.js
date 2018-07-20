@@ -1,22 +1,9 @@
 
-const { log } = require('../logger/logger');
 const Test = require('../abstractTest');
 
-const beforeTest = async function ({}) {
-  // console.log('beforeTest')
-}
-
-const runTest = async function ({env, browser, page, data}) {
+const runTest = async function ({env, browser, page, data, log}) {
   await page.goto(data.url);
   await log({ text: `Go to: ${data.url}` });
-}
-
-const afterTest = async function ({}) {
-  // console.log('afterTest')
-}
-
-const errorTest = async function() {
-
 }
 
 const test = new Test(
@@ -25,10 +12,7 @@ const test = new Test(
     type: 'atom',
     envNames: ['cloud'],
     needData: ['url'],
-    beforeTest: beforeTest,
     runTest: runTest,
-    afterTest: afterTest,
-    errorTest: errorTest,
   }
 )
 

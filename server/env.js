@@ -5,6 +5,9 @@ const yaml = require('js-yaml');
 const _ = require('lodash');
 const moment = require('moment')
 const puppeteer = require('puppeteer');
+const uuid = require('uuid/v1');
+
+const logger = require('./logger/logger');
 
 let args = {}
 _.forEach(process.argv.slice(2), v => {
@@ -221,6 +224,41 @@ class Envs {
 
 }
 
-let env = new Envs();;
+let instances = {};
 
-module.exports = env;
+module.exports = function(envsId){ 
+
+  if (envsId && _.get(instances, envsId)){
+    return {
+      envsId,
+      envs: _.get(instances, envsId).envs,
+      log: _.get(instances, envsId).log
+    }
+  }
+
+  if (envsId && !_.get(instances, envsId)){
+    throw({
+      message: `Unknown ENV ID ${envsId}`
+    })
+  }
+
+  if (!envsId){
+    envsId = uuid();
+    let newEnvs = new Envs();
+    
+    instances[envsId] = {
+      envs: newEnvs,
+      log: logger(newEnvs)
+    }
+
+    return {
+      envsId,
+      envs: instances[envsId].envs, 
+      log: instances[envsId].log
+    }
+  }
+
+  throw({
+    message: 'Error ENVS export'
+  })
+};

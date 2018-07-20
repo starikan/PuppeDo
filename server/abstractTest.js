@@ -1,9 +1,6 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval')
 
-const envs = require('./env')
-const { log } = require('./logger/logger');
-
 class Test {
   constructor(
     {
@@ -93,8 +90,18 @@ class Test {
         ...inputArgs
       // envName,
       // repeat,
-      } = {}
+      } = {},
+
+      envsId
     ) => {
+
+      if (!envsId){
+        throw({
+          message: 'Test needs envsId'
+        })
+      }
+
+      let { envs, log } = require('./env.js')(envsId);
 
       try {
 
@@ -120,7 +127,7 @@ class Test {
         const browser = env.getState('browser');
         const page =  env.getState(`pages.${envPageName}`);
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
-  
+        
         let dataLocal = {};
         dataLocal = Object.assign(dataLocal, envs.get('results'));
         dataLocal = Object.assign(dataLocal, envs.get('data'));
@@ -189,7 +196,10 @@ class Test {
           page, 
           data: dataLocal,
           selectors: selectorsLocal,
-          results: this.allowResults
+          results: this.allowResults,
+          envsId,
+          envs,
+          log,
         };
 
         // IF

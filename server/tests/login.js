@@ -1,4 +1,4 @@
-const { log } = require('../logger/logger');
+const { envs, log } = require('./env.js');
 const Test = require('../abstractTest');
 const { goTo, typeInput, buttonClick } = require('../atoms')
 

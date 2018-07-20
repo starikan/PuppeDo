@@ -1,14 +1,13 @@
-const { log } = require('../logger/logger');
 const Test = require('../abstractTest');
 
-const beforeTest = async function ({env, browser, page, data, selectors}) {
+const beforeTest = async function ({env, browser, page, data, selectors, log}) {
   await log({ 
     text: `Проверка наличия селектора = ${selectors.selector}`,
     level: 'raw'
   });
 }
 
-const runTest = async function ({env, browser, page, data, selectors, results}) {
+const runTest = async function ({env, browser, page, data, selectors, results, log}) {
   let selector = await page.$(selectors.selector);
   if (selector) {
     await log({ 
@@ -30,10 +29,6 @@ const runTest = async function ({env, browser, page, data, selectors, results}) 
   }
 }
 
-const afterTest = async function ({env, browser, page, data, selectors}) {}
-
-const errorTest = async function() {}
-
 const test = new Test(
   {
     name: 'checkSelector',
@@ -44,8 +39,6 @@ const test = new Test(
 
     beforeTest: beforeTest,
     runTest: runTest,
-    afterTest: afterTest,
-    errorTest: errorTest,
   }
 )
 

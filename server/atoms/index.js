@@ -7,12 +7,9 @@ var paths = walkSync('./server/atoms');
 paths.forEach(p => {
   let nameFile = p.split('.')[0];
   if (nameFile && nameFile != 'index'){
-    console.log(nameFile)
     atoms[nameFile] = require('./' + nameFile);
   }
 });
-
-console.log(atoms)
 
 module.exports = atoms;
 

@@ -3,7 +3,3 @@
 # type: test
 runTest:
 - login:
-# name: testGlob
-# type: test
-# runTest:
-# - name: login
