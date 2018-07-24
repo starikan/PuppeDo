@@ -165,9 +165,9 @@ class Test {
           selectorsLocal = Object.assign(selectorsLocal, this.selectors);
           selectorsLocal = Object.assign(selectorsLocal, selectors);
 
-          if (selectorsLocal != {}){
-            selectorsLocal = deepMap(v => _.isString(v) ? xpath2css(v) : v)(selectorsLocal)
-          }
+          // if (selectorsLocal != {}){
+          //   selectorsLocal = deepMap(v => _.isString(v) ? xpath2css(v) : v)(selectorsLocal)
+          // }
 
           // BINDING SELECTORS
           let bindSelectorsLocal = {};
