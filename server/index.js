@@ -37,5 +37,6 @@ process.on('unhandledRejection', async (error, p) => {
   // const { envsId, envs, log } = require('./env.js')();
   // console.log(error.envsId)
   // await log({ text: `Global: ${error.message} |||| ${error.stack}`, level: 'error', isScreenshot: true })
+  debugger;
   process.exit(1);
 });

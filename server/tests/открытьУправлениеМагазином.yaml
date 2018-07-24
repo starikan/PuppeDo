@@ -12,3 +12,4 @@ runTest:
     data: { time: 2000 }
 - clickSelector:
     bindSelectors: { selector: leftMenu.linkUpravlenieMagazin }
+- waitLoadPage:

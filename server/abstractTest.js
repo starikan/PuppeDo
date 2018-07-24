@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval')
+const deepMap = require('deep-map-object');
+const xpath2css = require('xpath2css');
 
 class Test {
   constructor(
@@ -162,7 +164,11 @@ class Test {
           selectorsLocal = Object.assign(selectorsLocal, env.get('selectors'));
           selectorsLocal = Object.assign(selectorsLocal, this.selectors);
           selectorsLocal = Object.assign(selectorsLocal, selectors);
-    
+
+          if (selectorsLocal != {}){
+            selectorsLocal = deepMap(v => _.isString(v) ? xpath2css(v) : v)(selectorsLocal)
+          }
+
           // BINDING SELECTORS
           let bindSelectorsLocal = {};
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);

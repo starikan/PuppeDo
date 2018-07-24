@@ -7,14 +7,6 @@ beforeTest:
     screenshot: false
     level: info
 
-afterTest:
-- login.checkIsLogin:
-- log:
-    text: TEST LOGIN END
-    screenshot: true
-    fullpage: true
-    level: info
-
 runTest:
 - goTo:
     bindData: { url: baseUrl }
@@ -33,3 +25,11 @@ runTest:
     bindSelectors:
         selector: auth.submit
 - waitLoadPage:
+
+afterTest:
+- login.checkIsLogin:
+- log:
+    text: TEST LOGIN END
+    screenshot: true
+    fullpage: true
+    level: info
