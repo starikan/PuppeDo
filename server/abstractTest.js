@@ -126,14 +126,14 @@ class Test {
         const envPageName = envs.get('current.page');
 
         const env = envs.get(`envs.${envName}`);
-        const browser = env.getState('browser');
-        const page =  env.getState(`pages.${envPageName}`);
+        const browser = env ? env.getState('browser') : null;
+        const page =  env ? env.getState(`pages.${envPageName}`) : null;
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
 
         let dataLocal = {};
         dataLocal = Object.assign(dataLocal, envs.get('results'));
         dataLocal = Object.assign(dataLocal, envs.get('data'));
-        dataLocal = Object.assign(dataLocal, env.get('data'));
+        dataLocal = Object.assign(dataLocal, env ? env.get('data') : {});
         dataLocal = Object.assign(dataLocal, this.data);
         dataLocal = Object.assign(dataLocal, data);
 
@@ -161,7 +161,7 @@ class Test {
         if (page){
           selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
           selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
-          selectorsLocal = Object.assign(selectorsLocal, env.get('selectors'));
+          selectorsLocal = Object.assign(selectorsLocal, env ? env.get('selectors') : {});
           selectorsLocal = Object.assign(selectorsLocal, this.selectors);
           selectorsLocal = Object.assign(selectorsLocal, selectors);
 

@@ -10,24 +10,25 @@ const getTest = function(testJson, envsId){
       message: 'getTest params error'
     })
   }
-  
+
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-  
+
   for (let funcKey in functions) {
     testJson[funcKey] = [];
-    
-    for (let test of functions[funcKey]){
-      
-      if (test.type === 'test'){
-        let newTest = getTest(test, envsId);
-        testJson[funcKey].push( newTest );
-      }
-      if (test.name === 'log'){
-        const { log } = require('../env.js')(envsId);
-        testJson[funcKey].push( async () => { await log(test) });
-      }
-      if (test.type === 'atom' && test.name !== 'log'){
-        testJson[funcKey].push( async () => { await atoms[test.name](test, envsId) });
+
+    if (_.isArray(functions[funcKey])){
+      for (let test of functions[funcKey]){
+        if (test.type === 'test'){
+          let newTest = getTest(test, envsId);
+          testJson[funcKey].push( newTest );
+        }
+        if (test.name === 'log'){
+          const { log } = require('../env.js')(envsId);
+          testJson[funcKey].push( async () => { await log(test) });
+        }
+        if (test.type === 'atom' && test.name !== 'log'){
+          testJson[funcKey].push( async () => { await atoms[test.name](test, envsId) });
+        }
       }
     }
   }

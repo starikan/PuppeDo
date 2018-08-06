@@ -29,6 +29,15 @@ async function runPuppeteer (browserSettings){
 
   let pages = {"main": page};
 
+  let width = _.get(browserSettings, 'windowSize.width');
+  let height = _.get(browserSettings, 'windowSize.height');
+  if (width && height) {
+    await pages.main.setViewport({
+      width: width,
+      height: height,
+    });
+  }
+
   return { browser, pages };
 };
 
@@ -49,7 +58,13 @@ async function connectElectron(browserSettings) {
       })
     }
 
-    const { webSocketDebuggerUrl } = jsonBrowser;
+    const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
+
+    if (!webSocketDebuggerUrl){
+      throw ({
+        message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running`
+      })
+    }
 
     const browser = await puppeteer.connect({
       browserWSEndpoint: webSocketDebuggerUrl,
@@ -58,6 +73,35 @@ async function connectElectron(browserSettings) {
     });
     let pagesRaw = await browser.pages();
     let pages = {"main": pagesRaw[pagesRaw.length - 1]};
+
+    let width = _.get(browserSettings, 'windowSize.width');
+    let height = _.get(browserSettings, 'windowSize.height');
+    if (width && height) {
+      await pages.main.setViewport({
+        width: width,
+        height: height,
+      });
+    };
+
+    // // Window frame - probably OS and WM dependent.
+    // height += 85;
+
+    // // Any tab.
+    // const {targetInfos: [{targetId}]} = await browser._connection.send(
+    //   'Target.getTargets'
+    // );
+
+    // // Tab window.
+    // const {windowId} = await browser._connection.send(
+    //   'Browser.getWindowForTarget',
+    //   {targetId}
+    // );
+
+    // // Resize.
+    // await browser._connection.send('Browser.setWindowBounds', {
+    //   bounds: {height, width},
+    //   windowId
+    // });
 
     return { browser: browser, pages: pages };
   }

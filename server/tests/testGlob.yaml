@@ -2,5 +2,10 @@
 name: testGlob
 type: test
 runTest:
+- envSwitch:
+    data: { envName: 'electron' }
+- loginElectron:
+- envSwitch:
+    data: { envName: 'cloud' }
 - login:
 - открытьУправлениеМагазином:

@@ -9,7 +9,6 @@ const main = async () => {
   }
 
   await envs.init();
-  envs.setEnv('cloud');
   const full = await getFullDepthJSON({
     envs: envs,
     filePath: envs.get('args.testFile'),

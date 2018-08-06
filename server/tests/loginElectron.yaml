@@ -1,0 +1,17 @@
+---
+name: loginElectron
+needEnv: electron
+beforeTest:
+- log:
+    text: TEST LOGIN ELECTRON START
+    screenshot: false
+    level: info
+
+runTest:
+
+afterTest:
+- log:
+    text: TEST LOGIN ELECTRON END
+    screenshot: true
+    fullpage: true
+    level: info
