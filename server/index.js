@@ -1,16 +1,8 @@
-// const { envs, log } = require('./env.js');
 const { getFullDepthJSON } = require('./yaml/getFullDepthJSON');
 const { getTest } = require('./yaml/getTest');
 
-// await typeInput({ text: 'Печенье', selCSS: '#Spwares_search_data' }, { isScreenshot: true });
-// await buttonClick({ selCSS: '#search_start' }, { isScreenshot: true });
-// await wait({ selector: '.cursor_wait', selectorHidden: true });
-// await log({ text: 'Товар отфильтрован', isScreenshot: true });
-
 const main = async () => {
-
-  const { envsId, envs, log } = require('./env.js')();
-
+  const { envsId, envs, log } = require('./env')();
   const debugOnError = true;
   if (debugOnError){
     envs.set('debugOnError', debugOnError);
@@ -29,14 +21,12 @@ const main = async () => {
 
 try {
   main();
-} 
+}
 catch (error) {}
 
 process.on('unhandledRejection', async (error, p) => {
-  // console.log('unhandledRejection')
-  // const { envsId, envs, log } = require('./env.js')();
-  // console.log(error.envsId)
-  // await log({ text: `Global: ${error.message} |||| ${error.stack}`, level: 'error', isScreenshot: true })
-  // debugger;
+  console.log('unhandledRejection')
+  console.log(error, p)
+  debugger
   process.exit(1);
 });

@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const _ = require('lodash');
 const moment = require('moment')
+// const xpath2css = require('xpath2css');
 
 class Logger {
   constructor(envs){
@@ -17,19 +18,21 @@ class Logger {
       let activeLog = _.get(activeEnv, 'env.log', {});
       let current = this.envs.get('current');
       let pageName = this.envs.get('current.page');
-    
+
       const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
       //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
       const name = `${now}.jpg`;
-    
+
       if (!this.envs.get('output.folder')) return;
-  
+
       const pathScreenshot = path.join(this.envs.get('output.folder'), name);
       const page = _.get(activeEnv, `state.pages.${pageName}`)
-    
+
       //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
       if (_.isObject(page)) {
         if (selCSS) {
+          // selCSS = xpath2css(selCSS);
+          // console.log(selCSS)
           const element = await page.$(selCSS);
           await element.screenshot({ path: pathScreenshot });
         }
@@ -46,9 +49,9 @@ class Logger {
       debugger;
     }
   };
-  
+
   getLevel(level){
-  
+
     const levels = {
       0: 'raw',
       1: 'debug',
@@ -65,21 +68,21 @@ class Logger {
       'error': 5,
       'env': 6
     }
-  
+
     let defaultLevel = 1;
-  
+
     // Active ENV log settings
     let activeEnv = this.envs.getEnv();
     let activeLog = _.get(activeEnv, 'env.log', {});
-    
+
     let envLevel =_.get(activeLog, 'level', defaultLevel);
     envLevel = _.isNumber(envLevel) ? envLevel : _.get(levels, envLevel, defaultLevel)
     let inputLevel = level;
     inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel)
-  
+
     let envLevelText = levels[envLevel];
     let inputLevelText = levels[inputLevel];
-  
+
     // If input level higher or equal then global env level thqn logging
     if (envLevel > inputLevel) {
       return false;
@@ -88,59 +91,59 @@ class Logger {
       return inputLevelText;
     }
   }
-  
-  async _log({ 
-    text = '', 
-    pageNum = 0, 
-    stdOut = true, 
-    selCSS = [], 
-    screenshot = null, 
-    fullpage = null, 
+
+  async _log({
+    text = '',
+    pageNum = 0,
+    stdOut = true,
+    selCSS = [],
+    screenshot = null,
+    fullpage = null,
     level = 'info',
     debug = false,
   } = {}) {
     try {
-  
+
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
-  
+
       const screenshots = [];
       const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-    
+
       if (!_.isBoolean(screenshot)){
         screenshot = _.get(activeLog, 'screenshot', false);
       }
       if (!_.isBoolean(fullpage)){
         fullpage = _.get(activeLog, 'fullpage', false);
       }
-  
+
       // LEVEL RULES
       level = this.getLevel(level);
       if (!level) return;
-  
+
       // LOG STRINGS
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
       const logStringNoTime = `${level} - ${pageNum} - ${text}`;
       const logString = `${now} - ${logStringNoTime}`;
-      
+
       // STDOUT
       if (stdOut) console.log(logString);
       if (level == 'env') {
         console.log(this.envs);
         debugger;
       }
-  
+
       // SCRENSHOTS
       let outputFolder = this.envs.get('output.folder')
       if (!outputFolder) return;
-  
-      
+
+
       if (screenshot) {
-  
+
         if (_.isString(selCSS)){
           selCSS = [selCSS]
         }
-        
+
         if (_.isArray(selCSS)){
           for (let css in selCSS) {
             const src = await this.saveScreenshot({ selCSS: selCSS[css] });
@@ -149,7 +152,7 @@ class Logger {
             }
           }
         }
-  
+
         if (fullpage) {
           const src = await this.saveScreenshot({ fullpage: fullpage });
           if (src) {
@@ -157,24 +160,24 @@ class Logger {
           }
         }
       }
-  
-      this.envs.push('log', { 
-        text: logStringNoTime, 
-        time: now, 
-        screenshots: screenshots, 
-        level: level 
+
+      this.envs.push('log', {
+        text: logStringNoTime,
+        time: now,
+        screenshots: screenshots,
+        level: level
       });
-          
+
       await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
         if (err) {
           return console.log(err);
         }
       });
-  
+
       // Export JSON log every step
       const exportJson = JSON.stringify(this.envs.get('log'));
       await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
-  
+
       if (debug){
         debugger;
       }

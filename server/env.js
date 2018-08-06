@@ -6,6 +6,7 @@ const _ = require('lodash');
 const moment = require('moment')
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
+const axios = require('axios');
 
 const logger = require('./logger/logger');
 
@@ -15,21 +16,57 @@ _.forEach(process.argv.slice(2), v => {
   args[data[0]] = data[1];
 });
 
-async function runPuppeteer(browserSettings){
+async function runPuppeteer (browserSettings){
   const browser = await puppeteer.launch({
     headless: _.get(browserSettings, "headless", true),
     slowMo: _.get(browserSettings, "slowMo", 0),
     args: _.get(browserSettings, "args", [])
   });
-  
+
   const page = await browser.newPage();
   const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
   await page.setViewport(override);
-  
+
   let pages = {"main": page};
-  
+
   return { browser, pages };
-}
+};
+
+async function connectElectron(browserSettings) {
+
+  const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
+
+  if (urlDevtoolsJson){
+    let jsonPages = await axios.get(urlDevtoolsJson + 'json');
+    let jsonBrowser = await axios.get(urlDevtoolsJson + 'json/version');
+
+    jsonPages = _.get(jsonPages, 'data');
+    jsonBrowser = _.get(jsonBrowser, 'data');
+
+    if (!jsonBrowser || !jsonPages) {
+      throw ({
+        message: `Can't connect to ${urlDevtoolsJson}`
+      })
+    }
+
+    const { webSocketDebuggerUrl } = jsonBrowser;
+
+    const browser = await puppeteer.connect({
+      browserWSEndpoint: webSocketDebuggerUrl,
+      ignoreHTTPSErrors: true,
+      slowMo: _.get(browserSettings, "slowMo", 0)
+    });
+    let pagesRaw = await browser.pages();
+    let pages = {"main": pagesRaw[pagesRaw.length - 1]};
+
+    return { browser: browser, pages: pages };
+  }
+
+  throw ({
+    message: `Can't connect to Electron ${urlDevtoolsJson}`
+  })
+
+};
 class Env {
 
   constructor(name, env = {}){
@@ -45,7 +82,7 @@ class Env {
       screenshots: {
         isScreenshot: false,
         fullPage: false
-      }      
+      }
     };
     this.env = Object.assign(this.env, env);
 
@@ -58,18 +95,18 @@ class Env {
   setState () {
     // Подмена браузера, установка куков
   }
-  
+
   get (name, def = null) {
     return _.get(this.env, name, def);
   }
-  
+
   getState (value = null) {
     if (value){
       return _.get(this, `state.${value}`)
     }
     return this.state;
   }
-  
+
   push (name, data) {
     let arr = _.clone(this.get(name, []));
     try {
@@ -141,7 +178,7 @@ class Envs {
       env = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
       name = env.name;
     }
-    
+
     if (name && env) {
       this.envs[name] = new Env(name, env);
     }
@@ -151,34 +188,41 @@ class Envs {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     };
-    
+
     const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
-    
+
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
-    
+
     fs.createReadStream('./server/logger/output.html').pipe(fs.createWriteStream(path.join(folder, 'output.html')));
 
     this.output.output = output;
     this.output.name = test;
     this.output.folder = folder;
-  }  
+  }
 
   async runBrowsers(){
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
-      
+
       const type = _.get(env, 'env.browser.type');
       const runtime = _.get(env, 'env.browser.runtime');
       const browserSettings = _.get(env, 'env.browser');
-      
+
       if (type === 'api'){}
 
       if (type === 'puppeteer'){
         if (runtime === 'run'){
-          const {browser, pages} = await runPuppeteer(browserSettings)
-          env.state = Object.assign(env.state, {browser, pages})
+          const {browser, pages} = await runPuppeteer(browserSettings);
+          env.state = Object.assign(env.state, {browser, pages});
+        }
+      }
+
+      if (type === 'electron'){
+        if (runtime === 'connect'){
+          const {browser, pages} = await connectElectron(browserSettings);
+          env.state = Object.assign(env.state, {browser, pages});
         }
       }
     }
@@ -226,7 +270,7 @@ class Envs {
 
 let instances = {};
 
-module.exports = function(envsId){ 
+module.exports = function(envsId){
 
   if (envsId && _.get(instances, envsId)){
     return {
@@ -245,7 +289,7 @@ module.exports = function(envsId){
   if (!envsId){
     envsId = uuid();
     let newEnvs = new Envs();
-    
+
     instances[envsId] = {
       envs: newEnvs,
       log: logger(newEnvs)
@@ -253,7 +297,7 @@ module.exports = function(envsId){
 
     return {
       envsId,
-      envs: instances[envsId].envs, 
+      envs: instances[envsId].envs,
       log: instances[envsId].log
     }
   }

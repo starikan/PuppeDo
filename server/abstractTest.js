@@ -6,10 +6,10 @@ const xpath2css = require('xpath2css');
 class Test {
   constructor(
     {
-      
+
       // Имя теста
-      // На базе имени ищутся данные в data в частности data[name] 
-      name, 
+      // На базе имени ищутся данные в data в частности data[name]
+      name,
 
       // Тип теста atom, test, multiEnv
       // Если atom то обязательный прямой проброс данных
@@ -42,10 +42,10 @@ class Test {
       // 2. Смотрим на данные в глобальной env.selectors
       // 3. Смотрим на данные в env[envName].selectors
       bindSelectors = {},
-      
+
       bindResult = {},
 
-      // Имя env 
+      // Имя env
       envNames = [], // Для тестов в которых переключается env
       // envName = null, // Если нет то берем активную
 
@@ -68,7 +68,7 @@ class Test {
     this.data = data;
     this.bindData = bindData;
 
-    this.selectors = selectors; 
+    this.selectors = selectors;
     this.bindSelectors = bindSelectors;
     this.allowResults = allowResults;
     this.bindResult = bindResult;
@@ -124,23 +124,23 @@ class Test {
 
         // CURRENT PAGE NAME
         const envPageName = envs.get('current.page');
-  
+
         const env = envs.get(`envs.${envName}`);
         const browser = env.getState('browser');
         const page =  env.getState(`pages.${envPageName}`);
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
-        
+
         let dataLocal = {};
         dataLocal = Object.assign(dataLocal, envs.get('results'));
         dataLocal = Object.assign(dataLocal, envs.get('data'));
         dataLocal = Object.assign(dataLocal, env.get('data'));
         dataLocal = Object.assign(dataLocal, this.data);
         dataLocal = Object.assign(dataLocal, data);
-        
+
         let bindDataLocal = {};
         bindDataLocal = Object.assign(bindDataLocal, this.bindData);
         bindDataLocal = Object.assign(bindDataLocal, bindData);
-  
+
         for (const key in bindDataLocal){
           if (!_.get(dataLocal, key)){
             dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
@@ -165,6 +165,7 @@ class Test {
           selectorsLocal = Object.assign(selectorsLocal, this.selectors);
           selectorsLocal = Object.assign(selectorsLocal, selectors);
 
+          // XPath
           // if (selectorsLocal != {}){
           //   selectorsLocal = deepMap(v => _.isString(v) ? xpath2css(v) : v)(selectorsLocal)
           // }
@@ -173,7 +174,7 @@ class Test {
           let bindSelectorsLocal = {};
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
-          
+
           for (const key in bindSelectorsLocal){
             if (!_.get(selectorsLocal, key)){
               selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
@@ -189,17 +190,17 @@ class Test {
             }
           })
         }
-        
+
         // debugger;
 
         //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
         // если что ронять с исключнием
         const args = {
-          envName, 
-          envPageName, 
-          env, 
-          browser, 
-          page, 
+          envName,
+          envPageName,
+          env,
+          browser,
+          page,
           data: dataLocal,
           selectors: selectorsLocal,
           results: this.allowResults,
@@ -221,7 +222,7 @@ class Test {
         let errorExpr = _.get(inputArgs, 'errorIfStart');
         if (errorExpr){
             let exprResult = false;
-            
+
             try {
               exprResult = safeEval(errorExpr, dataLocal);
             }
@@ -258,32 +259,32 @@ class Test {
         let bindResultsLocal = {};
         bindResultsLocal = Object.assign(bindResultsLocal, this.bindResults);
         bindResultsLocal = Object.assign(bindResultsLocal, bindResults);
-        
+
         let result = {};
-        
+
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){
           this.beforeTest = [this.beforeTest];
         }
-        
+
         if (_.isArray(this.beforeTest)){
           for (const fun of this.beforeTest){
             let funResult = await fun(args) || {};
             result = Object.assign(result, funResult);
           }
         }
-        
+
         if (_.isFunction(this.runTest)){
           this.runTest = [this.runTest];
         }
-        
+
         if (_.isArray(this.runTest)){
           for (const fun of this.runTest){
             let funResult = await fun(args) || {};
             result = Object.assign(result, funResult);
           }
         }
-        
+
         if (_.isFunction(this.afterTest)){
           this.afterTest = [this.afterTest];
         }
@@ -292,7 +293,7 @@ class Test {
             let funResult = await fun(args) || {};
             result = Object.assign(result, funResult);
           }
-        }  
+        }
 
         // todo
         // выкидывать предупреждение если пришло в результатах то чего нет в allowResults
