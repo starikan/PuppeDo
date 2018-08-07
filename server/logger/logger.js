@@ -45,8 +45,10 @@ class Logger {
       };
     }
     catch (err){
+      err.message += ` || saveScreenshot selCSS = ${selCSS}`;
       console.log(err);
       debugger;
+      throw(err);
     }
   };
 
@@ -183,7 +185,8 @@ class Logger {
       }
     }
     catch (err){
-      console.log(err)
+      console.log(err);
+      throw(err);
     }
   }
 }

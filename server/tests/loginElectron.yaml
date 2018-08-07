@@ -8,6 +8,23 @@ beforeTest:
     level: info
 
 runTest:
+- clickSelector:
+    bindSelectors: {selector: auth.showLoginInput}
+- typeInput:
+    bindData: { text: auth.login }
+    bindSelectors: { input: auth.inputLogin }
+- typeInput:
+    bindData: { text: auth.password }
+    bindSelectors: { input: auth.inputPassword }
+- clickSelector:
+    bindSelectors: {selector: auth.inputSubmit}
+- waitForSelector:
+    bindSelectors: {sel: session.openButton}
+- clickSelector:
+    bindSelectors: {selector: session.openButton}
+- waitForSelector:
+    bindSelectors: {sel: mainView.menuButton}
+
 
 afterTest:
 - log:

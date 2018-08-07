@@ -45,6 +45,8 @@ class Test {
 
       bindResult = {},
 
+      options = {},
+
       // Имя env
       envNames = [], // Для тестов в которых переключается env
       // envName = null, // Если нет то берем активную
@@ -86,6 +88,7 @@ class Test {
       {
         data = {},
         selectors = {},
+        options = {},
         bindData = {},
         bindSelectors = {},
         bindResults = {},
@@ -191,7 +194,8 @@ class Test {
           })
         }
 
-        // debugger;
+        let optionsLocal = {};
+        optionsLocal = Object.assign(optionsLocal, options);
 
         //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
         // если что ронять с исключнием
@@ -204,6 +208,7 @@ class Test {
           data: dataLocal,
           selectors: selectorsLocal,
           results: this.allowResults,
+          options: optionsLocal,
           envsId,
           envs,
           log,

@@ -5,7 +5,7 @@ const runTest = async function ({env, browser, page, data, selectors, log}) {
 }
 
 const afterTest = async function ({env, browser, page, data, selectors, log}) {
-  await log({ 
+  await log({
     text: `Ввод текста в INPUT = ${selectors.input}, TEXT = ${data.text}`,
     screenshot: true,
     fullpage: false,
@@ -18,7 +18,7 @@ const test = new Test(
   {
     name: 'typeInput',
     type: 'atom',
-    needEnv: ['cloud'],
+    needEnv: ['cloud', 'electron'],
     needSelectors: ['input'],
     needData: ['text'],
     runTest: runTest,
