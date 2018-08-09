@@ -1,0 +1,23 @@
+---
+name: logout
+needEnv: cloud
+beforeTest:
+- log:
+    text: TEST LOGOUT START
+    screenshot: false
+    level: info
+
+runTest:
+- checkSelector:
+    bindSelectors: { selector: leftMenu.exitLink }
+- clickSelector:
+    bindSelectors: { selector: leftMenu.exitLink }
+- waitLoadPage:
+    data: { waitUntil: load }
+
+afterTest:
+- log:
+    text: TEST LOGOUT END
+    screenshot: true
+    fullpage: true
+    level: info

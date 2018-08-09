@@ -9,3 +9,4 @@ runTest:
     data: { envName: 'cloud' }
 - Облако/login:
 - Облако/открытьУправлениеМагазином:
+- Облако/logout:
