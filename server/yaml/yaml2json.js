@@ -11,7 +11,7 @@ const yaml2json = async function(filePath, testsFolders = []){
       message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`
     });
   }
-  
+
   let isTestExist = fs.existsSync(filePath);
 
   let exts = ['.yaml', '.json', '.js'];
@@ -56,11 +56,11 @@ const yaml2json = async function(filePath, testsFolders = []){
     }
   }
 
-  // todo 
+  // todo
   if (testFile && testFile.endsWith('.js')){
     return { json: testFile };
   }
-  
+
   if (testFile && testFile.endsWith('.yaml')){
     try {
       full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
@@ -69,7 +69,7 @@ const yaml2json = async function(filePath, testsFolders = []){
       throw(e);
     }
   }
-  
+
   throw({
     message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}`
   });

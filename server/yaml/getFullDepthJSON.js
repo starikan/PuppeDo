@@ -17,7 +17,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
   if (!testFolders && envs){
     testFolders = envs.get('args.testsFolders');
   }
-  
+
   let full = {};
   full = filePath ? (await yaml2json(filePath, testFolders)).json : full;
   full = testBody ? Object.assign(full, testBody) : full;
@@ -25,13 +25,13 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
 
   const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest']
-  
+
   // Структура
 
   // runTest:
   // - testName:
   //     other: other
-  
+
   // runTest:
   // - name: testName
   //   other: other
@@ -53,7 +53,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
       }
 
       name = _.get(newRunner, 'name', null);
-      
+
       if (name) {
 
         let breadcrumbs = _.clone(full.breadcrumbs);
@@ -64,7 +64,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
 
         if (atoms.includes(name)){
           newRunner.type = 'atom';
-        }     
+        }
 
         if (name == 'log'){
           newRunner.type = 'log';
