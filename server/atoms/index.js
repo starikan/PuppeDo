@@ -1,17 +1,17 @@
-const _ = require('lodash');
-const walkSync = require('walk-sync');
+// const _ = require('lodash');
+// const walkSync = require('walk-sync');
 
-let atoms = {};
-var paths = walkSync('./server/atoms');
+// let atoms = {};
+// var paths = walkSync('./server/atoms');
 
-paths.forEach(p => {
-  let nameFile = p.split('.')[0];
-  if (nameFile && nameFile != 'index'){
-    atoms[nameFile] = require('./' + nameFile);
-  }
-});
+// paths.forEach(p => {
+//   let nameFile = p.split('.')[0];
+//   if (nameFile && nameFile != 'index'){
+//     atoms[nameFile] = require('./' + nameFile);
+//   }
+// });
 
-module.exports = atoms;
+// module.exports = atoms;
 
 // module.exports = {
 //   'typeInput': require('./typeInput'),

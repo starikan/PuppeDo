@@ -2,4 +2,4 @@
 name: goto
 needEnvs: ['cloud']
 needData: ['url']
-runTest: atoms/_goto.js
+runTest: atoms/goTo.js

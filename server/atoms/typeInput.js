@@ -1,29 +1,16 @@
-const Test = require('../abstractTest');
-
-const runTest = async function ({env, browser, page, data, selectors, log}) {
-  await page.type(selectors.input, data.text);
-}
-
-const afterTest = async function ({env, browser, page, data, selectors, log}) {
-  await log({
-    text: `Ввод текста в INPUT = ${selectors.input}, TEXT = ${data.text}`,
-    screenshot: true,
-    fullpage: false,
-    selCSS: [selectors.input],
-    level: 'debug'
-  });
-}
-
-const test = new Test(
-  {
-    name: 'typeInput',
-    type: 'atom',
-    needEnv: ['cloud', 'electron'],
-    needSelectors: ['input'],
-    needData: ['text'],
-    runTest: runTest,
-    afterTest: afterTest,
+module.exports = {
+  runTest: async function (args) {
+    const { page, data, selectors } = args;
+    await page.type(selectors.input, data.text);
+  },
+  afterTest: async function (args) {
+    const { data, selectors, log } = args;
+    await log({
+      text: `Ввод текста в INPUT = ${selectors.input}, TEXT = ${data.text}`,
+      screenshot: true,
+      fullpage: false,
+      selCSS: [selectors.input],
+      level: 'debug'
+    });
   }
-)
-
-module.exports = test.run;
+};

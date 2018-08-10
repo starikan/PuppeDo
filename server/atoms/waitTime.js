@@ -1,18 +1,7 @@
-const Test = require('../abstractTest');
-
-const runTest = async function ({env, browser, page, data, log}) {
-  await page.waitFor( data.time );
-  await log({ text: `waitTime ${data.time}ms`, level: 'debug' });
-}
-
-const test = new Test(
-  {
-    name: 'waitTime',
-    type: 'atom',
-    envNames: ['cloud'],
-    needData: ['time'],
-    runTest: runTest,
+module.exports = {
+  runTest: async function (args) {
+    const { page, data, log } = args;
+    await page.waitFor( data.time );
+    await log({ text: `waitTime ${data.time}ms`, level: 'debug' });
   }
-)
-
-module.exports = test.run;
+};

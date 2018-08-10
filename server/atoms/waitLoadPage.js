@@ -1,18 +1,9 @@
-const _ = require('lodash');
-const Test = require('../abstractTest');
+module.exports = {
+  runTest: async function (args) {
+    const _ = require('lodash');
+    const { page, options, log } = args;
 
-const runTest = async function ({options, browser, page, data, log}) {
-  await page.waitForNavigation({ waitUntil: _.get(options, 'waitUntil', 'load') });
-  await log({ text: `waitLoadPage` });
-}
-
-const test = new Test(
-  {
-    name: 'waitLoadPage',
-    type: 'atom',
-    envNames: ['cloud', 'electron'],
-    runTest: runTest,
+    await page.waitForNavigation({ waitUntil: _.get(options, 'waitUntil', 'load') });
+    await log({ text: `waitLoadPage` });
   }
-)
-
-module.exports = test.run;
+};

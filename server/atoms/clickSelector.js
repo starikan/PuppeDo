@@ -1,27 +1,17 @@
-const Test = require('../abstractTest');
+module.exports = {
+  runTest: async function (args) {
+    const { page, selectors, log } = args;
+    const sel = selectors.selector;
 
-const runTest = async function ({env, browser, page, data, selectors, log}) {
-  const sel = selectors.selector;
-
-  await log({
-    text: `Нажат селектор = ${sel}`,
-    screenshot: true,
-    fullpage: false,
-    selCSS: [sel],
-    level: 'debug'
-  });
-  let element = await page.$(sel)
-  await element.click(sel)
-}
-
-const test = new Test(
-  {
-    name: 'clickSelector',
-    type: 'atom',
-    needEnv: ['cloud', 'electron'],
-    needSelectors: ['selector'],
-    runTest: runTest,
+    await log({
+      text: `Нажат селектор = ${sel}`,
+      screenshot: true,
+      fullpage: false,
+      selCSS: [sel],
+      level: 'debug'
+    });
+    // debugger;
+    let element = await page.$(sel);
+    await element.click(sel);
   }
-)
-
-module.exports = test.run;
+};
