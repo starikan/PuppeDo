@@ -8,7 +8,7 @@ beforeTest:
     level: info
 
 runTest:
-- goTo:
+- goto:
     bindData: { url: baseUrl }
 - checkSelector:
     bindSelectors: { selector: auth.inputLogin }

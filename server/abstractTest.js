@@ -48,8 +48,7 @@ class Test {
       options = {},
 
       // Имя env
-      envNames = [], // Для тестов в которых переключается env
-      // envName = null, // Если нет то берем активную
+      // envNames = [], // Для тестов в которых переключается env
 
       // Колличество повторений
       repeat = 1,
@@ -74,9 +73,6 @@ class Test {
     this.bindSelectors = bindSelectors;
     this.allowResults = allowResults;
     this.bindResult = bindResult;
-
-    // this.envNames = envNames;
-    // this.envName = envName;
 
     this.beforeTest = beforeTest;
     this.runTest = runTest;
@@ -271,7 +267,6 @@ class Test {
         if (_.isFunction(this.beforeTest)){
           this.beforeTest = [this.beforeTest];
         }
-
         if (_.isArray(this.beforeTest)){
           for (const fun of this.beforeTest){
             let funResult = await fun(args) || {};
@@ -282,7 +277,6 @@ class Test {
         if (_.isFunction(this.runTest)){
           this.runTest = [this.runTest];
         }
-
         if (_.isArray(this.runTest)){
           for (const fun of this.runTest){
             let funResult = await fun(args) || {};

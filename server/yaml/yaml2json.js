@@ -3,6 +3,7 @@ const path = require('path');
 
 const _ = require('lodash');
 const yaml = require('js-yaml');
+const walkSync = require('walk-sync');
 
 const yaml2json = async function(filePath, testsFolders = []){
 
@@ -17,13 +18,18 @@ const yaml2json = async function(filePath, testsFolders = []){
   let exts = ['.yaml', '.json', '.js'];
   let files = [];
   let testFile = null;
+  let allTestFolders = _.clone(testsFolders);
+  testsFolders.forEach(folder => {
+    var paths = walkSync(folder);
+    allTestFolders = allTestFolders.concat(paths.filter(p => p.endsWith('/')).map(p => path.join(folder, p).replace(/\\/g, '\\\\')));
+  });
 
   if (!isTestExist){
     [filePath, path.basename(filePath)].forEach(file => {
       files.push(file);
       exts.forEach(ext => {
         files.push(file + ext);
-        testsFolders.forEach(folder => {
+        allTestFolders.forEach(folder => {
           files.push('.\\' + path.join(folder, file + ext));
         })
       })
