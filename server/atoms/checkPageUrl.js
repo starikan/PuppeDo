@@ -1,6 +1,8 @@
 module.exports = {
   runTest: async function ({env, browser, page, data, selectors, results, log}) {
-    debugger;
+
+    //TODO: 2018-08-14 S.Starodubov сделать нормальный скриншот страницы которая открывается
+
     const allPages = await browser.pages();
     const url = data.url;
     let isUrlExist = false;
@@ -25,7 +27,5 @@ module.exports = {
         level: 'raw'
       });
     }
-
-    debugger;
   }
 };
