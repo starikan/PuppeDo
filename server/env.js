@@ -10,10 +10,10 @@ const axios = require('axios');
 
 const logger = require('./logger/logger');
 
-let args = {}
+let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
   let data = v.split("=");
-  args[data[0]] = data[1];
+  args_ext[data[0]] = data[1];
 });
 
 async function runPuppeteer (browserSettings){
@@ -327,12 +327,30 @@ class Envs {
     }
   }
 
-  async init(){
-    let testFile = _.get(args, '--test', 'test');
-    let outputFolder = _.get(args, '--output', 'output');
-    let envFiles = JSON.parse(_.get(args, '--envs', []));
+  async init(args = {}){
+    let testFile = _.get(args, 'test') || _.get(args_ext, '--test');
+    let outputFolder =_.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
+    let envFiles = _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
+    let testsFolder = _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder');
     let testName = testFile.split('/')[testFile.split('/').length - 1];
-    let testsFolder = _.get(args, '--testsFolder');
+
+    if (!testFile) {
+      throw({
+        message: `Не указано имя головного теста. Параметр 'test'`
+      })
+    }
+
+    if (!envFiles) {
+      throw({
+        message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив`
+      })
+    }
+
+    if (!testsFolder) {
+      throw({
+        message: `Не указана папка с тестами. Параметр 'testsFolder'`
+      })
+    }
 
     this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
 
