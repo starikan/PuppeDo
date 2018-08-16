@@ -5,7 +5,8 @@ const _ = require('lodash');
 const yaml = require('js-yaml');
 const walkSync = require('walk-sync');
 
-const yaml2json = async function(filePath, testsFolders = []){
+// const yaml2json = async function(filePath, testFolder = []){
+const yaml2json = async function(filePath, testsFolder = ''){
 
   if (!_.isString(filePath)){
     throw({
@@ -18,10 +19,16 @@ const yaml2json = async function(filePath, testsFolders = []){
   let exts = ['.yaml', '.json', '.js'];
   let files = [];
   let testFile = null;
-  let allTestFolders = _.clone(testsFolders);
-  testsFolders.forEach(folder => {
-    var paths = walkSync(folder);
-    allTestFolders = allTestFolders.concat(paths.filter(p => p.endsWith('/')).map(p => path.join(folder, p).replace(/\\/g, '\\\\')));
+  testsFolder = testsFolder.replace(/\\/g, '\\\\');
+  let allTestFolders = [];
+  var paths = walkSync(testsFolder);
+  paths.forEach(folder => {
+    if (folder.includes('.git')){
+      return;
+    }
+    if (folder.endsWith('/')){
+      allTestFolders.push(folder.replace(/\\/g, '\\\\'))
+    }
   });
 
   if (!isTestExist){
@@ -30,7 +37,7 @@ const yaml2json = async function(filePath, testsFolders = []){
       exts.forEach(ext => {
         files.push(file + ext);
         allTestFolders.forEach(folder => {
-          files.push('.\\' + path.join(folder, file + ext));
+          files.push('.\\' + path.join(testsFolder, folder, file + ext));
         })
       })
     })
@@ -49,6 +56,11 @@ const yaml2json = async function(filePath, testsFolders = []){
   let full = {};
 
   if (!testFile){
+    if (filePath != 'log'){
+      throw({
+        message: `Can't find test file ${filePath} in folder ${testsFolder}`
+      })
+    }
     full = { name: testFile };
     return { json: full };
   }

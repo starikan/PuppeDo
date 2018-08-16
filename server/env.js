@@ -236,7 +236,7 @@ class Envs {
         }
         for (let i = 0; i < dataExtList.length; i++) {
           const dataExtFile = dataExtList[i];
-          let dataExt = yaml.safeLoad(fs.readFileSync('./server/' + dataExtFile, 'utf8'));
+          let dataExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, dataExtFile), 'utf8'));
           env.data = env.data || {};
           env.data = Object.assign(env.data, dataExt);
         }
@@ -254,7 +254,7 @@ class Envs {
         }
         for (let i = 0; i < selectorsExtList.length; i++) {
           const selectorsExtFile = selectorsExtList[i];
-          let selectorsExt = yaml.safeLoad(fs.readFileSync('./server/' + selectorsExtFile, 'utf8'));
+          let selectorsExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, selectorsExtFile), 'utf8'));
           env.selectors = env.selectors || {};
           env.selectors = Object.assign(env.selectors, selectorsExt);
         }
@@ -332,9 +332,9 @@ class Envs {
     let outputFolder = _.get(args, '--output', 'output');
     let envFiles = JSON.parse(_.get(args, '--envs', []));
     let testName = testFile.split('/')[testFile.split('/').length - 1];
-    let testsFolders = JSON.parse(_.get(args, '--testFolders', ['./tests/']));
+    let testsFolder = _.get(args, '--testsFolder');
 
-    this.set('args', {testFile, outputFolder, envFiles, testName, testsFolders})
+    this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
 
     await this.initTest({test: testName, output: outputFolder})
 

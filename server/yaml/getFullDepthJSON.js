@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const { yaml2json } = require('./yaml2json');
 
-const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders }){
+const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder }){
 
   if (filePath && !_.isString(filePath)) {
     throw({ message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` });
@@ -12,12 +12,12 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
     throw({ message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` });
   };
 
-  if (!testFolders && envs){
-    testFolders = envs.get('args.testsFolders');
+  if (!testsFolder && envs){
+    testsFolder = envs.get('args.testsFolder');
   }
 
   let full = {};
-  full = filePath ? (await yaml2json(filePath, testFolders)).json : full;
+  full = filePath ? (await yaml2json(filePath, testsFolder)).json : full;
   full = testBody ? Object.assign(full, testBody) : full;
 
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
@@ -67,7 +67,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
         full[runnerBlock][runnerNum] = await getFullDepthJSON({
           filePath: name,
           testBody: newRunner,
-          testFolders: testFolders
+          testsFolder: testsFolder
         })
       }
     }

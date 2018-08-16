@@ -1,3 +1,5 @@
+const path = require('path');
+
 const _ = require('lodash');
 
 const abstractTest = require('../abstractTest');
@@ -11,6 +13,7 @@ const getTest = function(testJson, envsId){
   }
 
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+  const { envs, log } = require('../env')(envsId);
 
   for (let funcKey in functions) {
     testJson[funcKey] = [];
@@ -22,12 +25,13 @@ const getTest = function(testJson, envsId){
           let newTest;
           if ( _.isString(testFunc) ){
             try {
-              funcFromFile = _.get(require('../' + testFunc), funcKey);
+              let funcFile = path.join(process.cwd(), envs.get('args.testsFolder'), testFunc);
+              funcFromFile = _.get(require(funcFile), funcKey);
               if (_.isFunction(funcFromFile)){
                 test[funcKey] = funcFromFile;
                 const abstractTest = require('../abstractTest');
                 const abstractTestDone = new abstractTest( test );
-                newTest = async () => { 
+                newTest = async () => {
                   await abstractTestDone.run(test, envsId) 
                 };
               }
