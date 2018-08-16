@@ -1,4 +1,0 @@
-name: waitForSelector
-envNames: ['cloud', 'electron']
-needSelectors: ['sel']
-runTest: atoms/waitForSelector.js

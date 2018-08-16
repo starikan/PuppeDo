@@ -1,7 +1,0 @@
----
-name: checkSelector
-needEnv: ['cloud']
-needSelectors: ['selector']
-allowResults: ['exists']
-beforeTest: atoms/checkSelector.js
-runTest: atoms/checkSelector.js

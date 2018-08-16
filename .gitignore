@@ -65,4 +65,4 @@ typings/
 node_modules
 output
 package-lock.json
-json
+settings

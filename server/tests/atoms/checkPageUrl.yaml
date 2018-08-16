@@ -1,6 +1,0 @@
----
-name: checkPageUrl
-needEnv: ['cloud']
-needData: ['url']
-allowResults: ['exists']
-runTest: atoms/checkPageUrl.js

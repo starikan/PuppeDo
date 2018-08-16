@@ -1,3 +1,0 @@
-name: waitLoadPage
-envNames: ['cloud', 'electron']
-runTest: atoms/waitLoadPage.js
