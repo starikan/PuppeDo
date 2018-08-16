@@ -223,6 +223,44 @@ class Envs {
       name = env.name;
     }
 
+    if (env) {
+      if (_.get(env, 'dataExt')) {
+        let dataExtList = _.get(env, 'dataExt');
+        if (_.isString(dataExtList)) {
+          dataExtList = [dataExtList];
+        }
+        if (!_.isArray(dataExtList)){
+          throw({
+            message: `dataExt wrong format ${dataExt}, ${file}`
+          })
+        }
+        for (let i = 0; i < dataExtList.length; i++) {
+          const dataExtFile = dataExtList[i];
+          let dataExt = yaml.safeLoad(fs.readFileSync('./server/' + dataExtFile, 'utf8'));
+          env.data = env.data || {};
+          env.data = Object.assign(env.data, dataExt);
+        }
+      }
+
+      if (_.get(env, 'selectorsExt')) {
+        let selectorsExtList = _.get(env, 'selectorsExt');
+        if (_.isString(selectorsExtList)) {
+          selectorsExtList = [selectorsExtList];
+        }
+        if (!_.isArray(selectorsExtList)){
+          throw({
+            message: `selectorsExt wrong format ${selectorsExt}, ${file}`
+          })
+        }
+        for (let i = 0; i < selectorsExtList.length; i++) {
+          const selectorsExtFile = selectorsExtList[i];
+          let selectorsExt = yaml.safeLoad(fs.readFileSync('./server/' + selectorsExtFile, 'utf8'));
+          env.selectors = env.selectors || {};
+          env.selectors = Object.assign(env.selectors, selectorsExt);
+        }
+      }
+    }
+
     if (name && env) {
       this.envs[name] = new Env(name, env);
     }

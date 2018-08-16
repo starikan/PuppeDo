@@ -1,7 +1,6 @@
 const _ = require('lodash');
 
 const abstractTest = require('../abstractTest');
-const atoms = require('../atoms');
 
 const getTest = function(testJson, envsId){
 
@@ -54,9 +53,6 @@ const getTest = function(testJson, envsId){
           const { log } = require('../env.js')(envsId);
           testJson[funcKey].push( async () => { await log(test) });
         }
-        // if (test.type === 'atom' && test.name !== 'log'){
-        //   testJson[funcKey].push( async () => { await atoms[test.name](test, envsId) });
-        // }
       }
     }
   }

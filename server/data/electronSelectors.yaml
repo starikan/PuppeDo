@@ -1,0 +1,10 @@
+---
+auth:
+  showLoginInput: .to-input-login-link
+  inputLogin: "input#cashterm_login_field"
+  inputPassword: "input#cashterm_password_field"
+  inputSubmit: '#cashterminal-load-interface'
+session:
+  openButton: 'button[ng-click="$ctrl.openSession(true)"]'
+mainView:
+  menuButton: 'a.btn-main-menu'

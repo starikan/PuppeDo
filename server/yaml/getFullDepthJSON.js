@@ -2,8 +2,6 @@ const _ = require('lodash');
 
 const { yaml2json } = require('./yaml2json');
 
-const atoms = Object.keys(require('../atoms'));
-
 const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders }){
 
   if (filePath && !_.isString(filePath)) {
@@ -61,10 +59,6 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testFolders 
         newRunner.breadcrumbs = breadcrumbs;
 
         newRunner.type = 'test';
-
-        if (atoms.includes(name)){
-          newRunner.type = 'atom';
-        }
 
         if (name == 'log'){
           newRunner.type = 'log';
