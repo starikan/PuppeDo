@@ -83,11 +83,21 @@ class Test {
     this.run = async (
       {
         data = {},
+        d = {}, // alias for data
+
         selectors = {},
+        s = {}, // alias for selectors
+        selector = {}, // alias for selectors
+
         options = {},
         bindData = {},
         bindSelectors = {},
         bindResults = {},
+        bD = {}, // alias for bindData
+        bS = {}, // alias for bindSelectors
+        bindSelector = {}, // alias for bindSelectors
+        bR = {}, // alias for bindResults
+        bindResult = {}, // alias for bindResults
         ...inputArgs
       // envName,
       // repeat,
@@ -135,10 +145,12 @@ class Test {
         dataLocal = Object.assign(dataLocal, env ? env.get('data') : {});
         dataLocal = Object.assign(dataLocal, this.data);
         dataLocal = Object.assign(dataLocal, data);
+        dataLocal = Object.assign(dataLocal, d);
 
         let bindDataLocal = {};
         bindDataLocal = Object.assign(bindDataLocal, this.bindData);
         bindDataLocal = Object.assign(bindDataLocal, bindData);
+        bindDataLocal = Object.assign(bindDataLocal, bD);
 
         for (const key in bindDataLocal){
           if (!_.get(dataLocal, key)){
@@ -163,6 +175,8 @@ class Test {
           selectorsLocal = Object.assign(selectorsLocal, env ? env.get('selectors') : {});
           selectorsLocal = Object.assign(selectorsLocal, this.selectors);
           selectorsLocal = Object.assign(selectorsLocal, selectors);
+          selectorsLocal = Object.assign(selectorsLocal, selector);
+          selectorsLocal = Object.assign(selectorsLocal, s);
 
           // XPath
           // if (selectorsLocal != {}){
@@ -173,6 +187,8 @@ class Test {
           let bindSelectorsLocal = {};
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
+          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelector);
+          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bS);
 
           for (const key in bindSelectorsLocal){
             if (!_.get(selectorsLocal, key)){
@@ -260,6 +276,8 @@ class Test {
         let bindResultsLocal = {};
         bindResultsLocal = Object.assign(bindResultsLocal, this.bindResults);
         bindResultsLocal = Object.assign(bindResultsLocal, bindResults);
+        bindResultsLocal = Object.assign(bindResultsLocal, bindResult);
+        bindResultsLocal = Object.assign(bindResultsLocal, bR);
 
         let result = {};
 
