@@ -18,6 +18,13 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder 
 
   let full = {};
   full = filePath ? (await yaml2json(filePath, testsFolder)).json : full;
+
+  if (!full){
+    throw({
+      message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}`
+    })
+  }
+
   full = testBody ? Object.assign(full, testBody) : full;
 
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
