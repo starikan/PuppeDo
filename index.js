@@ -27,8 +27,3 @@ const main = async (args = {}) => {
 }
 
 exports.main = main;
-
-// try {
-//   main();
-// }
-// catch (error) {}
