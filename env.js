@@ -331,7 +331,7 @@ class Envs {
     let testFile = _.get(args, 'test') || _.get(args_ext, '--test');
     let outputFolder =_.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
     let envFiles = _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
-    let testsFolder = _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder');
+    let testsFolder = _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
     let testName = testFile.split('/')[testFile.split('/').length - 1];
 
     if (!testFile) {
@@ -343,12 +343,6 @@ class Envs {
     if (!envFiles) {
       throw({
         message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив`
-      })
-    }
-
-    if (!testsFolder) {
-      throw({
-        message: `Не указана папка с тестами. Параметр 'testsFolder'`
       })
     }
 
