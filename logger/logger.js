@@ -2,7 +2,8 @@ const path = require('path');
 const fs = require('fs');
 
 const _ = require('lodash');
-const moment = require('moment')
+const moment = require('moment');
+const chalk = require('chalk');
 // const xpath2css = require('xpath2css');
 
 class Logger {
@@ -123,13 +124,29 @@ class Logger {
       level = this.getLevel(level);
       if (!level) return;
 
+      const style = {
+        'info': chalk.blue,
+        'test': chalk.green,
+        'warn': chalk.yellow,
+        'error': chalk.red,
+        'env': chalk.magenta
+      }
+
       // LOG STRINGS
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
-      const logStringNoTime = `${level} - ${pageNum} - ${text}`;
+      const logStringNoTime = `${level} - ${text}`;
       const logString = `${now} - ${logStringNoTime}`;
 
       // STDOUT
-      if (stdOut) console.log(logString);
+      if (stdOut) {
+        const styleFunction = _.get(style, level);
+        if (styleFunction && _.isFunction(styleFunction)){
+          console.log(styleFunction(logString));
+        }
+        else {
+          console.log(logString);
+        }
+      }
       if (level == 'env') {
         console.log(this.envs);
         debugger;
