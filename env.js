@@ -328,10 +328,12 @@ class Envs {
   }
 
   async init(args = {}){
-    let testFile = _.get(args, 'test') || _.get(args_ext, '--test');
-    let outputFolder =_.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
-    let envFiles = _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
-    let testsFolder = _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
+
+    let testFile = process.env.PPD_TEST || _.get(args, 'test') || _.get(args_ext, '--test');
+    let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
+    let envFiles = JSON.parse(process.env.PPD_ENVS) || _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
+    let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
+
     let testName = testFile.split('/')[testFile.split('/').length - 1];
 
     if (!testFile) {

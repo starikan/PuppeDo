@@ -140,6 +140,7 @@ class Test {
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
 
         let dataLocal = {};
+        dataLocal = Object.assign(dataLocal, JSON.parse(process.env.PPD_DATA) || {});
         dataLocal = Object.assign(dataLocal, envs.get('results'));
         dataLocal = Object.assign(dataLocal, envs.get('data'));
         dataLocal = Object.assign(dataLocal, env ? env.get('data') : {});
@@ -170,6 +171,7 @@ class Test {
         let selectorsLocal = {};
 
         if (page){
+          selectorsLocal = Object.assign(selectorsLocal, JSON.parse(process.env.PPD_SELECTORS) || {});
           selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
           selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
           selectorsLocal = Object.assign(selectorsLocal, env ? env.get('selectors') : {});
