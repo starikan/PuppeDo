@@ -22,4 +22,10 @@ const main = async (args = {}) => {
   await envs.closeBrowsers()
 }
 
-exports.main = main;
+if (!module.parent) {
+  // ran with `node something.js`
+  main();
+
+} else {
+  exports.main = main;
+}

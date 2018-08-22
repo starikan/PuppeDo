@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const yaml = require('js-yaml');
 const _ = require('lodash');
@@ -7,6 +8,7 @@ const moment = require('moment')
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
+const sleep = require('sleep');
 
 const logger = require('./logger/logger');
 
@@ -109,6 +111,42 @@ async function connectElectron(browserSettings) {
   throw ({
     message: `Can't connect to Electron ${urlDevtoolsJson}`
   })
+
+};
+
+async function runElectron(browserSettings) {
+
+  const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
+  const program = _.get(browserSettings, 'runtimeEnv.program');
+  const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
+  const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
+  const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
+  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5);
+
+  if (runtimeExecutable){
+    const run_args = [program, ...browser_args];
+    process.env = Object.assign(process.env, browser_env)
+
+    let prc = spawn(runtimeExecutable, run_args, {
+      cwd,
+      // detached: true
+    });
+
+    prc.stdout.on('data', (data) => {
+      // console.log(String(data));
+    })
+
+    await sleep.sleep(pauseAfterStartApp);
+
+    let { browser, pages } = await connectElectron(browserSettings);
+    return { browser: browser, pages: pages };
+  }
+  else {
+    throw ({
+      message: `Can't run Electron ${runtimeExecutable}`
+    })
+  }
+
 
 };
 class Env {
@@ -304,6 +342,10 @@ class Envs {
       if (type === 'electron'){
         if (runtime === 'connect'){
           const {browser, pages} = await connectElectron(browserSettings);
+          env.state = Object.assign(env.state, {browser, pages});
+        }
+        if (runtime === 'run'){
+          const {browser, pages} = await runElectron(browserSettings);
           env.state = Object.assign(env.state, {browser, pages});
         }
       }
