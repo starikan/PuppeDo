@@ -276,7 +276,7 @@ class Envs {
           const dataExtFile = dataExtList[i];
           let dataExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, dataExtFile), 'utf8'));
           env.data = env.data || {};
-          env.data = Object.assign(env.data, dataExt);
+          env.data = Object.assign(dataExt, env.data);
         }
       }
 
@@ -294,7 +294,7 @@ class Envs {
           const selectorsExtFile = selectorsExtList[i];
           let selectorsExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, selectorsExtFile), 'utf8'));
           env.selectors = env.selectors || {};
-          env.selectors = Object.assign(env.selectors, selectorsExt);
+          env.selectors = Object.assign(selectorsExt, env.selectors);
         }
       }
     }

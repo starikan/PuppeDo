@@ -90,14 +90,20 @@ class Test {
         selector = {}, // alias for selectors
 
         options = {},
+
         bindData = {},
-        bindSelectors = {},
-        bindResults = {},
         bD = {}, // alias for bindData
-        bS = {}, // alias for bindSelectors
+        bd = {}, // alias for bindData
+
+        bindSelectors = {},
         bindSelector = {}, // alias for bindSelectors
-        bR = {}, // alias for bindResults
+        bS = {}, // alias for bindSelectors
+        bs = {}, // alias for bindSelectors
+
+        bindResults = {},
         bindResult = {}, // alias for bindResults
+        bR = {}, // alias for bindResults
+        br = {}, // alias for bindResults
         ...inputArgs
       // envName,
       // repeat,
@@ -152,6 +158,7 @@ class Test {
         bindDataLocal = Object.assign(bindDataLocal, this.bindData);
         bindDataLocal = Object.assign(bindDataLocal, bindData);
         bindDataLocal = Object.assign(bindDataLocal, bD);
+        bindDataLocal = Object.assign(bindDataLocal, bd);
 
         for (const key in bindDataLocal){
           if (!_.get(dataLocal, key)){
@@ -191,6 +198,7 @@ class Test {
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelector);
           bindSelectorsLocal = Object.assign(bindSelectorsLocal, bS);
+          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bs);
 
           for (const key in bindSelectorsLocal){
             if (!_.get(selectorsLocal, key)){
@@ -280,6 +288,7 @@ class Test {
         bindResultsLocal = Object.assign(bindResultsLocal, bindResults);
         bindResultsLocal = Object.assign(bindResultsLocal, bindResult);
         bindResultsLocal = Object.assign(bindResultsLocal, bR);
+        bindResultsLocal = Object.assign(bindResultsLocal, br);
 
         let result = {};
 
