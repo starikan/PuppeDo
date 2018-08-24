@@ -29,25 +29,27 @@ class Helpers {
   }
 
   anyGet (object, paths) {
-    if (!object || _.isObject(object) || !paths || !_.isString(paths) || !_.isArray(paths)){
+    if (!object || !_.isObject(object) || !paths || (!_.isString(paths) && !_.isArray(paths))){
+      debugger
       throw({
         message: `anyGet error`
       })
     }
 
+    let result;
     if (_.isString(paths)){
-      return _.get(object, paths);
+      result = _.get(object, paths);
     }
 
     if (_.isArray(paths)){
       paths.forEach(s => {
         if (_.get(object, s)){
-          return _.get(object, s);
+          result = _.get(object, s);
         }
       })
     }
 
-    return false;
+    return result;
   }
 
 }
