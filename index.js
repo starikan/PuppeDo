@@ -25,7 +25,6 @@ const main = async (args = {}) => {
 if (!module.parent) {
   // ran with `node something.js`
   main();
-
 } else {
   exports.main = main;
 }

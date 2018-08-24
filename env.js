@@ -255,9 +255,14 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async createEnv ({env = {}, file = null, name = null} = {}){
+  async createEnv ({envExt = {}, file = null, name = null} = {}){
+    let env;
+
     if (file && file.endsWith('.yaml')) {
       env = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
+      Object.keys(envExt).forEach(key => {
+        _.set(env, key, envExt[key]);
+      })
       name = env.name;
     }
 
@@ -376,6 +381,25 @@ class Envs {
     let envFiles = JSON.parse(process.env.PPD_ENVS) || _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
 
+    /*
+    envsExt: {
+      envElectron: {
+        'browser.runtimeEnv.runtimeExecutable': '%electronPath%',
+        'browser.runtimeEnv.program': '%scriptPath%',
+      }
+    }
+    */
+    let envsExt = {}
+    if (process.env.PPD_ENVS_EXT) {
+      envsExt = JSON.parse(process.env.PPD_ENVS_EXT);
+    }
+    else if (_.get(args, 'envsExt')) {
+      envsExt = _.get(args, 'envsExt');
+    }
+    else if (_.get(args_ext, '--envsExt')) {
+      envsExt = JSON.parse(_.get(args_ext, '--envsExt'));
+    }
+
     let testName = testFile.split('/')[testFile.split('/').length - 1];
 
     if (!testFile) {
@@ -395,7 +419,9 @@ class Envs {
     await this.initTest({test: testName, output: outputFolder})
 
     for (let i = 0; i < envFiles.length; i++) {
-      await this.createEnv({file: envFiles[i]});
+      let envName = path.basename(envFiles[i], '.yaml');
+      let envExt = _.get(envsExt, envName, {});
+      await this.createEnv({envExt: envExt, file: envFiles[i]});
     }
 
     await this.runBrowsers();
