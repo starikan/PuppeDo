@@ -218,8 +218,12 @@ class Test {
         }
 
         // CHECK NEED DATA
+        // [['data', 'd'], 'another']
         _.forEach(needData, d => {
-          if (!_.get(dataLocal, d)){
+          const keysData = new Set(Object.keys(dataLocal));
+          const keysDataIncome = new Set(_.isString(d) ? [d] : d);
+          const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
+          if (!intersectionData.size){
             throw({
               message: `Error: can't find data parametr "${d}" in ${this.name} test`
             })
@@ -253,8 +257,12 @@ class Test {
           }
 
           // CHECK NEED SELECTORS
+          // [['selector', 'sel'], 'another']
           _.forEach(needSelectors, d => {
-            if (!_.get(selectorsLocal, d)){
+            const keysSelectors = new Set(Object.keys(selectorsLocal));
+            const keysSelectorsIncome = new Set(_.isString(d) ? [d] : d);
+            const intersectionSelectors = new Set([...keysSelectors].filter(x => keysSelectorsIncome.has(x)));
+            if (!intersectionSelectors.size){
               throw({
                 message: `Error: can't find selector "${d}" in ${this.name} test`
               })
