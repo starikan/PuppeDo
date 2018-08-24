@@ -25,9 +25,7 @@ class Helpers {
       return element;
     }
     else {
-      throw({
-        message: `Can't find selector ${selector} on page`
-      })
+      return false;
     }
   }
 }
