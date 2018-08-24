@@ -4,14 +4,13 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
 const chalk = require('chalk');
-// const xpath2css = require('xpath2css');
 
 class Logger {
   constructor(envs){
     this.envs = envs;
   }
 
-  async saveScreenshot({ selCSS = false, fullpage = false } = {}) {
+  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
 
     try {
       // Active ENV log settings
@@ -32,9 +31,10 @@ class Logger {
       //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
       if (_.isObject(page)) {
         if (selCSS) {
-          // selCSS = xpath2css(selCSS);
-          // console.log(selCSS)
-          const element = await page.$(selCSS);
+          const el = await page.$(selCSS);
+          await el.screenshot({ path: pathScreenshot });
+        }
+        if (element && _.isObject(element) && !_.isEmpty(element)){
           await element.screenshot({ path: pathScreenshot });
         }
         if (fullpage) {
@@ -104,6 +104,7 @@ class Logger {
     fullpage = null,
     level = 'info',
     debug = false,
+    element = false,
   } = {}) {
     try {
 
@@ -163,20 +164,24 @@ class Logger {
           selCSS = [selCSS]
         }
 
+        let src;
+
         if (_.isArray(selCSS)){
           for (let css in selCSS) {
-            const src = await this.saveScreenshot({ selCSS: selCSS[css] });
-            if (src) {
-              screenshots.push(src);
-            }
+            src = await this.saveScreenshot({ selCSS: selCSS[css] });
           }
         }
 
+        if (element){
+          src = await this.saveScreenshot({ element: element });
+        }
+
         if (fullpage) {
-          const src = await this.saveScreenshot({ fullpage: fullpage });
-          if (src) {
-            screenshots.push(src);
-          }
+          src = await this.saveScreenshot({ fullpage: fullpage });
+        }
+
+        if (src) {
+          screenshots.push(src);
         }
       }
 

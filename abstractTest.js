@@ -3,6 +3,35 @@ const safeEval = require('safe-eval')
 const deepMap = require('deep-map-object');
 const xpath2css = require('xpath2css');
 
+class Helpers {
+  constructor(){}
+
+  async getElement(page, selector){
+    if (page && selector && _.isString(selector) && _.isObject(page)){
+      let element;
+      if (selector.startsWith('xpath:')){
+        selector = _.trimStart(selector, 'xpath:');
+        element = await page.$x(selector);
+        if (element.length > 1) {
+          throw({
+            message: `Finded more then 1 xpath elements ${selector}`
+          })
+        }
+        element = element[0];      }
+      else {
+        selector = _.trimStart(selector, 'css:');
+        element = await page.$(selector);
+      }
+      return element;
+    }
+    else {
+      throw({
+        message: `Can't find selector ${selector} on page`
+      })
+    }
+  }
+}
+
 class Test {
   constructor(
     {
@@ -234,6 +263,7 @@ class Test {
           envsId,
           envs,
           log,
+          helper: new Helpers(),
         };
 
         // IF

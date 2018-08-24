@@ -21,8 +21,7 @@
     "sleep": "^5.2.3",
     "socketio": "^1.0.0",
     "uuid": "^3.3.2",
-    "walk-sync": "^0.3.2",
-    "xpath2css": "^0.6.2"
+    "walk-sync": "^0.3.2"
   },
   "devDependencies": {
     "prettier": "^1.13.7"
