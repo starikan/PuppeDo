@@ -27,6 +27,29 @@ class Helpers {
       return false;
     }
   }
+
+  anyGet (object, paths) {
+    if (!object || _.isObject(object) || !paths || !_.isString(paths) || !_.isArray(paths)){
+      throw({
+        message: `anyGet error`
+      })
+    }
+
+    if (_.isString(paths)){
+      return _.get(object, paths);
+    }
+
+    if (_.isArray(paths)){
+      paths.forEach(s => {
+        if (_.get(object, s)){
+          return _.get(object, s);
+        }
+      })
+    }
+
+    return false;
+  }
+
 }
 
 class Test {
