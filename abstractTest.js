@@ -1,6 +1,8 @@
+const fs = require('fs')
+
 const _ = require('lodash');
 const safeEval = require('safe-eval')
-const deepMap = require('deep-map-object');
+const yaml = require('js-yaml');
 
 class Helpers {
   constructor(){}
@@ -197,6 +199,12 @@ class Test {
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
 
         let dataLocal = {};
+
+        let ppd_data_ext_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : [];
+        ppd_data_ext_files.forEach(f => {
+          const ppd_data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+          dataLocal = Object.assign(dataLocal, ppd_data_ext);
+        })
         dataLocal = Object.assign(dataLocal, process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : {});
         dataLocal = Object.assign(dataLocal, envs.get('results'));
         dataLocal = Object.assign(dataLocal, envs.get('data'));
@@ -233,6 +241,11 @@ class Test {
         let selectorsLocal = {};
 
         if (page){
+          let ppd_selectors_ext_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : [];
+          ppd_selectors_ext_files.forEach(f => {
+            const ppd_selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+            selectorsLocal = Object.assign(selectorsLocal, ppd_selectors_ext);
+          })
           selectorsLocal = Object.assign(selectorsLocal, process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : {});
           selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
           selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
