@@ -314,7 +314,7 @@ class Test {
         }
 
         // ERROR
-        let errorExpr = _.get(inputArgs, 'errorIfStart');
+        let errorExpr = _.get(inputArgs, 'errorIf');
         if (errorExpr){
             let exprResult = false;
 
