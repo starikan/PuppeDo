@@ -226,9 +226,10 @@ class Test {
         }
 
         // CHECK NEED DATA
-        // [['data', 'd'], 'another']
+        // [['data', 'd'], 'another', 'optional?']
         _.forEach(needData, d => {
           const keysData = new Set(Object.keys(dataLocal));
+          if (_.isString(d) && d.endsWith('?')) return; // optional parametr
           const keysDataIncome = new Set(_.isString(d) ? [d] : d);
           const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
           if (!intersectionData.size){
@@ -270,9 +271,10 @@ class Test {
           }
 
           // CHECK NEED SELECTORS
-          // [['selector', 'sel'], 'another']
+          // [['selector', 'sel'], 'another', 'optional?']
           _.forEach(needSelectors, d => {
             const keysSelectors = new Set(Object.keys(selectorsLocal));
+            if (_.isString(d) && d.endsWith('?')) return; // optional parametr
             const keysSelectorsIncome = new Set(_.isString(d) ? [d] : d);
             const intersectionSelectors = new Set([...keysSelectors].filter(x => keysSelectorsIncome.has(x)));
             if (!intersectionSelectors.size){
