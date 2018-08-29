@@ -81,27 +81,43 @@ class Test {
       //TODO: 2018-07-02 S.Starodubov repeat
       // [{}] - много данных для посторения repeat
       data = {},
+      d = {}, // alias for data
       // Биндинги даты
       //  Смотрим на локальные данные this.data
       //  Смотрим на данные в env[envName].data
       //  Смотрим на данные в глобальной env.data
       //  Смотрим на данные в глобальной env.results
       bindData = {},
+      bD = {}, // alias for bindData
+      bd = {}, // alias for bindData
+
+      options = {},
 
       // Прямой проброс селекторов
       selectors = {},
+      selector = {}, // alias for selectors
+      s = {}, // alias for selectors
       // Биндинги селекторов
       // 1. Смотрим на локальные данные this.selectors
       // 2. Смотрим на данные в глобальной env.selectors
       // 3. Смотрим на данные в env[envName].selectors
       bindSelectors = {},
+      bindSelector = {}, // alias for bindSelectors
+      bS = {}, // alias for bindSelectors
+      bs = {}, // alias for bindSelectors
 
-      bindResult = {},
+      bindResults = {},
+      bindResult = {}, // alias for bindResults
+      bR = {}, // alias for bindResults
+      br = {}, // alias for bindResults
 
-      options = {},
-
-      // Имя env
-      // envNames = [], // Для тестов в которых переключается env
+      dataFunction = {},
+      dF = {}, // alias for dataFunction
+      df = {}, // alias for dataFunction
+      selectorsFunction = {},
+      selectorFunction = {}, // alias for selectorsFunction
+      sF = {}, // alias for selectorsFunction
+      sf = {}, // alias for selectorsFunction
 
       // Колличество повторений
       repeat = 1,
@@ -120,12 +136,36 @@ class Test {
     this.needSelectors = needSelectors;
 
     this.data = data;
+    this.d = d;
+
     this.bindData = bindData;
+    this.bD = bD;
+    this.bd = bd;
+
+    this.options = options;
 
     this.selectors = selectors;
+    this.selector = selector;
+    this.s = s;
+
     this.bindSelectors = bindSelectors;
+    this.bindSelector = bindSelector;
+    this.bS = bS;
+    this.bs = bs;
+
     this.allowResults = allowResults;
+    this.bindResults = bindResults;
     this.bindResult = bindResult;
+    this.bR = bR;
+    this.br = br;
+
+    this.dataFunction = dataFunction;
+    this.dF = dF;
+    this.df = df;
+    this.selectorsFunction = selectorsFunction;
+    this.selectorFunction = selectorFunction;
+    this.sF = sF;
+    this.sf = sf;
 
     this.beforeTest = beforeTest;
     this.runTest = runTest;
@@ -139,8 +179,8 @@ class Test {
         d = {}, // alias for data
 
         selectors = {},
-        s = {}, // alias for selectors
         selector = {}, // alias for selectors
+        s = {}, // alias for selectors
 
         options = {},
 
@@ -157,12 +197,22 @@ class Test {
         bindResult = {}, // alias for bindResults
         bR = {}, // alias for bindResults
         br = {}, // alias for bindResults
+
+        dataFunction = {},
+        dF = {}, // alias for dataFunction
+        df = {}, // alias for dataFunction
+
+        selectorsFunction = {},
+        selectorFunction = {}, // alias for selectorsFunction
+        sF = {}, // alias for selectorsFunction
+        sf = {}, // alias for selectorsFunction
+
         ...inputArgs
       // envName,
       // repeat,
       } = {},
 
-      envsId
+      envsId,
     ) => {
 
       if (!envsId){
@@ -224,6 +274,11 @@ class Test {
             dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
           }
         }
+
+        // Write data to local env. For child tests.
+        // if (env) {
+        //   env.set('data', dataLocal);
+        // }
 
         // CHECK NEED DATA
         // [['data', 'd'], 'another', 'optional?']

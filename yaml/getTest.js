@@ -32,7 +32,7 @@ const getTest = function(testJson, envsId){
                 const abstractTest = require('../abstractTest');
                 const abstractTestDone = new abstractTest( test );
                 newTest = async () => {
-                  await abstractTestDone.run(test, envsId) 
+                  await abstractTestDone.run(test, envsId)
                 };
               }
               else {
