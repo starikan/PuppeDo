@@ -3,6 +3,7 @@ const fs = require('fs')
 const _ = require('lodash');
 const safeEval = require('safe-eval')
 const yaml = require('js-yaml');
+const deepmerge = require('deepmerge');
 
 class Helpers {
   constructor(){}
@@ -248,37 +249,57 @@ class Test {
         const page =  env ? env.getState(`pages.${envPageName}`) : null;
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
 
-        let dataLocal = {};
 
+
+        // DATA
+
+        // 1. Берем данные из предыдущих тестов
+        let dataLocal = env ? env.get('data') : {};
+
+        // 2. Данные подгруженные из yaml файлов в переменной среды
         let ppd_data_ext_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : [];
         ppd_data_ext_files.forEach(f => {
           const ppd_data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-          dataLocal = Object.assign(dataLocal, ppd_data_ext);
+          dataLocal = deepmerge(dataLocal, ppd_data_ext);
         })
-        dataLocal = Object.assign(dataLocal, process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : {});
-        dataLocal = Object.assign(dataLocal, envs.get('results'));
-        dataLocal = Object.assign(dataLocal, envs.get('data'));
-        dataLocal = Object.assign(dataLocal, env ? env.get('data') : {});
-        dataLocal = Object.assign(dataLocal, this.data);
-        dataLocal = Object.assign(dataLocal, data);
-        dataLocal = Object.assign(dataLocal, d);
 
+        // 3. Данные из переменной среды + из глобального env + результаты
+        dataLocal = deepmerge.all([
+          dataLocal,
+          process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : {},
+          envs.get('data'),
+          envs.get('results')
+        ])
+
+        // 4. Биндим данные
         let bindDataLocal = {};
-        bindDataLocal = Object.assign(bindDataLocal, this.bindData);
-        bindDataLocal = Object.assign(bindDataLocal, bindData);
-        bindDataLocal = Object.assign(bindDataLocal, bD);
-        bindDataLocal = Object.assign(bindDataLocal, bd);
+        bindDataLocal = deepmerge.all([
+          bindDataLocal,
+          this.bindData,
+          this.bD,
+          this.bd,
+          bindData,
+          bD,
+          bd
+        ])
 
         for (const key in bindDataLocal){
-          if (!_.get(dataLocal, key)){
-            dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-          }
+          dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
         }
 
+        // 5. Данные самого теста
+        dataLocal = deepmerge.all([
+          dataLocal,
+          this.data,
+          this.d,
+          data,
+          d
+        ])
+
         // Write data to local env. For child tests.
-        // if (env) {
-        //   env.set('data', dataLocal);
-        // }
+        if (env) {
+          env.set('data', dataLocal);
+        }
 
         // CHECK NEED DATA
         // [['data', 'd'], 'another', 'optional?']
@@ -294,35 +315,60 @@ class Test {
           }
         })
 
+        // SELECTORS
         let selectorsLocal = {};
 
         if (page){
+          // 1. Берем данные из предыдущих тестов
+          selectorsLocal = env ? env.get('selectors') : {};
+
+          // 2. Данные подгруженные из yaml файлов в переменной среды
           let ppd_selectors_ext_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : [];
           ppd_selectors_ext_files.forEach(f => {
             const ppd_selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-            selectorsLocal = Object.assign(selectorsLocal, ppd_selectors_ext);
+            selectorsLocal = deepmerge(selectorsLocal, ppd_selectors_ext);
           })
-          selectorsLocal = Object.assign(selectorsLocal, process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : {});
-          selectorsLocal = Object.assign(selectorsLocal, envs.get('results'));
-          selectorsLocal = Object.assign(selectorsLocal, envs.get('selectors'));
-          selectorsLocal = Object.assign(selectorsLocal, env ? env.get('selectors') : {});
-          selectorsLocal = Object.assign(selectorsLocal, this.selectors);
-          selectorsLocal = Object.assign(selectorsLocal, selectors);
-          selectorsLocal = Object.assign(selectorsLocal, selector);
-          selectorsLocal = Object.assign(selectorsLocal, s);
 
-          // BINDING SELECTORS
+          // 3. Данные из переменной среды + из глобального env + результаты
+          selectorsLocal = deepmerge.all([
+            selectorsLocal,
+            process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : {},
+            envs.get('selectors'),
+            envs.get('results')
+          ])
+
+          // 4. Биндим данные
           let bindSelectorsLocal = {};
-          bindSelectorsLocal = Object.assign(bindSelectorsLocal, this.bindSelectors);
-          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelectors);
-          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bindSelector);
-          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bS);
-          bindSelectorsLocal = Object.assign(bindSelectorsLocal, bs);
+          bindSelectorsLocal = deepmerge.all([
+            bindSelectorsLocal,
+            this.bindSelectors,
+            this.bindSelector,
+            this.bS,
+            this.bs,
+            bindSelectors,
+            bindSelector,
+            bS,
+            bs
+          ])
 
           for (const key in bindSelectorsLocal){
-            if (!_.get(selectorsLocal, key)){
-              selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
-            }
+            selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+          }
+
+          // 5. Данные самого теста
+          selectorsLocal = deepmerge.all([
+            selectorsLocal,
+            this.selectors,
+            this.selector,
+            this.s,
+            selectors,
+            selector,
+            s,
+          ])
+
+          // Write data to local env. For child tests.
+          if (env) {
+            env.set('selectors', selectorsLocal);
           }
 
           // CHECK NEED SELECTORS
