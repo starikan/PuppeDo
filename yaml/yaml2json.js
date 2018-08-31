@@ -5,8 +5,7 @@ const _ = require('lodash');
 const yaml = require('js-yaml');
 const walkSync = require('walk-sync');
 
-// const yaml2json = async function(filePath, testFolder = []){
-const yaml2json = async function(filePath, testsFolder = ''){
+const yaml2json = function(filePath, testsFolder = ''){
 
   if (!_.isString(filePath)){
     throw({

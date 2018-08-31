@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const { yaml2json } = require('./yaml2json');
 
-const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder }){
+const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }){
 
   if (filePath && !_.isString(filePath)) {
     throw({ message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` });
@@ -17,7 +17,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder 
   }
 
   let full = {};
-  full = filePath ? (await yaml2json(filePath, testsFolder)).json : full;
+  full = filePath ? (yaml2json(filePath, testsFolder)).json : full;
 
   if (!full){
     throw({
@@ -30,19 +30,6 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder 
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
 
   const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest']
-
-  // Структура
-
-  // runTest:
-  // - testName:
-  //     other: other
-
-  // runTest:
-  // - name: testName
-  //   other: other
-
-  // т.е. массив из объектов у которых только один ключ который является именем
-  // или полный тест с полем имени
 
   for (const runnerBlock of runnerBlockNames){
     let runnerBlockValue = _.get(full, [runnerBlock]);
@@ -68,7 +55,7 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder 
 
           newRunner.type = name == 'log' ? 'log' : 'test';
 
-          full[runnerBlock][runnerNum] = await getFullDepthJSON({
+          full[runnerBlock][runnerNum] = getFullDepthJSON({
             filePath: name,
             testBody: newRunner,
             testsFolder: testsFolder

@@ -13,7 +13,7 @@ const main = async (args = {}) => {
   const { envsId, envs, log } = require('./env')();
 
   await envs.init(args);
-  const full = await getFullDepthJSON({
+  const full = getFullDepthJSON({
     envs: envs,
     filePath: envs.get('args.testFile'),
   });
