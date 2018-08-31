@@ -26,8 +26,8 @@ const yaml2json = async function(filePath, testsFolder = ''){
     if (folder.includes('.git')){
       return;
     }
-    if (folder.endsWith('/')){
-      allTestFolders.push(folder.replace(/\\/g, '\\\\'))
+    if (folder.endsWith('/') || folder.endsWith('\\')){
+      allTestFolders.push(folder)
     }
   });
 
@@ -37,7 +37,7 @@ const yaml2json = async function(filePath, testsFolder = ''){
       exts.forEach(ext => {
         files.push(file + ext);
         allTestFolders.forEach(folder => {
-          files.push('.\\' + path.join(testsFolder, folder, file + ext));
+          files.push(path.join(process.cwd(), testsFolder, folder, file + ext));
         })
       })
     })
