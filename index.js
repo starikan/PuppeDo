@@ -13,17 +13,16 @@ const main = async (args = {}) => {
   const { envsId, envs, log } = require('./env')();
 
   await envs.init(args);
-  const full = getFullDepthJSON({
+  const fullJSON = getFullDepthJSON({
     envs: envs,
     filePath: envs.get('args.testFile'),
   });
-  let test = getTest(full, envsId);
+  let test = getTest(fullJSON, envsId);
   await test();
   await envs.closeBrowsers()
 }
 
 if (!module.parent) {
-  // ran with `node something.js`
   main();
 } else {
   exports.main = main;

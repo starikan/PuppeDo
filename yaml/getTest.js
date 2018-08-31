@@ -4,7 +4,9 @@ const _ = require('lodash');
 
 const abstractTest = require('../abstractTest');
 
-const getTest = function(testJson, envsId){
+const getTest = function(testJsonIncome, envsId){
+
+  let testJson = _.cloneDeep(testJsonIncome);
 
   if (!testJson || !_.isObject(testJson) || !envsId){
     throw({
