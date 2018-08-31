@@ -45,37 +45,35 @@ const getFullDepthJSON = async function({ envs, filePath, testBody, testsFolder 
   // или полный тест с полем имени
 
   for (const runnerBlock of runnerBlockNames){
-    for (let runnerNum in _.get(full, runnerBlock, [])){
-      let runner = _.get(full, [runnerBlock, runnerNum], {})
-      let keys = Object.keys(runner);
-      let name = null;
-      let newRunner = {};
+    let runnerBlockValue = _.get(full, [runnerBlock]);
+    if (_.isArray(runnerBlockValue)){
+      for (let runnerNum in runnerBlockValue){
+        let newRunner = {};
+        let name;
+        let runner = _.get(runnerBlockValue, [runnerNum], {})
 
-      if (keys && keys.length == 1) {
-        name = keys[0];
-        newRunner = _.clone(runner[name]) || newRunner;
-        newRunner.name = name;
-      }
-
-      name = _.get(newRunner, 'name', null);
-
-      if (name) {
-
-        let breadcrumbs = _.clone(full.breadcrumbs);
-        breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`)
-        newRunner.breadcrumbs = breadcrumbs;
-
-        newRunner.type = 'test';
-
-        if (name == 'log'){
-          newRunner.type = 'log';
+        let keys = Object.keys(runner);
+        if (keys && keys.length == 1) {
+          name = keys[0];
+          newRunner = _.clone(runner[name]) || newRunner;
+          newRunner.name = name;
         }
 
-        full[runnerBlock][runnerNum] = await getFullDepthJSON({
-          filePath: name,
-          testBody: newRunner,
-          testsFolder: testsFolder
-        })
+        name = _.get(newRunner, 'name', null);
+
+        if (name) {
+          let breadcrumbs = _.clone(full.breadcrumbs);
+          breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`)
+          newRunner.breadcrumbs = breadcrumbs;
+
+          newRunner.type = name == 'log' ? 'log' : 'test';
+
+          full[runnerBlock][runnerNum] = await getFullDepthJSON({
+            filePath: name,
+            testBody: newRunner,
+            testsFolder: testsFolder
+          })
+        }
       }
     }
   }

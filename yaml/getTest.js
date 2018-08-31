@@ -16,47 +16,34 @@ const getTest = function(testJson, envsId){
   const { envs, log } = require('../env')(envsId);
 
   for (let funcKey in functions) {
+
     testJson[funcKey] = [];
+    let funcVal = functions[funcKey];
 
-    if (_.isArray(functions[funcKey])){
-      for (let test of functions[funcKey]){
+    if (_.isArray(funcVal)){
+      for (let test of funcVal){
         if (test.type === 'test'){
-          const testFunc = _.get(test, funcKey);
-          let newTest;
-          if ( _.isString(testFunc) ){
-            try {
-              let funcFile = path.join(process.cwd(), envs.get('args.testsFolder'), testFunc);
-              funcFromFile = _.get(require(funcFile), funcKey);
-              if (_.isFunction(funcFromFile)){
-                test[funcKey] = funcFromFile;
-                const abstractTest = require('../abstractTest');
-                const abstractTestDone = new abstractTest( test );
-                newTest = async () => {
-                  await abstractTestDone.run(test, envsId)
-                };
-              }
-              else {
-                throw ({
-                  message: `Функция по ссылке не найдена ${funcKey} -> ${testFunc}`
-                })
-              }
-            }
-            catch (err) {
-              throw({
-                message: `Функция по ссылке не доступна ${funcKey} -> ${testFunc}`
-              })
-            }
-          }
-          else {
-            newTest = getTest(test, envsId);
-          }
-
-          testJson[funcKey].push( newTest );
+          testJson[funcKey].push( getTest(test, envsId) );
         }
         if (test.name === 'log'){
-          const { log } = require('../env.js')(envsId);
           testJson[funcKey].push( async () => { await log(test) });
         }
+      }
+    }
+
+    if ( _.isString(funcVal) ){
+      try {
+        let funcFile = path.join(process.cwd(), envs.get('args.testsFolder'), funcVal);
+        funcFromFile = _.get(require(funcFile), funcKey);
+        if (_.isFunction(funcFromFile)){
+          testJson[funcKey] = [ funcFromFile ];
+        }
+        else {
+          throw ({ message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}` })
+        }
+      }
+      catch (err) {
+        throw({ message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}` })
       }
     }
   }
