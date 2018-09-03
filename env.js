@@ -378,7 +378,7 @@ class Envs {
 
     let testFile = process.env.PPD_TEST || _.get(args, 'test') || _.get(args_ext, '--test');
     let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
-    let envFiles = JSON.parse(process.env.PPD_ENVS) || _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs'));
+    let envFiles = process.env.PPD_ENVS ? JSON.parse(process.env.PPD_ENVS) : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
 
     /*
@@ -400,9 +400,11 @@ class Envs {
       envsExt = JSON.parse(_.get(args_ext, '--envsExt'));
     }
 
-    let testName = testFile.split('/')[testFile.split('/').length - 1];
-
-    if (!testFile) {
+    let testName;
+    if (testFile){
+      testName = testFile.split('/')[testFile.split('/').length - 1];
+    }
+    else {
       throw({
         message: `Не указано имя головного теста. Параметр 'test'`
       })
