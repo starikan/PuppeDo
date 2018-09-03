@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+</head>
+<body>
+  <script>
+    var socket1 = io.connect('http://localhost:3000');
+    socket1.on('news', function (data) {
+      console.log(data);
+      socket1.emit('my other event', { my: 'data' });
+    });
+
+    let start_test = () => {
+      console.log("Start test");
+      socket1.emit('start_test', {test: 'testGlob'});
+    }
+    let get_json = () => {
+      console.log("get_json");
+      socket1.emit('get_json');
+    }
+    let stop_test = () => {
+      console.log("Stop test");
+      socket1.disconnect();
+    }
+
+    // var socket2 = io.connect('http://localhost:3000');
+    // socket2.on('news', function (data) {
+    //   console.log(data);
+    //   socket2.emit('my other event', { my: 'data' });
+    // });
+
+    // let start_test2 = () => {
+    //   console.log("Start test");
+    //   socket2.emit('start_test');
+    // }
+    // let stop_test2 = () => {
+    //   console.log("Stop test");
+    //   socket2.disconnect();
+    // }
+  </script>
+  <!-- <input type="text"/> -->
+  <button onclick="start_test()">Старт теста</button>
+  <button onclick="get_json()">Получить JSON</button>
+  <!-- <button onclick="start_test2()">Старт теста2</button> -->
+  <!-- <button onclick="stop_test()">Стоп теста</button>
+  <button onclick="stop_test2()">Стоп теста2</button> -->
+</body>
+</html>
+
+
