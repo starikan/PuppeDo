@@ -259,7 +259,7 @@ class Test {
         let dataLocal = env ? env.get('data') : {};
 
         // 2. Данные подгруженные из yaml файлов в переменной среды
-        let ppd_data_ext_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : [];
+        let ppd_data_ext_files = envs.get('args.extDataExt');
         ppd_data_ext_files.forEach(f => {
           const ppd_data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
           dataLocal = deepmerge(dataLocal, ppd_data_ext, { arrayMerge: overwriteMerge });
@@ -268,7 +268,7 @@ class Test {
         // 3. Данные из переменной среды + из глобального env + результаты
         dataLocal = deepmerge.all([
           dataLocal,
-          process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : {},
+          envs.get('args.extData'),
           envs.get('data'),
           envs.get('results')
         ], { arrayMerge: overwriteMerge })
@@ -348,7 +348,7 @@ class Test {
           selectorsLocal = env ? env.get('selectors') : {};
 
           // 2. Данные подгруженные из yaml файлов в переменной среды
-          let ppd_selectors_ext_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : [];
+          let ppd_selectors_ext_files = envs.get('args.extSelectorsExt');
           ppd_selectors_ext_files.forEach(f => {
             const ppd_selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
             selectorsLocal = deepmerge(selectorsLocal, ppd_selectors_ext, { arrayMerge: overwriteMerge });
@@ -357,7 +357,7 @@ class Test {
           // 3. Данные из переменной среды + из глобального env + результаты
           selectorsLocal = deepmerge.all([
             selectorsLocal,
-            process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : {},
+            envs.get('args.extSelectors'),
             envs.get('selectors'),
             envs.get('results')
           ], { arrayMerge: overwriteMerge })

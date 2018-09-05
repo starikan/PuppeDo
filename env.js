@@ -385,25 +385,12 @@ class Envs {
     let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
     let envFiles = process.env.PPD_ENVS ? JSON.parse(process.env.PPD_ENVS) : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
-
-    /*
-    envsExt: {
-      envElectron: {
-        'browser.runtimeEnv.runtimeExecutable': '%electronPath%',
-        'browser.runtimeEnv.program': '%scriptPath%',
-      }
-    }
-    */
-    let envsExt = {}
-    if (process.env.PPD_ENVS_EXT) {
-      envsExt = JSON.parse(process.env.PPD_ENVS_EXT);
-    }
-    else if (_.get(args, 'envsExt')) {
-      envsExt = _.get(args, 'envsExt');
-    }
-    else if (_.get(args_ext, '--envsExt')) {
-      envsExt = JSON.parse(_.get(args_ext, '--envsExt'));
-    }
+    let envsExt = process.env.PPD_ENVS_EXT ? JSON.parse(process.env.PPD_ENVS_EXT) : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
+    let extData = process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
+    let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
+    let extDataExt = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
+    let extSelectorsExt = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+    let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
 
     let testName;
     if (testFile){
@@ -421,7 +408,19 @@ class Envs {
       })
     }
 
-    this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
+    this.set('args', {
+      testFile,
+      outputFolder,
+      envFiles,
+      testsFolder,
+      envsExt,
+      extData,
+      extSelectors,
+      extDataExt,
+      extSelectorsExt,
+      debugMode,
+      testName
+    })
 
     await this.initTest({test: testName, output: outputFolder})
 

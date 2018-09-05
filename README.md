@@ -24,7 +24,6 @@ npm install
   ]
 ```
 
-
 envCloud.yaml
 ```
 ---
@@ -141,3 +140,110 @@ afterTest:
   fullpage: true
   level: info
 ```
+
+
+
+# Настройка окружения
+
+1. Установить NodeJS
+2. Установить Python 2.7
+3. запустить из консоли в папке ```npm i```
+4. в папке privateData создать файл auth.yaml с подобным содержанием:
+    ```
+    auth:
+        login: тут логин
+        password: тут пароль
+    ```
+Вся информация из этой папки не будет уходить в репозиторий.
+
+# Способы запуска
+
+## VSCode
+
+```
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Запустить программу",
+      "args": [
+        "-e",
+        "require(\"PuppeDo\").main()"
+      ],
+      "env": {
+        "PPD_TEST": "testGlob",
+        "PPD_ENVS": "[\"settings/envCloud.yaml\"]",
+        "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]"
+      }
+    }
+  ]
+```
+
+## PyCharm
+
+1. Настроить запуск с конфигурацией NodeJS
+2. В аргументы прописать как в конфигурации VSCode (возможно не нужны \\" прокатит и просто ")
+3. Переменные среды записать как в конфигурации VSCode
+
+## Запуск с аргументами из коммандной строки
+
+1. ```node -e require("PuppeDo").main()```
+2. args
+    - --test - Тест который нужно запускать
+    - --output - Папка для логов (default: "output")
+    - --envs - МАССИВ (это обязательно) со ссылками на файлы описание сред выполнения
+    - --testsFolder - Папка с тестами (default: ".")
+    - --envsExt - Расширение значений envs (для CI)
+        ```
+        Пример:
+
+        envsExt: {
+            envElectron: { // Имя файла среды без .yaml
+                // Полные пути к переменным которые надо заменить
+                'browser.runtimeEnv.runtimeExecutable': '%electronPath%',
+                'browser.runtimeEnv.program': '%scriptPath%',
+            }
+        }
+        ```
+    - --data - Данные которые пробрасываются в тесты
+    - --selectors - Селекторы которые пробрасываются в тесты
+    - --dataExt - Массив с YAML файлами с данными
+    - --selectorsExt - Массив с YAML файлами с селекторами
+    - --debugMode - true включает дебаг режим
+
+## Запуск из скрипта JS
+
+1. ``` node index.js ```
+2. Внутри файла
+    ```
+    const = require("PuppeDo").main;
+    main({ args })
+    ```
+3. args:
+    - test
+    - output
+    - envs
+    - testsFolder
+    - envsExt
+    - data
+    - selectors
+    - dataExt
+    - selectorsExt
+    - debugMode
+
+## Запуск с переменными среды
+
+1. ```node -e require("PuppeDo").main()```
+2. SET PPD_%=%data%
+
+3. env: // Все в двойный кавычках "", если внутри они нужны нужно их эскейпить \" т.к. все потом парсится как JSON
+    - PPD_TEST
+    - PPD_OUTPUT
+    - PPD_ENVS
+    - PPD_TEST_FOLDER
+    - PPD_ENVS_EXT
+    - PPD_DATA
+    - PPD_SELECTORS
+    - PPD_DATA_EXT
+    - PPD_SELECTORS_EXT
+    - PPD_DEBUG_MODE
