@@ -8,7 +8,6 @@ const moment = require('moment')
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
-const sleep = require('sleep');
 
 const logger = require('./logger/logger');
 
@@ -17,6 +16,12 @@ _.forEach(process.argv.slice(2), v => {
   let data = v.split("=");
   args_ext[data[0]] = data[1];
 });
+
+function sleep(ms){
+  return new Promise(resolve=>{
+      setTimeout(resolve, ms)
+  })
+}
 
 async function runPuppeteer (browserSettings){
   const browser = await puppeteer.launch({
@@ -136,7 +141,7 @@ async function runElectron(browserSettings) {
       // console.log(String(data));
     })
 
-    await sleep.sleep(pauseAfterStartApp);
+    await sleep(pauseAfterStartApp);
 
     let { browser, pages } = await connectElectron(browserSettings);
     return { browser: browser, pages: pages };
