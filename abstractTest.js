@@ -2,8 +2,9 @@ const fs = require('fs')
 
 const _ = require('lodash');
 const safeEval = require('safe-eval')
-const yaml = require('js-yaml');
 const deepmerge = require('deepmerge');
+
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 class Helpers {
   constructor(){}
@@ -253,21 +254,17 @@ class Test {
 
         // DATA
 
-        const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
-
         // 1. Берем данные из предыдущих тестов
         let dataLocal = env ? env.get('data') : {};
 
-        // 2. Данные подгруженные из yaml файлов в переменной среды
-        let ppd_data_ext_files = envs.get('args.extDataExt');
-        ppd_data_ext_files.forEach(f => {
-          const ppd_data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-          dataLocal = deepmerge(dataLocal, ppd_data_ext, { arrayMerge: overwriteMerge });
-        })
-
-        // 3. Данные из переменной среды + из глобального env + результаты
+        // 3. Данные
+        // подгруженные из yaml файлов в переменной среды +
+        // из переменной среды +
+        // из глобального env +
+        // результаты
         dataLocal = deepmerge.all([
           dataLocal,
+          envs.get('args.extDataExt'),
           envs.get('args.extData'),
           envs.get('data'),
           envs.get('results')
@@ -347,16 +344,14 @@ class Test {
           // 1. Берем данные из предыдущих тестов
           selectorsLocal = env ? env.get('selectors') : {};
 
-          // 2. Данные подгруженные из yaml файлов в переменной среды
-          let ppd_selectors_ext_files = envs.get('args.extSelectorsExt');
-          ppd_selectors_ext_files.forEach(f => {
-            const ppd_selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-            selectorsLocal = deepmerge(selectorsLocal, ppd_selectors_ext, { arrayMerge: overwriteMerge });
-          })
-
-          // 3. Данные из переменной среды + из глобального env + результаты
+          // 3. Данные
+          // подгруженные из yaml файлов в переменной среды +
+          // из переменной среды +
+          // из глобального env +
+          // результаты
           selectorsLocal = deepmerge.all([
             selectorsLocal,
+            envs.get('args.extSelectorsExt'),
             envs.get('args.extSelectors'),
             envs.get('selectors'),
             envs.get('results')

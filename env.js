@@ -8,8 +8,11 @@ const moment = require('moment')
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
+const deepmerge = require('deepmerge');
 
 const logger = require('./logger/logger');
+
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
@@ -388,24 +391,32 @@ class Envs {
     let envsExt = process.env.PPD_ENVS_EXT ? JSON.parse(process.env.PPD_ENVS_EXT) : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
     let extData = process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
     let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
-    let extDataExt = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
-    let extSelectorsExt = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
     let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
+
+    let extDataExt_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
+    let extDataExt = {};
+    extDataExt_files.forEach(f => {
+      const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+      extDataExt = deepmerge(extDataExt, data_ext, { arrayMerge: overwriteMerge });
+    })
+
+    let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+    let extSelectorsExt = {};
+    extSelectorsExt_files.forEach(f => {
+      const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+      extSelectorsExt = deepmerge(extSelectorsExt, selectors_ext, { arrayMerge: overwriteMerge });
+    })
 
     let testName;
     if (testFile){
       testName = testFile.split('/')[testFile.split('/').length - 1];
     }
     else {
-      throw({
-        message: `Не указано имя головного теста. Параметр 'test'`
-      })
+      throw({ message: `Не указано имя головного теста. Параметр 'test'` })
     }
 
     if (!envFiles) {
-      throw({
-        message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив`
-      })
+      throw({ message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` })
     }
 
     this.set('args', {
