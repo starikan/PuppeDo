@@ -8,8 +8,11 @@ const moment = require('moment')
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
+const deepmerge = require('deepmerge');
 
 const logger = require('./logger/logger');
+
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
@@ -176,7 +179,7 @@ class Env {
   }
 
   set (name, data) {
-    return _.set(this.env, name, data);
+    return _.set(this, name, data);
   }
 
   setState () {
@@ -385,43 +388,50 @@ class Envs {
     let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
     let envFiles = process.env.PPD_ENVS ? JSON.parse(process.env.PPD_ENVS) : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
+    let envsExt = process.env.PPD_ENVS_EXT ? JSON.parse(process.env.PPD_ENVS_EXT) : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
+    let extData = process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
+    let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
+    let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
 
-    /*
-    envsExt: {
-      envElectron: {
-        'browser.runtimeEnv.runtimeExecutable': '%electronPath%',
-        'browser.runtimeEnv.program': '%scriptPath%',
-      }
-    }
-    */
-    let envsExt = {}
-    if (process.env.PPD_ENVS_EXT) {
-      envsExt = JSON.parse(process.env.PPD_ENVS_EXT);
-    }
-    else if (_.get(args, 'envsExt')) {
-      envsExt = _.get(args, 'envsExt');
-    }
-    else if (_.get(args_ext, '--envsExt')) {
-      envsExt = JSON.parse(_.get(args_ext, '--envsExt'));
-    }
+    let extDataExt_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
+    let extDataExt = {};
+    extDataExt_files.forEach(f => {
+      const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+      extDataExt = deepmerge(extDataExt, data_ext, { arrayMerge: overwriteMerge });
+    })
+
+    let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+    let extSelectorsExt = {};
+    extSelectorsExt_files.forEach(f => {
+      const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+      extSelectorsExt = deepmerge(extSelectorsExt, selectors_ext, { arrayMerge: overwriteMerge });
+    })
 
     let testName;
     if (testFile){
       testName = testFile.split('/')[testFile.split('/').length - 1];
     }
     else {
-      throw({
-        message: `Не указано имя головного теста. Параметр 'test'`
-      })
+      throw({ message: `Не указано имя головного теста. Параметр 'test'` })
     }
 
     if (!envFiles) {
-      throw({
-        message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив`
-      })
+      throw({ message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` })
     }
 
-    this.set('args', {testFile, outputFolder, envFiles, testName, testsFolder})
+    this.set('args', {
+      testFile,
+      outputFolder,
+      envFiles,
+      testsFolder,
+      envsExt,
+      extData,
+      extSelectors,
+      extDataExt,
+      extSelectorsExt,
+      debugMode,
+      testName
+    })
 
     await this.initTest({test: testName, output: outputFolder})
 

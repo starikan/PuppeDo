@@ -2,8 +2,9 @@ const fs = require('fs')
 
 const _ = require('lodash');
 const safeEval = require('safe-eval')
-const yaml = require('js-yaml');
 const deepmerge = require('deepmerge');
+
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
 
 class Helpers {
   constructor(){}
@@ -253,22 +254,18 @@ class Test {
 
         // DATA
 
-        const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
-
         // 1. Берем данные из предыдущих тестов
         let dataLocal = env ? env.get('data') : {};
 
-        // 2. Данные подгруженные из yaml файлов в переменной среды
-        let ppd_data_ext_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : [];
-        ppd_data_ext_files.forEach(f => {
-          const ppd_data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-          dataLocal = deepmerge(dataLocal, ppd_data_ext, { arrayMerge: overwriteMerge });
-        })
-
-        // 3. Данные из переменной среды + из глобального env + результаты
+        // 3. Данные
+        // подгруженные из yaml файлов в переменной среды +
+        // из переменной среды +
+        // из глобального env +
+        // результаты
         dataLocal = deepmerge.all([
           dataLocal,
-          process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : {},
+          envs.get('args.extDataExt'),
+          envs.get('args.extData'),
           envs.get('data'),
           envs.get('results')
         ], { arrayMerge: overwriteMerge })
@@ -312,10 +309,10 @@ class Test {
 
         for (const key in dataFunctionLocal){
           if (_.isString(dataFunctionLocal[key])){
-            dataLocal[key] = safeEval(dataFunctionLocal[key])
+            dataLocal[key] = safeEval(dataFunctionLocal[key], dataLocal)
           }
           if (_.isArray(dataFunctionLocal[key]) && dataFunctionLocal[key].length == 2){
-            let dataFuncEval =  safeEval(dataFunctionLocal[key][0]);
+            let dataFuncEval =  safeEval(dataFunctionLocal[key][0], dataLocal);
             dataLocal[key] = dataFuncEval;
             dataLocal[dataFunctionLocal[key][1]] = dataFuncEval;
           }
@@ -323,7 +320,7 @@ class Test {
 
         // Write data to local env. For child tests.
         if (env) {
-          env.set('data', dataLocal);
+          env.set('env.data', dataLocal);
         }
 
         // CHECK NEED DATA
@@ -347,17 +344,15 @@ class Test {
           // 1. Берем данные из предыдущих тестов
           selectorsLocal = env ? env.get('selectors') : {};
 
-          // 2. Данные подгруженные из yaml файлов в переменной среды
-          let ppd_selectors_ext_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : [];
-          ppd_selectors_ext_files.forEach(f => {
-            const ppd_selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-            selectorsLocal = deepmerge(selectorsLocal, ppd_selectors_ext, { arrayMerge: overwriteMerge });
-          })
-
-          // 3. Данные из переменной среды + из глобального env + результаты
+          // 3. Данные
+          // подгруженные из yaml файлов в переменной среды +
+          // из переменной среды +
+          // из глобального env +
+          // результаты
           selectorsLocal = deepmerge.all([
             selectorsLocal,
-            process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : {},
+            envs.get('args.extSelectorsExt'),
+            envs.get('args.extSelectors'),
             envs.get('selectors'),
             envs.get('results')
           ], { arrayMerge: overwriteMerge })
@@ -407,10 +402,10 @@ class Test {
 
           for (const key in selectorsFunctionLocal){
             if (_.isString(selectorsFunctionLocal[key])){
-              selectorsLocal[key] = safeEval(selectorsFunctionLocal[key])
+              selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], selectorsLocal)
             }
             if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2){
-              let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0]);
+              let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0], selectorsLocal);
               selectorsLocal[key] = selectorsFuncEval;
               selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
             }
@@ -418,7 +413,7 @@ class Test {
 
           // Write data to local env. For child tests.
           if (env) {
-            env.set('selectors', selectorsLocal);
+            env.set('env.selectors', selectorsLocal);
           }
 
           // CHECK NEED SELECTORS
