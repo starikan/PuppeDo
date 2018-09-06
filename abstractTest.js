@@ -309,10 +309,10 @@ class Test {
 
         for (const key in dataFunctionLocal){
           if (_.isString(dataFunctionLocal[key])){
-            dataLocal[key] = safeEval(dataFunctionLocal[key])
+            dataLocal[key] = safeEval(dataFunctionLocal[key], dataLocal)
           }
           if (_.isArray(dataFunctionLocal[key]) && dataFunctionLocal[key].length == 2){
-            let dataFuncEval =  safeEval(dataFunctionLocal[key][0]);
+            let dataFuncEval =  safeEval(dataFunctionLocal[key][0], dataLocal);
             dataLocal[key] = dataFuncEval;
             dataLocal[dataFunctionLocal[key][1]] = dataFuncEval;
           }
@@ -402,10 +402,10 @@ class Test {
 
           for (const key in selectorsFunctionLocal){
             if (_.isString(selectorsFunctionLocal[key])){
-              selectorsLocal[key] = safeEval(selectorsFunctionLocal[key])
+              selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], selectorsLocal)
             }
             if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2){
-              let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0]);
+              let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0], selectorsLocal);
               selectorsLocal[key] = selectorsFuncEval;
               selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
             }
