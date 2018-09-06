@@ -179,7 +179,7 @@ class Env {
   }
 
   set (name, data) {
-    return _.set(this.env, name, data);
+    return _.set(this, name, data);
   }
 
   setState () {

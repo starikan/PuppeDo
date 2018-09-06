@@ -320,7 +320,7 @@ class Test {
 
         // Write data to local env. For child tests.
         if (env) {
-          env.set('data', dataLocal);
+          env.set('env.data', dataLocal);
         }
 
         // CHECK NEED DATA
@@ -413,7 +413,7 @@ class Test {
 
           // Write data to local env. For child tests.
           if (env) {
-            env.set('selectors', selectorsLocal);
+            env.set('env.selectors', selectorsLocal);
           }
 
           // CHECK NEED SELECTORS
