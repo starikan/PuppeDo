@@ -307,16 +307,23 @@ class Test {
           df
         ], { arrayMerge: overwriteMerge })
 
+        let dataFunctionForGlobalResults = {}
+
         for (const key in dataFunctionLocal){
           if (_.isString(dataFunctionLocal[key])){
-            dataLocal[key] = safeEval(dataFunctionLocal[key], dataLocal)
+            dataLocal[key] = safeEval(dataFunctionLocal[key], dataLocal);
+            dataFunctionForGlobalResults[key] = dataLocal[key];
           }
           if (_.isArray(dataFunctionLocal[key]) && dataFunctionLocal[key].length == 2){
             let dataFuncEval =  safeEval(dataFunctionLocal[key][0], dataLocal);
             dataLocal[key] = dataFuncEval;
             dataLocal[dataFunctionLocal[key][1]] = dataFuncEval;
+            dataFunctionForGlobalResults[key] = dataFuncEval;
+            dataFunctionForGlobalResults[dataFunctionLocal[key][1]] = dataFuncEval;
           }
         }
+
+        envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults);
 
         // Write data to local env. For child tests.
         if (env) {
@@ -400,16 +407,23 @@ class Test {
             sf
           ], { arrayMerge: overwriteMerge })
 
+          let selectorsFunctionForGlobalResults = {}
+
           for (const key in selectorsFunctionLocal){
             if (_.isString(selectorsFunctionLocal[key])){
               selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], selectorsLocal)
+              selectorsFunctionForGlobalResults[key] = selectorsLocal[key];
             }
             if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2){
               let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0], selectorsLocal);
               selectorsLocal[key] = selectorsFuncEval;
               selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
+              selectorsFunctionForGlobalResults[key] = selectorsFuncEval;
+              selectorsFunctionForGlobalResults[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
             }
           }
+
+          envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults);
 
           // Write data to local env. For child tests.
           if (env) {
