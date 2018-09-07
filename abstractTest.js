@@ -323,7 +323,7 @@ class Test {
           }
         }
 
-        envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults);
+        envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults));
 
         // Write data to local env. For child tests.
         if (env) {
@@ -423,7 +423,7 @@ class Test {
             }
           }
 
-          envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults);
+          envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
 
           // Write data to local env. For child tests.
           if (env) {
