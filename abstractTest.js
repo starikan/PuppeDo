@@ -159,6 +159,7 @@ class Test {
     this.bs = bs;
 
     this.allowResults = allowResults;
+
     this.bindResults = bindResults;
     this.bindResult = bindResult;
     this.bR = bR;
@@ -525,6 +526,12 @@ class Test {
         let bindResultsLocal = {};
         bindResultsLocal = deepmerge.all([
           this.bindResults,
+          this.bindResult,
+          this.bR,
+          this.br,
+          this.results,
+          this.result,
+          this.r,
           bindResults,
           bindResult,
           bR,
