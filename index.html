@@ -17,7 +17,7 @@
 
     let start_test = () => {
       console.log("Start test");
-      socket1.emit('start_test', {test: 'testGlob'});
+      socket1.emit('start_test', {test: 'testGlob', envs: ["settings/settings/envCloud.yaml"]});
     }
     let get_json = () => {
       console.log("get_json");

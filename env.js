@@ -415,7 +415,7 @@ class Envs {
       throw({ message: `Не указано имя головного теста. Параметр 'test'` })
     }
 
-    if (!envFiles) {
+    if (!envFiles || _.isEmpty(envFiles)) {
       throw({ message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` })
     }
 

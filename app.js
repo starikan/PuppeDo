@@ -38,11 +38,13 @@ let runServer = function(){
     socket.on('start_test', async (data) => {
       try {
         console.log('start_test', data);
-        socket.ppd = socket.ppd || {};
-        socket.ppd = require('./env')();
-        await socket.ppd.envs.init(data);
-        console.log('createEnvs', socket);
-        console.log(io.sockets.clients());
+        if (!this.ppd) {
+          this.ppd = this.ppd || {};
+          this.ppd = require('./env')();
+          await this.ppd.envs.init(data);
+        }
+        // console.log('createEnvs', this);
+        // console.log(io.sockets.clients());
       }
       catch(err){
         console.log(err)
@@ -51,8 +53,8 @@ let runServer = function(){
 
     socket.on('get_json', (data) => {
       try {
-        console.log('get_json', socket);
-        let envs = _.get(socket, "ppd.envs");
+        console.log('get_json', this);
+        let envs = _.get(this, "ppd.envs");
         const fullJSON = getFullDepthJSON({
           envs: envs,
           filePath: envs.get('args.testFile'),
