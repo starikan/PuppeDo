@@ -523,16 +523,18 @@ class Test {
 
         // BIND RESULTS
         let bindResultsLocal = {};
-        bindResultsLocal = Object.assign(bindResultsLocal, this.bindResults);
-        bindResultsLocal = Object.assign(bindResultsLocal, bindResults);
-        bindResultsLocal = Object.assign(bindResultsLocal, bindResult);
-        bindResultsLocal = Object.assign(bindResultsLocal, bR);
-        bindResultsLocal = Object.assign(bindResultsLocal, br);
-        bindResultsLocal = Object.assign(bindResultsLocal, results);
-        bindResultsLocal = Object.assign(bindResultsLocal, result);
-        bindResultsLocal = Object.assign(bindResultsLocal, r);
+        bindResultsLocal = deepmerge.all([
+          this.bindResults,
+          bindResults,
+          bindResult,
+          bR,
+          br,
+          results,
+          result,
+          r,
+        ], { arrayMerge: overwriteMerge });
 
-        let result = {};
+        let resultFromTest = {};
 
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)){
@@ -541,7 +543,7 @@ class Test {
         if (_.isArray(this.beforeTest)){
           for (const fun of this.beforeTest){
             let funResult = await fun(args) || {};
-            result = Object.assign(result, funResult);
+            resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
           }
         }
 
@@ -551,7 +553,7 @@ class Test {
         if (_.isArray(this.runTest)){
           for (const fun of this.runTest){
             let funResult = await fun(args) || {};
-            result = Object.assign(result, funResult);
+            resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
           }
         }
 
@@ -561,7 +563,7 @@ class Test {
         if (_.isArray(this.afterTest)){
           for (const fun of this.afterTest){
             let funResult = await fun(args) || {};
-            result = Object.assign(result, funResult);
+            resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
           }
         }
 
@@ -570,7 +572,7 @@ class Test {
         // или если не пришло то чего нужно
 
         // RESULTS
-        Object.keys(result).forEach(key => {
+        Object.keys(resultFromTest).forEach(key => {
           let bindKey = _.get(bindResultsLocal, key);
           if (bindKey && this.allowResults.includes(key)) {
             envs.set(`results.${bindKey}`, result[key]);
