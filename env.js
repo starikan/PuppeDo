@@ -26,11 +26,12 @@ function sleep(ms){
   })
 }
 
-async function runPuppeteer (browserSettings){
+async function runPuppeteer (browserSettings, args = {}){
   const browser = await puppeteer.launch({
     headless: _.get(browserSettings, "headless", true),
     slowMo: _.get(browserSettings, "slowMo", 0),
-    args: _.get(browserSettings, "args", [])
+    args: _.get(browserSettings, "args", []),
+    devtools: !!_.get(args, "debugMode", false),
   });
 
   const page = await browser.newPage();
@@ -347,18 +348,18 @@ class Envs {
 
       if (type === 'puppeteer'){
         if (runtime === 'run'){
-          const {browser, pages} = await runPuppeteer(browserSettings);
+          const {browser, pages} = await runPuppeteer(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
       }
 
       if (type === 'electron'){
         if (runtime === 'connect'){
-          const {browser, pages} = await connectElectron(browserSettings);
+          const {browser, pages} = await connectElectron(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
         if (runtime === 'run'){
-          const {browser, pages} = await runElectron(browserSettings);
+          const {browser, pages} = await runElectron(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
       }
