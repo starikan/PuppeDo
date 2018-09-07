@@ -579,6 +579,13 @@ class Test {
         // или если не пришло то чего нужно
 
         // RESULTS
+        Object.keys(resultFromTest).forEach(key => {
+          let bindKey = _.get(bindResultsLocal, key);
+          if (bindKey && this.allowResults.includes(key)) {
+            envs.set(`results.${bindKey}`, result[key]);
+          }
+        })
+
         envs.set('results', deepmerge.all([envs.get('results'), resultFromTest], { arrayMerge: overwriteMerge }));
       }
       catch (err){
