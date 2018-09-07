@@ -112,6 +112,9 @@ class Test {
       bindResult = {}, // alias for bindResults
       bR = {}, // alias for bindResults
       br = {}, // alias for bindResults
+      results = {}, // alias for bindResults
+      result = {}, // alias for bindResults
+      r = {}, // alias for bindResults
 
       dataFunction = {},
       dF = {}, // alias for dataFunction
@@ -160,6 +163,9 @@ class Test {
     this.bindResult = bindResult;
     this.bR = bR;
     this.br = br;
+    this.results = results;
+    this.result = result;
+    this.r = r;
 
     this.dataFunction = dataFunction;
     this.dF = dF;
@@ -199,6 +205,9 @@ class Test {
         bindResult = {}, // alias for bindResults
         bR = {}, // alias for bindResults
         br = {}, // alias for bindResults
+        results = {}, // alias for bindResults
+        result = {}, // alias for bindResults
+        r = {}, // alias for bindResults
 
         dataFunction = {},
         dF = {}, // alias for dataFunction
@@ -458,7 +467,7 @@ class Test {
           page,
           data: dataLocal,
           selectors: selectorsLocal,
-          results: this.allowResults,
+          allowResults: this.allowResults,
           options: optionsLocal,
           envsId,
           envs,
@@ -519,6 +528,9 @@ class Test {
         bindResultsLocal = Object.assign(bindResultsLocal, bindResult);
         bindResultsLocal = Object.assign(bindResultsLocal, bR);
         bindResultsLocal = Object.assign(bindResultsLocal, br);
+        bindResultsLocal = Object.assign(bindResultsLocal, results);
+        bindResultsLocal = Object.assign(bindResultsLocal, result);
+        bindResultsLocal = Object.assign(bindResultsLocal, r);
 
         let result = {};
 
