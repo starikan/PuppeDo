@@ -582,7 +582,7 @@ class Test {
         Object.keys(resultFromTest).forEach(key => {
           let bindKey = _.get(bindResultsLocal, key);
           if (bindKey && this.allowResults.includes(key)) {
-            envs.set(`results.${bindKey}`, result[key]);
+            envs.set(`results.${bindKey}`, resultFromTest[key]);
           }
         })
 
