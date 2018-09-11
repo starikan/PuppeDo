@@ -390,6 +390,7 @@ class Envs {
     let envFiles = process.env.PPD_ENVS ? JSON.parse(process.env.PPD_ENVS) : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
     let envsExt = process.env.PPD_ENVS_EXT ? JSON.parse(process.env.PPD_ENVS_EXT) : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
+    let envsExtJson = process.env.PPD_ENVS_EXT_JSON || _.get(args, 'envsExtJson') || _.get(args_ext, '--envsExt');
     let extData = process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
     let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
     let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
@@ -420,12 +421,21 @@ class Envs {
       throw({ message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` })
     }
 
+    if (envsExtJson) {
+      try {
+        let envsExtJson_data = require(path.join(process.cwd(), envsExtJson));
+        envsExt = deepmerge.all([envsExtJson_data, envsExt], { arrayMerge: overwriteMerge })
+      }
+      catch (err) { }
+    }
+
     this.set('args', {
       testFile,
       outputFolder,
       envFiles,
       testsFolder,
       envsExt,
+      envsExtJson,
       extData,
       extSelectors,
       extDataExt,
