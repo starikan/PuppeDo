@@ -520,8 +520,6 @@ class Test {
             }
         }
 
-        // debugger;
-
         // BIND RESULTS
         let bindResultsLocal = {};
         bindResultsLocal = deepmerge.all([
@@ -579,6 +577,8 @@ class Test {
         // или если не пришло то чего нужно
 
         // RESULTS
+
+        // Результаты которые пришли из внутренностей теста
         Object.keys(resultFromTest).forEach(key => {
           let bindKey = _.get(bindResultsLocal, key);
           if (bindKey && this.allowResults.includes(key)) {
@@ -586,7 +586,20 @@ class Test {
           }
         })
 
-        envs.set('results', deepmerge.all([envs.get('results'), resultFromTest], { arrayMerge: overwriteMerge }));
+        // envs.set('results', deepmerge.all([envs.get('results'), resultFromTest], { arrayMerge: overwriteMerge }));
+
+        // Результаты которые просто просто хочется забиндить в переменную, а не приходящие из теста
+        Object.keys(bindResultsLocal).forEach(key => {
+          let bindKey = _.get(bindResultsLocal, key);
+          const availableData = deepmerge.all([
+            envs.get('results'),
+            dataLocal,
+            selectorsLocal,
+            resultFromTest,
+          ], { arrayMerge: overwriteMerge })
+          envs.set(`results.${bindKey}`, _.get(availableData, key));
+        });
+
       }
       catch (err){
         err.envsId = envsId;
