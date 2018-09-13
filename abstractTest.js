@@ -261,71 +261,61 @@ class Test {
         //TODO: 2018-07-03 S.Starodubov если нет page то может это API
 
 
+        let dataLocal = deepmerge.all([
+          {},
+          env ? env.get('data') : {}, //Берем данные из предыдущих тестов
+          envs.get('args.extDataExt'), // подгруженные из yaml файлов в переменной среды
+          envs.get('args.extData'), // из переменной среды
+          envs.get('data'), // из глобального env
+          envs.get('results') // результаты
+        ], { arrayMerge: overwriteMerge })
 
-        // DATA
-
-        // 1. Берем данные из предыдущих тестов
-        let dataLocal = env ? env.get('data') : {};
-
-        // 3. Данные
-        // подгруженные из yaml файлов в переменной среды +
-        // из переменной среды +
-        // из глобального env +
-        // результаты
-        dataLocal = deepmerge.all([
-          dataLocal,
-          envs.get('args.extDataExt'),
-          envs.get('args.extData'),
-          envs.get('data'),
+        let selectorsLocal = deepmerge.all([
+          {},
+          env ? env.get('selectors') : {},
+          envs.get('args.extSelectorsExt'),
+          envs.get('args.extSelectors'),
+          envs.get('selectors'),
           envs.get('results')
         ], { arrayMerge: overwriteMerge })
 
-        // 4. Биндим данные
-        let bindDataLocal = {};
-        bindDataLocal = deepmerge.all([
-          bindDataLocal,
-          this.bindData,
-          this.bD,
-          this.bd,
-          bindData,
-          bD,
-          bd
+        // Биндим
+        let bindDataLocal = deepmerge.all([
+          {}, this.bindData, this.bD, this.bd, bindData, bD, bd
+        ], { arrayMerge: overwriteMerge })
+        let bindSelectorsLocal = deepmerge.all([
+          {}, this.bindSelectors, this.bindSelector, this.bS, this.bs, bindSelectors, bindSelector, bS, bs
         ], { arrayMerge: overwriteMerge })
 
         for (const key in bindDataLocal){
           dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
         }
+        for (const key in bindSelectorsLocal){
+          selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+        }
 
-        // 5. Данные самого теста
-        dataLocal = deepmerge.all([
-          dataLocal,
-          this.data,
-          this.d,
-          data,
-          d
+        // Добавляем данные самого теста
+        dataLocal = deepmerge.all([ dataLocal, this.data, this.d, data, d ], { arrayMerge: overwriteMerge })
+        selectorsLocal = deepmerge.all([ selectorsLocal, this.selectors, this.selector, this.s, selectors, selector, s ], { arrayMerge: overwriteMerge })
+
+
+        // FUNCTIONS
+
+        let allDataAndSelectors = deepmerge.all([ dataLocal, selectorsLocal ], { arrayMerge: overwriteMerge })
+
+        let dataFunctionLocal = deepmerge.all([
+          {}, this.dataFunction, this.dF, this.df, dataFunction, dF, df
         ], { arrayMerge: overwriteMerge })
 
-        // 6. Данные из функций
-        let dataFunctionLocal = {};
-        dataFunctionLocal = deepmerge.all([
-          dataFunctionLocal,
-          this.dataFunction,
-          this.dF,
-          this.df,
-          dataFunction,
-          dF,
-          df
-        ], { arrayMerge: overwriteMerge })
-
-        let dataFunctionForGlobalResults = {}
+        let dataFunctionForGlobalResults = {};
 
         for (const key in dataFunctionLocal){
           if (_.isString(dataFunctionLocal[key])){
-            dataLocal[key] = safeEval(dataFunctionLocal[key], dataLocal);
+            dataLocal[key] = safeEval(dataFunctionLocal[key], allDataAndSelectors);
             dataFunctionForGlobalResults[key] = dataLocal[key];
           }
           if (_.isArray(dataFunctionLocal[key]) && dataFunctionLocal[key].length == 2){
-            let dataFuncEval =  safeEval(dataFunctionLocal[key][0], dataLocal);
+            let dataFuncEval =  safeEval(dataFunctionLocal[key][0], allDataAndSelectors);
             dataLocal[key] = dataFuncEval;
             dataLocal[dataFunctionLocal[key][1]] = dataFuncEval;
             dataFunctionForGlobalResults[key] = dataFuncEval;
@@ -333,14 +323,37 @@ class Test {
           }
         }
 
+        let selectorsFunctionLocal = deepmerge.all([
+          {}, this.selectorsFunction, this.selectorFunction, this.sF, this.sf, selectorsFunction, selectorFunction, sF, sf
+        ], { arrayMerge: overwriteMerge })
+
+        let selectorsFunctionForGlobalResults = {}
+
+        for (const key in selectorsFunctionLocal){
+          if (_.isString(selectorsFunctionLocal[key])){
+            selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], allDataAndSelectors)
+            selectorsFunctionForGlobalResults[key] = selectorsLocal[key];
+          }
+          if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2){
+            let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0], allDataAndSelectors);
+            selectorsLocal[key] = selectorsFuncEval;
+            selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
+            selectorsFunctionForGlobalResults[key] = selectorsFuncEval;
+            selectorsFunctionForGlobalResults[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
+          }
+        }
+
+        // Сохраняем функции в результаты
         envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults));
+        envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
 
         // Write data to local env. For child tests.
         if (env) {
           env.set('env.data', dataLocal);
+          env.set('env.selectors', selectorsLocal);
         }
 
-        // CHECK NEED DATA
+        // CHECK NEED
         // [['data', 'd'], 'another', 'optional?']
         _.forEach(needData, d => {
           const keysData = new Set(Object.keys(dataLocal));
@@ -354,107 +367,19 @@ class Test {
           }
         })
 
-        // SELECTORS
-        let selectorsLocal = {};
-
-        if (page){
-          // 1. Берем данные из предыдущих тестов
-          selectorsLocal = env ? env.get('selectors') : {};
-
-          // 3. Данные
-          // подгруженные из yaml файлов в переменной среды +
-          // из переменной среды +
-          // из глобального env +
-          // результаты
-          selectorsLocal = deepmerge.all([
-            selectorsLocal,
-            envs.get('args.extSelectorsExt'),
-            envs.get('args.extSelectors'),
-            envs.get('selectors'),
-            envs.get('results')
-          ], { arrayMerge: overwriteMerge })
-
-          // 4. Биндим данные
-          let bindSelectorsLocal = {};
-          bindSelectorsLocal = deepmerge.all([
-            bindSelectorsLocal,
-            this.bindSelectors,
-            this.bindSelector,
-            this.bS,
-            this.bs,
-            bindSelectors,
-            bindSelector,
-            bS,
-            bs
-          ], { arrayMerge: overwriteMerge })
-
-          for (const key in bindSelectorsLocal){
-            selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
+        _.forEach(needSelectors, d => {
+          const keysSelectors = new Set(Object.keys(selectorsLocal));
+          if (_.isString(d) && d.endsWith('?')) return; // optional parametr
+          const keysSelectorsIncome = new Set(_.isString(d) ? [d] : d);
+          const intersectionSelectors = new Set([...keysSelectors].filter(x => keysSelectorsIncome.has(x)));
+          if (!intersectionSelectors.size){
+            throw({
+              message: `Error: can't find selector "${d}" in ${this.name} test`
+            })
           }
+        })
 
-          // 5. Данные самого теста
-          selectorsLocal = deepmerge.all([
-            selectorsLocal,
-            this.selectors,
-            this.selector,
-            this.s,
-            selectors,
-            selector,
-            s,
-          ], { arrayMerge: overwriteMerge })
-
-          // 6. Данные из функций
-          let selectorsFunctionLocal = {};
-          selectorsFunctionLocal = deepmerge.all([
-            selectorsFunctionLocal,
-            this.selectorsFunction,
-            this.selectorFunction,
-            this.sF,
-            this.sf,
-            selectorsFunction,
-            selectorFunction,
-            sF,
-            sf
-          ], { arrayMerge: overwriteMerge })
-
-          let selectorsFunctionForGlobalResults = {}
-
-          for (const key in selectorsFunctionLocal){
-            if (_.isString(selectorsFunctionLocal[key])){
-              selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], selectorsLocal)
-              selectorsFunctionForGlobalResults[key] = selectorsLocal[key];
-            }
-            if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2){
-              let selectorsFuncEval =  safeEval(selectorsFunctionLocal[key][0], selectorsLocal);
-              selectorsLocal[key] = selectorsFuncEval;
-              selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
-              selectorsFunctionForGlobalResults[key] = selectorsFuncEval;
-              selectorsFunctionForGlobalResults[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
-            }
-          }
-
-          envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
-
-          // Write data to local env. For child tests.
-          if (env) {
-            env.set('env.selectors', selectorsLocal);
-          }
-
-          // CHECK NEED SELECTORS
-          // [['selector', 'sel'], 'another', 'optional?']
-          _.forEach(needSelectors, d => {
-            const keysSelectors = new Set(Object.keys(selectorsLocal));
-            if (_.isString(d) && d.endsWith('?')) return; // optional parametr
-            const keysSelectorsIncome = new Set(_.isString(d) ? [d] : d);
-            const intersectionSelectors = new Set([...keysSelectors].filter(x => keysSelectorsIncome.has(x)));
-            if (!intersectionSelectors.size){
-              throw({
-                message: `Error: can't find selector "${d}" in ${this.name} test`
-              })
-            }
-          })
-        }
-
+        // OPTIONS
         let optionsLocal = {};
         optionsLocal = Object.assign(optionsLocal, options);
 
