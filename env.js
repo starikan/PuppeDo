@@ -130,7 +130,7 @@ async function runElectron(browserSettings) {
   const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
   const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
   const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
-  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5);
+  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
 
   if (runtimeExecutable){
     const run_args = [program, ...browser_args];
@@ -138,16 +138,19 @@ async function runElectron(browserSettings) {
 
     let prc = spawn(runtimeExecutable, run_args, {
       cwd,
-      // detached: true
+      // detached: true,
+      env: browser_env
     });
 
     prc.stdout.on('data', (data) => {
       // console.log(String(data));
     })
-
+    console.log('before pause')
     await sleep(pauseAfterStartApp);
+    console.log('after pause')
 
     let { browser, pages } = await connectElectron(browserSettings);
+    // browser.prc = prc;
     return { browser: browser, pages: pages };
   }
   else {
@@ -380,6 +383,8 @@ class Envs {
         state.browser.close()
       }
       catch (exc) {}
+
+      process.exit(1);
     }
   }
 
