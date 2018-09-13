@@ -145,12 +145,9 @@ async function runElectron(browserSettings) {
     prc.stdout.on('data', (data) => {
       // console.log(String(data));
     })
-    console.log('before pause')
     await sleep(pauseAfterStartApp);
-    console.log('after pause')
 
     let { browser, pages } = await connectElectron(browserSettings);
-    // browser.prc = prc;
     return { browser: browser, pages: pages };
   }
   else {
