@@ -9,10 +9,34 @@ const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
 const deepmerge = require('deepmerge');
+const walkSync = require('walk-sync');
 
 const logger = require('./logger/logger');
 
 const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+
+const resolveStars = function(linksArray, testsFolder = '.') {
+
+  let resolvedArray = [];
+  linksArray.forEach(fileName => {
+    if (fileName.endsWith('*')){
+      let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
+      fileMask = _.trimEnd(fileMask, '/');
+      fileMask = _.trimEnd(fileMask, '\\\\');
+      fullFileMask = path.join(testsFolder, fileMask);
+      let paths = walkSync(fullFileMask);
+      paths = _.map(paths, v => {
+        if (v.endsWith('/') || v.endsWith('\\')) return false;
+        return path.join(fileMask, v);
+      }).filter(v => v);
+      resolvedArray = [...resolvedArray, ...paths];
+    }
+    else {
+      resolvedArray.push(fileName)
+    }
+  });
+  return resolvedArray;
+}
 
 let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
@@ -286,6 +310,7 @@ class Envs {
             message: `dataExt wrong format ${dataExt}, ${file}`
           })
         }
+        dataExtList = resolveStars(dataExtList, this.args.testsFolder);
         for (let i = 0; i < dataExtList.length; i++) {
           const dataExtFile = dataExtList[i];
           let dataExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, dataExtFile), 'utf8'));
@@ -304,6 +329,7 @@ class Envs {
             message: `selectorsExt wrong format ${selectorsExt}, ${file}`
           })
         }
+        selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
         for (let i = 0; i < selectorsExtList.length; i++) {
           const selectorsExtFile = selectorsExtList[i];
           let selectorsExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, selectorsExtFile), 'utf8'));
@@ -397,7 +423,9 @@ class Envs {
     let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
     let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
 
+    // Загрузка данных из внешних файлов
     let extDataExt_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
+    extDataExt_files = resolveStars(extDataExt_files, testsFolder);
     let extDataExt = {};
     extDataExt_files.forEach(f => {
       const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
@@ -405,6 +433,7 @@ class Envs {
     })
 
     let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+    extSelectorsExt_files = resolveStars(extSelectorsExt_files, testsFolder);
     let extSelectorsExt = {};
     extSelectorsExt_files.forEach(f => {
       const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
