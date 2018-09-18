@@ -80,8 +80,15 @@ const resolveStars = function(linksArray, testsFolder = '.') {
   return resolvedArray;
 }
 
+let args_ext = {}
+_.forEach(process.argv.slice(2), v => {
+  let data = v.split("=");
+  args_ext[data[0]] = data[1];
+});
+
 module.exports = {
   Helpers,
   overwriteMerge,
   resolveStars,
+  args_ext,
 }

@@ -190,6 +190,7 @@ afterTest:
 1. ```node -e require("PuppeDo").main()```
 2. args
     - --test - Тест который нужно запускать
+    - --testsList - Список тестов для последовательного запуска, без выключения приложений
     - --output - Папка для логов (default: "output")
     - --envs - МАССИВ (это обязательно) со ссылками на файлы описание сред выполнения
     - --testsFolder - Папка с тестами (default: ".")
@@ -221,6 +222,7 @@ afterTest:
     ```
 3. args:
     - test
+    - testsList
     - output
     - envs
     - testsFolder
@@ -238,6 +240,7 @@ afterTest:
 
 3. env: // Все в двойный кавычках "", если внутри они нужны нужно их эскейпить \" т.к. все потом парсится как JSON
     - PPD_TEST
+    - PPD_TESTS_LIST
     - PPD_OUTPUT
     - PPD_ENVS
     - PPD_TEST_FOLDER

@@ -1,7 +1,11 @@
+const _ = require('lodash');
+
 const { getFullDepthJSON } = require('./yaml/getFullDepthJSON');
 const { getTest } = require('./yaml/getTest');
+const { args_ext } = require('./helpers');
 
 const main = async (args = {}) => {
+  let testsList = process.env.PPD_TESTS_LIST ? JSON.parse(process.env.PPD_TESTS_LIST) : _.get(args, 'testsList') || JSON.parse(_.get(args_ext, '--testsList', '[]'));
 
   process.on('unhandledRejection', async (error, p) => {
     console.log('unhandledRejection')
@@ -13,12 +17,19 @@ const main = async (args = {}) => {
   const { envsId, envs, log } = require('./env')();
 
   await envs.init(args);
-  const fullJSON = getFullDepthJSON({
-    envs: envs,
-    filePath: envs.get('args.testFile'),
-  });
-  let test = getTest(fullJSON, envsId);
-  await test();
+
+  if (_.isEmpty(testsList)) testsList = [envs.get('args.testFile')];
+
+  for (let i = 0; i < testsList.length; i++) {
+    const testFile = testsList[i];
+    const fullJSON = getFullDepthJSON({
+      envs: envs,
+      filePath: testFile,
+    });
+    let test = getTest(fullJSON, envsId);
+    await test();
+  }
+
   await envs.closeBrowsers()
 }
 
