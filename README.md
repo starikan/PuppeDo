@@ -217,7 +217,7 @@ afterTest:
 1. ``` node index.js ```
 2. Внутри файла
     ```
-    const = require("PuppeDo").main;
+    const main = require("PuppeDo").main;
     main({ args })
     ```
 3. args:
