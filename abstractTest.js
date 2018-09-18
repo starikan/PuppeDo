@@ -1,60 +1,10 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval')
 const deepmerge = require('deepmerge');
+const yaml = require('js-yaml');
+const fs = require('fs');
 
-const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
-
-class Helpers {
-  constructor(){}
-
-  async getElement(page, selector){
-    if (page && selector && _.isString(selector) && _.isObject(page)){
-      let element;
-      if (selector.startsWith('xpath:')){
-        selector = _.trimStart(selector, 'xpath:');
-        element = await page.$x(selector);
-        if (element.length > 1) {
-          throw({
-            message: `Finded more then 1 xpath elements ${selector}`
-          })
-        }
-        element = element[0];      }
-      else {
-        selector = _.trimStart(selector, 'css:');
-        element = await page.$(selector);
-      }
-      return element;
-    }
-    else {
-      return false;
-    }
-  }
-
-  anyGet (object, paths) {
-    if (!object || !_.isObject(object) || !paths || (!_.isString(paths) && !_.isArray(paths))){
-      debugger
-      throw({
-        message: `anyGet error`
-      })
-    }
-
-    let result;
-    if (_.isString(paths)){
-      result = _.get(object, paths);
-    }
-
-    if (_.isArray(paths)){
-      paths.forEach(s => {
-        if (_.get(object, s)){
-          result = _.get(object, s);
-        }
-      })
-    }
-
-    return result;
-  }
-
-}
+const { Helpers, overwriteMerge, resolveStars } = require('./helpers');
 
 class Test {
   constructor(
@@ -76,17 +26,16 @@ class Test {
       needSelectors = [],
       allowResults = [],
 
+      dataExt = [],
+      selectorsExt = [],
+
       // Прямой проброс данных
       // {} - данные
       //TODO: 2018-07-02 S.Starodubov repeat
       // [{}] - много данных для посторения repeat
       data = {},
       d = {}, // alias for data
-      // Биндинги даты
-      //  Смотрим на локальные данные this.data
-      //  Смотрим на данные в env[envName].data
-      //  Смотрим на данные в глобальной env.data
-      //  Смотрим на данные в глобальной env.results
+
       bindData = {},
       bD = {}, // alias for bindData
       bd = {}, // alias for bindData
@@ -138,6 +87,9 @@ class Test {
     this.needData = needData;
     this.needSelectors = needSelectors;
 
+    this.dataExt = dataExt;
+    this.selectorsExt = selectorsExt;
+
     this.data = data;
     this.d = d;
 
@@ -182,6 +134,10 @@ class Test {
 
     this.run = async (
       {
+
+        dataExt = [],
+        selectorsExt = [],
+
         data = {},
         d = {}, // alias for data
 
@@ -276,6 +232,25 @@ class Test {
           envs.get('selectors'),
           envs.get('results')
         ], { arrayMerge: overwriteMerge })
+
+        // Добавляем загрузки из файлов из теста
+        let extDataExt_files = deepmerge.all([ [], this.dataExt, dataExt ], { arrayMerge: overwriteMerge });
+        extDataExt_files = resolveStars(extDataExt_files, envs.get('args.testsFolder'));
+        extDataExt_files.forEach(f => {
+          const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+          dataLocal = deepmerge.all([dataLocal, data_ext], { arrayMerge: overwriteMerge });
+          // Сохраняем в результаты для будущих тестов
+          envs.set('results', deepmerge(envs.get('results'), data_ext));
+        });
+
+        let extSelectorsExt_files = deepmerge.all([ [], this.selectorsExt, selectorsExt ], { arrayMerge: overwriteMerge });
+        extSelectorsExt_files = resolveStars(extSelectorsExt_files, envs.get('args.testsFolder'));
+        extSelectorsExt_files.forEach(f => {
+          const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+          selectorsLocal = deepmerge.all([selectorsLocal, data_ext], { arrayMerge: overwriteMerge });
+          // Сохраняем в результаты для будущих тестов
+          envs.set('results', deepmerge(envs.get('results'), data_ext));
+        });
 
         // Биндим
         let bindDataLocal = deepmerge.all([

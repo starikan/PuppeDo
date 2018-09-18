@@ -9,34 +9,9 @@ const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
 const deepmerge = require('deepmerge');
-const walkSync = require('walk-sync');
 
 const logger = require('./logger/logger');
-
-const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
-
-const resolveStars = function(linksArray, testsFolder = '.') {
-
-  let resolvedArray = [];
-  linksArray.forEach(fileName => {
-    if (fileName.endsWith('*')){
-      let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
-      fileMask = _.trimEnd(fileMask, '/');
-      fileMask = _.trimEnd(fileMask, '\\\\');
-      fullFileMask = path.join(testsFolder, fileMask);
-      let paths = walkSync(fullFileMask);
-      paths = _.map(paths, v => {
-        if (v.endsWith('/') || v.endsWith('\\')) return false;
-        return path.join(fileMask, v);
-      }).filter(v => v);
-      resolvedArray = [...resolvedArray, ...paths];
-    }
-    else {
-      resolvedArray.push(fileName)
-    }
-  });
-  return resolvedArray;
-}
+const { resolveStars, overwriteMerge } = require('./helpers');
 
 let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
