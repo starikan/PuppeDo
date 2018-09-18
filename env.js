@@ -11,8 +11,7 @@ const axios = require('axios');
 const deepmerge = require('deepmerge');
 
 const logger = require('./logger/logger');
-
-const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+const { resolveStars, overwriteMerge } = require('./helpers');
 
 let args_ext = {}
 _.forEach(process.argv.slice(2), v => {
@@ -26,11 +25,12 @@ function sleep(ms){
   })
 }
 
-async function runPuppeteer (browserSettings){
+async function runPuppeteer (browserSettings, args = {}){
   const browser = await puppeteer.launch({
     headless: _.get(browserSettings, "headless", true),
     slowMo: _.get(browserSettings, "slowMo", 0),
-    args: _.get(browserSettings, "args", [])
+    args: _.get(browserSettings, "args", []),
+    devtools: !!_.get(args, "debugMode", false),
   });
 
   const page = await browser.newPage();
@@ -129,7 +129,7 @@ async function runElectron(browserSettings) {
   const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
   const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
   const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
-  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5);
+  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
 
   if (runtimeExecutable){
     const run_args = [program, ...browser_args];
@@ -137,13 +137,13 @@ async function runElectron(browserSettings) {
 
     let prc = spawn(runtimeExecutable, run_args, {
       cwd,
-      // detached: true
+      // detached: true,
+      env: browser_env
     });
 
     prc.stdout.on('data', (data) => {
       // console.log(String(data));
     })
-
     await sleep(pauseAfterStartApp);
 
     let { browser, pages } = await connectElectron(browserSettings);
@@ -285,6 +285,7 @@ class Envs {
             message: `dataExt wrong format ${dataExt}, ${file}`
           })
         }
+        dataExtList = resolveStars(dataExtList, this.args.testsFolder);
         for (let i = 0; i < dataExtList.length; i++) {
           const dataExtFile = dataExtList[i];
           let dataExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, dataExtFile), 'utf8'));
@@ -303,6 +304,7 @@ class Envs {
             message: `selectorsExt wrong format ${selectorsExt}, ${file}`
           })
         }
+        selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
         for (let i = 0; i < selectorsExtList.length; i++) {
           const selectorsExtFile = selectorsExtList[i];
           let selectorsExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, selectorsExtFile), 'utf8'));
@@ -347,18 +349,18 @@ class Envs {
 
       if (type === 'puppeteer'){
         if (runtime === 'run'){
-          const {browser, pages} = await runPuppeteer(browserSettings);
+          const {browser, pages} = await runPuppeteer(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
       }
 
       if (type === 'electron'){
         if (runtime === 'connect'){
-          const {browser, pages} = await connectElectron(browserSettings);
+          const {browser, pages} = await connectElectron(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
         if (runtime === 'run'){
-          const {browser, pages} = await runElectron(browserSettings);
+          const {browser, pages} = await runElectron(browserSettings, this.args);
           env.state = Object.assign(env.state, {browser, pages});
         }
       }
@@ -379,6 +381,8 @@ class Envs {
         state.browser.close()
       }
       catch (exc) {}
+
+      process.exit(1);
     }
   }
 
@@ -389,11 +393,14 @@ class Envs {
     let envFiles = process.env.PPD_ENVS ? JSON.parse(process.env.PPD_ENVS) : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
     let testsFolder = process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', '.');
     let envsExt = process.env.PPD_ENVS_EXT ? JSON.parse(process.env.PPD_ENVS_EXT) : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
+    let envsExtJson = process.env.PPD_ENVS_EXT_JSON || _.get(args, 'envsExtJson') || _.get(args_ext, '--envsExt');
     let extData = process.env.PPD_DATA ? JSON.parse(process.env.PPD_DATA) : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
     let extSelectors = process.env.PPD_SELECTORS ? JSON.parse(process.env.PPD_SELECTORS) : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
     let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
 
+    // Загрузка данных из внешних файлов
     let extDataExt_files = process.env.PPD_DATA_EXT ? JSON.parse(process.env.PPD_DATA_EXT) : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
+    extDataExt_files = resolveStars(extDataExt_files, testsFolder);
     let extDataExt = {};
     extDataExt_files.forEach(f => {
       const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
@@ -401,6 +408,7 @@ class Envs {
     })
 
     let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT ? JSON.parse(process.env.PPD_SELECTORS_EXT) : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+    extSelectorsExt_files = resolveStars(extSelectorsExt_files, testsFolder);
     let extSelectorsExt = {};
     extSelectorsExt_files.forEach(f => {
       const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
@@ -419,12 +427,21 @@ class Envs {
       throw({ message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` })
     }
 
+    if (envsExtJson) {
+      try {
+        let envsExtJson_data = require(path.join(process.cwd(), envsExtJson));
+        envsExt = deepmerge.all([envsExtJson_data, envsExt], { arrayMerge: overwriteMerge })
+      }
+      catch (err) { }
+    }
+
     this.set('args', {
       testFile,
       outputFolder,
       envFiles,
       testsFolder,
       envsExt,
+      envsExtJson,
       extData,
       extSelectors,
       extDataExt,
