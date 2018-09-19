@@ -320,12 +320,6 @@ class Test {
         envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults));
         envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
 
-        // Write data to local env. For child tests.
-        if (env) {
-          env.set('env.data', dataLocal);
-          env.set('env.selectors', selectorsLocal);
-        }
-
         // CHECK NEED
         // [['data', 'd'], 'another', 'optional?']
         _.forEach(needData, d => {
@@ -468,6 +462,28 @@ class Test {
             let funResult = await fun(args) || {};
             resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
           }
+        }
+
+        // Удаление локальных данных для устранения дублирования старых при обшибке когда несколько значени в [selector, sel, s]
+        let needDataToRemove = _.flattenDeep(needData);
+        let needSelectorsToRemove = _.flattenDeep(needSelectors);
+        if (needDataToRemove.length>1 || needSelectorsToRemove.length>1) debugger;
+        _.forEach(needDataToRemove, v => {
+          try {
+            delete dataLocal[v]
+          } catch(err){}
+        })
+        _.forEach(needSelectorsToRemove, v => {
+          try {
+            delete selectorsLocal[v]
+          } catch(err){}
+        })
+
+
+        // Write data to local env. For child tests.
+        if (env) {
+          env.set('env.data', dataLocal);
+          env.set('env.selectors', selectorsLocal);
         }
 
         // todo
