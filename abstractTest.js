@@ -467,7 +467,6 @@ class Test {
         // Удаление локальных данных для устранения дублирования старых при обшибке когда несколько значени в [selector, sel, s]
         let needDataToRemove = _.flattenDeep(needData);
         let needSelectorsToRemove = _.flattenDeep(needSelectors);
-        if (needDataToRemove.length>1 || needSelectorsToRemove.length>1) debugger;
         _.forEach(needDataToRemove, v => {
           try {
             delete dataLocal[v]
