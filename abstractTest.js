@@ -320,6 +320,12 @@ class Test {
         envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults));
         envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
 
+        // Write data to local env. For child tests.
+        if (env) {
+          env.set('env.data', dataLocal);
+          env.set('env.selectors', selectorsLocal);
+        }
+
         // CHECK NEED
         // [['data', 'd'], 'another', 'optional?']
         _.forEach(needData, d => {
@@ -478,12 +484,6 @@ class Test {
           } catch(err){}
         })
 
-
-        // Write data to local env. For child tests.
-        if (env) {
-          env.set('env.data', dataLocal);
-          env.set('env.selectors', selectorsLocal);
-        }
 
         // todo
         // выкидывать предупреждение если пришло в результатах то чего нет в allowResults
