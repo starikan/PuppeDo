@@ -41,20 +41,25 @@ class Helpers {
     if (_.isString(paths)){
       result = _.get(object, paths);
     }
-
-    let results = {};
-    if (_.isArray(paths)){
-      paths.forEach(s => {
-        if (_.get(object, s)){
-          result = _.get(object, s);
-          results[s] = result;
-        }
-      })
+    else {
+      if (Object.keys(results).length > 1) {
+        throw({ message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен` })
+      }
     }
 
-    if (Object.keys(results).length > 1) {
-      throw({ message: `Ошибка при извлечении данных. В режиме вариативности переменной пришло несколько значений. Т.е. данные или селектор могут передаваться в нескольких видах например ['selector', 'sel', 's'] и данные переменные уже перезаписаны ранее, для избежания этой ошибки рекомендуется заменить например sel на select т.к. эта переменная будет запрошена раньше. Либо использовать единый стиль написания во всех тестах. Данные ${JSON.stringify(results)}` })
-    }
+    // let results = {};
+    // if (_.isArray(paths)){
+    //   paths.forEach(s => {
+    //     if (_.get(object, s)){
+    //       result = _.get(object, s);
+    //       results[s] = result;
+    //     }
+    //   })
+    // }
+
+    // if (Object.keys(results).length > 1) {
+    //   throw({ message: `Ошибка при извлечении данных. В режиме вариативности переменной пришло несколько значений. Т.е. данные или селектор могут передаваться в нескольких видах например ['selector', 'sel', 's'] и данные переменные уже перезаписаны ранее, для избежания этой ошибки рекомендуется заменить например sel на select т.к. эта переменная будет запрошена раньше. Либо использовать единый стиль написания во всех тестах. Данные ${JSON.stringify(results)}` })
+    // }
 
     return result;
   }
