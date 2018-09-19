@@ -42,9 +42,7 @@ class Helpers {
       result = _.get(object, paths);
     }
     else {
-      if (Object.keys(results).length > 1) {
-        throw({ message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен` })
-      }
+      throw({ message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен` })
     }
 
     // let results = {};
