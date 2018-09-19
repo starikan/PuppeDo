@@ -471,18 +471,18 @@ class Test {
         }
 
         // Удаление локальных данных для устранения дублирования старых при обшибке когда несколько значени в [selector, sel, s]
-        let needDataToRemove = _.flattenDeep(needData);
-        let needSelectorsToRemove = _.flattenDeep(needSelectors);
-        _.forEach(needDataToRemove, v => {
-          try {
-            delete dataLocal[v]
-          } catch(err){}
-        })
-        _.forEach(needSelectorsToRemove, v => {
-          try {
-            delete selectorsLocal[v]
-          } catch(err){}
-        })
+        // let needDataToRemove = _.flattenDeep(needData);
+        // let needSelectorsToRemove = _.flattenDeep(needSelectors);
+        // _.forEach(needDataToRemove, v => {
+        //   try {
+        //     delete dataLocal[v]
+        //   } catch(err){}
+        // })
+        // _.forEach(needSelectorsToRemove, v => {
+        //   try {
+        //     delete selectorsLocal[v]
+        //   } catch(err){}
+        // })
 
 
         // todo
