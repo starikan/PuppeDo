@@ -83,7 +83,7 @@ const resolveStars = function(linksArray, testsFolder = '.') {
       resolvedArray = [...resolvedArray, ...pathsClean];
     }
     else {
-      resolvedArray.push(fileName)
+      resolvedArray.push(path.join(testsFolder, fileName))
     }
   });
   return resolvedArray;

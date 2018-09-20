@@ -218,19 +218,21 @@ class Test {
         let dataLocal = deepmerge.all([
           {},
           env ? env.get('data') : {}, //Берем данные из предыдущих тестов
-          envs.get('args.extDataExt'), // подгруженные из yaml файлов в переменной среды
-          envs.get('args.extData'), // из переменной среды
-          envs.get('data'), // из глобального env
-          envs.get('results') // результаты
+          envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
+          envs.get('args.extData', {}), // из переменной среды
+          envs.get('data', {}), // из глобального env
+          envs.get('resultsFunc', {}), // результаты функций
+          envs.get('results', {}), // результаты
         ], { arrayMerge: overwriteMerge })
 
         let selectorsLocal = deepmerge.all([
           {},
           env ? env.get('selectors') : {},
-          envs.get('args.extSelectorsExt'),
-          envs.get('args.extSelectors'),
-          envs.get('selectors'),
-          envs.get('results')
+          envs.get('args.extSelectorsExt', {}),
+          envs.get('args.extSelectors', {}),
+          envs.get('selectors', {}),
+          envs.get('resultsFunc', {}),
+          envs.get('results', {}),
         ], { arrayMerge: overwriteMerge })
 
         // Добавляем загрузки из файлов из теста
@@ -239,8 +241,6 @@ class Test {
         extDataExt_files.forEach(f => {
           const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
           dataLocal = deepmerge.all([dataLocal, data_ext], { arrayMerge: overwriteMerge });
-          // Сохраняем в результаты для будущих тестов
-          envs.set('results', deepmerge(envs.get('results'), data_ext));
         });
 
         let extSelectorsExt_files = deepmerge.all([ [], this.selectorsExt, selectorsExt ], { arrayMerge: overwriteMerge });
@@ -248,8 +248,6 @@ class Test {
         extSelectorsExt_files.forEach(f => {
           const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
           selectorsLocal = deepmerge.all([selectorsLocal, data_ext], { arrayMerge: overwriteMerge });
-          // Сохраняем в результаты для будущих тестов
-          envs.set('results', deepmerge(envs.get('results'), data_ext));
         });
 
         // Биндим
@@ -317,8 +315,8 @@ class Test {
         }
 
         // Сохраняем функции в результаты
-        envs.set('results', deepmerge(envs.get('results'), dataFunctionForGlobalResults));
-        envs.set('results', deepmerge(envs.get('results'), selectorsFunctionForGlobalResults));
+        envs.set('resultsFunc', deepmerge(envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
+        envs.set('resultsFunc', deepmerge(envs.get('resultsFunc', {}), selectorsFunctionForGlobalResults));
 
         // Write data to local env. For child tests.
         if (env) {

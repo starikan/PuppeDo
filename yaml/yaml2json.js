@@ -36,7 +36,7 @@ const yaml2json = function(filePath, testsFolder = ''){
       exts.forEach(ext => {
         files.push(file + ext);
         allTestFolders.forEach(folder => {
-          files.push(path.join(process.cwd(), testsFolder, folder, file + ext));
+          files.push(path.join(testsFolder, folder, file + ext));
         })
       })
     })
