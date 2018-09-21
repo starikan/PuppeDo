@@ -5,6 +5,8 @@ const _ = require('lodash');
 const yaml = require('js-yaml');
 const walkSync = require('walk-sync');
 
+let paths;
+
 const yaml2json = function(filePath, testsFolder = ''){
 
   if (!_.isString(filePath)){
@@ -20,7 +22,9 @@ const yaml2json = function(filePath, testsFolder = ''){
   let testFile = null;
   testsFolder = testsFolder.replace(/\\/g, '\\\\');
   let allTestFolders = [];
-  var paths = walkSync(testsFolder);
+  if (!paths){
+    paths = walkSync(testsFolder);
+  }
   paths.forEach(folder => {
     if (folder.includes('.git')){
       return;
@@ -36,20 +40,22 @@ const yaml2json = function(filePath, testsFolder = ''){
       exts.forEach(ext => {
         files.push(file + ext);
         allTestFolders.forEach(folder => {
-          files.push(path.join(process.cwd(), testsFolder, folder, file + ext));
+          files.push(path.join(testsFolder, folder, file + ext));
         })
       })
     })
   }
 
-  for (let file of files) {
-    try {
-      if (fs.existsSync(file)) {
-        testFile = file;
-        break;
+  if (filePath != 'log'){
+    for (let file of files) {
+      try {
+        if (fs.existsSync(file)) {
+          testFile = file;
+          break;
+        }
       }
+      catch (err) {}
     }
-    catch (err) {}
   }
 
   let full = {};

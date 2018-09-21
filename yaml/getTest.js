@@ -34,18 +34,25 @@ const getTest = function(testJsonIncome, envsId){
     }
 
     if ( _.isString(funcVal) ){
+      let funcFile = path.join(envs.get('args.testsFolder'), funcVal);
       try {
-        let funcFile = path.join(process.cwd(), envs.get('args.testsFolder'), funcVal);
-        funcFromFile = _.get(require(funcFile), funcKey);
+        try {
+          funcFromFile = _.get(require(funcFile), funcKey);
+        }
+        catch (err) {
+          // if relative path of testFolder
+          funcFile = path.join(process.cwd(), funcFile);
+          funcFromFile = _.get(require(funcFile), funcKey);
+        }
         if (_.isFunction(funcFromFile)){
           testJson[funcKey] = [ funcFromFile ];
         }
         else {
-          throw ({ message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}` })
+          throw ({ message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
         }
       }
       catch (err) {
-        throw({ message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}` })
+        throw({ message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
       }
     }
   }

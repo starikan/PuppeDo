@@ -263,11 +263,12 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async createEnv ({envExt = {}, file = null, name = null} = {}){
+  async createEnv ({envExt = {}, file = null, name = null, testsFolder = '.'} = {}){
     let env;
 
     if (file && file.endsWith('.yaml')) {
-      env = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
+      const fileName = path.join(this.args.testsFolder, file);
+      env = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
       Object.keys(envExt).forEach(key => {
         _.set(env, key, envExt[key]);
       })
@@ -288,7 +289,7 @@ class Envs {
         dataExtList = resolveStars(dataExtList, this.args.testsFolder);
         for (let i = 0; i < dataExtList.length; i++) {
           const dataExtFile = dataExtList[i];
-          let dataExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, dataExtFile), 'utf8'));
+          let dataExt = yaml.safeLoad(fs.readFileSync(dataExtFile, 'utf8'));
           env.data = env.data || {};
           env.data = Object.assign(dataExt, env.data);
         }
@@ -307,7 +308,7 @@ class Envs {
         selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
         for (let i = 0; i < selectorsExtList.length; i++) {
           const selectorsExtFile = selectorsExtList[i];
-          let selectorsExt = yaml.safeLoad(fs.readFileSync(path.join(this.args.testsFolder, selectorsExtFile), 'utf8'));
+          let selectorsExt = yaml.safeLoad(fs.readFileSync(selectorsExtFile, 'utf8'));
           env.selectors = env.selectors || {};
           env.selectors = Object.assign(selectorsExt, env.selectors);
         }
