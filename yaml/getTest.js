@@ -41,7 +41,7 @@ const getTest = function(testJsonIncome, envsId){
         }
         catch (err) {
           // if relative path of testFolder
-          funcFile = '..\\' + funcFile;
+          funcFile = path.join(process.cwd(), funcFile);
           funcFromFile = _.get(require(funcFile), funcKey);
         }
         if (_.isFunction(funcFromFile)){
