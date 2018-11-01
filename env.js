@@ -387,7 +387,7 @@ class Envs {
     }
   }
 
-  async init(args = {}){
+  async init(args = {}, runBrowsers = true){
 
     let testFile = process.env.PPD_TEST || _.get(args, 'test') || _.get(args_ext, '--test');
     let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') ||  _.get(args_ext, '--output', 'output');
@@ -459,7 +459,9 @@ class Envs {
       await this.createEnv({envExt: envExt, file: envFiles[i]});
     }
 
-    await this.runBrowsers();
+    if (runBrowsers) {
+      await this.runBrowsers();
+    }
 
     // If already init do nothing
     this.init = async function() {};

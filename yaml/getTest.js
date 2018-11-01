@@ -61,4 +61,9 @@ const getTest = function(testJsonIncome, envsId){
   return async () => { await test.run(testJson, envsId)};
 }
 
-module.exports = { getTest };
+
+const getTestsFiles = async () => {
+  return [{test: 'test'}];
+}
+
+module.exports = { getTest, getTestsFiles };
