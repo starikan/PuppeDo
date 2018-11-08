@@ -16,7 +16,7 @@ const main = async (args = {}) => {
   process.on('unhandledRejection', async (error, p) => {
     console.log('unhandledRejection')
     console.log(error, p)
-    if (process.env.PPD_DEBUG_MODE) debugger;
+    if (_.get(envs, ['args', 'debugMode'])) debugger;
     process.exit(1);
   });
 
