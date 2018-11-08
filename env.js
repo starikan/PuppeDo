@@ -276,6 +276,10 @@ class Envs {
     }
 
     if (env) {
+
+      env.data = env.data || {};
+      env.selectors = env.selectors || {};
+
       if (_.get(env, 'dataExt')) {
         let dataExtList = _.get(env, 'dataExt');
         if (_.isString(dataExtList)) {
