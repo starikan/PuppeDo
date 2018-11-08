@@ -1,8 +1,14 @@
 const _ = require('lodash');
 
-const { getFullDepthJSON } = require('./yaml/getFullDepthJSON');
-const { getTest } = require('./yaml/getTest');
-const { args_ext } = require('./helpers');
+const {
+  getFullDepthJSON
+} = require('./yaml/getFullDepthJSON');
+const {
+  getTest, getTestsFiles
+} = require('./yaml/getTest');
+const {
+  args_ext
+} = require('./helpers');
 
 const main = async (args = {}) => {
   let testsList = process.env.PPD_TESTS_LIST ? JSON.parse(process.env.PPD_TESTS_LIST) : _.get(args, 'testsList') || JSON.parse(_.get(args_ext, '--testsList', '[]'));
@@ -14,7 +20,11 @@ const main = async (args = {}) => {
     process.exit(1);
   });
 
-  const { envsId, envs, log } = require('./env')();
+  const {
+    envsId,
+    envs,
+    log
+  } = require('./env')();
 
   await envs.init(args);
 
@@ -36,5 +46,10 @@ const main = async (args = {}) => {
 if (!module.parent) {
   main();
 } else {
-  exports.main = main;
+  module.exports = {
+    main,
+    getFullDepthJSON,
+    getTest,
+    env: require('./env'),
+  };
 }

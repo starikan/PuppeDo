@@ -454,9 +454,14 @@ class Envs {
     await this.initTest({test: testName, output: outputFolder})
 
     for (let i = 0; i < envFiles.length; i++) {
+      envFiles[i] = _.endsWith(envFiles[i], '.yaml') ? envFiles[i] : envFiles[i] + '.yaml';
       let envName = path.basename(envFiles[i], '.yaml');
       let envExt = _.get(envsExt, envName, {});
       await this.createEnv({envExt: envExt, file: envFiles[i]});
+    }
+
+    if (!this.envs || _.isEmpty(this.envs)) {
+      throw({ message: `Не возможно инициализировать ни одной среды исполнения. Проверьте параметр 'envs', должен быть не пустой массив` })
     }
 
     if (runBrowsers) {
