@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "0.18.0",
     "chalk": "2.4.1",
+    "circular-json": "0.5.9",
     "deepmerge": "2.1.1",
     "express": "^4.16.3",
     "express-ws": "^4.0.0",

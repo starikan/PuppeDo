@@ -4,6 +4,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
 const chalk = require('chalk');
+const CircularJSON = require('circular-json');
 
 class Logger {
   constructor(envs){
@@ -86,14 +87,14 @@ class Logger {
     let envLevelText = levels[envLevel];
     let inputLevelText = levels[inputLevel];
 
-    // If input level higher or equal then global env level thqn logging
+    // If input level higher or equal then global env level then logging
     if (envLevel > inputLevel) {
       return false;
     }
     else {
       return inputLevelText;
     }
-  }
+  };
 
   async _log({
     text = '',
@@ -137,6 +138,9 @@ class Logger {
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
       const logStringNoTime = `${level} - ${text}`;
       const logString = `${now} - ${logStringNoTime}`;
+      let dataEnvsGlobal = {};
+      let dataEnvs = {};
+      let type = 'log';
 
       // STDOUT
       if (stdOut) {
@@ -150,7 +154,11 @@ class Logger {
       }
       if (level == 'env') {
         console.log(this.envs);
-        debugger;
+        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+          return _.omit(val, 'state');
+        });
+        type = 'env';
       }
 
       // SCRENSHOTS
@@ -187,9 +195,12 @@ class Logger {
 
       this.envs.push('log', {
         text: logStringNoTime,
+        dataEnvs: dataEnvs,
+        dataEnvsGlobal: dataEnvsGlobal,
         time: now,
         screenshots: screenshots,
-        level: level
+        level: level,
+        type: type,
       });
 
       await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
@@ -199,7 +210,7 @@ class Logger {
       });
 
       // Export JSON log every step
-      const exportJson = JSON.stringify(this.envs.get('log'));
+      const exportJson = CircularJSON.stringify(this.envs.get('log'));
       await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
 
       if (debug){
@@ -210,7 +221,7 @@ class Logger {
       console.log(err);
       throw(err);
     }
-  }
+  };
 }
 
 module.exports = function(envs){
