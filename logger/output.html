@@ -14,7 +14,7 @@
     }
     table td, table th {
       border: 1px solid #000000;
-    }  
+    }
     .error {
       background-color: #f97575;
     }
@@ -25,14 +25,14 @@
   <div id="app">
     <p v-if="!json.length">Something wrong happened. Can`t load JSON with log.</p>
     <table>
-      <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }"> 
+      <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }">
         <td>{{ index }}</td>
         <td>{{ data.time }}</td>
         <td>
           <p v-if="data.text">{{ data.text }}</p>
           <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img">
         </td>
-      </tr>      
+      </tr>
     </table>
   </div>
 </body>
