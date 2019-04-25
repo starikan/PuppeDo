@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Output test</title>
   <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-json-tree-view@2.1.4/dist/vue-json-tree-view.min.js"></script>
   <script type="text/javascript" src="./output.json"></script>
   <style>
     table {
@@ -29,8 +30,22 @@
         <td>{{ index }}</td>
         <td>{{ data.time }}</td>
         <td>
-          <p v-if="data.text">{{ data.text }}</p>
+          <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
           <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img">
+          <tree-view v-if="data.type === 'env' && data.dataEnvsGlobal"
+                     :data="data.dataEnvsGlobal"
+                     :options="{
+                       maxDepth: 0,
+                       rootObjectKey: 'Global settings',
+                      }">
+          </tree-view>
+          <tree-view v-if="data.type === 'env' && data.dataEnvs"
+                     :data="data.dataEnvs"
+                     :options="{
+                       maxDepth: 0,
+                       rootObjectKey: 'Envs settings',
+                      }">
+          </tree-view>
         </td>
       </tr>
     </table>
@@ -38,6 +53,7 @@
 </body>
 
 <script>
+  Vue.use(TreeView)
   var app = new Vue({
     el: '#app',
     data: function(){

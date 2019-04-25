@@ -28,6 +28,8 @@ const main = async (args = {}) => {
 
   await envs.init(args);
 
+  log({level: 'env'});
+
   if (_.isEmpty(testsList)) testsList = [envs.get('args.testFile')];
 
   for (let i = 0; i < testsList.length; i++) {
