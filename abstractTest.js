@@ -78,6 +78,8 @@ class Test {
       runTest = async function(){},
       afterTest = async function(){},
       errorTest = async function(){},
+
+      source = '',
     } = {}
   ){
     this.name = name;
@@ -131,6 +133,8 @@ class Test {
     this.afterTest = afterTest;
 
     this.repeat = repeat;
+
+    this.source = source;
 
     this.run = async (
       {
@@ -354,6 +358,15 @@ class Test {
         let optionsLocal = {};
         optionsLocal = Object.assign(optionsLocal, options);
 
+        // Bind source of test in log function
+        function bind(func, source) {
+          return function() {
+            return func.apply(null, [...arguments, source]);
+          };
+        }
+
+        let logBinded = bind(log, this);
+
         //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
         // если что ронять с исключнием
         const args = {
@@ -368,7 +381,7 @@ class Test {
           options: optionsLocal,
           envsId,
           envs,
-          log,
+          log: logBinded,
           helper: new Helpers(),
         };
 

@@ -4,7 +4,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const moment = require('moment');
 const chalk = require('chalk');
-const CircularJSON = require('circular-json');
+var stringify = require('json-stringify-safe');
 
 class Logger {
   constructor(envs){
@@ -97,18 +97,20 @@ class Logger {
   };
 
   async _log({
-    text = '',
-    pageNum = 0,
-    stdOut = true,
-    selCSS = [],
-    screenshot = null,
-    fullpage = null,
-    level = 'info',
-    debug = false,
-    element = false,
-    testStruct = null,
-    dataType = null,
-  } = {}) {
+      text = '',
+      pageNum = 0,
+      stdOut = true,
+      selCSS = [],
+      screenshot = null,
+      fullpage = null,
+      level = 'info',
+      debug = false,
+      element = false,
+      testStruct = null,
+      dataType = null,
+    } = {},
+    testSource)
+  {
     try {
 
       let activeEnv = this.envs.getEnv();
@@ -173,6 +175,16 @@ class Logger {
         type = 'env';
       }
 
+      if (_.isEmpty(testStruct)) {
+        testStruct = _.get(testSource, 'source', {});
+        testStruct = _.mapValues(testStruct, v => {
+          if (!_.isEmpty(v)){
+            return v
+          }
+        })
+        console.log(testStruct)
+      }
+
       // SCRENSHOTS
       let outputFolder = this.envs.get('output.folder')
       if (!outputFolder) return;
@@ -223,7 +235,7 @@ class Logger {
       });
 
       // Export JSON log every step
-      const exportJson = CircularJSON.stringify(this.envs.get('log'));
+      const exportJson = stringify(this.envs.get('log'));
       await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
 
       if (debug){

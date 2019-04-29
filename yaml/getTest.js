@@ -17,6 +17,9 @@ const getTest = function(testJsonIncome, envsId){
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
   const { envs, log } = require('../env')(envsId);
 
+  // Pass source code of test into test for logging
+  testJson.source = _.cloneDeep(testJson);
+
   for (let funcKey in functions) {
 
     testJson[funcKey] = [];
