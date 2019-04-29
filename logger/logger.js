@@ -70,7 +70,7 @@ class Logger {
       'test': 3,
       'warn': 4,
       'error': 5,
-      'env': 6
+      'env': 6,
     }
 
     let defaultLevel = 1;
@@ -106,6 +106,8 @@ class Logger {
     level = 'info',
     debug = false,
     element = false,
+    testStruct = null,
+    dataType = null,
   } = {}) {
     try {
 
@@ -138,8 +140,8 @@ class Logger {
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
       const logStringNoTime = `${level} - ${text}`;
       const logString = `${now} - ${logStringNoTime}`;
-      let dataEnvsGlobal = {};
-      let dataEnvs = {};
+      let dataEnvsGlobal = null;
+      let dataEnvs = null;
       let type = 'log';
 
       // STDOUT
@@ -152,12 +154,22 @@ class Logger {
           console.log(logString);
         }
       }
+
       if (level == 'env') {
+        if (dataType == 'global_env') {
+          dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+        }
+        if (dataType == 'settings_env') {
+          dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+            return _.omit(val, 'state');
+          });
+        }
+        if (dataType == 'struct_test') {
+          if (!_.isEmpty(testStruct)) {
+            console.log(testStruct);
+          }
+        }
         console.log(this.envs);
-        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-          return _.omit(val, 'state');
-        });
         type = 'env';
       }
 
@@ -195,12 +207,13 @@ class Logger {
 
       this.envs.push('log', {
         text: logStringNoTime,
-        dataEnvs: dataEnvs,
-        dataEnvsGlobal: dataEnvsGlobal,
         time: now,
-        screenshots: screenshots,
-        level: level,
-        type: type,
+        dataEnvs,
+        dataEnvsGlobal,
+        testStruct,
+        screenshots,
+        level,
+        type,
       });
 
       await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {

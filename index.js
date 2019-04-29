@@ -28,7 +28,8 @@ const main = async (args = {}) => {
 
   await envs.init(args);
 
-  log({level: 'env'});
+  log({level: 'env', dataType: 'global_env'});
+  log({level: 'env', dataType: 'settings_env'});
 
   if (_.isEmpty(testsList)) testsList = [envs.get('args.testFile')];
 
@@ -38,6 +39,7 @@ const main = async (args = {}) => {
       envs: envs,
       filePath: testFile,
     });
+    log({level: 'env', testStruct: fullJSON, dataType: 'struct_test'});
     let test = getTest(fullJSON, envsId);
     await test();
   }

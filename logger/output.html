@@ -46,6 +46,13 @@
                        rootObjectKey: 'Envs settings',
                       }">
           </tree-view>
+          <tree-view v-if="data.type === 'env' && data.testStruct"
+                     :data="data.testStruct"
+                     :options="{
+                       maxDepth: 0,
+                       rootObjectKey: 'Test sctructure',
+                      }">
+          </tree-view>
         </td>
       </tr>
     </table>
