@@ -434,7 +434,7 @@ class Envs {
 
     if (envsExtJson) {
       try {
-        let envsExtJson_data = require(path.join(process.cwd(), envsExtJson));
+        let envsExtJson_data = require(path.join(testsFolder, envsExtJson));
         envsExt = deepmerge.all([envsExtJson_data, envsExt], { arrayMerge: overwriteMerge })
       }
       catch (err) { }

@@ -168,10 +168,10 @@ class Logger {
         }
         if (dataType == 'struct_test') {
           if (!_.isEmpty(testStruct)) {
-            console.log(testStruct);
+            // console.log(testStruct);
           }
         }
-        console.log(this.envs);
+        // console.log(this.envs);
         type = 'env';
       }
 
@@ -182,7 +182,7 @@ class Logger {
             return v
           }
         })
-        console.log(testStruct)
+        // console.log(testStruct)
       }
 
       // SCRENSHOTS

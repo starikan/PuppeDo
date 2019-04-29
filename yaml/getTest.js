@@ -43,6 +43,7 @@ const getTest = function(testJsonIncome, envsId){
           funcFromFile = _.get(require(funcFile), funcKey);
         }
         catch (err) {
+          console.log(err)
           // if relative path of testFolder
           funcFile = path.join(process.cwd(), funcFile);
           funcFromFile = _.get(require(funcFile), funcKey);
@@ -51,10 +52,12 @@ const getTest = function(testJsonIncome, envsId){
           testJson[funcKey] = [ funcFromFile ];
         }
         else {
+          console.log(err);
           throw ({ message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
         }
       }
       catch (err) {
+        console.log(err);
         throw({ message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
       }
     }
