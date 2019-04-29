@@ -2,10 +2,10 @@ const _ = require('lodash');
 
 const {
   getFullDepthJSON
-} = require('./yaml/getFullDepthJSON');
+} = require('./getFullDepthJSON');
 const {
   getTest, getTestsFiles
-} = require('./yaml/getTest');
+} = require('./getTest');
 const {
   args_ext
 } = require('./helpers');

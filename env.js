@@ -10,7 +10,7 @@ const uuid = require('uuid/v1');
 const axios = require('axios');
 const deepmerge = require('deepmerge');
 
-const logger = require('./logger/logger');
+const logger = require('./logger');
 const { resolveStars, overwriteMerge } = require('./helpers');
 
 let args_ext = {}
@@ -334,7 +334,7 @@ class Envs {
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
 
-    fs.createReadStream(path.join(path.resolve(__dirname), 'logger/output.html')).pipe(fs.createWriteStream(path.join(folder, 'output.html')));
+    fs.createReadStream(path.join(path.resolve(__dirname), 'output.html')).pipe(fs.createWriteStream(path.join(folder, 'output.html')));
 
     this.output.output = output;
     this.output.name = test;

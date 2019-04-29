@@ -2,7 +2,7 @@ const path = require('path');
 
 const _ = require('lodash');
 
-const abstractTest = require('../abstractTest');
+const abstractTest = require('./abstractTest');
 
 const getTest = function(testJsonIncome, envsId){
 
@@ -15,7 +15,7 @@ const getTest = function(testJsonIncome, envsId){
   }
 
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-  const { envs, log } = require('../env')(envsId);
+  const { envs, log } = require('./env')(envsId);
 
   // Pass source code of test into test for logging
   testJson.source = _.cloneDeep(testJson);
