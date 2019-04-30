@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 
 const yaml = require('js-yaml');
 const _ = require('lodash');
-const moment = require('moment')
+const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
 const uuid = require('uuid/v1');
 const axios = require('axios');
@@ -328,8 +328,7 @@ class Envs {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     };
-
-    const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+    const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);

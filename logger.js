@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const _ = require('lodash');
-const moment = require('moment');
+const dayjs = require('dayjs');
 const chalk = require('chalk');
 var stringify = require('json-stringify-safe');
 
@@ -20,7 +20,7 @@ class Logger {
       let current = this.envs.get('current');
       let pageName = this.envs.get('current.page');
 
-      const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
       const name = `${now}.jpg`;
 
@@ -117,7 +117,7 @@ class Logger {
       let activeLog = _.get(activeEnv, 'env.log', {});
 
       const screenshots = [];
-      const now = moment().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
       if (!_.isBoolean(screenshot)){
         screenshot = _.get(activeLog, 'screenshot', false);
