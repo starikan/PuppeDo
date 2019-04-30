@@ -5,6 +5,7 @@ const _ = require("lodash");
 const dayjs = require("dayjs");
 const chalk = require("chalk");
 const stringify = require("json-stringify-safe");
+const walkSync = require("walk-sync");
 
 class Logger {
   constructor(envs) {
@@ -97,6 +98,28 @@ class Logger {
       return false;
     } else {
       return inputLevelText;
+    }
+  }
+
+  // Copy all log into LATES path
+  copyToLatest(outputFolder) {
+    let filesSource = walkSync(outputFolder);
+    const latestPath = path.join(this.envs.get("output.output"), "latest");
+
+    if (!fs.existsSync(latestPath)) {
+      fs.mkdirSync(latestPath);
+    } else {
+      let filesExists = walkSync(latestPath);
+      for (let i = 0; i < filesExists.length; i++) {
+        fs.unlinkSync(path.join(latestPath, filesExists[i]));
+      }
+    }
+
+    for (let i = 0; i < filesSource.length; i++) {
+      fs.copyFileSync(
+        path.join(outputFolder, filesSource[i]),
+        path.join(latestPath, filesSource[i])
+      );
     }
   }
 
@@ -251,6 +274,8 @@ class Logger {
         path.join(outputFolder, "output.json"),
         exportJson
       );
+
+      this.copyToLatest(outputFolder);
 
       if (debug) {
         debugger;
