@@ -1,75 +1,82 @@
-const path = require('path');
+const path = require("path");
 
-const _ = require('lodash');
+const _ = require("lodash");
 
-const abstractTest = require('./abstractTest');
+const abstractTest = require("./abstractTest");
 
-const getTest = function(testJsonIncome, envsId){
-
+const getTest = function(testJsonIncome, envsId) {
   let testJson = _.cloneDeep(testJsonIncome);
 
-  if (!testJson || !_.isObject(testJson) || !envsId){
-    throw({
-      message: 'getTest params error'
-    })
+  if (!testJson || !_.isObject(testJson) || !envsId) {
+    throw {
+      message: "getTest params error"
+    };
   }
 
-  const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
-  const { envs, log } = require('./env')(envsId);
+  const functions = _.pick(testJson, [
+    "beforeTest",
+    "runTest",
+    "afterTest",
+    "errorTest"
+  ]);
+  const { envs, log } = require("./env")(envsId);
 
   // Pass source code of test into test for logging
   testJson.source = _.cloneDeep(testJson);
 
   for (let funcKey in functions) {
-
     testJson[funcKey] = [];
     let funcVal = functions[funcKey];
 
-    if (_.isArray(funcVal)){
-      for (let test of funcVal){
-        if (test.type === 'test'){
-          testJson[funcKey].push( getTest(test, envsId) );
+    if (_.isArray(funcVal)) {
+      for (let test of funcVal) {
+        if (test.type === "test") {
+          testJson[funcKey].push(getTest(test, envsId));
         }
-        if (test.name === 'log'){
-          testJson[funcKey].push( async () => { await log(test) });
+        if (test.name === "log") {
+          testJson[funcKey].push(async () => {
+            await log(test);
+          });
         }
       }
     }
 
-    if ( _.isString(funcVal) ){
-      let funcFile = path.join(envs.get('args.testsFolder'), funcVal);
+    if (_.isString(funcVal)) {
+      let funcFile = path.join(envs.get("args.testsFolder"), funcVal);
       try {
         try {
           funcFromFile = _.get(require(funcFile), funcKey);
-        }
-        catch (err) {
-          console.log(err)
+        } catch (err) {
+          console.log(err);
           // if relative path of testFolder
           funcFile = path.join(process.cwd(), funcFile);
           funcFromFile = _.get(require(funcFile), funcKey);
         }
-        if (_.isFunction(funcFromFile)){
-          testJson[funcKey] = [ funcFromFile ];
-        }
-        else {
+        if (_.isFunction(funcFromFile)) {
+          testJson[funcKey] = [funcFromFile];
+        } else {
           console.log(err);
-          throw ({ message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
+          throw {
+            message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`
+          };
         }
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err);
-        throw({ message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.` })
+        throw {
+          message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`
+        };
       }
     }
   }
 
-  const test = new abstractTest( testJson );
-  return async () => { await test.run(testJson, envsId)};
-}
-
+  const test = new abstractTest(testJson);
+  return async () => {
+    await test.run(testJson, envsId);
+  };
+};
 
 const getTestsFiles = async () => {
-  return [{test: 'test'}];
-}
+  return [{ test: "test" }];
+};
 
 module.exports = { getTest, getTestsFiles };

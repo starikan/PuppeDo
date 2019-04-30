@@ -1,33 +1,36 @@
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
-const _ = require('lodash');
-const dayjs = require('dayjs');
-const chalk = require('chalk');
-var stringify = require('json-stringify-safe');
+const _ = require("lodash");
+const dayjs = require("dayjs");
+const chalk = require("chalk");
+const stringify = require("json-stringify-safe");
 
 class Logger {
-  constructor(envs){
+  constructor(envs) {
     this.envs = envs;
   }
 
-  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
-
+  async saveScreenshot({
+    selCSS = false,
+    fullpage = false,
+    element = false
+  } = {}) {
     try {
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, 'env.log', {});
-      let current = this.envs.get('current');
-      let pageName = this.envs.get('current.page');
+      let activeLog = _.get(activeEnv, "env.log", {});
+      let current = this.envs.get("current");
+      let pageName = this.envs.get("current.page");
 
-      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format("YYYY-MM-DD_HH-mm-ss.SSS");
       //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
       const name = `${now}.jpg`;
 
-      if (!this.envs.get('output.folder')) return;
+      if (!this.envs.get("output.folder")) return;
 
-      const pathScreenshot = path.join(this.envs.get('output.folder'), name);
-      const page = _.get(activeEnv, `state.pages.${pageName}`)
+      const pathScreenshot = path.join(this.envs.get("output.folder"), name);
+      const page = _.get(activeEnv, `state.pages.${pageName}`);
 
       //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
       if (_.isObject(page)) {
@@ -35,7 +38,7 @@ class Logger {
           const el = await page.$(selCSS);
           await el.screenshot({ path: pathScreenshot });
         }
-        if (element && _.isObject(element) && !_.isEmpty(element)){
+        if (element && _.isObject(element) && !_.isEmpty(element)) {
           await element.screenshot({ path: pathScreenshot });
         }
         if (fullpage) {
@@ -44,45 +47,47 @@ class Logger {
         return name;
       } else {
         return false;
-      };
-    }
-    catch (err){
+      }
+    } catch (err) {
       err.message += ` || saveScreenshot selCSS = ${selCSS}`;
       console.log(err);
       debugger;
-      throw(err);
+      throw err;
     }
-  };
+  }
 
-  getLevel(level){
-
+  getLevel(level) {
     const levels = {
-      0: 'raw',
-      1: 'debug',
-      2: 'info',
-      3: 'test',
-      4: 'warn',
-      5: 'error',
-      6: 'env',
-      'raw': 0,
-      'debug': 1,
-      'info': 2,
-      'test': 3,
-      'warn': 4,
-      'error': 5,
-      'env': 6,
-    }
+      0: "raw",
+      1: "debug",
+      2: "info",
+      3: "test",
+      4: "warn",
+      5: "error",
+      6: "env",
+      raw: 0,
+      debug: 1,
+      info: 2,
+      test: 3,
+      warn: 4,
+      error: 5,
+      env: 6
+    };
 
     let defaultLevel = 1;
 
     // Active ENV log settings
     let activeEnv = this.envs.getEnv();
-    let activeLog = _.get(activeEnv, 'env.log', {});
+    let activeLog = _.get(activeEnv, "env.log", {});
 
-    let envLevel =_.get(activeLog, 'level', defaultLevel);
-    envLevel = _.isNumber(envLevel) ? envLevel : _.get(levels, envLevel, defaultLevel)
+    let envLevel = _.get(activeLog, "level", defaultLevel);
+    envLevel = _.isNumber(envLevel)
+      ? envLevel
+      : _.get(levels, envLevel, defaultLevel);
     let inputLevel = level;
-    inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel)
+    inputLevel = _.isNumber(inputLevel)
+      ? inputLevel
+      : _.get(levels, inputLevel, defaultLevel);
 
     let envLevelText = levels[envLevel];
     let inputLevelText = levels[inputLevel];
@@ -90,40 +95,39 @@ class Logger {
     // If input level higher or equal then global env level then logging
     if (envLevel > inputLevel) {
       return false;
-    }
-    else {
+    } else {
       return inputLevelText;
     }
-  };
+  }
 
-  async _log({
-      text = '',
+  async _log(
+    {
+      text = "",
       pageNum = 0,
       stdOut = true,
       selCSS = [],
       screenshot = null,
       fullpage = null,
-      level = 'info',
+      level = "info",
       debug = false,
       element = false,
       testStruct = null,
-      dataType = null,
+      dataType = null
     } = {},
-    testSource)
-  {
+    testSource
+  ) {
     try {
-
       let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, 'env.log', {});
+      let activeLog = _.get(activeEnv, "env.log", {});
 
       const screenshots = [];
-      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format("YYYY-MM-DD_HH-mm-ss.SSS");
 
-      if (!_.isBoolean(screenshot)){
-        screenshot = _.get(activeLog, 'screenshot', false);
+      if (!_.isBoolean(screenshot)) {
+        screenshot = _.get(activeLog, "screenshot", false);
       }
-      if (!_.isBoolean(fullpage)){
-        fullpage = _.get(activeLog, 'fullpage', false);
+      if (!_.isBoolean(fullpage)) {
+        fullpage = _.get(activeLog, "fullpage", false);
       }
 
       // LEVEL RULES
@@ -131,12 +135,12 @@ class Logger {
       if (!level) return;
 
       const style = {
-        'info': chalk.blue,
-        'test': chalk.green,
-        'warn': chalk.yellow,
-        'error': chalk.red,
-        'env': chalk.magenta
-      }
+        info: chalk.blue,
+        test: chalk.green,
+        warn: chalk.yellow,
+        error: chalk.red,
+        env: chalk.magenta
+      };
 
       // LOG STRINGS
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
@@ -144,67 +148,70 @@ class Logger {
       const logString = `${now} - ${logStringNoTime}`;
       let dataEnvsGlobal = null;
       let dataEnvs = null;
-      let type = 'log';
+      let type = "log";
 
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(style, level);
-        if (styleFunction && _.isFunction(styleFunction)){
+        if (styleFunction && _.isFunction(styleFunction)) {
           console.log(styleFunction(logString));
-        }
-        else {
+        } else {
           console.log(logString);
         }
       }
 
-      if (level == 'env') {
-        if (dataType == 'global_env') {
-          dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+      if (level == "env") {
+        if (dataType == "global_env") {
+          dataEnvsGlobal = _.pick(this.envs, [
+            "args",
+            "current",
+            "data",
+            "results",
+            "selectors"
+          ]);
         }
-        if (dataType == 'settings_env') {
-          dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-            return _.omit(val, 'state');
+        if (dataType == "settings_env") {
+          dataEnvs = _.mapValues(_.get(this.envs, ["envs"], {}), val => {
+            return _.omit(val, "state");
           });
         }
-        if (dataType == 'struct_test') {
+        if (dataType == "struct_test") {
           if (!_.isEmpty(testStruct)) {
             // console.log(testStruct);
           }
         }
         // console.log(this.envs);
-        type = 'env';
+        type = "env";
       }
 
       if (_.isEmpty(testStruct)) {
-        testStruct = _.get(testSource, 'source', {});
+        testStruct = _.get(testSource, "source", {});
         testStruct = _.mapValues(testStruct, v => {
-          if (!_.isEmpty(v)){
-            return v
+          if (!_.isEmpty(v)) {
+            return v;
           }
-        })
+        });
         // console.log(testStruct)
       }
 
       // SCRENSHOTS
-      let outputFolder = this.envs.get('output.folder')
+      let outputFolder = this.envs.get("output.folder");
       if (!outputFolder) return;
 
-
       if (screenshot) {
-
-        if (_.isString(selCSS)){
-          selCSS = [selCSS]
+        if (_.isString(selCSS)) {
+          selCSS = [selCSS];
         }
 
         let src;
 
-        if (_.isArray(selCSS)){
+        if (_.isArray(selCSS)) {
           for (let css in selCSS) {
             src = await this.saveScreenshot({ selCSS: selCSS[css] });
           }
         }
 
-        if (element){
+        if (element) {
           src = await this.saveScreenshot({ element: element });
         }
 
@@ -217,7 +224,7 @@ class Logger {
         }
       }
 
-      this.envs.push('log', {
+      this.envs.push("log", {
         text: logStringNoTime,
         time: now,
         dataEnvs,
@@ -225,35 +232,41 @@ class Logger {
         testStruct,
         screenshots,
         level,
-        type,
+        type
       });
 
-      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
-        if (err) {
-          return console.log(err);
+      await fs.appendFileSync(
+        path.join(outputFolder, "output.log"),
+        logString + "\n",
+        function(err) {
+          if (err) {
+            return console.log(err);
+          }
         }
-      });
+      );
 
       // Export JSON log every step
-      const exportJson = stringify(this.envs.get('log'));
-      await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
+      const exportJson = stringify(this.envs.get("log"));
+      await fs.writeFileSync(
+        path.join(outputFolder, "output.json"),
+        exportJson
+      );
 
-      if (debug){
+      if (debug) {
         debugger;
       }
-    }
-    catch (err){
+    } catch (err) {
       console.log(err);
-      throw(err);
+      throw err;
     }
-  };
+  }
 }
 
-module.exports = function(envs){
-  if (!envs){
-    throw({
+module.exports = function(envs) {
+  if (!envs) {
+    throw {
       message: "Logger need ENVS"
-    })
+    };
   }
 
   const logger = new Logger(envs);
