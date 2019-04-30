@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
-const uuid = require('uuid/v1');
+const crypto = require("crypto");
 const axios = require('axios');
 const deepmerge = require('deepmerge');
 
@@ -496,7 +496,7 @@ module.exports = function(envsId){
   }
 
   if (!envsId){
-    envsId = uuid();
+    envsId = crypto.randomBytes(16).toString("hex");
     let newEnvs = new Envs();
 
     instances[envsId] = {
