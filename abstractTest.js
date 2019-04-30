@@ -447,34 +447,6 @@ class Test {
         let optionsLocal = {};
         optionsLocal = Object.assign(optionsLocal, options);
 
-        // Bind source of test in log function
-        function bind(func, source) {
-          return function() {
-            return func.apply(null, [...arguments, source]);
-          };
-        }
-
-        let logBinded = bind(log, this);
-
-        //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
-        // если что ронять с исключнием
-        const args = {
-          envName,
-          envPageName,
-          env,
-          browser,
-          page,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          allowResults: this.allowResults,
-          options: optionsLocal,
-          envsId,
-          envs,
-          log: logBinded,
-          helper: new Helpers(),
-          _
-        };
-
         // IF
         let expr = _.get(inputArgs, "if");
         if (expr) {
@@ -540,6 +512,51 @@ class Test {
         );
 
         let resultFromTest = {};
+
+        // Bind source of test in log function
+        let allowResults = this.allowResults;
+        function bind(func, source) {
+          return function() {
+            return func.apply(this, [
+              ...arguments,
+              source,
+              {
+                envName,
+                envPageName,
+                // env,
+                // browser,
+                // page,
+                data: dataLocal,
+                selectors: selectorsLocal,
+                allowResults: allowResults,
+                results: bindResultsLocal,
+                options: optionsLocal,
+                envsId
+              }
+            ]);
+          };
+        }
+
+        let logBinded = bind(log, this);
+
+        //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
+        // если что ронять с исключнием
+        const args = {
+          envName,
+          envPageName,
+          env,
+          browser,
+          page,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          allowResults: this.allowResults,
+          options: optionsLocal,
+          envsId,
+          envs,
+          log: logBinded,
+          helper: new Helpers(),
+          _
+        };
 
         // RUN FUNCTIONS
         if (_.isFunction(this.beforeTest)) {

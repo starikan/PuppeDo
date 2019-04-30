@@ -1,79 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Output test</title>
-  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue-json-tree-view@2.1.4/dist/vue-json-tree-view.min.js"></script>
-  <script type="text/javascript" src="./output.json"></script>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table td, table th {
-      border: 1px solid #000000;
-    }
-    .error {
-      background-color: #f97575;
-    }
-  </style>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Output test</title>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-json-tree-view@2.1.4/dist/vue-json-tree-view.min.js"></script>
+    <script type="text/javascript" src="./output.json"></script>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table td,
+      table th {
+        border: 1px solid #000000;
+      }
+      .error {
+        background-color: #f97575;
+      }
+    </style>
+  </head>
 
-<body>
-  <div id="app">
-    <p v-if="!json.length">Something wrong happened. Can`t load JSON with log.</p>
-    <table>
-      <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }">
-        <td>{{ index }}</td>
-        <td>{{ data.time }}</td>
-        <td>
-          <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
-          <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img">
-          <tree-view v-if="data.type === 'env' && data.dataEnvsGlobal"
-                     :data="data.dataEnvsGlobal"
-                     :options="{
+  <body>
+    <div id="app">
+      <p v-if="!json.length">
+        Something wrong happened. Can`t load JSON with log.
+      </p>
+      <table>
+        <tr
+          v-for="(data, index) in json"
+          :key="index"
+          :class="{ error: data.level == 'error' }"
+        >
+          <td>{{ index }}</td>
+          <td>{{ data.time }}</td>
+          <td>
+            <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
+            <img
+              v-if="data.screenshots.length"
+              v-for="img in data.screenshots"
+              :src="img"
+            />
+          </td>
+          <td>
+            <tree-view
+              v-if="data.type === 'env' && data.dataEnvsGlobal"
+              :data="data.dataEnvsGlobal"
+              :options="{
                        maxDepth: 0,
                        rootObjectKey: 'Global settings',
-                      }">
-          </tree-view>
-          <tree-view v-if="data.type === 'env' && data.dataEnvs"
-                     :data="data.dataEnvs"
-                     :options="{
+                      }"
+            >
+            </tree-view>
+            <tree-view
+              v-if="data.type === 'env' && data.dataEnvs"
+              :data="data.dataEnvs"
+              :options="{
                        maxDepth: 0,
                        rootObjectKey: 'Envs settings',
-                      }">
-          </tree-view>
-          <tree-view v-if="data.testStruct && Object.keys(data.testStruct).length !== 0"
-                     :data="data.testStruct"
-                     :options="{
+                      }"
+            >
+            </tree-view>
+            <tree-view
+              v-if="data.testStruct && Object.keys(data.testStruct).length !== 0"
+              :data="data.testStruct"
+              :options="{
                        maxDepth: 0,
                        rootObjectKey: 'Test sctructure',
-                      }">
-          </tree-view>
-        </td>
-      </tr>
-    </table>
-  </div>
-</body>
+                      }"
+            >
+            </tree-view>
+            <tree-view
+              v-if="data.bindedData && Object.keys(data.bindedData).length !== 0"
+              :data="data.bindedData"
+              :options="{
+                       maxDepth: 0,
+                       rootObjectKey: 'Binded data',
+                      }"
+            >
+            </tree-view>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
 
-<script>
-  Vue.use(TreeView)
-  var app = new Vue({
-    el: '#app',
-    data: function(){
-      return {
-        json: []
+  <script>
+    Vue.use(TreeView);
+    var app = new Vue({
+      el: "#app",
+      data: function() {
+        return {
+          json: []
+        };
+      },
+      mounted() {
+        let self = this;
+        fetch("output.json")
+          .then(response => response.json())
+          .then(res => (self.json = res));
       }
-    },
-    mounted() {
-      let self = this;
-      fetch("output.json")
-        .then(response => response.json())
-        .then(res => self.json = res);
-    }
-  })
-</script>
+    });
+  </script>
 </html>

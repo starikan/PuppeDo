@@ -137,7 +137,8 @@ class Logger {
       testStruct = null,
       dataType = null
     } = {},
-    testSource
+    testSource,
+    bindedData
   ) {
     try {
       let activeEnv = this.envs.getEnv();
@@ -255,7 +256,8 @@ class Logger {
         testStruct,
         screenshots,
         level,
-        type
+        type,
+        bindedData
       });
 
       await fs.appendFileSync(
