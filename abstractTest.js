@@ -5,7 +5,11 @@ const safeEval = require('safe-eval');
 const deepmerge = require('deepmerge');
 const yaml = require('js-yaml');
 
-const { Helpers, overwriteMerge, resolveStars } = require('./helpers');
+const {
+  Helpers,
+  overwriteMerge,
+  resolveStars
+} = require('./helpers');
 
 const checkNeedEnv = (needEnvs, envName) => {
   needEnvs = _.isString(needEnvs) ? [needEnvs] : needEnvs;
@@ -17,20 +21,30 @@ const checkNeedEnv = (needEnvs, envName) => {
       };
     }
   } else {
-    throw { message: 'needEnv wrong format, shoud be array or string' };
+    throw {
+      message: 'needEnv wrong format, shoud be array or string'
+    };
   }
 };
 
-const resolveAliases = (valueName, otherValues, mainValue = {}, defaultValue = {}) => {
+const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue = {}) => {
   const ALIASSES = {
     bindData: ['bD', 'bd'],
+    bindSelectors: ['bindSelector', 'bS', 'bs'],
+    bindResults: ['bindResult', 'bR', 'br'],
+    selectors: ['selector', 's'],
+    data: ['d'],
   };
 
-  let result = deepmerge.all([defaultValue, mainValue], { arrayMerge: overwriteMerge });
+  let result = deepmerge.all([defaultValue, parentValue], {
+    arrayMerge: overwriteMerge
+  });
 
   const aliasses = [valueName, ..._.get(ALIASSES, valueName, [])];
   aliasses.forEach(v => {
-    result = deepmerge.all([result, _.get(otherValues, v, {})], { arrayMerge: overwriteMerge });
+    result = deepmerge.all([result, _.get(otherValues, v, {})], {
+      arrayMerge: overwriteMerge
+    });
   });
 
   return result;
@@ -61,8 +75,6 @@ class Test {
     // {} - данные
     //TODO: 2018-07-02 S.Starodubov repeat
     // [{}] - много данных для посторения repeat
-    data = {},
-    d = {}, // alias for data
 
     options = {},
 
@@ -70,19 +82,12 @@ class Test {
     selectors = {},
     selector = {}, // alias for selectors
     s = {}, // alias for selectors
+
     // Биндинги селекторов
     // 1. Смотрим на локальные данные this.selectors
     // 2. Смотрим на данные в глобальной env.selectors
     // 3. Смотрим на данные в env[envName].selectors
-    bindSelectors = {},
-    bindSelector = {}, // alias for bindSelectors
-    bS = {}, // alias for bindSelectors
-    bs = {}, // alias for bindSelectors
 
-    bindResults = {},
-    bindResult = {}, // alias for bindResults
-    bR = {}, // alias for bindResults
-    br = {}, // alias for bindResults
     results = {}, // alias for bindResults
     result = {}, // alias for bindResults
     r = {}, // alias for bindResults
@@ -98,10 +103,10 @@ class Test {
     // Колличество повторений
     repeat = 1,
 
-    beforeTest = async function() {},
-    runTest = async function() {},
-    afterTest = async function() {},
-    errorTest = async function() {},
+    beforeTest = async function () {},
+    runTest = async function () {},
+    afterTest = async function () {},
+    errorTest = async function () {},
 
     source = '',
     ...constructorArgs
@@ -116,29 +121,16 @@ class Test {
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
 
-    this.data = data;
-    this.d = d;
-
-    // Bindings for data
+    this.data = resolveAliases('data', constructorArgs);
+    this.selectors = resolveAliases('selectors', constructorArgs);
     this.bindData = resolveAliases('bindData', constructorArgs);
+    this.bindSelectors = resolveAliases('bindSelectors', constructorArgs);
+    this.bindResults = resolveAliases('bindResults', constructorArgs);
 
     this.options = options;
 
-    this.selectors = selectors;
-    this.selector = selector;
-    this.s = s;
-
-    this.bindSelectors = bindSelectors;
-    this.bindSelector = bindSelector;
-    this.bS = bS;
-    this.bs = bs;
-
     this.allowResults = allowResults;
 
-    this.bindResults = bindResults;
-    this.bindResult = bindResult;
-    this.bR = bR;
-    this.br = br;
     this.results = results;
     this.result = result;
     this.r = r;
@@ -146,6 +138,7 @@ class Test {
     this.dataFunction = dataFunction;
     this.dF = dF;
     this.df = df;
+
     this.selectorsFunction = selectorsFunction;
     this.selectorFunction = selectorFunction;
     this.sF = sF;
@@ -159,24 +152,14 @@ class Test {
 
     this.source = source;
 
-    this.run = async (
-      {
+    this.run = async ({
         dataExt = [],
         selectorsExt = [],
 
         data = {},
         d = {}, // alias for data
 
-        selectors = {},
-        selector = {}, // alias for selectors
-        s = {}, // alias for selectors
-
         options = {},
-
-        bindSelectors = {},
-        bindSelector = {}, // alias for bindSelectors
-        bS = {}, // alias for bindSelectors
-        bs = {}, // alias for bindSelectors
 
         bindResults = {},
         bindResult = {}, // alias for bindResults
@@ -202,13 +185,21 @@ class Test {
 
       envsId,
     ) => {
+      let data = resolveAliases('data', inputArgs, this.data);
+      let selectors = resolveAliases('selectors', inputArgs, this.selectors);
       let bindDataLocal = resolveAliases('bindData', inputArgs, this.bindData);
+      let bindSelectorsLocal = resolveAliases('bindSelectors', inputArgs, this.bindSelectors);
 
       if (!envsId) {
-        throw { message: 'Test shoud have envsId' };
+        throw {
+          message: 'Test shoud have envsId'
+        };
       }
 
-      let { envs, log } = require('./env.js')(envsId);
+      let {
+        envs,
+        log
+      } = require('./env.js')(envsId);
 
       try {
         const envName = envs.get('current.name');
@@ -221,33 +212,35 @@ class Test {
         checkNeedEnv(this.needEnv, envName);
 
         let dataLocal = deepmerge.all(
-          [
-            {},
+          [{},
             env ? env.get('data') : {}, //Берем данные из предыдущих тестов
             envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
             envs.get('args.extData', {}), // из переменной среды
             envs.get('data', {}), // из глобального env
             envs.get('resultsFunc', {}), // результаты функций
             envs.get('results', {}), // результаты
-          ],
-          { arrayMerge: overwriteMerge },
+          ], {
+            arrayMerge: overwriteMerge
+          },
         );
 
         let selectorsLocal = deepmerge.all(
-          [
-            {},
+          [{},
             env ? env.get('selectors') : {},
             envs.get('args.extSelectorsExt', {}),
             envs.get('args.extSelectors', {}),
             envs.get('selectors', {}),
             envs.get('resultsFunc', {}),
             envs.get('results', {}),
-          ],
-          { arrayMerge: overwriteMerge },
+          ], {
+            arrayMerge: overwriteMerge
+          },
         );
 
         // Добавляем загрузки из файлов из теста
-        let extDataExt_files = deepmerge.all([[], this.dataExt, dataExt], {
+        let extDataExt_files = deepmerge.all([
+          [], this.dataExt, dataExt
+        ], {
           arrayMerge: overwriteMerge,
         });
         extDataExt_files = resolveStars(extDataExt_files, envs.get('args.testsFolder'));
@@ -258,7 +251,9 @@ class Test {
           });
         });
 
-        let extSelectorsExt_files = deepmerge.all([[], this.selectorsExt, selectorsExt], {
+        let extSelectorsExt_files = deepmerge.all([
+          [], this.selectorsExt, selectorsExt
+        ], {
           arrayMerge: overwriteMerge,
         });
         extSelectorsExt_files = resolveStars(extSelectorsExt_files, envs.get('args.testsFolder'));
@@ -269,11 +264,6 @@ class Test {
           });
         });
 
-        let bindSelectorsLocal = deepmerge.all(
-          [{}, this.bindSelectors, this.bindSelector, this.bS, this.bs, bindSelectors, bindSelector, bS, bs],
-          { arrayMerge: overwriteMerge },
-        );
-
         for (const key in bindDataLocal) {
           dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
         }
@@ -282,13 +272,12 @@ class Test {
         }
 
         // Добавляем данные самого теста
-        dataLocal = deepmerge.all([dataLocal, this.data, this.d, data, d], {
-          arrayMerge: overwriteMerge,
+        dataLocal = deepmerge.all([dataLocal, this.data, data], {
+          arrayMerge: overwriteMerge
         });
-        selectorsLocal = deepmerge.all(
-          [selectorsLocal, this.selectors, this.selector, this.s, selectors, selector, s],
-          { arrayMerge: overwriteMerge },
-        );
+        selectorsLocal = deepmerge.all([selectorsLocal, this.selectors, selectors], {
+          arrayMerge: overwriteMerge
+        });
 
         // FUNCTIONS
 
@@ -317,8 +306,7 @@ class Test {
         }
 
         let selectorsFunctionLocal = deepmerge.all(
-          [
-            {},
+          [{},
             this.selectorsFunction,
             this.selectorFunction,
             this.sF,
@@ -327,8 +315,9 @@ class Test {
             selectorFunction,
             sF,
             sf,
-          ],
-          { arrayMerge: overwriteMerge },
+          ], {
+            arrayMerge: overwriteMerge
+          },
         );
 
         let selectorsFunctionForGlobalResults = {};
@@ -447,16 +436,18 @@ class Test {
             results,
             result,
             r,
-          ],
-          { arrayMerge: overwriteMerge },
+          ], {
+            arrayMerge: overwriteMerge
+          },
         );
 
         let resultFromTest = {};
 
         // Bind source of test in log function
         let allowResults = this.allowResults;
+
         function bind(func, source) {
-          return function() {
+          return function () {
             return func.apply(this, [
               ...arguments,
               source,

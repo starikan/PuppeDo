@@ -1,8 +1,15 @@
 const _ = require("lodash");
 
-const { yaml2json } = require("./yaml2json");
+const {
+  yaml2json
+} = require("./yaml2json");
 
-const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
+const getFullDepthJSON = function ({
+  envs,
+  filePath,
+  testBody,
+  testsFolder
+}) {
   if (filePath && !_.isString(filePath)) {
     throw {
       message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}`
@@ -73,4 +80,6 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
   return full;
 };
 
-module.exports = { getFullDepthJSON };
+module.exports = {
+  getFullDepthJSON
+};
