@@ -54,6 +54,56 @@ const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue =
   return result;
 };
 
+//TODO: 2019-05-06 S.Starodubov Нужен полный рефакторинг двух этих функций
+const fetchData = (env, envs, extFiles) => {
+  let dataLocal = deepmerge.all(
+    [{},
+      env ? env.get('data') : {}, //Берем данные из предыдущих тестов
+      envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
+      envs.get('args.extData', {}), // из переменной среды
+      envs.get('data', {}), // из глобального env
+      envs.get('resultsFunc', {}), // результаты функций
+      envs.get('results', {}), // результаты
+    ], {
+      arrayMerge: overwriteMerge
+    },
+  );
+
+  let resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
+  resolvedExtFiles.forEach(f => {
+    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+    dataLocal = deepmerge.all([dataLocal, data_ext], {
+      arrayMerge: overwriteMerge,
+    });
+  });
+
+  return dataLocal;
+}
+
+const fetchSelectors = (env, envs, extFiles) => {
+  let selectorsLocal = deepmerge.all(
+    [{},
+      env ? env.get('selectors') : {},
+      envs.get('args.extSelectorsExt', {}),
+      envs.get('args.extSelectors', {}),
+      envs.get('selectors', {}),
+      envs.get('resultsFunc', {}),
+      envs.get('results', {}),
+    ], {
+      arrayMerge: overwriteMerge
+    },
+  );
+
+  resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
+  resolvedExtFiles.forEach(f => {
+    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+    selectorsLocal = deepmerge.all([selectorsLocal, data_ext], {
+      arrayMerge: overwriteMerge,
+    });
+  });
+  return selectorsLocal;
+}
+
 class Test {
   constructor({
     // Имя теста
@@ -145,6 +195,9 @@ class Test {
       let results = resolveAliases('results', inputArgs);
       let bindResults = resolveAliases('bindResults', inputArgs);
 
+      dataExt = [...new Set([...this.dataExt, ...dataExt])];
+      selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
+
       if (!envsId) {
         throw {
           message: 'Test shoud have envsId'
@@ -166,76 +219,24 @@ class Test {
 
         checkNeedEnv(this.needEnv, envName);
 
-        let dataLocal = deepmerge.all(
-          [{},
-            env ? env.get('data') : {}, //Берем данные из предыдущих тестов
-            envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
-            envs.get('args.extData', {}), // из переменной среды
-            envs.get('data', {}), // из глобального env
-            envs.get('resultsFunc', {}), // результаты функций
-            envs.get('results', {}), // результаты
-          ], {
-            arrayMerge: overwriteMerge
-          },
-        );
-
-        let selectorsLocal = deepmerge.all(
-          [{},
-            env ? env.get('selectors') : {},
-            envs.get('args.extSelectorsExt', {}),
-            envs.get('args.extSelectors', {}),
-            envs.get('selectors', {}),
-            envs.get('resultsFunc', {}),
-            envs.get('results', {}),
-          ], {
-            arrayMerge: overwriteMerge
-          },
-        );
-
-        // Добавляем загрузки из файлов из теста
-        let extDataExt_files = deepmerge.all([
-          [], this.dataExt, dataExt
-        ], {
-          arrayMerge: overwriteMerge,
-        });
-        extDataExt_files = resolveStars(extDataExt_files, envs.get('args.testsFolder'));
-        extDataExt_files.forEach(f => {
-          const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-          dataLocal = deepmerge.all([dataLocal, data_ext], {
-            arrayMerge: overwriteMerge,
-          });
-        });
-
-        let extSelectorsExt_files = deepmerge.all([
-          [], this.selectorsExt, selectorsExt
-        ], {
-          arrayMerge: overwriteMerge,
-        });
-        extSelectorsExt_files = resolveStars(extSelectorsExt_files, envs.get('args.testsFolder'));
-        extSelectorsExt_files.forEach(f => {
-          const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-          selectorsLocal = deepmerge.all([selectorsLocal, data_ext], {
-            arrayMerge: overwriteMerge,
-          });
-        });
-
+        let dataLocal = fetchData(env, envs, dataExt);
         for (const key in bindDataLocal) {
           dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
         }
+        // Добавляем данные самого теста после всех биндингов
+        dataLocal = deepmerge.all([dataLocal, data], {
+          arrayMerge: overwriteMerge
+        });
+
+        let selectorsLocal = fetchSelectors(env, envs, selectorsExt);
         for (const key in bindSelectorsLocal) {
           selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
         }
-
-        // Добавляем данные самого теста
-        dataLocal = deepmerge.all([dataLocal, this.data, data], {
-          arrayMerge: overwriteMerge
-        });
-        selectorsLocal = deepmerge.all([selectorsLocal, this.selectors, selectors], {
+        selectorsLocal = deepmerge.all([selectorsLocal, selectors], {
           arrayMerge: overwriteMerge
         });
 
         // FUNCTIONS
-
         let allDataAndSelectors = deepmerge.all([dataLocal, selectorsLocal], {
           arrayMerge: overwriteMerge,
         });
@@ -411,39 +412,21 @@ class Test {
         };
 
         // RUN FUNCTIONS
-        if (_.isFunction(this.beforeTest)) {
-          this.beforeTest = [this.beforeTest];
-        }
-        if (_.isArray(this.beforeTest)) {
-          for (const fun of this.beforeTest) {
-            let funResult = (await fun(args)) || {};
-            resultFromTest = deepmerge.all([resultFromTest, funResult], {
-              arrayMerge: overwriteMerge,
-            });
-          }
-        }
+        const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
 
-        if (_.isFunction(this.runTest)) {
-          this.runTest = [this.runTest];
-        }
-        if (_.isArray(this.runTest)) {
-          for (const fun of this.runTest) {
-            let funResult = (await fun(args)) || {};
-            resultFromTest = deepmerge.all([resultFromTest, funResult], {
-              arrayMerge: overwriteMerge,
-            });
-          }
-        }
+        for (let i = 0; i < FUNCTIONS.length; i++) {
+          let funcs = FUNCTIONS[i];
 
-        if (_.isFunction(this.afterTest)) {
-          this.afterTest = [this.afterTest];
-        }
-        if (_.isArray(this.afterTest)) {
-          for (const fun of this.afterTest) {
-            let funResult = (await fun(args)) || {};
-            resultFromTest = deepmerge.all([resultFromTest, funResult], {
-              arrayMerge: overwriteMerge,
-            });
+          if (_.isFunction(funcs)) {
+            funcs = [funcs];
+          }
+          if (_.isArray(funcs)) {
+            for (const fun of funcs) {
+              let funResult = (await fun(args)) || {};
+              resultFromTest = deepmerge.all([resultFromTest, funResult], {
+                arrayMerge: overwriteMerge,
+              });
+            }
           }
         }
 
