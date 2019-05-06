@@ -84,7 +84,12 @@ async function connectElectron(browserSettings) {
       slowMo: _.get(browserSettings, "slowMo", 0)
     });
     let pagesRaw = await browser.pages();
-    let pages = { main: pagesRaw[pagesRaw.length - 1] };
+    if (pagesRaw.length) {
+      let pages = { main: pagesRaw[0] };
+    }
+    else {
+      throw({message: "Cand find any pages in connection"});
+    }
 
     let width = _.get(browserSettings, "windowSize.width");
     let height = _.get(browserSettings, "windowSize.height");
