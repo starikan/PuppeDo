@@ -34,6 +34,10 @@ const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue =
     bindResults: ['bindResult', 'bR', 'br'],
     selectors: ['selector', 's'],
     data: ['d'],
+    results: ['result', 'r'],
+    options: ['option', 'opt', 'o'],
+    selectorsFunction: ['selectorFunction', 'sF', 'sf'],
+    dataFunction: ['dF', 'df'],
   };
 
   let result = deepmerge.all([defaultValue, parentValue], {
@@ -56,11 +60,11 @@ class Test {
     // На базе имени ищутся данные в data в частности data[name]
     name,
 
-    // Тип теста atom, test, multiEnv
+    // Тип теста atom, test, multiEnv?
     // Если atom то обязательный прямой проброс данных
     type = 'test',
 
-    // ДОступные типы env
+    // Доступные типы env
     // Если тест работает с несколькими env то проверять входные env
     // и активную на совпадение с этим делом
     needEnv = [],
@@ -71,35 +75,14 @@ class Test {
     dataExt = [],
     selectorsExt = [],
 
-    // Прямой проброс данных
-    // {} - данные
-    //TODO: 2018-07-02 S.Starodubov repeat
-    // [{}] - много данных для посторения repeat
-
-    options = {},
-
-    // Прямой проброс селекторов
-    selectors = {},
-    selector = {}, // alias for selectors
-    s = {}, // alias for selectors
-
     // Биндинги селекторов
     // 1. Смотрим на локальные данные this.selectors
     // 2. Смотрим на данные в глобальной env.selectors
     // 3. Смотрим на данные в env[envName].selectors
 
-    results = {}, // alias for bindResults
-    result = {}, // alias for bindResults
-    r = {}, // alias for bindResults
-
-    dataFunction = {},
-    dF = {}, // alias for dataFunction
-    df = {}, // alias for dataFunction
-    selectorsFunction = {},
-    selectorFunction = {}, // alias for selectorsFunction
-    sF = {}, // alias for selectorsFunction
-    sf = {}, // alias for selectorsFunction
-
+    // {} - данные
+    //TODO: 2018-07-02 S.Starodubov repeat
+    // [{}] - много данных для посторения repeat
     // Колличество повторений
     repeat = 1,
 
@@ -121,74 +104,46 @@ class Test {
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
 
-    this.data = resolveAliases('data', constructorArgs);
-    this.selectors = resolveAliases('selectors', constructorArgs);
-    this.bindData = resolveAliases('bindData', constructorArgs);
-    this.bindSelectors = resolveAliases('bindSelectors', constructorArgs);
-    this.bindResults = resolveAliases('bindResults', constructorArgs);
-
-    this.options = options;
-
     this.allowResults = allowResults;
-
-    this.results = results;
-    this.result = result;
-    this.r = r;
-
-    this.dataFunction = dataFunction;
-    this.dF = dF;
-    this.df = df;
-
-    this.selectorsFunction = selectorsFunction;
-    this.selectorFunction = selectorFunction;
-    this.sF = sF;
-    this.sf = sf;
 
     this.beforeTest = beforeTest;
     this.runTest = runTest;
     this.afterTest = afterTest;
+    this.errorTest = errorTest;
 
     this.repeat = repeat;
-
     this.source = source;
+
+    this.data = resolveAliases('data', constructorArgs);
+    this.selectors = resolveAliases('selectors', constructorArgs);
+    this.results = resolveAliases('results', constructorArgs);
+    this.options = resolveAliases('options', constructorArgs);
+    this.bindData = resolveAliases('bindData', constructorArgs);
+    this.bindSelectors = resolveAliases('bindSelectors', constructorArgs);
+    this.bindResults = resolveAliases('bindResults', constructorArgs);
+    this.selectorsFunction = resolveAliases('selectorsFunction', constructorArgs);
+    this.dataFunction = resolveAliases('dataFunction', constructorArgs);
 
     this.run = async ({
         dataExt = [],
         selectorsExt = [],
-
-        data = {},
-        d = {}, // alias for data
-
-        options = {},
-
-        bindResults = {},
-        bindResult = {}, // alias for bindResults
-        bR = {}, // alias for bindResults
-        br = {}, // alias for bindResults
-        results = {}, // alias for bindResults
-        result = {}, // alias for bindResults
-        r = {}, // alias for bindResults
-
-        dataFunction = {},
-        dF = {}, // alias for dataFunction
-        df = {}, // alias for dataFunction
-
-        selectorsFunction = {},
-        selectorFunction = {}, // alias for selectorsFunction
-        sF = {}, // alias for selectorsFunction
-        sf = {}, // alias for selectorsFunction
-
         ...inputArgs
         // envName,
         // repeat,
       } = {},
-
       envsId,
     ) => {
+
       let data = resolveAliases('data', inputArgs, this.data);
       let selectors = resolveAliases('selectors', inputArgs, this.selectors);
+      let options = resolveAliases('options', inputArgs, this.options);
       let bindDataLocal = resolveAliases('bindData', inputArgs, this.bindData);
       let bindSelectorsLocal = resolveAliases('bindSelectors', inputArgs, this.bindSelectors);
+      let selectorsFunctionLocal = resolveAliases('selectorsFunction', inputArgs, this.selectorsFunction);
+      let dataFunctionLocal = resolveAliases('dataFunction', inputArgs, this.dataFunction);
+
+      let results = resolveAliases('results', inputArgs);
+      let bindResults = resolveAliases('bindResults', inputArgs);
 
       if (!envsId) {
         throw {
@@ -285,10 +240,6 @@ class Test {
           arrayMerge: overwriteMerge,
         });
 
-        let dataFunctionLocal = deepmerge.all([{}, this.dataFunction, this.dF, this.df, dataFunction, dF, df], {
-          arrayMerge: overwriteMerge,
-        });
-
         let dataFunctionForGlobalResults = {};
 
         for (const key in dataFunctionLocal) {
@@ -304,21 +255,6 @@ class Test {
             dataFunctionForGlobalResults[dataFunctionLocal[key][1]] = dataFuncEval;
           }
         }
-
-        let selectorsFunctionLocal = deepmerge.all(
-          [{},
-            this.selectorsFunction,
-            this.selectorFunction,
-            this.sF,
-            this.sf,
-            selectorsFunction,
-            selectorFunction,
-            sF,
-            sf,
-          ], {
-            arrayMerge: overwriteMerge
-          },
-        );
 
         let selectorsFunctionForGlobalResults = {};
 
@@ -372,10 +308,6 @@ class Test {
           }
         });
 
-        // OPTIONS
-        let optionsLocal = {};
-        optionsLocal = Object.assign(optionsLocal, options);
-
         // IF
         let expr = _.get(inputArgs, 'if');
         if (expr) {
@@ -423,19 +355,8 @@ class Test {
         bindResultsLocal = deepmerge.all(
           [
             this.bindResults,
-            this.bindResult,
-            this.bR,
-            this.br,
-            this.results,
-            this.result,
-            this.r,
             bindResults,
-            bindResult,
-            bR,
-            br,
             results,
-            result,
-            r,
           ], {
             arrayMerge: overwriteMerge
           },
@@ -461,12 +382,12 @@ class Test {
                 selectors: selectorsLocal,
                 allowResults: allowResults,
                 results: bindResultsLocal,
-                options: optionsLocal,
+                options,
                 envsId,
               },
             ]);
           };
-        }
+        };
 
         let logBinded = bind(log, this);
 
@@ -481,7 +402,7 @@ class Test {
           data: dataLocal,
           selectors: selectorsLocal,
           allowResults: this.allowResults,
-          options: optionsLocal,
+          options,
           envsId,
           envs,
           log: logBinded,
