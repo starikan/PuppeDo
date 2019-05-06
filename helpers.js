@@ -1,7 +1,7 @@
-const path = require("path");
+const path = require('path');
 
-const _ = require("lodash");
-const walkSync = require("walk-sync");
+const _ = require('lodash');
+const walkSync = require('walk-sync');
 
 class Helpers {
   constructor() {}
@@ -9,17 +9,17 @@ class Helpers {
   async getElement(page, selector) {
     if (page && selector && _.isString(selector) && _.isObject(page)) {
       let element;
-      if (selector.startsWith("xpath:")) {
-        selector = _.trimStart(selector, "xpath:");
+      if (selector.startsWith('xpath:')) {
+        selector = _.trimStart(selector, 'xpath:');
         element = await page.$x(selector);
         if (element.length > 1) {
           throw {
-            message: `Finded more then 1 xpath elements ${selector}`
+            message: `Finded more then 1 xpath elements ${selector}`,
           };
         }
         element = element[0];
       } else {
-        selector = _.trimStart(selector, "css:");
+        selector = _.trimStart(selector, 'css:');
         element = await page.$(selector);
       }
       return element;
@@ -29,15 +29,10 @@ class Helpers {
   }
 
   anyGet(object, paths) {
-    if (
-      !object ||
-      !_.isObject(object) ||
-      !paths ||
-      (!_.isString(paths) && !_.isArray(paths))
-    ) {
+    if (!object || !_.isObject(object) || !paths || (!_.isString(paths) && !_.isArray(paths))) {
       debugger;
       throw {
-        message: `anyGet error`
+        message: `anyGet error`,
       };
     }
 
@@ -46,7 +41,7 @@ class Helpers {
       result = _.get(object, paths);
     } else {
       throw {
-        message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен`
+        message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен`,
       };
     }
 
@@ -70,17 +65,17 @@ class Helpers {
 
 const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
 
-const resolveStars = function(linksArray, testsFolder = ".") {
+const resolveStars = function(linksArray, testsFolder = '.') {
   let resolvedArray = [];
   linksArray.forEach(fileName => {
-    if (fileName.endsWith("*")) {
-      let fileMask = _.trimEnd(fileName, "*").replace(/\\/g, "\\\\");
-      fileMask = _.trimEnd(fileMask, "/");
-      fileMask = _.trimEnd(fileMask, "\\\\");
+    if (fileName.endsWith('*')) {
+      let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
+      fileMask = _.trimEnd(fileMask, '/');
+      fileMask = _.trimEnd(fileMask, '\\\\');
       fullFileMask = path.join(testsFolder, fileMask);
       let paths = walkSync(fullFileMask);
       let pathsClean = _.map(paths, v => {
-        if (v.endsWith("/") || v.endsWith("\\")) return false;
+        if (v.endsWith('/') || v.endsWith('\\')) return false;
         return path.join(fullFileMask, v);
       }).filter(v => v);
       resolvedArray = [...resolvedArray, ...pathsClean];
@@ -93,7 +88,7 @@ const resolveStars = function(linksArray, testsFolder = ".") {
 
 let args_ext = {};
 _.forEach(process.argv.slice(2), v => {
-  let data = v.split("=");
+  let data = v.split('=');
   args_ext[data[0]] = data[1];
 });
 
@@ -101,5 +96,5 @@ module.exports = {
   Helpers,
   overwriteMerge,
   resolveStars,
-  args_ext
+  args_ext,
 };

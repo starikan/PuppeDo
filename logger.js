@@ -1,36 +1,32 @@
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
-const _ = require("lodash");
-const dayjs = require("dayjs");
-const chalk = require("chalk");
-const stringify = require("json-stringify-safe");
-const walkSync = require("walk-sync");
+const _ = require('lodash');
+const dayjs = require('dayjs');
+const chalk = require('chalk');
+const stringify = require('json-stringify-safe');
+const walkSync = require('walk-sync');
 
 class Logger {
   constructor(envs) {
     this.envs = envs;
   }
 
-  async saveScreenshot({
-    selCSS = false,
-    fullpage = false,
-    element = false
-  } = {}) {
+  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
     try {
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, "env.log", {});
-      let current = this.envs.get("current");
-      let pageName = this.envs.get("current.page");
+      let activeLog = _.get(activeEnv, 'env.log', {});
+      let current = this.envs.get('current');
+      let pageName = this.envs.get('current.page');
 
-      const now = dayjs().format("YYYY-MM-DD_HH-mm-ss.SSS");
+      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
       const name = `${now}.jpg`;
 
-      if (!this.envs.get("output.folder")) return;
+      if (!this.envs.get('output.folder')) return;
 
-      const pathScreenshot = path.join(this.envs.get("output.folder"), name);
+      const pathScreenshot = path.join(this.envs.get('output.folder'), name);
       const page = _.get(activeEnv, `state.pages.${pageName}`);
 
       //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
@@ -59,36 +55,32 @@ class Logger {
 
   getLevel(level) {
     const levels = {
-      0: "raw",
-      1: "debug",
-      2: "info",
-      3: "test",
-      4: "warn",
-      5: "error",
-      6: "env",
+      0: 'raw',
+      1: 'debug',
+      2: 'info',
+      3: 'test',
+      4: 'warn',
+      5: 'error',
+      6: 'env',
       raw: 0,
       debug: 1,
       info: 2,
       test: 3,
       warn: 4,
       error: 5,
-      env: 6
+      env: 6,
     };
 
     let defaultLevel = 1;
 
     // Active ENV log settings
     let activeEnv = this.envs.getEnv();
-    let activeLog = _.get(activeEnv, "env.log", {});
+    let activeLog = _.get(activeEnv, 'env.log', {});
 
-    let envLevel = _.get(activeLog, "level", defaultLevel);
-    envLevel = _.isNumber(envLevel)
-      ? envLevel
-      : _.get(levels, envLevel, defaultLevel);
+    let envLevel = _.get(activeLog, 'level', defaultLevel);
+    envLevel = _.isNumber(envLevel) ? envLevel : _.get(levels, envLevel, defaultLevel);
     let inputLevel = level;
-    inputLevel = _.isNumber(inputLevel)
-      ? inputLevel
-      : _.get(levels, inputLevel, defaultLevel);
+    inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel);
 
     let envLevelText = levels[envLevel];
     let inputLevelText = levels[inputLevel];
@@ -104,7 +96,7 @@ class Logger {
   // Copy all log into LATES path
   copyToLatest(outputFolder) {
     let filesSource = walkSync(outputFolder);
-    const latestPath = path.join(this.envs.get("output.output"), "latest");
+    const latestPath = path.join(this.envs.get('output.output'), 'latest');
 
     if (!fs.existsSync(latestPath)) {
       fs.mkdirSync(latestPath);
@@ -116,42 +108,39 @@ class Logger {
     }
 
     for (let i = 0; i < filesSource.length; i++) {
-      fs.copyFileSync(
-        path.join(outputFolder, filesSource[i]),
-        path.join(latestPath, filesSource[i])
-      );
+      fs.copyFileSync(path.join(outputFolder, filesSource[i]), path.join(latestPath, filesSource[i]));
     }
   }
 
   async _log(
     {
-      text = "",
+      text = '',
       pageNum = 0,
       stdOut = true,
       selCSS = [],
       screenshot = null,
       fullpage = null,
-      level = "info",
+      level = 'info',
       debug = false,
       element = false,
       testStruct = null,
-      dataType = null
+      dataType = null,
     } = {},
     testSource,
-    bindedData
+    bindedData,
   ) {
     try {
       let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, "env.log", {});
+      let activeLog = _.get(activeEnv, 'env.log', {});
 
       const screenshots = [];
-      const now = dayjs().format("YYYY-MM-DD_HH-mm-ss.SSS");
+      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
       if (!_.isBoolean(screenshot)) {
-        screenshot = _.get(activeLog, "screenshot", false);
+        screenshot = _.get(activeLog, 'screenshot', false);
       }
       if (!_.isBoolean(fullpage)) {
-        fullpage = _.get(activeLog, "fullpage", false);
+        fullpage = _.get(activeLog, 'fullpage', false);
       }
 
       // LEVEL RULES
@@ -163,7 +152,7 @@ class Logger {
         test: chalk.green,
         warn: chalk.yellow,
         error: chalk.red,
-        env: chalk.magenta
+        env: chalk.magenta,
       };
 
       // LOG STRINGS
@@ -172,7 +161,7 @@ class Logger {
       const logString = `${now} - ${logStringNoTime}`;
       let dataEnvsGlobal = null;
       let dataEnvs = null;
-      let type = "log";
+      let type = 'log';
 
       // STDOUT
       if (stdOut) {
@@ -184,32 +173,26 @@ class Logger {
         }
       }
 
-      if (level == "env") {
-        if (dataType == "global_env") {
-          dataEnvsGlobal = _.pick(this.envs, [
-            "args",
-            "current",
-            "data",
-            "results",
-            "selectors"
-          ]);
+      if (level == 'env') {
+        if (dataType == 'global_env') {
+          dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
         }
-        if (dataType == "settings_env") {
-          dataEnvs = _.mapValues(_.get(this.envs, ["envs"], {}), val => {
-            return _.omit(val, "state");
+        if (dataType == 'settings_env') {
+          dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+            return _.omit(val, 'state');
           });
         }
-        if (dataType == "struct_test") {
+        if (dataType == 'struct_test') {
           if (!_.isEmpty(testStruct)) {
             // console.log(testStruct);
           }
         }
         // console.log(this.envs);
-        type = "env";
+        type = 'env';
       }
 
       if (_.isEmpty(testStruct)) {
-        testStruct = _.get(testSource, "source", {});
+        testStruct = _.get(testSource, 'source', {});
         testStruct = _.mapValues(testStruct, v => {
           if (!_.isEmpty(v)) {
             return v;
@@ -219,7 +202,7 @@ class Logger {
       }
 
       // SCRENSHOTS
-      let outputFolder = this.envs.get("output.folder");
+      let outputFolder = this.envs.get('output.folder');
       if (!outputFolder) return;
 
       if (screenshot) {
@@ -248,7 +231,7 @@ class Logger {
         }
       }
 
-      this.envs.push("log", {
+      this.envs.push('log', {
         text: logStringNoTime,
         time: now,
         dataEnvs,
@@ -257,25 +240,18 @@ class Logger {
         screenshots,
         level,
         type,
-        bindedData
+        bindedData,
       });
 
-      await fs.appendFileSync(
-        path.join(outputFolder, "output.log"),
-        logString + "\n",
-        function(err) {
-          if (err) {
-            return console.log(err);
-          }
+      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {
+        if (err) {
+          return console.log(err);
         }
-      );
+      });
 
       // Export JSON log every step
-      const exportJson = stringify(this.envs.get("log"));
-      await fs.writeFileSync(
-        path.join(outputFolder, "output.json"),
-        exportJson
-      );
+      const exportJson = stringify(this.envs.get('log'));
+      await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
 
       this.copyToLatest(outputFolder);
 
@@ -292,7 +268,7 @@ class Logger {
 module.exports = function(envs) {
   if (!envs) {
     throw {
-      message: "Logger need ENVS"
+      message: 'Logger need ENVS',
     };
   }
 

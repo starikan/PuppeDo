@@ -1,34 +1,34 @@
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const _ = require("lodash");
-const yaml = require("js-yaml");
-const walkSync = require("walk-sync");
+const _ = require('lodash');
+const yaml = require('js-yaml');
+const walkSync = require('walk-sync');
 
 let paths;
 
-const yaml2json = function(filePath, testsFolder = "") {
+const yaml2json = function(filePath, testsFolder = '') {
   if (!_.isString(filePath)) {
     throw {
-      message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`
+      message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}`,
     };
   }
 
   let isTestExist = fs.existsSync(filePath);
 
-  let exts = [".yaml", ".json", ".js"];
+  let exts = ['.yaml', '.json', '.js'];
   let files = [];
   let testFile = null;
-  testsFolder = testsFolder.replace(/\\/g, "\\\\");
+  testsFolder = testsFolder.replace(/\\/g, '\\\\');
   let allTestFolders = [];
   if (!paths) {
     paths = walkSync(testsFolder);
   }
   paths.forEach(folder => {
-    if (folder.includes(".git")) {
+    if (folder.includes('.git')) {
       return;
     }
-    if (folder.endsWith("/") || folder.endsWith("\\")) {
+    if (folder.endsWith('/') || folder.endsWith('\\')) {
       allTestFolders.push(folder);
     }
   });
@@ -45,7 +45,7 @@ const yaml2json = function(filePath, testsFolder = "") {
     });
   }
 
-  if (filePath != "log") {
+  if (filePath != 'log') {
     for (let file of files) {
       try {
         if (fs.existsSync(file)) {
@@ -59,16 +59,16 @@ const yaml2json = function(filePath, testsFolder = "") {
   let full = {};
 
   if (!testFile) {
-    if (filePath != "log") {
+    if (filePath != 'log') {
       throw {
-        message: `Can't find test file ${filePath} in folder ${testsFolder}`
+        message: `Can't find test file ${filePath} in folder ${testsFolder}`,
       };
     }
     full = { name: testFile };
     return { json: full };
   }
 
-  if (testFile && testFile.endsWith(".json")) {
+  if (testFile && testFile.endsWith('.json')) {
     try {
       full = require(testFile);
       return { json: full };
@@ -78,13 +78,13 @@ const yaml2json = function(filePath, testsFolder = "") {
   }
 
   // todo
-  if (testFile && testFile.endsWith(".js")) {
+  if (testFile && testFile.endsWith('.js')) {
     return { json: testFile };
   }
 
-  if (testFile && testFile.endsWith(".yaml")) {
+  if (testFile && testFile.endsWith('.yaml')) {
     try {
-      full = yaml.safeLoad(fs.readFileSync(testFile, "utf8"));
+      full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
       return { json: full };
     } catch (e) {
       throw e;
@@ -92,7 +92,7 @@ const yaml2json = function(filePath, testsFolder = "") {
   }
 
   throw {
-    message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}`
+    message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}`,
   };
 };
 

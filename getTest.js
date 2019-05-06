@@ -1,25 +1,20 @@
-const path = require("path");
+const path = require('path');
 
-const _ = require("lodash");
+const _ = require('lodash');
 
-const abstractTest = require("./abstractTest");
+const abstractTest = require('./abstractTest');
 
 const getTest = function(testJsonIncome, envsId) {
   let testJson = _.cloneDeep(testJsonIncome);
 
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw {
-      message: "getTest params error"
+      message: 'getTest params error',
     };
   }
 
-  const functions = _.pick(testJson, [
-    "beforeTest",
-    "runTest",
-    "afterTest",
-    "errorTest"
-  ]);
-  const { envs, log } = require("./env")(envsId);
+  const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+  const { envs, log } = require('./env')(envsId);
 
   // Pass source code of test into test for logging
   testJson.source = _.cloneDeep(testJson);
@@ -30,10 +25,10 @@ const getTest = function(testJsonIncome, envsId) {
 
     if (_.isArray(funcVal)) {
       for (let test of funcVal) {
-        if (test.type === "test") {
+        if (test.type === 'test') {
           testJson[funcKey].push(getTest(test, envsId));
         }
-        if (test.name === "log") {
+        if (test.name === 'log') {
           testJson[funcKey].push(async () => {
             await log(test);
           });
@@ -42,7 +37,7 @@ const getTest = function(testJsonIncome, envsId) {
     }
 
     if (_.isString(funcVal)) {
-      let funcFile = path.join(envs.get("args.testsFolder"), funcVal);
+      let funcFile = path.join(envs.get('args.testsFolder'), funcVal);
       try {
         try {
           funcFromFile = _.get(require(funcFile), funcKey);
@@ -57,13 +52,13 @@ const getTest = function(testJsonIncome, envsId) {
         } else {
           console.log(err);
           throw {
-            message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`
+            message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
           };
         }
       } catch (err) {
         console.log(err);
         throw {
-          message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`
+          message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
         };
       }
     }
