@@ -1,7 +1,7 @@
 const _ = require("lodash");
 
 const { getFullDepthJSON } = require("./getFullDepthJSON");
-const { getTest, getTestsFiles } = require("./getTest");
+const { getTest } = require("./getTest");
 const { args_ext } = require("./helpers");
 
 const main = async (args = {}) => {
