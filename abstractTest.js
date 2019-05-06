@@ -21,6 +21,21 @@ const checkNeedEnv = (needEnvs, envName) => {
   }
 };
 
+const resolveAliases = (valueName, otherValues, mainValue = {}, defaultValue = {}) => {
+  const ALIASSES = {
+    bindData: ['bD', 'bd'],
+  };
+
+  let result = deepmerge.all([defaultValue, mainValue], { arrayMerge: overwriteMerge });
+
+  const aliasses = [valueName, ..._.get(ALIASSES, valueName, [])];
+  aliasses.forEach(v => {
+    result = deepmerge.all([result, _.get(otherValues, v, {})], { arrayMerge: overwriteMerge });
+  });
+
+  return result;
+};
+
 class Test {
   constructor({
     // Имя теста
@@ -48,10 +63,6 @@ class Test {
     // [{}] - много данных для посторения repeat
     data = {},
     d = {}, // alias for data
-
-    bindData = {},
-    bD = {}, // alias for bindData
-    bd = {}, // alias for bindData
 
     options = {},
 
@@ -93,6 +104,7 @@ class Test {
     errorTest = async function() {},
 
     source = '',
+    ...constructorArgs
   } = {}) {
     this.name = name;
     this.type = type;
@@ -107,9 +119,8 @@ class Test {
     this.data = data;
     this.d = d;
 
-    this.bindData = bindData;
-    this.bD = bD;
-    this.bd = bd;
+    // Bindings for data
+    this.bindData = resolveAliases('bindData', constructorArgs);
 
     this.options = options;
 
@@ -162,10 +173,6 @@ class Test {
 
         options = {},
 
-        bindData = {},
-        bD = {}, // alias for bindData
-        bd = {}, // alias for bindData
-
         bindSelectors = {},
         bindSelector = {}, // alias for bindSelectors
         bS = {}, // alias for bindSelectors
@@ -195,6 +202,8 @@ class Test {
 
       envsId,
     ) => {
+      let bindDataLocal = resolveAliases('bindData', inputArgs, this.bindData);
+
       if (!envsId) {
         throw { message: 'Test shoud have envsId' };
       }
@@ -260,10 +269,6 @@ class Test {
           });
         });
 
-        // Биндим
-        let bindDataLocal = deepmerge.all([{}, this.bindData, this.bD, this.bd, bindData, bD, bd], {
-          arrayMerge: overwriteMerge,
-        });
         let bindSelectorsLocal = deepmerge.all(
           [{}, this.bindSelectors, this.bindSelector, this.bS, this.bs, bindSelectors, bindSelector, bS, bs],
           { arrayMerge: overwriteMerge },
