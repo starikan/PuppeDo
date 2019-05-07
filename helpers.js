@@ -6,21 +6,28 @@ const walkSync = require('walk-sync');
 class Helpers {
   constructor() {}
 
-  async getElement(page, selector) {
+  async getElement(page, selector, allElements = false) {
     if (page && selector && _.isString(selector) && _.isObject(page)) {
       let element;
       if (selector.startsWith('xpath:')) {
         selector = _.trimStart(selector, 'xpath:');
         element = await page.$x(selector);
-        if (element.length > 1) {
-          throw {
-            message: `Finded more then 1 xpath elements ${selector}`,
-          };
+        if (!allElements) {
+          if (element.length > 1) {
+            throw {
+              message: `Finded more then 1 xpath elements ${selector}`,
+            };
+          }
+          element = element[0];
         }
-        element = element[0];
       } else {
         selector = _.trimStart(selector, 'css:');
-        element = await page.$(selector);
+        if (allElements){
+          element = await page.$$(selector);
+        }
+        else {
+          element = await page.$(selector);
+        }
       }
       return element;
     } else {

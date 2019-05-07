@@ -309,6 +309,7 @@ class Test {
           }
         });
 
+        //TODO: 2019-05-07 S.Starodubov все эти ифы надо еще сделать в конец когда уже есть результаты типа ifResults сделать
         // IF
         let expr = _.get(inputArgs, 'if');
         if (expr) {
