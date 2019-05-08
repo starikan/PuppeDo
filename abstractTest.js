@@ -104,6 +104,23 @@ const fetchSelectors = (env, envs, extFiles) => {
   return selectorsLocal;
 }
 
+const checkNeeds = (needs, data, testName) => {
+  // [['data', 'd'], 'another', 'optional?']
+  _.forEach(needs, d => {
+    const keysData = new Set(Object.keys(data));
+    if (_.isString(d) && d.endsWith('?')) return; // optional parametr
+    const keysDataIncome = new Set(_.isString(d) ? [d] : d);
+    const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
+    if (!intersectionData.size) {
+      throw {
+        message: `Error: can't find data parametr "${d}" in ${testName} test`,
+      };
+    }
+  });
+
+  return;
+}
+
 class Test {
   constructor({
     // Имя теста
@@ -283,31 +300,8 @@ class Test {
           env.set('env.selectors', selectorsLocal);
         }
 
-        // CHECK NEED
-        // [['data', 'd'], 'another', 'optional?']
-        _.forEach(needData, d => {
-          const keysData = new Set(Object.keys(dataLocal));
-          if (_.isString(d) && d.endsWith('?')) return; // optional parametr
-          const keysDataIncome = new Set(_.isString(d) ? [d] : d);
-          const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
-          if (!intersectionData.size) {
-            throw {
-              message: `Error: can't find data parametr "${d}" in ${this.name} test`,
-            };
-          }
-        });
-
-        _.forEach(needSelectors, d => {
-          const keysSelectors = new Set(Object.keys(selectorsLocal));
-          if (_.isString(d) && d.endsWith('?')) return; // optional parametr
-          const keysSelectorsIncome = new Set(_.isString(d) ? [d] : d);
-          const intersectionSelectors = new Set([...keysSelectors].filter(x => keysSelectorsIncome.has(x)));
-          if (!intersectionSelectors.size) {
-            throw {
-              message: `Error: can't find selector "${d}" in ${this.name} test`,
-            };
-          }
-        });
+        checkNeeds(needData, dataLocal, this.name);
+        checkNeeds(needSelectors, selectorsLocal, this.name);
 
         //TODO: 2019-05-07 S.Starodubov все эти ифы надо еще сделать в конец когда уже есть результаты типа ifResults сделать
         // IF
