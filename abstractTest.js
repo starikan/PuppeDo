@@ -121,6 +121,27 @@ const checkNeeds = (needs, data, testName) => {
   return;
 }
 
+//TODO: 2019-05-08 S.Starodubov отрефакторить вместе с fetchData isSelector
+const updateData = (env, envs, dataExt, bindDataLocal, data, isSelector = false) => {
+  // Fetch data from ext files
+  let dataLocal;
+  if (isSelector) {
+    dataLocal = fetchSelectors(env, envs, dataExt);
+  } else {
+    dataLocal = fetchData(env, envs, dataExt);
+  }
+  // Update local data with binding
+  for (const key in bindDataLocal) {
+    dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
+  };
+  // Update after all bindings data from test itself
+  dataLocal = deepmerge.all([dataLocal, data], {
+    arrayMerge: overwriteMerge
+  });
+
+  return dataLocal;
+}
+
 class Test {
   constructor({
     // Имя теста
@@ -211,6 +232,11 @@ class Test {
 
       let results = resolveAliases('results', inputArgs);
       let bindResults = resolveAliases('bindResults', inputArgs);
+      let allowResults = this.allowResults;
+      let resultFromTest = {};
+      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results, ], {
+        arrayMerge: overwriteMerge
+      });
 
       dataExt = [...new Set([...this.dataExt, ...dataExt])];
       selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
@@ -236,22 +262,8 @@ class Test {
 
         checkNeedEnv(this.needEnv, envName);
 
-        let dataLocal = fetchData(env, envs, dataExt);
-        for (const key in bindDataLocal) {
-          dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-        }
-        // Добавляем данные самого теста после всех биндингов
-        dataLocal = deepmerge.all([dataLocal, data], {
-          arrayMerge: overwriteMerge
-        });
-
-        let selectorsLocal = fetchSelectors(env, envs, selectorsExt);
-        for (const key in bindSelectorsLocal) {
-          selectorsLocal[key] = _.get(selectorsLocal, bindSelectorsLocal[key]);
-        }
-        selectorsLocal = deepmerge.all([selectorsLocal, selectors], {
-          arrayMerge: overwriteMerge
-        });
+        let dataLocal = updateData(env, envs, dataExt, bindDataLocal, data);
+        let selectorsLocal = updateData(env, envs, selectorsExt, bindSelectorsLocal, selectors, true);
 
         // FUNCTIONS
         let allDataAndSelectors = deepmerge.all([dataLocal, selectorsLocal], {
@@ -345,23 +357,6 @@ class Test {
             };
           }
         }
-
-        // BIND RESULTS
-        let bindResultsLocal = {};
-        bindResultsLocal = deepmerge.all(
-          [
-            this.bindResults,
-            bindResults,
-            results,
-          ], {
-            arrayMerge: overwriteMerge
-          },
-        );
-
-        let resultFromTest = {};
-
-        // Bind source of test in log function
-        let allowResults = this.allowResults;
 
         function bind(func, source) {
           return function () {
