@@ -71,7 +71,6 @@ const checkNeeds = (needs, data, testName) => {
   return;
 }
 
-//TODO: 2019-05-06 S.Starodubov Нужен рефакторинг
 const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false) => {
   let dataLocal, joinArray;
 
@@ -88,23 +87,22 @@ const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false)
   }
   joinArray = [...joinArray, envs.get('resultsFunc', {}), envs.get('results', {})]
 
-  dataLocal = deepmerge.all(joinArray, {
-    arrayMerge: overwriteMerge
-  });
-
   // 7. Fetch data from ext files that passed in test itself
   let resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
   resolvedExtFiles.forEach(f => {
     const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    dataLocal = deepmerge.all([dataLocal, data_ext], {
-      arrayMerge: overwriteMerge,
-    });
+    joinArray = [...joinArray, data_ext];
+  });
+
+  dataLocal = deepmerge.all(joinArray, {
+    arrayMerge: overwriteMerge
   });
 
   // 8. Update local data with bindings
   for (const key in bindDataLocal) {
     dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
   };
+
   // 9. Update after all bindings with raw data from test itself
   dataLocal = deepmerge.all([dataLocal, data], {
     arrayMerge: overwriteMerge
@@ -205,7 +203,7 @@ class Test {
       let bindResults = resolveAliases('bindResults', inputArgs);
       let allowResults = this.allowResults;
       let resultFromTest = {};
-      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results, ], {
+      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results ], {
         arrayMerge: overwriteMerge
       });
 
