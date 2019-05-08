@@ -126,6 +126,8 @@ class Test {
     repeat = 1,
     ...constructorArgs
   } = {}) {
+
+    // if (this.name === 'typeInput') debugger;
     this.name = name;
     this.type = type;
 
@@ -179,6 +181,8 @@ class Test {
       envsId,
     ) => {
 
+      // if (this.name === 'typeInput') debugger;
+
       this.data = this.resolveAliases('data', inputArgs, constructorArgs);
       this.bindData = this.resolveAliases('bindData', inputArgs, constructorArgs);
       this.selectors = this.resolveAliases('selectors', inputArgs, constructorArgs);
@@ -220,6 +224,7 @@ class Test {
 
         let dataLocal = fetchData(env, envs, this.dataExt, this.bindData, this.data);
         let selectorsLocal = fetchData(env, envs, this.selectorsExt, this.bindSelectors, this.selectors, true);
+        // if (this.name === 'typeInput') debugger;
 
         // FUNCTIONS
         let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
