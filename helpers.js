@@ -41,7 +41,7 @@ class Helpers {
       throw {
         message: `anyGet error`,
       };
-    }
+    };
 
     let result;
     if (_.isString(paths)) {

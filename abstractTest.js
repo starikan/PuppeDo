@@ -27,33 +27,6 @@ const checkNeedEnv = (needEnvs, envName) => {
   }
 };
 
-const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue = {}) => {
-  const ALIASSES = {
-    bindData: ['bD', 'bd'],
-    bindSelectors: ['bindSelector', 'bS', 'bs'],
-    bindResults: ['bindResult', 'bR', 'br'],
-    selectors: ['selector', 's'],
-    data: ['d'],
-    results: ['result', 'r'],
-    options: ['option', 'opt', 'o'],
-    selectorsFunction: ['selectorFunction', 'sF', 'sf'],
-    dataFunction: ['dF', 'df'],
-  };
-
-  let result = deepmerge.all([defaultValue, parentValue], {
-    arrayMerge: overwriteMerge
-  });
-
-  const aliasses = [valueName, ..._.get(ALIASSES, valueName, [])];
-  aliasses.forEach(v => {
-    result = deepmerge.all([result, _.get(otherValues, v, {})], {
-      arrayMerge: overwriteMerge
-    });
-  });
-
-  return result;
-};
-
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
@@ -83,7 +56,7 @@ const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false)
   if (isSelector) {
     joinArray = [env ? env.get('selectors') : {}, envs.get('args.extSelectorsExt', {}), envs.get('args.extSelectors', {}), envs.get('selectors', {})]
   } else {
-    joinArray = [env ? env.get('data') : {}, envs.get('args.extDataExt', {}), envs.get('args.extData', {}), envs.get('data', {})]
+    joinArray = [env ? env.get('data') : {}, envs.get('args.extthis.', {}), envs.get('args.extData', {}), envs.get('data', {})]
   }
   joinArray = [...joinArray, envs.get('resultsFunc', {}), envs.get('results', {})]
 
@@ -173,15 +146,28 @@ class Test {
     this.repeat = repeat;
     this.source = source;
 
-    this.data = resolveAliases('data', constructorArgs);
-    this.selectors = resolveAliases('selectors', constructorArgs);
-    this.results = resolveAliases('results', constructorArgs);
-    this.options = resolveAliases('options', constructorArgs);
-    this.bindData = resolveAliases('bindData', constructorArgs);
-    this.bindSelectors = resolveAliases('bindSelectors', constructorArgs);
-    this.bindResults = resolveAliases('bindResults', constructorArgs);
-    this.selectorsFunction = resolveAliases('selectorsFunction', constructorArgs);
-    this.dataFunction = resolveAliases('dataFunction', constructorArgs);
+    this.ALIASSES = {
+      bindData: ['bD', 'bd'],
+      bindSelectors: ['bindSelector', 'bS', 'bs'],
+      bindResults: ['bindResult', 'bR', 'br'],
+      selectors: ['selector', 's'],
+      data: ['d'],
+      results: ['result', 'r'],
+      options: ['option', 'opt', 'o'],
+      selectorsFunction: ['selectorFunction', 'sF', 'sf'],
+      dataFunction: ['dF', 'df'],
+    };
+
+    this.resolveAliases = (valueName, constructorValues, testValues) => {
+      let result = {};
+      const aliasses = [valueName, ..._.get(this.ALIASSES, valueName, [])];
+      aliasses.forEach(v => {
+        result = deepmerge.all([result, _.get(constructorValues, v, {}), _.get(testValues, v, {})], {
+          arrayMerge: overwriteMerge
+        });
+      });
+      return result;
+    };
 
     this.run = async ({
         dataExt = [],
@@ -193,27 +179,23 @@ class Test {
       envsId,
     ) => {
 
-      let data = resolveAliases('data', inputArgs, this.data);
-      let bindDataLocal = resolveAliases('bindData', inputArgs, this.bindData);
+      this.data = this.resolveAliases('data', inputArgs, constructorArgs);
+      this.bindData = this.resolveAliases('bindData', inputArgs, constructorArgs);
+      this.selectors = this.resolveAliases('selectors', inputArgs, constructorArgs);
+      this.bindSelectors = this.resolveAliases('bindSelectors', inputArgs, constructorArgs);
+      this.options = this.resolveAliases('options', inputArgs, constructorArgs);
+      this.dataFunction = this.resolveAliases('dataFunction', inputArgs, constructorArgs);
+      this.selectorsFunction = this.resolveAliases('selectorsFunction', inputArgs, constructorArgs);
+      this.results = this.resolveAliases('results', inputArgs, constructorArgs);
+      this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
 
-      let selectors = resolveAliases('selectors', inputArgs, this.selectors);
-      let bindSelectorsLocal = resolveAliases('bindSelectors', inputArgs, this.bindSelectors);
-
-      let options = resolveAliases('options', inputArgs, this.options);
-
-      let dataFunctionLocal = resolveAliases('dataFunction', inputArgs, this.dataFunction);
-      let selectorsFunctionLocal = resolveAliases('selectorsFunction', inputArgs, this.selectorsFunction);
-
-      let results = resolveAliases('results', inputArgs);
-      let bindResults = resolveAliases('bindResults', inputArgs);
-      let allowResults = this.allowResults;
       let resultFromTest = {};
-      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results], {
+      let bindResultsLocal = deepmerge.all([{}, this.bindResults, this.results], {
         arrayMerge: overwriteMerge
       });
 
-      dataExt = [...new Set([...this.dataExt, ...dataExt])];
-      selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
+      this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
+      this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
 
       if (!envsId) {
         throw {
@@ -236,16 +218,16 @@ class Test {
 
         checkNeedEnv(this.needEnv, envName);
 
-        let dataLocal = fetchData(env, envs, dataExt, bindDataLocal, data);
-        let selectorsLocal = fetchData(env, envs, selectorsExt, bindSelectorsLocal, selectors, true);
+        let dataLocal = fetchData(env, envs, this.dataExt, this.bindData, this.data);
+        let selectorsLocal = fetchData(env, envs, this.selectorsExt, this.bindSelectors, this.selectors, true);
 
         // FUNCTIONS
-        let dataFunctionForGlobalResults = resolveDataFunctions(dataFunctionLocal, dataLocal, selectorsLocal);
+        let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
         dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], {
           arrayMerge: overwriteMerge
         });
 
-        let selectorsFunctionForGlobalResults = resolveDataFunctions(selectorsFunctionLocal, dataLocal, selectorsLocal);
+        let selectorsFunctionForGlobalResults = resolveDataFunctions(this.selectorsFunction, dataLocal, selectorsLocal);
         selectorsLocal = deepmerge.all([selectorsLocal, selectorsFunctionForGlobalResults], {
           arrayMerge: overwriteMerge
         });
@@ -306,6 +288,20 @@ class Test {
           }
         }
 
+        let bindArgs = {
+          envName,
+          envPageName,
+          // env,
+          // browser,
+          // page,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          allowResults: this.allowResults,
+          results: bindResultsLocal,
+          options: this.options,
+          envsId,
+        }
+
         function bind(func, source) {
           return function () {
             return func.apply(this, [
@@ -319,9 +315,9 @@ class Test {
                 // page,
                 data: dataLocal,
                 selectors: selectorsLocal,
-                allowResults: allowResults,
+                // allowResults: this.allowResults,
                 results: bindResultsLocal,
-                options,
+                // options: this.options,
                 envsId,
               },
             ]);
@@ -341,7 +337,7 @@ class Test {
           data: dataLocal,
           selectors: selectorsLocal,
           allowResults: this.allowResults,
-          options,
+          options: this.options,
           envsId,
           envs,
           log: logBinded,
@@ -367,20 +363,6 @@ class Test {
             }
           }
         }
-
-        // Удаление локальных данных для устранения дублирования старых при обшибке когда несколько значени в [selector, sel, s]
-        // let needDataToRemove = _.flattenDeep(needData);
-        // let needSelectorsToRemove = _.flattenDeep(needSelectors);
-        // _.forEach(needDataToRemove, v => {
-        //   try {
-        //     delete dataLocal[v]
-        //   } catch(err){}
-        // })
-        // _.forEach(needSelectorsToRemove, v => {
-        //   try {
-        //     delete selectorsLocal[v]
-        //   } catch(err){}
-        // })
 
         // todo
         // выкидывать предупреждение если пришло в результатах то чего нет в allowResults
@@ -413,7 +395,7 @@ class Test {
           text: `Test ${this.name} = ${err.message}`,
           screenshot: false,
         });
-        await errorTest();
+        await this.errorTest();
         console.log(err);
         throw err;
       }
