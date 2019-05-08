@@ -56,8 +56,8 @@ const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue =
 
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
+  const keysData = new Set(Object.keys(data));
   _.forEach(needs, d => {
-    const keysData = new Set(Object.keys(data));
     if (_.isString(d) && d.endsWith('?')) return; // optional parametr
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
@@ -113,42 +113,23 @@ const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false)
 
 class Test {
   constructor({
-    // Имя теста
-    // На базе имени ищутся данные в data в частности data[name]
     name,
-
-    // Тип теста atom, test, multiEnv?
-    // Если atom то обязательный прямой проброс данных
-    type = 'test',
-
-    // Доступные типы env
-    // Если тест работает с несколькими env то проверять входные env
-    // и активную на совпадение с этим делом
+    type = 'test', // atom, test, multiEnv?
     needEnv = [],
     needData = [],
     needSelectors = [],
     allowResults = [],
-
     dataExt = [],
     selectorsExt = [],
-
-    // Биндинги селекторов
-    // 1. Смотрим на локальные данные this.selectors
-    // 2. Смотрим на данные в глобальной env.selectors
-    // 3. Смотрим на данные в env[envName].selectors
-
-    // {} - данные
-    //TODO: 2018-07-02 S.Starodubov repeat
-    // [{}] - много данных для посторения repeat
-    // Колличество повторений
-    repeat = 1,
 
     beforeTest = async function () {},
     runTest = async function () {},
     afterTest = async function () {},
     errorTest = async function () {},
-
     source = '',
+
+    //TODO: 2018-07-02 S.Starodubov repeat
+    repeat = 1,
     ...constructorArgs
   } = {}) {
     this.name = name;
