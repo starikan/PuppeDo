@@ -111,6 +111,27 @@ const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false)
   return dataLocal;
 }
 
+const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
+  const allDataSel = deepmerge.all([dataLocal, selectorsLocal], {
+    arrayMerge: overwriteMerge,
+  });
+
+  let funcEval = {};
+
+  for (const key in funcParams) {
+    if (_.isString(funcParams[key])) {
+      funcEval[key] = safeEval(funcParams[key], allDataSel);
+    }
+    if (_.isArray(funcParams[key]) && funcParams[key].length == 2) {
+      let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
+      funcEval[key] = dataFuncEval;
+      funcEval[funcParams[key][1]] = dataFuncEval;
+    }
+  }
+
+  return funcEval;
+}
+
 class Test {
   constructor({
     name,
@@ -173,18 +194,21 @@ class Test {
     ) => {
 
       let data = resolveAliases('data', inputArgs, this.data);
-      let selectors = resolveAliases('selectors', inputArgs, this.selectors);
-      let options = resolveAliases('options', inputArgs, this.options);
       let bindDataLocal = resolveAliases('bindData', inputArgs, this.bindData);
+
+      let selectors = resolveAliases('selectors', inputArgs, this.selectors);
       let bindSelectorsLocal = resolveAliases('bindSelectors', inputArgs, this.bindSelectors);
-      let selectorsFunctionLocal = resolveAliases('selectorsFunction', inputArgs, this.selectorsFunction);
+
+      let options = resolveAliases('options', inputArgs, this.options);
+
       let dataFunctionLocal = resolveAliases('dataFunction', inputArgs, this.dataFunction);
+      let selectorsFunctionLocal = resolveAliases('selectorsFunction', inputArgs, this.selectorsFunction);
 
       let results = resolveAliases('results', inputArgs);
       let bindResults = resolveAliases('bindResults', inputArgs);
       let allowResults = this.allowResults;
       let resultFromTest = {};
-      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results ], {
+      let bindResultsLocal = deepmerge.all([{}, this.bindResults, bindResults, results], {
         arrayMerge: overwriteMerge
       });
 
@@ -216,41 +240,15 @@ class Test {
         let selectorsLocal = fetchData(env, envs, selectorsExt, bindSelectorsLocal, selectors, true);
 
         // FUNCTIONS
-        let allDataAndSelectors = deepmerge.all([dataLocal, selectorsLocal], {
-          arrayMerge: overwriteMerge,
+        let dataFunctionForGlobalResults = resolveDataFunctions(dataFunctionLocal, dataLocal, selectorsLocal);
+        dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], {
+          arrayMerge: overwriteMerge
         });
 
-        let dataFunctionForGlobalResults = {};
-
-        for (const key in dataFunctionLocal) {
-          if (_.isString(dataFunctionLocal[key])) {
-            dataLocal[key] = safeEval(dataFunctionLocal[key], allDataAndSelectors);
-            dataFunctionForGlobalResults[key] = dataLocal[key];
-          }
-          if (_.isArray(dataFunctionLocal[key]) && dataFunctionLocal[key].length == 2) {
-            let dataFuncEval = safeEval(dataFunctionLocal[key][0], allDataAndSelectors);
-            dataLocal[key] = dataFuncEval;
-            dataLocal[dataFunctionLocal[key][1]] = dataFuncEval;
-            dataFunctionForGlobalResults[key] = dataFuncEval;
-            dataFunctionForGlobalResults[dataFunctionLocal[key][1]] = dataFuncEval;
-          }
-        }
-
-        let selectorsFunctionForGlobalResults = {};
-
-        for (const key in selectorsFunctionLocal) {
-          if (_.isString(selectorsFunctionLocal[key])) {
-            selectorsLocal[key] = safeEval(selectorsFunctionLocal[key], allDataAndSelectors);
-            selectorsFunctionForGlobalResults[key] = selectorsLocal[key];
-          }
-          if (_.isArray(selectorsFunctionLocal[key]) && selectorsFunctionLocal[key].length == 2) {
-            let selectorsFuncEval = safeEval(selectorsFunctionLocal[key][0], allDataAndSelectors);
-            selectorsLocal[key] = selectorsFuncEval;
-            selectorsLocal[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
-            selectorsFunctionForGlobalResults[key] = selectorsFuncEval;
-            selectorsFunctionForGlobalResults[selectorsFunctionLocal[key][1]] = selectorsFuncEval;
-          }
-        }
+        let selectorsFunctionForGlobalResults = resolveDataFunctions(selectorsFunctionLocal, dataLocal, selectorsLocal);
+        selectorsLocal = deepmerge.all([selectorsLocal, selectorsFunctionForGlobalResults], {
+          arrayMerge: overwriteMerge
+        });
 
         // Сохраняем функции в результаты
         envs.set('resultsFunc', deepmerge(envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
