@@ -54,56 +54,6 @@ const resolveAliases = (valueName, otherValues, parentValue = {}, defaultValue =
   return result;
 };
 
-//TODO: 2019-05-06 S.Starodubov Нужен полный рефакторинг двух этих функций
-const fetchData = (env, envs, extFiles) => {
-  let dataLocal = deepmerge.all(
-    [{},
-      env ? env.get('data') : {}, //Берем данные из предыдущих тестов
-      envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
-      envs.get('args.extData', {}), // из переменной среды
-      envs.get('data', {}), // из глобального env
-      envs.get('resultsFunc', {}), // результаты функций
-      envs.get('results', {}), // результаты
-    ], {
-      arrayMerge: overwriteMerge
-    },
-  );
-
-  let resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
-  resolvedExtFiles.forEach(f => {
-    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    dataLocal = deepmerge.all([dataLocal, data_ext], {
-      arrayMerge: overwriteMerge,
-    });
-  });
-
-  return dataLocal;
-}
-
-const fetchSelectors = (env, envs, extFiles) => {
-  let selectorsLocal = deepmerge.all(
-    [{},
-      env ? env.get('selectors') : {},
-      envs.get('args.extSelectorsExt', {}),
-      envs.get('args.extSelectors', {}),
-      envs.get('selectors', {}),
-      envs.get('resultsFunc', {}),
-      envs.get('results', {}),
-    ], {
-      arrayMerge: overwriteMerge
-    },
-  );
-
-  resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
-  resolvedExtFiles.forEach(f => {
-    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    selectorsLocal = deepmerge.all([selectorsLocal, data_ext], {
-      arrayMerge: overwriteMerge,
-    });
-  });
-  return selectorsLocal;
-}
-
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   _.forEach(needs, d => {
@@ -121,15 +71,58 @@ const checkNeeds = (needs, data, testName) => {
   return;
 }
 
+//TODO: 2019-05-06 S.Starodubov Нужен рефакторинг
+const fetchData = (env, envs, extFiles, isSelector = false) => {
+  let dataLocal = {};
+
+  if (isSelector) {
+    dataLocal = deepmerge.all(
+      [dataLocal,
+        env ? env.get('selectors') : {},
+        envs.get('args.extSelectorsExt', {}),
+        envs.get('args.extSelectors', {}),
+        envs.get('selectors', {}),
+      ], {
+        arrayMerge: overwriteMerge
+      },
+    );
+  } else {
+    dataLocal = deepmerge.all(
+      [dataLocal,
+        env ? env.get('data') : {}, //Берем данные из предыдущих тестов
+        envs.get('args.extDataExt', {}), // подгруженные из yaml файлов в переменной среды
+        envs.get('args.extData', {}), // из переменной среды
+        envs.get('data', {}), // из глобального env
+      ], {
+        arrayMerge: overwriteMerge
+      },
+    );
+  }
+
+  dataLocal = deepmerge.all([
+    dataLocal,
+    envs.get('resultsFunc', {}), // результаты функций
+    envs.get('results', {}), // результаты
+  ], {
+    arrayMerge: overwriteMerge
+  });
+
+
+  let resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
+  resolvedExtFiles.forEach(f => {
+    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+    dataLocal = deepmerge.all([dataLocal, data_ext], {
+      arrayMerge: overwriteMerge,
+    });
+  });
+
+  return dataLocal;
+}
+
 //TODO: 2019-05-08 S.Starodubov отрефакторить вместе с fetchData isSelector
 const updateData = (env, envs, dataExt, bindDataLocal, data, isSelector = false) => {
   // Fetch data from ext files
-  let dataLocal;
-  if (isSelector) {
-    dataLocal = fetchSelectors(env, envs, dataExt);
-  } else {
-    dataLocal = fetchData(env, envs, dataExt);
-  }
+  dataLocal = fetchData(env, envs, dataExt, isSelector);
   // Update local data with binding
   for (const key in bindDataLocal) {
     dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
