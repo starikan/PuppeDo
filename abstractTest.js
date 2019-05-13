@@ -21,22 +21,6 @@ function bind(func, source, bindArgs) {
   };
 };
 
-const checkNeedEnv = (needEnvs, envName) => {
-  needEnvs = _.isString(needEnvs) ? [needEnvs] : needEnvs;
-
-  if (_.isArray(needEnvs)) {
-    if (needEnvs.length && !needEnvs.includes(envName)) {
-      throw {
-        message: `Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`,
-      };
-    }
-  } else {
-    throw {
-      message: 'needEnv wrong format, shoud be array or string'
-    };
-  }
-};
-
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
@@ -52,46 +36,6 @@ const checkNeeds = (needs, data, testName) => {
   });
 
   return;
-}
-
-const fetchData = (env, envs, extFiles, bindDataLocal, data, isSelector = false) => {
-  let dataLocal, joinArray;
-
-  // 1. Get data from previous tests
-  // 2. Get data from yaml files in env passed
-  // 3. Get data from ENV params global
-  // 4. Get data from global env for all tests
-  // 5. Get data from user function results
-  // 6. Get data from results
-  if (isSelector) {
-    joinArray = [env ? env.get('selectors') : {}, envs.get('args.extSelectorsExt', {}), envs.get('args.extSelectors', {}), envs.get('selectors', {})]
-  } else {
-    joinArray = [env ? env.get('data') : {}, envs.get('args.extDataExt', {}), envs.get('args.extData', {}), envs.get('data', {})]
-  }
-  joinArray = [...joinArray, envs.get('resultsFunc', {}), envs.get('results', {})]
-
-  // 7. Fetch data from ext files that passed in test itself
-  let resolvedExtFiles = resolveStars(extFiles, envs.get('args.testsFolder'));
-  resolvedExtFiles.forEach(f => {
-    const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    joinArray = [...joinArray, data_ext];
-  });
-
-  dataLocal = deepmerge.all(joinArray, {
-    arrayMerge: overwriteMerge
-  });
-
-  // 8. Update local data with bindings
-  for (const key in bindDataLocal) {
-    dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-  };
-
-  // 9. Update after all bindings with raw data from test itself
-  dataLocal = deepmerge.all([dataLocal, data], {
-    arrayMerge: overwriteMerge
-  });
-
-  return dataLocal;
 }
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
@@ -179,11 +123,72 @@ class Test {
       return result;
     };
 
+    this.checkNeedEnv = () => {
+      const needEnvs = _.isString(this.needEnv) ? [this.needEnv] : this.needEnv;
+      if (_.isArray(needEnvs)) {
+        if (needEnvs.length && !needEnvs.includes(this.envName)) {
+          throw {
+            message: `Wrong Environment, local current env = ${this.envName}, but test pass needEnvs = ${needEnvs}`,
+          };
+        }
+      } else {
+        throw {
+          message: 'needEnv wrong format, shoud be array or string'
+        };
+      }
+    };
+
+    this.fetchData = (isSelector = false) => {
+      let dataLocal, joinArray;
+      const extFiles = isSelector ? this.selectorsExt : this.dataExt;
+      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
+      const data = isSelector ? this.selectors : this.data;
+
+      // 1. Get data from previous tests
+      // 2. Get data from yaml files in env passed
+      // 3. Get data from ENV params global
+      // 4. Get data from global env for all tests
+      // 5. Get data from user function results
+      // 6. Get data from results
+      if (isSelector) {
+        joinArray = [this.env ? this.env.get('selectors') : {}, this.envs.get('args.extSelectorsExt', {}), this.envs.get('args.extSelectors', {}), this.envs.get('selectors', {})]
+      } else {
+        joinArray = [this.env ? this.env.get('data') : {}, this.envs.get('args.extDataExt', {}), this.envs.get('args.extData', {}), this.envs.get('data', {})]
+      }
+      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})]
+
+      // 7. Fetch data from ext files that passed in test itself
+      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.testsFolder'));
+      resolvedExtFiles.forEach(f => {
+        const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
+        joinArray = [...joinArray, data_ext];
+      });
+
+      dataLocal = deepmerge.all(joinArray, {
+        arrayMerge: overwriteMerge
+      });
+
+      // 8. Update local data with bindings
+      for (const key in bindDataLocal) {
+        dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
+      };
+
+      // 9. Update after all bindings with raw data from test itself
+      dataLocal = deepmerge.all([dataLocal, data], {
+        arrayMerge: overwriteMerge
+      });
+
+      return dataLocal;
+    };
+
+    this.fetchSelectors = () => {
+      return this.fetchData(true);
+    };
+
     this.run = async ({
         dataExt = [],
         selectorsExt = [],
         ...inputArgs
-        // envName,
         // repeat,
       } = {},
       envsId,
@@ -218,17 +223,15 @@ class Test {
       } = require('./env.js')(envsId);
 
       try {
-        const envName = envs.get('current.name');
-        const envPageName = envs.get('current.page');
-        const env = envs.get(`envs.${envName}`);
-        const browser = env ? env.getState('browser') : null;
-        //TODO: 2018-07-03 S.Starodubov если нет page то может это API
-        const page = env ? env.getState(`pages.${envPageName}`) : null;
+        this.envs = envs;
+        this.envName = this.envs.get('current.name');
+        this.envPageName = this.envs.get('current.page');
+        this.env = this.envs.get(`envs.${this.envName}`);
 
-        checkNeedEnv(this.needEnv, envName);
+        this.checkNeedEnv();
 
-        let dataLocal = fetchData(env, envs, this.dataExt, this.bindData, this.data);
-        let selectorsLocal = fetchData(env, envs, this.selectorsExt, this.bindSelectors, this.selectors, true);
+        let dataLocal = this.fetchData();
+        let selectorsLocal = this.fetchSelectors();
 
         // FUNCTIONS
         let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
@@ -242,13 +245,13 @@ class Test {
         });
 
         // Сохраняем функции в результаты
-        envs.set('resultsFunc', deepmerge(envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
-        envs.set('resultsFunc', deepmerge(envs.get('resultsFunc', {}), selectorsFunctionForGlobalResults));
+        this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
+        this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), selectorsFunctionForGlobalResults));
 
         // Write data to local env. For child tests.
-        if (env) {
-          env.set('env.data', dataLocal);
-          env.set('env.selectors', selectorsLocal);
+        if (this.env) {
+          this.env.set('env.data', dataLocal);
+          this.env.set('env.selectors', selectorsLocal);
         }
 
         checkNeeds(needData, dataLocal, this.name);
@@ -299,11 +302,11 @@ class Test {
 
         // TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте, если что ронять с исключнием
 
-        // All data passed to function
+        // All data passed to log
         const args = {
           envsId,
-          envName,
-          envPageName,
+          envName: this.envName,
+          envPageName: this.envPageName,
           data: dataLocal,
           selectors: selectorsLocal,
           options: this.options,
@@ -311,11 +314,13 @@ class Test {
           results: bindResultsLocal,
         };
 
+        // Extend with data passed to functions
         const args_ext = Object.assign({}, args, {
-          env,
-          envs,
-          browser,
-          page,
+          env: this.env,
+          envs: this.envs,
+          browser: this.env ? this.env.getState('browser') : null,
+          //TODO: 2018-07-03 S.Starodubov если нет page то может это API
+          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: bind(log, source, args),
           helper: new Helpers(),
           _,
