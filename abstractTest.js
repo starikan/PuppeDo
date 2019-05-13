@@ -11,6 +11,16 @@ const {
   resolveStars
 } = require('./helpers');
 
+function bind(func, source, bindArgs) {
+  return function () {
+    return func.apply(this, [
+      ...arguments,
+      source,
+      bindArgs
+    ]);
+  };
+};
+
 const checkNeedEnv = (needEnvs, envName) => {
   needEnvs = _.isString(needEnvs) ? [needEnvs] : needEnvs;
 
@@ -287,62 +297,29 @@ class Test {
           }
         }
 
-        let bindArgs = {
+        // TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте, если что ронять с исключнием
+
+        // All data passed to function
+        const args = {
+          envsId,
           envName,
           envPageName,
-          // env,
-          // browser,
-          // page,
           data: dataLocal,
           selectors: selectorsLocal,
+          options: this.options,
           allowResults: this.allowResults,
           results: bindResultsLocal,
-          options: this.options,
-          envsId,
-        }
-
-        function bind(func, source) {
-          return function () {
-            return func.apply(this, [
-              ...arguments,
-              source,
-              {
-                envName,
-                envPageName,
-                // env,
-                // browser,
-                // page,
-                data: dataLocal,
-                selectors: selectorsLocal,
-                // allowResults: this.allowResults,
-                results: bindResultsLocal,
-                // options: this.options,
-                envsId,
-              },
-            ]);
-          };
         };
 
-        let logBinded = bind(log, this);
-
-        //TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте
-        // если что ронять с исключнием
-        const args = {
-          envName,
-          envPageName,
+        const args_ext = Object.assign({}, args, {
           env,
+          envs,
           browser,
           page,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          allowResults: this.allowResults,
-          options: this.options,
-          envsId,
-          envs,
-          log: logBinded,
+          log: bind(log, source, args),
           helper: new Helpers(),
           _,
-        };
+        });
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
@@ -355,7 +332,7 @@ class Test {
           }
           if (_.isArray(funcs)) {
             for (const fun of funcs) {
-              let funResult = (await fun(args)) || {};
+              let funResult = (await fun(args_ext)) || {};
               resultFromTest = deepmerge.all([resultFromTest, funResult], {
                 arrayMerge: overwriteMerge,
               });

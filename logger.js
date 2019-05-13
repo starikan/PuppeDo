@@ -192,7 +192,7 @@ class Logger {
       }
 
       if (_.isEmpty(testStruct)) {
-        testStruct = _.get(testSource, 'source', {});
+        testStruct = testSource;
         testStruct = _.mapValues(testStruct, v => {
           if (!_.isEmpty(v)) {
             return v;
