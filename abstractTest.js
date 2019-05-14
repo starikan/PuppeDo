@@ -103,10 +103,9 @@ class Test {
     this.ALIASSES = {
       bindData: ['bD', 'bd'],
       bindSelectors: ['bindSelector', 'bS', 'bs'],
-      bindResults: ['bindResult', 'bR', 'br'],
+      bindResults: ['bindResult', 'bR', 'br', 'result', 'r'],
       selectors: ['selector', 's'],
       data: ['d'],
-      results: ['result', 'r'],
       options: ['option', 'opt', 'o'],
       selectorsFunction: ['selectorFunction', 'sF', 'sf'],
       dataFunction: ['dF', 'df'],
@@ -200,14 +199,7 @@ class Test {
       this.options = this.resolveAliases('options', inputArgs, constructorArgs);
       this.dataFunction = this.resolveAliases('dataFunction', inputArgs, constructorArgs);
       this.selectorsFunction = this.resolveAliases('selectorsFunction', inputArgs, constructorArgs);
-      this.results = this.resolveAliases('results', inputArgs, constructorArgs);
       this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
-
-      let resultFromTest = {};
-      let bindResultsLocal = deepmerge.all([{}, this.bindResults, this.results], {
-        arrayMerge: overwriteMerge
-      });
-
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
 
@@ -311,7 +303,7 @@ class Test {
           selectors: selectorsLocal,
           options: this.options,
           allowResults: this.allowResults,
-          results: bindResultsLocal,
+          bindResults: this.bindResults,
         };
 
         // Extend with data passed to functions
@@ -328,6 +320,7 @@ class Test {
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
+        let resultFromTest = {};
 
         for (let i = 0; i < FUNCTIONS.length; i++) {
           let funcs = FUNCTIONS[i];
@@ -345,30 +338,26 @@ class Test {
           }
         }
 
-        // todo
-        // выкидывать предупреждение если пришло в результатах то чего нет в allowResults
-        // или если не пришло то чего нужно
-
         // RESULTS
+        // todo выкидывать предупреждение если не пришло то чего нужно в результатах то чего в allowResults
+        let results = _.pick(resultFromTest, allowResults);
 
-        // Результаты которые пришли из внутренностей теста
-        Object.keys(resultFromTest).forEach(key => {
-          let bindKey = _.get(bindResultsLocal, key);
-          if (bindKey && this.allowResults.includes(key)) {
-            envs.set(`results.${bindKey}`, resultFromTest[key]);
-          }
-        });
+        if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
+          throw ({
+            message: 'Can`t get results from test'
+          })
+        };
 
-        // envs.set('results', deepmerge.all([envs.get('results'), resultFromTest], { arrayMerge: overwriteMerge }));
+        for (const key in this.bindResults) {
+          results[key] = _.get(results, this.bindResults[key]);
+        };
 
-        // Результаты которые просто просто хочется забиндить в переменную, а не приходящие из теста
-        Object.keys(bindResultsLocal).forEach(key => {
-          let bindKey = _.get(bindResultsLocal, key);
-          const availableData = deepmerge.all([envs.get('results'), dataLocal, selectorsLocal, resultFromTest], {
-            arrayMerge: overwriteMerge,
-          });
-          envs.set(`results.${bindKey}`, _.get(availableData, key));
-        });
+        envs.set('results', deepmerge.all([envs.get('results'), results], {
+          arrayMerge: overwriteMerge,
+        }));
+
+        // Результаты которые просто просто хочется забиндить в переменную, это делать через функции
+
       } catch (err) {
         err.envsId = envsId;
         log({
