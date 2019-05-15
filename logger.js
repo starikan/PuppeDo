@@ -121,6 +121,12 @@ class Logger {
     testSource,
     bindedData,
   ) {
+
+    const logDisabled = this.envs.get('args.logDisabled');
+    if (logDisabled) {
+      return;
+    }
+
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});

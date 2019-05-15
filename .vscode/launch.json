@@ -71,6 +71,7 @@
         "PPD_TEST": "cashdesk",
         "PPD_TESTS_LIST": "[\"mainLogin\", \"mainSettings\"]",
         "PPD_DEBUG_MODE": "true",
+        // "PPD_LOG_DISABLED": "true",
       }
     }
   ]

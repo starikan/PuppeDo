@@ -120,6 +120,7 @@ const argParse = args => {
     JSON.parse(process.env.PPD_SELECTORS) :
     _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
   let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
+  let logDisabled = process.env.PPD_LOG_DISABLED || _.get(args, 'logDisabled') || _.get(args_ext, '--logDisabled', false);
 
   let testsList = process.env.PPD_TESTS_LIST ?
     JSON.parse(process.env.PPD_TESTS_LIST) :
@@ -187,6 +188,7 @@ const argParse = args => {
     extSelectorsExt_files,
     extDataExt,
     extSelectorsExt,
+    logDisabled,
   };
 }
 
