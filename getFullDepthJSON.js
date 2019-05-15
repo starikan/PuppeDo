@@ -1,45 +1,28 @@
-const _ = require("lodash");
+const _ = require('lodash');
 
-const {
-  yaml2json
-} = require("./yaml2json");
+const { yaml2json } = require('./yaml2json');
 
-const getFullDepthJSON = function ({
-  envs,
-  filePath,
-  testBody,
-  testsFolder
-}) {
+const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
   if (filePath && !_.isString(filePath)) {
-    throw {
-      message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}`
-    };
+    throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
   }
 
   if (testBody && !_.isObject(testBody)) {
-    throw {
-      message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}`
-    };
+    throw { message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` };
   }
 
   if (!testsFolder && envs) {
-    testsFolder = envs.get("args.testsFolder");
+    testsFolder = envs.get('args.testsFolder');
   }
 
-  let full = {};
-  full = filePath ? yaml2json(filePath, testsFolder).json : full;
-
+  let full = filePath ? yaml2json(filePath, testsFolder).json : {};
   if (!full) {
-    throw {
-      message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}`
-    };
+    throw { message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}` };
   }
 
   full = testBody ? Object.assign(full, testBody) : full;
-
-  full.breadcrumbs = _.get(full, "breadcrumbs", [filePath]);
-
-  const runnerBlockNames = ["beforeTest", "runTest", "afterTest", "errorTest"];
+  full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
+  const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
   for (const runnerBlock of runnerBlockNames) {
     let runnerBlockValue = _.get(full, [runnerBlock]);
@@ -56,30 +39,35 @@ const getFullDepthJSON = function ({
           newRunner.name = name;
         }
 
-        name = _.get(newRunner, "name", null);
+        name = _.get(newRunner, 'name', null);
 
         if (name) {
           let breadcrumbs = _.clone(full.breadcrumbs);
           breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`);
           newRunner.breadcrumbs = breadcrumbs;
 
-          newRunner.type = name == "log" ? "log" : "test";
+          newRunner.type = name == 'log' ? 'log' : 'test';
 
           full[runnerBlock][runnerNum] = getFullDepthJSON({
             filePath: name,
             testBody: newRunner,
-            testsFolder: testsFolder
+            testsFolder: testsFolder,
           });
         }
       }
     }
   }
 
-  full.name = _.get(full, "name", filePath);
+  full.name = _.get(full, 'name', filePath);
 
   return full;
 };
 
+const getDescriptions = function({fullJSON = {}} = {}) {
+  return fullJSON;
+};
+
 module.exports = {
-  getFullDepthJSON
+  getFullDepthJSON,
+  getDescriptions,
 };

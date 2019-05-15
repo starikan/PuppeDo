@@ -1,27 +1,19 @@
 const _ = require('lodash');
 
-const {
-  getFullDepthJSON
-} = require('./getFullDepthJSON');
-const {
-  getTest
-} = require('./getTest');
-const {
-  argParse
-} = require('./helpers');
+const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
+const { getTest } = require('./getTest');
+const { argParse } = require('./helpers');
 
 const main = async (args = {}) => {
+  console.time('Start');
+
   let envsIdGlob = null;
   args = argParse(args);
 
   for (let i = 0; i < args.testsList.length; i++) {
-    console.log("TEST", args.testsList[i]);
+    console.log('TEST', args.testsList[i]);
 
-    let {
-      envsId,
-      envs,
-      log
-    } = require('./env')(envsIdGlob);
+    let { envsId, envs, log } = require('./env')(envsIdGlob);
     envsIdGlob = envsId;
 
     process.on('unhandledRejection', async (error, p) => {
@@ -37,38 +29,23 @@ const main = async (args = {}) => {
     args.testName = testName;
 
     await envs.init(args);
-    await envs.initOutput({
-      test: testName,
-      output: args.outputFolder
-    });
-    await envs.initOutputLatest({
-      output: args.outputFolder
-    });
+    await envs.initOutput({ test: testName, output: args.outputFolder });
+    await envs.initOutputLatest({ output: args.outputFolder });
 
+    log({ level: 'env', dataType: 'global_env' });
+    log({ level: 'env', dataType: 'settings_env' });
 
-    log({
-      level: 'env',
-      dataType: 'global_env'
-    });
-    log({
-      level: 'env',
-      dataType: 'settings_env'
-    });
-
-    const fullJSON = getFullDepthJSON({
-      envs: envs,
-      filePath: testFile,
-    });
-    log({
-      level: 'env',
-      testStruct: fullJSON,
-      dataType: 'struct_test'
-    });
+    const fullJSON = getFullDepthJSON({ envs: envs, filePath: testFile });
+    log({ level: 'env', testStruct: fullJSON, dataType: 'struct_test' });
+    const fullDescriptions = getDescriptions({ fullJSON: fullJSON });
+    log({ level: 'env', json: fullDescriptions, dataType: 'fullDescriptions' });
 
     let test = getTest(fullJSON, envsId);
     await test();
     await envs.closeBrowsers();
   }
+
+  console.timeEnd('Start');
 
   process.exit(1);
 };

@@ -39,7 +39,7 @@
             <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
             <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img" />
           </td>
-          <td>
+          <td width='50%'>
             <tree-view
               v-if="data.type === 'env' && data.dataEnvsGlobal"
               :data="data.dataEnvsGlobal"

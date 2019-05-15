@@ -11,11 +11,7 @@ class Logger {
     this.envs = envs;
   }
 
-  async saveScreenshot({
-    selCSS = false,
-    fullpage = false,
-    element = false
-  } = {}) {
+  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
     try {
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
@@ -37,20 +33,13 @@ class Logger {
       if (_.isObject(page)) {
         if (selCSS) {
           const el = await page.$(selCSS);
-          await el.screenshot({
-            path: pathScreenshot
-          });
+          await el.screenshot({ path: pathScreenshot });
         }
         if (element && _.isObject(element) && !_.isEmpty(element)) {
-          await element.screenshot({
-            path: pathScreenshot
-          });
+          await element.screenshot({ path: pathScreenshot });
         }
         if (fullpage) {
-          await page.screenshot({
-            path: pathScreenshot,
-            fullPage: fullpage
-          });
+          await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
         }
         fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         return name;
@@ -104,8 +93,8 @@ class Logger {
     }
   }
 
-
-  async _log({
+  async _log(
+    {
       text = '',
       pageNum = 0,
       stdOut = true,
@@ -115,13 +104,14 @@ class Logger {
       level = 'info',
       debug = false,
       element = false,
+      //TODO: 2019-05-15 S.Starodubov сдклать это тоже полем json
       testStruct = null,
+      json = null,
       dataType = null,
     } = {},
     testSource,
     bindedData,
   ) {
-
     const logDisabled = this.envs.get('args.logDisabled');
     if (logDisabled) {
       return;
@@ -185,6 +175,12 @@ class Logger {
             // console.log(testStruct);
           }
         }
+        if (dataType == 'fullDescriptions') {
+          if (!_.isEmpty(json)) {
+            // console.log(testStruct);
+          }
+          debugger;
+        }
         // console.log(this.envs);
         type = 'env';
       }
@@ -213,22 +209,16 @@ class Logger {
 
         if (_.isArray(selCSS)) {
           for (let css in selCSS) {
-            src = await this.saveScreenshot({
-              selCSS: selCSS[css]
-            });
+            src = await this.saveScreenshot({ selCSS: selCSS[css] });
           }
         }
 
         if (element) {
-          src = await this.saveScreenshot({
-            element: element
-          });
+          src = await this.saveScreenshot({ element: element });
         }
 
         if (fullpage) {
-          src = await this.saveScreenshot({
-            fullpage: fullpage
-          });
+          src = await this.saveScreenshot({ fullpage: fullpage });
         }
 
         if (src) {
@@ -248,7 +238,7 @@ class Logger {
         bindedData,
       });
 
-      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
+      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {
         if (err) {
           return console.log(err);
         }
@@ -271,11 +261,9 @@ class Logger {
   }
 }
 
-module.exports = function (envs) {
+module.exports = function(envs) {
   if (!envs) {
-    throw {
-      message: 'Logger need ENVS',
-    };
+    throw { message: 'Logger need ENVS' };
   }
 
   const logger = new Logger(envs);
