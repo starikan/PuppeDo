@@ -20,6 +20,9 @@
       .error {
         background-color: #f97575;
       }
+      img {
+        max-width: 300px;
+      }
     </style>
   </head>
 
@@ -29,56 +32,36 @@
         Something wrong happened. Can`t load JSON with log.
       </p>
       <table>
-        <tr
-          v-for="(data, index) in json"
-          :key="index"
-          :class="{ error: data.level == 'error' }"
-        >
+        <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }">
           <td>{{ index }}</td>
           <td>{{ data.time }}</td>
           <td>
             <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
-            <img
-              v-if="data.screenshots.length"
-              v-for="img in data.screenshots"
-              :src="img"
-            />
+            <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img" />
           </td>
           <td>
             <tree-view
               v-if="data.type === 'env' && data.dataEnvsGlobal"
               :data="data.dataEnvsGlobal"
-              :options="{
-                       maxDepth: 0,
-                       rootObjectKey: 'Global settings',
-                      }"
+              :options="{ maxDepth: 0, rootObjectKey: 'Global settings' }"
             >
             </tree-view>
             <tree-view
               v-if="data.type === 'env' && data.dataEnvs"
               :data="data.dataEnvs"
-              :options="{
-                       maxDepth: 0,
-                       rootObjectKey: 'Envs settings',
-                      }"
+              :options="{ maxDepth: 0, rootObjectKey: 'Envs settings' }"
             >
             </tree-view>
             <tree-view
               v-if="data.testStruct && Object.keys(data.testStruct).length !== 0"
               :data="data.testStruct"
-              :options="{
-                       maxDepth: 0,
-                       rootObjectKey: 'Test sctructure',
-                      }"
+              :options="{ maxDepth: 0, rootObjectKey: 'Test sctructure' }"
             >
             </tree-view>
             <tree-view
               v-if="data.bindedData && Object.keys(data.bindedData).length !== 0"
               :data="data.bindedData"
-              :options="{
-                       maxDepth: 0,
-                       rootObjectKey: 'Binded data',
-                      }"
+              :options="{ maxDepth: 0, rootObjectKey: 'Binded data' }"
             >
             </tree-view>
           </td>
@@ -90,18 +73,18 @@
   <script>
     Vue.use(TreeView);
     var app = new Vue({
-      el: "#app",
+      el: '#app',
       data: function() {
         return {
-          json: []
+          json: [],
         };
       },
       mounted() {
         let self = this;
-        fetch("output.json")
+        fetch('output.json')
           .then(response => response.json())
           .then(res => (self.json = res));
-      }
+      },
     });
   </script>
 </html>
