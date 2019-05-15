@@ -10,12 +10,11 @@ const _ = require('lodash');
 const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
 const axios = require('axios');
-const deepmerge = require('deepmerge');
+const walkSync = require('walk-sync');
 
 const logger = require('./logger');
 const {
   resolveStars,
-  overwriteMerge
 } = require('./helpers');
 
 let args_ext = {};
@@ -359,13 +358,38 @@ class Envs {
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
 
-    fs.createReadStream(path.join(path.resolve(__dirname), 'output.html')).pipe(
-      fs.createWriteStream(path.join(folder, 'output.html')),
-    );
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = test;
     this.output.folder = folder;
+  }
+
+  async initOutputLatest({
+    output = 'output',
+  } = {}) {
+
+    let folderLatest = path.join(output, 'latest');
+
+    if (!fs.existsSync(output)) {
+      await fs.mkdirSync(output);
+    }
+
+    // Create latest log path
+    if (!fs.existsSync(folderLatest)) {
+      fs.mkdirSync(folderLatest);
+    } else {
+      let filesExists = walkSync(folderLatest);
+      for (let i = 0; i < filesExists.length; i++) {
+        fs.unlinkSync(path.join(folderLatest, filesExists[i]));
+      }
+    }
+
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+
+    this.output.folderLatest = folderLatest;
+
+    this.initOutputLatest = () => {};
   }
 
   async runBrowsers() {

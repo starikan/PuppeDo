@@ -5,14 +5,17 @@ const _ = require('lodash');
 const dayjs = require('dayjs');
 const chalk = require('chalk');
 const stringify = require('json-stringify-safe');
-const walkSync = require('walk-sync');
 
 class Logger {
   constructor(envs) {
     this.envs = envs;
   }
 
-  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
+  async saveScreenshot({
+    selCSS = false,
+    fullpage = false,
+    element = false
+  } = {}) {
     try {
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
@@ -27,20 +30,29 @@ class Logger {
       if (!this.envs.get('output.folder')) return;
 
       const pathScreenshot = path.join(this.envs.get('output.folder'), name);
+      const pathScreenshotLatest = path.join(this.envs.get('output.folderLatest'), name);
       const page = _.get(activeEnv, `state.pages.${pageName}`);
 
       //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
       if (_.isObject(page)) {
         if (selCSS) {
           const el = await page.$(selCSS);
-          await el.screenshot({ path: pathScreenshot });
+          await el.screenshot({
+            path: pathScreenshot
+          });
         }
         if (element && _.isObject(element) && !_.isEmpty(element)) {
-          await element.screenshot({ path: pathScreenshot });
+          await element.screenshot({
+            path: pathScreenshot
+          });
         }
         if (fullpage) {
-          await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
+          await page.screenshot({
+            path: pathScreenshot,
+            fullPage: fullpage
+          });
         }
+        fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         return name;
       } else {
         return false;
@@ -48,7 +60,6 @@ class Logger {
     } catch (err) {
       err.message += ` || saveScreenshot selCSS = ${selCSS}`;
       console.log(err);
-      debugger;
       throw err;
     }
   }
@@ -93,27 +104,8 @@ class Logger {
     }
   }
 
-  // Copy all log into LATES path
-  copyToLatest(outputFolder) {
-    let filesSource = walkSync(outputFolder);
-    const latestPath = path.join(this.envs.get('output.output'), 'latest');
 
-    if (!fs.existsSync(latestPath)) {
-      fs.mkdirSync(latestPath);
-    } else {
-      let filesExists = walkSync(latestPath);
-      for (let i = 0; i < filesExists.length; i++) {
-        fs.unlinkSync(path.join(latestPath, filesExists[i]));
-      }
-    }
-
-    for (let i = 0; i < filesSource.length; i++) {
-      fs.copyFileSync(path.join(outputFolder, filesSource[i]), path.join(latestPath, filesSource[i]));
-    }
-  }
-
-  async _log(
-    {
+  async _log({
       text = '',
       pageNum = 0,
       stdOut = true,
@@ -203,7 +195,8 @@ class Logger {
 
       // SCRENSHOTS
       let outputFolder = this.envs.get('output.folder');
-      if (!outputFolder) return;
+      let outputFolderLatest = this.envs.get('output.folderLatest');
+      if (!outputFolder || !outputFolderLatest) return;
 
       if (screenshot) {
         if (_.isString(selCSS)) {
@@ -214,16 +207,22 @@ class Logger {
 
         if (_.isArray(selCSS)) {
           for (let css in selCSS) {
-            src = await this.saveScreenshot({ selCSS: selCSS[css] });
+            src = await this.saveScreenshot({
+              selCSS: selCSS[css]
+            });
           }
         }
 
         if (element) {
-          src = await this.saveScreenshot({ element: element });
+          src = await this.saveScreenshot({
+            element: element
+          });
         }
 
         if (fullpage) {
-          src = await this.saveScreenshot({ fullpage: fullpage });
+          src = await this.saveScreenshot({
+            fullpage: fullpage
+          });
         }
 
         if (src) {
@@ -243,7 +242,7 @@ class Logger {
         bindedData,
       });
 
-      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {
+      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function (err) {
         if (err) {
           return console.log(err);
         }
@@ -253,7 +252,8 @@ class Logger {
       const exportJson = stringify(this.envs.get('log'));
       await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
 
-      this.copyToLatest(outputFolder);
+      fs.copyFileSync(path.join(outputFolder, 'output.log'), path.join(outputFolderLatest, 'output.log'));
+      fs.copyFileSync(path.join(outputFolder, 'output.json'), path.join(outputFolderLatest, 'output.json'));
 
       if (debug) {
         debugger;
@@ -265,7 +265,7 @@ class Logger {
   }
 }
 
-module.exports = function(envs) {
+module.exports = function (envs) {
   if (!envs) {
     throw {
       message: 'Logger need ENVS',

@@ -41,6 +41,9 @@ const main = async (args = {}) => {
       test: testName,
       output: args.outputFolder
     });
+    await envs.initOutputLatest({
+      output: args.outputFolder
+    });
 
 
     log({
