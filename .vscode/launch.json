@@ -66,10 +66,10 @@
         // "PPD_ENVS": "[\"settings/envElectronRun.yaml\"]",
         // "PPD_ENVS": "[\"envCloud.yaml\"]",
         "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
-        "PPD_TEST": "cashdesk",
         "PPD_ENVS_EXT_JSON": "privateData/envElectronRunExt.json",
-
-        // "PPD_TESTS_LIST": "[\"testGlob\", \"starodubov\"]"
+        // "PPD_OUTPUT": "electron",
+        "PPD_TEST": "cashdesk",
+        "PPD_TESTS_LIST": "[\"mainLogin\", \"mainSettings\"]",
         "PPD_DEBUG_MODE": "true",
       }
     }

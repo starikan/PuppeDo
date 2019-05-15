@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
+const {
+  spawn
+} = require('child_process');
 const crypto = require('crypto');
 
 const yaml = require('js-yaml');
@@ -11,7 +13,10 @@ const axios = require('axios');
 const deepmerge = require('deepmerge');
 
 const logger = require('./logger');
-const { resolveStars, overwriteMerge } = require('./helpers');
+const {
+  resolveStars,
+  overwriteMerge
+} = require('./helpers');
 
 let args_ext = {};
 _.forEach(process.argv.slice(2), v => {
@@ -37,7 +42,9 @@ async function runPuppeteer(browserSettings, args = {}) {
   const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
   await page.setViewport(override);
 
-  let pages = { main: page };
+  let pages = {
+    main: page
+  };
 
   let width = _.get(browserSettings, 'windowSize.width');
   let height = _.get(browserSettings, 'windowSize.height');
@@ -48,7 +55,10 @@ async function runPuppeteer(browserSettings, args = {}) {
     });
   }
 
-  return { browser, pages };
+  return {
+    browser,
+    pages
+  };
 }
 
 async function connectElectron(browserSettings) {
@@ -83,9 +93,13 @@ async function connectElectron(browserSettings) {
     let pagesRaw = await browser.pages();
     let pages = {};
     if (pagesRaw.length) {
-      pages = { main: pagesRaw[0] };
+      pages = {
+        main: pagesRaw[0]
+      };
     } else {
-      throw { message: 'Cand find any pages in connection' };
+      throw {
+        message: 'Cand find any pages in connection'
+      };
     }
 
     let width = _.get(browserSettings, 'windowSize.width');
@@ -117,7 +131,10 @@ async function connectElectron(browserSettings) {
     //   windowId
     // });
 
-    return { browser: browser, pages: pages };
+    return {
+      browser: browser,
+      pages: pages
+    };
   }
 
   throw {
@@ -148,8 +165,14 @@ async function runElectron(browserSettings) {
     });
     await sleep(pauseAfterStartApp);
 
-    let { browser, pages } = await connectElectron(browserSettings);
-    return { browser: browser, pages: pages };
+    let {
+      browser,
+      pages
+    } = await connectElectron(browserSettings);
+    return {
+      browser: browser,
+      pages: pages
+    };
   } else {
     throw {
       message: `Can't run Electron ${runtimeExecutable}`,
@@ -207,7 +230,11 @@ class Env {
 }
 
 class Envs {
-  constructor({ output = 'output', name = 'test', files = [] } = {}) {
+  constructor({
+    output = 'output',
+    name = 'test',
+    files = []
+  } = {}) {
     this.envs = {};
     this.data = {};
     this.selectors = {};
@@ -256,7 +283,11 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async createEnv({ envExt = {}, file = null, name = null, testsFolder = '.' } = {}) {
+  async createEnv({
+    envExt = {},
+    file = null,
+    name = null,
+  } = {}) {
     let env;
 
     if (file && file.endsWith('.yaml')) {
@@ -316,7 +347,10 @@ class Envs {
     }
   }
 
-  async initTest({ output = 'output', test = 'test' } = {}) {
+  async initOutput({
+    output = 'output',
+    test = 'test'
+  } = {}) {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
@@ -343,24 +377,41 @@ class Envs {
       const runtime = _.get(env, 'env.browser.runtime');
       const browserSettings = _.get(env, 'env.browser');
 
-      if (type === 'api') {
-      }
+      if (type === 'api') {}
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const { browser, pages } = await runPuppeteer(browserSettings, this.args);
-          env.state = Object.assign(env.state, { browser, pages });
+          const {
+            browser,
+            pages
+          } = await runPuppeteer(browserSettings, this.args);
+          env.state = Object.assign(env.state, {
+            browser,
+            pages
+          });
         }
       }
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const { browser, pages } = await connectElectron(browserSettings, this.args);
-          env.state = Object.assign(env.state, { browser, pages });
+          const {
+            browser,
+            pages
+          } = await connectElectron(browserSettings, this.args);
+          env.state = Object.assign(env.state, {
+            browser,
+            pages
+          });
         }
         if (runtime === 'run') {
-          const { browser, pages } = await runElectron(browserSettings, this.args);
-          env.state = Object.assign(env.state, { browser, pages });
+          const {
+            browser,
+            pages
+          } = await runElectron(browserSettings, this.args);
+          env.state = Object.assign(env.state, {
+            browser,
+            pages
+          });
         }
       }
     }
@@ -379,100 +430,26 @@ class Envs {
       try {
         state.browser.close();
       } catch (exc) {}
-
-      process.exit(1);
     }
   }
 
   async init(args = {}, runBrowsers = true) {
-    let testFile = process.env.PPD_TEST || _.get(args, 'test') || _.get(args_ext, '--test');
-    let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') || _.get(args_ext, '--output', 'output');
-    let envFiles = process.env.PPD_ENVS
-      ? JSON.parse(process.env.PPD_ENVS)
-      : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
-    let testsFolder =
-      process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', process.cwd());
-    let envsExt = process.env.PPD_ENVS_EXT
-      ? JSON.parse(process.env.PPD_ENVS_EXT)
-      : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
-    let envsExtJson = process.env.PPD_ENVS_EXT_JSON || _.get(args, 'envsExtJson') || _.get(args_ext, '--envsExt');
-    let extData = process.env.PPD_DATA
-      ? JSON.parse(process.env.PPD_DATA)
-      : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
-    let extSelectors = process.env.PPD_SELECTORS
-      ? JSON.parse(process.env.PPD_SELECTORS)
-      : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
-    let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
 
-    // Загрузка данных из внешних файлов
-    let extDataExt_files = process.env.PPD_DATA_EXT
-      ? JSON.parse(process.env.PPD_DATA_EXT)
-      : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
-    extDataExt_files = resolveStars(extDataExt_files, testsFolder);
-    let extDataExt = {};
-    extDataExt_files.forEach(f => {
-      const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-      extDataExt = deepmerge(extDataExt, data_ext, {
-        arrayMerge: overwriteMerge,
-      });
-    });
-
-    let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT
-      ? JSON.parse(process.env.PPD_SELECTORS_EXT)
-      : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
-    extSelectorsExt_files = resolveStars(extSelectorsExt_files, testsFolder);
-    let extSelectorsExt = {};
-    extSelectorsExt_files.forEach(f => {
-      const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-      extSelectorsExt = deepmerge(extSelectorsExt, selectors_ext, {
-        arrayMerge: overwriteMerge,
-      });
-    });
-
-    let testName;
-    if (testFile) {
-      testName = testFile.split('/')[testFile.split('/').length - 1];
-    } else {
-      throw { message: `Не указано имя головного теста. Параметр 'test'` };
-    }
-
-    if (!envFiles || _.isEmpty(envFiles)) {
-      throw {
-        message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив`,
-      };
-    }
-
-    if (envsExtJson) {
-      try {
-        let envsExtJson_data = require(path.join(testsFolder, envsExtJson));
-        envsExt = deepmerge.all([envsExtJson_data, envsExt], {
-          arrayMerge: overwriteMerge,
-        });
-      } catch (err) {}
-    }
-
-    this.set('args', {
-      testFile,
-      outputFolder,
+    let {
       envFiles,
-      testsFolder,
       envsExt,
-      envsExtJson,
-      extData,
-      extSelectors,
-      extDataExt,
-      extSelectorsExt,
-      debugMode,
-      testName,
-    });
+    } = args;
 
-    await this.initTest({ test: testName, output: outputFolder });
+    this.set('args', args);
 
     for (let i = 0; i < envFiles.length; i++) {
       envFiles[i] = _.endsWith(envFiles[i], '.yaml') ? envFiles[i] : envFiles[i] + '.yaml';
       let envName = path.basename(envFiles[i], '.yaml');
       let envExt = _.get(envsExt, envName, {});
-      await this.createEnv({ envExt: envExt, file: envFiles[i] });
+      await this.createEnv({
+        envExt: envExt,
+        file: envFiles[i]
+      });
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {
@@ -486,28 +463,26 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = async function() {};
+    this.init = async function () {};
   }
 }
 
 let instances = {};
 
-module.exports = function(envsId) {
-  if (envsId && _.get(instances, envsId)) {
-    return {
-      envsId,
-      envs: _.get(instances, envsId).envs,
-      log: _.get(instances, envsId).log,
-    };
-  }
-
-  if (envsId && !_.get(instances, envsId)) {
-    throw {
-      message: `Unknown ENV ID ${envsId}`,
-    };
-  }
-
-  if (!envsId) {
+module.exports = function (envsId) {
+  if (envsId) {
+    if (_.get(instances, envsId)) {
+      return {
+        envsId,
+        envs: _.get(instances, envsId).envs,
+        log: _.get(instances, envsId).log,
+      };
+    } else {
+      throw {
+        message: `Unknown ENV ID ${envsId}`,
+      };
+    }
+  } else {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
 
@@ -522,8 +497,4 @@ module.exports = function(envsId) {
       log: instances[envsId].log,
     };
   }
-
-  throw {
-    message: 'Error ENVS export',
-  };
 };

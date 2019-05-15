@@ -61,7 +61,7 @@ const yaml2json = function(filePath, testsFolder = '') {
   if (!testFile) {
     if (filePath != 'log') {
       throw {
-        message: `Can't find test file ${filePath} in folder ${testsFolder}`,
+        message: `Can't find test file '${filePath}' in folder '${testsFolder}'`,
       };
     }
     full = { name: testFile };

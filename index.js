@@ -1,42 +1,73 @@
 const _ = require('lodash');
 
-const { getFullDepthJSON } = require('./getFullDepthJSON');
-const { getTest } = require('./getTest');
-const { args_ext } = require('./helpers');
+const {
+  getFullDepthJSON
+} = require('./getFullDepthJSON');
+const {
+  getTest
+} = require('./getTest');
+const {
+  argParse
+} = require('./helpers');
 
 const main = async (args = {}) => {
-  let testsList = process.env.PPD_TESTS_LIST
-    ? JSON.parse(process.env.PPD_TESTS_LIST)
-    : _.get(args, 'testsList') || JSON.parse(_.get(args_ext, '--testsList', '[]'));
+  let envsIdGlob = null;
+  args = argParse(args);
 
-  process.on('unhandledRejection', async (error, p) => {
-    console.log('unhandledRejection');
-    console.log(error, p);
-    if (_.get(envs, ['args', 'debugMode'])) debugger;
-    process.exit(1);
-  });
+  for (let i = 0; i < args.testsList.length; i++) {
+    console.log("TEST", args.testsList[i]);
 
-  const { envsId, envs, log } = require('./env')();
+    let {
+      envsId,
+      envs,
+      log
+    } = require('./env')(envsIdGlob);
+    envsIdGlob = envsId;
 
-  await envs.init(args);
+    process.on('unhandledRejection', async (error, p) => {
+      console.log('unhandledRejection');
+      console.log(error, p);
+      if (_.get(envs, ['args', 'debugMode'])) debugger;
+      process.exit(1);
+    });
 
-  log({ level: 'env', dataType: 'global_env' });
-  log({ level: 'env', dataType: 'settings_env' });
+    const testFile = args.testsList[i];
+    const testName = testFile.split('/')[testFile.split('/').length - 1];
+    args.testFile = testFile;
+    args.testName = testName;
 
-  if (_.isEmpty(testsList)) testsList = [envs.get('args.testFile')];
+    await envs.init(args);
+    await envs.initOutput({
+      test: testName,
+      output: args.outputFolder
+    });
 
-  for (let i = 0; i < testsList.length; i++) {
-    const testFile = testsList[i];
+
+    log({
+      level: 'env',
+      dataType: 'global_env'
+    });
+    log({
+      level: 'env',
+      dataType: 'settings_env'
+    });
+
     const fullJSON = getFullDepthJSON({
       envs: envs,
       filePath: testFile,
     });
-    log({ level: 'env', testStruct: fullJSON, dataType: 'struct_test' });
+    log({
+      level: 'env',
+      testStruct: fullJSON,
+      dataType: 'struct_test'
+    });
+
     let test = getTest(fullJSON, envsId);
     await test();
+    await envs.closeBrowsers();
   }
 
-  await envs.closeBrowsers();
+  process.exit(1);
 };
 
 if (!module.parent) {
