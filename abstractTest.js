@@ -5,21 +5,13 @@ const safeEval = require('safe-eval');
 const deepmerge = require('deepmerge');
 const yaml = require('js-yaml');
 
-const {
-  Helpers,
-  overwriteMerge,
-  resolveStars
-} = require('./helpers');
+const { Helpers, overwriteMerge, resolveStars } = require('./helpers');
 
 function bind(func, source, bindArgs) {
-  return function () {
-    return func.apply(this, [
-      ...arguments,
-      source,
-      bindArgs
-    ]);
+  return function() {
+    return func.apply(this, [...arguments, source, bindArgs]);
   };
-};
+}
 
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
@@ -29,14 +21,12 @@ const checkNeeds = (needs, data, testName) => {
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw {
-        message: `Error: can't find data parametr "${d}" in ${testName} test`,
-      };
+      throw { message: `Error: can't find data parametr "${d}" in ${testName} test` };
     }
   });
 
   return;
-}
+};
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
   const allDataSel = deepmerge.all([dataLocal, selectorsLocal], {
@@ -57,12 +47,13 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
   }
 
   return funcEval;
-}
+};
 
 class Test {
   constructor({
     name,
     type = 'test', // atom, test, multiEnv?
+    levelIndent = 0,
     needEnv = [],
     needData = [],
     needSelectors = [],
@@ -70,10 +61,10 @@ class Test {
     dataExt = [],
     selectorsExt = [],
 
-    beforeTest = async function () {},
-    runTest = async function () {},
-    afterTest = async function () {},
-    errorTest = async function () {},
+    beforeTest = async function() {},
+    runTest = async function() {},
+    afterTest = async function() {},
+    errorTest = async function() {},
     source = '',
 
     //TODO: 2018-07-02 S.Starodubov repeat
@@ -82,6 +73,7 @@ class Test {
   } = {}) {
     this.name = name;
     this.type = type;
+    this.levelIndent = levelIndent;
 
     this.needEnv = needEnv;
     this.needData = needData;
@@ -116,7 +108,7 @@ class Test {
       const aliasses = [valueName, ..._.get(this.ALIASSES, valueName, [])];
       aliasses.forEach(v => {
         result = deepmerge.all([result, _.get(constructorValues, v, {}), _.get(testValues, v, {})], {
-          arrayMerge: overwriteMerge
+          arrayMerge: overwriteMerge,
         });
       });
       return result;
@@ -131,9 +123,7 @@ class Test {
           };
         }
       } else {
-        throw {
-          message: 'needEnv wrong format, shoud be array or string'
-        };
+        throw { message: 'needEnv wrong format, shoud be array or string' };
       }
     };
 
@@ -150,11 +140,21 @@ class Test {
       // 5. Get data from user function results
       // 6. Get data from results
       if (isSelector) {
-        joinArray = [this.env ? this.env.get('selectors') : {}, this.envs.get('args.extSelectorsExt', {}), this.envs.get('args.extSelectors', {}), this.envs.get('selectors', {})]
+        joinArray = [
+          this.env ? this.env.get('selectors') : {},
+          this.envs.get('args.extSelectorsExt', {}),
+          this.envs.get('args.extSelectors', {}),
+          this.envs.get('selectors', {}),
+        ];
       } else {
-        joinArray = [this.env ? this.env.get('data') : {}, this.envs.get('args.extDataExt', {}), this.envs.get('args.extData', {}), this.envs.get('data', {})]
+        joinArray = [
+          this.env ? this.env.get('data') : {},
+          this.envs.get('args.extDataExt', {}),
+          this.envs.get('args.extData', {}),
+          this.envs.get('data', {}),
+        ];
       }
-      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})]
+      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
 
       // 7. Fetch data from ext files that passed in test itself
       let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.testsFolder'));
@@ -164,17 +164,17 @@ class Test {
       });
 
       dataLocal = deepmerge.all(joinArray, {
-        arrayMerge: overwriteMerge
+        arrayMerge: overwriteMerge,
       });
 
       // 8. Update local data with bindings
       for (const key in bindDataLocal) {
         dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-      };
+      }
 
       // 9. Update after all bindings with raw data from test itself
       dataLocal = deepmerge.all([dataLocal, data], {
-        arrayMerge: overwriteMerge
+        arrayMerge: overwriteMerge,
       });
 
       return dataLocal;
@@ -184,7 +184,8 @@ class Test {
       return this.fetchData(true);
     };
 
-    this.run = async ({
+    this.run = async (
+      {
         dataExt = [],
         selectorsExt = [],
         ...inputArgs
@@ -204,15 +205,10 @@ class Test {
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
 
       if (!envsId) {
-        throw {
-          message: 'Test shoud have envsId'
-        };
+        throw { message: 'Test shoud have envsId' };
       }
 
-      let {
-        envs,
-        log
-      } = require('./env.js')(envsId);
+      let { envs, log } = require('./env.js')(envsId);
 
       try {
         this.envs = envs;
@@ -228,12 +224,12 @@ class Test {
         // FUNCTIONS
         let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
         dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], {
-          arrayMerge: overwriteMerge
+          arrayMerge: overwriteMerge,
         });
 
         let selectorsFunctionForGlobalResults = resolveDataFunctions(this.selectorsFunction, dataLocal, selectorsLocal);
         selectorsLocal = deepmerge.all([selectorsLocal, selectorsFunctionForGlobalResults], {
-          arrayMerge: overwriteMerge
+          arrayMerge: overwriteMerge,
         });
 
         // Сохраняем функции в результаты
@@ -286,9 +282,7 @@ class Test {
               fullpage: true,
               text: `Test stoped with error = ${errorExpr}`,
             });
-            throw {
-              message: `Test stoped with error = ${errorExpr}`,
-            };
+            throw { message: `Test stoped with error = ${errorExpr}` };
           }
         }
 
@@ -304,6 +298,7 @@ class Test {
           options: this.options,
           allowResults: this.allowResults,
           bindResults: this.bindResults,
+          levelIndent: this.levelIndent,
         };
 
         // Extend with data passed to functions
@@ -343,21 +338,21 @@ class Test {
         let results = _.pick(resultFromTest, allowResults);
 
         if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
-          throw ({
-            message: 'Can`t get results from test'
-          })
-        };
+          throw { message: 'Can`t get results from test' };
+        }
 
         for (const key in this.bindResults) {
           results[key] = _.get(results, this.bindResults[key]);
-        };
+        }
 
-        envs.set('results', deepmerge.all([envs.get('results'), results], {
-          arrayMerge: overwriteMerge,
-        }));
+        envs.set(
+          'results',
+          deepmerge.all([envs.get('results'), results], {
+            arrayMerge: overwriteMerge,
+          }),
+        );
 
         // Результаты которые просто просто хочется забиндить в переменную, это делать через функции
-
       } catch (err) {
         err.envsId = envsId;
         log({

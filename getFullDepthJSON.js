@@ -4,7 +4,7 @@ const { yaml2json } = require('./yaml2json');
 
 let fullDescription = '';
 
-const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level = 0, textView = false }) {
+const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, levelIndent = 0, textView = false }) {
   if (filePath && !_.isString(filePath)) {
     throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
   }
@@ -24,6 +24,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
 
   full = testBody ? Object.assign(full, testBody) : full;
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
+  full.levelIndent = levelIndent;
   const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
   // Generate text view for test
@@ -34,13 +35,13 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   let name = _.get(full, 'name');
   let todo = _.get(full, 'todo');
   let fullString = '';
-  fullString += '    '.repeat(level);
+  fullString += '    '.repeat(levelIndent);
   fullString += todo ? 'TODO: ' + todo + '== ' : '';
-  fullString += description ? description : '';
+  fullString += description ? `${description} ` : '';
   fullString += name ? `(${name})` : '';
   fullString += '\n';
 
-  level += 1;
+  levelIndent += 1;
 
   if (name === 'log') fullString = null;
 
@@ -76,7 +77,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
             filePath: name,
             testBody: newRunner,
             testsFolder: testsFolder,
-            level,
+            levelIndent,
           });
         }
       }

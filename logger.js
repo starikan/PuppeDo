@@ -106,8 +106,7 @@ class Logger {
       element = false,
       //TODO: 2019-05-15 S.Starodubov сдклать это тоже полем json
       testStruct = null,
-      json = null,
-      dataType = null,
+      levelIndent = 0,
     } = {},
     testSource,
     bindedData,
@@ -161,14 +160,10 @@ class Logger {
       }
 
       if (level == 'env') {
-        if (dataType == 'global_env') {
-          dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
-        }
-        if (dataType == 'settings_env') {
-          dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-            return _.omit(val, 'state');
-          });
-        }
+        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+          return _.omit(val, 'state');
+        });
         type = 'env';
       }
 
@@ -222,6 +217,7 @@ class Logger {
         level,
         type,
         bindedData,
+        levelIndent,
       });
 
       await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {

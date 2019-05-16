@@ -35,10 +35,7 @@ const main = async (args = {}) => {
     const fullJSON = getFullDepthJSON({ envs: envs, filePath: testFile, textView: true });
     const fullDescriptions = getDescriptions();
 
-    log({ level: 'env', text: fullDescriptions, screenshot: false });
-    log({ level: 'env', dataType: 'global_env', screenshot: false });
-    log({ level: 'env', dataType: 'settings_env', screenshot: false });
-    log({ level: 'env', testStruct: fullJSON, dataType: 'struct_test', screenshot: false });
+    log({ level: 'env', text: fullDescriptions, testStruct: fullJSON, screenshot: false });
 
     let test = getTest(fullJSON, envsId);
     await test();
