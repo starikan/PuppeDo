@@ -179,7 +179,6 @@ class Logger {
           if (!_.isEmpty(json)) {
             // console.log(testStruct);
           }
-          debugger;
         }
         // console.log(this.envs);
         type = 'env';
