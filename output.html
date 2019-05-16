@@ -34,9 +34,17 @@
       <table>
         <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }">
           <td>{{ index }}</td>
-          <td>{{ data.time }}</td>
+          <td width='50px'>
+            <pre>{{ data.time.split('_')[0] }}</pre>
+            <pre>{{ data.time.split('_')[1] }}</pre>
+          </td>
           <td>
-            <p v-if="data.text && data.type !== 'env'">{{ data.text }}</p>
+            <p>{{ data.level }}</p>
+          </td>
+          <td>
+            <p v-if="data.text">
+              <pre>{{ data.text }}</pre>
+            </p>
             <img v-if="data.screenshots.length" v-for="img in data.screenshots" :src="img" />
           </td>
           <td width='50%'>

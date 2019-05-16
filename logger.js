@@ -145,8 +145,7 @@ class Logger {
 
       // LOG STRINGS
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
-      const logStringNoTime = `${level} - ${text}`;
-      const logString = `${now} - ${logStringNoTime}`;
+      const logString = `${now} - ${level} - ${text}`;
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
@@ -170,17 +169,6 @@ class Logger {
             return _.omit(val, 'state');
           });
         }
-        if (dataType == 'struct_test') {
-          if (!_.isEmpty(testStruct)) {
-            // console.log(testStruct);
-          }
-        }
-        if (dataType == 'fullDescriptions') {
-          if (!_.isEmpty(json)) {
-            // console.log(testStruct);
-          }
-        }
-        // console.log(this.envs);
         type = 'env';
       }
 
@@ -191,7 +179,6 @@ class Logger {
             return v;
           }
         });
-        // console.log(testStruct)
       }
 
       // SCRENSHOTS
@@ -226,7 +213,7 @@ class Logger {
       }
 
       this.envs.push('log', {
-        text: logStringNoTime,
+        text,
         time: now,
         dataEnvs,
         dataEnvsGlobal,

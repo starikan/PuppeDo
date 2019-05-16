@@ -2,7 +2,9 @@ const _ = require('lodash');
 
 const { yaml2json } = require('./yaml2json');
 
-const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
+let fullDescription = '';
+
+const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level = 0, textView = false }) {
   if (filePath && !_.isString(filePath)) {
     throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
   }
@@ -23,6 +25,28 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
   full = testBody ? Object.assign(full, testBody) : full;
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
   const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+
+  // Generate text view for test
+  if (textView) {
+    fullDescription = '';
+  }
+  let description = _.get(full, 'description');
+  let name = _.get(full, 'name');
+  let todo = _.get(full, 'todo');
+  let fullString = '';
+  fullString += '    '.repeat(level);
+  fullString += todo ? 'TODO: ' + todo + '== ' : '';
+  fullString += description ? description : '';
+  fullString += name ? `(${name})` : '';
+  fullString += '\n';
+
+  level += 1;
+
+  if (name === 'log') fullString = null;
+
+  if (fullString) {
+    fullDescription += fullString;
+  }
 
   for (const runnerBlock of runnerBlockNames) {
     let runnerBlockValue = _.get(full, [runnerBlock]);
@@ -52,6 +76,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
             filePath: name,
             testBody: newRunner,
             testsFolder: testsFolder,
+            level,
           });
         }
       }
@@ -63,11 +88,8 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder }) {
   return full;
 };
 
-const getDescriptions = function({fullJSON = {}} = {}) {
-  return fullJSON;
+const getDescriptions = function() {
+  return fullDescription;
 };
 
-module.exports = {
-  getFullDepthJSON,
-  getDescriptions,
-};
+module.exports = { getFullDepthJSON, getDescriptions };

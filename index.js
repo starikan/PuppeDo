@@ -32,13 +32,13 @@ const main = async (args = {}) => {
     await envs.initOutput({ test: testName, output: args.outputFolder });
     await envs.initOutputLatest({ output: args.outputFolder });
 
-    log({ level: 'env', dataType: 'global_env' });
-    log({ level: 'env', dataType: 'settings_env' });
+    const fullJSON = getFullDepthJSON({ envs: envs, filePath: testFile, textView: true });
+    const fullDescriptions = getDescriptions();
 
-    const fullJSON = getFullDepthJSON({ envs: envs, filePath: testFile });
-    log({ level: 'env', testStruct: fullJSON, dataType: 'struct_test' });
-    const fullDescriptions = getDescriptions({ fullJSON: fullJSON });
-    log({ level: 'env', json: fullDescriptions, dataType: 'fullDescriptions' });
+    log({ level: 'env', text: fullDescriptions, screenshot: false });
+    log({ level: 'env', dataType: 'global_env', screenshot: false });
+    log({ level: 'env', dataType: 'settings_env', screenshot: false });
+    log({ level: 'env', testStruct: fullJSON, dataType: 'struct_test', screenshot: false });
 
     let test = getTest(fullJSON, envsId);
     await test();
