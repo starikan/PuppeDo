@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const {
-  spawn
-} = require('child_process');
+const { spawn } = require('child_process');
 const crypto = require('crypto');
 
 const yaml = require('js-yaml');
@@ -13,21 +11,7 @@ const axios = require('axios');
 const walkSync = require('walk-sync');
 
 const logger = require('./logger');
-const {
-  resolveStars,
-} = require('./helpers');
-
-let args_ext = {};
-_.forEach(process.argv.slice(2), v => {
-  let data = v.split('=');
-  args_ext[data[0]] = data[1];
-});
-
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
+const { resolveStars, sleep } = require('./helpers');
 
 async function runPuppeteer(browserSettings, args = {}) {
   const browser = await puppeteer.launch({
@@ -41,23 +25,15 @@ async function runPuppeteer(browserSettings, args = {}) {
   const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
   await page.setViewport(override);
 
-  let pages = {
-    main: page
-  };
+  let pages = { main: page };
 
   let width = _.get(browserSettings, 'windowSize.width');
   let height = _.get(browserSettings, 'windowSize.height');
   if (width && height) {
-    await pages.main.setViewport({
-      width: width,
-      height: height,
-    });
+    await pages.main.setViewport({ width: width, height: height });
   }
 
-  return {
-    browser,
-    pages
-  };
+  return { browser, pages };
 }
 
 async function connectElectron(browserSettings) {
@@ -71,17 +47,12 @@ async function connectElectron(browserSettings) {
     jsonBrowser = _.get(jsonBrowser, 'data');
 
     if (!jsonBrowser || !jsonPages) {
-      throw {
-        message: `Can't connect to ${urlDevtoolsJson}`,
-      };
+      throw { message: `Can't connect to ${urlDevtoolsJson}` };
     }
 
     const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
-
     if (!webSocketDebuggerUrl) {
-      throw {
-        message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running`,
-      };
+      throw { message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running` };
     }
 
     const browser = await puppeteer.connect({
@@ -92,22 +63,15 @@ async function connectElectron(browserSettings) {
     let pagesRaw = await browser.pages();
     let pages = {};
     if (pagesRaw.length) {
-      pages = {
-        main: pagesRaw[0]
-      };
+      pages = { main: pagesRaw[0] };
     } else {
-      throw {
-        message: 'Cand find any pages in connection'
-      };
+      throw { message: 'Cand find any pages in connection' };
     }
 
     let width = _.get(browserSettings, 'windowSize.width');
     let height = _.get(browserSettings, 'windowSize.height');
     if (width && height) {
-      await pages.main.setViewport({
-        width: width,
-        height: height,
-      });
+      await pages.main.setViewport({ width: width, height: height });
     }
 
     // // Window frame - probably OS and WM dependent.
@@ -130,15 +94,10 @@ async function connectElectron(browserSettings) {
     //   windowId
     // });
 
-    return {
-      browser: browser,
-      pages: pages
-    };
+    return { browser: browser, pages: pages };
   }
 
-  throw {
-    message: `Can't connect to Electron ${urlDevtoolsJson}`,
-  };
+  throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
 }
 
 async function runElectron(browserSettings) {
@@ -153,29 +112,17 @@ async function runElectron(browserSettings) {
     const run_args = [program, ...browser_args];
     process.env = Object.assign(process.env, browser_env);
 
-    let prc = spawn(runtimeExecutable, run_args, {
-      cwd,
-      // detached: true,
-      env: browser_env,
-    });
+    let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
 
     prc.stdout.on('data', data => {
       // console.log(String(data));
     });
     await sleep(pauseAfterStartApp);
 
-    let {
-      browser,
-      pages
-    } = await connectElectron(browserSettings);
-    return {
-      browser: browser,
-      pages: pages
-    };
+    let { browser, pages } = await connectElectron(browserSettings);
+    return { browser: browser, pages: pages };
   } else {
-    throw {
-      message: `Can't run Electron ${runtimeExecutable}`,
-    };
+    throw { message: `Can't run Electron ${runtimeExecutable}` };
   }
 }
 class Env {
@@ -189,10 +136,7 @@ class Env {
       data: {},
       selectors: {},
       logLevel: 'debug',
-      screenshots: {
-        isScreenshot: false,
-        fullPage: false,
-      },
+      screenshots: { isScreenshot: false, fullPage: false },
     };
     this.env = Object.assign(this.env, env);
   }
@@ -202,7 +146,7 @@ class Env {
   }
 
   setState() {
-    // Подмена браузера, установка куков
+    //TODO: Подмена браузера, установка куков
   }
 
   get(name, def = null) {
@@ -229,11 +173,7 @@ class Env {
 }
 
 class Envs {
-  constructor({
-    output = 'output',
-    name = 'test',
-    files = []
-  } = {}) {
+  constructor() {
     this.envs = {};
     this.data = {};
     this.selectors = {};
@@ -282,11 +222,7 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async createEnv({
-    envExt = {},
-    file = null,
-    name = null,
-  } = {}) {
+  async createEnv({ envExt = {}, file = null, name = null } = {}) {
     let env;
 
     if (file && file.endsWith('.yaml')) {
@@ -308,9 +244,7 @@ class Envs {
           dataExtList = [dataExtList];
         }
         if (!_.isArray(dataExtList)) {
-          throw {
-            message: `dataExt wrong format ${dataExt}, ${file}`,
-          };
+          throw { message: `dataExt wrong format ${dataExt}, ${file}` };
         }
         dataExtList = resolveStars(dataExtList, this.args.testsFolder);
         for (let i = 0; i < dataExtList.length; i++) {
@@ -327,9 +261,7 @@ class Envs {
           selectorsExtList = [selectorsExtList];
         }
         if (!_.isArray(selectorsExtList)) {
-          throw {
-            message: `selectorsExt wrong format ${selectorsExt}, ${file}`,
-          };
+          throw { message: `selectorsExt wrong format ${selectorsExt}, ${file}` };
         }
         selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
         for (let i = 0; i < selectorsExtList.length; i++) {
@@ -346,10 +278,7 @@ class Envs {
     }
   }
 
-  async initOutput({
-    output = 'output',
-    test = 'test'
-  } = {}) {
+  async initOutput({ output = 'output', test = 'test' } = {}) {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
@@ -358,17 +287,14 @@ class Envs {
     const folder = path.join(output, `/${test}_${now}`);
     await fs.mkdirSync(folder);
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
+    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = test;
     this.output.folder = folder;
   }
 
-  async initOutputLatest({
-    output = 'output',
-  } = {}) {
-
+  async initOutputLatest({ output = 'output' } = {}) {
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
@@ -385,10 +311,11 @@ class Envs {
       }
     }
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
 
+    // Drop this function after first use
     this.initOutputLatest = () => {};
   }
 
@@ -401,41 +328,24 @@ class Envs {
       const runtime = _.get(env, 'env.browser.runtime');
       const browserSettings = _.get(env, 'env.browser');
 
-      if (type === 'api') {}
+      if (type === 'api') {
+      }
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const {
-            browser,
-            pages
-          } = await runPuppeteer(browserSettings, this.args);
-          env.state = Object.assign(env.state, {
-            browser,
-            pages
-          });
+          const { browser, pages } = await runPuppeteer(browserSettings, this.args);
+          env.state = Object.assign(env.state, { browser, pages });
         }
       }
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const {
-            browser,
-            pages
-          } = await connectElectron(browserSettings, this.args);
-          env.state = Object.assign(env.state, {
-            browser,
-            pages
-          });
+          const { browser, pages } = await connectElectron(browserSettings, this.args);
+          env.state = Object.assign(env.state, { browser, pages });
         }
         if (runtime === 'run') {
-          const {
-            browser,
-            pages
-          } = await runElectron(browserSettings, this.args);
-          env.state = Object.assign(env.state, {
-            browser,
-            pages
-          });
+          const { browser, pages } = await runElectron(browserSettings, this.args);
+          env.state = Object.assign(env.state, { browser, pages });
         }
       }
     }
@@ -452,11 +362,7 @@ class Envs {
   }
 
   async init(args = {}, runBrowsers = true) {
-
-    let {
-      envFiles,
-      envsExt,
-    } = args;
+    let { envFiles, envsExt } = args;
 
     this.set('args', args);
 
@@ -464,16 +370,11 @@ class Envs {
       envFiles[i] = _.endsWith(envFiles[i], '.yaml') ? envFiles[i] : envFiles[i] + '.yaml';
       let envName = path.basename(envFiles[i], '.yaml');
       let envExt = _.get(envsExt, envName, {});
-      await this.createEnv({
-        envExt: envExt,
-        file: envFiles[i]
-      });
+      await this.createEnv({ envExt: envExt, file: envFiles[i] });
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {
-      throw {
-        message: `Не возможно инициализировать ни одной среды исполнения. Проверьте параметр 'envs', должен быть не пустой массив`,
-      };
+      throw { message: `Can't init any environment. Check 'envs' parameter, should be array` };
     }
 
     if (runBrowsers) {
@@ -481,13 +382,13 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = async function () {};
+    this.init = async function() {};
   }
 }
 
 let instances = {};
 
-module.exports = function (envsId) {
+module.exports = function(envsId) {
   if (envsId) {
     if (_.get(instances, envsId)) {
       return {
@@ -496,18 +397,13 @@ module.exports = function (envsId) {
         log: _.get(instances, envsId).log,
       };
     } else {
-      throw {
-        message: `Unknown ENV ID ${envsId}`,
-      };
+      throw { message: `Unknown ENV ID ${envsId}` };
     }
   } else {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
 
-    instances[envsId] = {
-      envs: newEnvs,
-      log: logger(newEnvs),
-    };
+    instances[envsId] = { envs: newEnvs, log: logger(newEnvs) };
 
     return {
       envsId,

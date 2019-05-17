@@ -6,6 +6,8 @@ const dayjs = require('dayjs');
 const chalk = require('chalk');
 const yaml = require('js-yaml');
 
+const { sleep } = require('./helpers');
+
 class Logger {
   constructor(envs) {
     this.envs = envs;
@@ -15,17 +17,19 @@ class Logger {
     try {
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, 'env.log', {});
-      let current = this.envs.get('current');
       let pageName = this.envs.get('current.page');
 
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       const name = `${now}.jpg`;
 
-      if (!this.envs.get('output.folder')) return;
+      if (!this.envs.get('output.folder') || !this.envs.get('output.folderLatest')) {
+        console.log('There is no output folder for screenshot');
+        return;
+      }
 
       const pathScreenshot = path.join(this.envs.get('output.folder'), name);
       const pathScreenshotLatest = path.join(this.envs.get('output.folderLatest'), name);
+
       const page = _.get(activeEnv, `state.pages.${pageName}`);
 
       if (_.isObject(page)) {
@@ -39,8 +43,9 @@ class Logger {
         if (fullpage) {
           await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
         }
-        fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
-        //TODO: 2019-05-17 S.Starodubov сделать паузу после скриншота
+        await fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
+        // Timeout after screenshot
+        await sleep(25);
         return name;
       } else {
         return false;
@@ -81,7 +86,6 @@ class Logger {
     let inputLevel = level;
     inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel);
 
-    let envLevelText = levels[envLevel];
     let inputLevelText = levels[inputLevel];
 
     // If input level higher or equal then global env level then logging

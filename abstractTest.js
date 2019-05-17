@@ -24,28 +24,24 @@ const checkNeeds = (needs, data, testName) => {
       throw { message: `Error: can't find data parametr "${d}" in ${testName} test` };
     }
   });
-
   return;
 };
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
-  const allDataSel = deepmerge.all([dataLocal, selectorsLocal], {
-    arrayMerge: overwriteMerge,
-  });
-
+  const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
   let funcEval = {};
 
   for (const key in funcParams) {
     if (_.isString(funcParams[key])) {
       funcEval[key] = safeEval(funcParams[key], allDataSel);
     }
+    //TODO: 2019-05-17 S.Starodubov Убрать эту возможность делать присвоение через функции
     if (_.isArray(funcParams[key]) && funcParams[key].length == 2) {
       let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
       funcEval[key] = dataFuncEval;
       funcEval[funcParams[key][1]] = dataFuncEval;
     }
   }
-
   return funcEval;
 };
 
@@ -70,22 +66,17 @@ class Test {
   } = {}) {
     this.name = name;
     this.type = type;
-    this.levelIndent = levelIndent;
-
     this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
-
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
-
     this.allowResults = allowResults;
-
     this.beforeTest = beforeTest;
     this.runTest = runTest;
     this.afterTest = afterTest;
     this.errorTest = errorTest;
-
+    this.levelIndent = levelIndent;
     this.repeat = repeat;
     this.source = source;
 
@@ -160,9 +151,7 @@ class Test {
         joinArray = [...joinArray, data_ext];
       });
 
-      dataLocal = deepmerge.all(joinArray, {
-        arrayMerge: overwriteMerge,
-      });
+      dataLocal = deepmerge.all(joinArray, { arrayMerge: overwriteMerge });
 
       // 8. Update local data with bindings
       for (const key in bindDataLocal) {
@@ -170,9 +159,7 @@ class Test {
       }
 
       // 9. Update after all bindings with raw data from test itself
-      dataLocal = deepmerge.all([dataLocal, data], {
-        arrayMerge: overwriteMerge,
-      });
+      dataLocal = deepmerge.all([dataLocal, data], { arrayMerge: overwriteMerge });
 
       return dataLocal;
     };
@@ -181,15 +168,7 @@ class Test {
       return this.fetchData(true);
     };
 
-    this.run = async (
-      {
-        dataExt = [],
-        selectorsExt = [],
-        ...inputArgs
-        // repeat,
-      } = {},
-      envsId,
-    ) => {
+    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
       this.data = this.resolveAliases('data', inputArgs, constructorArgs);
       this.bindData = this.resolveAliases('bindData', inputArgs, constructorArgs);
       this.selectors = this.resolveAliases('selectors', inputArgs, constructorArgs);
@@ -221,9 +200,7 @@ class Test {
 
         // FUNCTIONS
         let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
-        dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], {
-          arrayMerge: overwriteMerge,
-        });
+        dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], { arrayMerge: overwriteMerge });
 
         let selectorsFunctionForGlobalResults = resolveDataFunctions(this.selectorsFunction, dataLocal, selectorsLocal);
         selectorsLocal = deepmerge.all([selectorsLocal, selectorsFunctionForGlobalResults], {
@@ -302,7 +279,7 @@ class Test {
           env: this.env,
           envs: this.envs,
           browser: this.env ? this.env.getState('browser') : null,
-          //If there is no page it`s might be API
+          // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: bind(log, source, args),
           helper: new Helpers(),
@@ -322,15 +299,13 @@ class Test {
           if (_.isArray(funcs)) {
             for (const fun of funcs) {
               let funResult = (await fun(args_ext)) || {};
-              resultFromTest = deepmerge.all([resultFromTest, funResult], {
-                arrayMerge: overwriteMerge,
-              });
+              resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
             }
           }
         }
 
         // RESULTS
-        // todo выкидывать предупреждение если не пришло то чего нужно в результатах то чего в allowResults
+        // TODO: выкидывать предупреждение если не пришло то чего нужно в результатах то чего в allowResults
         let results = _.pick(resultFromTest, allowResults);
 
         if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
@@ -341,19 +316,12 @@ class Test {
           results[key] = _.get(results, this.bindResults[key]);
         }
 
-        envs.set(
-          'results',
-          deepmerge.all([envs.get('results'), results], {
-            arrayMerge: overwriteMerge,
-          }),
-        );
+        envs.set('results', deepmerge.all([envs.get('results'), results], { arrayMerge: overwriteMerge }));
 
         if (this.repeat > 1) {
           this.repeat -= 1;
           await this.run(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
         }
-
-        // Результаты которые просто просто хочется забиндить в переменную, это делать через функции
       } catch (err) {
         err.envsId = envsId;
         log({
@@ -366,8 +334,6 @@ class Test {
         throw err;
       }
     };
-
-    // this.canReuse; // Есть ли зависимости от окружения, типа переключений.
   }
 }
 
