@@ -198,18 +198,20 @@ afterTest:
         ```
         Пример:
 
-        envsExt: {
-            envElectron: { // Имя файла среды без .yaml
-                // Полные пути к переменным которые надо заменить
-                'browser.runtimeEnv.runtimeExecutable': '%electronPath%',
-                'browser.runtimeEnv.program': '%scriptPath%',
+        "privateData/envElectronRunExt.json"
+
+        {
+            "envElectronRun": {
+                "browser.runtimeEnv.runtimeExecutable": "P:/DEV/cashdesk-electron/node_modules/.bin/electron.cmd",
+                "browser.runtimeEnv.program": "P:/DEV/cashdesk-electron/index.js",
+                "browser.runtimeEnv.cwd": "P:/DEV/cashdesk-electron/"
             }
         }
         ```
     - --data - Данные которые пробрасываются в тесты
     - --selectors - Селекторы которые пробрасываются в тесты
-    - --dataExt - Массив с YAML файлами с данными
-    - --selectorsExt - Массив с YAML файлами с селекторами
+    - --dataExt - Массив с YAML файлами с данными (можно использовать *)
+    - --selectorsExt - Массив с YAML файлами с селекторами (можно использовать *)
     - --debugMode - true включает дебаг режим
 
 ## Запуск из скрипта JS
@@ -227,11 +229,13 @@ afterTest:
     - envs
     - testsFolder
     - envsExt
+    - envsExtJson
     - data
     - selectors
     - dataExt
     - selectorsExt
     - debugMode
+    - logDisabled
 
 ## Запуск с переменными среды
 
@@ -245,8 +249,10 @@ afterTest:
     - PPD_ENVS
     - PPD_TEST_FOLDER
     - PPD_ENVS_EXT
+    - PPD_ENVS_EXT_JSON
     - PPD_DATA
     - PPD_SELECTORS
     - PPD_DATA_EXT
     - PPD_SELECTORS_EXT
     - PPD_DEBUG_MODE
+    - PPD_LOG_DISABLED
