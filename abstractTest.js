@@ -188,14 +188,6 @@ class Test {
       let { envs, log } = require('./env.js')(envsId);
 
       try {
-        // Descriptions in log
-        log({
-          screenshot: false,
-          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
-          level: 'test',
-          levelIndent,
-        });
-
         this.envs = envs;
         this.envName = this.envs.get('current.name');
         this.envPageName = this.envs.get('current.page');
@@ -227,6 +219,42 @@ class Test {
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
+
+        // All data passed to log
+        const args = {
+          envsId,
+          envName: this.envName,
+          envPageName: this.envPageName,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          options: this.options,
+          allowResults: this.allowResults,
+          bindResults: this.bindResults,
+          levelIndent: this.levelIndent,
+          repeat: this.repeat,
+        };
+
+        let logBinded = bind(log, source, args);
+
+        // Extend with data passed to functions
+        const args_ext = Object.assign({}, args, {
+          env: this.env,
+          envs: this.envs,
+          browser: this.env ? this.env.getState('browser') : null,
+          // If there is no page it`s might be API
+          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
+          log: logBinded,
+          helper: new Helpers(),
+          _,
+        });
+
+        // Descriptions in log
+        logBinded({
+          screenshot: false,
+          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
+          level: 'test',
+          levelIndent,
+        });
 
         // IF
         let expr = _.get(inputArgs, 'if');
@@ -267,32 +295,6 @@ class Test {
             throw { message: `Test stoped with error = ${errorExpr}` };
           }
         }
-
-        // All data passed to log
-        const args = {
-          envsId,
-          envName: this.envName,
-          envPageName: this.envPageName,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          options: this.options,
-          allowResults: this.allowResults,
-          bindResults: this.bindResults,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
-        };
-
-        // Extend with data passed to functions
-        const args_ext = Object.assign({}, args, {
-          env: this.env,
-          envs: this.envs,
-          browser: this.env ? this.env.getState('browser') : null,
-          // If there is no page it`s might be API
-          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
-          log: bind(log, source, args),
-          helper: new Helpers(),
-          _,
-        });
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
