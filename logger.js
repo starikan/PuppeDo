@@ -116,7 +116,7 @@ class Logger {
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
-      let debugMode = this.envs.get('args.logDisabled') === 'true' ? true : false;
+      let debugMode = this.envs.get('args.debugMode') === 'true' ? true : false;
 
       let outputFolder = this.envs.get('output.folder');
       let outputFolderLatest = this.envs.get('output.folderLatest');
