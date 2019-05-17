@@ -5,16 +5,13 @@ const _ = require('lodash');
 const abstractTest = require('./abstractTest');
 
 const getTest = function(testJsonIncome, envsId) {
-  let testJson = _.cloneDeep(testJsonIncome);
-
-  if (!testJson || !_.isObject(testJson) || !envsId) {
-    throw {
-      message: 'getTest params error',
-    };
-  }
-
-  const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
   const { envs, log } = require('./env')(envsId);
+
+  let testJson = _.cloneDeep(testJsonIncome);
+  if (!testJson || !_.isObject(testJson) || !envsId) {
+    throw { message: 'getTest params error' };
+  }
+  const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
 
   // Pass source code of test into test for logging
   testJson.source = _.cloneDeep(testJson);
