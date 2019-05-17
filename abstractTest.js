@@ -60,14 +60,11 @@ class Test {
     allowResults = [],
     dataExt = [],
     selectorsExt = [],
-
     beforeTest = async function() {},
     runTest = async function() {},
     afterTest = async function() {},
     errorTest = async function() {},
     source = '',
-
-    //TODO: 2018-07-02 S.Starodubov repeat
     repeat = 1,
     ...constructorArgs
   } = {}) {
@@ -246,7 +243,6 @@ class Test {
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
-        //TODO: 2019-05-07 S.Starodubov все эти ифы надо еще сделать в конец когда уже есть результаты типа ifResults сделать
         // IF
         let expr = _.get(inputArgs, 'if');
         if (expr) {
@@ -287,8 +283,6 @@ class Test {
           }
         }
 
-        // TODO: 2018-07-03 S.Starodubov проверки на существование всего этого, чтобы не проверять в самом тесте, если что ронять с исключнием
-
         // All data passed to log
         const args = {
           envsId,
@@ -308,7 +302,7 @@ class Test {
           env: this.env,
           envs: this.envs,
           browser: this.env ? this.env.getState('browser') : null,
-          //TODO: 2018-07-03 S.Starodubov если нет page то может это API
+          //If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: bind(log, source, args),
           helper: new Helpers(),

@@ -445,12 +445,6 @@ class Envs {
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
       const state = this.envs[key].state;
-
-      const type = _.get(this.envs[key], 'env.browser.type');
-      const runtime = _.get(this.envs[key], 'env.browser.runtime');
-      const browserSettings = _.get(this.envs[key], 'env.browser');
-
-      //TODO: 2018-06-26 S.Starodubov Сделать закрытие на основе переменных открытия
       try {
         state.browser.close();
       } catch (exc) {}

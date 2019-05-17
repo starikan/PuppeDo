@@ -20,7 +20,6 @@ class Logger {
       let pageName = this.envs.get('current.page');
 
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
-      //TODO: 2018-06-29 S.Starodubov привести к нормальному формату
       const name = `${now}.jpg`;
 
       if (!this.envs.get('output.folder')) return;
@@ -29,7 +28,6 @@ class Logger {
       const pathScreenshotLatest = path.join(this.envs.get('output.folderLatest'), name);
       const page = _.get(activeEnv, `state.pages.${pageName}`);
 
-      //TODO: 2018-06-29 S.Starodubov нужна проверка на браузер
       if (_.isObject(page)) {
         if (selCSS) {
           const el = await page.$(selCSS);
