@@ -116,6 +116,7 @@ class Logger {
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
+      let debugMode = this.envs.get('args.logDisabled') === 'true' ? true : false;
 
       let outputFolder = this.envs.get('output.folder');
       let outputFolderLatest = this.envs.get('output.folderLatest');
@@ -195,11 +196,11 @@ class Logger {
         time: now,
         dataEnvs,
         dataEnvsGlobal,
-        testStruct,
+        testStruct: debugMode || type === 'env' ? testStruct : null,
         screenshots,
         level,
         type,
-        bindedData,
+        bindedData: debugMode ? bindedData : null,
         levelIndent,
       };
       this.envs.push('log', logEntry);
