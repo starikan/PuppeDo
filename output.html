@@ -7,6 +7,7 @@
     <title>Output test</title>
     <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-json-tree-view@2.1.4/dist/vue-json-tree-view.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@3.13.1/dist/js-yaml.min.js"></script>
     <script type="text/javascript" src="./output.json"></script>
     <style>
       table {
@@ -29,7 +30,7 @@
   <body>
     <div id="app">
       <p v-if="!json.length">
-        Something wrong happened. Can`t load JSON with log.
+        Something wrong happened. Can`t load data from log.
       </p>
       <table>
         <tr v-for="(data, index) in json" :key="index" :class="{ error: data.level == 'error' }">
@@ -89,9 +90,11 @@
       },
       mounted() {
         let self = this;
-        fetch('output.json')
-          .then(response => response.json())
-          .then(res => (self.json = res));
+        fetch('output.yaml')
+          .then(response => response.text())
+          .then(res => {
+            self.json = jsyaml.load(res)
+          });
       },
     });
   </script>
