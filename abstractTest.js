@@ -203,7 +203,7 @@ class Test {
       this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
-      this.repeat = _.get(inputArgs, 'repeat') || this.repeat;
+      this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
 
       if (!envsId) {
         throw { message: 'Test shoud have envsId' };
