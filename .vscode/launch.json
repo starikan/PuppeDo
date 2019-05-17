@@ -68,8 +68,9 @@
         "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
         "PPD_ENVS_EXT_JSON": "privateData/envElectronRunExt.json",
         // "PPD_OUTPUT": "electron",
+        // "PPD_TEST": "mainLeftMenu",
         "PPD_TEST": "cashdesk",
-        "PPD_TESTS_LIST": "[\"mainLogin\", \"mainSettings\"]",
+        // "PPD_TESTS_LIST": "[\"mainLogin\", \"mainLeftMenu\"]",
         "PPD_DEBUG_MODE": "true",
         // "PPD_LOG_DISABLED": "true",
       }

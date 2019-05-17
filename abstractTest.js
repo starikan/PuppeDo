@@ -188,6 +188,14 @@ class Test {
       let { envs, log } = require('./env.js')(envsId);
 
       try {
+        // Descriptions in log
+        log({
+          screenshot: false,
+          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
+          level: 'test',
+          levelIndent,
+        });
+
         this.envs = envs;
         this.envName = this.envs.get('current.name');
         this.envPageName = this.envs.get('current.page');
