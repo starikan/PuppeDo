@@ -104,38 +104,53 @@ class Logger {
       level = 'info',
       debug = false,
       element = false,
-      //TODO: 2019-05-15 S.Starodubov сдклать это тоже полем json
       testStruct = null,
       levelIndent = 0,
     } = {},
     testSource,
     bindedData,
   ) {
-    const logDisabled = this.envs.get('args.logDisabled');
-    if (logDisabled) {
-      return;
-    }
-
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
+
       let outputFolder = this.envs.get('output.folder');
       let outputFolderLatest = this.envs.get('output.folderLatest');
       if (!outputFolder || !outputFolderLatest) return;
 
       const screenshots = [];
+      screenshot = !_.isBoolean(screenshot) ? _.get(activeLog, 'screenshot', false) : screenshot;
+      fullpage = !_.isBoolean(fullpage) ? _.get(activeLog, 'fullpage', false) : fullpage;
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
-      const style = {
-        info: chalk.blue,
-        test: chalk.green,
-        warn: chalk.yellow,
-        error: chalk.red,
-        env: chalk.magenta,
-      };
+      const styles = { info: chalk.blue, test: chalk.green, warn: chalk.yellow, error: chalk.red, env: chalk.magenta };
 
+      // LEVEL RULES
+      level = this.getLevel(level);
+      if (!level) return;
+
+      // LOG STRINGS
+      const logString = `${now} - ${level.padEnd(5)} - ${'='.repeat(levelIndent)} ${text}`;
+
+      // STDOUT
+      if (stdOut) {
+        const styleFunction = _.get(styles, level);
+        if (styleFunction && _.isFunction(styleFunction)) {
+          console.log(styleFunction(logString));
+        } else {
+          console.log(logString);
+        }
+      }
+
+      // NO LOG FILES ONLY STDOUT
+      const logDisabled = this.envs.get('args.logDisabled');
+      if (logDisabled) {
+        return;
+      }
+
+      // ENVS TO LOG
       if (level == 'env') {
         dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
         dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
@@ -143,31 +158,6 @@ class Logger {
         });
         text = '\n' + text;
         type = 'env';
-      }
-
-      if (!_.isBoolean(screenshot)) {
-        screenshot = _.get(activeLog, 'screenshot', false);
-      }
-      if (!_.isBoolean(fullpage)) {
-        fullpage = _.get(activeLog, 'fullpage', false);
-      }
-
-      // LEVEL RULES
-      level = this.getLevel(level);
-      if (!level) return;
-
-      // LOG STRINGS
-      //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
-      const logString = `${now} - ${level.padEnd(5)} - ${'='.repeat(levelIndent)} ${text}`;
-
-      // STDOUT
-      if (stdOut) {
-        const styleFunction = _.get(style, level);
-        if (styleFunction && _.isFunction(styleFunction)) {
-          console.log(styleFunction(logString));
-        } else {
-          console.log(logString);
-        }
       }
 
       // TEXT LOG
@@ -188,29 +178,16 @@ class Logger {
 
       // SCRENSHOTS
       if (screenshot) {
-        if (_.isString(selCSS)) {
-          selCSS = [selCSS];
-        }
-
         let src;
-
-        if (_.isArray(selCSS)) {
-          for (let css in selCSS) {
-            src = await this.saveScreenshot({ selCSS: selCSS[css] });
-          }
+        selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
+        for (let css in selCSS) {
+          src = await this.saveScreenshot({ selCSS: selCSS[css] });
+          src ? screenshots.push(src) : null;
         }
-
-        if (element) {
-          src = await this.saveScreenshot({ element: element });
-        }
-
-        if (fullpage) {
-          src = await this.saveScreenshot({ fullpage: fullpage });
-        }
-
-        if (src) {
-          screenshots.push(src);
-        }
+        src = element ? await this.saveScreenshot({ element: element }) : null;
+        src ? screenshots.push(src) : null;
+        src = fullpage ? await this.saveScreenshot({ fullpage: fullpage }) : null;
+        src ? screenshots.push(src) : null;
       }
 
       this.envs.push('log', {
