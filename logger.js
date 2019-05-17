@@ -119,9 +119,31 @@ class Logger {
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
+      let outputFolder = this.envs.get('output.folder');
+      let outputFolderLatest = this.envs.get('output.folderLatest');
+      if (!outputFolder || !outputFolderLatest) return;
 
       const screenshots = [];
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      let dataEnvsGlobal = null;
+      let dataEnvs = null;
+      let type = 'log';
+      const style = {
+        info: chalk.blue,
+        test: chalk.green,
+        warn: chalk.yellow,
+        error: chalk.red,
+        env: chalk.magenta,
+      };
+
+      if (level == 'env') {
+        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+          return _.omit(val, 'state');
+        });
+        text = '\n' + text;
+        type = 'env';
+      }
 
       if (!_.isBoolean(screenshot)) {
         screenshot = _.get(activeLog, 'screenshot', false);
@@ -134,20 +156,9 @@ class Logger {
       level = this.getLevel(level);
       if (!level) return;
 
-      const style = {
-        info: chalk.blue,
-        test: chalk.green,
-        warn: chalk.yellow,
-        error: chalk.red,
-        env: chalk.magenta,
-      };
-
       // LOG STRINGS
       //TODO: 2018-06-29 S.Starodubov привести в нормальный формат
-      const logString = `${now} - ${level} - ${text}`;
-      let dataEnvsGlobal = null;
-      let dataEnvs = null;
-      let type = 'log';
+      const logString = `${now} - ${level.padEnd(5)} - ${'='.repeat(levelIndent)} ${text}`;
 
       // STDOUT
       if (stdOut) {
@@ -159,13 +170,12 @@ class Logger {
         }
       }
 
-      if (level == 'env') {
-        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-          return _.omit(val, 'state');
-        });
-        type = 'env';
-      }
+      // TEXT LOG
+      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {
+        if (err) {
+          return console.log(err);
+        }
+      });
 
       if (_.isEmpty(testStruct)) {
         testStruct = testSource;
@@ -177,10 +187,6 @@ class Logger {
       }
 
       // SCRENSHOTS
-      let outputFolder = this.envs.get('output.folder');
-      let outputFolderLatest = this.envs.get('output.folderLatest');
-      if (!outputFolder || !outputFolderLatest) return;
-
       if (screenshot) {
         if (_.isString(selCSS)) {
           selCSS = [selCSS];
@@ -220,13 +226,8 @@ class Logger {
         levelIndent,
       });
 
-      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n', function(err) {
-        if (err) {
-          return console.log(err);
-        }
-      });
-
       // Export JSON log every step
+      //TODO: 2019-05-17 S.Starodubov try just append to files
       const exportJson = stringify(this.envs.get('log'));
       await fs.writeFileSync(path.join(outputFolder, 'output.json'), exportJson);
 

@@ -203,6 +203,7 @@ class Test {
       this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
+      this.repeat = _.get(inputArgs, 'repeat') || this.repeat;
 
       if (!envsId) {
         throw { message: 'Test shoud have envsId' };
@@ -299,6 +300,7 @@ class Test {
           allowResults: this.allowResults,
           bindResults: this.bindResults,
           levelIndent: this.levelIndent,
+          repeat: this.repeat,
         };
 
         // Extend with data passed to functions
@@ -351,6 +353,11 @@ class Test {
             arrayMerge: overwriteMerge,
           }),
         );
+
+        if (this.repeat > 1) {
+          this.repeat -= 1;
+          await this.run(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+        }
 
         // Результаты которые просто просто хочется забиндить в переменную, это делать через функции
       } catch (err) {
