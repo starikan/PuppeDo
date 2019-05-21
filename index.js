@@ -4,16 +4,26 @@ const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { argParse } = require('./helpers');
 
-const main = async (args = {}) => {
-  console.time('Start');
+const main = async (args = {}, socket = null) => {
+  debugger;
+  if (!socket) {
+    socket = {
+      send: () => {},
+      sendYAML: () => {},
+    };
+  }
+
+  console.time();
 
   let envsIdGlob = null;
   args = argParse(args);
+  socket.sendYAML({ data: args, type: 'init_args' });
 
   for (let i = 0; i < args.testsList.length; i++) {
     console.log('TEST', args.testsList[i]);
+    socket.sendYAML({ data: args.testsList[i], type: 'test_run' });
 
-    let { envsId, envs, log } = require('./env')(envsIdGlob);
+    let { envsId, envs, log } = require('./env')(envsIdGlob, socket);
     envsIdGlob = envsId;
 
     process.on('unhandledRejection', async (error, p) => {
@@ -40,11 +50,14 @@ const main = async (args = {}) => {
     let test = getTest(fullJSON, envsId);
     await test();
     await envs.closeBrowsers();
+    socket.sendYAML({ data: args.testsList[i], type: 'test_end' });
   }
 
-  console.timeEnd('Start');
+  console.timeEnd();
 
-  process.exit(1);
+  if (!module.parent) {
+    process.exit(1);
+  }
 };
 
 if (!module.parent) {
@@ -52,6 +65,7 @@ if (!module.parent) {
 } else {
   module.exports = {
     main,
+    argParse,
     getFullDepthJSON,
     getTest,
     env: require('./env'),

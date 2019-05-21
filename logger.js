@@ -9,8 +9,9 @@ const yaml = require('js-yaml');
 const { sleep } = require('./helpers');
 
 class Logger {
-  constructor(envs) {
+  constructor(envs, socket) {
     this.envs = envs;
+    this.socket = socket;
   }
 
   async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
@@ -204,6 +205,7 @@ class Logger {
         levelIndent,
       };
       this.envs.push('log', logEntry);
+      this.socket.sendYAML({ type: 'log', logEntry })
 
       // Export YAML log every step
       let indent = 2;
@@ -222,11 +224,11 @@ class Logger {
   }
 }
 
-module.exports = function(envs) {
+module.exports = function(envs, socket = null) {
   if (!envs) {
     throw { message: 'Logger need ENVS' };
   }
 
-  const logger = new Logger(envs);
+  const logger = new Logger(envs, socket);
   return logger._log.bind(logger);
 };
