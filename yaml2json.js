@@ -92,4 +92,26 @@ const yaml2json = function(filePath, testsFolder = '') {
   throw { message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}` };
 };
 
-module.exports = { yaml2json };
+const getAllYamls = async (testsFolder = '.') => {
+  testsFolder = testsFolder.replace(/\\/g, '\\\\');
+
+  allContent = {};
+
+  if (!paths) {
+    paths = walkSync(testsFolder);
+    paths = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
+  }
+
+  paths.forEach(filePath => {
+    try {
+      full = yaml.safeLoad(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
+      allContent[filePath] = full;
+    } catch (e) {
+      throw e;
+    }
+  });
+
+  return { paths, allContent };
+};
+
+module.exports = { yaml2json, getAllYamls };

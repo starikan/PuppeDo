@@ -3,6 +3,7 @@ const _ = require('lodash');
 const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { argParse } = require('./helpers');
+const { getAllYamls } = require('./yaml2json');
 
 process.on('unhandledRejection', async error => {
   const errorObj = {
@@ -81,7 +82,7 @@ const main = async (args = {}, socket = null) => {
   }
 };
 
-const fetchTests = async (args = {}, socket) => {
+const fetchStruct = async (args = {}, socket) => {
   try {
     args = argParse(args);
     socket.sendYAML({ data: args, type: 'init_args' });
@@ -93,7 +94,25 @@ const fetchTests = async (args = {}, socket) => {
     const fullDescriptions = getDescriptions();
     socket.sendYAML({ data: fullDescriptions, type: 'fullDescriptions', envsId });
   } catch (err) {
-    err.message += ` || error in 'fetchTests'`;
+    err.message += ` || error in 'fetchStruct'`;
+    err.socket = socket;
+    throw err;
+  }
+};
+
+const fetchAvailableTests = async (args = {}, socket) => {
+  try {
+    args = argParse(args);
+    socket.sendYAML({ data: args, type: 'init_args' });
+    let { envsId, envs, log } = require('./env')({ socket });
+    await envs.init(args);
+
+    const testsFolder = _.get(envs, ['args', 'testsFolder'], '.');
+    const allYamls = await getAllYamls(testsFolder);
+    debugger;
+    socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
+  } catch (err) {
+    err.message += ` || error in 'fetchAvailableTests'`;
     err.socket = socket;
     throw err;
   }
@@ -104,6 +123,7 @@ if (!module.parent) {
 } else {
   module.exports = {
     main,
-    fetchTests,
+    fetchStruct,
+    fetchAvailableTests,
   };
 }
