@@ -4,57 +4,51 @@
   // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Server",
-      "program": "${workspaceFolder}\\app.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Напрямую",
-      "program": "${workspaceFolder}\\index.js",
-      // "runtimeArgs": ["--inspect"],
-      "args": [
-        // "--envs=[\"settings/envElectron.yaml\"]",
-        "--envs=[\"settings/envCloud.yaml\"]",
-        // "--envs=[\"settings/envCloud.yaml\", \"settings/envElectron.yaml\"]",
-        "--test=testGlob",
-        // "--test=Облако/login",
-        "--output=output",
-        "--testFolders=[\"server/tests\"]",
-        "--testsFolder=tests"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Запустить программу",
-      "program": "${workspaceFolder}\\index.js",
-      // "args": [
-      //   "-e",
-      //   "require(\"PuppeDo\").main()"
-      //   // "require(\"PuppeDo\").main({ envs: [\"settings/envCloud.yaml\"], test: \"testGlob\" })"
-      // ],
-      "env": {
-        "PPD_ENVS": "[\"envElectron.yaml\"]",
-        // "PPD_ENVS": "[\"settings/settings/envElectronRun.yaml\"]",
-        // "PPD_ENVS": "[\"envCloud.yaml\"]",
-        "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Напрямую",
+    //   "program": "${workspaceFolder}\\index.js",
+    //   // "runtimeArgs": ["--inspect"],
+    //   "args": [
+    //     // "--envs=[\"settings/envElectron.yaml\"]",
+    //     "--envs=[\"settings/envCloud.yaml\"]",
+    //     // "--envs=[\"settings/envCloud.yaml\", \"settings/envElectron.yaml\"]",
+    //     "--test=testGlob",
+    //     // "--test=Облако/login",
+    //     "--output=output",
+    //     "--testFolders=[\"server/tests\"]",
+    //     "--testsFolder=tests"
+    //   ]
+    // },
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Запустить программу",
+    //   "program": "${workspaceFolder}\\index.js",
+    //   // "args": [
+    //   //   "-e",
+    //   //   "require(\"PuppeDo\").main()"
+    //   //   // "require(\"PuppeDo\").main({ envs: [\"settings/envCloud.yaml\"], test: \"testGlob\" })"
+    //   // ],
+    //   "env": {
+    //     "PPD_ENVS": "[\"envElectron.yaml\"]",
+    //     // "PPD_ENVS": "[\"settings/settings/envElectronRun.yaml\"]",
+    //     // "PPD_ENVS": "[\"envCloud.yaml\"]",
+    //     "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
 
-        "PPD_TEST": "cashdesk",
-        // "PPD_TEST": "starodubov",
-        "PPD_TEST_FOLDER": "P:\\DEV\\PuppeDo\\settings",
+    //     "PPD_TEST": "cashdesk",
+    //     // "PPD_TEST": "starodubov",
+    //     "PPD_TEST_FOLDER": "P:\\DEV\\PuppeDo\\settings",
 
-        // "PPD_TEST": "testGlob",
-        // "PPD_TEST_FOLDER": "settings",
+    //     // "PPD_TEST": "testGlob",
+    //     // "PPD_TEST_FOLDER": "settings",
 
-        "PPD_DEBUG_MODE": "true",
-        // "PPD_TESTS_LIST": "[\"testGlob\", \"starodubov\"]"
+    //     "PPD_DEBUG_MODE": "true",
+    //     // "PPD_TESTS_LIST": "[\"testGlob\", \"starodubov\"]"
 
-      }
-    },
+    //   }
+    // },
     {
       "type": "node",
       "request": "launch",

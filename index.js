@@ -4,6 +4,26 @@ const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { argParse } = require('./helpers');
 
+process.on('unhandledRejection', async error => {
+  const errorObj = {
+    message: error.message,
+    stack: error.stack,
+    name: error.name,
+    envsId: error.envsId,
+  };
+  //TODO: 2019-05-21 S.Starodubov пробрасывать эти параметры в ошибку
+  if (error.socket && error.socket.sendYAML) {
+    error.socket.sendYAML({ data: errorObj, type: 'error', envsId: error.envsId });
+  }
+  if (error.debug) {
+    console.log(error);
+    debugger;
+  }
+  if (!module.parent) {
+    process.exit(1);
+  }
+});
+
 const main = async (args = {}, socket = null) => {
   if (!socket) {
     socket = {
@@ -19,18 +39,11 @@ const main = async (args = {}, socket = null) => {
   socket.sendYAML({ data: args, type: 'init_args' });
 
   for (let i = 0; i < args.testsList.length; i++) {
-    console.log('TEST', args.testsList[i]);
-    socket.sendYAML({ data: args.testsList[i], type: 'test_run' });
-
     let { envsId, envs, log } = require('./env')(envsIdGlob, socket);
     envsIdGlob = envsId;
 
-    process.on('unhandledRejection', async (error, p) => {
-      console.log('unhandledRejection');
-      console.log(error, p);
-      if (_.get(envs, ['args', 'debugMode'])) debugger;
-      process.exit(1);
-    });
+    console.log('TEST', args.testsList[i]);
+    socket.sendYAML({ data: args.testsList[i], type: 'test_run', envsId });
 
     const testFile = args.testsList[i];
     const testName = testFile.split('/')[testFile.split('/').length - 1];
@@ -46,10 +59,10 @@ const main = async (args = {}, socket = null) => {
 
     log({ level: 'env', text: fullDescriptions, testStruct: fullJSON, screenshot: false });
 
-    let test = getTest(fullJSON, envsId);
+    let test = getTest(fullJSON, envsId, socket);
     await test();
     await envs.closeBrowsers();
-    socket.sendYAML({ data: args.testsList[i], type: 'test_end' });
+    socket.sendYAML({ data: args.testsList[i], type: 'test_end', envsId });
   }
 
   console.timeEnd();

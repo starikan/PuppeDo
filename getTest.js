@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 const abstractTest = require('./abstractTest');
 
-const getTest = function(testJsonIncome, envsId) {
+const getTest = function(testJsonIncome, envsId, socket) {
   const { envs, log } = require('./env')(envsId);
 
   let testJson = _.cloneDeep(testJsonIncome);
@@ -16,6 +16,8 @@ const getTest = function(testJsonIncome, envsId) {
   // Pass source code of test into test for logging
   testJson.source = _.cloneDeep(testJson);
 
+  testJson.socket = socket;
+
   for (let funcKey in functions) {
     testJson[funcKey] = [];
     let funcVal = functions[funcKey];
@@ -23,7 +25,7 @@ const getTest = function(testJsonIncome, envsId) {
     if (_.isArray(funcVal)) {
       for (let test of funcVal) {
         if (test.type === 'test') {
-          testJson[funcKey].push(getTest(test, envsId));
+          testJson[funcKey].push(getTest(test, envsId, socket));
         }
         if (test.name === 'log') {
           testJson[funcKey].push(async () => {

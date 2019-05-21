@@ -9,9 +9,10 @@ const yaml = require('js-yaml');
 const { sleep } = require('./helpers');
 
 class Logger {
-  constructor(envs, socket) {
+  constructor({ envs, socket, envsId }) {
     this.envs = envs;
     this.socket = socket;
+    this.envsId = envsId;
   }
 
   async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
@@ -53,7 +54,7 @@ class Logger {
       }
     } catch (err) {
       err.message += ` || saveScreenshot selCSS = ${selCSS}`;
-      console.log(err);
+      err.socket = this.socket;
       throw err;
     }
   }
@@ -205,7 +206,7 @@ class Logger {
         levelIndent,
       };
       this.envs.push('log', logEntry);
-      this.socket.sendYAML({ type: 'log', logEntry });
+      this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
       let indent = 2;
@@ -218,17 +219,19 @@ class Logger {
         debugger;
       }
     } catch (err) {
-      console.log(err);
+      err.message += ' || error in _log';
+      err.socket = this.socket;
+      err.debug = _.get(this.envs, ['args', 'debugMode']);
       throw err;
     }
   }
 }
 
-module.exports = function(envs, socket = null) {
+module.exports = function({ envs, envsId = null, socket = null }) {
   if (!envs) {
     throw { message: 'Logger need ENVS' };
   }
 
-  const logger = new Logger(envs, socket);
+  const logger = new Logger({ envs, socket, envsId });
   return logger._log.bind(logger);
 };

@@ -62,6 +62,7 @@ class Test {
     errorTest = async function() {},
     source = '',
     repeat = 1,
+    socket = null,
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -79,6 +80,7 @@ class Test {
     this.levelIndent = levelIndent;
     this.repeat = repeat;
     this.source = source;
+    this.socket = socket;
 
     this.ALIASSES = {
       bindData: ['bD', 'bd'],
@@ -334,13 +336,15 @@ class Test {
         }
       } catch (err) {
         err.envsId = envsId;
+        err.message += ` || error in test = ${this.name}`;
+        err.socket = this.socket;
+        err.debug = _.get(this.envs, ['args', 'debugMode']);
         log({
           level: 'error',
           text: `Test ${this.name} = ${err.message}`,
           screenshot: false,
         });
         await this.errorTest();
-        console.log(err);
         throw err;
       }
     };

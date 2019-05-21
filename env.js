@@ -404,7 +404,7 @@ module.exports = function(envsId, socket = null) {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
 
-    instances[envsId] = { envs: newEnvs, log: logger(newEnvs, socket), socket };
+    instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId}), socket };
 
     return {
       envsId,
