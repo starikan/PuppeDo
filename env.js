@@ -388,29 +388,20 @@ class Envs {
 
 let instances = {};
 
-module.exports = function(envsId, socket = null) {
+module.exports = function({ envsId, socket = null } = {}) {
   if (envsId) {
-    if (_.get(instances, envsId)) {
-      return {
-        envsId,
-        envs: _.get(instances, envsId).envs,
-        log: _.get(instances, envsId).log,
-        socket: _.get(instances, envsId).socket,
-      };
-    } else {
+    if (!_.get(instances, envsId)) {
       throw { message: `Unknown ENV ID ${envsId}` };
     }
   } else {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
-
-    instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId}), socket };
-
-    return {
-      envsId,
-      envs: instances[envsId].envs,
-      log: instances[envsId].log,
-      socket: instances[envsId].socket,
-    };
+    instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId }), socket };
   }
+  return {
+    envsId,
+    envs: _.get(instances, [envsId, 'envs']),
+    log: _.get(instances, [envsId, 'log']),
+    socket: _.get(instances, [envsId, 'socket']),
+  };
 };

@@ -5,7 +5,7 @@ const _ = require('lodash');
 const abstractTest = require('./abstractTest');
 
 const getTest = function(testJsonIncome, envsId, socket) {
-  const { envs, log } = require('./env')(envsId);
+  const { envs, log } = require('./env')({ envsId, socket });
 
   let testJson = _.cloneDeep(testJsonIncome);
   if (!testJson || !_.isObject(testJson) || !envsId) {

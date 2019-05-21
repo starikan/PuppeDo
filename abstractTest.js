@@ -189,7 +189,7 @@ class Test {
         throw { message: 'Test shoud have envsId' };
       }
 
-      let { envs, log } = require('./env.js')(envsId);
+      let { envs, log } = require('./env.js')({ envsId });
 
       try {
         this.envs = envs;
