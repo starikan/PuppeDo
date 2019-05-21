@@ -205,7 +205,7 @@ class Logger {
         levelIndent,
       };
       this.envs.push('log', logEntry);
-      this.socket.sendYAML({ type: 'log', logEntry })
+      this.socket.sendYAML({ type: 'log', logEntry });
 
       // Export YAML log every step
       let indent = 2;

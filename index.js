@@ -5,7 +5,6 @@ const { getTest } = require('./getTest');
 const { argParse } = require('./helpers');
 
 const main = async (args = {}, socket = null) => {
-  debugger;
   if (!socket) {
     socket = {
       send: () => {},
