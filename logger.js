@@ -204,6 +204,7 @@ class Logger {
         type,
         bindedData: debugMode ? bindedData : null,
         levelIndent,
+        stepId: _.get(bindedData, 'stepId'),
       };
       this.envs.push('log', logEntry);
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -222,6 +223,7 @@ class Logger {
       err.message += ' || error in _log';
       err.socket = this.socket;
       err.debug = _.get(this.envs, ['args', 'debugMode']);
+      err.stepId = _.get(bindedData, 'stepId');
       throw err;
     }
   }

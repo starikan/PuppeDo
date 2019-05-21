@@ -10,6 +10,7 @@ process.on('unhandledRejection', async error => {
     stack: error.stack,
     name: error.name,
     envsId: error.envsId,
+    stepId: error.stepId,
   };
   //TODO: 2019-05-21 S.Starodubov пробрасывать эти параметры в ошибку
   if (error.socket && error.socket.sendYAML) {

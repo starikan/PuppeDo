@@ -1,5 +1,6 @@
-const _ = require('lodash');
+const crypto = require('crypto');
 
+const _ = require('lodash');
 const { yaml2json } = require('./yaml2json');
 
 let fullDescription = '';
@@ -48,6 +49,8 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   if (fullString) {
     fullDescription += fullString;
   }
+
+  full.stepId = crypto.randomBytes(16).toString('hex');
 
   for (const runnerBlock of runnerBlockNames) {
     let runnerBlockValue = _.get(full, [runnerBlock]);

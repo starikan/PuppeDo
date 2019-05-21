@@ -63,6 +63,7 @@ class Test {
     source = '',
     repeat = 1,
     socket = null,
+    stepId = null,
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -81,6 +82,7 @@ class Test {
     this.repeat = repeat;
     this.source = source;
     this.socket = socket;
+    this.stepId = stepId;
 
     this.ALIASSES = {
       bindData: ['bD', 'bd'],
@@ -234,6 +236,7 @@ class Test {
           bindResults: this.bindResults,
           levelIndent: this.levelIndent,
           repeat: this.repeat,
+          stepId: this.stepId,
         };
 
         let logBinded = bind(log, source, args);
@@ -339,10 +342,12 @@ class Test {
         err.message += ` || error in test = ${this.name}`;
         err.socket = this.socket;
         err.debug = _.get(this.envs, ['args', 'debugMode']);
+        err.stepId = this.stepId;
         log({
           level: 'error',
           text: `Test ${this.name} = ${err.message}`,
           screenshot: false,
+          stepId: this.stepId,
         });
         await this.errorTest();
         throw err;
