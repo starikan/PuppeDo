@@ -17,6 +17,7 @@ const yaml2json = function(filePath, testsFolder = '') {
   let exts = ['.yaml', '.json', '.js'];
   let files = [];
   let testFile = null;
+  //TODO: 2019-05-22 S.Starodubov path.normalize
   testsFolder = testsFolder.replace(/\\/g, '\\\\');
   let allTestFolders = [];
 
@@ -92,24 +93,26 @@ const yaml2json = function(filePath, testsFolder = '') {
   throw { message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}` };
 };
 
-const getAllYamls = async (testsFolder = '.') => {
-  testsFolder = testsFolder.replace(/\\/g, '\\\\');
+const getAllYamls = async ({ testsFolder = '.', envsId }) => {
+  console.time('getAllYamls');
 
-  allContent = {};
+  testsFolder = path.normalize(testsFolder);
 
-  if (!paths) {
-    paths = walkSync(testsFolder);
-    paths = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
-  }
+  let allContent = {};
+  let paths = walkSync(testsFolder);
+  // !startsWith('.') remove folders like .git
+  let files = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
 
-  paths.forEach(filePath => {
+  files.forEach(filePath => {
     try {
-      full = yaml.safeLoad(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
+      let full = yaml.safeLoad(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
       allContent[filePath] = full;
     } catch (e) {
       throw e;
     }
   });
+
+  console.timeEnd('getAllYamls');
 
   return { paths, allContent };
 };
