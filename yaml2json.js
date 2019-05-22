@@ -6,19 +6,42 @@ const yaml = require('js-yaml');
 const walkSync = require('walk-sync');
 
 // Only one time read files from disk
+// let allContent;
+// let allFiles;
 let paths;
 
-const yaml2json = function(filePath, testsFolder = '') {
+const yaml2json = function(filePath, testsFolder = '.') {
   if (!_.isString(filePath)) {
-    throw { message: `yaml2json: Incorrect file name YAML/JSON/JS - ${filePath}` };
+    throw { message: `yaml2json: Incorrect file name YAML: "${filePath}". Must be string.` };
   }
+
+  testsFolder = path.normalize(testsFolder);
+
+  // if (!allContent) {
+  //   const yamls = getAllYamls({ testsFolder });
+  //   allContent = yamls.allContent;
+  //   allFiles = yamls.allFiles;
+  // }
+
+  // const fileContent = allContent.find(v => v.filePath.includes(filePath + '.yaml'));
+  // if (!fileContent) {
+  //   debugger
+  //   if (filePath !== 'log') {
+  //     throw { message: `Can't find test file '${filePath}' in folder '${testsFolder}'` };
+  //   }
+  //   return {
+  //     json: {
+  //       name: filePath,
+  //     },
+  //   };
+  // }
+
+  // return { json: fileContent };
 
   let isTestExist = fs.existsSync(filePath);
   let exts = ['.yaml', '.json', '.js'];
   let files = [];
   let testFile = null;
-  //TODO: 2019-05-22 S.Starodubov path.normalize
-  testsFolder = testsFolder.replace(/\\/g, '\\\\');
   let allTestFolders = [];
 
   if (!paths) {
@@ -59,27 +82,27 @@ const yaml2json = function(filePath, testsFolder = '') {
 
   let full = {};
 
-  if (!testFile) {
-    if (filePath != 'log') {
-      throw { message: `Can't find test file '${filePath}' in folder '${testsFolder}'` };
-    }
-    full = { name: testFile };
-    return { json: full };
-  }
+  // if (!testFile) {
+  //   if (filePath != 'log') {
+  //     throw { message: `Can't find test file '${filePath}' in folder '${testsFolder}'` };
+  //   }
+  //   full = { name: testFile };
+  //   return { json: full };
+  // }
 
-  if (testFile && testFile.endsWith('.json')) {
-    try {
-      full = require(testFile);
-      return { json: full };
-    } catch (e) {
-      throw e;
-    }
-  }
+  // if (testFile && testFile.endsWith('.json')) {
+  //   try {
+  //     full = require(testFile);
+  //     return { json: full };
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 
-  // TODO:
-  if (testFile && testFile.endsWith('.js')) {
-    return { json: testFile };
-  }
+  // // TODO:
+  // if (testFile && testFile.endsWith('.js')) {
+  //   return { json: testFile };
+  // }
 
   if (testFile && testFile.endsWith('.yaml')) {
     try {
@@ -93,28 +116,39 @@ const yaml2json = function(filePath, testsFolder = '') {
   throw { message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}` };
 };
 
-const getAllYamls = async ({ testsFolder = '.', envsId }) => {
+const getAllYamls = ({ testsFolder = '.', envsId }) => {
   console.time('getAllYamls');
 
   testsFolder = path.normalize(testsFolder);
 
-  let allContent = {};
+  let allContent = [];
   let paths = walkSync(testsFolder);
   // !startsWith('.') remove folders like .git
-  let files = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
+  let allFiles = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
 
-  files.forEach(filePath => {
+  allFiles.forEach(filePath => {
     try {
       let full = yaml.safeLoad(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
-      allContent[filePath] = full;
+      full.filePath = path.join(testsFolder, filePath);
+      allContent.push(full);
     } catch (e) {
       throw e;
     }
   });
 
+  // const fileNames = allFiles.map(v => {
+  //   return path.parse(v).name;
+  // });
+
+  let atoms = allContent.filter(v => v.type === 'atom' && v);
+  let tests = allContent.filter(v => v.type === 'test' && v);
+  let envs = allContent.filter(v => v.type === 'env' && v);
+  let data = allContent.filter(v => v.type === 'data' && v);
+  let selectors = allContent.filter(v => v.type === 'selectors' && v);
+
   console.timeEnd('getAllYamls');
 
-  return { paths, allContent };
+  return { allFiles, allContent, atoms, tests, envs, data, selectors };
 };
 
 module.exports = { yaml2json, getAllYamls };

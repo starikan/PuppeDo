@@ -64,6 +64,7 @@ class Test {
     repeat = 1,
     socket = null,
     stepId = null,
+    breadcrumbs = [],
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -83,6 +84,7 @@ class Test {
     this.source = source;
     this.socket = socket;
     this.stepId = stepId;
+    this.breadcrumbs = breadcrumbs;
 
     this.ALIASSES = {
       bindData: ['bD', 'bd'],
