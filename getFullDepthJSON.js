@@ -22,6 +22,9 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   if (!full) {
     throw { message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}` };
   }
+  if (!['atom', 'test'].includes(_.get(full, 'type'))) {
+    throw { message: `Файл ${filePath} в папке ${testsFolder} не является тестом` };
+  }
 
   full = testBody ? Object.assign(full, testBody) : full;
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);

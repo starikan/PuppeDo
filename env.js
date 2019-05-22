@@ -227,7 +227,7 @@ class Envs {
 
     if (file && file.endsWith('.yaml')) {
       const fileName = path.join(this.args.testsFolder, file);
-      env = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
+      env = await yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
       Object.keys(envExt).forEach(key => {
         _.set(env, key, envExt[key]);
       });
@@ -240,35 +240,37 @@ class Envs {
 
       if (_.get(env, 'dataExt')) {
         let dataExtList = _.get(env, 'dataExt');
-        if (_.isString(dataExtList)) {
-          dataExtList = [dataExtList];
-        }
+        dataExtList = _.isString(dataExtList) ? [dataExtList] : dataExtList;
         if (!_.isArray(dataExtList)) {
           throw { message: `dataExt wrong format ${dataExt}, ${file}` };
         }
         dataExtList = resolveStars(dataExtList, this.args.testsFolder);
         for (let i = 0; i < dataExtList.length; i++) {
-          const dataExtFile = dataExtList[i];
-          let dataExt = yaml.safeLoad(fs.readFileSync(dataExtFile, 'utf8'));
-          env.data = env.data || {};
-          env.data = Object.assign(dataExt, env.data);
+          let dataExt = await yaml.safeLoad(fs.readFileSync(dataExtList[i], 'utf8'));
+          if (_.get(dataExt, 'type') === 'data') {
+            env.data = env.data || {};
+            env.data = Object.assign(dataExt.data, env.data);
+          } else {
+            throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+          }
         }
       }
 
       if (_.get(env, 'selectorsExt')) {
         let selectorsExtList = _.get(env, 'selectorsExt');
-        if (_.isString(selectorsExtList)) {
-          selectorsExtList = [selectorsExtList];
-        }
+        selectorsExtList = _.isString(selectorsExtList) ? [selectorsExtList] : selectorsExtList;
         if (!_.isArray(selectorsExtList)) {
           throw { message: `selectorsExt wrong format ${selectorsExt}, ${file}` };
         }
         selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
         for (let i = 0; i < selectorsExtList.length; i++) {
-          const selectorsExtFile = selectorsExtList[i];
-          let selectorsExt = yaml.safeLoad(fs.readFileSync(selectorsExtFile, 'utf8'));
-          env.selectors = env.selectors || {};
-          env.selectors = Object.assign(selectorsExt, env.selectors);
+          let selectorsExt = await yaml.safeLoad(fs.readFileSync(selectorsExtList[i], 'utf8'));
+          if (_.get(selectorsExt, 'type') === 'selectors') {
+            env.selectors = env.selectors || {};
+            env.selectors = Object.assign(selectorsExt.data, env.selectors);
+          } else {
+            throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+          }
         }
       }
     }
@@ -366,11 +368,20 @@ class Envs {
 
     this.set('args', args);
 
-    for (let i = 0; i < envFiles.length; i++) {
-      envFiles[i] = _.endsWith(envFiles[i], '.yaml') ? envFiles[i] : envFiles[i] + '.yaml';
-      let envName = path.basename(envFiles[i], '.yaml');
+    let envsData = envFiles.map((val, key) => {
+      let envFile = val.endsWith('.yaml') ? val : val + '.yaml';
+      envFile = path.normalize(envFile);
+      let envName = path.basename(envFile, '.yaml');
       let envExt = _.get(envsExt, envName, {});
-      await this.createEnv({ envExt: envExt, file: envFiles[i] });
+      return {
+        envFile,
+        envName,
+        envExt,
+      };
+    });
+
+    for (let i = 0; i < envsData.length; i++) {
+      await this.createEnv({ envExt: envsData[i].envExt, file: envsData[i].envFile });
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {

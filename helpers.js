@@ -124,14 +124,22 @@ const argParse = args => {
   let extDataExt = {};
   extDataExt_files.forEach(f => {
     const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    extDataExt = deepmerge(extDataExt, data_ext, { arrayMerge: overwriteMerge });
+    if (_.get(data_ext, 'type') === 'data') {
+      extDataExt = deepmerge(extDataExt, _.get(data_ext, 'data', {}), { arrayMerge: overwriteMerge });
+    } else {
+      throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+    }
   });
 
   extSelectorsExt_files = resolveStars(extSelectorsExt_files, testsFolder);
   let extSelectorsExt = {};
   extSelectorsExt_files.forEach(f => {
     const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-    extSelectorsExt = deepmerge(extSelectorsExt, selectors_ext, { arrayMerge: overwriteMerge });
+    if (_.get(selectors_ext, 'type') === 'selectors') {
+      extSelectorsExt = deepmerge(extSelectorsExt, _.get(selectors_ext, 'data', {}), { arrayMerge: overwriteMerge });
+    } else {
+      throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+    }
   });
 
   if (!envFiles || _.isEmpty(envFiles)) {

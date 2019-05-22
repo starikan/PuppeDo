@@ -152,7 +152,11 @@ class Test {
       let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.testsFolder'));
       resolvedExtFiles.forEach(f => {
         const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-        joinArray = [...joinArray, data_ext];
+        if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {
+          joinArray = [...joinArray, data_ext];
+        } else {
+          throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+        }
       });
 
       dataLocal = deepmerge.all(joinArray, { arrayMerge: overwriteMerge });
