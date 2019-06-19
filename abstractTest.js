@@ -98,14 +98,19 @@ class Test {
     };
 
     this.resolveAliases = (valueName, constructorValues, testValues) => {
-      let result = {};
-      const aliasses = [valueName, ..._.get(this.ALIASSES, valueName, [])];
-      aliasses.forEach(v => {
-        result = deepmerge.all([result, _.get(constructorValues, v, {}), _.get(testValues, v, {})], {
-          arrayMerge: overwriteMerge,
+      try {
+        let result = {};
+        const aliasses = [valueName, ..._.get(this.ALIASSES, valueName, [])];
+        aliasses.forEach(v => {
+          result = deepmerge.all([result, _.get(constructorValues, v, {}), _.get(testValues, v, {})], {
+            arrayMerge: overwriteMerge,
+          });
         });
-      });
-      return result;
+        return result;
+      } catch (error) {
+        error.message += ` || function resolveAliases(${valueName})`;
+        throw error;
+      }
     };
 
     this.checkNeedEnv = () => {
@@ -190,6 +195,7 @@ class Test {
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
       this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
+      this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
 
       if (!envsId) {
         throw { message: 'Test shoud have envsId' };
@@ -229,43 +235,6 @@ class Test {
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
-
-        // All data passed to log
-        const args = {
-          envsId,
-          envName: this.envName,
-          envPageName: this.envPageName,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          options: this.options,
-          allowResults: this.allowResults,
-          bindResults: this.bindResults,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
-          stepId: this.stepId,
-        };
-
-        let logBinded = bind(log, source, args);
-
-        // Extend with data passed to functions
-        const args_ext = Object.assign({}, args, {
-          env: this.env,
-          envs: this.envs,
-          browser: this.env ? this.env.getState('browser') : null,
-          // If there is no page it`s might be API
-          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
-          log: logBinded,
-          helper: new Helpers(),
-          _,
-        });
-
-        // Descriptions in log
-        logBinded({
-          screenshot: false,
-          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
-          level: 'test',
-          levelIndent,
-        });
 
         // IF
         let expr = _.get(inputArgs, 'if');
@@ -307,6 +276,43 @@ class Test {
           }
         }
 
+        // All data passed to log
+        const args = {
+          envsId,
+          envName: this.envName,
+          envPageName: this.envPageName,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          options: this.options,
+          allowResults: this.allowResults,
+          bindResults: this.bindResults,
+          levelIndent: this.levelIndent,
+          repeat: this.repeat,
+          stepId: this.stepId,
+        };
+
+        let logBinded = bind(log, source, args);
+
+        // Extend with data passed to functions
+        const args_ext = Object.assign({}, args, {
+          env: this.env,
+          envs: this.envs,
+          browser: this.env ? this.env.getState('browser') : null,
+          // If there is no page it`s might be API
+          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
+          log: logBinded,
+          helper: new Helpers(),
+          _,
+        });
+
+        // Descriptions in log
+        logBinded({
+          screenshot: false,
+          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
+          level: 'test',
+          levelIndent,
+        });
+
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
@@ -339,6 +345,16 @@ class Test {
 
         envs.set('results', deepmerge.all([envs.get('results'), results], { arrayMerge: overwriteMerge }));
 
+        // WHILE
+        if (this.while){
+          const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
+          const whileEval = safeEval(this.while, allDataSel);
+          if (!whileEval){
+            return;
+          }
+        }
+
+        // REPEAT
         if (this.repeat > 1) {
           this.repeat -= 1;
           await this.run(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
