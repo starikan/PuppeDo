@@ -61,7 +61,7 @@ const resolveStars = function(linksArray, testsFolder = '.') {
       let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
       fileMask = _.trimEnd(fileMask, '/');
       fileMask = _.trimEnd(fileMask, '\\\\');
-      fullFileMask = path.join(testsFolder, fileMask);
+      const fullFileMask = path.join(testsFolder, fileMask);
       let paths = walkSync(fullFileMask);
       let pathsClean = _.map(paths, v => {
         if (v.endsWith('/') || v.endsWith('\\')) return false;

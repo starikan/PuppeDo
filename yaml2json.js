@@ -39,7 +39,7 @@ const yaml2json = function(filePath, testsFolder = '.') {
   // return { json: fileContent };
 
   let isTestExist = fs.existsSync(filePath);
-  let exts = ['.yaml', '.json', '.js'];
+  let exts = ['.yaml'];
   let files = [];
   let testFile = null;
   let allTestFolders = [];
@@ -49,7 +49,12 @@ const yaml2json = function(filePath, testsFolder = '.') {
   }
 
   paths.forEach(folder => {
-    if (folder.includes('.git')) {
+    if (
+      folder.includes('.git') ||
+      folder.includes('node_modules') ||
+      folder.includes('.history') ||
+      folder.includes('output')
+    ) {
       return;
     }
     if (folder.endsWith('/') || folder.endsWith('\\')) {

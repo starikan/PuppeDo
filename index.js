@@ -38,12 +38,14 @@ const main = async (args = {}, socket = null) => {
     console.time();
 
     let envsIdGlob = null;
+    let envsGlob = null;
     args = argParse(args);
     socket.sendYAML({ data: args, type: 'init_args' });
 
     for (let i = 0; i < args.testsList.length; i++) {
       let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob, socket });
       envsIdGlob = envsId;
+      envsGlob = envs;
 
       console.log('TEST', args.testsList[i]);
       socket.sendYAML({ data: args.testsList[i], type: 'test_run', envsId });
@@ -66,19 +68,20 @@ const main = async (args = {}, socket = null) => {
 
       let test = getTest(fullJSON, envsId, socket);
       await test();
-      await envs.closeBrowsers();
       socket.sendYAML({ data: args.testsList[i], type: 'test_end', envsId });
     }
 
+    await envsGlob.closeBrowsers();
     console.timeEnd();
 
     if (!module.parent) {
       process.exit(1);
     }
-  } catch (err) {
-    err.message += ` || error in 'main'`;
-    err.socket = socket;
-    throw err;
+  } catch (error) {
+    error.message += ` || error in 'main'`;
+    error.socket = socket;
+    console.log(error)
+    throw error;
   }
 };
 
