@@ -27,7 +27,7 @@ const checkNeeds = (needs, data, testName) => {
   return;
 };
 
-const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal) => {
+const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
   let funcEval = {};
 
@@ -95,6 +95,7 @@ class Test {
       options: ['option', 'opt', 'o'],
       selectorsFunction: ['selectorFunction', 'sF', 'sf'],
       dataFunction: ['dF', 'df'],
+      resultFunction: ['rF', 'rf'],
     };
 
     this.resolveAliases = (valueName, constructorValues, testValues) => {
@@ -191,6 +192,7 @@ class Test {
       this.options = this.resolveAliases('options', inputArgs, constructorArgs);
       this.dataFunction = this.resolveAliases('dataFunction', inputArgs, constructorArgs);
       this.selectorsFunction = this.resolveAliases('selectorsFunction', inputArgs, constructorArgs);
+      this.resultFunction = this.resolveAliases('resultFunction', inputArgs, constructorArgs);
       this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
@@ -226,6 +228,10 @@ class Test {
         // Сохраняем функции в результаты
         this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
         this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), selectorsFunctionForGlobalResults));
+
+        // Update data and selectors with functions result
+        dataLocal = deepmerge(dataLocal, dataFunctionForGlobalResults);
+        selectorsLocal = deepmerge(selectorsLocal, selectorsFunctionForGlobalResults);
 
         // Write data to local env. For child tests.
         if (this.env) {
@@ -264,7 +270,6 @@ class Test {
               throw err;
             }
           }
-
           if (exprResult) {
             await log({
               level: 'error',
@@ -345,11 +350,23 @@ class Test {
 
         envs.set('results', deepmerge.all([envs.get('results'), results], { arrayMerge: overwriteMerge }));
 
+        // RESULT FUNCTIONS
+        if (!_.isEmpty(this.resultFunction)) {
+          const dataWithResults = deepmerge.all([dataLocal, selectorsLocal, results], { arrayMerge: overwriteMerge });
+          let resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
+          dataLocal = deepmerge.all([dataLocal, resultFunction], { arrayMerge: overwriteMerge });
+          selectorsLocal = deepmerge.all([selectorsLocal, resultFunction], { arrayMerge: overwriteMerge });
+          envs.set(
+            'results',
+            deepmerge.all([envs.get('results'), results, resultFunction], { arrayMerge: overwriteMerge }),
+          );
+        }
+
         // WHILE
-        if (this.while){
+        if (this.while) {
           const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
           const whileEval = safeEval(this.while, allDataSel);
-          if (!whileEval){
+          if (!whileEval) {
             return;
           }
         }
