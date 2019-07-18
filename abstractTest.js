@@ -2,16 +2,27 @@ const fs = require('fs');
 
 const _ = require('lodash');
 const safeEval = require('safe-eval');
-const deepmerge = require('deepmerge');
 const yaml = require('js-yaml');
 
-const { Helpers, overwriteMerge, resolveStars } = require('./helpers');
+const { Helpers, merge, resolveStars } = require('./helpers');
 
 function bind(func, source, bindArgs) {
   return function() {
     return func.apply(this, [...arguments, source, bindArgs]);
   };
 }
+
+const ALIASSES = {
+  bindData: ['bD', 'bd'],
+  bindSelectors: ['bindSelector', 'bS', 'bs'],
+  bindResults: ['bindResult', 'bR', 'br', 'result', 'r'],
+  selectors: ['selector', 's'],
+  data: ['d'],
+  options: ['option', 'opt', 'o'],
+  selectorsFunction: ['selectorFunction', 'sF', 'sf'],
+  dataFunction: ['dF', 'df'],
+  resultFunction: ['rF', 'rf'],
+};
 
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
@@ -28,7 +39,7 @@ const checkNeeds = (needs, data, testName) => {
 };
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
-  const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
+  const allDataSel = merge(dataLocal, selectorsLocal);
   let funcEval = {};
 
   for (const key in funcParams) {
@@ -43,6 +54,33 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
     }
   }
   return funcEval;
+};
+
+const resolveAliases = (valueName, inputs = {}, aliasses = {}) => {
+  try {
+    let result = {};
+    const values = [valueName, ..._.get(aliasses, valueName, [])];
+    values.forEach(v => {
+      result = merge(result, _.get(inputs, v, {}));
+    });
+    return result;
+  } catch (error) {
+    error.message += ` || function resolveAliases(${valueName})`;
+    throw error;
+  }
+};
+
+const checkNeedEnv = ({needEnv, envName} = {}) => {
+  const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
+  if (_.isArray(needEnvs)) {
+    if (needEnvs.length && !needEnvs.includes(envName)) {
+      throw {
+        message: `Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`,
+      };
+    }
+  } else {
+    throw { message: 'needEnv wrong format, shoud be array or string' };
+  }
 };
 
 class Test {
@@ -86,47 +124,6 @@ class Test {
     this.stepId = stepId;
     this.breadcrumbs = breadcrumbs;
 
-    this.ALIASSES = {
-      bindData: ['bD', 'bd'],
-      bindSelectors: ['bindSelector', 'bS', 'bs'],
-      bindResults: ['bindResult', 'bR', 'br', 'result', 'r'],
-      selectors: ['selector', 's'],
-      data: ['d'],
-      options: ['option', 'opt', 'o'],
-      selectorsFunction: ['selectorFunction', 'sF', 'sf'],
-      dataFunction: ['dF', 'df'],
-      resultFunction: ['rF', 'rf'],
-    };
-
-    this.resolveAliases = (valueName, constructorValues, testValues) => {
-      try {
-        let result = {};
-        const aliasses = [valueName, ..._.get(this.ALIASSES, valueName, [])];
-        aliasses.forEach(v => {
-          result = deepmerge.all([result, _.get(constructorValues, v, {}), _.get(testValues, v, {})], {
-            arrayMerge: overwriteMerge,
-          });
-        });
-        return result;
-      } catch (error) {
-        error.message += ` || function resolveAliases(${valueName})`;
-        throw error;
-      }
-    };
-
-    this.checkNeedEnv = () => {
-      const needEnvs = _.isString(this.needEnv) ? [this.needEnv] : this.needEnv;
-      if (_.isArray(needEnvs)) {
-        if (needEnvs.length && !needEnvs.includes(this.envName)) {
-          throw {
-            message: `Wrong Environment, local current env = ${this.envName}, but test pass needEnvs = ${needEnvs}`,
-          };
-        }
-      } else {
-        throw { message: 'needEnv wrong format, shoud be array or string' };
-      }
-    };
-
     this.fetchData = (isSelector = false) => {
       let dataLocal, joinArray;
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
@@ -167,7 +164,7 @@ class Test {
         }
       });
 
-      dataLocal = deepmerge.all(joinArray, { arrayMerge: overwriteMerge });
+      dataLocal = merge(...joinArray);
 
       // 8. Update local data with bindings
       for (const key in bindDataLocal) {
@@ -175,7 +172,7 @@ class Test {
       }
 
       // 9. Update after all bindings with raw data from test itself
-      dataLocal = deepmerge.all([dataLocal, data], { arrayMerge: overwriteMerge });
+      dataLocal = merge(dataLocal, data);
 
       return dataLocal;
     };
@@ -185,17 +182,22 @@ class Test {
     };
 
     this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
-      this.data = this.resolveAliases('data', inputArgs, constructorArgs);
-      this.bindData = this.resolveAliases('bindData', inputArgs, constructorArgs);
-      this.selectors = this.resolveAliases('selectors', inputArgs, constructorArgs);
-      this.bindSelectors = this.resolveAliases('bindSelectors', inputArgs, constructorArgs);
-      this.options = this.resolveAliases('options', inputArgs, constructorArgs);
-      this.dataFunction = this.resolveAliases('dataFunction', inputArgs, constructorArgs);
-      this.selectorsFunction = this.resolveAliases('selectorsFunction', inputArgs, constructorArgs);
-      this.resultFunction = this.resolveAliases('resultFunction', inputArgs, constructorArgs);
-      this.bindResults = this.resolveAliases('bindResults', inputArgs, constructorArgs);
+      const inputs = merge(inputArgs, constructorArgs);
+
+      this.data = resolveAliases('data', inputs, ALIASSES);
+      this.bindData = resolveAliases('bindData', inputs, ALIASSES);
+      this.dataFunction = resolveAliases('dataFunction', inputs, ALIASSES);
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
+
+      this.selectors = resolveAliases('selectors', inputs, ALIASSES);
+      this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASSES);
+      this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASSES);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
+
+      this.bindResults = resolveAliases('bindResults', inputs, ALIASSES);
+      this.resultFunction = resolveAliases('resultFunction', inputs, ALIASSES);
+
+      this.options = resolveAliases('options', inputs, ALIASSES);
       this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
       this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
 
@@ -211,29 +213,25 @@ class Test {
         this.envPageName = this.envs.get('current.page');
         this.env = this.envs.get(`envs.${this.envName}`);
 
-        this.checkNeedEnv();
+        checkNeedEnv({needEnv: this.needEnv, envName: this.envName});
 
         let dataLocal = this.fetchData();
         let selectorsLocal = this.fetchSelectors();
+        let allData = merge(dataLocal, selectorsLocal);
 
         // FUNCTIONS
-        let dataFunctionForGlobalResults = resolveDataFunctions(this.dataFunction, dataLocal, selectorsLocal);
-        dataLocal = deepmerge.all([dataLocal, dataFunctionForGlobalResults], { arrayMerge: overwriteMerge });
-
-        let selectorsFunctionForGlobalResults = resolveDataFunctions(this.selectorsFunction, dataLocal, selectorsLocal);
-        selectorsLocal = deepmerge.all([selectorsLocal, selectorsFunctionForGlobalResults], {
-          arrayMerge: overwriteMerge,
-        });
+        let dFResults = resolveDataFunctions(this.dataFunction, allData);
+        let sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
         // Сохраняем функции в результаты
-        this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), dataFunctionForGlobalResults));
-        this.envs.set('resultsFunc', deepmerge(this.envs.get('resultsFunc', {}), selectorsFunctionForGlobalResults));
+        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
+        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), sFResults));
 
         // Update data and selectors with functions result
-        dataLocal = deepmerge(dataLocal, dataFunctionForGlobalResults);
-        selectorsLocal = deepmerge(selectorsLocal, selectorsFunctionForGlobalResults);
+        dataLocal = merge(dataLocal, dFResults);
+        selectorsLocal = merge(selectorsLocal, sFResults);
 
-        // Write data to local env. For child tests.
+        // Write data to local env. For next tests.
         if (this.env) {
           this.env.set('env.data', dataLocal);
           this.env.set('env.selectors', selectorsLocal);
@@ -245,8 +243,15 @@ class Test {
         // IF
         let expr = _.get(inputArgs, 'if');
         if (expr) {
+          // TODO: 2019-07-18 S.Starodubov ReferenceError
           let exprResult = safeEval(expr, dataLocal);
           if (!exprResult) {
+            await log({
+              level: 'info',
+              screenshot: false,
+              fullpage: false,
+              text: 'If skiping',
+            });
             return;
           }
         }
@@ -331,7 +336,8 @@ class Test {
           if (_.isArray(funcs)) {
             for (const fun of funcs) {
               let funResult = (await fun(args_ext)) || {};
-              resultFromTest = deepmerge.all([resultFromTest, funResult], { arrayMerge: overwriteMerge });
+              // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
+              resultFromTest = merge(resultFromTest, funResult);
             }
           }
         }
@@ -348,23 +354,22 @@ class Test {
           results[key] = _.get(results, this.bindResults[key]);
         }
 
-        envs.set('results', deepmerge.all([envs.get('results'), results], { arrayMerge: overwriteMerge }));
+        envs.set('results', merge(envs.get('results'), results));
+
+        // if (this.name === 'getText') debugger;
 
         // RESULT FUNCTIONS
         if (!_.isEmpty(this.resultFunction)) {
-          const dataWithResults = deepmerge.all([dataLocal, selectorsLocal, results], { arrayMerge: overwriteMerge });
+          const dataWithResults = merge(dataLocal, selectorsLocal, results);
           let resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
-          dataLocal = deepmerge.all([dataLocal, resultFunction], { arrayMerge: overwriteMerge });
-          selectorsLocal = deepmerge.all([selectorsLocal, resultFunction], { arrayMerge: overwriteMerge });
-          envs.set(
-            'results',
-            deepmerge.all([envs.get('results'), results, resultFunction], { arrayMerge: overwriteMerge }),
-          );
+          dataLocal = merge(dataLocal, resultFunction);
+          selectorsLocal = merge(selectorsLocal, resultFunction);
+          envs.set('results', merge(envs.get('results'), results, resultFunction));
         }
 
         // WHILE
         if (this.while) {
-          const allDataSel = deepmerge.all([dataLocal, selectorsLocal], { arrayMerge: overwriteMerge });
+          const allDataSel = merge(dataLocal, selectorsLocal);
           const whileEval = safeEval(this.while, allDataSel);
           if (!whileEval) {
             return;

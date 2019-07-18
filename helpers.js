@@ -52,7 +52,8 @@ const sleep = ms => {
   });
 };
 
-const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
+const merge = (...objects) =>
+  deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
 
 const resolveStars = function(linksArray, testsFolder = '.') {
   let resolvedArray = [];
@@ -125,7 +126,7 @@ const argParse = args => {
   extDataExt_files.forEach(f => {
     const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
     if (_.get(data_ext, 'type') === 'data') {
-      extDataExt = deepmerge(extDataExt, _.get(data_ext, 'data', {}), { arrayMerge: overwriteMerge });
+      extDataExt = merge(extDataExt, _.get(data_ext, 'data', {}));
     } else {
       throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
     }
@@ -136,7 +137,7 @@ const argParse = args => {
   extSelectorsExt_files.forEach(f => {
     const selectors_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
     if (_.get(selectors_ext, 'type') === 'selectors') {
-      extSelectorsExt = deepmerge(extSelectorsExt, _.get(selectors_ext, 'data', {}), { arrayMerge: overwriteMerge });
+      extSelectorsExt = merge(extSelectorsExt, _.get(selectors_ext, 'data', {}));
     } else {
       throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
     }
@@ -149,7 +150,7 @@ const argParse = args => {
   if (envsExtJson) {
     try {
       let envsExtJson_data = require(path.join(testsFolder, envsExtJson));
-      envsExt = deepmerge.all([envsExtJson_data, envsExt], { arrayMerge: overwriteMerge });
+      envsExt = merge(envsExtJson_data, envsExt);
     } catch (err) {}
   }
 
@@ -174,7 +175,7 @@ const argParse = args => {
 
 module.exports = {
   Helpers,
-  overwriteMerge,
+  merge,
   resolveStars,
   argParse,
   sleep,
