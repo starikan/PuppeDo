@@ -78,48 +78,124 @@ const resolveStars = function(linksArray, testsFolder = '.') {
 
 const argParse = args => {
   let args_ext = {};
+
   _.forEach(process.argv.slice(2), v => {
     let data = v.split('=');
     args_ext[data[0]] = data[1];
   });
 
-  let outputFolder = process.env.PPD_OUTPUT || _.get(args, 'output') || _.get(args_ext, '--output', 'output');
-  let envFiles = process.env.PPD_ENVS
-    ? JSON.parse(process.env.PPD_ENVS)
-    : _.get(args, 'envs') || JSON.parse(_.get(args_ext, '--envs', '[]'));
-  let testsFolder =
-    process.env.PPD_TEST_FOLDER || _.get(args, 'testsFolder') || _.get(args_ext, '--testsFolder', process.cwd());
-  let envsExt = process.env.PPD_ENVS_EXT
-    ? JSON.parse(process.env.PPD_ENVS_EXT)
-    : _.get(args, 'envsExt') || JSON.parse(_.get(args_ext, '--envsExt', '{}'));
-  let envsExtJson = process.env.PPD_ENVS_EXT_JSON || _.get(args, 'envsExtJson') || _.get(args_ext, '--envsExt');
-  let extData = process.env.PPD_DATA
-    ? JSON.parse(process.env.PPD_DATA)
-    : _.get(args, 'data') || JSON.parse(_.get(args_ext, '--data', '{}'));
-  let extSelectors = process.env.PPD_SELECTORS
-    ? JSON.parse(process.env.PPD_SELECTORS)
-    : _.get(args, 'selectors') || JSON.parse(_.get(args_ext, '--selectors', '{}'));
-  let debugMode = process.env.PPD_DEBUG_MODE || _.get(args, 'debugMode') || _.get(args_ext, '--debugMode', false);
-  let logDisabled =
-    process.env.PPD_LOG_DISABLED || _.get(args, 'logDisabled') || _.get(args_ext, '--logDisabled', false);
+  let argsEnv = {
+    testsFolder: process.env.PPD_TEST_FOLDER,
+    testFile: process.env.PPD_TEST,
+    testsList: JSON.parse(process.env.PPD_TESTS_LIST || 'null'),
+    outputFolder: process.env.PPD_OUTPUT,
+    envFiles: JSON.parse(process.env.PPD_ENVS || 'null'),
 
-  let testsList = process.env.PPD_TESTS_LIST
-    ? JSON.parse(process.env.PPD_TESTS_LIST)
-    : _.get(args, 'testsList') || JSON.parse(_.get(args_ext, '--testsList', '[]'));
+    envsExt: JSON.parse(process.env.PPD_ENVS_EXT || 'null'),
+    envsExtJson: process.env.PPD_ENVS_EXT_JSON,
+    extData: JSON.parse(process.env.PPD_DATA || 'null'),
+    extSelectors: JSON.parse(process.env.PPD_SELECTORS || 'null'),
+    extDataExt_files: JSON.parse(process.env.PPD_DATA_EXT || 'null'),
+    extSelectorsExt_files: JSON.parse(process.env.PPD_SELECTORS_EXT || 'null'),
 
-  let testFile = process.env.PPD_TEST || _.get(args, 'test') || _.get(args_ext, '--test');
+    debugMode: ['true', 'false'].includes(process.env.PPD_DEBUG_MODE) ? JSON.parse(process.env.PPD_DEBUG_MODE) : null,
+    logDisabled: ['true', 'false'].includes(process.env.PPD_LOG_DISABLED)
+      ? JSON.parse(process.env.PPD_LOG_DISABLED)
+      : null,
+  };
+
+  let argsRaw = {
+    testsFolder: _.get(args, 'testsFolder'),
+    testsList: _.get(args, 'testsList'),
+    testFile: _.get(args, 'testFile'),
+    outputFolder: _.get(args, 'output'),
+    envFiles: _.get(args, 'envs'),
+
+    envsExt: _.get(args, 'envsExt'),
+    envsExtJson: _.get(args, 'envsExtJson'),
+    extData: _.get(args, 'extData'),
+    extSelectors: _.get(args, 'extSelectors'),
+    extDataExt_files: _.get(args, 'extDataExt_files'),
+    extSelectorsExt_files: _.get(args, 'extSelectorsExt_files'),
+
+    debugMode: _.get(args, 'debugMode'),
+    logDisabled: _.get(args, 'logDisabled'),
+  };
+
+  let argsExt = {
+    testsFolder: _.get(args_ext, '--testsFolder'),
+    testFile: _.get(args_ext, '--test'),
+    testsList: JSON.parse(_.get(args_ext, '--testsList', 'null')),
+    outputFolder: _.get(args_ext, '--output'),
+    envFiles: JSON.parse(_.get(args_ext, '--envs', 'null')),
+
+    envsExt: JSON.parse(_.get(args_ext, '--envsExt', 'null')),
+    envsExtJson: _.get(args_ext, '--envsExt'),
+    extData: _.get(args_ext, '--data'),
+    extSelectors: _.get(args_ext, '--selectors'),
+    extDataExt_files: JSON.parse(_.get(args_ext, '--dataExt', 'null')),
+    extSelectorsExt_files: JSON.parse(_.get(args_ext, '--selectorsExt', 'null')),
+
+    debugMode: _.get(args_ext, '--debugMode'),
+    logDisabled: _.get(args_ext, '--logDisabled'),
+  };
+
+  let argsDefault = {
+    testsFolder: process.cwd(),
+    testFile: null,
+    testsList: [],
+    outputFolder: 'output',
+    envFiles: [],
+
+    envsExt: {},
+    envsExtJson: null,
+    extData: {},
+    extSelectors: {},
+    extDataExt_files: [],
+    extSelectorsExt_files: [],
+
+    debugMode: false,
+    logDisabled: false,
+  };
+
+  const removeEmpty = obj => Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
+
+  argsDefault = removeEmpty(argsDefault);
+  argsExt = removeEmpty(argsExt);
+  argsRaw = removeEmpty(argsRaw);
+  argsEnv = removeEmpty(argsEnv);
+
+  const megessss = merge(argsDefault, argsExt, argsRaw, argsEnv);
+  let {
+    outputFolder,
+    envFiles,
+    testsFolder,
+    envsExt,
+    testsList,
+    testFile,
+    debugMode,
+    logDisabled,
+    extData,
+    extSelectors,
+    envsExtJson,
+    extDataExt_files,
+    extSelectorsExt_files,
+  } = megessss;
+
+  if (!envFiles || _.isEmpty(envFiles)) {
+    throw { message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` };
+  }
 
   if (_.isEmpty(testsList)) {
     testsList = [testFile];
   }
 
-  let extDataExt_files = process.env.PPD_DATA_EXT
-    ? JSON.parse(process.env.PPD_DATA_EXT)
-    : _.get(args, 'dataExt') || JSON.parse(_.get(args_ext, '--dataExt', '[]'));
-
-  let extSelectorsExt_files = process.env.PPD_SELECTORS_EXT
-    ? JSON.parse(process.env.PPD_SELECTORS_EXT)
-    : _.get(args, 'selectorsExt') || JSON.parse(_.get(args_ext, '--selectorsExt', '[]'));
+  if (envsExtJson) {
+    try {
+      let envsExtJson_data = require(path.join(testsFolder, envsExtJson));
+      envsExt = merge(envsExtJson_data, envsExt);
+    } catch (err) {}
+  }
 
   extDataExt_files = resolveStars(extDataExt_files, testsFolder);
   let extDataExt = {};
@@ -128,7 +204,7 @@ const argParse = args => {
     if (_.get(data_ext, 'type') === 'data') {
       extDataExt = merge(extDataExt, _.get(data_ext, 'data', {}));
     } else {
-      throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+      throw { message: `Ext Data file ${f} not typed. Include "type: data" atribute` };
     }
   });
 
@@ -139,20 +215,9 @@ const argParse = args => {
     if (_.get(selectors_ext, 'type') === 'selectors') {
       extSelectorsExt = merge(extSelectorsExt, _.get(selectors_ext, 'data', {}));
     } else {
-      throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+      throw { message: `Ext Data file ${f} not typed. Include "type: selectors" atribute` };
     }
   });
-
-  if (!envFiles || _.isEmpty(envFiles)) {
-    throw { message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` };
-  }
-
-  if (envsExtJson) {
-    try {
-      let envsExtJson_data = require(path.join(testsFolder, envsExtJson));
-      envsExt = merge(envsExtJson_data, envsExt);
-    } catch (err) {}
-  }
 
   return {
     outputFolder,

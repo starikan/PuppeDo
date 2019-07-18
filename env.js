@@ -331,6 +331,7 @@ class Envs {
       const browserSettings = _.get(env, 'env.browser');
 
       if (type === 'api') {
+        // TODO: 2019-07-18 S.Starodubov todo
       }
 
       if (type === 'puppeteer') {
@@ -342,11 +343,11 @@ class Envs {
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const { browser, pages } = await connectElectron(browserSettings, this.args);
+          const { browser, pages } = await connectElectron(browserSettings);
           env.state = Object.assign(env.state, { browser, pages });
         }
         if (runtime === 'run') {
-          const { browser, pages } = await runElectron(browserSettings, this.args);
+          const { browser, pages } = await runElectron(browserSettings);
           env.state = Object.assign(env.state, { browser, pages });
         }
       }
