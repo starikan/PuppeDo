@@ -55,18 +55,24 @@
       "name": "PuppeDo_tests",
       "program": "${workspaceFolder}\\index.js",
       "env": {
+
         "PPD_TEST_FOLDER": "../PuppeDo_tests",
+        "PPD_TESTS": "[\"mainLogin\"]",
         "PPD_ENVS": "[\"settings/envElectron.yaml\"]",
-        // "PPD_ENVS": "[\"settings/envElectronRun.yaml\"]",
-        // "PPD_ENVS": "[\"envCloud.yaml\"]",
-        "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
-        "PPD_ENVS_EXT_JSON": "privateData/envElectronRunExt.json",
-        // "PPD_OUTPUT": "electron",
-        // "PPD_TEST": "mainLeftMenu",
-        "PPD_TEST": "mainLogin",
-        // "PPD_TEST": "авториацияПоПинКоду",
-        // "PPD_TESTS_LIST": "[\"mainLogin\", \"mainLeftMenu\"]",
+        "PPD_EXT_FILES": "[\"privateData/auth.yaml\", \"privateData/envElectronRunExt\"]",
         "PPD_DEBUG_MODE": "true",
+
+        // "PPD_ENVS": "[\"settings/envElectron.yaml\"]",
+        // // "PPD_ENVS": "[\"settings/envElectronRun.yaml\"]",
+        // // "PPD_ENVS": "[\"envCloud.yaml\"]",
+        // "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]",
+        // "PPD_ENVS_EXT_JSON": "privateData/envElectronRunExt.json",
+        // // "PPD_OUTPUT": "electron",
+        // // "PPD_TEST": "mainLeftMenu",
+        // "PPD_TEST": "mainLogin",
+        // // "PPD_TEST": "авториацияПоПинКоду",
+        // // "PPD_TESTS_LIST": "[\"mainLogin\", \"mainLeftMenu\"]",
+        // "PPD_DEBUG_MODE": "true",
         // "PPD_LOG_DISABLED": "true",
       }
     }

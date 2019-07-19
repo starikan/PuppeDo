@@ -3,7 +3,6 @@ const path = require('path');
 const { spawn } = require('child_process');
 const crypto = require('crypto');
 
-const yaml = require('js-yaml');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
@@ -11,7 +10,7 @@ const axios = require('axios');
 const walkSync = require('walk-sync');
 
 const logger = require('./logger');
-const { resolveStars, sleep } = require('./helpers');
+const { merge, sleep } = require('./helpers');
 
 async function runPuppeteer(browserSettings, args = {}) {
   const browser = await puppeteer.launch({
@@ -222,64 +221,6 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async createEnv({ envExt = {}, file = null, name = null } = {}) {
-    let env;
-
-    if (file && file.endsWith('.yaml')) {
-      const fileName = path.join(this.args.testsFolder, file);
-      env = await yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
-      Object.keys(envExt).forEach(key => {
-        _.set(env, key, envExt[key]);
-      });
-      name = env.name;
-    }
-
-    if (env) {
-      env.data = env.data || {};
-      env.selectors = env.selectors || {};
-
-      if (_.get(env, 'dataExt')) {
-        let dataExtList = _.get(env, 'dataExt');
-        dataExtList = _.isString(dataExtList) ? [dataExtList] : dataExtList;
-        if (!_.isArray(dataExtList)) {
-          throw { message: `dataExt wrong format ${dataExt}, ${file}` };
-        }
-        dataExtList = resolveStars(dataExtList, this.args.testsFolder);
-        for (let i = 0; i < dataExtList.length; i++) {
-          let dataExt = await yaml.safeLoad(fs.readFileSync(dataExtList[i], 'utf8'));
-          if (_.get(dataExt, 'type') === 'data') {
-            env.data = env.data || {};
-            env.data = Object.assign(dataExt.data, env.data);
-          } else {
-            throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
-          }
-        }
-      }
-
-      if (_.get(env, 'selectorsExt')) {
-        let selectorsExtList = _.get(env, 'selectorsExt');
-        selectorsExtList = _.isString(selectorsExtList) ? [selectorsExtList] : selectorsExtList;
-        if (!_.isArray(selectorsExtList)) {
-          throw { message: `selectorsExt wrong format ${selectorsExt}, ${file}` };
-        }
-        selectorsExtList = resolveStars(selectorsExtList, this.args.testsFolder);
-        for (let i = 0; i < selectorsExtList.length; i++) {
-          let selectorsExt = await yaml.safeLoad(fs.readFileSync(selectorsExtList[i], 'utf8'));
-          if (_.get(selectorsExt, 'type') === 'selectors') {
-            env.selectors = env.selectors || {};
-            env.selectors = Object.assign(selectorsExt.data, env.selectors);
-          } else {
-            throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
-          }
-        }
-      }
-    }
-
-    if (name && env) {
-      this.envs[name] = new Env(name, env);
-    }
-  }
-
   async initOutput({ output = 'output', test = 'test' } = {}) {
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
@@ -365,24 +306,23 @@ class Envs {
   }
 
   async init(args = {}, runBrowsers = true) {
-    let { envFiles, envsExt } = args;
-
+    let { envs, data, selectors } = args;
     this.set('args', args);
+    this.set('data', data);
+    this.set('selectors', selectors);
 
-    let envsData = envFiles.map((val, key) => {
-      let envFile = val.endsWith('.yaml') ? val : val + '.yaml';
-      envFile = path.normalize(envFile);
-      let envName = path.basename(envFile, '.yaml');
-      let envExt = _.get(envsExt, envName, {});
-      return {
-        envFile,
-        envName,
-        envExt,
-      };
-    });
+    for (let i = 0; i < envs.length; i++) {
+      const env = envs[i];
+      const name = _.get(env, 'name');
 
-    for (let i = 0; i < envsData.length; i++) {
-      await this.createEnv({ envExt: envsData[i].envExt, file: envsData[i].envFile });
+      if (env) {
+        env.data = merge(data, env.data || {});
+        env.selectors = merge(selectors, env.selectors || {});
+      }
+
+      if (name && env) {
+        this.envs[name] = new Env(name, env);
+      }
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {

@@ -139,15 +139,15 @@ class Test {
       if (isSelector) {
         joinArray = [
           this.env ? this.env.get('selectors') : {},
-          this.envs.get('args.extSelectorsExt', {}),
-          this.envs.get('args.extSelectors', {}),
+          // this.envs.get('args.extSelectorsExt', {}),
+          // this.envs.get('args.extSelectors', {}),
           this.envs.get('selectors', {}),
         ];
       } else {
         joinArray = [
           this.env ? this.env.get('data') : {},
-          this.envs.get('args.extDataExt', {}),
-          this.envs.get('args.extData', {}),
+          // this.envs.get('args.extDataExt', {}),
+          // this.envs.get('args.extData', {}),
           this.envs.get('data', {}),
         ];
       }
