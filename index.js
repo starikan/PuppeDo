@@ -39,18 +39,18 @@ const main = async (args = {}, socket = null) => {
 
     let envsIdGlob = null;
     let envsGlob = null;
-    args = argParse(args);
+    args = await argParse(args);
     socket.sendYAML({ data: args, type: 'init_args' });
 
-    for (let i = 0; i < args.testsList.length; i++) {
+    for (let i = 0; i < args.tests.length; i++) {
       let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob, socket });
       envsIdGlob = envsId;
       envsGlob = envs;
 
-      console.log('TEST', args.testsList[i]);
-      socket.sendYAML({ data: args.testsList[i], type: 'test_run', envsId });
+      console.log('TEST', args.tests[i]);
+      socket.sendYAML({ data: args.tests[i], type: 'test_run', envsId });
 
-      const testFile = args.testsList[i];
+      const testFile = args.tests[i];
       const testName = testFile.split('/')[testFile.split('/').length - 1];
       args.testFile = testFile;
       args.testName = testName;
@@ -68,7 +68,7 @@ const main = async (args = {}, socket = null) => {
 
       let test = getTest(fullJSON, envsId, socket);
       await test();
-      socket.sendYAML({ data: args.testsList[i], type: 'test_end', envsId });
+      socket.sendYAML({ data: args.tests[i], type: 'test_end', envsId });
     }
 
     await envsGlob.closeBrowsers();
@@ -87,9 +87,9 @@ const main = async (args = {}, socket = null) => {
 
 const fetchStruct = async (args = {}, socket) => {
   try {
-    args = argParse(args);
+    args = await argParse(args);
     socket.sendYAML({ data: args, type: 'init_args' });
-    let { envsId, envs, log } = require('./env')({ socket });
+    let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
 
     const fullJSON = getFullDepthJSON({ envs: envs, filePath: args.testFile, textView: true });
@@ -105,9 +105,9 @@ const fetchStruct = async (args = {}, socket) => {
 
 const fetchAvailableTests = async (args = {}, socket) => {
   try {
-    args = argParse(args);
+    args = await argParse(args);
     socket.sendYAML({ data: args, type: 'init_args' });
-    let { envsId, envs, log } = require('./env')({ socket });
+    let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
     const testsFolder = _.get(envs, ['args', 'testsFolder'], '.');
     const allYamls = await getAllYamls({ testsFolder, envsId });
