@@ -70,7 +70,7 @@ const resolveAliases = (valueName, inputs = {}, aliasses = {}) => {
   }
 };
 
-const checkNeedEnv = ({needEnv, envName} = {}) => {
+const checkNeedEnv = ({ needEnv, envName } = {}) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -181,6 +181,32 @@ class Test {
       return this.fetchData(true);
     };
 
+    this.collectDebugData = (error, locals = {}, message = null) => {
+      error.test = {
+        data: this.data,
+        bindData: this.bindData,
+        dataFunction: this.dataFunction,
+        dataExt: this.dataExt,
+        selectors: this.selectors,
+        bindSelectors: this.bindSelectors,
+        selectorsFunction: this.selectorsFunction,
+        selectorsExt: this.selectorsExt,
+        bindResults: this.bindResults,
+        resultFunction: this.resultFunction,
+        options: this.options,
+        repeat: this.repeat,
+        while: this.while,
+        if: this.if,
+        errorIf: this.errorIf,
+        errorIfResult: this.errorIfResult,
+      };
+      error.testLocal = locals;
+      if (message) {
+        error.message = message;
+      }
+      return error;
+    };
+
     this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
       const inputs = merge(inputArgs, constructorArgs);
 
@@ -200,6 +226,10 @@ class Test {
       this.options = resolveAliases('options', inputs, ALIASSES);
       this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
       this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
+      this.if = _.get(inputArgs, 'if') || _.get(constructorArgs, 'if') || this.if;
+      this.errorIf = _.get(inputArgs, 'errorIf') || _.get(constructorArgs, 'errorIf') || this.errorIf;
+      this.errorIfResult =
+        _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
         throw { message: 'Test shoud have envsId' };
@@ -213,7 +243,7 @@ class Test {
         this.envPageName = this.envs.get('current.page');
         this.env = this.envs.get(`envs.${this.envName}`);
 
-        checkNeedEnv({needEnv: this.needEnv, envName: this.envName});
+        checkNeedEnv({ needEnv: this.needEnv, envName: this.envName });
 
         let dataLocal = this.fetchData();
         let selectorsLocal = this.fetchSelectors();
@@ -241,6 +271,7 @@ class Test {
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
         // IF
+        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
         let expr = _.get(inputArgs, 'if');
         if (expr) {
           // TODO: 2019-07-18 S.Starodubov ReferenceError
@@ -256,6 +287,7 @@ class Test {
           }
         }
 
+        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
         // ERROR
         let errorExpr = _.get(inputArgs, 'errorIf');
         if (errorExpr) {
@@ -345,6 +377,7 @@ class Test {
         // RESULTS
         // TODO: выкидывать предупреждение если не пришло то чего нужно в результатах то чего в allowResults
         let results = _.pick(resultFromTest, allowResults);
+        let localResults = {};
 
         if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
           throw { message: 'Can`t get results from test' };
@@ -353,6 +386,7 @@ class Test {
         for (const key in this.bindResults) {
           results[this.bindResults[key]] = _.get(results, key);
         }
+        localResults = results;
 
         envs.set('results', merge(envs.get('results'), results));
 
@@ -362,7 +396,45 @@ class Test {
           let resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
           dataLocal = merge(dataLocal, resultFunction);
           selectorsLocal = merge(selectorsLocal, resultFunction);
-          envs.set('results', merge(envs.get('results'), results, resultFunction));
+          localResults = merge(localResults, resultFunction);
+          envs.set('results', merge(envs.get('results'), localResults));
+        }
+
+        // ERROR
+        if (this.errorIfResult) {
+          let exprResult = false;
+
+          try {
+            exprResult = safeEval(this.errorIfResult, localResults);
+          } catch (err) {
+            if (err.name == 'ReferenceError') {
+              await log({
+                level: 'error',
+                screenshot: true,
+                fullpage: true,
+                text: `errorIfResult can't evaluate = ${err.message}`,
+              });
+            }
+            throw this.collectDebugData(err, { dataLocal, selectorsLocal, localResults, results });
+          }
+          if (exprResult) {
+            await log({
+              level: 'error',
+              screenshot: true,
+              fullpage: true,
+              text: `Test stoped with error = ${this.errorIfResult}`,
+            });
+            throw this.collectDebugData(
+              {},
+              {
+                dataLocal,
+                selectorsLocal,
+                localResults,
+                results,
+              },
+              `Test stoped with error = ${this.errorIfResult}`,
+            );
+          }
         }
 
         // WHILE
@@ -381,6 +453,7 @@ class Test {
         }
       } catch (err) {
         err.envsId = envsId;
+        err.envs = this.envs;
         err.message += ` || error in test = ${this.name}`;
         err.socket = this.socket;
         err.debug = _.get(this.envs, ['args', 'debugMode']);

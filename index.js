@@ -18,6 +18,7 @@ process.on('unhandledRejection', async error => {
     error.socket.sendYAML({ data: errorObj, type: 'error', envsId: error.envsId });
   }
   if (error.debug) {
+    error.messageObj = _.get(error, 'message').split(' || ');
     console.log(error);
     debugger;
   }
