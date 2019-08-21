@@ -48,7 +48,7 @@ const main = async (args = {}, socket = null) => {
       envsIdGlob = envsId;
       envsGlob = envs;
 
-      console.log('TEST', args.tests[i]);
+      console.log(`======= TEST ${args.tests[i]} ========`);
       socket.sendYAML({ data: args.tests[i], type: 'test_run', envsId });
 
       const testFile = args.tests[i];

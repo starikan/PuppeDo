@@ -276,7 +276,7 @@ class Test {
         let expr = _.get(inputArgs, 'if');
         if (expr) {
           // TODO: 2019-07-18 S.Starodubov ReferenceError
-          let exprResult = safeEval(expr, dataLocal);
+          let exprResult = safeEval(expr, merge(dataLocal, selectorsLocal));
           if (!exprResult) {
             await log({
               level: 'info',
@@ -295,7 +295,7 @@ class Test {
           let exprResult = false;
 
           try {
-            exprResult = safeEval(errorExpr, dataLocal);
+            exprResult = safeEval(errorExpr, merge(dataLocal, selectorsLocal));
           } catch (err) {
             if (err.name == 'ReferenceError') {
               await log({
