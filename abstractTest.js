@@ -224,6 +224,7 @@ class Test {
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASSES);
 
       this.options = resolveAliases('options', inputs, ALIASSES);
+      this.description = _.get(inputArgs, 'description') || _.get(constructorArgs, 'description') || this.description;
       this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
       this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
       this.if = _.get(inputArgs, 'if') || _.get(constructorArgs, 'if') || this.if;
@@ -350,7 +351,7 @@ class Test {
         // Descriptions in log
         logBinded({
           screenshot: false,
-          text: _.get(inputArgs, 'description', `(${this.name}) TODO: Fill description`),
+          text: this.description || `(${this.name}) TODO: Fill description`,
           level: 'test',
           levelIndent,
         });
@@ -451,21 +452,22 @@ class Test {
           this.repeat -= 1;
           await this.run(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
         }
-      } catch (err) {
-        err.envsId = envsId;
-        err.envs = this.envs;
-        err.message += ` || error in test = ${this.name}`;
-        err.socket = this.socket;
-        err.debug = _.get(this.envs, ['args', 'debugMode']);
-        err.stepId = this.stepId;
+      } catch (error) {
+        error.envsId = error.envsId || envsId;
+        error.envs = error.envs || this.envs;
+        error.socket = error.socket || this.socket;
+        error.debug = error.debug || _.get(this.envs, ['args', 'debugMode']);
+        error.stepId = error.stepId || this.stepId;
+        error.testDescription = error.testDescription || this.description;
+        error.message += ` || error in test = ${this.name}`;
         log({
           level: 'error',
-          text: `Test ${this.name} = ${err.message}`,
+          text: `Description: ${this.description} (${this.name})`,
           screenshot: false,
           stepId: this.stepId,
         });
         await this.errorTest();
-        throw err;
+        throw error;
       }
     };
   }

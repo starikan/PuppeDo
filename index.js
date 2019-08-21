@@ -65,7 +65,7 @@ const main = async (args = {}, socket = null) => {
       const fullDescriptions = getDescriptions();
       socket.sendYAML({ data: fullDescriptions, type: 'fullDescriptions', envsId });
 
-      log({ level: 'env', text: fullDescriptions, testStruct: fullJSON, screenshot: false });
+      log({ level: 'env', text: '\n' + fullDescriptions, testStruct: fullJSON, screenshot: false });
 
       let test = getTest(fullJSON, envsId, socket);
       await test();
@@ -81,7 +81,6 @@ const main = async (args = {}, socket = null) => {
   } catch (error) {
     error.message += ` || error in 'main'`;
     error.socket = socket;
-    console.log(error)
     throw error;
   }
 };

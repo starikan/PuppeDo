@@ -39,7 +39,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   let name = _.get(full, 'name');
   let todo = _.get(full, 'todo');
   let fullString = '';
-  fullString += '    '.repeat(levelIndent);
+  fullString += '   '.repeat(levelIndent);
   fullString += todo ? 'TODO: ' + todo + '== ' : '';
   fullString += description ? `${description} ` : '';
   fullString += name ? `(${name})` : '';
