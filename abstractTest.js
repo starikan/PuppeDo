@@ -351,12 +351,10 @@ class Test {
         }
 
         for (const key in this.bindResults) {
-          results[key] = _.get(results, this.bindResults[key]);
+          results[this.bindResults[key]] = _.get(results, key);
         }
 
         envs.set('results', merge(envs.get('results'), results));
-
-        // if (this.name === 'getText') debugger;
 
         // RESULT FUNCTIONS
         if (!_.isEmpty(this.resultFunction)) {
