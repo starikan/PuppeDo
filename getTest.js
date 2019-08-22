@@ -49,7 +49,6 @@ const getTest = function(testJsonIncome, envsId, socket) {
         if (_.isFunction(funcFromFile)) {
           testJson[funcKey] = [funcFromFile];
         } else {
-          console.log(err);
           throw {
             message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
           };
