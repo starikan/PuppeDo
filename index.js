@@ -13,12 +13,11 @@ process.on('unhandledRejection', async error => {
     envsId: error.envsId,
     stepId: error.stepId,
   };
-  //TODO: 2019-05-21 S.Starodubov пробрасывать эти параметры в ошибку
+  error.messageObj = _.get(error, 'message').split(' || ');
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: errorObj, type: 'error', envsId: error.envsId });
   }
   if (error.debug) {
-    error.messageObj = _.get(error, 'message').split(' || ');
     console.log(error);
     debugger;
   }
