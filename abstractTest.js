@@ -406,7 +406,7 @@ class Test {
           let exprResult = false;
 
           try {
-            exprResult = safeEval(this.errorIfResult, localResults);
+            exprResult = safeEval(this.errorIfResult, merge(dataLocal, selectorsLocal, localResults));
           } catch (err) {
             if (err.name == 'ReferenceError') {
               await log({
