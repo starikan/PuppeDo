@@ -80,6 +80,7 @@ const main = async (args = {}, socket = null) => {
   } catch (error) {
     error.message += ` || error in 'main'`;
     error.socket = socket;
+    console.log(error);
     throw error;
   }
 };

@@ -13,7 +13,7 @@ class Helpers {
     if (page && selector && _.isString(selector) && _.isObject(page)) {
       let element;
       if (selector.startsWith('xpath:')) {
-        selector = selector.trimStart('xpath:');
+        selector = selector.replace(/^xpath:/, '');
         element = await page.$x(selector);
         if (!allElements) {
           if (element.length > 1) {
@@ -22,7 +22,7 @@ class Helpers {
           element = element[0];
         }
       } else {
-        selector = selector.trimStart('css:');
+        selector = selector.replace(/^css:/, '');
         element = allElements ? await page.$$(selector) : await page.$(selector);
       }
       return element;
