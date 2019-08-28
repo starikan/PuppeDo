@@ -118,7 +118,7 @@ const yaml2json = function(filePath, testsFolder = '.') {
     }
   }
 
-  throw { message: `YAML/JSON: Incorrect file name YAML/JSON - ${testFile}` };
+  throw { message: `YAML/JSON: Incorrect file name YAML/JSON - '${testFile}' associated with '${filePath}'` };
 };
 
 const getAllYamls = ({ testsFolder = '.', envsId }) => {
