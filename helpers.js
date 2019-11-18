@@ -5,6 +5,7 @@ const _ = require('lodash');
 const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 const deepmerge = require('deepmerge');
+require('polyfill-object.fromentries');
 
 class Helpers {
   constructor() {}
