@@ -3,10 +3,9 @@ const fs = require('fs');
 
 const _ = require('lodash');
 const dayjs = require('dayjs');
-const chalk = require('chalk');
 const yaml = require('js-yaml');
 
-const { sleep } = require('./helpers');
+const { sleep, stylesConsole } = require('./helpers');
 
 class Logger {
   constructor({ envs, socket, envsId }) {
@@ -45,7 +44,7 @@ class Logger {
         if (fullpage) {
           await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
         }
-        await fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
+        fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         // Timeout after screenshot
         await sleep(25);
         return name;
@@ -131,7 +130,6 @@ class Logger {
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
-      const styles = { info: chalk.blue, test: chalk.green, warn: chalk.yellow, error: chalk.red, env: chalk.magenta };
 
       // LEVEL RULES
       level = this.getLevel(level);
@@ -142,12 +140,8 @@ class Logger {
 
       // STDOUT
       if (stdOut) {
-        const styleFunction = _.get(styles, level);
-        if (styleFunction && _.isFunction(styleFunction)) {
-          console.log(styleFunction(logString));
-        } else {
-          console.log(logString);
-        }
+        const styleFunction = _.get(stylesConsole, level, args => args);
+        console.log(styleFunction(logString));
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -167,8 +161,8 @@ class Logger {
       }
 
       // EXPORT TEXT LOG
-      await fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n');
-      await fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), logString + '\n');
+      fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n');
+      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), logString + '\n');
 
       if (_.isEmpty(testStruct)) {
         testStruct = testSource;
@@ -213,8 +207,8 @@ class Logger {
       let indent = 2;
       let yamlString =
         (await '-\n') + yaml.dump(logEntry, { lineWidth: 1000, indent }).replace(/^/gm, ' '.repeat(indent)) + '\n';
-      await fs.appendFileSync(path.join(outputFolder, 'output.yaml'), yamlString);
-      await fs.appendFileSync(path.join(outputFolderLatest, 'output.yaml'), yamlString);
+      fs.appendFileSync(path.join(outputFolder, 'output.yaml'), yamlString);
+      fs.appendFileSync(path.join(outputFolderLatest, 'output.yaml'), yamlString);
 
       if (debug) {
         debugger;

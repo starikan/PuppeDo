@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
-const { argParse } = require('./helpers');
+const { argParse, stylesConsole } = require('./helpers');
 const { getAllYamls } = require('./yaml2json');
 
 process.on('unhandledRejection', async error => {
@@ -18,7 +18,8 @@ process.on('unhandledRejection', async error => {
     error.socket.sendYAML({ data: errorObj, type: 'error', envsId: error.envsId });
   }
   if (error.debug) {
-    console.log(error);
+    const styleFunction = _.get(stylesConsole, 'trace', args => args);
+    console.log(styleFunction(error));
     debugger;
   }
   if (!module.parent) {
@@ -80,7 +81,8 @@ const main = async (args = {}, socket = null) => {
   } catch (error) {
     error.message += ` || error in 'main'`;
     error.socket = socket;
-    console.log(error);
+    const styleFunction = _.get(stylesConsole, 'trace', args => args);
+    console.log(styleFunction(error));
     throw error;
   }
 };

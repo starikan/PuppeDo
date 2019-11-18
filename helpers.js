@@ -168,17 +168,7 @@ const argParse = async args => {
     argsEnv = removeEmpty(argsEnv);
 
     const megessss = merge(argsDefault, argsExt, argsRaw, argsEnv);
-    let {
-      testsFolder,
-      outputFolder,
-      envFiles,
-      extFiles,
-      data,
-      selectors,
-      tests,
-      debugMode,
-      logDisabled,
-    } = megessss;
+    let { testsFolder, outputFolder, envFiles, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
 
     tests = !_.isArray(tests) ? [tests] : tests;
 
@@ -249,10 +239,22 @@ const argParse = async args => {
   }
 };
 
+const stylesConsole = {
+  raw: _logString => _logString,
+  debug: _logString => _logString,
+  info: _logString => `\u001b[${35}m${_logString}\u001b[0m`, // pink
+  test: _logString => `\u001b[${32}m${_logString}\u001b[0m`, // green
+  warn: _logString => `\u001b[${33}m${_logString}\u001b[0m`, // yellow
+  error: _logString => `\u001b[${31}m${_logString}\u001b[0m`, // red
+  trace: _logString => `\u001b[${36}m${_logString}\u001b[0m`, // blue
+  env: _logString => `\u001b[${34}m${_logString}\u001b[0m`, // violete
+};
+
 module.exports = {
   Helpers,
   merge,
   resolveStars,
   argParse,
   sleep,
+  stylesConsole,
 };
