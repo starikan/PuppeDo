@@ -138,7 +138,7 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const logString = `${now} - ${level.padEnd(5)} - ${'   '.repeat(levelIndent)} ${text}`;
+      const logString = `${now} - ${level.padEnd(5)} - ${' | '.repeat(levelIndent)} ${text}`;
 
       // STDOUT
       if (stdOut) {
