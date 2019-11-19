@@ -126,8 +126,12 @@ class Logger {
       if (!outputFolder || !outputFolderLatest) return;
 
       const screenshots = [];
-      screenshot = _.get(activeLog, 'screenshot', !!screenshot);
-      fullpage = _.get(activeLog, 'fullpage', !!fullpage);
+      if (!_.get(activeLog, 'screenshot')) {
+        screenshot = false;
+      }
+      if (!_.get(activeLog, 'fullpage')) {
+        fullpage = false;
+      }
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
@@ -224,7 +228,7 @@ class Logger {
       err.socket = this.socket;
       err.debug = _.get(this.envs, ['args', 'debugMode']);
       err.stepId = _.get(bindedData, 'stepId');
-      debugger
+      debugger;
       throw err;
     }
   }
