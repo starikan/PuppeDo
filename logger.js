@@ -126,8 +126,8 @@ class Logger {
       if (!outputFolder || !outputFolderLatest) return;
 
       const screenshots = [];
-      screenshot = !_.isBoolean(screenshot) ? _.get(activeLog, 'screenshot', false) : screenshot;
-      fullpage = !_.isBoolean(fullpage) ? _.get(activeLog, 'fullpage', false) : fullpage;
+      screenshot = _.get(activeLog, 'screenshot', !!screenshot);
+      fullpage = _.get(activeLog, 'fullpage', !!fullpage);
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
