@@ -123,6 +123,8 @@ class Test {
     this.socket = socket;
     this.stepId = stepId;
     this.breadcrumbs = breadcrumbs;
+    this.funcFile = constructorArgs.funcFile;
+    this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
       let dataLocal, joinArray;
@@ -465,6 +467,8 @@ class Test {
           text: `Description: ${this.description} (${this.name})`,
           screenshot: false,
           stepId: this.stepId,
+          funcFile: this.funcFile,
+          testFile: this.testFile,
         });
         await this.errorTest();
         throw error;

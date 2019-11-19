@@ -47,6 +47,8 @@ const getTest = function(testJsonIncome, envsId, socket) {
           funcFromFile = _.get(require(funcFile), funcKey);
         }
         if (_.isFunction(funcFromFile)) {
+          // Resolve JS file for test for logging
+          testJson.funcFile = path.resolve(funcFile);
           testJson[funcKey] = [funcFromFile];
         } else {
           throw {

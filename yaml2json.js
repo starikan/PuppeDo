@@ -112,6 +112,7 @@ const yaml2json = function(filePath, testsFolder = '.') {
   if (testFile && testFile.endsWith('.yaml')) {
     try {
       full = yaml.safeLoad(fs.readFileSync(testFile, 'utf8'));
+      full.testFile = path.resolve(testFile);
       return { json: full };
     } catch (e) {
       throw e;

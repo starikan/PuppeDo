@@ -110,6 +110,8 @@ class Logger {
       element = false,
       testStruct = null,
       levelIndent = 0,
+      funcFile,
+      testFile,
     } = {},
     testSource,
     bindedData,
@@ -142,6 +144,10 @@ class Logger {
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
         console.log(styleFunction(logString));
+        if (level === 'error') {
+          if (testFile) console.log('Файл с тестом:', styleFunction(testFile));
+          if (funcFile) console.log('Файл с функцией:', styleFunction(funcFile));
+        }
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -218,6 +224,7 @@ class Logger {
       err.socket = this.socket;
       err.debug = _.get(this.envs, ['args', 'debugMode']);
       err.stepId = _.get(bindedData, 'stepId');
+      debugger
       throw err;
     }
   }
