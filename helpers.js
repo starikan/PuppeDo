@@ -202,23 +202,24 @@ const argParse = async args => {
     // Data and Selectors resolve in env
     for (let i = 0; i < envs.length; i++) {
       const env = envs[i];
+
       let dataExt = _.get(env, 'dataExt');
-      let selectorsExt = _.get(env, 'selectorsExt');
-      dataExt = _.isString(dataExt) ? [dataExt] : dataExt;
-      selectorsExt = _.isString(selectorsExt) ? [selectorsExt] : selectorsExt;
-      dataExt = resolveStars(dataExt);
-      selectorsExt = resolveStars(selectorsExt);
-      for (let i = 0; i < dataExt.length; i++) {
-        // debugger
-        dataExt[i] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, dataExt[i]), 'utf8'));
-        if (_.get(dataExt[i], 'type') === 'data') {
-          envs[i].data = merge(data, _.get(dataExt[i], 'data'));
+      dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
+      envs[i].data = data;
+      for (let j = 0; j < dataExt.length; j++) {
+        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, dataExt[j]), 'utf8'));
+        if (_.get(dataExt[j], 'type') === 'data') {
+          envs[i].data = merge(envs[i].data, _.get(dataExt[j], 'data', {}));
         }
       }
-      for (let i = 0; i < selectorsExt.length; i++) {
-        selectorsExt[i] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, selectorsExt[i]), 'utf8'));
-        if (_.get(selectorsExt[i], 'type') === 'selectors') {
-          envs[i].selectors = merge(selectors, _.get(selectorsExt[i], 'data'));
+
+      let selectorsExt = _.get(env, 'selectorsExt');
+      selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
+      envs[i].selectors = selectors;
+      for (let j = 0; j < selectorsExt.length; j++) {
+        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, selectorsExt[j]), 'utf8'));
+        if (_.get(selectorsExt[j], 'type') === 'selectors') {
+          envs[i].selectors = merge(envs[i].selectors, _.get(selectorsExt[j], 'data', {}));
         }
       }
     }
