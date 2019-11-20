@@ -5,17 +5,13 @@ const { getTest } = require('./getTest');
 const { argParse, stylesConsole } = require('./helpers');
 const { getAllYamls } = require('./yaml2json');
 
-process.on('unhandledRejection', async error => {
-  const errorObj = {
-    message: error.message,
-    stack: error.stack,
-    name: error.name,
-    envsId: error.envsId,
-    stepId: error.stepId,
-  };
+const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
   if (error.socket && error.socket.sendYAML) {
-    error.socket.sendYAML({ data: errorObj, type: 'error', envsId: error.envsId });
+    error.socket.sendYAML({ data: {...error}, type: error.type || 'error', envsId: error.envsId });
+  }
+  if (error.stack) {
+    error.stack = error.stack.split('\n    ')
   }
   if (error.debug) {
     const styleFunction = _.get(stylesConsole, 'trace', args => args);
@@ -25,7 +21,10 @@ process.on('unhandledRejection', async error => {
   if (!module.parent) {
     process.exit(1);
   }
-});
+}
+
+process.on('unhandledRejection', errorHandler);
+process.on('SyntaxError', errorHandler);
 
 const main = async (args = {}, socket = null) => {
   try {
@@ -83,6 +82,12 @@ const main = async (args = {}, socket = null) => {
     error.socket = socket;
     const styleFunction = _.get(stylesConsole, 'trace', args => args);
     console.log(styleFunction(error));
+    if (String(error).startsWith('SyntaxError')) {
+      error.debug = true;
+      error.type = 'SyntaxError';
+      await errorHandler(error);
+      return;
+    }
     throw error;
   }
 };
