@@ -114,12 +114,12 @@ async function runElectron(browserSettings) {
     let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
 
     prc.stdout.on('data', data => {
-      // console.log(String(data));
+      console.log(String(data));
     });
     await sleep(pauseAfterStartApp);
 
     let { browser, pages } = await connectElectron(browserSettings);
-    return { browser: browser, pages: pages };
+    return { browser, pages, pid: prc.pid };
   } else {
     throw { message: `Can't run Electron ${runtimeExecutable}` };
   }
@@ -288,8 +288,8 @@ class Envs {
           env.state = Object.assign(env.state, { browser, pages });
         }
         if (runtime === 'run') {
-          const { browser, pages } = await runElectron(browserSettings);
-          env.state = Object.assign(env.state, { browser, pages });
+          const { browser, pages, pid } = await runElectron(browserSettings);
+          env.state = Object.assign(env.state, { browser, pages, pid });
         }
       }
     }
@@ -301,6 +301,19 @@ class Envs {
       const state = this.envs[key].state;
       try {
         state.browser.close();
+      } catch (exc) {}
+    }
+  }
+
+  async closeProcesses() {
+    for (let i = 0; i < Object.keys(this.envs).length; i++) {
+      const key = Object.keys(this.envs)[i];
+      const pid = _.get(this.envs[key], "state.pid");
+      const killOnEnd = _.get(this.envs[key], "env.browser.killOnEnd", true);
+      try {
+        if (killOnEnd) {
+          spawn("taskkill", ["/pid", pid, '/f', '/t']);
+        }
       } catch (exc) {}
     }
   }

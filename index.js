@@ -72,6 +72,7 @@ const main = async (args = {}, socket = null) => {
     }
 
     await envsGlob.closeBrowsers();
+    await envsGlob.closeProcesses();
     console.timeEnd();
 
     if (!module.parent) {
