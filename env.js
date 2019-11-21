@@ -12,118 +12,6 @@ const walkSync = require('walk-sync');
 const logger = require('./logger');
 const { merge, sleep } = require('./helpers');
 
-async function runPuppeteer(browserSettings, args = {}) {
-  const browser = await puppeteer.launch({
-    headless: _.get(browserSettings, 'headless', true),
-    slowMo: _.get(browserSettings, 'slowMo', 0),
-    args: _.get(browserSettings, 'args', []),
-    devtools: !!_.get(args, 'debugMode', false),
-  });
-
-  const page = await browser.newPage();
-  const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
-  await page.setViewport(override);
-
-  let pages = { main: page };
-
-  let width = _.get(browserSettings, 'windowSize.width');
-  let height = _.get(browserSettings, 'windowSize.height');
-  if (width && height) {
-    await pages.main.setViewport({ width: width, height: height });
-  }
-
-  return { browser, pages };
-}
-
-async function connectElectron(browserSettings) {
-  const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
-
-  if (urlDevtoolsJson) {
-    let jsonPages = await axios.get(urlDevtoolsJson + 'json');
-    let jsonBrowser = await axios.get(urlDevtoolsJson + 'json/version');
-
-    jsonPages = _.get(jsonPages, 'data');
-    jsonBrowser = _.get(jsonBrowser, 'data');
-
-    if (!jsonBrowser || !jsonPages) {
-      throw { message: `Can't connect to ${urlDevtoolsJson}` };
-    }
-
-    const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
-    if (!webSocketDebuggerUrl) {
-      throw { message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running` };
-    }
-
-    const browser = await puppeteer.connect({
-      browserWSEndpoint: webSocketDebuggerUrl,
-      ignoreHTTPSErrors: true,
-      slowMo: _.get(browserSettings, 'slowMo', 0),
-    });
-    let pagesRaw = await browser.pages();
-    let pages = {};
-    if (pagesRaw.length) {
-      pages = { main: pagesRaw[0] };
-    } else {
-      throw { message: 'Cand find any pages in connection' };
-    }
-
-    let width = _.get(browserSettings, 'windowSize.width');
-    let height = _.get(browserSettings, 'windowSize.height');
-    if (width && height) {
-      await pages.main.setViewport({ width: width, height: height });
-    }
-
-    // // Window frame - probably OS and WM dependent.
-    // height += 85;
-
-    // // Any tab.
-    // const {targetInfos: [{targetId}]} = await browser._connection.send(
-    //   'Target.getTargets'
-    // );
-
-    // // Tab window.
-    // const {windowId} = await browser._connection.send(
-    //   'Browser.getWindowForTarget',
-    //   {targetId}
-    // );
-
-    // // Resize.
-    // await browser._connection.send('Browser.setWindowBounds', {
-    //   bounds: {height, width},
-    //   windowId
-    // });
-
-    return { browser: browser, pages: pages };
-  }
-
-  throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
-}
-
-async function runElectron(browserSettings) {
-  const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
-  const program = _.get(browserSettings, 'runtimeEnv.program');
-  const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
-  const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
-  const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
-  const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
-
-  if (runtimeExecutable) {
-    const run_args = [program, ...browser_args];
-    process.env = Object.assign(process.env, browser_env);
-
-    let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
-
-    prc.stdout.on('data', data => {
-      console.log(String(data));
-    });
-    await sleep(pauseAfterStartApp);
-
-    let { browser, pages } = await connectElectron(browserSettings);
-    return { browser, pages, pid: prc.pid };
-  } else {
-    throw { message: `Can't run Electron ${runtimeExecutable}` };
-  }
-}
 class Env {
   constructor(name, env = {}) {
     this.name = name;
@@ -221,7 +109,9 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async initOutput({ output = 'output', test = 'test' } = {}) {
+  async initOutput(args) {
+    const test = args.testName || 'test';
+    const output = args.outputFolder || 'output';
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
@@ -237,7 +127,8 @@ class Envs {
     this.output.folder = folder;
   }
 
-  async initOutputLatest({ output = 'output' } = {}) {
+  async initOutputLatest(args) {
+    const output = args.outputFolder || 'output';
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
@@ -262,7 +153,7 @@ class Envs {
     this.initOutputLatest = () => {};
   }
 
-  async runBrowsers() {
+  async runBrowsers(args) {
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
@@ -277,21 +168,140 @@ class Envs {
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const { browser, pages } = await runPuppeteer(browserSettings, this.args);
+          const { browser, pages } = await this.runPuppeteer(browserSettings, args);
           env.state = Object.assign(env.state, { browser, pages });
         }
       }
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const { browser, pages } = await connectElectron(browserSettings);
+          const { browser, pages } = await this.connectElectron(browserSettings);
           env.state = Object.assign(env.state, { browser, pages });
         }
         if (runtime === 'run') {
-          const { browser, pages, pid } = await runElectron(browserSettings);
+          const { browser, pages, pid } = await this.runElectron(browserSettings, env);
           env.state = Object.assign(env.state, { browser, pages, pid });
         }
       }
+    }
+  }
+
+  async runPuppeteer(browserSettings, args = {}) {
+    const browser = await puppeteer.launch({
+      headless: _.get(browserSettings, 'headless', true),
+      slowMo: _.get(browserSettings, 'slowMo', 0),
+      args: _.get(browserSettings, 'args', []),
+      devtools: !!_.get(args, 'debugMode', false),
+    });
+
+    const page = await browser.newPage();
+    const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
+    await page.setViewport(override);
+
+    let pages = { main: page };
+
+    let width = _.get(browserSettings, 'windowSize.width');
+    let height = _.get(browserSettings, 'windowSize.height');
+    if (width && height) {
+      await pages.main.setViewport({ width: width, height: height });
+    }
+
+    return { browser, pages };
+  }
+
+  async connectElectron(browserSettings) {
+    const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
+
+    if (urlDevtoolsJson) {
+      let jsonPages = await axios.get(urlDevtoolsJson + 'json');
+      let jsonBrowser = await axios.get(urlDevtoolsJson + 'json/version');
+
+      jsonPages = _.get(jsonPages, 'data');
+      jsonBrowser = _.get(jsonBrowser, 'data');
+
+      if (!jsonBrowser || !jsonPages) {
+        throw { message: `Can't connect to ${urlDevtoolsJson}` };
+      }
+
+      const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
+      if (!webSocketDebuggerUrl) {
+        throw { message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running` };
+      }
+
+      const browser = await puppeteer.connect({
+        browserWSEndpoint: webSocketDebuggerUrl,
+        ignoreHTTPSErrors: true,
+        slowMo: _.get(browserSettings, 'slowMo', 0),
+      });
+      let pagesRaw = await browser.pages();
+      let pages = {};
+      if (pagesRaw.length) {
+        pages = { main: pagesRaw[0] };
+      } else {
+        throw { message: 'Cand find any pages in connection' };
+      }
+
+      let width = _.get(browserSettings, 'windowSize.width');
+      let height = _.get(browserSettings, 'windowSize.height');
+      if (width && height) {
+        await pages.main.setViewport({ width: width, height: height });
+      }
+
+      // // Window frame - probably OS and WM dependent.
+      // height += 85;
+
+      // // Any tab.
+      // const {targetInfos: [{targetId}]} = await browser._connection.send(
+      //   'Target.getTargets'
+      // );
+
+      // // Tab window.
+      // const {windowId} = await browser._connection.send(
+      //   'Browser.getWindowForTarget',
+      //   {targetId}
+      // );
+
+      // // Resize.
+      // await browser._connection.send('Browser.setWindowBounds', {
+      //   bounds: {height, width},
+      //   windowId
+      // });
+
+      return { browser: browser, pages: pages };
+    }
+
+    throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
+  }
+
+  async runElectron(browserSettings, env) {
+    const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
+    const program = _.get(browserSettings, 'runtimeEnv.program');
+    const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
+    const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
+    const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
+    const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
+
+    if (runtimeExecutable) {
+      const run_args = [program, ...browser_args];
+      process.env = Object.assign(process.env, browser_env);
+
+      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
+
+      if (prc) {
+        fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
+        fs.writeFileSync(path.join(this.output.folderLatest, `${env.name}.log`), '');
+      };
+
+      prc.stdout.on('data', data => {
+        fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
+        fs.appendFileSync(path.join(this.output.folderLatest, `${env.name}.log`), String(data));
+      });
+      await sleep(pauseAfterStartApp);
+
+      let { browser, pages } = await this.connectElectron(browserSettings);
+      return { browser, pages, pid: prc.pid };
+    } else {
+      throw { message: `Can't run Electron ${runtimeExecutable}` };
     }
   }
 
@@ -343,7 +353,7 @@ class Envs {
     }
 
     if (runBrowsers) {
-      await this.runBrowsers();
+      await this.runBrowsers(args);
     }
 
     // If already init do nothing

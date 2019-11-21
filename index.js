@@ -50,16 +50,14 @@ const main = async (args = {}, socket = null) => {
       console.log(`======= TEST ${args.tests[i]} ========`);
       socket.sendYAML({ data: args.tests[i], type: 'test_run', envsId });
 
-      const testFile = args.tests[i];
-      const testName = testFile.split('/')[testFile.split('/').length - 1];
-      args.testFile = testFile;
-      args.testName = testName;
+      args.testFile = args.tests[i];
+      args.testName = args.testFile.split('/')[args.testFile.split('/').length - 1];
 
+      await envs.initOutput(args);
+      await envs.initOutputLatest(args);
       await envs.init(args);
-      await envs.initOutput({ test: testName, output: args.outputFolder });
-      await envs.initOutputLatest({ output: args.outputFolder });
 
-      const fullJSON = getFullDepthJSON({ envs: envs, filePath: testFile, textView: true });
+      const fullJSON = getFullDepthJSON({ envs: envs, filePath: args.testFile, textView: true });
       socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
       const fullDescriptions = getDescriptions();
       socket.sendYAML({ data: fullDescriptions, type: 'fullDescriptions', envsId });
