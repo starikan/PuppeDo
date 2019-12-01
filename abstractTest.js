@@ -275,7 +275,7 @@ class Test {
 
         // IF
         // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
-        let expr = _.get(inputArgs, 'if');
+        let expr = this.if;
         if (expr) {
           // TODO: 2019-07-18 S.Starodubov ReferenceError
           let exprResult = safeEval(expr, merge(dataLocal, selectorsLocal));
@@ -292,7 +292,7 @@ class Test {
 
         // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
         // ERROR
-        let errorExpr = _.get(inputArgs, 'errorIf');
+        let errorExpr = this.errorIf;
         if (errorExpr) {
           let exprResult = false;
 
@@ -387,7 +387,8 @@ class Test {
         }
 
         for (const key in this.bindResults) {
-          results[this.bindResults[key]] = _.get(results, key);
+          // results[this.bindResults[key]] = _.get(results, key);
+          results[key] = _.get(results, this.bindResults[key]);
         }
         localResults = results;
 
@@ -452,7 +453,7 @@ class Test {
         // REPEAT
         if (this.repeat > 1) {
           this.repeat -= 1;
-          await this.run(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+          await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
         }
       } catch (error) {
         error.envsId = error.envsId || envsId;
