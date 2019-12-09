@@ -240,6 +240,7 @@ const argParse = async args => {
   }
 };
 
+// https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 const stylesConsole = {
   raw: _logString => _logString,
   debug: _logString => _logString,
