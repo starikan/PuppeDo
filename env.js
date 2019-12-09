@@ -158,9 +158,9 @@ class Envs {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
 
-      const type = _.get(env, 'env.browser.type');
-      const runtime = _.get(env, 'env.browser.runtime');
-      const browserSettings = _.get(env, 'env.browser');
+      const type = _.get(env, 'env.browser.type', 'puppeteer');
+      const runtime = _.get(env, 'env.browser.runtime', 'run');
+      const browserSettings = _.get(env, 'env.browser', {});
 
       if (type === 'api') {
         // TODO: 2019-07-18 S.Starodubov todo
@@ -275,15 +275,15 @@ class Envs {
     const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
     const program = _.get(browserSettings, 'runtimeEnv.program');
     const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
-    const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
-    const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
+    const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
+    const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
     const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
 
     if (runtimeExecutable) {
-      const run_args = [program, ...browser_args];
-      process.env = Object.assign(process.env, browser_env);
+      const run_args = [program, ...browserArgs];
+      process.env = Object.assign(process.env, browserEnv);
 
-      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
+      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browserEnv });
 
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
