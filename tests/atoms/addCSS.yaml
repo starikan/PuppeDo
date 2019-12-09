@@ -1,0 +1,9 @@
+---
+name: addCSS
+type: atom
+needData: ['css']
+runTest: atoms/addCSS.js
+description: 'Inject user CSS styles on current page'
+help:
+  data:
+    css: css style to inject [string]

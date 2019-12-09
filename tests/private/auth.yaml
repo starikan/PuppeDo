@@ -1,0 +1,8 @@
+---
+type: data
+description: Secret Data
+needEnv: mainEnv
+data:
+  auth:
+    login: login
+    password: password

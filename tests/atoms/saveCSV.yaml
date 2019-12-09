@@ -1,0 +1,4 @@
+name: saveCSV
+type: atom
+needData: ['data', 'headers?', 'filename', 'folder']
+runTest: 'atoms/saveCSV.js'

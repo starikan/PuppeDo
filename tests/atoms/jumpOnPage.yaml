@@ -1,0 +1,4 @@
+name: jumpOnPage
+type: atom
+needData: ['name']
+runTest: atoms/jumpOnPage.js

@@ -8,14 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "PuppeDo_tests",
-      "program": "${workspaceFolder}\\index.js",
-      "env": {
-        "PPD_TEST_FOLDER": "../PuppeDo_tests",
-        "PPD_TESTS": "[\"mainLogin\"]",
-        "PPD_ENVS": "[\"settings/envElectron.yaml\"]",
-        "PPD_EXT_FILES": "[\"privateData/auth.yaml\", \"privateData/envElectronRunExt\"]",
-        "PPD_DEBUG_MODE": "true",
-      }
+      "program": "${workspaceFolder}\\tests\\index.js"
     }
   ]
 }

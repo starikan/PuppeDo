@@ -1,0 +1,13 @@
+name: clickSelectorAndWait
+type: atom
+needSelectors: ['selector', 'selectorWait?']
+needData: ['time?']
+runTest:
+  - clickSelector:
+      bS: { selector: selector }
+  - waitForSelector:
+      bS: { selector: selectorWait }
+      if: "selector ? true : false"
+  - waitTime:
+      bD: { time: time }
+      if: "time ? true : false"

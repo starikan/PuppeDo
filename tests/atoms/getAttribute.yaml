@@ -1,0 +1,7 @@
+---
+name: getAttribute
+type: atom
+needSelectors: ['selector']
+needData: ['attribute']
+allowResults: ['attributeValue']
+runTest: atoms/getAttribute.js

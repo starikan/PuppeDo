@@ -1,0 +1,3 @@
+name: debugger
+type: atom
+runTest: atoms/debugger.js

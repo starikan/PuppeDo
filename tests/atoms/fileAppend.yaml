@@ -1,0 +1,4 @@
+type: atom
+name: fileAppend
+needData: ['fileName', 'string']
+runTest: atoms/fileAppend.js

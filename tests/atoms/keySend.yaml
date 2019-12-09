@@ -1,0 +1,4 @@
+name: keySend
+type: atom
+needData: ['key', 'modificator?', 'modificator1?', 'modificator2?']
+runTest: atoms/keySend.js

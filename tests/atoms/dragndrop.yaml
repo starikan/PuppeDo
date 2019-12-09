@@ -1,0 +1,16 @@
+---
+name: dragAndDrop
+needSelectors: ['dnd_selector']
+needData: ['dnd_offcetX', 'dnd_offcetY', 'dnd_dX', 'dnd_dY']
+runTest:
+  - mouseMoveOnSelector:
+      bS: { selector: dnd_selector }
+      bD:
+        dX: dnd_offcetX
+        dY: dnd_offcetY
+  - mouseDown:
+  - mouseMove:
+      bD:
+        dX: dnd_dX
+        dY: dnd_dY
+  - mouseUp:

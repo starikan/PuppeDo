@@ -1,0 +1,6 @@
+---
+name: checkPageUrl
+type: atom
+needData: ['url']
+allowResults: ['exists']
+runTest: atoms/checkPageUrl.js

@@ -1,0 +1,6 @@
+name: typeInput
+type: atom
+needSelectors: ['input']
+needData: ['text']
+runTest: atoms/typeInput.js
+afterTest: atoms/typeInput.js

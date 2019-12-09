@@ -1,0 +1,4 @@
+name: hoverSelector
+type: atom
+needSelectors: ['selector']
+runTest: atoms/hoverSelector.js

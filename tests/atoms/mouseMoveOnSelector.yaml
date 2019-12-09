@@ -1,0 +1,5 @@
+name: mouseMoveOnSelector
+type: atom
+needSelectors: ['selector']
+needData: ['dX', 'dY']
+runTest: atoms/mouseMoveOnSelector.js

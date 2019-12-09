@@ -1,0 +1,3 @@
+name: mouseDown
+type: atom
+runTest: atoms/mouseDown.js

@@ -1,0 +1,5 @@
+---
+name: addJS
+type: atom
+needData: ['js?', 'jsFile?']
+runTest: atoms/addJS.js

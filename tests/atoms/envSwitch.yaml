@@ -1,0 +1,4 @@
+name: envSwitch
+type: atom
+needData: ['envName']
+runTest: atoms/envSwitch.js

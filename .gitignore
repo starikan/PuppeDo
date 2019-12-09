@@ -10,4 +10,3 @@ node_modules
 output
 settings
 yarn.lock
-/.vscode/settings.json
