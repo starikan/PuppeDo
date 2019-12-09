@@ -105,15 +105,13 @@ const argParse = async args => {
 
   try {
     argsEnv = {
-      testsFolder: process.env.PPD_TEST_FOLDER,
-      outputFolder: process.env.PPD_OUTPUT,
+      testsFolder: process.env.PPD_ROOT,
       envFiles: JSON.parse(process.env.PPD_ENVS || 'null'),
-
+      outputFolder: process.env.PPD_OUTPUT,
       tests: resolveJson(process.env.PPD_TESTS),
       data: resolveJson(process.env.PPD_DATA),
       selectors: resolveJson(process.env.PPD_SELECTORS),
       extFiles: resolveJson(process.env.PPD_EXT_FILES),
-
       debugMode: ['true', 'false'].includes(process.env.PPD_DEBUG_MODE) ? JSON.parse(process.env.PPD_DEBUG_MODE) : null,
       logDisabled: ['true', 'false'].includes(process.env.PPD_LOG_DISABLED)
         ? JSON.parse(process.env.PPD_LOG_DISABLED)
@@ -121,43 +119,37 @@ const argParse = async args => {
     };
 
     argsRaw = {
-      testsFolder: _.get(args, 'testsFolder'),
+      testsFolder: _.get(args, 'PPD_ROOT'),
+      envFiles: _.get(args, 'PPD_ENVS'),
       outputFolder: _.get(args, 'output'),
-      envFiles: _.get(args, 'envs'),
-
       tests: _.get(args, 'tests'),
       data: _.get(args, 'data'),
       selectors: _.get(args, 'selectors'),
       extFiles: resolveJson(_.get(args, 'extFiles')),
-
       debugMode: _.get(args, 'debugMode'),
       logDisabled: _.get(args, 'logDisabled'),
     };
 
     argsExt = {
-      testsFolder: _.get(args_ext, '--testsFolder'),
+      testsFolder: _.get(args_ext, '--PPD_ROOT'),
+      envFiles: JSON.parse(_.get(args_ext, '--PPD_ENVS', 'null')),
       outputFolder: _.get(args_ext, '--output'),
-      envFiles: JSON.parse(_.get(args_ext, '--envs', 'null')),
-
       tests: resolveJson(_.get(args_ext, '--tests')),
       data: _.get(args_ext, '--data'),
       selectors: _.get(args_ext, '--selectors'),
       extFiles: resolveJson(_.get(args_ext, '--extFiles')),
-
       debugMode: _.get(args_ext, '--debugMode'),
       logDisabled: _.get(args_ext, '--logDisabled'),
     };
 
     argsDefault = {
       testsFolder: process.cwd(),
-      outputFolder: 'output',
       envFiles: [],
-
+      outputFolder: 'output',
       tests: [],
       data: {},
       selectors: {},
       extFiles: [],
-
       debugMode: false,
       logDisabled: false,
     };

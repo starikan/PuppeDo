@@ -1,6 +1,5 @@
 ---
 type: data
 description: Simple Data
-needEnv: mainEnv
 data:
   data: test

@@ -1,6 +1,5 @@
 ---
 type: selectors
 description: Simple Selectors
-needEnv: mainEnv
 data:
   selector: test
