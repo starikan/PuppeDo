@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
-const axios = require('axios');
+const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
 const logger = require('./logger');
@@ -213,11 +213,11 @@ class Envs {
     const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
 
     if (urlDevtoolsJson) {
-      let jsonPages = await axios.get(urlDevtoolsJson + 'json');
-      let jsonBrowser = await axios.get(urlDevtoolsJson + 'json/version');
+      const jsonPagesResponse = await fetch(urlDevtoolsJson + 'json', { method: 'GET' });
+      const jsonBrowserResponse = await fetch(urlDevtoolsJson + 'json/version', { method: 'GET' });
 
-      jsonPages = _.get(jsonPages, 'data');
-      jsonBrowser = _.get(jsonBrowser, 'data');
+      const jsonPages = await jsonPagesResponse.json();
+      const jsonBrowser = await jsonBrowserResponse.json();
 
       if (!jsonBrowser || !jsonPages) {
         throw { message: `Can't connect to ${urlDevtoolsJson}` };
@@ -233,6 +233,7 @@ class Envs {
         ignoreHTTPSErrors: true,
         slowMo: _.get(browserSettings, 'slowMo', 0),
       });
+
       let pagesRaw = await browser.pages();
       let pages = {};
       if (pagesRaw.length) {
@@ -247,21 +248,18 @@ class Envs {
         await pages.main.setViewport({ width: width, height: height });
       }
 
-      // // Window frame - probably OS and WM dependent.
-      // height += 85;
-
-      // // Any tab.
+      // Any tab.
       // const {targetInfos: [{targetId}]} = await browser._connection.send(
       //   'Target.getTargets'
       // );
 
-      // // Tab window.
+      // Tab window.
       // const {windowId} = await browser._connection.send(
       //   'Browser.getWindowForTarget',
       //   {targetId}
       // );
 
-      // // Resize.
+      // Resize.
       // await browser._connection.send('Browser.setWindowBounds', {
       //   bounds: {height, width},
       //   windowId
@@ -290,7 +288,7 @@ class Envs {
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
         fs.writeFileSync(path.join(this.output.folderLatest, `${env.name}.log`), '');
-      };
+      }
 
       prc.stdout.on('data', data => {
         fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
@@ -318,11 +316,11 @@ class Envs {
   async closeProcesses() {
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
-      const pid = _.get(this.envs[key], "state.pid");
-      const killOnEnd = _.get(this.envs[key], "env.browser.killOnEnd", true);
+      const pid = _.get(this.envs[key], 'state.pid');
+      const killOnEnd = _.get(this.envs[key], 'env.browser.killOnEnd', true);
       try {
         if (killOnEnd) {
-          spawn("taskkill", ["/pid", pid, '/f', '/t']);
+          spawn('taskkill', ['/pid', pid, '/f', '/t']);
         }
       } catch (exc) {}
     }
