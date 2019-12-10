@@ -1,42 +1,31 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const { yaml2json } = require('./yaml2json');
+const { getAllYamls } = require('./yaml2json');
 
+const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 let fullDescription = '';
+let allTests;
 
 const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, levelIndent = 0, textView = false }) {
-  // debugger;
-
-  if (filePath && !_.isString(filePath)) {
-    throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
+  testsFolder = testsFolder || (envs && envs.get('args.testsFolder'));
+  if (!allTests) {
+    allTests = getAllYamls({ testsFolder });
   }
-
-  if (testBody && !_.isObject(testBody)) {
-    throw { message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` };
-  }
-
-  // debugger
-  testsFolder = testsFolder || ( envs && envs.get('args.testsFolder'));
-
-  let full = filePath ? yaml2json(filePath, testsFolder).json : {};
-  // debugger
-  if (!full) {
-    throw { message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}` };
-  }
-  if (!['atom', 'test'].includes(_.get(full, 'type'))) {
-    throw { message: `Файл ${filePath} в папке ${testsFolder} не является тестом` };
-  }
-
-  full = testBody ? Object.assign(full, testBody) : full;
-  full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
-  full.levelIndent = levelIndent;
-  const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
   // Generate text view for test
   if (textView) {
     fullDescription = '';
   }
+
+  let full = allTests.allContent.find(v => v.name === filePath && ['atom', 'test'].includes(v.type));
+  if (!full) {
+    throw { message: `Test with name '${filePath}' not found in folder '${testsFolder}'` };
+  }
+
+  full = testBody ? Object.assign(full, testBody) : full;
+  full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
+  full.levelIndent = levelIndent;
 
   const { description, name, todo } = full;
   let fullString = [
@@ -46,8 +35,6 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
     name ? `(${name})` : '',
     '\n',
   ].join('');
-
-  // if (name === 'log') fullString = null;
 
   if (fullString) {
     fullDescription += fullString;

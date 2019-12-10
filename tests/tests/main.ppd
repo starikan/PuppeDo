@@ -6,6 +6,6 @@ beforeTest:
       data: { envName: 'mainEnv' }
 
 runTest:
-  - todo:
-      description: Make awesome test
+  # - todo:
+  #     description: Make awesome test
   - subTest:

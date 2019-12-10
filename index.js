@@ -116,7 +116,7 @@ const fetchAvailableTests = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
     const testsFolder = _.get(envs, ['args', 'testsFolder'], '.');
-    const allYamls = await getAllYamls({ testsFolder, envsId });
+    const allYamls = await getAllYamls({ testsFolder });
     socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
   } catch (err) {
     err.message += ` || error in 'fetchAvailableTests'`;

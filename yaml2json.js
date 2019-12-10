@@ -122,15 +122,17 @@ const yaml2json = function(filePath, testsFolder = '.') {
   throw { message: `YAML/JSON: Incorrect file name YAML/JSON - '${testFile}' associated with '${filePath}'` };
 };
 
-const getAllYamls = ({ testsFolder = '.', envsId }) => {
+const getAllYamls = ({ testsFolder = '.' }) => {
   console.time('getAllYamls');
 
   testsFolder = path.normalize(testsFolder);
 
   let allContent = [];
   let paths = walkSync(testsFolder);
-  // !startsWith('.') remove folders like .git
-  let allFiles = _.filter(paths, v => !v.startsWith('.') && v.endsWith('.yaml'));
+  const exts = ['.yaml', '.yml', '.ppd'];
+
+  // startsWith('.') remove folders like .git
+  let allFiles = _.filter(paths, v => !v.startsWith('.') && exts.includes(path.parse(v).ext));
 
   allFiles.forEach(filePath => {
     try {
