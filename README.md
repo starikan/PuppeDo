@@ -135,14 +135,14 @@ data | Object with data
 Parametr | Description | Default Value | Type
 ------------- | ------------- | ------------- | -------------
 PPD_ROOT | Root folder of tests | `process.cwd()` | `String`
-PPD_ENVS | Names of environments to run. | `[]` | `String[]`
-PPD_TESTS | todo | todo | todo
-PPD_DATA | todo | todo | todo
-PPD_SELECTORS | todo | todo | todo
-PPD_EXT_FILES | todo | todo | todo
-PPD_OUTPUT | todo | todo | todo
-PPD_DEBUG_MODE | todo | todo | todo
-PPD_LOG_DISABLED | todo | todo | todo
+PPD_ENVS | Links of environments to run. | `[]` | `String[]`
+PPD_TESTS | Name of tests to run one by one | `[]` | `String[]`
+PPD_DATA | Object with data | `{}` | `Object`
+PPD_SELECTORS | Object with selectors | `{}` | `Object`
+PPD_EXT_FILES | Array with additional files | `[]` | `String[]`
+PPD_OUTPUT | Path to log folder | `output` | `String`
+PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
+PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
 
 # Socket
 #### Todo

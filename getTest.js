@@ -7,6 +7,8 @@ const abstractTest = require('./abstractTest');
 const getTest = function(testJsonIncome, envsId, socket) {
   const { envs, log } = require('./env')({ envsId, socket });
 
+  // debugger
+
   let testJson = _.cloneDeep(testJsonIncome);
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw { message: 'getTest params error' };
@@ -41,7 +43,6 @@ const getTest = function(testJsonIncome, envsId, socket) {
         try {
           funcFromFile = _.get(require(funcFile), funcKey);
         } catch (err) {
-          console.log(err);
           // if relative path of testFolder
           funcFile = path.join(process.cwd(), funcFile);
           funcFromFile = _.get(require(funcFile), funcKey);
@@ -59,6 +60,21 @@ const getTest = function(testJsonIncome, envsId, socket) {
         console.log(err);
         throw {
           message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
+        };
+      }
+    }
+
+    if (!funcVal) {
+      debugger
+      const testFileExt = path.parse(testJson.testFile).ext;
+      const funcFile = testJson.testFile.replace(testFileExt, '.js');
+      try {
+        funcFromFile = _.get(require(funcFile), funcKey);
+        testJson.funcFile = path.resolve(funcFile);
+        testJson[funcKey] = [funcFromFile];
+      } catch (error) {
+        throw {
+          message: `Функция по ссылке не найдена ${funcKey}, файл ${funcFile}. Проверьте наличии функции и пути.`,
         };
       }
     }

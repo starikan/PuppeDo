@@ -6,7 +6,7 @@ const run = async () => {
   await ppd.main({
     PPD_ROOT: 'tests',
     PPD_ENVS: ['envs/env.yaml'],
-    tests: ['main'],
+    PPD_TESTS: ['main'],
     debugMode: true,
   });
 };

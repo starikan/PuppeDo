@@ -1,0 +1,6 @@
+---
+name: subTest
+type: test
+runTest:
+  - todo:
+      description: Make awesome sub test

@@ -39,7 +39,7 @@ const yaml2json = function(filePath, testsFolder = '.') {
   // return { json: fileContent };
 
   let isTestExist = fs.existsSync(filePath);
-  let exts = ['.yaml'];
+  let exts = ['.yaml', '.yml', '.ppd'];
   let files = [];
   let testFile = null;
   let allTestFolders = [];

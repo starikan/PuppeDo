@@ -107,8 +107,8 @@ const argParse = async args => {
     argsEnv = {
       testsFolder: process.env.PPD_ROOT,
       envFiles: JSON.parse(process.env.PPD_ENVS || 'null'),
-      outputFolder: process.env.PPD_OUTPUT,
       tests: resolveJson(process.env.PPD_TESTS),
+      outputFolder: process.env.PPD_OUTPUT,
       data: resolveJson(process.env.PPD_DATA),
       selectors: resolveJson(process.env.PPD_SELECTORS),
       extFiles: resolveJson(process.env.PPD_EXT_FILES),
@@ -121,8 +121,8 @@ const argParse = async args => {
     argsRaw = {
       testsFolder: _.get(args, 'PPD_ROOT'),
       envFiles: _.get(args, 'PPD_ENVS'),
+      tests: _.get(args, 'PPD_TESTS'),
       outputFolder: _.get(args, 'output'),
-      tests: _.get(args, 'tests'),
       data: _.get(args, 'data'),
       selectors: _.get(args, 'selectors'),
       extFiles: resolveJson(_.get(args, 'extFiles')),
@@ -133,8 +133,8 @@ const argParse = async args => {
     argsExt = {
       testsFolder: _.get(args_ext, '--PPD_ROOT'),
       envFiles: JSON.parse(_.get(args_ext, '--PPD_ENVS', 'null')),
+      tests: resolveJson(_.get(args_ext, '--PPD_TESTS')),
       outputFolder: _.get(args_ext, '--output'),
-      tests: resolveJson(_.get(args_ext, '--tests')),
       data: _.get(args_ext, '--data'),
       selectors: _.get(args_ext, '--selectors'),
       extFiles: resolveJson(_.get(args_ext, '--extFiles')),
@@ -145,8 +145,8 @@ const argParse = async args => {
     argsDefault = {
       testsFolder: process.cwd(),
       envFiles: [],
-      outputFolder: 'output',
       tests: [],
+      outputFolder: 'output',
       data: {},
       selectors: {},
       extFiles: [],

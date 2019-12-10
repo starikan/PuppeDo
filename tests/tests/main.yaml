@@ -8,3 +8,4 @@ beforeTest:
 runTest:
   - todo:
       description: Make awesome test
+  - subTest:

@@ -6,6 +6,8 @@ const { yaml2json } = require('./yaml2json');
 let fullDescription = '';
 
 const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, levelIndent = 0, textView = false }) {
+  // debugger;
+
   if (filePath && !_.isString(filePath)) {
     throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
   }
@@ -14,11 +16,11 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
     throw { message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` };
   }
 
-  if (!testsFolder && envs) {
-    testsFolder = envs.get('args.testsFolder');
-  }
+  // debugger
+  testsFolder = testsFolder || ( envs && envs.get('args.testsFolder'));
 
   let full = filePath ? yaml2json(filePath, testsFolder).json : {};
+  // debugger
   if (!full) {
     throw { message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}` };
   }
@@ -35,19 +37,17 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   if (textView) {
     fullDescription = '';
   }
-  let description = _.get(full, 'description');
-  let name = _.get(full, 'name');
-  let todo = _.get(full, 'todo');
-  let fullString = '';
-  fullString += '   '.repeat(levelIndent);
-  fullString += todo ? 'TODO: ' + todo + '== ' : '';
-  fullString += description ? `${description} ` : '';
-  fullString += name ? `(${name})` : '';
-  fullString += '\n';
 
-  levelIndent += 1;
+  const { description, name, todo } = full;
+  let fullString = [
+    '   '.repeat(levelIndent),
+    todo ? 'TODO: ' + todo + '== ' : '',
+    description ? `${description} ` : '',
+    name ? `(${name})` : '',
+    '\n',
+  ].join('');
 
-  if (name === 'log') fullString = null;
+  // if (name === 'log') fullString = null;
 
   if (fullString) {
     fullDescription += fullString;
@@ -64,7 +64,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
         let runner = _.get(runnerBlockValue, [runnerNum], {});
 
         let keys = Object.keys(runner);
-        if (keys && keys.length == 1) {
+        if (keys.length == 1) {
           name = keys[0];
           newRunner = _.clone(runner[name]) || newRunner;
           newRunner.name = name;
@@ -83,7 +83,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
             filePath: name,
             testBody: newRunner,
             testsFolder: testsFolder,
-            levelIndent,
+            levelIndent: levelIndent + 1,
           });
         }
       }
