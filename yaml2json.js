@@ -136,9 +136,11 @@ const getAllYamls = ({ testsFolder = '.' }) => {
 
   allFiles.forEach(filePath => {
     try {
-      let full = yaml.safeLoad(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
-      full.filePath = path.join(testsFolder, filePath);
-      allContent.push(full);
+      let full = yaml.safeLoadAll(fs.readFileSync(path.join(testsFolder, filePath), 'utf8'));
+      for (let v of full) {
+        v.filePath = path.join(testsFolder, filePath);
+        allContent.push(v);
+      }
     } catch (e) {
       throw e;
     }

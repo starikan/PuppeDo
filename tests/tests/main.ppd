@@ -9,3 +9,14 @@ runTest:
   # - todo:
   #     description: Make awesome test
   - subTest:
+---
+name: calimba
+type: test
+beforeTest:
+  - envSwitch:
+      data: { envName: 'mainEnv' }
+
+runTest:
+  # - todo:
+  #     description: Make awesome test
+  - subTest:
