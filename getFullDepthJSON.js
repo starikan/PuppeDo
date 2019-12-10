@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const { getAllYamls } = require('./yaml2json');
 
-const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 let fullDescription = '';
 let allTests;
 
@@ -26,6 +26,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
   full = testBody ? Object.assign(full, testBody) : full;
   full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
   full.levelIndent = levelIndent;
+  full.stepId = crypto.randomBytes(16).toString('hex');
 
   const { description, name, todo } = full;
   let fullString = [
@@ -40,9 +41,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
     fullDescription += fullString;
   }
 
-  full.stepId = crypto.randomBytes(16).toString('hex');
-
-  for (const runnerBlock of runnerBlockNames) {
+  for (const runnerBlock of RUNNER_BLOCK_NAMES) {
     let runnerBlockValue = _.get(full, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
       for (let runnerNum in runnerBlockValue) {
@@ -74,6 +73,10 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
           });
         }
       }
+    } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)){
+      throw {
+        message: `Running block '${runnerBlock}' in test '${full.name}' in file '${full.filePath}' must be array of tests`,
+      };
     }
   }
 

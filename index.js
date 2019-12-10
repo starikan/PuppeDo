@@ -14,10 +14,10 @@ const errorHandler = async error => {
     error.stack = error.stack.split('\n    ')
   }
   if (error.debug) {
-    const styleFunction = _.get(stylesConsole, 'trace', args => args);
-    console.log(styleFunction(error));
     debugger;
   }
+  const styleFunction = _.get(stylesConsole, 'trace', args => args);
+  console.log(styleFunction(error.message));
   if (!module.parent) {
     process.exit(1);
   }
@@ -79,15 +79,13 @@ const main = async (args = {}, socket = null) => {
   } catch (error) {
     error.message += ` || error in 'main'`;
     error.socket = socket;
-    const styleFunction = _.get(stylesConsole, 'trace', args => args);
-    console.log(styleFunction(error));
     if (String(error).startsWith('SyntaxError')) {
       error.debug = true;
       error.type = 'SyntaxError';
       await errorHandler(error);
       return;
     }
-    throw error;
+    await errorHandler(error);
   }
 };
 

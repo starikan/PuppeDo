@@ -7,7 +7,7 @@ const run = async () => {
     PPD_ROOT: 'tests',
     PPD_ENVS: ['envs/env.yaml'],
     PPD_TESTS: ['main'],
-    debugMode: true,
+    debugMode: 'true',
   });
 };
 
