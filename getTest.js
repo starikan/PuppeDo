@@ -5,7 +5,7 @@ const _ = require('lodash');
 const abstractTest = require('./abstractTest');
 
 const getTest = function(testJsonIncome, envsId, socket) {
-  const { envs, log } = require('./env')({ envsId, socket });
+  const { envs } = require('./env')({ envsId, socket });
 
   // debugger
 
@@ -16,7 +16,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
 
   // Pass source code of test into test for logging
-  testJson.source = _.cloneDeep(testJson);
+  testJson.source = {...testJson};
 
   testJson.socket = socket;
 
@@ -26,13 +26,8 @@ const getTest = function(testJsonIncome, envsId, socket) {
 
     if (_.isArray(funcVal)) {
       for (let test of funcVal) {
-        if (test.type === 'test') {
+        if (['test', 'atom'].includes(test.type)) {
           testJson[funcKey].push(getTest(test, envsId, socket));
-        }
-        if (test.name === 'log') {
-          testJson[funcKey].push(async () => {
-            await log(test);
-          });
         }
       }
     }
@@ -65,7 +60,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
     }
 
     if (!funcVal) {
-      debugger
+      // debugger
       const testFileExt = path.parse(testJson.testFile).ext;
       const funcFile = testJson.testFile.replace(testFileExt, '.js');
       try {

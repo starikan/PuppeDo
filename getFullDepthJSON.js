@@ -53,12 +53,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody = {}, testsFolder, 
         name = _.get(newRunner, 'name', null);
 
         if (name) {
-          let breadcrumbs = _.clone(fullJSON.breadcrumbs);
-          breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`);
-          newRunner.breadcrumbs = breadcrumbs;
-
-          newRunner.type = name == 'log' ? 'log' : 'test';
-
+          newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
           const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
             filePath: name,
             testBody: newRunner,
