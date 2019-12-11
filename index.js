@@ -57,7 +57,10 @@ const main = async (args = {}, socket = null) => {
       await envs.initOutputLatest(args);
       await envs.init(args);
 
-      const { fullJSON, textDescription } = getFullDepthJSON({ envs: envs, filePath: args.testFile });
+      const { fullJSON, textDescription } = getFullDepthJSON({
+        testName: envs.get('args.testFile'),
+        testFolder: envs.get('args.testsFolder'),
+      });
       socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
       socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
 
@@ -95,7 +98,10 @@ const fetchStruct = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
 
-    const { fullJSON, textDescription } = getFullDepthJSON({ envs: envs, filePath: args.testFile });
+    const { fullJSON, textDescription } = getFullDepthJSON({
+      testName: args.testFile,
+      testFolder: envs.get('args.testsFolder'),
+    });
     socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
     socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
   } catch (err) {

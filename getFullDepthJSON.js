@@ -19,17 +19,16 @@ const generateDescriptionStep = fullJSON => {
   return descriptionString;
 };
 
-const getFullDepthJSON = function({ envs, filePath, testBody = {}, testsFolder, levelIndent = 0, allTests = false }) {
-  testsFolder = testsFolder || (envs && envs.get('args.testsFolder'));
+const getFullDepthJSON = function({ testName, testsFolder, testBody = {}, levelIndent = 0, allTests = false }) {
   allTests = allTests || getAllYamls({ testsFolder });
 
-  let fullJSON = allTests.allContent.find(v => v.name === filePath && ['atom', 'test'].includes(v.type));
+  let fullJSON = allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type));
   if (!fullJSON) {
-    throw { message: `Test with name '${filePath}' not found in folder '${testsFolder}'` };
+    throw { message: `Test with name '${testName}' not found in folder '${testsFolder}'` };
   }
 
   fullJSON = Object.assign({}, fullJSON, testBody);
-  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [filePath]);
+  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testName]);
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
@@ -55,9 +54,9 @@ const getFullDepthJSON = function({ envs, filePath, testBody = {}, testsFolder, 
         if (name) {
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
           const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
-            filePath: name,
-            testBody: newRunner,
+            testName: name,
             testsFolder,
+            testBody: newRunner,
             levelIndent: levelIndent + 1,
             allTests,
           });
@@ -73,7 +72,7 @@ const getFullDepthJSON = function({ envs, filePath, testBody = {}, testsFolder, 
     }
   }
 
-  fullJSON.name = _.get(fullJSON, 'name', filePath);
+  fullJSON.name = _.get(fullJSON, 'name', testName);
 
   return { fullJSON, textDescription };
 };
