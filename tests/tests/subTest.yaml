@@ -1,6 +1,12 @@
 ---
 name: subTest
 type: test
+description: SubTest
 runTest:
   - todo:
       description: Make awesome sub test
+  - todo:
+  # - fakeUndefinedTest:
+  - test:
+      description: Make awesome sub test 2
+  - test:

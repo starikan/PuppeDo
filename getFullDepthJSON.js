@@ -4,32 +4,36 @@ const _ = require('lodash');
 const { getAllYamls } = require('./yaml2json');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
-let allTests;
 
-const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, levelIndent = 0 }) {
-  testsFolder = testsFolder || (envs && envs.get('args.testsFolder'));
-  if (!allTests) {
-    allTests = getAllYamls({ testsFolder });
-  }
+const generateDescriptionStep = fullJSON => {
+  const { description, name, todo, levelIndent } = fullJSON;
 
-  let fullJSON = allTests.allContent.find(v => v.name === filePath && ['atom', 'test'].includes(v.type));
-  if (!fullJSON) {
-    throw { message: `Test with name '${filePath}' not found in folder '${testsFolder}'` };
-  }
-
-  fullJSON = testBody ? Object.assign(fullJSON, testBody) : fullJSON;
-  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [filePath]);
-  fullJSON.levelIndent = levelIndent;
-  fullJSON.stepId = crypto.randomBytes(16).toString('hex');
-
-  const { description, name, todo } = fullJSON;
-  let textDescription = [
+  const descriptionString = [
     '   '.repeat(levelIndent),
     todo ? 'TODO: ' + todo + '== ' : '',
     description ? `${description} ` : '',
     name ? `(${name})` : '',
     '\n',
   ].join('');
+
+  return descriptionString;
+};
+
+const getFullDepthJSON = function({ envs, filePath, testBody = {}, testsFolder, levelIndent = 0, allTests = false }) {
+  testsFolder = testsFolder || (envs && envs.get('args.testsFolder'));
+  allTests = allTests || getAllYamls({ testsFolder });
+
+  let fullJSON = allTests.allContent.find(v => v.name === filePath && ['atom', 'test'].includes(v.type));
+  if (!fullJSON) {
+    throw { message: `Test with name '${filePath}' not found in folder '${testsFolder}'` };
+  }
+
+  fullJSON = Object.assign({}, fullJSON, testBody);
+  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [filePath]);
+  fullJSON.levelIndent = levelIndent;
+  fullJSON.stepId = crypto.randomBytes(16).toString('hex');
+
+  let textDescription = generateDescriptionStep(fullJSON);
 
   for (const runnerBlock of RUNNER_BLOCK_NAMES) {
     let runnerBlockValue = _.get(fullJSON, [runnerBlock]);
@@ -55,18 +59,19 @@ const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, level
 
           newRunner.type = name == 'log' ? 'log' : 'test';
 
-          const {fullJSON: fullJSONResponse, textDescription: textDescriptionResponse} = getFullDepthJSON({
+          const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
             filePath: name,
             testBody: newRunner,
-            testsFolder: testsFolder,
+            testsFolder,
             levelIndent: levelIndent + 1,
+            allTests,
           });
 
           fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
           textDescription += textDescriptionResponse;
         }
       }
-    } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)){
+    } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
       throw {
         message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.filePath}' must be array of tests`,
       };

@@ -6,8 +6,8 @@ beforeTest:
       data: { envName: 'mainEnv' }
 
 runTest:
-  # - todo:
-  #     description: Make awesome test
+  - todo:
+      description: Make awesome test
   - subTest:
 ---
 name: calimba
@@ -17,6 +17,6 @@ beforeTest:
       data: { envName: 'mainEnv' }
 
 runTest:
-  # - todo:
-  #     description: Make awesome test
+  - todo:
+      description: Make awesome test
   - subTest:
