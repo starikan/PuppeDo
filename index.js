@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { getFullDepthJSON, getDescriptions } = require('./getFullDepthJSON');
+const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { argParse, stylesConsole } = require('./helpers');
 const { getAllYamls } = require('./yaml2json');
@@ -8,10 +8,10 @@ const { getAllYamls } = require('./yaml2json');
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
   if (error.socket && error.socket.sendYAML) {
-    error.socket.sendYAML({ data: {...error}, type: error.type || 'error', envsId: error.envsId });
+    error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
   if (error.stack) {
-    error.stack = error.stack.split('\n    ')
+    error.stack = error.stack.split('\n    ');
   }
   if (error.debug) {
     debugger;
@@ -21,7 +21,7 @@ const errorHandler = async error => {
   if (!module.parent) {
     process.exit(1);
   }
-}
+};
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
@@ -57,12 +57,11 @@ const main = async (args = {}, socket = null) => {
       await envs.initOutputLatest(args);
       await envs.init(args);
 
-      const fullJSON = getFullDepthJSON({ envs: envs, filePath: args.testFile, textView: true });
+      const { fullJSON, textDescription } = getFullDepthJSON({ envs: envs, filePath: args.testFile });
       socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
-      const fullDescriptions = getDescriptions();
-      socket.sendYAML({ data: fullDescriptions, type: 'fullDescriptions', envsId });
+      socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
 
-      log({ level: 'env', text: '\n' + fullDescriptions, testStruct: fullJSON, screenshot: false });
+      log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
 
       let test = getTest(fullJSON, envsId, socket);
       await test();
@@ -96,10 +95,9 @@ const fetchStruct = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
 
-    const fullJSON = getFullDepthJSON({ envs: envs, filePath: args.testFile, textView: true });
+    const { fullJSON, textDescription } = getFullDepthJSON({ envs: envs, filePath: args.testFile });
     socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
-    const fullDescriptions = getDescriptions();
-    socket.sendYAML({ data: fullDescriptions, type: 'fullDescriptions', envsId });
+    socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
   } catch (err) {
     err.message += ` || error in 'fetchStruct'`;
     err.socket = socket;
