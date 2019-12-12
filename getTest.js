@@ -26,8 +26,10 @@ const getTest = function(testJsonIncome, envsId, socket) {
     const funcFile = path.resolve(testJson.filePath.replace(testFileExt, '.js'));
     try {
       const funcFromFile = _.get(require(funcFile), funcKey);
-      testJson.funcFile = path.resolve(funcFile);
-      testJson[funcKey] = [funcFromFile];
+      if (_.isFunction(funcFromFile)) {
+        testJson.funcFile = path.resolve(funcFile);
+        testJson[funcKey] = [funcFromFile];
+      }
     } catch (error) {
       // If there is no JS file it`s fine.
     }
@@ -46,9 +48,9 @@ const getTest = function(testJsonIncome, envsId, socket) {
       }
 
       if (_.isString(funcVal)) {
-        let funcFile = path.resolve(path.join(envs.get('args.testsFolder'), funcVal));
+        const funcFile = path.resolve(path.join(envs.get('args.testsFolder'), funcVal));
         try {
-          funcFromFile = _.get(require(funcFile), funcKey);
+          const funcFromFile = _.get(require(funcFile), funcKey);
           if (_.isFunction(funcFromFile)) {
             testJson.funcFile = path.resolve(funcFile);
             testJson[funcKey] = [funcFromFile];
