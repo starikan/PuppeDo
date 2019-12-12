@@ -7,16 +7,14 @@ const abstractTest = require('./abstractTest');
 const getTest = function(testJsonIncome, envsId, socket) {
   const { envs } = require('./env')({ envsId, socket });
 
-  // debugger
-
-  let testJson = _.cloneDeep(testJsonIncome);
+  let testJson = {...testJsonIncome};
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw { message: 'getTest params error' };
   }
   const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
 
   // Pass source code of test into test for logging
-  testJson.source = {...testJson};
+  testJson.source = {...testJsonIncome};
 
   testJson.socket = socket;
 
@@ -58,6 +56,8 @@ const getTest = function(testJsonIncome, envsId, socket) {
         };
       }
     }
+
+    // TODO: Сделать чтобы runTest убрать из атомов а если есть то искать js которая указана а если нет типа blank чтоб ничего не делало
 
     if (!funcVal) {
       // debugger

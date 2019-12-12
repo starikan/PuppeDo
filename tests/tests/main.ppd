@@ -6,9 +6,15 @@ beforeTest:
       data: { envName: 'mainEnv' }
 
 runTest:
+  - goto:
+      d: { url: 'https://wikipedia.org/' }
+  - waitTime:
+      d: { time: 2000 }
   - todo:
       description: Make awesome test
   - subTest:
+  - blank:
+
 ---
 name: calimba
 type: test

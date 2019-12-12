@@ -37,21 +37,13 @@ const getFullDepthJSON = function({ testName, testsFolder, testBody = {}, levelI
   for (const runnerBlock of RUNNER_BLOCK_NAMES) {
     let runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
-      for (let runnerNum in runnerBlockValue) {
-        let newRunner = {};
-        let name;
-        let runner = _.get(runnerBlockValue, [runnerNum], {});
-
-        let keys = Object.keys(runner);
-        if (keys.length == 1) {
-          name = keys[0];
-          newRunner = _.clone(runner[name]) || newRunner;
-          newRunner.name = name;
-        }
-
-        name = _.get(newRunner, 'name', null);
+      for (const runnerNum in runnerBlockValue) {
+        const runner = _.get(runnerBlockValue, [runnerNum], {});
+        let [name, newRunner] = Object.entries(runner)[0] || [null, {}];
+        newRunner = newRunner || {};
 
         if (name) {
+          newRunner.name = name;
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
           const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
             testName: name,
