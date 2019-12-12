@@ -3,7 +3,6 @@ const _ = require('lodash');
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { argParse, stylesConsole, TestsContent } = require('./helpers');
-const { getAllYamls } = require('./yaml2json');
 
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
@@ -121,7 +120,8 @@ const fetchAvailableTests = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
     const testsFolder = _.get(envs, ['args', 'testsFolder'], '.');
-    const allYamls = await getAllYamls({ testsFolder });
+    const testContent = new TestsContent({rootFolder: testsFolder});
+    const allYamls = await testContent.getAllData();
     socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
   } catch (err) {
     err.message += ` || error in 'fetchAvailableTests'`;

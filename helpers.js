@@ -67,7 +67,7 @@ class TestsContent extends Singleton {
 
   async getAllData(force = false) {
     if (force || !this.allData) {
-      console.time('getAllYamls');
+      console.time('getAllData');
 
       const rootFolder = path.normalize(this.rootFolder);
 
@@ -98,7 +98,7 @@ class TestsContent extends Singleton {
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      console.timeEnd('getAllYamls');
+      console.timeEnd('getAllData');
 
       this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
 
