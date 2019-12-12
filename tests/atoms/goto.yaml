@@ -2,4 +2,4 @@
 name: goto
 type: atom
 needData: ['url']
-runTest: atoms/goTo.js
+# runTest: atoms/goTo.js

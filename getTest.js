@@ -5,6 +5,25 @@ const _ = require('lodash');
 const abstractTest = require('./abstractTest');
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
+const resolveJS = (testJson, funcFile, funcKey, funcVal = false, canThrow = false) => {
+  try {
+    const funcFromFile = _.get(require(funcFile), funcKey);
+    if (_.isFunction(funcFromFile)) {
+      testJson.funcFile = path.resolve(funcFile);
+      testJson[funcKey] = [funcFromFile];
+    }
+    return testJson;
+  } catch (err) {
+    if (canThrow) {
+      throw {
+        message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
+      };
+    } else {
+      // If there is no JS file it`s fine.
+    }
+  }
+};
+
 const getTest = function(testJsonIncome, envsId, socket) {
   const { envs } = require('./env')({ envsId, socket });
 
@@ -24,15 +43,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
     const funcKey = 'runTest';
     const testFileExt = path.parse(testJson.filePath).ext;
     const funcFile = path.resolve(testJson.filePath.replace(testFileExt, '.js'));
-    try {
-      const funcFromFile = _.get(require(funcFile), funcKey);
-      if (_.isFunction(funcFromFile)) {
-        testJson.funcFile = path.resolve(funcFile);
-        testJson[funcKey] = [funcFromFile];
-      }
-    } catch (error) {
-      // If there is no JS file it`s fine.
-    }
+    testJson = resolveJS(testJson, funcFile, funcKey);
   } else {
     for (let funcKey in functions) {
       let funcVal = functions[funcKey];
@@ -49,17 +60,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
 
       if (_.isString(funcVal)) {
         const funcFile = path.resolve(path.join(envs.get('args.testsFolder'), funcVal));
-        try {
-          const funcFromFile = _.get(require(funcFile), funcKey);
-          if (_.isFunction(funcFromFile)) {
-            testJson.funcFile = path.resolve(funcFile);
-            testJson[funcKey] = [funcFromFile];
-          }
-        } catch (err) {
-          throw {
-            message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
-          };
-        }
+        testJson = resolveJS(testJson, funcFile, funcKey, funcVal, true);
       }
     }
   }
