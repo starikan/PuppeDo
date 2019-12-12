@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
-const { argParse, stylesConsole } = require('./helpers');
+const { argParse, stylesConsole, TestsContent } = require('./helpers');
 const { getAllYamls } = require('./yaml2json');
 
 const errorHandler = async error => {
@@ -40,6 +40,9 @@ const main = async (args = {}, socket = null) => {
     let envsIdGlob = null;
     let envsGlob = null;
     args = await argParse(args);
+    const testContent = new TestsContent({rootFolder: args.testsFolder});
+    await testContent.getAllData();
+
     socket.sendYAML({ data: args, type: 'init_args' });
 
     for (let i = 0; i < args.tests.length; i++) {
@@ -59,7 +62,6 @@ const main = async (args = {}, socket = null) => {
 
       const { fullJSON, textDescription } = getFullDepthJSON({
         testName: envs.get('args.testFile'),
-        testFolder: envs.get('args.testsFolder'),
       });
       socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
       socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
@@ -98,9 +100,10 @@ const fetchStruct = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
 
+    const testContent = new TestsContent({rootFolder: args.testsFolder});
+    await testContent.getAllData();
     const { fullJSON, textDescription } = getFullDepthJSON({
       testName: args.testFile,
-      testFolder: envs.get('args.testsFolder'),
     });
     socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
     socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });

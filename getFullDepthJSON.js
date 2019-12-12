@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const { getAllYamls } = require('./yaml2json');
+const { TestsContent } = require('./helpers');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -19,12 +19,15 @@ const generateDescriptionStep = fullJSON => {
   return descriptionString;
 };
 
-const getFullDepthJSON = function({ testName, testsFolder, testBody = {}, levelIndent = 0, allTests = false }) {
-  allTests = allTests || getAllYamls({ testsFolder });
+const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) {
+  const allTests = new TestsContent().allData;
+  if (!allTests) {
+    throw { message: 'No tests content. Init it first with "TestsContent" class' };
+  }
 
   let fullJSON = allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type));
   if (!fullJSON) {
-    throw { message: `Test with name '${testName}' not found in folder '${testsFolder}'` };
+    throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
   }
 
   fullJSON = Object.assign({}, fullJSON, testBody);
@@ -47,10 +50,8 @@ const getFullDepthJSON = function({ testName, testsFolder, testBody = {}, levelI
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
           const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
             testName: name,
-            testsFolder,
             testBody: newRunner,
             levelIndent: levelIndent + 1,
-            allTests,
           });
 
           fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
