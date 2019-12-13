@@ -118,9 +118,7 @@ const sleep = ms => {
 const merge = (...objects) =>
   deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
 
-const removeEmpty = obj => Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
-
-const resolveStars = function(linksArray, testsFolder = '.') {
+const resolveStars = function(linksArray, rootFolder = '.') {
   let resolvedArray = [];
   if (!_.isArray(linksArray)) return resolvedArray;
   linksArray.forEach(fileName => {
@@ -128,7 +126,7 @@ const resolveStars = function(linksArray, testsFolder = '.') {
       let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
       fileMask = _.trimEnd(fileMask, '/');
       fileMask = _.trimEnd(fileMask, '\\\\');
-      const fullFileMask = path.join(testsFolder, fileMask);
+      const fullFileMask = path.join(rootFolder, fileMask);
       let paths = walkSync(fullFileMask);
       let pathsClean = _.map(paths, v => {
         if (v.endsWith('/') || v.endsWith('\\')) return false;
@@ -136,7 +134,7 @@ const resolveStars = function(linksArray, testsFolder = '.') {
       }).filter(v => v);
       resolvedArray = [...resolvedArray, ...pathsClean];
     } else {
-      resolvedArray.push(path.join(testsFolder, fileName));
+      resolvedArray.push(path.join(rootFolder, fileName));
     }
   });
   resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
@@ -165,9 +163,13 @@ const argParse = async args => {
     }
   };
 
+  const removeEmpty = obj => Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
+
+  // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
+
   try {
     argsEnv = {
-      testsFolder: process.env.PPD_ROOT,
+      rootFolder: process.env.PPD_ROOT,
       envFiles: JSON.parse(process.env.PPD_ENVS || 'null'),
       tests: resolveJson(process.env.PPD_TESTS),
       outputFolder: process.env.PPD_OUTPUT,
@@ -181,31 +183,31 @@ const argParse = async args => {
     };
 
     argsRaw = {
-      testsFolder: _.get(args, 'PPD_ROOT'),
+      rootFolder: _.get(args, 'PPD_ROOT'),
       envFiles: _.get(args, 'PPD_ENVS'),
       tests: _.get(args, 'PPD_TESTS'),
-      outputFolder: _.get(args, 'output'),
-      data: _.get(args, 'data'),
-      selectors: _.get(args, 'selectors'),
-      extFiles: resolveJson(_.get(args, 'extFiles')),
-      debugMode: _.get(args, 'debugMode'),
-      logDisabled: _.get(args, 'logDisabled'),
+      outputFolder: _.get(args, 'PPD_OUTPUT'),
+      data: _.get(args, 'PPD_DATA'),
+      selectors: _.get(args, 'PPD_SELECTORS'),
+      extFiles: resolveJson(_.get(args, 'PPD_EXT_FILES')),
+      debugMode: _.get(args, 'PPD_DEBUG_MODE'),
+      logDisabled: _.get(args, 'PPD_LOG_DISABLED'),
     };
 
     argsExt = {
-      testsFolder: _.get(args_ext, '--PPD_ROOT'),
-      envFiles: JSON.parse(_.get(args_ext, '--PPD_ENVS', 'null')),
-      tests: resolveJson(_.get(args_ext, '--PPD_TESTS')),
-      outputFolder: _.get(args_ext, '--output'),
-      data: _.get(args_ext, '--data'),
-      selectors: _.get(args_ext, '--selectors'),
-      extFiles: resolveJson(_.get(args_ext, '--extFiles')),
-      debugMode: _.get(args_ext, '--debugMode'),
-      logDisabled: _.get(args_ext, '--logDisabled'),
+      rootFolder: _.get(args_ext, 'PPD_ROOT'),
+      envFiles: JSON.parse(_.get(args_ext, 'PPD_ENVS', 'null')),
+      tests: resolveJson(_.get(args_ext, 'PPD_TESTS')),
+      outputFolder: _.get(args_ext, 'PPD_OUTPUT'),
+      data: _.get(args_ext, 'PPD_DATA'),
+      selectors: _.get(args_ext, 'PPD_SELECTORS'),
+      extFiles: resolveJson(_.get(args_ext, 'PPD_EXT_FILES')),
+      debugMode: _.get(args_ext, 'PPD_DEBUG_MODE'),
+      logDisabled: _.get(args_ext, 'PPD_LOG_DISABLED'),
     };
 
     argsDefault = {
-      testsFolder: process.cwd(),
+      rootFolder: process.cwd(),
       envFiles: [],
       tests: [],
       outputFolder: 'output',
@@ -222,7 +224,7 @@ const argParse = async args => {
     argsEnv = removeEmpty(argsEnv);
 
     const megessss = merge(argsDefault, argsExt, argsRaw, argsEnv);
-    let { testsFolder, outputFolder, envFiles, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
+    let { rootFolder, outputFolder, envFiles, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
 
     tests = !_.isArray(tests) ? [tests] : tests;
 
@@ -230,11 +232,11 @@ const argParse = async args => {
     if (!envFiles || _.isEmpty(envFiles)) {
       throw { message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` };
     }
-    let envs = resolveStars(envFiles, testsFolder);
+    let envs = resolveStars(envFiles, rootFolder);
     envs = envs.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
 
     // EXTENSION FILES
-    extFiles = resolveStars(extFiles, testsFolder);
+    extFiles = resolveStars(extFiles, rootFolder);
     extFiles = extFiles.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
     extFiles.forEach(v => {
       if (_.get(v, 'type') === 'data') {
@@ -261,7 +263,7 @@ const argParse = async args => {
       dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
       envs[i].data = data;
       for (let j = 0; j < dataExt.length; j++) {
-        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, dataExt[j]), 'utf8'));
+        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(rootFolder, dataExt[j]), 'utf8'));
         if (_.get(dataExt[j], 'type') === 'data') {
           envs[i].data = merge(envs[i].data, _.get(dataExt[j], 'data', {}));
         }
@@ -271,7 +273,7 @@ const argParse = async args => {
       selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
       envs[i].selectors = selectors;
       for (let j = 0; j < selectorsExt.length; j++) {
-        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(testsFolder, selectorsExt[j]), 'utf8'));
+        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(rootFolder, selectorsExt[j]), 'utf8'));
         if (_.get(selectorsExt[j], 'type') === 'selectors') {
           envs[i].selectors = merge(envs[i].selectors, _.get(selectorsExt[j], 'data', {}));
         }
@@ -279,7 +281,7 @@ const argParse = async args => {
     }
 
     return {
-      testsFolder,
+      rootFolder,
       outputFolder,
       envs,
       tests,

@@ -144,6 +144,12 @@ PPD_OUTPUT | Path to log folder | `output` | `String`
 PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
 
+Arguments applying order. From minor to major:
+1. Defaults
+1. CLI arguments
+1. ENV variables
+1. Arguments from script
+
 # Socket
 #### Todo
 
@@ -269,7 +275,7 @@ afterTest:
     - --tests - Список тестов для последовательного запуска, без выключения приложений
     - --output - Папка для логов (default: "output")
     - --envs - МАССИВ (это обязательно) со ссылками на файлы описание сред выполнения
-    - --testsFolder - Папка с тестами (default: ".")
+    - --rootFolder - Папка с тестами (default: ".")
     - --envsExt - Расширение значений envs (для CI)
         ```
         Пример:
@@ -303,7 +309,7 @@ afterTest:
     - tests
     - output
     - envs
-    - testsFolder
+    - rootFolder
     - envsExt
     - envsExtJson
     - data

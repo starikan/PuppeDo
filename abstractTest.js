@@ -156,7 +156,7 @@ class Test {
       joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
 
       // 7. Fetch data from ext files that passed in test itself
-      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.testsFolder'));
+      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.rootFolder'));
       resolvedExtFiles.forEach(f => {
         const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
         if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {

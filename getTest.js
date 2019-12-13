@@ -59,7 +59,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
       }
 
       if (_.isString(funcVal)) {
-        const funcFile = path.resolve(path.join(envs.get('args.testsFolder'), funcVal));
+        const funcFile = path.resolve(path.join(envs.get('args.rootFolder'), funcVal));
         testJson = resolveJS(testJson, funcFile, funcKey, funcVal, true);
       }
     }
