@@ -170,7 +170,7 @@ const argParse = async args => {
   try {
     argsEnv = {
       rootFolder: process.env.PPD_ROOT,
-      envFiles: JSON.parse(process.env.PPD_ENVS || 'null'),
+      envs: JSON.parse(process.env.PPD_ENVS || 'null'),
       tests: resolveJson(process.env.PPD_TESTS),
       outputFolder: process.env.PPD_OUTPUT,
       data: resolveJson(process.env.PPD_DATA),
@@ -184,7 +184,7 @@ const argParse = async args => {
 
     argsRaw = {
       rootFolder: _.get(args, 'PPD_ROOT'),
-      envFiles: _.get(args, 'PPD_ENVS'),
+      envs: _.get(args, 'PPD_ENVS'),
       tests: _.get(args, 'PPD_TESTS'),
       outputFolder: _.get(args, 'PPD_OUTPUT'),
       data: _.get(args, 'PPD_DATA'),
@@ -196,7 +196,7 @@ const argParse = async args => {
 
     argsExt = {
       rootFolder: _.get(args_ext, 'PPD_ROOT'),
-      envFiles: JSON.parse(_.get(args_ext, 'PPD_ENVS', 'null')),
+      envs: JSON.parse(_.get(args_ext, 'PPD_ENVS', 'null')),
       tests: resolveJson(_.get(args_ext, 'PPD_TESTS')),
       outputFolder: _.get(args_ext, 'PPD_OUTPUT'),
       data: _.get(args_ext, 'PPD_DATA'),
@@ -208,7 +208,7 @@ const argParse = async args => {
 
     argsDefault = {
       rootFolder: process.cwd(),
-      envFiles: [],
+      envs: [],
       tests: [],
       outputFolder: 'output',
       data: {},
@@ -224,16 +224,33 @@ const argParse = async args => {
     argsEnv = removeEmpty(argsEnv);
 
     const megessss = merge(argsDefault, argsExt, argsRaw, argsEnv);
-    let { rootFolder, outputFolder, envFiles, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
+    let { rootFolder, outputFolder, envs, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
+
+    if (!tests || _.isEmpty(tests)) {
+      throw {message: 'There is no tests to run. Pass any test in PPD_TESTS argument'}
+    }
+
+    if (!envs || _.isEmpty(envs)) {
+      throw {message: 'There is no environments to run. Pass any test in PPD_TESTS argument'}
+    }
 
     tests = !_.isArray(tests) ? [tests] : tests;
+    envs = !_.isArray(envs) ? [envs] : envs;
+
+    // TODO: То что ниже надо вынести отсюда
+
+    const allData = await new TestsContent({rootFolder}).getAllData();
 
     // ENVS LOADING
-    if (!envFiles || _.isEmpty(envFiles)) {
-      throw { message: `Не указано ни одной среды исполнения. Параметр 'envs' должен быть не пустой массив` };
-    }
-    let envs = resolveStars(envFiles, rootFolder);
-    envs = envs.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
+    envs = envs.map(v =>  {
+      const env = allData.envs.find(g => g.name === v)
+      if (env) {
+        return env;
+      }
+      else {
+        throw {message: `PuppeDo found unkown environment in yours args. It's name '${v}'.`}
+      }
+    })
 
     // EXTENSION FILES
     extFiles = resolveStars(extFiles, rootFolder);

@@ -39,8 +39,7 @@ const main = async (args = {}, socket = null) => {
     let envsIdGlob = null;
     let envsGlob = null;
     args = await argParse(args);
-    const testContent = new TestsContent({rootFolder: args.rootFolder});
-    await testContent.getAllData();
+    await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
 
     socket.sendYAML({ data: args, type: 'init_args' });
 
@@ -99,8 +98,7 @@ const fetchStruct = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
 
-    const testContent = new TestsContent({rootFolder: args.rootFolder});
-    await testContent.getAllData();
+    await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
     const { fullJSON, textDescription } = getFullDepthJSON({
       testName: args.testFile,
     });
@@ -120,8 +118,7 @@ const fetchAvailableTests = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init(args);
     const rootFolder = _.get(envs, ['args', 'rootFolder'], '.');
-    const testContent = new TestsContent({rootFolder: rootFolder});
-    const allYamls = await testContent.getAllData();
+    const allYamls = await new TestsContent({ rootFolder }).getAllData();
     socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
   } catch (err) {
     err.message += ` || error in 'fetchAvailableTests'`;
