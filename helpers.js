@@ -117,9 +117,19 @@ class Arguments extends Singleton {
   // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
 
   init(args) {
-    this.strings = []
+    this.params = {
+      rootFolder: 'PPD_ROOT',
+      envs: 'PPD_ENVS',
+      tests: 'PPD_TESTS',
+      outputFolder: 'PPD_OUTPUT',
+      data: 'PPD_DATA',
+      selectors: 'PPD_SELECTORS',
+      extFiles: 'PPD_EXT_FILES',
+      debugMode: 'PPD_DEBUG_MODE',
+      logDisabled: 'PPD_LOG_DISABLED',
+    };
 
-    this.argsJS = this.parseJS(args);
+    this.argsJS = this.parser(args, this.params);
     this.argsCLI = this.parseCLI();
     this.argsEnv = this.parseENV();
     this.argsDefault = this.parseDefault();
@@ -143,6 +153,28 @@ class Arguments extends Singleton {
     }
   }
 
+  parser(args, params) {
+    return Object.entries(params).reduce((s, v) => {
+      const [key, val] = v;
+      let newVal = _.get(args, val);
+      // If comma in string try convert to array
+      if (_.isString(newVal)) {
+        newVal = newVal.split(',');
+        if (newVal.length === 1) {
+          newVal = newVal[0];
+        }
+      }
+      // Convert string to Boolean
+      if (['true', 'false'].includes(newVal)) {
+        newVal = newVal === 'true' ? true : false;
+      }
+      if (newVal) {
+        s[key] = newVal;
+      }
+      return s;
+    }, {});
+  }
+
   parseDefault() {
     this.argsDefault = {
       rootFolder: process.cwd(),
@@ -157,23 +189,6 @@ class Arguments extends Singleton {
     };
 
     return this.argsDefault;
-  }
-
-  parseJS(args) {
-    this.argsJS = {
-      rootFolder: _.get(args, 'PPD_ROOT'),
-      envs: _.get(args, 'PPD_ENVS'),
-      tests: _.get(args, 'PPD_TESTS'),
-      outputFolder: _.get(args, 'PPD_OUTPUT'),
-      data: _.get(args, 'PPD_DATA'),
-      selectors: _.get(args, 'PPD_SELECTORS'),
-      extFiles: this.resolveJson(_.get(args, 'PPD_EXT_FILES')),
-      debugMode: _.get(args, 'PPD_DEBUG_MODE'),
-      logDisabled: _.get(args, 'PPD_LOG_DISABLED'),
-    };
-
-    this.argsJS = this.removeEmpty(this.argsJS);
-    return this.argsJS;
   }
 
   parseCLI() {

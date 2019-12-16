@@ -8,7 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "PuppeDo_tests",
-      "program": "${workspaceFolder}\\tests\\index.js"
+      "program": "${workspaceFolder}\\tests\\index.js",
+      // "args": ["PPD_EXT_FILES=123321,123,55"],
     }
   ]
 }
