@@ -49,7 +49,7 @@ class Helpers {
 }
 
 class TestsContent extends Singleton {
-  constructor({rootFolder = process.cwd(), additionalFolders = [], ignorePaths = null} = {}) {
+  constructor({ rootFolder = process.cwd(), additionalFolders = [], ignorePaths = null } = {}) {
     super();
     this.allData = this.allData || null;
     this.rootFolder = this.rootFolder || rootFolder;
@@ -109,6 +109,118 @@ class TestsContent extends Singleton {
   }
 }
 
+class Arguments extends Singleton {
+  constructor() {
+    super();
+  }
+
+  init(args) {
+    this.argsJS = this.parseJS(args);
+    this.argsCLI = this.parseCLI();
+    this.argsEnv = this.parseENV();
+    this.argsDefault = this.parseDefault();
+    this.args = this.mergeArgs();
+    return this.args;
+  }
+
+  removeEmpty(obj) {
+    return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
+  }
+
+  resolveJson(str) {
+    if (!str) {
+      return null;
+    }
+    try {
+      const parsedJson = JSON.parse(str);
+      return parsedJson;
+    } catch (error) {
+      return String(str);
+    }
+  }
+
+  parseDefault() {
+    this.argsDefault = {
+      rootFolder: process.cwd(),
+      envs: [],
+      tests: [],
+      outputFolder: 'output',
+      data: {},
+      selectors: {},
+      extFiles: [],
+      debugMode: false,
+      logDisabled: false,
+    };
+
+    return this.argsDefault;
+  }
+
+  parseJS(args) {
+    this.argsJS = {
+      rootFolder: _.get(args, 'PPD_ROOT'),
+      envs: _.get(args, 'PPD_ENVS'),
+      tests: _.get(args, 'PPD_TESTS'),
+      outputFolder: _.get(args, 'PPD_OUTPUT'),
+      data: _.get(args, 'PPD_DATA'),
+      selectors: _.get(args, 'PPD_SELECTORS'),
+      extFiles: this.resolveJson(_.get(args, 'PPD_EXT_FILES')),
+      debugMode: _.get(args, 'PPD_DEBUG_MODE'),
+      logDisabled: _.get(args, 'PPD_LOG_DISABLED'),
+    };
+
+    this.argsJS = this.removeEmpty(this.argsJS);
+    return this.argsJS;
+  }
+
+  parseCLI() {
+    const argsExt = {};
+
+    _.forEach(process.argv.slice(2), v => {
+      let data = v.split('=');
+      argsExt[data[0]] = data[1];
+    });
+
+    this.argsCLI = {
+      rootFolder: _.get(argsExt, 'PPD_ROOT'),
+      envs: JSON.parse(_.get(argsExt, 'PPD_ENVS', 'null')),
+      tests: this.resolveJson(_.get(argsExt, 'PPD_TESTS')),
+      outputFolder: _.get(argsExt, 'PPD_OUTPUT'),
+      data: _.get(argsExt, 'PPD_DATA'),
+      selectors: _.get(argsExt, 'PPD_SELECTORS'),
+      extFiles: this.resolveJson(_.get(argsExt, 'PPD_EXT_FILES')),
+      debugMode: _.get(argsExt, 'PPD_DEBUG_MODE'),
+      logDisabled: _.get(argsExt, 'PPD_LOG_DISABLED'),
+    };
+
+    this.argsCLI = this.removeEmpty(this.argsCLI);
+    return this.argsCLI;
+  }
+
+  parseENV() {
+    this.argsEnv = {
+      rootFolder: process.env.PPD_ROOT,
+      envs: JSON.parse(process.env.PPD_ENVS || 'null'),
+      tests: this.resolveJson(process.env.PPD_TESTS),
+      outputFolder: process.env.PPD_OUTPUT,
+      data: this.resolveJson(process.env.PPD_DATA),
+      selectors: this.resolveJson(process.env.PPD_SELECTORS),
+      extFiles: this.resolveJson(process.env.PPD_EXT_FILES),
+      debugMode: ['true', 'false'].includes(process.env.PPD_DEBUG_MODE) ? JSON.parse(process.env.PPD_DEBUG_MODE) : null,
+      logDisabled: ['true', 'false'].includes(process.env.PPD_LOG_DISABLED)
+        ? JSON.parse(process.env.PPD_LOG_DISABLED)
+        : null,
+    };
+
+    this.argsEnv = this.removeEmpty(this.argsEnv);
+    return this.argsEnv;
+  }
+
+  mergeArgs() {
+    this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
+    return this.args;
+  }
+}
+
 const sleep = ms => {
   return new Promise(resolve => {
     setTimeout(resolve, ms);
@@ -142,96 +254,17 @@ const resolveStars = function(linksArray, rootFolder = '.') {
 };
 
 const argParse = async args => {
-  let args_ext = {};
-
-  _.forEach(process.argv.slice(2), v => {
-    let data = v.split('=');
-    args_ext[data[0]] = data[1];
-  });
-
-  let argsEnv, argsRaw, argsExt, argsDefault;
-
-  const resolveJson = str => {
-    if (!str) {
-      return null;
-    }
-    try {
-      const parsedJson = JSON.parse(str);
-      return parsedJson;
-    } catch (error) {
-      return String(str);
-    }
-  };
-
-  const removeEmpty = obj => Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
-
   // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
 
   try {
-    argsEnv = {
-      rootFolder: process.env.PPD_ROOT,
-      envs: JSON.parse(process.env.PPD_ENVS || 'null'),
-      tests: resolveJson(process.env.PPD_TESTS),
-      outputFolder: process.env.PPD_OUTPUT,
-      data: resolveJson(process.env.PPD_DATA),
-      selectors: resolveJson(process.env.PPD_SELECTORS),
-      extFiles: resolveJson(process.env.PPD_EXT_FILES),
-      debugMode: ['true', 'false'].includes(process.env.PPD_DEBUG_MODE) ? JSON.parse(process.env.PPD_DEBUG_MODE) : null,
-      logDisabled: ['true', 'false'].includes(process.env.PPD_LOG_DISABLED)
-        ? JSON.parse(process.env.PPD_LOG_DISABLED)
-        : null,
-    };
-
-    argsRaw = {
-      rootFolder: _.get(args, 'PPD_ROOT'),
-      envs: _.get(args, 'PPD_ENVS'),
-      tests: _.get(args, 'PPD_TESTS'),
-      outputFolder: _.get(args, 'PPD_OUTPUT'),
-      data: _.get(args, 'PPD_DATA'),
-      selectors: _.get(args, 'PPD_SELECTORS'),
-      extFiles: resolveJson(_.get(args, 'PPD_EXT_FILES')),
-      debugMode: _.get(args, 'PPD_DEBUG_MODE'),
-      logDisabled: _.get(args, 'PPD_LOG_DISABLED'),
-    };
-
-    argsExt = {
-      rootFolder: _.get(args_ext, 'PPD_ROOT'),
-      envs: JSON.parse(_.get(args_ext, 'PPD_ENVS', 'null')),
-      tests: resolveJson(_.get(args_ext, 'PPD_TESTS')),
-      outputFolder: _.get(args_ext, 'PPD_OUTPUT'),
-      data: _.get(args_ext, 'PPD_DATA'),
-      selectors: _.get(args_ext, 'PPD_SELECTORS'),
-      extFiles: resolveJson(_.get(args_ext, 'PPD_EXT_FILES')),
-      debugMode: _.get(args_ext, 'PPD_DEBUG_MODE'),
-      logDisabled: _.get(args_ext, 'PPD_LOG_DISABLED'),
-    };
-
-    argsDefault = {
-      rootFolder: process.cwd(),
-      envs: [],
-      tests: [],
-      outputFolder: 'output',
-      data: {},
-      selectors: {},
-      extFiles: [],
-      debugMode: false,
-      logDisabled: false,
-    };
-
-    argsDefault = removeEmpty(argsDefault);
-    argsExt = removeEmpty(argsExt);
-    argsRaw = removeEmpty(argsRaw);
-    argsEnv = removeEmpty(argsEnv);
-
-    const megessss = merge(argsDefault, argsExt, argsRaw, argsEnv);
-    let { rootFolder, outputFolder, envs, extFiles, data, selectors, tests, debugMode, logDisabled } = megessss;
+    let { rootFolder, outputFolder, envs, extFiles, data, selectors, tests, debugMode, logDisabled } = new Arguments().init(args);
 
     if (!tests || _.isEmpty(tests)) {
-      throw {message: 'There is no tests to run. Pass any test in PPD_TESTS argument'}
+      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
     }
 
     if (!envs || _.isEmpty(envs)) {
-      throw {message: 'There is no environments to run. Pass any test in PPD_TESTS argument'}
+      throw { message: 'There is no environments to run. Pass any test in PPD_TESTS argument' };
     }
 
     tests = !_.isArray(tests) ? [tests] : tests;
@@ -239,18 +272,17 @@ const argParse = async args => {
 
     // TODO: То что ниже надо вынести отсюда
 
-    const allData = await new TestsContent({rootFolder}).getAllData();
+    const allData = await new TestsContent({ rootFolder }).getAllData();
 
     // ENVS LOADING
-    envs = envs.map(v =>  {
-      const env = allData.envs.find(g => g.name === v)
+    envs = envs.map(v => {
+      const env = allData.envs.find(g => g.name === v);
       if (env) {
         return env;
+      } else {
+        throw { message: `PuppeDo found unkown environment in yours args. It's name '${v}'.` };
       }
-      else {
-        throw {message: `PuppeDo found unkown environment in yours args. It's name '${v}'.`}
-      }
-    })
+    });
 
     // EXTENSION FILES
     extFiles = resolveStars(extFiles, rootFolder);
