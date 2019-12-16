@@ -8,9 +8,10 @@ const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
+const yaml = require('js-yaml');
 
 const logger = require('./logger');
-const { merge, sleep } = require('./helpers');
+const { merge, sleep, Arguments, TestsContent } = require('./helpers');
 
 class Env {
   constructor(name, env = {}) {
@@ -326,7 +327,94 @@ class Envs {
     }
   }
 
-  async init(args = {}, runBrowsers = true) {
+  async resolveLinks() {
+
+    const resolveStars = function(linksArray, rootFolder = '.') {
+      let resolvedArray = [];
+      if (!_.isArray(linksArray)) return resolvedArray;
+      linksArray.forEach(fileName => {
+        if (fileName.endsWith('*')) {
+          let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
+          fileMask = _.trimEnd(fileMask, '/');
+          fileMask = _.trimEnd(fileMask, '\\\\');
+          const fullFileMask = path.join(rootFolder, fileMask);
+          let paths = walkSync(fullFileMask);
+          let pathsClean = _.map(paths, v => {
+            if (v.endsWith('/') || v.endsWith('\\')) return false;
+            return path.join(fullFileMask, v);
+          }).filter(v => v);
+          resolvedArray = [...resolvedArray, ...pathsClean];
+        } else {
+          resolvedArray.push(path.join(rootFolder, fileName));
+        }
+      });
+      resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
+      return resolvedArray;
+    };
+
+    const args = new Arguments().args;
+    const allData = await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
+
+    // ENVS LOADING
+    args.envs = args.envs.map(v => {
+      const env = allData.envs.find(g => g.name === v);
+      if (env) {
+        return env;
+      } else {
+        throw { message: `PuppeDo found unkown environment in yours args. It's name '${v}'.` };
+      }
+    });
+
+    // EXTENSION FILES
+    args.extFiles = resolveStars(args.extFiles, args.rootFolder);
+    args.extFiles = args.extFiles.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
+    args.extFiles.forEach(v => {
+      if (_.get(v, 'type') === 'data') {
+        args.data = merge(args.data, _.get(v, 'data', {}));
+      }
+      if (_.get(v, 'type') === 'selectors') {
+        args.selectors = merge(args.selectors, _.get(v, 'data', {}));
+      }
+      if (_.get(v, 'type') === 'env') {
+        for (let i = 0; i < args.envs.length; i++) {
+          const element = args.envs[i];
+          if (_.get(element, 'name') === _.get(v, 'name')) {
+            args.envs[i] = merge(element, v);
+          }
+        }
+      }
+    });
+
+    // Data and Selectors resolve in env
+    for (let i = 0; i < args.envs.length; i++) {
+      const env = args.envs[i];
+
+      let dataExt = _.get(env, 'dataExt');
+      dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
+      args.envs[i].data = args.data;
+      for (let j = 0; j < dataExt.length; j++) {
+        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.rootFolder, dataExt[j]), 'utf8'));
+        if (_.get(dataExt[j], 'type') === 'data') {
+          args.envs[i].data = merge(args.envs[i].data, _.get(dataExt[j], 'data', {}));
+        }
+      }
+
+      let selectorsExt = _.get(env, 'selectorsExt');
+      selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
+      args.envs[i].selectors = args.selectors;
+      for (let j = 0; j < selectorsExt.length; j++) {
+        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.rootFolder, selectorsExt[j]), 'utf8'));
+        if (_.get(selectorsExt[j], 'type') === 'selectors') {
+          args.envs[i].selectors = merge(args.envs[i].selectors, _.get(selectorsExt[j], 'data', {}));
+        }
+      }
+    }
+
+    return args;
+  }
+
+  async init(runBrowsers = true) {
+    const args = {...await this.resolveLinks()}
     let { envs, data, selectors } = args;
     this.set('args', args);
     this.set('data', data);

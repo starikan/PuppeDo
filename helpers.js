@@ -117,6 +117,8 @@ class Arguments extends Singleton {
   // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
 
   init(args) {
+    this.strings = []
+
     this.argsJS = this.parseJS(args);
     this.argsCLI = this.parseCLI();
     this.argsEnv = this.parseENV();
@@ -267,96 +269,6 @@ const resolveStars = function(linksArray, rootFolder = '.') {
   return resolvedArray;
 };
 
-const argParse = async args => {
-
-  try {
-    let {
-      rootFolder,
-      outputFolder,
-      envs,
-      extFiles,
-      data,
-      selectors,
-      tests,
-      debugMode,
-      logDisabled,
-    } = new Arguments().init(args);
-
-    // TODO: То что ниже надо вынести отсюда
-
-    const allData = await new TestsContent({ rootFolder }).getAllData();
-
-    // ENVS LOADING
-    envs = envs.map(v => {
-      const env = allData.envs.find(g => g.name === v);
-      if (env) {
-        return env;
-      } else {
-        throw { message: `PuppeDo found unkown environment in yours args. It's name '${v}'.` };
-      }
-    });
-
-    // EXTENSION FILES
-    extFiles = resolveStars(extFiles, rootFolder);
-    extFiles = extFiles.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
-    extFiles.forEach(v => {
-      if (_.get(v, 'type') === 'data') {
-        data = merge(data, _.get(v, 'data', {}));
-      }
-      if (_.get(v, 'type') === 'selectors') {
-        selectors = merge(selectors, _.get(v, 'data', {}));
-      }
-      if (_.get(v, 'type') === 'env') {
-        for (let i = 0; i < envs.length; i++) {
-          const element = envs[i];
-          if (_.get(element, 'name') === _.get(v, 'name')) {
-            envs[i] = merge(element, v);
-          }
-        }
-      }
-    });
-
-    // Data and Selectors resolve in env
-    for (let i = 0; i < envs.length; i++) {
-      const env = envs[i];
-
-      let dataExt = _.get(env, 'dataExt');
-      dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
-      envs[i].data = data;
-      for (let j = 0; j < dataExt.length; j++) {
-        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(rootFolder, dataExt[j]), 'utf8'));
-        if (_.get(dataExt[j], 'type') === 'data') {
-          envs[i].data = merge(envs[i].data, _.get(dataExt[j], 'data', {}));
-        }
-      }
-
-      let selectorsExt = _.get(env, 'selectorsExt');
-      selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
-      envs[i].selectors = selectors;
-      for (let j = 0; j < selectorsExt.length; j++) {
-        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(rootFolder, selectorsExt[j]), 'utf8'));
-        if (_.get(selectorsExt[j], 'type') === 'selectors') {
-          envs[i].selectors = merge(envs[i].selectors, _.get(selectorsExt[j], 'data', {}));
-        }
-      }
-    }
-
-    return {
-      rootFolder,
-      outputFolder,
-      envs,
-      tests,
-      data,
-      selectors,
-      debugMode,
-      logDisabled,
-    };
-  } catch (error) {
-    debugger;
-    // TODO: 2019-07-18 S.Starodubov todo
-  }
-};
-
 // https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 const stylesConsole = {
   raw: _logString => _logString,
@@ -373,8 +285,8 @@ module.exports = {
   Helpers,
   merge,
   resolveStars,
-  argParse,
   sleep,
   stylesConsole,
   TestsContent,
+  Arguments,
 };

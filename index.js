@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
-const { argParse, stylesConsole, TestsContent } = require('./helpers');
+const { stylesConsole, TestsContent, Arguments } = require('./helpers');
 
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
@@ -38,7 +38,7 @@ const main = async (args = {}, socket = null) => {
 
     let envsIdGlob = null;
     let envsGlob = null;
-    args = await argParse(args);
+    args = new Arguments().init(args);
     await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
 
     socket.sendYAML({ data: args, type: 'init_args' });
@@ -56,7 +56,7 @@ const main = async (args = {}, socket = null) => {
 
       await envs.initOutput(args);
       await envs.initOutputLatest(args);
-      await envs.init(args);
+      await envs.init();
 
       const { fullJSON, textDescription } = getFullDepthJSON({
         testName: envs.get('args.testFile'),
@@ -93,10 +93,10 @@ const main = async (args = {}, socket = null) => {
 
 const fetchStruct = async (args = {}, socket) => {
   try {
-    args = await argParse(args);
+    args = new Arguments().init(args);
     socket.sendYAML({ data: args, type: 'init_args' });
     let { envsId, envs } = require('./env')({ socket });
-    await envs.init(args);
+    await envs.init();
 
     await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
     const { fullJSON, textDescription } = getFullDepthJSON({
@@ -113,10 +113,10 @@ const fetchStruct = async (args = {}, socket) => {
 
 const fetchAvailableTests = async (args = {}, socket) => {
   try {
-    args = await argParse(args);
+    args = new Arguments().init(args);
     socket.sendYAML({ data: args, type: 'init_args' });
     let { envsId, envs } = require('./env')({ socket });
-    await envs.init(args);
+    await envs.init();
     const rootFolder = _.get(envs, ['args', 'rootFolder'], '.');
     const allYamls = await new TestsContent({ rootFolder }).getAllData();
     socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
