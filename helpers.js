@@ -114,6 +114,8 @@ class Arguments extends Singleton {
     super();
   }
 
+  // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
+
   init(args) {
     this.argsJS = this.parseJS(args);
     this.argsCLI = this.parseCLI();
@@ -217,6 +219,18 @@ class Arguments extends Singleton {
 
   mergeArgs() {
     this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
+
+    if (!this.args.tests || _.isEmpty(this.args.tests)) {
+      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
+    }
+
+    if (!this.args.envs || _.isEmpty(this.args.envs)) {
+      throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
+    }
+
+    this.args.tests = !_.isArray(this.args.tests) ? [this.args.tests] : this.args.tests;
+    this.args.envs = !_.isArray(this.args.envs) ? [this.args.envs] : this.args.envs;
+
     return this.args;
   }
 }
@@ -254,21 +268,19 @@ const resolveStars = function(linksArray, rootFolder = '.') {
 };
 
 const argParse = async args => {
-  // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
 
   try {
-    let { rootFolder, outputFolder, envs, extFiles, data, selectors, tests, debugMode, logDisabled } = new Arguments().init(args);
-
-    if (!tests || _.isEmpty(tests)) {
-      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
-    }
-
-    if (!envs || _.isEmpty(envs)) {
-      throw { message: 'There is no environments to run. Pass any test in PPD_TESTS argument' };
-    }
-
-    tests = !_.isArray(tests) ? [tests] : tests;
-    envs = !_.isArray(envs) ? [envs] : envs;
+    let {
+      rootFolder,
+      outputFolder,
+      envs,
+      extFiles,
+      data,
+      selectors,
+      tests,
+      debugMode,
+      logDisabled,
+    } = new Arguments().init(args);
 
     // TODO: То что ниже надо вынести отсюда
 
