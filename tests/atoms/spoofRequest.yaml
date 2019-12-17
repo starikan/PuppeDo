@@ -1,4 +1,0 @@
-type: atom
-name: spoofRequest
-needData: ['urlregexp', 'filename']
-runTest: atoms/spoofRequest.js

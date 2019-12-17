@@ -1,5 +1,0 @@
----
-name: goto
-type: atom
-needData: ['url']
-# runTest: atoms/goTo.js

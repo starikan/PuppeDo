@@ -1,4 +1,0 @@
-name: setPageName
-type: atom
-needData: ['position', 'name']
-runTest: atoms/setPageName.js

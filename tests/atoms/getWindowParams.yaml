@@ -1,5 +1,0 @@
----
-name: getWindowParams
-type: atom
-allowResults: ['width', 'height', 'deviceScaleFactor', 'isMobile', 'hasTouch', 'isLandscape']
-runTest: atoms/getWindowParams.js

@@ -1,3 +1,0 @@
-name: waitLoadPage
-type: atom
-runTest: atoms/waitLoadPage.js

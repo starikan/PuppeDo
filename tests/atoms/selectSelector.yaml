@@ -1,6 +1,0 @@
-name: selectSelector
-type: atom
-needSelectors: ['selector']
-needData: ['option']
-runTest: atoms/selectSelector.js
-cssOnly: true

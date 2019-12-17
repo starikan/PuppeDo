@@ -1,6 +1,0 @@
----
-name: getCoordsElement
-type: atom
-needSelectors: ['selector']
-allowResults: ['x', 'y', 'width', 'height']
-runTest: atoms/getCoordsElement.js

@@ -1,4 +1,0 @@
-name: mouseMove
-type: atom
-needData: ['X?', 'Y?', 'dX?', 'dY?']
-runTest: atoms/mouseMove.js

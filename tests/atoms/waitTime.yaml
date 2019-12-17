@@ -1,4 +1,0 @@
-name: waitTime
-type: atom
-needData: ['time']
-runTest: atoms/waitTime.js
