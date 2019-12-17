@@ -1,8 +1,6 @@
 const _ = require('lodash');
 const deepmerge = require('deepmerge');
-require('polyfill-object.fromentries');
 
-const { Singleton } = require('./singleton');
 class Helpers {
   constructor() {}
 
