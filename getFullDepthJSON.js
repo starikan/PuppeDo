@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const { TestsContent } = require('./helpers');
+const { TestsContent } = require('./TestContent');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 

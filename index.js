@@ -2,7 +2,9 @@ const _ = require('lodash');
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
-const { stylesConsole, TestsContent, Arguments } = require('./helpers');
+const { stylesConsole } = require('./helpers');
+const { TestsContent } = require('./TestContent');
+const { Arguments } = require('./Arguments');
 
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
@@ -15,6 +17,7 @@ const errorHandler = async error => {
   if (error.debug) {
     debugger;
   }
+debugger
   const styleFunction = _.get(stylesConsole, 'trace', args => args);
   console.log(styleFunction(error.message));
   if (!module.parent) {

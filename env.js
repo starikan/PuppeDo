@@ -11,7 +11,9 @@ const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
 const logger = require('./logger');
-const { merge, sleep, Arguments, TestsContent } = require('./helpers');
+const { merge, sleep } = require('./helpers');
+const { TestsContent } = require('./TestContent');
+const { Arguments } = require('./Arguments');
 
 class Env {
   constructor(name, env = {}) {
