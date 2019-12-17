@@ -119,8 +119,8 @@ class Arguments extends Singleton {
   init(args) {
     this.params = {
       PPD_ROOT: 'PPD_ROOT',
-      envs: 'PPD_ENVS',
-      tests: 'PPD_TESTS',
+      PPD_ENVS: 'PPD_ENVS',
+      PPD_TESTS: 'PPD_TESTS',
       PPD_OUTPUT: 'PPD_OUTPUT',
       data: 'PPD_DATA',
       selectors: 'PPD_SELECTORS',
@@ -179,8 +179,8 @@ class Arguments extends Singleton {
   parseDefault() {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
-      envs: [],
-      tests: [],
+      PPD_ENVS: [],
+      PPD_TESTS: [],
       PPD_OUTPUT: 'output',
       data: {},
       selectors: {},
@@ -206,16 +206,16 @@ class Arguments extends Singleton {
   mergeArgs() {
     this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
 
-    if (!this.args.tests || _.isEmpty(this.args.tests)) {
+    if (!this.args.PPD_TESTS || _.isEmpty(this.args.PPD_TESTS)) {
       throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
     }
 
-    if (!this.args.envs || _.isEmpty(this.args.envs)) {
+    if (!this.args.PPD_ENVS || _.isEmpty(this.args.PPD_ENVS)) {
       throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
     }
 
-    this.args.tests = !_.isArray(this.args.tests) ? [this.args.tests] : this.args.tests;
-    this.args.envs = !_.isArray(this.args.envs) ? [this.args.envs] : this.args.envs;
+    this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
+    this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
 
     return this.args;
   }

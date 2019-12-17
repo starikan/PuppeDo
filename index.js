@@ -43,15 +43,15 @@ const main = async (args = {}, socket = null) => {
 
     socket.sendYAML({ data: args, type: 'init_args' });
 
-    for (let i = 0; i < args.tests.length; i++) {
+    for (let i = 0; i < args.PPD_TESTS.length; i++) {
       let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob, socket });
       envsIdGlob = envsId;
       envsGlob = envs;
 
-      console.log(`======= TEST ${args.tests[i]} ========`);
-      socket.sendYAML({ data: args.tests[i], type: 'test_run', envsId });
+      console.log(`======= TEST ${args.PPD_TESTS[i]} ========`);
+      socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_run', envsId });
 
-      args.testFile = args.tests[i];
+      args.testFile = args.PPD_TESTS[i];
       args.testName = args.testFile.split('/')[args.testFile.split('/').length - 1];
 
       await envs.initOutput(args);
@@ -68,7 +68,7 @@ const main = async (args = {}, socket = null) => {
 
       let test = getTest(fullJSON, envsId, socket);
       await test();
-      socket.sendYAML({ data: args.tests[i], type: 'test_end', envsId });
+      socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_end', envsId });
     }
 
     await envsGlob.closeBrowsers();
