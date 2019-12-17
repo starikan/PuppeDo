@@ -29,6 +29,13 @@ class TestsContent extends Singleton {
     }
   }
 
+  checkDublikates(){
+    const { allFiles, allContent, atoms, tests, envs, data, selectors } = this.allData;
+    const dubTests = _(tests).groupBy('name').filter(v => v.length > 1).value();
+    // TODO: не забыть удалить файлик с дубликатами
+    debugger;
+  }
+
   async getAllData(force = false) {
     if (force || !this.allData) {
       console.time('getAllData');
@@ -65,11 +72,11 @@ class TestsContent extends Singleton {
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      // TODO: выкидывать ошибку если есть дубликаты
-
       console.timeEnd('getAllData');
 
       this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
+
+      this.checkDublikates();
 
       return this.allData;
     } else {

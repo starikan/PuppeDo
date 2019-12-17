@@ -1,0 +1,28 @@
+---
+name: main
+type: test
+beforeTest:
+  - envSwitch:
+      data: { envName: 'mainEnv' }
+
+runTest:
+  - goto:
+      bD: { url: wikiUrl }
+  - waitTime:
+      d: { time: 2000 }
+  - todo:
+      description: Make awesome test
+  - subTest:
+  - blank:
+
+---
+name: calimba
+type: test
+beforeTest:
+  - envSwitch:
+      data: { envName: 'mainEnv' }
+
+runTest:
+  - todo:
+      description: Make awesome test
+  - subTest:

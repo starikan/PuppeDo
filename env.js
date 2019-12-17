@@ -328,7 +328,6 @@ class Envs {
     }
   }
 
-  // TODO: Отрефакторить это дело
   async resolveLinks() {
     const args = new Arguments().args;
     const allData = await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();

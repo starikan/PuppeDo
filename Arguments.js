@@ -10,8 +10,6 @@ class Arguments extends Singleton {
     super();
   }
 
-  // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
-
   init(args) {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
