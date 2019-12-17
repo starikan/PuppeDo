@@ -112,7 +112,7 @@ class Envs {
 
   async initOutput(args) {
     const test = args.testName || 'test';
-    const output = args.outputFolder || 'output';
+    const output = args.PPD_OUTPUT || 'output';
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
@@ -129,7 +129,7 @@ class Envs {
   }
 
   async initOutputLatest(args) {
-    const output = args.outputFolder || 'output';
+    const output = args.PPD_OUTPUT || 'output';
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
@@ -192,7 +192,7 @@ class Envs {
       headless: _.get(browserSettings, 'headless', true),
       slowMo: _.get(browserSettings, 'slowMo', 0),
       args: _.get(browserSettings, 'args', []),
-      devtools: !!_.get(args, 'debugMode', false),
+      devtools: !!_.get(args, 'PPD_DEBUG_MODE', false),
     });
 
     const page = await browser.newPage();
@@ -353,7 +353,7 @@ class Envs {
     };
 
     const args = new Arguments().args;
-    const allData = await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
+    const allData = await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();
 
     // ENVS LOADING
     args.envs = args.envs.map(v => {
@@ -366,9 +366,9 @@ class Envs {
     });
 
     // EXTENSION FILES
-    args.extFiles = resolveStars(args.extFiles, args.rootFolder);
-    args.extFiles = args.extFiles.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
-    args.extFiles.forEach(v => {
+    args.PPD_EXT_FILES = resolveStars(args.PPD_EXT_FILES, args.PPD_ROOT);
+    args.PPD_EXT_FILES = args.PPD_EXT_FILES.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
+    args.PPD_EXT_FILES.forEach(v => {
       if (_.get(v, 'type') === 'data') {
         args.data = merge(args.data, _.get(v, 'data', {}));
       }
@@ -393,7 +393,7 @@ class Envs {
       dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
       args.envs[i].data = args.data;
       for (let j = 0; j < dataExt.length; j++) {
-        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.rootFolder, dataExt[j]), 'utf8'));
+        dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.PPD_ROOT, dataExt[j]), 'utf8'));
         if (_.get(dataExt[j], 'type') === 'data') {
           args.envs[i].data = merge(args.envs[i].data, _.get(dataExt[j], 'data', {}));
         }
@@ -403,7 +403,7 @@ class Envs {
       selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
       args.envs[i].selectors = args.selectors;
       for (let j = 0; j < selectorsExt.length; j++) {
-        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.rootFolder, selectorsExt[j]), 'utf8'));
+        selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.PPD_ROOT, selectorsExt[j]), 'utf8'));
         if (_.get(selectorsExt[j], 'type') === 'selectors') {
           args.envs[i].selectors = merge(args.envs[i].selectors, _.get(selectorsExt[j], 'data', {}));
         }

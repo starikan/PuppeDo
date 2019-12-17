@@ -39,7 +39,7 @@ const main = async (args = {}, socket = null) => {
     let envsIdGlob = null;
     let envsGlob = null;
     args = new Arguments().init(args);
-    await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
+    await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();
 
     socket.sendYAML({ data: args, type: 'init_args' });
 
@@ -98,7 +98,7 @@ const fetchStruct = async (args = {}, socket) => {
     let { envsId, envs } = require('./env')({ socket });
     await envs.init();
 
-    await new TestsContent({ rootFolder: args.rootFolder }).getAllData();
+    await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();
     const { fullJSON, textDescription } = getFullDepthJSON({
       testName: args.testFile,
     });

@@ -119,7 +119,7 @@ class Logger {
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
-      let debugMode = this.envs.get('args.debugMode') === 'true' ? true : false;
+      let debugMode = this.envs.get('args.PPD_DEBUG_MODE');
 
       let outputFolder = this.envs.get('output.folder');
       let outputFolderLatest = this.envs.get('output.folderLatest');
@@ -155,8 +155,7 @@ class Logger {
       }
 
       // NO LOG FILES ONLY STDOUT
-      const logDisabled = this.envs.get('args.logDisabled');
-      if (logDisabled) {
+      if (this.envs.get('args.PPD_LOG_DISABLED')) {
         return;
       }
 
@@ -226,7 +225,7 @@ class Logger {
     } catch (err) {
       err.message += ' || error in _log';
       err.socket = this.socket;
-      err.debug = _.get(this.envs, ['args', 'debugMode']);
+      err.debug = _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
       err.stepId = _.get(bindedData, 'stepId');
       debugger;
       throw err;

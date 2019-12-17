@@ -156,7 +156,7 @@ class Test {
       joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
 
       // 7. Fetch data from ext files that passed in test itself
-      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.rootFolder'));
+      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.PPD_ROOT'));
       resolvedExtFiles.forEach(f => {
         const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
         if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {
@@ -459,7 +459,7 @@ class Test {
         error.envsId = error.envsId || envsId;
         error.envs = error.envs || this.envs;
         error.socket = error.socket || this.socket;
-        error.debug = error.debug || _.get(this.envs, ['args', 'debugMode']);
+        error.debug = error.debug || _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;

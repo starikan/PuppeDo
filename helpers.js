@@ -118,15 +118,15 @@ class Arguments extends Singleton {
 
   init(args) {
     this.params = {
-      rootFolder: 'PPD_ROOT',
+      PPD_ROOT: 'PPD_ROOT',
       envs: 'PPD_ENVS',
       tests: 'PPD_TESTS',
-      outputFolder: 'PPD_OUTPUT',
+      PPD_OUTPUT: 'PPD_OUTPUT',
       data: 'PPD_DATA',
       selectors: 'PPD_SELECTORS',
-      extFiles: 'PPD_EXT_FILES',
-      debugMode: 'PPD_DEBUG_MODE',
-      logDisabled: 'PPD_LOG_DISABLED',
+      PPD_EXT_FILES: 'PPD_EXT_FILES',
+      PPD_DEBUG_MODE: 'PPD_DEBUG_MODE',
+      PPD_LOG_DISABLED: 'PPD_LOG_DISABLED',
     };
     this.paramsVal = Object.values(this.params);
 
@@ -178,15 +178,15 @@ class Arguments extends Singleton {
 
   parseDefault() {
     this.argsDefault = {
-      rootFolder: process.cwd(),
+      PPD_ROOT: process.cwd(),
       envs: [],
       tests: [],
-      outputFolder: 'output',
+      PPD_OUTPUT: 'output',
       data: {},
       selectors: {},
-      extFiles: [],
-      debugMode: false,
-      logDisabled: false,
+      PPD_EXT_FILES: [],
+      PPD_DEBUG_MODE: false,
+      PPD_LOG_DISABLED: false,
     };
 
     return this.argsDefault;
