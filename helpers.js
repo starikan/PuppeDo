@@ -117,46 +117,27 @@ class Arguments extends Singleton {
   // TODO добавить дополнительные папки с тестами чтобы сделать атомы пакетом нпм
 
   init(args) {
-    this.params = {
-      PPD_ROOT: 'PPD_ROOT',
-      PPD_ENVS: 'PPD_ENVS',
-      PPD_TESTS: 'PPD_TESTS',
-      PPD_OUTPUT: 'PPD_OUTPUT',
-      PPD_DATA: 'PPD_DATA',
-      PPD_SELECTORS: 'PPD_SELECTORS',
-      PPD_EXT_FILES: 'PPD_EXT_FILES',
-      PPD_DEBUG_MODE: 'PPD_DEBUG_MODE',
-      PPD_LOG_DISABLED: 'PPD_LOG_DISABLED',
+    this.argsDefault = {
+      PPD_ROOT: process.cwd(),
+      PPD_ENVS: [],
+      PPD_TESTS: [],
+      PPD_OUTPUT: 'output',
+      PPD_DATA: {},
+      PPD_SELECTORS: {},
+      PPD_EXT_FILES: [],
+      PPD_DEBUG_MODE: false,
+      PPD_LOG_DISABLED: false,
     };
-    this.paramsVal = Object.values(this.params);
-
+    this.params = Object.keys(this.argsDefault);
     this.argsJS = this.parser(args, this.params);
-    this.argsEnv = this.parser(_.pick(process.env, this.paramsVal), this.params);
-    this.argsCLI = this.parseCLI();
-    this.argsDefault = this.parseDefault();
+    this.argsEnv = this.parser(_.pick(process.env, this.params), this.params);
+    this.argsCLI = this.parseCLI(this.params);
     this.args = this.mergeArgs();
     return this.args;
   }
 
-  removeEmpty(obj) {
-    return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v != null));
-  }
-
-  resolveJson(str) {
-    if (!str) {
-      return null;
-    }
-    try {
-      const parsedJson = JSON.parse(str);
-      return parsedJson;
-    } catch (error) {
-      return String(str);
-    }
-  }
-
   parser(args, params) {
-    return Object.entries(params).reduce((s, v) => {
-      const [key, val] = v;
+    return params.reduce((s, val) => {
       let newVal = _.get(args, val);
       // If comma in string try convert to array
       if (_.isString(newVal)) {
@@ -170,37 +151,20 @@ class Arguments extends Singleton {
         newVal = newVal === 'true' ? true : false;
       }
       if (newVal) {
-        s[key] = newVal;
+        s[val] = newVal;
       }
       return s;
     }, {});
   }
 
-  parseDefault() {
-    this.argsDefault = {
-      PPD_ROOT: process.cwd(),
-      PPD_ENVS: [],
-      PPD_TESTS: [],
-      PPD_OUTPUT: 'output',
-      PPD_DATA: {},
-      PPD_SELECTORS: {},
-      PPD_EXT_FILES: [],
-      PPD_DEBUG_MODE: false,
-      PPD_LOG_DISABLED: false,
-    };
-
-    return this.argsDefault;
-  }
-
-  parseCLI() {
+  parseCLI(params) {
     const argsRaw = process.argv
       .map(v => v.split(/\s+/))
       .flat()
       .map(v => v.split('='))
       .filter(v => v.length > 1)
-      .filter(v => this.paramsVal.includes(v[0]));
-    this.argsCLI = this.parser(Object.fromEntries(argsRaw), this.params);
-    return this.argsCLI;
+      .filter(v => params.includes(v[0]));
+    return this.parser(Object.fromEntries(argsRaw), params);
   }
 
   mergeArgs() {
