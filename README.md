@@ -142,6 +142,7 @@ Parametr | Description | Default Value | Type
 ------------- | ------------- | ------------- | -------------
 PPD_ROOT | Root folder of tests | `process.cwd()` | `String`
 PPD_ROOT_ADDITIONAL | Append folders of tests and stuff | `[]` | `String[]`
+PPD_ROOT_IGNORE | Ignore folders of tests starts with | `['.git', 'node_modules']` | `String[]`
 PPD_ENVS | Links of environments to run. | `[]` | `String[]`
 PPD_TESTS | Name of tests to run one by one | `[]` | `String[]`
 PPD_DATA | Object with data | `{}` | `Object`

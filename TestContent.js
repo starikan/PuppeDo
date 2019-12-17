@@ -8,7 +8,7 @@ const yaml = require('js-yaml');
 const { Singleton } = require('./singleton');
 
 class TestsContent extends Singleton {
-  constructor({ rootFolder = process.cwd(), additionalFolders = [], ignorePaths = null } = {}) {
+  constructor({ rootFolder = process.cwd(), additionalFolders = [], ignorePaths = [] } = {}) {
     super();
     this.allData = this.allData || null;
     this.ignorePaths = this.ignorePaths || ignorePaths;
@@ -33,19 +33,18 @@ class TestsContent extends Singleton {
     if (force || !this.allData) {
       console.time('getAllData');
 
-      // TODO: ignorePaths
-
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];
       let paths = [];
       const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
 
       for (let i = 0; i < folders.length; i++) {
-        const pathsFolder = walkSync(folders[i]).map(v => path.join(folders[i], v));
+        const pathsFolder = walkSync(folders[i])
+          .filter(v => !this.ignorePaths.filter(g => v.startsWith(g)).length)
+          .map(v => path.join(folders[i], v));
         paths = [...paths, ...pathsFolder];
       }
 
-      // startsWith('.') remove folders like .git
       const allFiles = _.filter(paths, v => !v.startsWith('.') && exts.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
