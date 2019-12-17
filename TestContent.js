@@ -11,39 +11,48 @@ class TestsContent extends Singleton {
   constructor({ rootFolder = process.cwd(), additionalFolders = [], ignorePaths = null } = {}) {
     super();
     this.allData = this.allData || null;
-    this.rootFolder = this.rootFolder || rootFolder;
-    this.additionalFolders = this.additionalFolders || additionalFolders;
     this.ignorePaths = this.ignorePaths || ignorePaths;
+    this.setRootFolder(rootFolder);
+    this.setAdditionalFolders(additionalFolders);
   }
 
   setRootFolder(rootFolder) {
-    this.rootFolder = rootFolder;
+    this.rootFolder = this.rootFolder || rootFolder;
+    this.rootFolder = path.normalize(this.rootFolder);
   }
 
   setAdditionalFolders(additionalFolders = []) {
-    this.additionalFolders = additionalFolders;
+    this.additionalFolders = this.additionalFolders || additionalFolders;
+
+    if (_.isString(this.additionalFolders)) {
+      this.additionalFolders = [this.additionalFolders];
+    }
   }
 
   async getAllData(force = false) {
     if (force || !this.allData) {
       console.time('getAllData');
 
-      const rootFolder = path.normalize(this.rootFolder);
-
-      // TODO: additionalFolders, ignorePaths
+      // TODO: ignorePaths
 
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];
-      const paths = walkSync(rootFolder);
+      let paths = [];
+      const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
+
+      for (let i = 0; i < folders.length; i++) {
+        const pathsFolder = walkSync(folders[i]).map(v => path.join(folders[i], v));
+        paths = [...paths, ...pathsFolder];
+      }
 
       // startsWith('.') remove folders like .git
       const allFiles = _.filter(paths, v => !v.startsWith('.') && exts.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
         try {
-          const full = yaml.safeLoadAll(fs.readFileSync(path.join(rootFolder, filePath), 'utf8'));
+          const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           for (let v of full) {
-            v.filePath = path.join(rootFolder, filePath);
+            v.filePath = filePath;
             allContent.push(v);
           }
         } catch (e) {
