@@ -8,7 +8,6 @@ const dayjs = require('dayjs');
 const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
-const yaml = require('js-yaml');
 
 const logger = require('./logger');
 const { merge, sleep } = require('./helpers');
