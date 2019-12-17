@@ -1,13 +1,28 @@
 {
-  "name": "PuppeDo",
-  "version": "3.0.0",
-  "description": "",
+  "name": "@puppedo/core",
+  "version": "4.0.0",
+  "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/starikan/PuppeDo.git"
+  },
+  "keywords": [
+    "puppeteer",
+    "puppedo",
+    "testing",
+    "tests",
+    "e2e",
+    "chrome",
+    "electron",
+    "yaml programming",
+    "automatization"
+  ],
   "dependencies": {
     "dayjs": "1.8.17",
     "deepmerge": "4.2.2",
