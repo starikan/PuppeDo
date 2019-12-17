@@ -370,10 +370,10 @@ class Envs {
     args.PPD_EXT_FILES = args.PPD_EXT_FILES.map(v => yaml.safeLoad(fs.readFileSync(v, 'utf8')));
     args.PPD_EXT_FILES.forEach(v => {
       if (_.get(v, 'type') === 'data') {
-        args.data = merge(args.data, _.get(v, 'data', {}));
+        args.PPD_DATA = merge(args.PPD_DATA, _.get(v, 'data', {}));
       }
       if (_.get(v, 'type') === 'selectors') {
-        args.selectors = merge(args.selectors, _.get(v, 'data', {}));
+        args.PPD_SELECTORS = merge(args.PPD_SELECTORS, _.get(v, 'data', {}));
       }
       if (_.get(v, 'type') === 'env') {
         for (let i = 0; i < args.PPD_ENVS.length; i++) {
@@ -391,7 +391,7 @@ class Envs {
 
       let dataExt = _.get(env, 'dataExt');
       dataExt = resolveStars(_.isString(dataExt) ? [dataExt] : dataExt);
-      args.PPD_ENVS[i].data = args.data;
+      args.PPD_ENVS[i].data = args.PPD_DATA;
       for (let j = 0; j < dataExt.length; j++) {
         dataExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.PPD_ROOT, dataExt[j]), 'utf8'));
         if (_.get(dataExt[j], 'type') === 'data') {
@@ -401,7 +401,7 @@ class Envs {
 
       let selectorsExt = _.get(env, 'selectorsExt');
       selectorsExt = resolveStars(_.isString(selectorsExt) ? [selectorsExt] : selectorsExt);
-      args.PPD_ENVS[i].selectors = args.selectors;
+      args.PPD_ENVS[i].selectors = args.PPD_SELECTORS;
       for (let j = 0; j < selectorsExt.length; j++) {
         selectorsExt[j] = await yaml.safeLoad(fs.readFileSync(path.join(args.PPD_ROOT, selectorsExt[j]), 'utf8'));
         if (_.get(selectorsExt[j], 'type') === 'selectors') {
@@ -415,8 +415,7 @@ class Envs {
 
   async init(runBrowsers = true) {
     const args = { ...(await this.resolveLinks()) };
-    // TODO: PPD_DATA, PPD_SELECTORS
-    let { PPD_ENVS: envs, data, selectors } = args;
+    let { PPD_ENVS: envs, PPD_DATA: data, PPD_SELECTORS: selectors } = args;
     this.set('args', args);
     this.set('data', data);
     this.set('selectors', selectors);
