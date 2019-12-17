@@ -4,7 +4,7 @@ const _ = require('lodash');
 const safeEval = require('safe-eval');
 const yaml = require('js-yaml');
 
-const { Helpers, merge, resolveStars } = require('./helpers');
+const { Helpers, merge } = require('./helpers');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -127,6 +127,29 @@ class Test {
     this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
+      const resolveStars = function(linksArray, rootFolder = '.') {
+        let resolvedArray = [];
+        if (!_.isArray(linksArray)) return resolvedArray;
+        linksArray.forEach(fileName => {
+          if (fileName.endsWith('*')) {
+            let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
+            fileMask = _.trimEnd(fileMask, '/');
+            fileMask = _.trimEnd(fileMask, '\\\\');
+            const fullFileMask = path.join(rootFolder, fileMask);
+            let paths = walkSync(fullFileMask);
+            let pathsClean = _.map(paths, v => {
+              if (v.endsWith('/') || v.endsWith('\\')) return false;
+              return path.join(fullFileMask, v);
+            }).filter(v => v);
+            resolvedArray = [...resolvedArray, ...pathsClean];
+          } else {
+            resolvedArray.push(path.join(rootFolder, fileName));
+          }
+        });
+        resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
+        return resolvedArray;
+      };
+
       let dataLocal, joinArray;
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;

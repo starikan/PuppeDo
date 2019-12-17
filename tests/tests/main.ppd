@@ -7,7 +7,7 @@ beforeTest:
 
 runTest:
   - goto:
-      d: { url: 'https://wikipedia.org/' }
+      bD: { url: wikiUrl }
   - waitTime:
       d: { time: 2000 }
   - todo:

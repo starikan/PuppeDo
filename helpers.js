@@ -74,8 +74,8 @@ class TestsContent extends Singleton {
       // TODO: additionalFolders, ignorePaths
 
       const allContent = [];
-      const paths = walkSync(rootFolder);
       const exts = ['.yaml', '.yml', '.ppd'];
+      const paths = walkSync(rootFolder);
 
       // startsWith('.') remove folders like .git
       const allFiles = _.filter(paths, v => !v.startsWith('.') && exts.includes(path.parse(v).ext));
@@ -98,6 +98,8 @@ class TestsContent extends Singleton {
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
+      // TODO: выкидывать ошибку если есть дубликаты
+
       console.timeEnd('getAllData');
 
       this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
@@ -119,12 +121,13 @@ class Arguments extends Singleton {
   init(args) {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
+      // TODO
+      PPD_ROOT_ADDITIONAL: [],
       PPD_ENVS: [],
       PPD_TESTS: [],
       PPD_OUTPUT: 'output',
       PPD_DATA: {},
       PPD_SELECTORS: {},
-      PPD_EXT_FILES: [],
       PPD_DEBUG_MODE: false,
       PPD_LOG_DISABLED: false,
     };
@@ -194,29 +197,6 @@ const sleep = ms => {
 const merge = (...objects) =>
   deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
 
-const resolveStars = function(linksArray, rootFolder = '.') {
-  let resolvedArray = [];
-  if (!_.isArray(linksArray)) return resolvedArray;
-  linksArray.forEach(fileName => {
-    if (fileName.endsWith('*')) {
-      let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
-      fileMask = _.trimEnd(fileMask, '/');
-      fileMask = _.trimEnd(fileMask, '\\\\');
-      const fullFileMask = path.join(rootFolder, fileMask);
-      let paths = walkSync(fullFileMask);
-      let pathsClean = _.map(paths, v => {
-        if (v.endsWith('/') || v.endsWith('\\')) return false;
-        return path.join(fullFileMask, v);
-      }).filter(v => v);
-      resolvedArray = [...resolvedArray, ...pathsClean];
-    } else {
-      resolvedArray.push(path.join(rootFolder, fileName));
-    }
-  });
-  resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
-  return resolvedArray;
-};
-
 // https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 const stylesConsole = {
   raw: _logString => _logString,
@@ -232,7 +212,6 @@ const stylesConsole = {
 module.exports = {
   Helpers,
   merge,
-  resolveStars,
   sleep,
   stylesConsole,
   TestsContent,

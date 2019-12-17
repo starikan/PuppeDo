@@ -17,7 +17,7 @@ For start new project use [PuppeDoCLI](https://github.com/starikan/PuppeDoCLI)
 
 # Project structure
 
-All files must have exts `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT](#runing-arguments)
+All files must have exts `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments)
 
 ## Environment files
 
@@ -37,10 +37,15 @@ selectors:
   myEnvSelectors: bar
 
 dataExt:
-  - data/data.yaml
+  - dataExt
+  - privateData
 
 selectorsExt:
-  - data/selectors.yaml
+  - selectorsExt
+  - privateSelectors
+
+envsExt:
+  - privateEnv
 
 browser:
   type: puppeteer
@@ -75,8 +80,9 @@ type | For environment files it shoud be `env`.
 description | Description
 data | Object with data for passing in this env.
 selectors | Object with selectors for passing in this env.
-dataExt | Array of files with data. Related to [PPD_ROOT](#runing-arguments). You can use asterisk to load all files from folder `data/*`
-selectorsExt | Array of files with selectors. Related to [PPD_ROOT](#runing-arguments). You can use asterisk to load all files from folder `data/*`
+dataExt | Array of data that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
+selectorsExt | Array of selectors that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
+envsExt | Array of envs that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
 browser | [Browser settings](#browser-settings)
 log | [Logging settings](#logging-settings)
 
@@ -135,11 +141,11 @@ data | Object with data
 Parametr | Description | Default Value | Type
 ------------- | ------------- | ------------- | -------------
 PPD_ROOT | Root folder of tests | `process.cwd()` | `String`
+PPD_ROOT_ADDITIONAL | Append folders of tests and stuff | `[]` | `String[]`
 PPD_ENVS | Links of environments to run. | `[]` | `String[]`
 PPD_TESTS | Name of tests to run one by one | `[]` | `String[]`
 PPD_DATA | Object with data | `{}` | `Object`
 PPD_SELECTORS | Object with selectors | `{}` | `Object`
-PPD_EXT_FILES | Array with additional files | `[]` | `String[]`
 PPD_OUTPUT | Path to log folder | `output` | `String`
 PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
@@ -304,37 +310,9 @@ afterTest:
     const main = require("PuppeDo").main;
     main({ args })
     ```
-3. args:
-    - test
-    - tests
-    - output
-    - envs
-    - rootFolder
-    - envsExt
-    - envsExtJson
-    - data
-    - selectors
-    - dataExt
-    - selectorsExt
-    - debugMode
-    - logDisabled
 
 ## Запуск с переменными среды
 
 1. ```node -e require("PuppeDo").main()```
 2. SET PPD_%=%data%
-
-3. env: // Все в двойный кавычках "", если внутри они нужны нужно их эскейпить \" т.к. все потом парсится как JSON
-    - PPD_TEST
-    - PPD_TESTS
-    - PPD_OUTPUT
-    - PPD_ENVS
-    - PPD_ROOT
-    - PPD_ENVS_EXT
-    - PPD_ENVS_EXT_JSON
-    - PPD_DATA
-    - PPD_SELECTORS
-    - PPD_DATA_EXT
-    - PPD_SELECTORS_EXT
-    - PPD_DEBUG_MODE
-    - PPD_LOG_DISABLED -->
+ -->
