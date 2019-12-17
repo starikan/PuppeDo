@@ -7,9 +7,21 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "PuppeDo_tests",
+      "name": "PuppeDo_JS",
       "program": "${workspaceFolder}\\tests\\index.js",
-      // "args": ["PPD_EXT_FILES=123321,123,55"],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_ENV",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./index').main()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "main",
+        "PPD_DEBUG_MODE": "true",
+      }
     }
   ]
 }

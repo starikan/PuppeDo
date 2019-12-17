@@ -128,10 +128,11 @@ class Arguments extends Singleton {
       debugMode: 'PPD_DEBUG_MODE',
       logDisabled: 'PPD_LOG_DISABLED',
     };
+    this.paramsVal = Object.values(this.params);
 
     this.argsJS = this.parser(args, this.params);
+    this.argsEnv = this.parser(_.pick(process.env, this.paramsVal), this.params);
     this.argsCLI = this.parseCLI();
-    this.argsEnv = this.parseENV();
     this.argsDefault = this.parseDefault();
     this.args = this.mergeArgs();
     return this.args;
@@ -213,25 +214,6 @@ class Arguments extends Singleton {
 
     this.argsCLI = this.removeEmpty(this.argsCLI);
     return this.argsCLI;
-  }
-
-  parseENV() {
-    this.argsEnv = {
-      rootFolder: process.env.PPD_ROOT,
-      envs: JSON.parse(process.env.PPD_ENVS || 'null'),
-      tests: this.resolveJson(process.env.PPD_TESTS),
-      outputFolder: process.env.PPD_OUTPUT,
-      data: this.resolveJson(process.env.PPD_DATA),
-      selectors: this.resolveJson(process.env.PPD_SELECTORS),
-      extFiles: this.resolveJson(process.env.PPD_EXT_FILES),
-      debugMode: ['true', 'false'].includes(process.env.PPD_DEBUG_MODE) ? JSON.parse(process.env.PPD_DEBUG_MODE) : null,
-      logDisabled: ['true', 'false'].includes(process.env.PPD_LOG_DISABLED)
-        ? JSON.parse(process.env.PPD_LOG_DISABLED)
-        : null,
-    };
-
-    this.argsEnv = this.removeEmpty(this.argsEnv);
-    return this.argsEnv;
   }
 
   mergeArgs() {

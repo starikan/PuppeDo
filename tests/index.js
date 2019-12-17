@@ -14,5 +14,5 @@ const run = async () => {
 try {
   run();
 } catch (error) {
-  console.log(error)
+  console.log(error);
 }
