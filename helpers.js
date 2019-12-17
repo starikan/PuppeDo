@@ -193,26 +193,13 @@ class Arguments extends Singleton {
   }
 
   parseCLI() {
-    const argsExt = {};
-
-    _.forEach(process.argv.slice(2), v => {
-      let data = v.split('=');
-      argsExt[data[0]] = data[1];
-    });
-
-    this.argsCLI = {
-      rootFolder: _.get(argsExt, 'PPD_ROOT'),
-      envs: JSON.parse(_.get(argsExt, 'PPD_ENVS', 'null')),
-      tests: this.resolveJson(_.get(argsExt, 'PPD_TESTS')),
-      outputFolder: _.get(argsExt, 'PPD_OUTPUT'),
-      data: _.get(argsExt, 'PPD_DATA'),
-      selectors: _.get(argsExt, 'PPD_SELECTORS'),
-      extFiles: this.resolveJson(_.get(argsExt, 'PPD_EXT_FILES')),
-      debugMode: _.get(argsExt, 'PPD_DEBUG_MODE'),
-      logDisabled: _.get(argsExt, 'PPD_LOG_DISABLED'),
-    };
-
-    this.argsCLI = this.removeEmpty(this.argsCLI);
+    const argsRaw = process.argv
+      .map(v => v.split(/\s+/))
+      .flat()
+      .map(v => v.split('='))
+      .filter(v => v.length > 1)
+      .filter(v => this.paramsVal.includes(v[0]));
+    this.argsCLI = this.parser(Object.fromEntries(argsRaw), this.params);
     return this.argsCLI;
   }
 

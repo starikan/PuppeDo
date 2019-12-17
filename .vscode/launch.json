@@ -22,6 +22,30 @@
         "PPD_TESTS": "main",
         "PPD_DEBUG_MODE": "true",
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_CLI",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-e",
+        "require('./index').main()",
+        "PPD_ROOT=tests",
+        "PPD_ENVS=mainEnv",
+        "PPD_TESTS=main",
+        "PPD_DEBUG_MODE=true",
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_CLI2",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}\\tests\\index.js",
+      "args": [
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true",
+      ]
     }
   ]
 }
