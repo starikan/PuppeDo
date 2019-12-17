@@ -15,7 +15,6 @@ class Arguments extends Singleton {
   init(args) {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
-      // TODO
       PPD_ROOT_ADDITIONAL: [],
       PPD_ENVS: [],
       PPD_TESTS: [],

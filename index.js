@@ -1,4 +1,5 @@
 const _ = require('lodash');
+require('@puppedo/atoms');
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
@@ -17,7 +18,6 @@ const errorHandler = async error => {
   if (error.debug) {
     debugger;
   }
-debugger
   const styleFunction = _.get(stylesConsole, 'trace', args => args);
   console.log(styleFunction(error.message));
   if (!module.parent) {
