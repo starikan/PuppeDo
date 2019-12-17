@@ -29,9 +29,12 @@ class TestsContent extends Singleton {
     }
   }
 
-  checkDublikates(){
+  checkDublikates() {
     const { allFiles, allContent, atoms, tests, envs, data, selectors } = this.allData;
-    const dubTests = _(tests).groupBy('name').filter(v => v.length > 1).value();
+    const dubTests = _(tests)
+      .groupBy('name')
+      .filter(v => v.length > 1)
+      .value();
     // TODO: не забыть удалить файлик с дубликатами
     debugger;
   }
@@ -42,9 +45,9 @@ class TestsContent extends Singleton {
 
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];
-      let paths = [];
       const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
 
+      let paths = [];
       for (let i = 0; i < folders.length; i++) {
         const pathsFolder = walkSync(folders[i])
           .filter(v => !this.ignorePaths.filter(g => v.startsWith(g)).length)
@@ -52,7 +55,8 @@ class TestsContent extends Singleton {
         paths = [...paths, ...pathsFolder];
       }
 
-      const allFiles = _.filter(paths, v => !v.startsWith('.') && exts.includes(path.parse(v).ext));
+      // TODO Отрефакторить
+      const allFiles = _.filter(paths, v => exts.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
         try {
