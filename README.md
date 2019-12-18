@@ -150,6 +150,7 @@ PPD_SELECTORS | Object with selectors | `{}` | `Object`
 PPD_OUTPUT | Path to log folder | `output` | `String`
 PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
+PPD_LOG_TIMER | Log every atoms time for tuning | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults

@@ -22,6 +22,7 @@ class Arguments extends Singleton {
       PPD_SELECTORS: {},
       PPD_DEBUG_MODE: false,
       PPD_LOG_DISABLED: false,
+      PPD_LOG_TIMER: false,
     };
     this.params = Object.keys(this.argsDefault);
     this.argsJS = this.parser(args, this.params);
