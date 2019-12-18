@@ -3,7 +3,7 @@ const deepmerge = require('deepmerge');
 
 class Helpers {
   constructor() {}
-
+  // TODO: remove this
   async getElement(page, selector, allElements = false) {
     if (page && selector && _.isString(selector) && _.isObject(page)) {
       let element;
@@ -25,7 +25,7 @@ class Helpers {
       return false;
     }
   }
-
+  // TODO: remove this
   anyGet(object, paths) {
     let result;
     if (!object || !_.isObject(object) || !paths || (!_.isString(paths) && !_.isArray(paths))) {
