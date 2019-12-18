@@ -57,7 +57,7 @@ class TestsContent extends Singleton {
 
   async getAllData(force = false) {
     if (force || !this.allData) {
-      console.time('getAllData');
+      // console.time('getAllData');
 
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];
@@ -98,7 +98,7 @@ class TestsContent extends Singleton {
         this.checkDublikates(this.allData[key], key);
       }
 
-      console.timeEnd('getAllData');
+      // console.timeEnd('getAllData');
       return this.allData;
     } else {
       return this.allData;

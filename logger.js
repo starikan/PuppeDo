@@ -132,7 +132,7 @@ class Logger {
       if (!_.get(activeLog, 'fullpage')) {
         fullpage = false;
       }
-      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format('HH:mm:ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
@@ -142,7 +142,7 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const logString = `${now} - ${level.padEnd(5)} - ${' | '.repeat(levelIndent)} ${text}`;
+      const logString = `${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} ${text}`;
 
       // STDOUT
       if (stdOut) {

@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const dayjs = require('dayjs');
+
 require('@puppedo/atoms');
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
@@ -37,7 +39,7 @@ const main = async (args = {}, socket = null) => {
       };
     }
 
-    console.time();
+    const startTime = new Date()
 
     let envsIdGlob = null;
     let envsGlob = null;
@@ -55,7 +57,8 @@ const main = async (args = {}, socket = null) => {
       envsIdGlob = envsId;
       envsGlob = envs;
 
-      console.log(`======= TEST ${args.PPD_TESTS[i]} ========`);
+      console.log(`======= TEST '${args.PPD_TESTS[i]}' ========`);
+      console.log(`Start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
       socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_run', envsId });
 
       args.testFile = args.PPD_TESTS[i];
@@ -80,7 +83,7 @@ const main = async (args = {}, socket = null) => {
 
     await envsGlob.closeBrowsers();
     await envsGlob.closeProcesses();
-    console.timeEnd();
+    console.log(`Evaluated time: ${(new Date() - startTime) / 1000} sec.`);
 
     if (!module.parent) {
       process.exit(1);

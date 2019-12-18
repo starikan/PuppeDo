@@ -486,9 +486,10 @@ class Test {
           await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
         }
 
+        // TIMER IN CONSOLE
         const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
         if (timer) {
-          console.log(`${' '.repeat(35 + 3 * this.levelIndent)} (${this.name}) Timer: ${new Date() - startTime} ms.`);
+          console.log(`${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`);
         }
       } catch (error) {
         error.envsId = error.envsId || envsId;
