@@ -163,6 +163,7 @@ class Test {
       // 6. Get data from results
       if (isSelector) {
         joinArray = [
+          _.get(this.envs, ['args', 'PPD_SELECTORS'], {}),
           this.env ? this.env.get('selectors') : {},
           // this.envs.get('args.extSelectorsExt', {}),
           // this.envs.get('args.extSelectors', {}),
@@ -170,6 +171,7 @@ class Test {
         ];
       } else {
         joinArray = [
+          _.get(this.envs, ['args', 'PPD_DATA'], {}),
           this.env ? this.env.get('data') : {},
           // this.envs.get('args.extDataExt', {}),
           // this.envs.get('args.extData', {}),
@@ -262,6 +264,8 @@ class Test {
       }
 
       let { envs, log } = require('./env.js')({ envsId });
+
+      debugger
 
       try {
         this.envs = envs;

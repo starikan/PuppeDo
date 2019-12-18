@@ -1,6 +1,10 @@
 ---
 name: main
 type: test
+
+data:
+  mainTestData: foo
+
 beforeTest:
   - envSwitch:
       data: { envName: 'mainEnv' }
