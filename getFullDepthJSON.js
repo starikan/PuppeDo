@@ -44,7 +44,6 @@ const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) 
         const runner = _.get(runnerBlockValue, [runnerNum], {});
         let [name, newRunner] = Object.entries(runner)[0] || [null, {}];
         newRunner = newRunner || {};
-
         if (name) {
           newRunner.name = name;
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];

@@ -265,8 +265,6 @@ class Test {
 
       let { envs, log } = require('./env.js')({ envsId });
 
-      debugger
-
       try {
         this.envs = envs;
         this.envName = this.envs.get('current.name');

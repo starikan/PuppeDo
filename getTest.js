@@ -5,28 +5,22 @@ const _ = require('lodash');
 const abstractTest = require('./abstractTest');
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
-const resolveJS = (testJson, funcFile, funcKey, funcVal = false, canThrow = false) => {
+const resolveJS = (testJson, funcFile) => {
   try {
-    const funcFromFile = _.get(require(funcFile), funcKey);
+    const funcFromFile = _.get(require(funcFile), 'runTest');
     if (_.isFunction(funcFromFile)) {
       testJson.funcFile = path.resolve(funcFile);
-      testJson[funcKey] = [funcFromFile];
+      testJson['runTest'] = [funcFromFile];
     }
-    return testJson;
   } catch (err) {
-    if (canThrow) {
-      throw {
-        message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
-      };
-    } else {
-      // If there is no JS file it`s fine.
-    }
+    // If there is no JS file it`s fine.
+    testJson.funcFile = 'No file';
+    testJson['runTest'] = [() => {}];
   }
+  return testJson;
 };
 
 const getTest = function(testJsonIncome, envsId, socket) {
-  const { envs } = require('./env')({ envsId, socket });
-
   let testJson = { ...testJsonIncome };
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw { message: 'getTest params error' };
@@ -40,10 +34,9 @@ const getTest = function(testJsonIncome, envsId, socket) {
 
   // If there is no any function in test we deside that it have runTest in js file with the same name
   if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
-    const funcKey = 'runTest';
     const testFileExt = path.parse(testJson.filePath).ext;
     const funcFile = path.resolve(testJson.filePath.replace(testFileExt, '.js'));
-    testJson = resolveJS(testJson, funcFile, funcKey);
+    testJson = resolveJS(testJson, funcFile);
   } else {
     for (let funcKey in functions) {
       let funcVal = functions[funcKey];
@@ -56,11 +49,8 @@ const getTest = function(testJsonIncome, envsId, socket) {
             testJson[funcKey].push(getTest(test, envsId, socket));
           }
         }
-      }
-
-      if (_.isString(funcVal)) {
-        const funcFile = path.resolve(path.join(envs.get('args.PPD_ROOT'), funcVal));
-        testJson = resolveJS(testJson, funcFile, funcKey, funcVal, true);
+      } else {
+        throw { message: `Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'` };
       }
     }
   }
