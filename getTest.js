@@ -7,7 +7,8 @@ const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
 const resolveJS = (testJson, funcFile) => {
   try {
-    const funcFromFile = _.get(require(funcFile), 'runTest');
+    const atom = require(funcFile);
+    const funcFromFile = _.get(atom, 'runTest');
     if (_.isFunction(funcFromFile)) {
       testJson.funcFile = path.resolve(funcFile);
       testJson['runTest'] = [funcFromFile];

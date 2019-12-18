@@ -147,6 +147,7 @@ class Logger {
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
+        // TODO: console.table
         console.log(styleFunction(logString));
         if (level === 'error') {
           if (testFile) console.log('Файл с тестом:', styleFunction(testFile));

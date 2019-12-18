@@ -373,6 +373,8 @@ class Test {
           log: logBinded,
           helper: new Helpers(),
           _,
+          name: this.name,
+          description: this.description,
         });
 
         // Descriptions in log
