@@ -29,14 +29,30 @@ class TestsContent extends Singleton {
     }
   }
 
-  checkDublikates() {
-    const { allFiles, allContent, atoms, tests, envs, data, selectors } = this.allData;
+  checkDublikates(tests, key) {
     const dubTests = _(tests)
       .groupBy('name')
       .filter(v => v.length > 1)
+      .flatten()
       .value();
-    // TODO: не забыть удалить файлик с дубликатами
-    debugger;
+    const dubNames = dubTests.reduce((s, v) => {
+      if (!s.includes(v.name)) {
+        s = [...s, v.name];
+      }
+      return s;
+    }, []);
+    const dubFiles = dubTests.reduce((s, v) => {
+      if (!s.includes(v.filePath)) {
+        s = [...s, v.filePath];
+      }
+      return s;
+    }, []);
+
+    if (dubNames.length || dubFiles.length) {
+      throw {
+        message: `There is dublicates of '${key}' in files '${dubFiles.join(', ')}'. Names is '${dubNames.join(', ')}'`,
+      };
+    }
   }
 
   async getAllData(force = false) {
@@ -76,12 +92,13 @@ class TestsContent extends Singleton {
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      console.timeEnd('getAllData');
-
       this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
 
-      this.checkDublikates();
+      for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
+        this.checkDublikates(this.allData[key], key);
+      }
 
+      console.timeEnd('getAllData');
       return this.allData;
     } else {
       return this.allData;
