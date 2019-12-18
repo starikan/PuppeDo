@@ -235,6 +235,9 @@ class Test {
     };
 
     this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+
+      const startTime = new Date();
+
       const inputs = merge(inputArgs, constructorArgs);
 
       this.data = resolveAliases('data', inputs, ALIASSES);
@@ -481,6 +484,11 @@ class Test {
         if (this.repeat > 1) {
           this.repeat -= 1;
           await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
+        }
+
+        const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
+        if (timer) {
+          console.log(`${' '.repeat(35 + 3 * this.levelIndent)} (${this.name}) Timer: ${new Date() - startTime} ms.`);
         }
       } catch (error) {
         error.envsId = error.envsId || envsId;
