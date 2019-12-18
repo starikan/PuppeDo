@@ -128,8 +128,11 @@ const fetchAvailableTests = async (args = {}, socket) => {
     socket.sendYAML({ data: args, type: 'init_args' });
     let { envsId, envs } = require('./env')({ socket });
     await envs.init();
-    const { rootFolder, additionalFolders, ignorePaths } = _.get(envs, ['args'], {});
-    const allYamls = await new TestsContent({ rootFolder, additionalFolders, ignorePaths }).getAllData();
+    const allYamls = await new TestsContent({
+      rootFolder: args.PPD_ROOT,
+      additionalFolders: args.PPD_ROOT_ADDITIONAL,
+      ignorePaths: args.PPD_ROOT_IGNORE,
+    }).getAllData();
     socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
   } catch (err) {
     err.message += ` || error in 'fetchAvailableTests'`;
