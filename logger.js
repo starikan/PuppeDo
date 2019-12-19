@@ -119,7 +119,7 @@ class Logger {
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
-      let debugMode = this.envs.get('args.debugMode') === 'true' ? true : false;
+      let debugMode = this.envs.get('args.PPD_DEBUG_MODE');
 
       let outputFolder = this.envs.get('output.folder');
       let outputFolderLatest = this.envs.get('output.folderLatest');
@@ -132,7 +132,7 @@ class Logger {
       if (!_.get(activeLog, 'fullpage')) {
         fullpage = false;
       }
-      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const now = dayjs().format('HH:mm:ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
@@ -142,11 +142,12 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const logString = `${now} - ${level.padEnd(5)} - ${' | '.repeat(levelIndent)} ${text}`;
+      const logString = `${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} ${text}`;
 
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
+        // TODO: console.table
         console.log(styleFunction(logString));
         if (level === 'error') {
           if (testFile) console.log('Файл с тестом:', styleFunction(testFile));
@@ -155,8 +156,7 @@ class Logger {
       }
 
       // NO LOG FILES ONLY STDOUT
-      const logDisabled = this.envs.get('args.logDisabled');
-      if (logDisabled) {
+      if (this.envs.get('args.PPD_LOG_DISABLED')) {
         return;
       }
 
@@ -226,7 +226,7 @@ class Logger {
     } catch (err) {
       err.message += ' || error in _log';
       err.socket = this.socket;
-      err.debug = _.get(this.envs, ['args', 'debugMode']);
+      err.debug = _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
       err.stepId = _.get(bindedData, 'stepId');
       debugger;
       throw err;

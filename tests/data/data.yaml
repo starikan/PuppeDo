@@ -1,0 +1,7 @@
+---
+type: data
+name: data
+description: Simple Data
+data:
+  data: test
+  wikiUrl: https://wikipedia.org/

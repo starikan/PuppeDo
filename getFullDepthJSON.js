@@ -1,102 +1,72 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const { yaml2json } = require('./yaml2json');
+const { TestsContent } = require('./TestContent');
 
-let fullDescription = '';
+const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
-const getFullDepthJSON = function({ envs, filePath, testBody, testsFolder, levelIndent = 0, textView = false }) {
-  if (filePath && !_.isString(filePath)) {
-    throw { message: `yaml2json: Incorrect FILE NAME YAML/JSON/JS - ${filePath}` };
+const generateDescriptionStep = fullJSON => {
+  const { description, name, todo, levelIndent } = fullJSON;
+
+  const descriptionString = [
+    '   '.repeat(levelIndent),
+    todo ? 'TODO: ' + todo + '== ' : '',
+    description ? `${description} ` : '',
+    name ? `(${name})` : '',
+    '\n',
+  ].join('');
+
+  return descriptionString;
+};
+
+const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) {
+  const allTests = new TestsContent().allData;
+  if (!allTests) {
+    throw { message: 'No tests content. Init it first with "TestsContent" class' };
   }
 
-  if (testBody && !_.isObject(testBody)) {
-    throw { message: `yaml2json: Incorrect TEST BODY YAML/JSON/JS - ${testBody}` };
+  let fullJSON = allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type));
+  if (!fullJSON) {
+    throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
   }
 
-  if (!testsFolder && envs) {
-    testsFolder = envs.get('args.testsFolder');
-  }
+  fullJSON = Object.assign({}, fullJSON, testBody);
+  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testName]);
+  fullJSON.levelIndent = levelIndent;
+  fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
-  let full = filePath ? yaml2json(filePath, testsFolder).json : {};
-  if (!full) {
-    throw { message: `Невозможно запустить в папке ${testsFolder} пустой тест ${filePath}` };
-  }
-  if (!['atom', 'test'].includes(_.get(full, 'type'))) {
-    throw { message: `Файл ${filePath} в папке ${testsFolder} не является тестом` };
-  }
+  let textDescription = generateDescriptionStep(fullJSON);
 
-  full = testBody ? Object.assign(full, testBody) : full;
-  full.breadcrumbs = _.get(full, 'breadcrumbs', [filePath]);
-  full.levelIndent = levelIndent;
-  const runnerBlockNames = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
-
-  // Generate text view for test
-  if (textView) {
-    fullDescription = '';
-  }
-  let description = _.get(full, 'description');
-  let name = _.get(full, 'name');
-  let todo = _.get(full, 'todo');
-  let fullString = '';
-  fullString += '   '.repeat(levelIndent);
-  fullString += todo ? 'TODO: ' + todo + '== ' : '';
-  fullString += description ? `${description} ` : '';
-  fullString += name ? `(${name})` : '';
-  fullString += '\n';
-
-  levelIndent += 1;
-
-  if (name === 'log') fullString = null;
-
-  if (fullString) {
-    fullDescription += fullString;
-  }
-
-  full.stepId = crypto.randomBytes(16).toString('hex');
-
-  for (const runnerBlock of runnerBlockNames) {
-    let runnerBlockValue = _.get(full, [runnerBlock]);
+  for (const runnerBlock of RUNNER_BLOCK_NAMES) {
+    let runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
-      for (let runnerNum in runnerBlockValue) {
-        let newRunner = {};
-        let name;
-        let runner = _.get(runnerBlockValue, [runnerNum], {});
-
-        let keys = Object.keys(runner);
-        if (keys && keys.length == 1) {
-          name = keys[0];
-          newRunner = _.clone(runner[name]) || newRunner;
-          newRunner.name = name;
-        }
-
-        name = _.get(newRunner, 'name', null);
-
+      for (const runnerNum in runnerBlockValue) {
+        const runner = _.get(runnerBlockValue, [runnerNum], {});
+        let [name, newRunner] = Object.entries(runner)[0] || [null, {}];
+        newRunner = newRunner || {};
         if (name) {
-          let breadcrumbs = _.clone(full.breadcrumbs);
-          breadcrumbs.push(`${runnerBlock}[${runnerNum}].${name}`);
-          newRunner.breadcrumbs = breadcrumbs;
-
-          newRunner.type = name == 'log' ? 'log' : 'test';
-
-          full[runnerBlock][runnerNum] = getFullDepthJSON({
-            filePath: name,
+          newRunner.name = name;
+          newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
+          const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
+            testName: name,
             testBody: newRunner,
-            testsFolder: testsFolder,
-            levelIndent,
+            levelIndent: levelIndent + 1,
           });
+
+          fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
+          textDescription += textDescriptionResponse;
         }
       }
+    } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
+      throw {
+        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.filePath}' must be array of tests`,
+      };
     }
   }
 
-  full.name = _.get(full, 'name', filePath);
+  fullJSON.name = _.get(fullJSON, 'name', testName);
 
-  return full;
+  return { fullJSON, textDescription };
 };
 
-const getDescriptions = function() {
-  return fullDescription;
-};
-
-module.exports = { getFullDepthJSON, getDescriptions };
+module.exports = { getFullDepthJSON };

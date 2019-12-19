@@ -7,15 +7,46 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "PuppeDo_tests",
-      "program": "${workspaceFolder}\\index.js",
+      "name": "PuppeDo_JS",
+      "program": "${workspaceFolder}\\tests\\index.js",
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_ENV",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./index').main()"],
       "env": {
-        "PPD_TEST_FOLDER": "../PuppeDo_tests",
-        "PPD_TESTS": "[\"mainLogin\"]",
-        "PPD_ENVS": "[\"settings/envElectron.yaml\"]",
-        "PPD_EXT_FILES": "[\"privateData/auth.yaml\", \"privateData/envElectronRunExt\"]",
+        "PPD_ROOT": "tests",
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "main",
         "PPD_DEBUG_MODE": "true",
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_CLI",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-e",
+        "require('./index').main()",
+        "PPD_ROOT=tests",
+        "PPD_ENVS=mainEnv",
+        "PPD_TESTS=main",
+        "PPD_DEBUG_MODE=true",
+        "PPD_LOG_TIMER=true",
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_CLI2",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}\\tests\\index.js",
+      "args": [
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true",
+      ]
     }
   ]
 }

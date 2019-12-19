@@ -4,7 +4,7 @@ const _ = require('lodash');
 const safeEval = require('safe-eval');
 const yaml = require('js-yaml');
 
-const { Helpers, merge, resolveStars } = require('./helpers');
+const { Helpers, merge } = require('./helpers');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -127,6 +127,29 @@ class Test {
     this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
+      const resolveStars = function(linksArray, rootFolder = '.') {
+        let resolvedArray = [];
+        if (!_.isArray(linksArray)) return resolvedArray;
+        linksArray.forEach(fileName => {
+          if (fileName.endsWith('*')) {
+            let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
+            fileMask = _.trimEnd(fileMask, '/');
+            fileMask = _.trimEnd(fileMask, '\\\\');
+            const fullFileMask = path.join(rootFolder, fileMask);
+            let paths = walkSync(fullFileMask);
+            let pathsClean = _.map(paths, v => {
+              if (v.endsWith('/') || v.endsWith('\\')) return false;
+              return path.join(fullFileMask, v);
+            }).filter(v => v);
+            resolvedArray = [...resolvedArray, ...pathsClean];
+          } else {
+            resolvedArray.push(path.join(rootFolder, fileName));
+          }
+        });
+        resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
+        return resolvedArray;
+      };
+
       let dataLocal, joinArray;
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
@@ -140,6 +163,7 @@ class Test {
       // 6. Get data from results
       if (isSelector) {
         joinArray = [
+          _.get(this.envs, ['args', 'PPD_SELECTORS'], {}),
           this.env ? this.env.get('selectors') : {},
           // this.envs.get('args.extSelectorsExt', {}),
           // this.envs.get('args.extSelectors', {}),
@@ -147,6 +171,7 @@ class Test {
         ];
       } else {
         joinArray = [
+          _.get(this.envs, ['args', 'PPD_DATA'], {}),
           this.env ? this.env.get('data') : {},
           // this.envs.get('args.extDataExt', {}),
           // this.envs.get('args.extData', {}),
@@ -156,7 +181,7 @@ class Test {
       joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
 
       // 7. Fetch data from ext files that passed in test itself
-      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.testsFolder'));
+      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.PPD_ROOT'));
       resolvedExtFiles.forEach(f => {
         const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
         if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {
@@ -210,6 +235,9 @@ class Test {
     };
 
     this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+
+      const startTime = new Date();
+
       const inputs = merge(inputArgs, constructorArgs);
 
       this.data = resolveAliases('data', inputs, ALIASSES);
@@ -346,8 +374,11 @@ class Test {
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: logBinded,
+          // TODO: remove this
           helper: new Helpers(),
           _,
+          name: this.name,
+          description: this.description,
         });
 
         // Descriptions in log
@@ -455,11 +486,17 @@ class Test {
           this.repeat -= 1;
           await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
         }
+
+        // TIMER IN CONSOLE
+        const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
+        if (timer) {
+          console.log(`${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`);
+        }
       } catch (error) {
         error.envsId = error.envsId || envsId;
         error.envs = error.envs || this.envs;
         error.socket = error.socket || this.socket;
-        error.debug = error.debug || _.get(this.envs, ['args', 'debugMode']);
+        error.debug = error.debug || _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;

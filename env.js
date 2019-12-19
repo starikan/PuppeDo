@@ -11,6 +11,8 @@ const walkSync = require('walk-sync');
 
 const logger = require('./logger');
 const { merge, sleep } = require('./helpers');
+const { TestsContent } = require('./TestContent');
+const { Arguments } = require('./Arguments');
 
 class Env {
   constructor(name, env = {}) {
@@ -111,7 +113,7 @@ class Envs {
 
   async initOutput(args) {
     const test = args.testName || 'test';
-    const output = args.outputFolder || 'output';
+    const output = args.PPD_OUTPUT || 'output';
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
@@ -128,7 +130,7 @@ class Envs {
   }
 
   async initOutputLatest(args) {
-    const output = args.outputFolder || 'output';
+    const output = args.PPD_OUTPUT || 'output';
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
@@ -158,9 +160,9 @@ class Envs {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
 
-      const type = _.get(env, 'env.browser.type');
-      const runtime = _.get(env, 'env.browser.runtime');
-      const browserSettings = _.get(env, 'env.browser');
+      const type = _.get(env, 'env.browser.type', 'puppeteer');
+      const runtime = _.get(env, 'env.browser.runtime', 'run');
+      const browserSettings = _.get(env, 'env.browser', {});
 
       if (type === 'api') {
         // TODO: 2019-07-18 S.Starodubov todo
@@ -191,7 +193,7 @@ class Envs {
       headless: _.get(browserSettings, 'headless', true),
       slowMo: _.get(browserSettings, 'slowMo', 0),
       args: _.get(browserSettings, 'args', []),
-      devtools: !!_.get(args, 'debugMode', false),
+      devtools: !!_.get(args, 'PPD_DEBUG_MODE', false),
     });
 
     const page = await browser.newPage();
@@ -275,15 +277,15 @@ class Envs {
     const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
     const program = _.get(browserSettings, 'runtimeEnv.program');
     const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
-    const browser_args = _.get(browserSettings, 'runtimeEnv.args', []);
-    const browser_env = _.get(browserSettings, 'runtimeEnv.env', {});
+    const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
+    const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
     const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
 
     if (runtimeExecutable) {
-      const run_args = [program, ...browser_args];
-      process.env = Object.assign(process.env, browser_env);
+      const run_args = [program, ...browserArgs];
+      process.env = Object.assign(process.env, browserEnv);
 
-      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browser_env });
+      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browserEnv });
 
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
@@ -326,8 +328,43 @@ class Envs {
     }
   }
 
-  async init(args = {}, runBrowsers = true) {
-    let { envs, data, selectors } = args;
+  async resolveLinks() {
+    const args = new Arguments().args;
+    const allData = await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();
+
+    // ENVS RESOLVING
+    args.PPD_ENVS = args.PPD_ENVS.map(v => {
+      const env = allData.envs.find(g => g.name === v);
+      if (env) {
+        const { dataExt, selectorsExt, envsExt } = env;
+        envsExt.forEach(d => {
+          const envsResolved = allData.envs.find(g => g.name === d, {});
+          env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser', {}));
+          env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log', {}));
+          env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data', {}));
+          env.selectors = merge(_.get(env, 'selectors', {}), _.get(envsResolved, 'selectors', {}));
+          env.description = _.get(env, 'description', '') + ' -> ' + _.get(envsResolved, 'description', '');
+        });
+        dataExt.forEach(d => {
+          const dataResolved = allData.data.find(g => g.name === d, {});
+          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data', {}));
+        });
+        selectorsExt.forEach(d => {
+          const selectorsResolved = allData.selectors.find(g => g.name === d, {});
+          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data', {}));
+        });
+        return env;
+      } else {
+        throw { message: `PuppeDo found unkown environment in yours args. It's name '${v}'.` };
+      }
+    });
+
+    return args;
+  }
+
+  async init(runBrowsers = true) {
+    const args = { ...(await this.resolveLinks()) };
+    let { PPD_ENVS: envs, PPD_DATA: data, PPD_SELECTORS: selectors } = args;
     this.set('args', args);
     this.set('data', data);
     this.set('selectors', selectors);

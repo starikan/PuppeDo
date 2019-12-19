@@ -3,63 +3,55 @@ const path = require('path');
 const _ = require('lodash');
 
 const abstractTest = require('./abstractTest');
+const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+
+const resolveJS = (testJson, funcFile) => {
+  try {
+    const atom = require(funcFile);
+    const funcFromFile = _.get(atom, 'runTest');
+    if (_.isFunction(funcFromFile)) {
+      testJson.funcFile = path.resolve(funcFile);
+      testJson['runTest'] = [funcFromFile];
+    }
+  } catch (err) {
+    // If there is no JS file it`s fine.
+    testJson.funcFile = 'No file';
+    testJson['runTest'] = [() => {}];
+  }
+  return testJson;
+};
 
 const getTest = function(testJsonIncome, envsId, socket) {
-  const { envs, log } = require('./env')({ envsId, socket });
-
-  let testJson = _.cloneDeep(testJsonIncome);
+  let testJson = { ...testJsonIncome };
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw { message: 'getTest params error' };
   }
-  const functions = _.pick(testJson, ['beforeTest', 'runTest', 'afterTest', 'errorTest']);
+  const functions = _.pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging
-  testJson.source = _.cloneDeep(testJson);
+  testJson.source = { ...testJsonIncome };
 
   testJson.socket = socket;
 
-  for (let funcKey in functions) {
-    testJson[funcKey] = [];
-    let funcVal = functions[funcKey];
+  // If there is no any function in test we deside that it have runTest in js file with the same name
+  if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
+    const testFileExt = path.parse(testJson.filePath).ext;
+    const funcFile = path.resolve(testJson.filePath.replace(testFileExt, '.js'));
+    testJson = resolveJS(testJson, funcFile);
+  } else {
+    for (let funcKey in functions) {
+      let funcVal = functions[funcKey];
 
-    if (_.isArray(funcVal)) {
-      for (let test of funcVal) {
-        if (test.type === 'test') {
-          testJson[funcKey].push(getTest(test, envsId, socket));
+      // Resolve nested
+      if (_.isArray(funcVal)) {
+        testJson[funcKey] = [];
+        for (let test of funcVal) {
+          if (['test', 'atom'].includes(test.type)) {
+            testJson[funcKey].push(getTest(test, envsId, socket));
+          }
         }
-        if (test.name === 'log') {
-          testJson[funcKey].push(async () => {
-            await log(test);
-          });
-        }
-      }
-    }
-
-    if (_.isString(funcVal)) {
-      let funcFile = path.join(envs.get('args.testsFolder'), funcVal);
-      try {
-        try {
-          funcFromFile = _.get(require(funcFile), funcKey);
-        } catch (err) {
-          console.log(err);
-          // if relative path of testFolder
-          funcFile = path.join(process.cwd(), funcFile);
-          funcFromFile = _.get(require(funcFile), funcKey);
-        }
-        if (_.isFunction(funcFromFile)) {
-          // Resolve JS file for test for logging
-          testJson.funcFile = path.resolve(funcFile);
-          testJson[funcKey] = [funcFromFile];
-        } else {
-          throw {
-            message: `Функция по ссылке не найдена ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
-          };
-        }
-      } catch (err) {
-        console.log(err);
-        throw {
-          message: `Функция по ссылке не доступна ${funcKey} -> ${funcVal}, файл ${funcFile}. Проверьте наличии функции и пути.`,
-        };
+      } else {
+        throw { message: `Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'` };
       }
     }
   }
