@@ -39,7 +39,7 @@ const main = async (args = {}, socket = null) => {
       };
     }
 
-    const startTime = new Date()
+    const startTime = new Date();
 
     let envsIdGlob = null;
     let envsGlob = null;
@@ -52,13 +52,16 @@ const main = async (args = {}, socket = null) => {
 
     socket.sendYAML({ data: args, type: 'init_args' });
 
+    console.log(`Init time 🕝: ${(new Date() - startTime) / 1000} sec.`);
+
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
+      const startTimeTest = new Date();
+
       let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob, socket });
       envsIdGlob = envsId;
       envsGlob = envs;
 
-      console.log(`======= TEST '${args.PPD_TESTS[i]}' ========`);
-      console.log(`Start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
+      console.log(`TEST '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
       socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_run', envsId });
 
       args.testFile = args.PPD_TESTS[i];
@@ -77,13 +80,17 @@ const main = async (args = {}, socket = null) => {
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
 
       let test = getTest(fullJSON, envsId, socket);
+
+      console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
+
       await test();
       socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_end', envsId });
+      console.log(`Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
     }
 
     await envsGlob.closeBrowsers();
     await envsGlob.closeProcesses();
-    console.log(`Evaluated time: ${(new Date() - startTime) / 1000} sec.`);
+    console.log(`Evaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     if (!module.parent) {
       process.exit(1);

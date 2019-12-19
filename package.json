@@ -28,7 +28,7 @@
     "automation"
   ],
   "dependencies": {
-    "dayjs": "1.8.17",
+    "dayjs": "1.8.18",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
@@ -39,6 +39,6 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "^1.1.2"
+    "@puppedo/atoms": "^1.2.0"
   }
 }
