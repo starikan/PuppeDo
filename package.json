@@ -39,6 +39,6 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "^1.2.0"
+    "@puppedo/atoms": "latest"
   }
 }
