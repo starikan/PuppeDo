@@ -336,7 +336,7 @@ class Envs {
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
       const env = allData.envs.find(g => g.name === v);
       if (env) {
-        const { dataExt, selectorsExt, envsExt } = env;
+        const { dataExt = [], selectorsExt = [], envsExt = [] } = env;
         envsExt.forEach(d => {
           const envsResolved = allData.envs.find(g => g.name === d, {});
           env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser', {}));
