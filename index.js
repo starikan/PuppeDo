@@ -1,6 +1,8 @@
 const { main, fetchStruct, fetchAvailableTests } = require('./Api');
 const { errorHandler } = require('./Error');
 const { getFullDepthJSON } = require('./getFullDepthJSON');
+const { TestsContent } = require('./TestContent');
+const { Arguments } = require('./Arguments');
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
@@ -17,5 +19,7 @@ if (!module.parent) {
     fetchStruct,
     fetchAvailableTests,
     getFullDepthJSON,
+    TestsContent,
+    Arguments,
   };
 }
