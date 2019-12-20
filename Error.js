@@ -16,9 +16,9 @@ const errorHandler = async error => {
   console.log(styleFunction(error.message));
   console.log();
   console.log(styleFunction(error.stack));
-  if (!module.parent) {
+  // if (!module.parent) {
     process.exit(1);
-  }
+  // }
 };
 
 module.exports = {

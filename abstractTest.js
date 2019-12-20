@@ -5,6 +5,7 @@ const safeEval = require('safe-eval');
 const yaml = require('js-yaml');
 
 const { Helpers, merge } = require('./helpers');
+const { Blocker } = require('./Blocker');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -234,7 +235,7 @@ class Test {
       return error;
     };
 
-    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
 
       const startTime = new Date();
 
@@ -490,7 +491,9 @@ class Test {
         // TIMER IN CONSOLE
         const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
         if (timer) {
-          console.log(`${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`);
+          console.log(
+            `${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`,
+          );
         }
       } catch (error) {
         error.envsId = error.envsId || envsId;
@@ -510,6 +513,29 @@ class Test {
         });
         await this.errorTest();
         throw error;
+      }
+    };
+
+    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+      const blocker = new Blocker();
+      const block = blocker.getBlock(this.stepId);
+      const { blockEmitter } = blocker;
+      if (block && blockEmitter) {
+        // Test
+        // setTimeout(() => {
+        //   blocker.setBlock(this.stepId, false);
+        // }, 2000);
+        return new Promise(resolve => {
+          blockEmitter.on('updateBlock', async newBlock => {
+            if (newBlock.stepId ===this.stepId && !newBlock.block) {
+              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId)
+              resolve()
+            }
+          });
+        })
+      }
+      else {
+        return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
       }
     };
   }

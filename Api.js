@@ -3,6 +3,7 @@ const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
+const { Blocker } = require('./Blocker');
 
 const main = async (args = {}, socket = null) => {
   try {
@@ -53,6 +54,8 @@ const main = async (args = {}, socket = null) => {
 
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
 
+      const blocker = new Blocker()
+      blocker.refresh()
       let test = getTest(fullJSON, envsId, socket);
 
       console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
