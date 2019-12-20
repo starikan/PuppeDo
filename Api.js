@@ -75,10 +75,8 @@ const main = async (args = {}, socket = null) => {
     if (String(error).startsWith('SyntaxError')) {
       error.debug = true;
       error.type = 'SyntaxError';
-      await errorHandler(error);
-      return;
     }
-    await errorHandler(error);
+    throw error;
   }
 };
 

@@ -1,11 +1,15 @@
-require('@puppedo/atoms');
 const { main, fetchStruct, fetchAvailableTests } = require('./Api');
 const { errorHandler } = require('./Error');
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 
+process.on('unhandledRejection', errorHandler);
+process.on('SyntaxError', errorHandler);
+
+try {
+  require('@puppedo/atoms');
+} catch (error) {}
+
 if (!module.parent) {
-  process.on('unhandledRejection', errorHandler);
-  process.on('SyntaxError', errorHandler);
   main();
 } else {
   module.exports = {

@@ -12,7 +12,7 @@ const errorHandler = async error => {
   if (error.debug) {
     debugger;
   }
-  const styleFunction = get(stylesConsole, 'trace', args => args);
+  const styleFunction = _.get(stylesConsole, 'error', args => args);
   console.log(styleFunction(error.message));
   console.log();
   console.log(styleFunction(error.stack));
