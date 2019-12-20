@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
