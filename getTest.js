@@ -2,6 +2,8 @@ const path = require('path');
 
 const _ = require('lodash');
 
+const { Blocker } = require('./Blocker');
+
 const abstractTest = require('./abstractTest');
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -33,6 +35,11 @@ const getTest = function(testJsonIncome, envsId, socket) {
 
   testJson.socket = socket;
 
+  const blocker = new Blocker();
+  blocker.push({ stepId: testJson.stepId, block: false, breadcrumbs: testJson.breadcrumbs });
+  // Test
+  // blocker.push({ stepId: testJson.stepId, block: true, breadcrumbs: testJson.breadcrumbs });
+
   // If there is no any function in test we deside that it have runTest in js file with the same name
   if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
     const testFileExt = path.parse(testJson.filePath).ext;
@@ -57,6 +64,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
   }
 
   const test = new abstractTest(testJson);
+
   return async () => {
     await test.run(testJson, envsId);
   };

@@ -4,6 +4,6 @@ name: envExt
 description: My Secret Env Ext
 
 log:
-  level: debug
+  level: raw
   screenshot: true
   fullpage: true
