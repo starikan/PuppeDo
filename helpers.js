@@ -1,45 +1,4 @@
-const _ = require('lodash');
 const deepmerge = require('deepmerge');
-
-class Helpers {
-  constructor() {}
-  // TODO: remove this
-  async getElement(page, selector, allElements = false) {
-    if (page && selector && _.isString(selector) && _.isObject(page)) {
-      let element;
-      if (selector.startsWith('xpath:')) {
-        selector = selector.replace(/^xpath:/, '');
-        element = await page.$x(selector);
-        if (!allElements) {
-          if (element.length > 1) {
-            throw { message: `Finded more then 1 xpath elements ${selector}` };
-          }
-          element = element[0];
-        }
-      } else {
-        selector = selector.replace(/^css:/, '');
-        element = allElements ? await page.$$(selector) : await page.$(selector);
-      }
-      return element;
-    } else {
-      return false;
-    }
-  }
-  // TODO: remove this
-  anyGet(object, paths) {
-    let result;
-    if (!object || !_.isObject(object) || !paths || (!_.isString(paths) && !_.isArray(paths))) {
-      throw { message: `anyGet error` };
-    }
-    if (_.isString(paths)) {
-      result = _.get(object, paths);
-    } else {
-      throw { message: `Ошибка при извлечении данных. Режиме вариативности переменных отключен` };
-    }
-
-    return result;
-  }
-}
 
 const sleep = ms => {
   return new Promise(resolve => {
@@ -63,7 +22,6 @@ const stylesConsole = {
 };
 
 module.exports = {
-  Helpers,
   merge,
   sleep,
   stylesConsole,

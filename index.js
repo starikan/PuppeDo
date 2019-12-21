@@ -1,4 +1,4 @@
-const { main, fetchStruct, fetchAvailableTests } = require('./Api');
+const { main } = require('./Api');
 const { errorHandler } = require('./Error');
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { TestsContent } = require('./TestContent');
@@ -13,8 +13,6 @@ if (!module.parent) {
 } else {
   module.exports = {
     main,
-    fetchStruct,
-    fetchAvailableTests,
     getFullDepthJSON,
     TestsContent,
     Arguments,

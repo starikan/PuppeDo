@@ -54,8 +54,8 @@ const main = async (args = {}, socket = null) => {
 
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
 
-      const blocker = new Blocker()
-      blocker.refresh()
+      const blocker = new Blocker();
+      blocker.refresh();
       let test = getTest(fullJSON, envsId, socket);
 
       console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
@@ -83,51 +83,6 @@ const main = async (args = {}, socket = null) => {
   }
 };
 
-const fetchStruct = async (args = {}, socket) => {
-  try {
-    args = new Arguments().init(args);
-    socket.sendYAML({ data: args, type: 'init_args' });
-    let { envsId, envs } = require('./env')({ socket });
-    await envs.init();
-
-    await new TestsContent({
-      rootFolder: args.PPD_ROOT,
-      additionalFolders: args.PPD_ROOT_ADDITIONAL,
-      ignorePaths: args.PPD_ROOT_IGNORE,
-    }).getAllData();
-    const { fullJSON, textDescription } = getFullDepthJSON({
-      testName: args.testFile,
-    });
-    socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
-    socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
-  } catch (err) {
-    err.message += ` || error in 'fetchStruct'`;
-    err.socket = socket;
-    throw err;
-  }
-};
-
-const fetchAvailableTests = async (args = {}, socket) => {
-  try {
-    args = new Arguments().init(args);
-    socket.sendYAML({ data: args, type: 'init_args' });
-    let { envsId, envs } = require('./env')({ socket });
-    await envs.init();
-    const allYamls = await new TestsContent({
-      rootFolder: args.PPD_ROOT,
-      additionalFolders: args.PPD_ROOT_ADDITIONAL,
-      ignorePaths: args.PPD_ROOT_IGNORE,
-    }).getAllData();
-    socket.sendYAML({ data: allYamls, type: 'allYamls', envsId });
-  } catch (err) {
-    err.message += ` || error in 'fetchAvailableTests'`;
-    err.socket = socket;
-    throw err;
-  }
-};
-
 module.exports = {
   main,
-  fetchStruct,
-  fetchAvailableTests,
 };
