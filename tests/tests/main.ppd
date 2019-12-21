@@ -10,7 +10,7 @@ beforeTest:
       data: { envName: 'mainEnv' }
 
 runTest:
-  - goto:
+  - goTo:
       bD: { url: wikiUrl }
   - waitTime:
       d: { time: 2000 }

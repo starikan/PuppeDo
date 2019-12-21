@@ -8,10 +8,6 @@ const { Blocker } = require('./Blocker');
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
 
-try {
-  require('@puppedo/atoms');
-} catch (error) {}
-
 if (!module.parent) {
   main();
 } else {

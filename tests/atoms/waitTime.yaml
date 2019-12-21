@@ -1,0 +1,3 @@
+name: waitTime
+type: atom
+needData: ['time']

@@ -37,8 +37,5 @@
     "puppeteer": "1.4.0",
     "safe-eval": "0.4.1",
     "walk-sync": "2.0.2"
-  },
-  "devDependencies": {
-    "@puppedo/atoms": "latest"
   }
 }
