@@ -14,7 +14,7 @@ class Arguments extends Singleton {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
       PPD_ROOT_ADDITIONAL: [],
-      PPD_ROOT_IGNORE: ['.git', 'node_modules'],
+      PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
       PPD_ENVS: [],
       PPD_TESTS: [],
       PPD_OUTPUT: 'output',
