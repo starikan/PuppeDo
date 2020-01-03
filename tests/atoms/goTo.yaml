@@ -1,4 +1,0 @@
----
-name: goTo
-type: atom
-needData: ['url']

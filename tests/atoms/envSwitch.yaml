@@ -1,3 +1,0 @@
-name: envSwitch
-type: atom
-needData: ['envName']
