@@ -47,8 +47,8 @@ class TestsContent extends Singleton {
       return s;
     }, []);
     const dubFiles = dubTests.reduce((s, v) => {
-      if (!s.includes(v.filePath)) {
-        s = [...s, v.filePath];
+      if (!s.includes(v.testFile)) {
+        s = [...s, v.testFile];
       }
       return s;
     }, []);
@@ -74,14 +74,13 @@ class TestsContent extends Singleton {
         paths = [...paths, ...pathsFolder];
       }
 
-      // TODO Отрефакторить
       const allFiles = _.filter(paths, v => exts.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
         try {
           const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           for (let v of full) {
-            v.filePath = filePath;
+            v.testFile = filePath;
             allContent.push(v);
           }
         } catch (e) {

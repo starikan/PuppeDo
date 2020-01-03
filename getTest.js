@@ -42,8 +42,8 @@ const getTest = function(testJsonIncome, envsId, socket) {
 
   // If there is no any function in test we deside that it have runTest in js file with the same name
   if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
-    const testFileExt = path.parse(testJson.filePath).ext;
-    const funcFile = path.resolve(testJson.filePath.replace(testFileExt, '.js'));
+    const testFileExt = path.parse(testJson.testFile).ext;
+    const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
     testJson = resolveJS(testJson, funcFile);
   } else {
     for (let funcKey in functions) {

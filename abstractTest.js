@@ -1,11 +1,11 @@
-const fs = require('fs');
-
 const _ = require('lodash');
 const safeEval = require('safe-eval');
-const yaml = require('js-yaml');
 
-const { Helpers, merge } = require('./helpers');
+const { merge } = require('./helpers');
 const { Blocker } = require('./Blocker');
+const { Arguments } = require('./Arguments');
+const Environment = require('./env');
+const { TestsContent } = require('./TestContent');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -87,12 +87,14 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
 class Test {
   constructor({
     name,
-    type = 'test', // atom, test, multiEnv?
+    type = 'test',
     levelIndent = 0,
     needEnv = [],
     needData = [],
     needSelectors = [],
     allowResults = [],
+    data = {},
+    selectors = {},
     dataExt = [],
     selectorsExt = [],
     beforeTest = async function() {},
@@ -111,6 +113,8 @@ class Test {
     this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
+    this.dataTest = data;
+    this.selectorsTest = selectors;
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
@@ -128,78 +132,43 @@ class Test {
     this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
-      const resolveStars = function(linksArray, rootFolder = '.') {
-        let resolvedArray = [];
-        if (!_.isArray(linksArray)) return resolvedArray;
-        linksArray.forEach(fileName => {
-          if (fileName.endsWith('*')) {
-            let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
-            fileMask = _.trimEnd(fileMask, '/');
-            fileMask = _.trimEnd(fileMask, '\\\\');
-            const fullFileMask = path.join(rootFolder, fileMask);
-            let paths = walkSync(fullFileMask);
-            let pathsClean = _.map(paths, v => {
-              if (v.endsWith('/') || v.endsWith('\\')) return false;
-              return path.join(fullFileMask, v);
-            }).filter(v => v);
-            resolvedArray = [...resolvedArray, ...pathsClean];
-          } else {
-            resolvedArray.push(path.join(rootFolder, fileName));
-          }
-        });
-        resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
-        return resolvedArray;
-      };
+      const { PPD_SELECTORS = {}, PPD_DATA = {} } = new Arguments();
+      const dataName = isSelector ? 'selectors' : 'data';
 
-      let dataLocal, joinArray;
+      // * Get data from ENV params global
+      let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
+
+      // * Get data from global envs for all tests
+      joinArray = [...joinArray, this.envs.get(dataName, {})];
+
+      // * Get data from current env
+      joinArray = [...joinArray, this.env ? this.env.get(dataName) : {}];
+
+      // * Fetch data from ext files that passed in test itself
+      const allTests = new TestsContent().getAllData();
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      const data = isSelector ? this.selectors : this.data;
-
-      // 1. Get data from previous tests
-      // 2. Get data from yaml files in env passed
-      // 3. Get data from ENV params global
-      // 4. Get data from global env for all tests
-      // 5. Get data from user function results
-      // 6. Get data from results
-      if (isSelector) {
-        joinArray = [
-          _.get(this.envs, ['args', 'PPD_SELECTORS'], {}),
-          this.env ? this.env.get('selectors') : {},
-          // this.envs.get('args.extSelectorsExt', {}),
-          // this.envs.get('args.extSelectors', {}),
-          this.envs.get('selectors', {}),
-        ];
-      } else {
-        joinArray = [
-          _.get(this.envs, ['args', 'PPD_DATA'], {}),
-          this.env ? this.env.get('data') : {},
-          // this.envs.get('args.extDataExt', {}),
-          // this.envs.get('args.extData', {}),
-          this.envs.get('data', {}),
-        ];
-      }
-      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
-
-      // 7. Fetch data from ext files that passed in test itself
-      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.PPD_ROOT'));
-      resolvedExtFiles.forEach(f => {
-        const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-        if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {
-          joinArray = [...joinArray, data_ext];
-        } else {
-          throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+      extFiles.forEach(v => {
+        const extData = allTests[dataName].find(d => v === d.name);
+        if (extData) {
+          joinArray = [...joinArray, extData.data];
         }
       });
 
-      dataLocal = merge(...joinArray);
+      // * Get data from test inself in test describe
+      joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
-      // 8. Update local data with bindings
+      // * Get data from user function results and results
+      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
+
+      // * Update local data with bindings
+      let dataLocal = merge(...joinArray);
+      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
       for (const key in bindDataLocal) {
         dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
       }
 
-      // 9. Update after all bindings with raw data from test itself
+      // * Update after all bindings with data from test itself passed in runing
+      const data = isSelector ? this.selectors : this.data;
       dataLocal = merge(dataLocal, data);
 
       return dataLocal;
@@ -210,24 +179,25 @@ class Test {
     };
 
     this.collectDebugData = (error, locals = {}, message = null) => {
-      error.test = {
-        data: this.data,
-        bindData: this.bindData,
-        dataFunction: this.dataFunction,
-        dataExt: this.dataExt,
-        selectors: this.selectors,
-        bindSelectors: this.bindSelectors,
-        selectorsFunction: this.selectorsFunction,
-        selectorsExt: this.selectorsExt,
-        bindResults: this.bindResults,
-        resultFunction: this.resultFunction,
-        options: this.options,
-        repeat: this.repeat,
-        while: this.while,
-        if: this.if,
-        errorIf: this.errorIf,
-        errorIfResult: this.errorIfResult,
-      };
+      const fields = [
+        'data',
+        'bindData',
+        'dataFunction',
+        'dataExt',
+        'selectors',
+        'bindSelectors',
+        'selectorsFunction',
+        'selectorsExt',
+        'bindResults',
+        'resultFunction',
+        'options',
+        'repeat',
+        'while',
+        'if',
+        'errorIf',
+        'errorIfResult',
+      ];
+      error.test = _.pick(this, fields);
       error.testLocal = locals;
       if (message) {
         error.message = message;
@@ -235,8 +205,41 @@ class Test {
       return error;
     };
 
-    this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    this.checkIf = async (expr, type, log, locals = {}) => {
+      let exprResult;
+      const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
 
+      try {
+        exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
+      } catch (err) {
+        if (err.name == 'ReferenceError') {
+          await log({
+            level: 'error',
+            screenshot: true,
+            fullpage: true,
+            text: `Can't evaluate ${type} = ${err.message}`,
+          });
+        }
+        throw this.collectDebugData(err, locals);
+      }
+
+      if (!exprResult && type === 'if') {
+        await log({ level: 'info', screenshot: false, fullpage: false, text: `If skiping ${expr}` });
+        return true;
+      }
+
+      if (exprResult && type !== 'if') {
+        await log({
+          level: 'error',
+          screenshot: true,
+          fullpage: true,
+          text: `Test stoped with expr ${type} = '${expr}'`,
+        });
+        throw this.collectDebugData({}, locals, `Test stoped with expr ${type} = '${expr}'`);
+      }
+    };
+
+    this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
       const startTime = new Date();
 
       const inputs = merge(inputArgs, constructorArgs);
@@ -267,7 +270,7 @@ class Test {
         throw { message: 'Test shoud have envsId' };
       }
 
-      let { envs, log } = require('./env.js')({ envsId });
+      let { envs, log } = Environment({ envsId });
 
       try {
         this.envs = envs;
@@ -303,51 +306,16 @@ class Test {
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
         // IF
-        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
-        let expr = this.if;
-        if (expr) {
-          // TODO: 2019-07-18 S.Starodubov ReferenceError
-          let exprResult = safeEval(expr, merge(dataLocal, selectorsLocal));
-          if (!exprResult) {
-            await log({
-              level: 'info',
-              screenshot: false,
-              fullpage: false,
-              text: 'If skiping',
-            });
+        if (this.if) {
+          const skip = await this.checkIf(this.if, 'if', log, { dataLocal, selectorsLocal });
+          if (skip) {
             return;
           }
         }
 
-        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
-        // ERROR
-        let errorExpr = this.errorIf;
-        if (errorExpr) {
-          let exprResult = false;
-
-          try {
-            exprResult = safeEval(errorExpr, merge(dataLocal, selectorsLocal));
-          } catch (err) {
-            if (err.name == 'ReferenceError') {
-              await log({
-                level: 'error',
-                screenshot: true,
-                fullpage: true,
-                text: `errorIf can't evaluate = ${err.message}`,
-              });
-            } else {
-              throw err;
-            }
-          }
-          if (exprResult) {
-            await log({
-              level: 'error',
-              screenshot: true,
-              fullpage: true,
-              text: `Test stoped with error = ${errorExpr}`,
-            });
-            throw { message: `Test stoped with error = ${errorExpr}` };
-          }
+        // ERROR IF
+        if (this.errorIf) {
+          await this.checkIf(this.errorIf, 'errorIf', log, { dataLocal, selectorsLocal });
         }
 
         // All data passed to log
@@ -436,39 +404,12 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          let exprResult = false;
-
-          try {
-            exprResult = safeEval(this.errorIfResult, merge(dataLocal, selectorsLocal, localResults));
-          } catch (err) {
-            if (err.name == 'ReferenceError') {
-              await log({
-                level: 'error',
-                screenshot: true,
-                fullpage: true,
-                text: `errorIfResult can't evaluate = ${err.message}`,
-              });
-            }
-            throw this.collectDebugData(err, { dataLocal, selectorsLocal, localResults, results });
-          }
-          if (exprResult) {
-            await log({
-              level: 'error',
-              screenshot: true,
-              fullpage: true,
-              text: `Test stoped with error = ${this.errorIfResult}`,
-            });
-            throw this.collectDebugData(
-              {},
-              {
-                dataLocal,
-                selectorsLocal,
-                localResults,
-                results,
-              },
-              `Test stoped with error = ${this.errorIfResult}`,
-            );
-          }
+          await this.checkIf(this.errorIfResult, 'errorIfResult', log, {
+            dataLocal,
+            selectorsLocal,
+            localResults,
+            results,
+          });
         }
 
         // WHILE
@@ -494,16 +435,17 @@ class Test {
           );
         }
       } catch (error) {
+        const { PPD_DEBUG_MODE = false } = new Arguments();
         error.envsId = error.envsId || envsId;
         error.envs = error.envs || this.envs;
         error.socket = error.socket || this.socket;
-        error.debug = error.debug || _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
+        error.debug = error.debug || PPD_DEBUG_MODE;
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;
         log({
           level: 'error',
-          text: `Description: ${this.description} (${this.name})`,
+          text: `Description: ${this.description || 'No test description'} (${this.name})`,
           screenshot: false,
           stepId: this.stepId,
           funcFile: this.funcFile,
@@ -525,14 +467,13 @@ class Test {
         // }, 2000);
         return new Promise(resolve => {
           blockEmitter.on('updateBlock', async newBlock => {
-            if (newBlock.stepId ===this.stepId && !newBlock.block) {
-              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId)
-              resolve()
+            if (newBlock.stepId === this.stepId && !newBlock.block) {
+              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+              resolve();
             }
           });
-        })
-      }
-      else {
+        });
+      } else {
         return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
       }
     };

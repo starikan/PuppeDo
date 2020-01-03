@@ -111,29 +111,34 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async initOutput(args, testName = 'test') {
-    const output = args.PPD_OUTPUT || 'output';
+  initOutput() {
+    const { PPD_OUTPUT: output } = new Arguments();
+    const currentTest = this.get('current.test') || 'test';
+
     if (!fs.existsSync(output)) {
-      await fs.mkdirSync(output);
+      fs.mkdirSync(output);
     }
     const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
-    const folder = path.join(output, `/${testName}_${now}`);
-    await fs.mkdirSync(folder);
+    const folder = path.join(output, `${now}_${currentTest}`);
+    fs.mkdirSync(folder);
 
-    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
 
     this.output.output = output;
-    this.output.name = testName;
+    this.output.name = currentTest;
     this.output.folder = folder;
+
+    this.initOutputLatest();
   }
 
-  async initOutputLatest(args) {
-    const output = args.PPD_OUTPUT || 'output';
+  initOutputLatest() {
+    const { PPD_OUTPUT: output } = new Arguments();
+
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
-      await fs.mkdirSync(output);
+      fs.mkdirSync(output);
     }
 
     // Create latest log path
@@ -146,7 +151,7 @@ class Envs {
       }
     }
 
-    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
 
@@ -154,7 +159,7 @@ class Envs {
     this.initOutputLatest = () => {};
   }
 
-  async runBrowsers(args) {
+  async runBrowsers() {
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
@@ -164,13 +169,12 @@ class Envs {
       const browserSettings = _.get(env, 'env.browser', {});
 
       if (type === 'api') {
-        // TODO: 2019-07-18 S.Starodubov todo
       }
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const { browser, pages } = await this.runPuppeteer(browserSettings, args);
-          env.state = Object.assign(env.state, { browser, pages });
+          const { browser, pages } = await this.runPuppeteer(browserSettings);
+          env.state = { ...env.state, ...{ browser, pages } };
         }
       }
 
@@ -187,24 +191,18 @@ class Envs {
     }
   }
 
-  async runPuppeteer(browserSettings, args = {}) {
-    const browser = await puppeteer.launch({
-      headless: _.get(browserSettings, 'headless', true),
-      slowMo: _.get(browserSettings, 'slowMo', 0),
-      args: _.get(browserSettings, 'args', []),
-      devtools: !!_.get(args, 'PPD_DEBUG_MODE', false),
-    });
+  async runPuppeteer(browserSettings) {
+    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { headless = true, slowMo = 0, args = [] } = browserSettings;
+
+    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: !!PPD_DEBUG_MODE });
 
     const page = await browser.newPage();
-    const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
-    await page.setViewport(override);
+    const pages = { main: page };
 
-    let pages = { main: page };
-
-    let width = _.get(browserSettings, 'windowSize.width');
-    let height = _.get(browserSettings, 'windowSize.height');
+    const { width, height } = _.get(browserSettings, 'windowSize');
     if (width && height) {
-      await pages.main.setViewport({ width: width, height: height });
+      await pages.main.setViewport({ width, height });
     }
 
     return { browser, pages };
@@ -243,10 +241,9 @@ class Envs {
         throw { message: 'Cand find any pages in connection' };
       }
 
-      let width = _.get(browserSettings, 'windowSize.width');
-      let height = _.get(browserSettings, 'windowSize.height');
+      const { width, height } = _.get(browserSettings, 'windowSize');
       if (width && height) {
-        await pages.main.setViewport({ width: width, height: height });
+        await pages.main.setViewport({ width, height });
       }
 
       // Any tab.
@@ -387,7 +384,7 @@ class Envs {
     }
 
     if (runBrowsers) {
-      await this.runBrowsers(args);
+      await this.runBrowsers();
     }
 
     // If already init do nothing
@@ -407,6 +404,7 @@ module.exports = function({ envsId, socket } = {}) {
     let newEnvs = new Envs();
     instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId }), socket };
   }
+
   return {
     envsId,
     envs: _.get(instances, [envsId, 'envs']),

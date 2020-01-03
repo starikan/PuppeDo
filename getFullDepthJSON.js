@@ -2,6 +2,7 @@ const crypto = require('crypto');
 
 const _ = require('lodash');
 const { TestsContent } = require('./TestContent');
+const Environment = require('./env');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -19,7 +20,10 @@ const generateDescriptionStep = fullJSON => {
   return descriptionString;
 };
 
-const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) {
+const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
+  if (!testName) {
+    testName = Environment({ envsId }).envs.get('current.test');
+  }
   const allTests = new TestsContent().getAllData();
   if (!allTests) {
     throw { message: 'No tests content. Init it first with "TestsContent" class' };
@@ -59,7 +63,7 @@ const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) 
       }
     } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
       throw {
-        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.filePath}' must be array of tests`,
+        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' must be array of tests`,
       };
     }
   }
