@@ -159,7 +159,7 @@ class Envs {
     this.initOutputLatest = () => {};
   }
 
-  async runBrowsers(args) {
+  async runBrowsers() {
     for (let i = 0; i < Object.keys(this.envs).length; i++) {
       const key = Object.keys(this.envs)[i];
       const env = this.envs[key];
@@ -174,8 +174,8 @@ class Envs {
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const { browser, pages } = await this.runPuppeteer(browserSettings, args);
-          env.state = Object.assign(env.state, { browser, pages });
+          const { browser, pages } = await this.runPuppeteer(browserSettings);
+          env.state = { ...env.state, ...{ browser, pages } };
         }
       }
 
@@ -192,24 +192,18 @@ class Envs {
     }
   }
 
-  async runPuppeteer(browserSettings, args = {}) {
-    const browser = await puppeteer.launch({
-      headless: _.get(browserSettings, 'headless', true),
-      slowMo: _.get(browserSettings, 'slowMo', 0),
-      args: _.get(browserSettings, 'args', []),
-      devtools: !!_.get(args, 'PPD_DEBUG_MODE', false),
-    });
+  async runPuppeteer(browserSettings) {
+    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { headless = true, slowMo = 0, args = [] } = browserSettings;
+
+    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: !!PPD_DEBUG_MODE });
 
     const page = await browser.newPage();
-    const override = Object.assign(page.viewport(), _.get(browserSettings, 'windowSize'));
-    await page.setViewport(override);
+    const pages = { main: page };
 
-    let pages = { main: page };
-
-    let width = _.get(browserSettings, 'windowSize.width');
-    let height = _.get(browserSettings, 'windowSize.height');
+    const { width, height } = _.get(browserSettings, 'windowSize');
     if (width && height) {
-      await pages.main.setViewport({ width: width, height: height });
+      await pages.main.setViewport({ width, height });
     }
 
     return { browser, pages };
@@ -248,10 +242,9 @@ class Envs {
         throw { message: 'Cand find any pages in connection' };
       }
 
-      let width = _.get(browserSettings, 'windowSize.width');
-      let height = _.get(browserSettings, 'windowSize.height');
+      const { width, height } = _.get(browserSettings, 'windowSize');
       if (width && height) {
-        await pages.main.setViewport({ width: width, height: height });
+        await pages.main.setViewport({ width, height });
       }
 
       // Any tab.
@@ -392,7 +385,7 @@ class Envs {
     }
 
     if (runBrowsers) {
-      await this.runBrowsers(args);
+      await this.runBrowsers();
     }
 
     // If already init do nothing
