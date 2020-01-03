@@ -20,17 +20,17 @@ const generateDescriptionStep = fullJSON => {
 };
 
 const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) {
-  const allTests = new TestsContent().allData;
+  const allTests = new TestsContent().getAllData();
   if (!allTests) {
     throw { message: 'No tests content. Init it first with "TestsContent" class' };
   }
 
-  let fullJSON = allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type));
-  if (!fullJSON) {
+  const testJSON = { ...allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)) };
+  if (!testJSON) {
     throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
   }
 
-  fullJSON = Object.assign({}, fullJSON, testBody);
+  const fullJSON = _.cloneDeep({ ...testJSON, ...testBody });
   fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testName]);
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');

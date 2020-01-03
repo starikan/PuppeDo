@@ -333,11 +333,11 @@ class Envs {
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
-      const env = allData.envs.find(g => g.name === v);
+      const env = { ...allData.envs.find(g => g.name === v) };
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [] } = env;
         envsExt.forEach(d => {
-          const envsResolved = allData.envs.find(g => g.name === d, {});
+          const envsResolved = { ...allData.envs.find(g => g.name === d, {}) };
           env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser', {}));
           env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log', {}));
           env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data', {}));
@@ -345,11 +345,11 @@ class Envs {
           env.description = _.get(env, 'description', '') + ' -> ' + _.get(envsResolved, 'description', '');
         });
         dataExt.forEach(d => {
-          const dataResolved = allData.data.find(g => g.name === d, {});
+          const dataResolved = { ...allData.data.find(g => g.name === d, {}) };
           env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data', {}));
         });
         selectorsExt.forEach(d => {
-          const selectorsResolved = allData.selectors.find(g => g.name === d, {});
+          const selectorsResolved = { ...allData.selectors.find(g => g.name === d, {}) };
           env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data', {}));
         });
         return env;

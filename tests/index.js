@@ -12,7 +12,7 @@ const run = async () => {
       PPD_SELECTORS: 'DDD',
     },
     PPD_ENVS: ['mainEnv'],
-    PPD_TESTS: ['main'],
+    PPD_TESTS: ['main', 'subTest'],
     PPD_DEBUG_MODE: true,
   });
 };

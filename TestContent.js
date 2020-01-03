@@ -60,7 +60,7 @@ class TestsContent extends Singleton {
     }
   }
 
-  async getAllData(force = false) {
+  getAllData(force = false) {
     if (force || !this.allData) {
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];

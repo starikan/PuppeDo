@@ -4,38 +4,31 @@ const { getTest } = require('./getTest');
 const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
 const { Blocker } = require('./Blocker');
+const Environment = require('./env');
 
 const main = async (args = {}) => {
+  let envsId, envs, log;
   try {
     const startTime = new Date();
 
-    let envsIdGlob, envsGlob;
     args = new Arguments(args);
-    const testContent = await new TestsContent().getAllData();
+    const testContent = new TestsContent().getAllData();
 
     console.log(`Init time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
       const startTimeTest = new Date();
+      const testName = args.PPD_TESTS[i];
+      console.log(`\n\nTest '${testName}' start on '${dayjs(startTimeTest).format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
 
-      let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob });
-      envsIdGlob = envsId;
-      envsGlob = envs;
-
-      console.log(`TEST '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
-
-      const testFile = args.PPD_TESTS[i];
-      const testName = testFile.split('/')[testFile.split('/').length - 1];
-
+      ({ envsId, envs, log } = Environment({ envsId }));
       await envs.initOutput(args, testName);
       await envs.initOutputLatest(args);
       await envs.init();
 
-      const { fullJSON, textDescription } = getFullDepthJSON({
-        testName: testFile,
-      });
+      const { fullJSON, textDescription } = getFullDepthJSON({ testName });
 
-      log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
+      log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON });
 
       const blocker = new Blocker();
       blocker.refresh();
@@ -44,12 +37,12 @@ const main = async (args = {}) => {
       console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
 
       await test();
-      console.log(`Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
+      console.log(`Test '${testName}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
     }
 
-    await envsGlob.closeBrowsers();
-    await envsGlob.closeProcesses();
-    console.log(`Evaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`);
+    await envs.closeBrowsers();
+    await envs.closeProcesses();
+    console.log(`\n\nEvaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     if (!module.parent) {
       process.exit(1);
