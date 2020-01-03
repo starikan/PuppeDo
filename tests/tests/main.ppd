@@ -5,6 +5,9 @@ type: test
 data:
   mainTestData: foo
 
+dataExt:
+  - dataExtMain
+
 beforeTest:
   - envSwitch:
       data: { envName: 'mainEnv' }

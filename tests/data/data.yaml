@@ -5,3 +5,9 @@ description: Simple Data
 data:
   data: test
   wikiUrl: https://wikipedia.org/
+---
+type: data
+name: dataExtMain
+description: Simple Data Extension in Test
+data:
+  dataExtMain: dataExtMain

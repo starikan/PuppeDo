@@ -6,7 +6,9 @@ const yaml = require('js-yaml');
 
 const { merge } = require('./helpers');
 const { Blocker } = require('./Blocker');
+const { Arguments } = require('./Arguments');
 const Environment = require('./env');
+const { TestsContent } = require('./TestContent');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -94,6 +96,8 @@ class Test {
     needData = [],
     needSelectors = [],
     allowResults = [],
+    data = {},
+    selectors = {},
     dataExt = [],
     selectorsExt = [],
     beforeTest = async function() {},
@@ -112,6 +116,8 @@ class Test {
     this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
+    this.dataTest = data;
+    this.selectorsTest = selectors;
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
@@ -129,78 +135,45 @@ class Test {
     this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
-      const resolveStars = function(linksArray, rootFolder = '.') {
-        let resolvedArray = [];
-        if (!_.isArray(linksArray)) return resolvedArray;
-        linksArray.forEach(fileName => {
-          if (fileName.endsWith('*')) {
-            let fileMask = _.trimEnd(fileName, '*').replace(/\\/g, '\\\\');
-            fileMask = _.trimEnd(fileMask, '/');
-            fileMask = _.trimEnd(fileMask, '\\\\');
-            const fullFileMask = path.join(rootFolder, fileMask);
-            let paths = walkSync(fullFileMask);
-            let pathsClean = _.map(paths, v => {
-              if (v.endsWith('/') || v.endsWith('\\')) return false;
-              return path.join(fullFileMask, v);
-            }).filter(v => v);
-            resolvedArray = [...resolvedArray, ...pathsClean];
-          } else {
-            resolvedArray.push(path.join(rootFolder, fileName));
-          }
-        });
-        resolvedArray = resolvedArray.map(v => (v.endsWith('.yaml') ? v : v + '.yaml'));
-        return resolvedArray;
-      };
+      const { PPD_SELECTORS = {}, PPD_DATA = {} } = new Arguments();
+      const dataName = isSelector ? 'selectors' : 'data';
 
-      let dataLocal, joinArray;
+      // * Get data from ENV params global
+      let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
+
+      // * Get data from global envs for all tests
+      joinArray = [...joinArray, this.envs.get(dataName, {})];
+
+      // * Get data from current env
+      joinArray = [...joinArray, this.env ? this.env.get(dataName) : {}];
+
+      // * Fetch data from ext files that passed in test itself
+      const allTests = new TestsContent().getAllData();
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      const data = isSelector ? this.selectors : this.data;
-
-      // 1. Get data from previous tests
-      // 2. Get data from yaml files in env passed
-      // 3. Get data from ENV params global
-      // 4. Get data from global env for all tests
-      // 5. Get data from user function results
-      // 6. Get data from results
-      if (isSelector) {
-        joinArray = [
-          _.get(this.envs, ['args', 'PPD_SELECTORS'], {}),
-          this.env ? this.env.get('selectors') : {},
-          // this.envs.get('args.extSelectorsExt', {}),
-          // this.envs.get('args.extSelectors', {}),
-          this.envs.get('selectors', {}),
-        ];
-      } else {
-        joinArray = [
-          _.get(this.envs, ['args', 'PPD_DATA'], {}),
-          this.env ? this.env.get('data') : {},
-          // this.envs.get('args.extDataExt', {}),
-          // this.envs.get('args.extData', {}),
-          this.envs.get('data', {}),
-        ];
-      }
-      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
-
-      // 7. Fetch data from ext files that passed in test itself
-      let resolvedExtFiles = resolveStars(extFiles, this.envs.get('args.PPD_ROOT'));
-      resolvedExtFiles.forEach(f => {
-        const data_ext = yaml.safeLoad(fs.readFileSync(f, 'utf8'));
-        if (['data', 'selectors'].includes(_.get(data_ext, 'type'))) {
-          joinArray = [...joinArray, data_ext];
-        } else {
-          throw { message: 'Ext Data file not typed. Include "type: data (selectors)" atribute' };
+      extFiles.forEach(v => {
+        const extData = allTests[dataName].find(d => v === d.name);
+        if (extData) {
+          joinArray = [...joinArray, extData.data];
         }
       });
 
-      dataLocal = merge(...joinArray);
+      // * Get data from test inself in test describe
+      joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
-      // 8. Update local data with bindings
+      // * Get data from user function results and results
+      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
+
+      debugger
+
+      // * Update local data with bindings
+      let dataLocal = merge(...joinArray);
+      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
       for (const key in bindDataLocal) {
         dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
       }
 
-      // 9. Update after all bindings with raw data from test itself
+      // * Update after all bindings with data from test itself passed in runing
+      const data = isSelector ? this.selectors : this.data;
       dataLocal = merge(dataLocal, data);
 
       return dataLocal;
@@ -237,7 +210,6 @@ class Test {
     };
 
     this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
-
       const startTime = new Date();
 
       const inputs = merge(inputArgs, constructorArgs);
@@ -526,14 +498,13 @@ class Test {
         // }, 2000);
         return new Promise(resolve => {
           blockEmitter.on('updateBlock', async newBlock => {
-            if (newBlock.stepId ===this.stepId && !newBlock.block) {
-              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId)
-              resolve()
+            if (newBlock.stepId === this.stepId && !newBlock.block) {
+              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+              resolve();
             }
           });
-        })
-      }
-      else {
+        });
+      } else {
         return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
       }
     };
