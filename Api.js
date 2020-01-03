@@ -4,6 +4,7 @@ const { getTest } = require('./getTest');
 const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
 const { Blocker } = require('./Blocker');
+const Environment = require('./env');
 
 const main = async (args = {}) => {
   try {
@@ -11,14 +12,14 @@ const main = async (args = {}) => {
 
     let envsIdGlob, envsGlob;
     args = new Arguments(args);
-    const testContent = await new TestsContent().getAllData();
+    const testContent = new TestsContent().getAllData();
 
     console.log(`Init time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
       const startTimeTest = new Date();
 
-      let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob });
+      let { envsId, envs, log } = Environment({ envsId: envsIdGlob });
       envsIdGlob = envsId;
       envsGlob = envs;
 
