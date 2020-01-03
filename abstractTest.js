@@ -4,8 +4,9 @@ const _ = require('lodash');
 const safeEval = require('safe-eval');
 const yaml = require('js-yaml');
 
-const { Helpers, merge } = require('./helpers');
+const { merge } = require('./helpers');
 const { Blocker } = require('./Blocker');
+const Environment = require('./env');
 
 function bind(func, source, bindArgs) {
   return function() {
@@ -267,7 +268,7 @@ class Test {
         throw { message: 'Test shoud have envsId' };
       }
 
-      let { envs, log } = require('./env.js')({ envsId });
+      let { envs, log } = Environment({ envsId });
 
       try {
         this.envs = envs;

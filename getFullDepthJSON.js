@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const _ = require('lodash');
 const { TestsContent } = require('./TestContent');
-const { Arguments } = require('./Arguments');
+const Environment = require('./env');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -20,9 +20,9 @@ const generateDescriptionStep = fullJSON => {
   return descriptionString;
 };
 
-const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0 } = {}) => {
+const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
   if (!testName) {
-    ({ currentTest: testName } = new Arguments());
+    testName = Environment({ envsId }).envs.get('current.test');
   }
   const allTests = new TestsContent().getAllData();
   if (!allTests) {
