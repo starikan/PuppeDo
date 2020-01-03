@@ -88,7 +88,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
 class Test {
   constructor({
     name,
-    type = 'test', // atom, test, multiEnv?
+    type = 'test',
     levelIndent = 0,
     needEnv = [],
     needData = [],

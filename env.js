@@ -169,7 +169,6 @@ class Envs {
       const browserSettings = _.get(env, 'env.browser', {});
 
       if (type === 'api') {
-        // TODO: 2019-07-18 S.Starodubov todo
       }
 
       if (type === 'puppeteer') {

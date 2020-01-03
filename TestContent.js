@@ -74,7 +74,6 @@ class TestsContent extends Singleton {
         paths = [...paths, ...pathsFolder];
       }
 
-      // TODO Отрефакторить
       const allFiles = _.filter(paths, v => exts.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
