@@ -63,7 +63,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
       }
     } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
       throw {
-        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.filePath}' must be array of tests`,
+        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' must be array of tests`,
       };
     }
   }

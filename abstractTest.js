@@ -1,8 +1,5 @@
-const fs = require('fs');
-
 const _ = require('lodash');
 const safeEval = require('safe-eval');
-const yaml = require('js-yaml');
 
 const { merge } = require('./helpers');
 const { Blocker } = require('./Blocker');
@@ -163,8 +160,6 @@ class Test {
       // * Get data from user function results and results
       joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
 
-      debugger
-
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
@@ -184,24 +179,25 @@ class Test {
     };
 
     this.collectDebugData = (error, locals = {}, message = null) => {
-      error.test = {
-        data: this.data,
-        bindData: this.bindData,
-        dataFunction: this.dataFunction,
-        dataExt: this.dataExt,
-        selectors: this.selectors,
-        bindSelectors: this.bindSelectors,
-        selectorsFunction: this.selectorsFunction,
-        selectorsExt: this.selectorsExt,
-        bindResults: this.bindResults,
-        resultFunction: this.resultFunction,
-        options: this.options,
-        repeat: this.repeat,
-        while: this.while,
-        if: this.if,
-        errorIf: this.errorIf,
-        errorIfResult: this.errorIfResult,
-      };
+      const fields = [
+        'data',
+        'bindData',
+        'dataFunction',
+        'dataExt',
+        'selectors',
+        'bindSelectors',
+        'selectorsFunction',
+        'selectorsExt',
+        'bindResults',
+        'resultFunction',
+        'options',
+        'repeat',
+        'while',
+        'if',
+        'errorIf',
+        'errorIfResult',
+      ];
+      error.test = _.pick(this, fields);
       error.testLocal = locals;
       if (message) {
         error.message = message;
@@ -433,12 +429,7 @@ class Test {
             });
             throw this.collectDebugData(
               {},
-              {
-                dataLocal,
-                selectorsLocal,
-                localResults,
-                results,
-              },
+              { dataLocal, selectorsLocal, localResults, results },
               `Test stoped with error = ${this.errorIfResult}`,
             );
           }
@@ -476,7 +467,7 @@ class Test {
         error.message += ` || error in test = ${this.name}`;
         log({
           level: 'error',
-          text: `Description: ${this.description} (${this.name})`,
+          text: `Description: ${this.description || 'No test description'} (${this.name})`,
           screenshot: false,
           stepId: this.stepId,
           funcFile: this.funcFile,

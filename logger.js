@@ -157,8 +157,8 @@ class Logger {
         const styleFunction = _.get(stylesConsole, level, args => args);
         console.log(styleFunction(logString));
         if (level === 'error') {
-          if (testFile) console.log('File with test:', styleFunction(testFile));
-          if (funcFile) console.log('File with function:', styleFunction(funcFile));
+          if (testFile) console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with test: ${testFile}`));
+          if (funcFile) console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with function: ${funcFile}`));
         }
       }
 
