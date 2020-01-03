@@ -205,6 +205,40 @@ class Test {
       return error;
     };
 
+    this.checkIf = async (expr, type, log, locals = {}) => {
+      let exprResult;
+      const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
+
+      try {
+        exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
+      } catch (err) {
+        if (err.name == 'ReferenceError') {
+          await log({
+            level: 'error',
+            screenshot: true,
+            fullpage: true,
+            text: `Can't evaluate ${type} = ${err.message}`,
+          });
+        }
+        throw this.collectDebugData(err, locals);
+      }
+
+      if (!exprResult && type === 'if') {
+        await log({ level: 'info', screenshot: false, fullpage: false, text: `If skiping ${expr}` });
+        return true;
+      }
+
+      if (exprResult && type !== 'if') {
+        await log({
+          level: 'error',
+          screenshot: true,
+          fullpage: true,
+          text: `Test stoped with expr ${type} = '${expr}'`,
+        });
+        throw this.collectDebugData({}, locals, `Test stoped with expr ${type} = '${expr}'`);
+      }
+    };
+
     this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
       const startTime = new Date();
 
@@ -272,51 +306,16 @@ class Test {
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
         // IF
-        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
-        let expr = this.if;
-        if (expr) {
-          // TODO: 2019-07-18 S.Starodubov ReferenceError
-          let exprResult = safeEval(expr, merge(dataLocal, selectorsLocal));
-          if (!exprResult) {
-            await log({
-              level: 'info',
-              screenshot: false,
-              fullpage: false,
-              text: 'If skiping',
-            });
+        if (this.if) {
+          const skip = await this.checkIf(this.if, 'if', log, { dataLocal, selectorsLocal });
+          if (skip) {
             return;
           }
         }
 
-        // TODO: 2019-08-21 S.Starodubov refactor like errorIfResult
-        // ERROR
-        let errorExpr = this.errorIf;
-        if (errorExpr) {
-          let exprResult = false;
-
-          try {
-            exprResult = safeEval(errorExpr, merge(dataLocal, selectorsLocal));
-          } catch (err) {
-            if (err.name == 'ReferenceError') {
-              await log({
-                level: 'error',
-                screenshot: true,
-                fullpage: true,
-                text: `errorIf can't evaluate = ${err.message}`,
-              });
-            } else {
-              throw err;
-            }
-          }
-          if (exprResult) {
-            await log({
-              level: 'error',
-              screenshot: true,
-              fullpage: true,
-              text: `Test stoped with error = ${errorExpr}`,
-            });
-            throw { message: `Test stoped with error = ${errorExpr}` };
-          }
+        // ERROR IF
+        if (this.errorIf) {
+          await this.checkIf(this.errorIf, 'errorIf', log, { dataLocal, selectorsLocal });
         }
 
         // All data passed to log
@@ -405,34 +404,12 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          let exprResult = false;
-
-          try {
-            exprResult = safeEval(this.errorIfResult, merge(dataLocal, selectorsLocal, localResults));
-          } catch (err) {
-            if (err.name == 'ReferenceError') {
-              await log({
-                level: 'error',
-                screenshot: true,
-                fullpage: true,
-                text: `errorIfResult can't evaluate = ${err.message}`,
-              });
-            }
-            throw this.collectDebugData(err, { dataLocal, selectorsLocal, localResults, results });
-          }
-          if (exprResult) {
-            await log({
-              level: 'error',
-              screenshot: true,
-              fullpage: true,
-              text: `Test stoped with error = ${this.errorIfResult}`,
-            });
-            throw this.collectDebugData(
-              {},
-              { dataLocal, selectorsLocal, localResults, results },
-              `Test stoped with error = ${this.errorIfResult}`,
-            );
-          }
+          await this.checkIf(this.errorIfResult, 'errorIfResult', log, {
+            dataLocal,
+            selectorsLocal,
+            localResults,
+            results,
+          });
         }
 
         // WHILE
@@ -458,10 +435,11 @@ class Test {
           );
         }
       } catch (error) {
+        const { PPD_DEBUG_MODE = false } = new Arguments();
         error.envsId = error.envsId || envsId;
         error.envs = error.envs || this.envs;
         error.socket = error.socket || this.socket;
-        error.debug = error.debug || _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
+        error.debug = error.debug || PPD_DEBUG_MODE;
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;

@@ -15,7 +15,7 @@ const errorHandler = async error => {
   const styleFunction = _.get(stylesConsole, 'error', args => args);
   console.log(styleFunction(error.message));
   console.log();
-  console.log(styleFunction(error.stack));
+  error.stack ? console.log(styleFunction(error.stack)) : '';
   // if (!module.parent) {
     process.exit(1);
   // }
