@@ -398,7 +398,7 @@ class Envs {
 
 let instances = {};
 
-module.exports = function({ envsId, socket = null } = {}) {
+module.exports = function({ envsId, socket } = {}) {
   if (envsId) {
     if (!_.get(instances, envsId)) {
       throw { message: `Unknown ENV ID ${envsId}` };

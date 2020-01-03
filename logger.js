@@ -8,10 +8,18 @@ const yaml = require('js-yaml');
 const { sleep, stylesConsole } = require('./helpers');
 
 class Logger {
-  constructor({ envs, socket, envsId }) {
+  constructor({ envs, envsId, socket }) {
+
+    if (!socket) {
+      socket = {
+        send: () => {},
+        sendYAML: () => {},
+      };
+    }
+
     this.envs = envs;
-    this.socket = socket;
     this.envsId = envsId;
+    this.socket = socket;
   }
 
   async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {

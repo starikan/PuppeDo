@@ -5,39 +5,24 @@ const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
 const { Blocker } = require('./Blocker');
 
-const main = async (args = {}, socket = null) => {
+const main = async (args = {}) => {
   try {
-    if (!socket) {
-      socket = {
-        send: () => {},
-        sendYAML: () => {},
-      };
-    }
-
     const startTime = new Date();
 
-    let envsIdGlob = null;
-    let envsGlob = null;
+    let envsIdGlob, envsGlob;
     args = new Arguments().init(args);
-    await new TestsContent({
-      rootFolder: args.PPD_ROOT,
-      additionalFolders: args.PPD_ROOT_ADDITIONAL,
-      ignorePaths: args.PPD_ROOT_IGNORE,
-    }).getAllData();
-
-    socket.sendYAML({ data: args, type: 'init_args' });
+    const testContent = await new TestsContent().getAllData();
 
     console.log(`Init time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
       const startTimeTest = new Date();
 
-      let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob, socket });
+      let { envsId, envs, log } = require('./env')({ envsId: envsIdGlob });
       envsIdGlob = envsId;
       envsGlob = envs;
 
       console.log(`TEST '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
-      socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_run', envsId });
 
       args.testFile = args.PPD_TESTS[i];
       args.testName = args.testFile.split('/')[args.testFile.split('/').length - 1];
@@ -49,19 +34,16 @@ const main = async (args = {}, socket = null) => {
       const { fullJSON, textDescription } = getFullDepthJSON({
         testName: envs.get('args.testFile'),
       });
-      socket.sendYAML({ data: fullJSON, type: 'fullJSON', envsId });
-      socket.sendYAML({ data: textDescription, type: 'fullDescriptions', envsId });
 
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });
 
       const blocker = new Blocker();
       blocker.refresh();
-      let test = getTest(fullJSON, envsId, socket);
+      let test = getTest(fullJSON, envsId);
 
       console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
 
       await test();
-      socket.sendYAML({ data: args.PPD_TESTS[i], type: 'test_end', envsId });
       console.log(`Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
     }
 
@@ -74,7 +56,6 @@ const main = async (args = {}, socket = null) => {
     }
   } catch (error) {
     error.message += ` || error in 'main'`;
-    error.socket = socket;
     if (String(error).startsWith('SyntaxError')) {
       error.debug = true;
       error.type = 'SyntaxError';
