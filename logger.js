@@ -158,8 +158,8 @@ class Logger {
         // TODO: console.table
         console.log(styleFunction(logString));
         if (level === 'error') {
-          if (testFile) console.log('Файл с тестом:', styleFunction(testFile));
-          if (funcFile) console.log('Файл с функцией:', styleFunction(funcFile));
+          if (testFile) console.log('File with test:', styleFunction(testFile));
+          if (funcFile) console.log('File with function:', styleFunction(funcFile));
         }
       }
 

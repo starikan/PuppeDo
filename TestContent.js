@@ -11,7 +11,7 @@ const { Arguments } = require('./Arguments');
 class TestsContent extends Singleton {
   constructor({ rootFolder, additionalFolders, ignorePaths } = {}) {
     super();
-    const args = new Arguments().args;
+    const args = new Arguments();
 
     this.allData = this.allData || null;
     this.ignorePaths = this.ignorePaths || ignorePaths || args.PPD_ROOT_IGNORE;

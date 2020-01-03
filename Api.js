@@ -10,7 +10,7 @@ const main = async (args = {}) => {
     const startTime = new Date();
 
     let envsIdGlob, envsGlob;
-    args = new Arguments().init(args);
+    args = new Arguments(args);
     const testContent = await new TestsContent().getAllData();
 
     console.log(`Init time 🕝: ${(new Date() - startTime) / 1000} sec.`);
@@ -24,15 +24,15 @@ const main = async (args = {}) => {
 
       console.log(`TEST '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
 
-      args.testFile = args.PPD_TESTS[i];
-      args.testName = args.testFile.split('/')[args.testFile.split('/').length - 1];
+      const testFile = args.PPD_TESTS[i];
+      const testName = testFile.split('/')[testFile.split('/').length - 1];
 
-      await envs.initOutput(args);
+      await envs.initOutput(args, testName);
       await envs.initOutputLatest(args);
       await envs.init();
 
       const { fullJSON, textDescription } = getFullDepthJSON({
-        testName: envs.get('args.testFile'),
+        testName: testFile,
       });
 
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON, screenshot: false });

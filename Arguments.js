@@ -6,8 +6,12 @@ const { merge } = require('./helpers');
 const { Singleton } = require('./singleton');
 
 class Arguments extends Singleton {
-  constructor() {
+  constructor(args, reInit = false) {
     super();
+    if (reInit || !this.args) {
+      return this.init(args);
+    }
+    return this.args;
   }
 
   init(args) {
