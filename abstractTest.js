@@ -375,8 +375,6 @@ class Test {
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: logBinded,
-          // TODO: remove this
-          helper: new Helpers(),
           _,
           name: this.name,
           description: this.description,

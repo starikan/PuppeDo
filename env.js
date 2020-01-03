@@ -111,21 +111,20 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async initOutput(args) {
-    const test = args.testName || 'test';
+  async initOutput(args, testName = 'test') {
     const output = args.PPD_OUTPUT || 'output';
     if (!fs.existsSync(output)) {
       await fs.mkdirSync(output);
     }
     const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
-    const folder = path.join(output, `/${test}_${now}`);
+    const folder = path.join(output, `/${testName}_${now}`);
     await fs.mkdirSync(folder);
 
     await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
 
     this.output.output = output;
-    this.output.name = test;
+    this.output.name = testName;
     this.output.folder = folder;
   }
 
@@ -329,8 +328,8 @@ class Envs {
   }
 
   async resolveLinks() {
-    const args = new Arguments().args;
-    const allData = await new TestsContent({ rootFolder: args.PPD_ROOT }).getAllData();
+    const args = new Arguments();
+    const allData = await new TestsContent().getAllData();
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
@@ -398,7 +397,7 @@ class Envs {
 
 let instances = {};
 
-module.exports = function({ envsId, socket = null } = {}) {
+module.exports = function({ envsId, socket } = {}) {
   if (envsId) {
     if (!_.get(instances, envsId)) {
       throw { message: `Unknown ENV ID ${envsId}` };

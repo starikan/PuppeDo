@@ -8,10 +8,18 @@ const yaml = require('js-yaml');
 const { sleep, stylesConsole } = require('./helpers');
 
 class Logger {
-  constructor({ envs, socket, envsId }) {
+  constructor({ envs, envsId, socket }) {
+
+    if (!socket) {
+      socket = {
+        send: () => {},
+        sendYAML: () => {},
+      };
+    }
+
     this.envs = envs;
-    this.socket = socket;
     this.envsId = envsId;
+    this.socket = socket;
   }
 
   async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
@@ -150,8 +158,8 @@ class Logger {
         // TODO: console.table
         console.log(styleFunction(logString));
         if (level === 'error') {
-          if (testFile) console.log('Файл с тестом:', styleFunction(testFile));
-          if (funcFile) console.log('Файл с функцией:', styleFunction(funcFile));
+          if (testFile) console.log('File with test:', styleFunction(testFile));
+          if (funcFile) console.log('File with function:', styleFunction(funcFile));
         }
       }
 

@@ -6,23 +6,28 @@ const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
 const { Singleton } = require('./singleton');
+const { Arguments } = require('./Arguments');
 
 class TestsContent extends Singleton {
-  constructor({ rootFolder = process.cwd(), additionalFolders = [], ignorePaths = [] } = {}) {
+  constructor({ rootFolder, additionalFolders, ignorePaths } = {}) {
     super();
+    const args = new Arguments();
+
     this.allData = this.allData || null;
-    this.ignorePaths = this.ignorePaths || ignorePaths;
+    this.ignorePaths = this.ignorePaths || ignorePaths || args.PPD_ROOT_IGNORE;
+    this.rootFolder = this.rootFolder || rootFolder || args.PPD_ROOT || process.cwd();
+    this.additionalFolders = this.additionalFolders || additionalFolders || args.PPD_ROOT_ADDITIONAL || [];
     this.setRootFolder(rootFolder);
     this.setAdditionalFolders(additionalFolders);
   }
 
   setRootFolder(rootFolder) {
-    this.rootFolder = this.rootFolder || rootFolder;
+    this.rootFolder = rootFolder || this.rootFolder;
     this.rootFolder = path.normalize(this.rootFolder);
   }
 
-  setAdditionalFolders(additionalFolders = []) {
-    this.additionalFolders = this.additionalFolders || additionalFolders;
+  setAdditionalFolders(additionalFolders) {
+    this.additionalFolders = additionalFolders || this.additionalFolders;
 
     if (_.isString(this.additionalFolders)) {
       this.additionalFolders = [this.additionalFolders];
@@ -57,8 +62,6 @@ class TestsContent extends Singleton {
 
   async getAllData(force = false) {
     if (force || !this.allData) {
-      // console.time('getAllData');
-
       const allContent = [];
       const exts = ['.yaml', '.yml', '.ppd'];
       const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
@@ -98,7 +101,6 @@ class TestsContent extends Singleton {
         this.checkDublikates(this.allData[key], key);
       }
 
-      // console.timeEnd('getAllData');
       return this.allData;
     } else {
       return this.allData;

@@ -6,15 +6,19 @@ const { merge } = require('./helpers');
 const { Singleton } = require('./singleton');
 
 class Arguments extends Singleton {
-  constructor() {
+  constructor(args, reInit = false) {
     super();
+    if (reInit || !this.args) {
+      return this.init(args);
+    }
+    return this.args;
   }
 
   init(args) {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
       PPD_ROOT_ADDITIONAL: [],
-      PPD_ROOT_IGNORE: ['.git', 'node_modules'],
+      PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
       PPD_ENVS: [],
       PPD_TESTS: [],
       PPD_OUTPUT: 'output',

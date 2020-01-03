@@ -1,3 +1,4 @@
+require('@puppedo/atoms');
 const ppd = require('../index');
 
 const run = async () => {
