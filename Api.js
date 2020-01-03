@@ -18,15 +18,14 @@ const main = async (args = {}) => {
 
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
       const startTimeTest = new Date();
-      const testName = args.PPD_TESTS[i];
-      console.log(`\n\nTest '${testName}' start on '${dayjs(startTimeTest).format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
+      args.currentTest = args.PPD_TESTS[i];
+      console.log(`\n\nTest '${args.currentTest}' start on '${dayjs(startTimeTest).format('YYYY-MM-DD HH:mm:ss.SSS')}'`);
 
       ({ envsId, envs, log } = Environment({ envsId }));
-      await envs.initOutput(args, testName);
-      await envs.initOutputLatest(args);
+      envs.initOutput();
       await envs.init();
 
-      const { fullJSON, textDescription } = getFullDepthJSON({ testName });
+      const { fullJSON, textDescription } = getFullDepthJSON();
 
       log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON });
 
@@ -37,7 +36,7 @@ const main = async (args = {}) => {
       console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
 
       await test();
-      console.log(`Test '${testName}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
+      console.log(`Test '${args.currentTest}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
     }
 
     await envs.closeBrowsers();

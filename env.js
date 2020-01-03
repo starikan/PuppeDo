@@ -111,29 +111,33 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  async initOutput(args, testName = 'test') {
-    const output = args.PPD_OUTPUT || 'output';
+  initOutput() {
+    const { PPD_OUTPUT: output, currentTest = 'test' } = new Arguments();
+
     if (!fs.existsSync(output)) {
-      await fs.mkdirSync(output);
+      fs.mkdirSync(output);
     }
     const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
-    const folder = path.join(output, `/${testName}_${now}`);
-    await fs.mkdirSync(folder);
+    const folder = path.join(output, `${now}_${currentTest}`);
+    fs.mkdirSync(folder);
 
-    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
 
     this.output.output = output;
-    this.output.name = testName;
+    this.output.name = currentTest;
     this.output.folder = folder;
+
+    this.initOutputLatest();
   }
 
-  async initOutputLatest(args) {
-    const output = args.PPD_OUTPUT || 'output';
+  initOutputLatest() {
+    const { PPD_OUTPUT: output } = new Arguments();
+
     let folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
-      await fs.mkdirSync(output);
+      fs.mkdirSync(output);
     }
 
     // Create latest log path
@@ -146,7 +150,7 @@ class Envs {
       }
     }
 
-    await fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
 
@@ -407,6 +411,7 @@ module.exports = function({ envsId, socket } = {}) {
     let newEnvs = new Envs();
     instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId }), socket };
   }
+
   return {
     envsId,
     envs: _.get(instances, [envsId, 'envs']),

@@ -2,6 +2,7 @@ const crypto = require('crypto');
 
 const _ = require('lodash');
 const { TestsContent } = require('./TestContent');
+const { Arguments } = require('./Arguments');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -19,7 +20,10 @@ const generateDescriptionStep = fullJSON => {
   return descriptionString;
 };
 
-const getFullDepthJSON = function({ testName, testBody = {}, levelIndent = 0 }) {
+const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0 } = {}) => {
+  if (!testName) {
+    ({ currentTest: testName } = new Arguments());
+  }
   const allTests = new TestsContent().getAllData();
   if (!allTests) {
     throw { message: 'No tests content. Init it first with "TestsContent" class' };
