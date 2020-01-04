@@ -288,7 +288,7 @@ class Test {
         let dFResults = resolveDataFunctions(this.dataFunction, allData);
         let sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
-        // Сохраняем функции в результаты
+        // Save all functions results into envs
         this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
         this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), sFResults));
 
@@ -319,24 +319,23 @@ class Test {
         }
 
         // All data passed to log
-        const args = {
-          envsId,
-          envName: this.envName,
-          envPageName: this.envPageName,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          options: this.options,
-          allowResults: this.allowResults,
-          bindResults: this.bindResults,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
-          stepId: this.stepId,
-        };
+        const argsFields = [
+          'envName',
+          'envPageName',
+          'options',
+          'allowResults',
+          'bindResults',
+          'levelIndent',
+          'repeat',
+          'stepId',
+        ];
+        const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
 
-        let logBinded = bind(log, source, args);
+        const logBinded = bind(log, source, args);
 
         // Extend with data passed to functions
-        const args_ext = Object.assign({}, args, {
+        const argsExt = {
+          ...args,
           env: this.env,
           envs: this.envs,
           browser: this.env ? this.env.getState('browser') : null,
@@ -346,7 +345,7 @@ class Test {
           _,
           name: this.name,
           description: this.description,
-        });
+        };
 
         // Descriptions in log
         logBinded({
@@ -368,7 +367,7 @@ class Test {
           }
           if (_.isArray(funcs)) {
             for (const fun of funcs) {
-              let funResult = (await fun(args_ext)) || {};
+              let funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);
             }

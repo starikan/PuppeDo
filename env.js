@@ -17,9 +17,8 @@ const { Arguments } = require('./Arguments');
 class Env {
   constructor(name, env = {}) {
     this.name = name;
-    this.state = {
-      // тут браузер, страницы, куки
-    };
+    // Browser, pages, coockies, etc.
+    this.state = {};
     this.env = {
       name: name,
       data: {},
