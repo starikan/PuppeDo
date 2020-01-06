@@ -6,7 +6,7 @@ module.exports = { runTest: instance.runTest.bind(instance) };
 instance.atomRun = async function() {
   const jsEvalOnClick = () => {
     function clickHandler(event) {
-      console.log(event);
+      // console.log(event);
 
       const fields = [
         'x',
@@ -79,18 +79,100 @@ instance.atomRun = async function() {
         exportData.path.push(path);
       });
 
-      console.log(exportData);
+      const target = event.target;
+      exportData.xpath = [xpath.getXPath(target), xpath.getUniqueXPath(target)];
+
+      // console.log(exportData);
       console.log(JSON.stringify(exportData, { skipInvalid: true }));
     }
     window.addEventListener('click', clickHandler, true);
     return window;
   };
 
+  const checkSelectorsInDom = selectors => {
+    selectors = selectors.map(v => [v, document.querySelectorAll(v).length]);
+    return selectors;
+  };
+
+  const getCombinations = (chars, divider = '.') => {
+    const result = [];
+    const f = (prefix, chars) => {
+      for (var i = 0; i < chars.length; i++) {
+        result.push(prefix + divider + chars[i]);
+        f(prefix + divider + chars[i], chars.slice(i + 1));
+      }
+    };
+    f('', chars);
+    return result;
+  };
+
+  const generateSelectors = elements => {
+    elements = elements
+      .filter(v => !v.hidden)
+      .filter(v => v.tagName && !['HTML', 'BODY'].includes(v.tagName))
+      .map(v => this._.pick(v, ['classList', 'attributes', 'id', 'tagName', 'textContent']))
+      .map(v => {
+        v.tagName = v.tagName.toLowerCase();
+        return v;
+      })
+      .map(v => {
+        delete v.attributes.class;
+        return v;
+      });
+
+    const parts = elements.map(v => {
+      let set = [
+        ...(v.id ? [`#${v.id}`] : []),
+        ...getCombinations(v.classList)
+          .map(c => `${c}`)
+          .sort((a, b) => a.length - b.length),
+        // ...getCombinations(v.classList)
+        //   .map(c => `${v.tagName}${c}`)
+        //   .sort((a, b) => a.length - b.length),
+        ...getCombinations(
+          Object.entries(v.attributes).map(attr => `[${attr[0]}='${attr[1]}']`),
+          '',
+        ),
+        // ...getCombinations(
+        //   Object.entries(v.attributes).map(attr => `[${attr[0]}='${attr[1]}']`),
+        //   '',
+        // ).map(c => `${v.tagName}${c}`),
+        ...[v.tagName],
+      ];
+
+      return set;
+    });
+
+    let selectors = [...parts[0]];
+    let combines = [...parts[0]];
+    for (let i = 1; i < parts.length; i++) {
+      combines = parts[i].reduce((s, b) => (s = [...s, ...combines.map(a => `${b} > ${a}`)]), []);
+      selectors = [...selectors, ...combines];
+    }
+
+    return selectors;
+  };
+
+  const checkSelectors = async selectors => {
+    let counts = await this.page.evaluate(checkSelectorsInDom, selectors);
+    counts = counts
+      .filter(v => v[1] === 1)
+      .map(v => v[0])
+      .sort(
+        (a, b) =>
+          a.split('').filter(v => ['.', '>'].includes(v)).length >
+          b.split('').filter(v => ['.', '>'].includes(v)).length,
+      );
+    return counts;
+  };
+
   const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js';
   const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
-
+  // https://github.com/johannhof/xpath-dom
+  const xpathFile = 'https://cdn.rawgit.com/johannhof/xpath-dom/master/dist/xpath-dom.min.js';
   await this.page.addScriptTag({ url: yamlFile });
   await this.page.addScriptTag({ url: lodashFile });
+  await this.page.addScriptTag({ url: xpathFile });
   await this.page.evaluate(jsEvalOnClick);
 
   const client = await this.page.target().createCDPSession();
@@ -100,11 +182,13 @@ instance.atomRun = async function() {
     const textLog = e.message.text;
     try {
       const data = JSON.parse(textLog);
+      const selectors = generateSelectors(data.path);
+      const selectorsCheck = await checkSelectors(selectors);
       // const { x, y } = data;
       // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
       // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
       // debugger;
-      console.log(data)
+      console.log(selectorsCheck);
     } catch (err) {
       // debugger;
     }
