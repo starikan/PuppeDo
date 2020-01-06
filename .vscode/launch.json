@@ -18,7 +18,7 @@
       "args": ["-e", "require('./index').main()"],
       "env": {
         "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms\\atoms"],
+        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "main",
         "PPD_DEBUG_MODE": "true",
@@ -33,7 +33,7 @@
         "-e",
         "require('./index').main()",
         "PPD_ROOT=tests",
-        "PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms\\atoms",
+        "PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms",
         "PPD_ENVS=mainEnv",
         "PPD_TESTS=main",
         "PPD_DEBUG_MODE=true",
@@ -47,7 +47,7 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}\\tests\\index.js",
       "args": [
-        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms\\atoms",
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms",
       ]
     }
   ]
