@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
-const { merge } = require('./helpers');
+const { merge, blankSocket } = require('./helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
@@ -29,7 +29,7 @@ const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   _.forEach(needs, d => {
-    if (_.isString(d) && d.endsWith('?')) return; // optional parametr
+    if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
     if (!intersectionData.size) {
@@ -80,7 +80,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
       };
     }
   } else {
-    throw { message: 'needEnv wrong format, shoud be array or string' };
+    throw { message: 'needEnv wrong format, should be array or string' };
   }
 };
 
@@ -103,7 +103,7 @@ class Test {
     errorTest = async function() {},
     source = '',
     repeat = 1,
-    socket = null,
+    socket = blankSocket,
     stepId = null,
     breadcrumbs = [],
     ...constructorArgs
@@ -233,9 +233,9 @@ class Test {
           level: 'error',
           screenshot: true,
           fullpage: true,
-          text: `Test stoped with expr ${type} = '${expr}'`,
+          text: `Test stopped with expr ${type} = '${expr}'`,
         });
-        throw this.collectDebugData({}, locals, `Test stoped with expr ${type} = '${expr}'`);
+        throw this.collectDebugData({}, locals, `Test stopped with expr ${type} = '${expr}'`);
       }
     };
 
@@ -267,7 +267,7 @@ class Test {
         _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
-        throw { message: 'Test shoud have envsId' };
+        throw { message: 'Test should have envsId' };
       }
 
       let { envs, log } = Environment({ envsId });
@@ -345,6 +345,7 @@ class Test {
           _,
           name: this.name,
           description: this.description,
+          socket: this.socket,
         };
 
         // Descriptions in log

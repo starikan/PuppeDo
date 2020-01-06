@@ -3,6 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const { Blocker } = require('./Blocker');
+const { blankSocket } = require('./helpers');
 
 const abstractTest = require('./abstractTest');
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
@@ -23,7 +24,7 @@ const resolveJS = (testJson, funcFile) => {
   return testJson;
 };
 
-const getTest = function(testJsonIncome, envsId, socket) {
+const getTest = function(testJsonIncome, envsId, socket = blankSocket) {
   let testJson = { ...testJsonIncome };
   if (!testJson || !_.isObject(testJson) || !envsId) {
     throw { message: 'getTest params error' };
@@ -40,7 +41,7 @@ const getTest = function(testJsonIncome, envsId, socket) {
   // Test
   // blocker.push({ stepId: testJson.stepId, block: true, breadcrumbs: testJson.breadcrumbs });
 
-  // If there is no any function in test we deside that it have runTest in js file with the same name
+  // If there is no any function in test we decide that it have runTest in js file with the same name
   if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
     const testFileExt = path.parse(testJson.testFile).ext;
     const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
