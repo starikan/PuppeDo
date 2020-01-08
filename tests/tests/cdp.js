@@ -7,7 +7,11 @@ instance.atomRun = async function() {
   const jsEvalOnClick = () => {
     let previousBorder = null;
     let elementClicked = null;
-    function clickHandler(event) {
+
+    window.clickHandler = function(event) {
+      event.stopPropagation();
+      event.preventDefault();
+
       if (elementClicked) {
         elementClicked.style.border = previousBorder;
       }
@@ -41,6 +45,8 @@ instance.atomRun = async function() {
 
       exportData.path = [];
       event.path.forEach((p, i) => {
+        if (i > 3) return;
+
         let fieldsPath = [
           'baseURI',
           'childElementCount',
@@ -95,9 +101,9 @@ instance.atomRun = async function() {
       console.log(JSON.stringify(exportData, { skipInvalid: true }));
 
       target.style.setProperty('border', '2px solid red');
-    }
-    window.addEventListener('click', clickHandler, true);
-    return window;
+    };
+    window.removeEventListener('click', window.clickHandler);
+    window.addEventListener('click', window.clickHandler, true);
   };
 
   const checkSelectorsInDom = selectors => {
