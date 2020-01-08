@@ -5,8 +5,17 @@ module.exports = { runTest: instance.runTest.bind(instance) };
 // WRITE YOUR LOGIC BELLOW
 instance.atomRun = async function() {
   const jsEvalOnClick = () => {
+    let previousBorder = null;
+    let elementClicked = null;
     function clickHandler(event) {
-      // console.log(event);
+      if (elementClicked) {
+        elementClicked.style.border = previousBorder;
+      }
+
+      elementClicked = event.target;
+      elementClicked.style.setProperty('border', previousBorder);
+
+      console.log(event);
 
       const fields = [
         'x',
@@ -84,6 +93,8 @@ instance.atomRun = async function() {
 
       // console.log(exportData);
       console.log(JSON.stringify(exportData, { skipInvalid: true }));
+
+      target.style.setProperty('border', '2px solid red');
     }
     window.addEventListener('click', clickHandler, true);
     return window;
@@ -166,38 +177,44 @@ instance.atomRun = async function() {
     return counts;
   };
 
-  const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js';
-  const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
-  // https://github.com/johannhof/xpath-dom
-  const xpathFile = 'https://cdn.rawgit.com/johannhof/xpath-dom/master/dist/xpath-dom.min.js';
-  await this.page.addScriptTag({ url: yamlFile });
-  await this.page.addScriptTag({ url: lodashFile });
-  await this.page.addScriptTag({ url: xpathFile });
-  await this.page.evaluate(jsEvalOnClick);
+  this.addScripts = async () => {
+    const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.min.js';
+    const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
+    // https://github.com/johannhof/xpath-dom
+    const xpathFile = 'https://cdn.rawgit.com/johannhof/xpath-dom/master/dist/xpath-dom.min.js';
 
-  const client = await this.page.target().createCDPSession();
-  await client.send('Console.enable');
-  await client.send('DOM.enable');
-  client.on('Console.messageAdded', async e => {
-    const textLog = e.message.text;
     try {
-      const data = JSON.parse(textLog);
-      const selectors = generateSelectors(data.path);
-      const selectorsCheck = await checkSelectors(selectors);
-      // const { x, y } = data;
-      // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
-      // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
-      // debugger;
-      console.log(selectorsCheck);
-    } catch (err) {
-      // debugger;
-    }
-  });
+      await this.page.addScriptTag({ url: yamlFile });
+      await this.page.addScriptTag({ url: lodashFile });
+      await this.page.addScriptTag({ url: xpathFile });
+      await this.page.evaluate(jsEvalOnClick);
 
-  // await client.send('DOM.enable');
-  // client.on('DOM.documentUpdated', e => {
-  //   await client.send('Page.enable');
-  //   const links = await client.send('')
-  //   console.log(e);
-  // });
+      const client = await this.page.target().createCDPSession();
+      await client.send('Console.enable');
+      client.on('Console.messageAdded', async e => {
+        const textLog = e.message.text;
+        try {
+          const data = JSON.parse(textLog);
+          const selectors = generateSelectors(data.path);
+          const selectorsCheck = await checkSelectors(selectors);
+          // const { x, y } = data;
+          // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
+          // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
+          // debugger;
+          console.log(selectorsCheck);
+        } catch (err) {
+          // debugger;
+        }
+      });
+
+      await client.send('DOM.enable');
+      client.on('DOM.documentUpdated', this.addScripts);
+
+      // debugger;
+    } catch (err) {
+      debugger;
+    }
+  };
+
+  await this.addScripts();
 };
