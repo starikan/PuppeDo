@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
-const { merge } = require('./helpers');
+const { merge, blankSocket } = require('./helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
@@ -29,7 +29,7 @@ const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   _.forEach(needs, d => {
-    if (_.isString(d) && d.endsWith('?')) return; // optional parametr
+    if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
     if (!intersectionData.size) {
@@ -80,7 +80,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
       };
     }
   } else {
-    throw { message: 'needEnv wrong format, shoud be array or string' };
+    throw { message: 'needEnv wrong format, should be array or string' };
   }
 };
 
@@ -103,7 +103,7 @@ class Test {
     errorTest = async function() {},
     source = '',
     repeat = 1,
-    socket = null,
+    socket = blankSocket,
     stepId = null,
     breadcrumbs = [],
     ...constructorArgs
@@ -233,9 +233,9 @@ class Test {
           level: 'error',
           screenshot: true,
           fullpage: true,
-          text: `Test stoped with expr ${type} = '${expr}'`,
+          text: `Test stopped with expr ${type} = '${expr}'`,
         });
-        throw this.collectDebugData({}, locals, `Test stoped with expr ${type} = '${expr}'`);
+        throw this.collectDebugData({}, locals, `Test stopped with expr ${type} = '${expr}'`);
       }
     };
 
@@ -267,7 +267,7 @@ class Test {
         _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
-        throw { message: 'Test shoud have envsId' };
+        throw { message: 'Test should have envsId' };
       }
 
       let { envs, log } = Environment({ envsId });
@@ -288,7 +288,7 @@ class Test {
         let dFResults = resolveDataFunctions(this.dataFunction, allData);
         let sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
-        // Сохраняем функции в результаты
+        // Save all functions results into envs
         this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
         this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), sFResults));
 
@@ -319,24 +319,23 @@ class Test {
         }
 
         // All data passed to log
-        const args = {
-          envsId,
-          envName: this.envName,
-          envPageName: this.envPageName,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          options: this.options,
-          allowResults: this.allowResults,
-          bindResults: this.bindResults,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
-          stepId: this.stepId,
-        };
+        const argsFields = [
+          'envName',
+          'envPageName',
+          'options',
+          'allowResults',
+          'bindResults',
+          'levelIndent',
+          'repeat',
+          'stepId',
+        ];
+        const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
 
-        let logBinded = bind(log, source, args);
+        const logBinded = bind(log, source, args);
 
         // Extend with data passed to functions
-        const args_ext = Object.assign({}, args, {
+        const argsExt = {
+          ...args,
           env: this.env,
           envs: this.envs,
           browser: this.env ? this.env.getState('browser') : null,
@@ -346,7 +345,8 @@ class Test {
           _,
           name: this.name,
           description: this.description,
-        });
+          socket: this.socket,
+        };
 
         // Descriptions in log
         logBinded({
@@ -368,7 +368,7 @@ class Test {
           }
           if (_.isArray(funcs)) {
             for (const fun of funcs) {
-              let funResult = (await fun(args_ext)) || {};
+              let funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);
             }

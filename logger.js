@@ -5,18 +5,10 @@ const _ = require('lodash');
 const dayjs = require('dayjs');
 const yaml = require('js-yaml');
 
-const { sleep, stylesConsole } = require('./helpers');
+const { sleep, stylesConsole, blankSocket } = require('./helpers');
 
 class Logger {
-  constructor({ envs, envsId, socket }) {
-
-    if (!socket) {
-      socket = {
-        send: () => {},
-        sendYAML: () => {},
-      };
-    }
-
+  constructor({ envs, envsId, socket = blankSocket }) {
     this.envs = envs;
     this.envsId = envsId;
     this.socket = socket;
@@ -107,8 +99,10 @@ class Logger {
 
   async _log(
     {
+      funcFile,
+      testFile,
       text = '',
-      pageNum = 0,
+      // pageNum = 0,
       stdOut = true,
       selCSS = [],
       screenshot = null,
@@ -118,8 +112,6 @@ class Logger {
       element = false,
       testStruct = null,
       levelIndent = 0,
-      funcFile,
-      testFile,
     } = {},
     testSource,
     bindedData,
@@ -157,8 +149,14 @@ class Logger {
         const styleFunction = _.get(stylesConsole, level, args => args);
         console.log(styleFunction(logString));
         if (level === 'error') {
-          if (testFile) console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with test: ${testFile}`));
-          if (funcFile) console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with function: ${funcFile}`));
+          if (testFile)
+            console.log(
+              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with test: ${testFile}`),
+            );
+          if (funcFile)
+            console.log(
+              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with function: ${funcFile}`),
+            );
         }
       }
 
@@ -223,7 +221,7 @@ class Logger {
       // Export YAML log every step
       let indent = 2;
       let yamlString =
-        (await '-\n') + yaml.dump(logEntry, { lineWidth: 1000, indent }).replace(/^/gm, ' '.repeat(indent)) + '\n';
+        '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indent }).replace(/^/gm, ' '.repeat(indent)) + '\n';
       fs.appendFileSync(path.join(outputFolder, 'output.yaml'), yamlString);
       fs.appendFileSync(path.join(outputFolderLatest, 'output.yaml'), yamlString);
 
@@ -241,7 +239,7 @@ class Logger {
   }
 }
 
-module.exports = function({ envs, envsId = null, socket = null }) {
+module.exports = function({ envs, envsId = null, socket = blankSocket }) {
   if (!envs) {
     throw { message: 'Logger need ENVS' };
   }

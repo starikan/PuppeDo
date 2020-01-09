@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "automation"
   ],
   "dependencies": {
-    "dayjs": "1.8.18",
+    "dayjs": "1.8.19",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
@@ -39,6 +39,6 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "latest"
+    "@puppedo/atoms": "^1.4.2"
   }
 }

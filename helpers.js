@@ -18,11 +18,17 @@ const stylesConsole = {
   warn: _logString => `\u001b[${33}m${_logString}\u001b[0m`, // yellow
   error: _logString => `\u001b[${31}m${_logString}\u001b[0m`, // red
   trace: _logString => `\u001b[${36}m${_logString}\u001b[0m`, // blue
-  env: _logString => `\u001b[${34}m${_logString}\u001b[0m`, // violete
+  env: _logString => `\u001b[${34}m${_logString}\u001b[0m`, // violet
+};
+
+const blankSocket = {
+  send: () => {},
+  sendYAML: () => {},
 };
 
 module.exports = {
   merge,
   sleep,
   stylesConsole,
+  blankSocket,
 };
