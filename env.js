@@ -10,14 +10,14 @@ const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
 const logger = require('./logger');
-const { merge, sleep } = require('./helpers');
+const { merge, sleep, blankSocket } = require('./helpers');
 const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
 
 class Env {
   constructor(name, env = {}) {
     this.name = name;
-    // Browser, pages, coockies, etc.
+    // Browser, pages, cookies, etc.
     this.state = {};
     this.env = {
       name: name,
@@ -237,7 +237,7 @@ class Envs {
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
-        throw { message: 'Cand find any pages in connection' };
+        throw { message: 'Can`t find any pages in connection' };
       }
 
       const { width, height } = _.get(browserSettings, 'windowSize');
@@ -350,7 +350,7 @@ class Envs {
         });
         return env;
       } else {
-        throw { message: `PuppeDo found unkown environment in yours args. It's name '${v}'.` };
+        throw { message: `PuppeDo found unknown environment in yours args. It's name '${v}'.` };
       }
     });
 
@@ -393,7 +393,7 @@ class Envs {
 
 let instances = {};
 
-module.exports = function({ envsId, socket } = {}) {
+module.exports = function({ envsId, socket = blankSocket } = {}) {
   if (envsId) {
     if (!_.get(instances, envsId)) {
       throw { message: `Unknown ENV ID ${envsId}` };
