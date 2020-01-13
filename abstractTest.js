@@ -13,7 +13,7 @@ function bind(func, source, bindArgs) {
   };
 }
 
-const ALIASSES = {
+const ALIASES = {
   bindData: ['bD', 'bd'],
   bindSelectors: ['bindSelector', 'bS', 'bs'],
   bindResults: ['bindResult', 'bR', 'br', 'result', 'r'],
@@ -33,7 +33,7 @@ const checkNeeds = (needs, data, testName) => {
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw { message: `Error: can't find data parametr "${d}" in ${testName} test` };
+      throw { message: `Error: can't find data parameter "${d}" in ${testName} test` };
     }
   });
   return;
@@ -47,7 +47,7 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
     if (_.isString(funcParams[key])) {
       funcEval[key] = safeEval(funcParams[key], allDataSel);
     }
-    //TODO: 2019-05-17 S.Starodubov Убрать эту возможность делать присвоение через функции
+    //TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
     if (_.isArray(funcParams[key]) && funcParams[key].length == 2) {
       let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
       funcEval[key] = dataFuncEval;
@@ -57,10 +57,10 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   return funcEval;
 };
 
-const resolveAliases = (valueName, inputs = {}, aliasses = {}) => {
+const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   try {
     let result = {};
-    const values = [valueName, ..._.get(aliasses, valueName, [])];
+    const values = [valueName, ..._.get(aliases, valueName, [])];
     values.forEach(v => {
       result = merge(result, _.get(inputs, v, {}));
     });
@@ -154,7 +154,7 @@ class Test {
         }
       });
 
-      // * Get data from test inself in test describe
+      // * Get data from test itself in test describe
       joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
       // * Get data from user function results and results
@@ -167,7 +167,7 @@ class Test {
         dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
       }
 
-      // * Update after all bindings with data from test itself passed in runing
+      // * Update after all bindings with data from test itself passed in running
       const data = isSelector ? this.selectors : this.data;
       dataLocal = merge(dataLocal, data);
 
@@ -224,7 +224,7 @@ class Test {
       }
 
       if (!exprResult && type === 'if') {
-        await log({ level: 'info', screenshot: false, fullpage: false, text: `If skiping ${expr}` });
+        await log({ level: 'info', screenshot: false, fullpage: false, text: `If skipping ${expr}` });
         return true;
       }
 
@@ -244,20 +244,20 @@ class Test {
 
       const inputs = merge(inputArgs, constructorArgs);
 
-      this.data = resolveAliases('data', inputs, ALIASSES);
-      this.bindData = resolveAliases('bindData', inputs, ALIASSES);
-      this.dataFunction = resolveAliases('dataFunction', inputs, ALIASSES);
+      this.data = resolveAliases('data', inputs, ALIASES);
+      this.bindData = resolveAliases('bindData', inputs, ALIASES);
+      this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
       this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
 
-      this.selectors = resolveAliases('selectors', inputs, ALIASSES);
-      this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASSES);
-      this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASSES);
+      this.selectors = resolveAliases('selectors', inputs, ALIASES);
+      this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
+      this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
 
-      this.bindResults = resolveAliases('bindResults', inputs, ALIASSES);
-      this.resultFunction = resolveAliases('resultFunction', inputs, ALIASSES);
+      this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
+      this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
 
-      this.options = resolveAliases('options', inputs, ALIASSES);
+      this.options = resolveAliases('options', inputs, ALIASES);
       this.description = _.get(inputArgs, 'description') || _.get(constructorArgs, 'description') || this.description;
       this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
       this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
@@ -376,7 +376,7 @@ class Test {
         }
 
         // RESULTS
-        // TODO: выкидывать предупреждение если не пришло то чего нужно в результатах то чего в allowResults
+        // TODO: raise warning if not needed in allowResults
         let results = _.pick(resultFromTest, allowResults);
         let localResults = {};
 

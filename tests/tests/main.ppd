@@ -27,7 +27,7 @@ runTest:
   - blank:
 
 ---
-name: calimba
+name: oneFileTwoTests
 type: test
 beforeTest:
   - envSwitch:

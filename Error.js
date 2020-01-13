@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { stylesConsole } =  require('./helpers');
+const { stylesConsole } = require('./helpers');
 
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
@@ -17,7 +17,7 @@ const errorHandler = async error => {
   console.log();
   error.stack ? console.log(styleFunction(error.stack)) : '';
   // if (!module.parent) {
-    process.exit(1);
+  process.exit(1);
   // }
 };
 

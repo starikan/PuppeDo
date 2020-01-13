@@ -31,7 +31,7 @@ const main = async (args = {}) => {
       blocker.refresh();
       let test = getTest(fullJSON, envsId);
 
-      console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
+      console.log(`Prepare time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
 
       await test();
       console.log(`Test '${args.currentTest}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
