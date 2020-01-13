@@ -102,7 +102,6 @@ class Logger {
       funcFile,
       testFile,
       text = '',
-      // pageNum = 0,
       stdOut = true,
       selCSS = [],
       screenshot = null,
@@ -113,8 +112,8 @@ class Logger {
       testStruct = null,
       levelIndent = 0,
     } = {},
-    testSource,
-    bindedData,
+    testSource = {},
+    bindedData = {},
   ) {
     try {
       let activeEnv = this.envs.getEnv();
@@ -180,8 +179,7 @@ class Logger {
       fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), logString + '\n');
 
       if (_.isEmpty(testStruct)) {
-        testStruct = testSource;
-        testStruct = _.mapValues(testStruct, v => {
+        testStruct = _.mapValues(testSource, v => {
           if (!_.isEmpty(v)) {
             return v;
           }

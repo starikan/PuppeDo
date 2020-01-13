@@ -34,7 +34,7 @@ class Env {
   }
 
   setState() {
-    //TODO: Подмена браузера, установка куков
+    // TODO: 2020-01-13 S.Starodubov cookies and other
   }
 
   get(name, def = null) {
@@ -168,6 +168,7 @@ class Envs {
       const browserSettings = _.get(env, 'env.browser', {});
 
       if (type === 'api') {
+        // TODO: 2020-01-13 S.Starodubov
       }
 
       if (type === 'puppeteer') {
@@ -223,7 +224,7 @@ class Envs {
 
       const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
       if (!webSocketDebuggerUrl) {
-        throw { message: `webSocketDebuggerUrl empty. Posibly wrong Electron version running` };
+        throw { message: `webSocketDebuggerUrl empty. Possibly wrong Electron version running` };
       }
 
       const browser = await puppeteer.connect({
@@ -329,7 +330,7 @@ class Envs {
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
-      const env = { ...allData.envs.find(g => g.name === v) };
+      const env = _.cloneDeep(allData.envs.find(g => g.name === v));
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [] } = env;
         envsExt.forEach(d => {

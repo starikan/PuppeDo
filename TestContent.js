@@ -34,7 +34,7 @@ class TestsContent extends Singleton {
     }
   }
 
-  checkDublikates(tests, key) {
+  checkDuplicates(tests, key) {
     const dubTests = _(tests)
       .groupBy('name')
       .filter(v => v.length > 1)
@@ -55,7 +55,7 @@ class TestsContent extends Singleton {
 
     if (dubNames.length || dubFiles.length) {
       throw {
-        message: `There is dublicates of '${key}' in files '${dubFiles.join(', ')}'. Names is '${dubNames.join(', ')}'`,
+        message: `There is duplicates of '${key}' in files '${dubFiles.join(', ')}'. Names is '${dubNames.join(', ')}'`,
       };
     }
   }
@@ -63,7 +63,7 @@ class TestsContent extends Singleton {
   getAllData(force = false) {
     if (force || !this.allData) {
       const allContent = [];
-      const exts = ['.yaml', '.yml', '.ppd'];
+      const extensions = ['.yaml', '.yml', '.ppd'];
       const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
 
       let paths = [];
@@ -74,7 +74,7 @@ class TestsContent extends Singleton {
         paths = [...paths, ...pathsFolder];
       }
 
-      const allFiles = _.filter(paths, v => exts.includes(path.parse(v).ext));
+      const allFiles = _.filter(paths, v => extensions.includes(path.parse(v).ext));
 
       allFiles.forEach(filePath => {
         try {
@@ -97,7 +97,7 @@ class TestsContent extends Singleton {
       this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
 
       for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
-        this.checkDublikates(this.allData[key], key);
+        this.checkDuplicates(this.allData[key], key);
       }
 
       return this.allData;

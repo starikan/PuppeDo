@@ -31,15 +31,15 @@ const main = async (args = {}) => {
       blocker.refresh();
       let test = getTest(fullJSON, envsId);
 
-      console.log(`Prepate time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
+      console.log(`Prepare time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
 
       await test();
       console.log(`Test '${args.currentTest}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`);
     }
 
-    // await envs.closeBrowsers();
-    // await envs.closeProcesses();
-    // console.log(`\n\nEvaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`);
+    await envs.closeBrowsers();
+    await envs.closeProcesses();
+    console.log(`\n\nEvaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`);
 
     if (!module.parent) {
       process.exit(1);

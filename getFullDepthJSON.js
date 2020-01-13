@@ -29,7 +29,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
     throw { message: 'No tests content. Init it first with "TestsContent" class' };
   }
 
-  const testJSON = { ...allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)) };
+  const testJSON = _.cloneDeep(allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)));
   if (!testJSON) {
     throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
   }
