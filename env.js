@@ -335,19 +335,19 @@ class Envs {
         const { dataExt = [], selectorsExt = [], envsExt = [] } = env;
         envsExt.forEach(d => {
           const envsResolved = { ...allData.envs.find(g => g.name === d, {}) };
-          env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser', {}));
-          env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log', {}));
-          env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data', {}));
-          env.selectors = merge(_.get(env, 'selectors', {}), _.get(envsResolved, 'selectors', {}));
+          env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser') || {});
+          env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log') || {});
+          env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data') || {});
+          env.selectors = merge(_.get(env, 'selectors', {}), _.get(envsResolved, 'selectors') || {});
           env.description = _.get(env, 'description', '') + ' -> ' + _.get(envsResolved, 'description', '');
         });
         dataExt.forEach(d => {
           const dataResolved = { ...allData.data.find(g => g.name === d, {}) };
-          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data', {}));
+          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data') || {});
         });
         selectorsExt.forEach(d => {
           const selectorsResolved = { ...allData.selectors.find(g => g.name === d, {}) };
-          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data', {}));
+          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data') || {});
         });
         return env;
       } else {
