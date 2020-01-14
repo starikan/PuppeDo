@@ -371,7 +371,8 @@ class Test {
             funcs = [funcs];
           }
           if (_.isArray(funcs)) {
-            for (const fun of funcs) {
+            for (let f = 0; f < funcs.length; f++) {
+              const fun = funcs[f];
               let funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);
