@@ -17,13 +17,13 @@ For start new project use [PuppeDoCLI](https://github.com/starikan/PuppeDoCLI)
 
 # Project structure
 
-All files must have exts `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments)
+All files must have extensions `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments)
 
 ## Environment files
 
 File with environment information. There is may more then one env in test. You can switch between envs.
 
-If there exist more then one env with the same name they merge. Use in for development redefinition parts of env in private env file. I.e. for runing electron app from your local files.
+If there exist more then one env with the same name they merge. Use in for development redefinition parts of env in private env file. I.e. for running electron app from your local files.
 
 ```yaml
 name: mainEnv
@@ -71,36 +71,36 @@ log:
   fullpage: true
 ```
 
-### Parametrs
+### Parameters
 
-Parametr  | Description
+Parameter  | Description
 ------------- | -------------
-name | Name of environment. Use it for runing envs with [Runing arguments](#runing-arguments). Feel free for naming but with caution use spaces.
-type | For environment files it shoud be `env`.
+name | Name of environment. Use it for running envs with [Running arguments](#running-arguments). Feel free for naming but with caution use spaces.
+type | For environment files it should be `env`.
 description | Description
 data | Object with data for passing in this env.
 selectors | Object with selectors for passing in this env.
-dataExt | Array of data that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
-selectorsExt | Array of selectors that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
-envsExt | Array of envs that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#runing-arguments). You can use asterisk to load all files from folder `data/*`
+dataExt | Array of data that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
+selectorsExt | Array of selectors that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
+envsExt | Array of envs that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
 browser | [Browser settings](#browser-settings)
 log | [Logging settings](#logging-settings)
 
 ### Browser Settings
-Parametr | Description | Default Value | Dependence
+Parameter | Description | Default Value | Dependence
 ------------- | ------------- | -------------  | -------------
 type | Type of browser: `puppeteer` - chrome browser, `electron` - electron app | `puppeteer`
-runtime | `run` - run new browser instanse, `connect` - connect to exist browser via [DevTools API](https://chromedevtools.github.io/devtools-protocol/) need `urlDevtoolsJson` parametr | `run` | `urlDevtoolsJson`
+runtime | `run` - run new browser instance, `connect` - connect to exist browser via [DevTools API](https://chromedevtools.github.io/devtools-protocol/) need `urlDevtoolsJson` parameter | `run` | `urlDevtoolsJson`
 urlDevtoolsJson | Link to devtool server `http://127.0.0.1:9222/`. To start electron or chrome with this feature run it with arg `--remote-debugging-port=9222`. Use your port number. | | runtime is `connect`
 args | Array of custom [Arguments](https://peter.sh/experiments/chromium-command-line-switches/) for Chrome
 headless | Headless mode `false` - show browser. `true` - headless mode. If debug mode enabled in PuppeDo always Headless mode is `false` | `true` |`PPD_DEBUG_MODE`
-slowMo | Dellay before every action in millisecconds.| `0`
+slowMo | Delay before every action in milliseconds.| `0`
 windowSize | Viewport size. Object `width, height` in px.
 runtimeEnv | [runtimeEnv settings](#runtimeEnv-settings)
 killOnEnd | Is close browser on end of tests. | `true`
 
 ### runtimeEnv Settings
-Parametr  | Description
+Parameter  | Description
 ------------- | -------------
 runtimeExecutable | todo
 program | todo
@@ -110,7 +110,7 @@ env | todo
 pauseAfterStartApp | todo
 
 ### Logging Settings
-Parametr  | Description
+Parameter  | Description
 ------------- | -------------
 level | todo
 screenshot | todo
@@ -125,7 +125,7 @@ data:
   value: test
 ```
 
-Parametr  | Description
+Parameter  | Description
 ------------- | -------------
 type | `data` or `selectors`
 description | Description
@@ -137,8 +137,8 @@ data | Object with data
 # Test atoms files
 #### Todo
 
-# Runing Arguments
-Parametr | Description | Default Value | Type
+# Running Arguments
+Parameter | Description | Default Value | Type
 ------------- | ------------- | ------------- | -------------
 PPD_ROOT | Root folder of tests | `process.cwd()` | `String`
 PPD_ROOT_ADDITIONAL | Append folders of tests and stuff | `[]` | `String[]`
