@@ -44,7 +44,7 @@ class Arguments extends Singleton {
       if (_.isString(newVal)) {
         newVal = newVal.split(',');
         if (newVal.length === 1) {
-          newVal = newVal[0];
+          newVal = newVal[0].trim();
         }
       }
       // Convert string to Boolean
@@ -81,6 +81,9 @@ class Arguments extends Singleton {
 
     this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
     this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
+    this.args.PPD_ROOT_IGNORE = !_.isArray(this.args.PPD_ROOT_IGNORE)
+      ? [this.args.PPD_ROOT_IGNORE]
+      : this.args.PPD_ROOT_IGNORE;
 
     return this.args;
   }
