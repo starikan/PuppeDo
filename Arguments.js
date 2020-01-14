@@ -43,9 +43,14 @@ class Arguments extends Singleton {
       let newVal = _.get(args, val);
       // If comma in string try convert to array
       if (_.isString(newVal)) {
-        newVal = newVal.split(',');
-        if (newVal.length === 1) {
-          newVal = newVal[0].trim();
+        try {
+          newVal = JSON.parse(newVal);
+        }
+        catch (error) {
+          newVal = newVal.split(',');
+          if (newVal.length === 1) {
+            newVal = newVal[0].trim();
+          }
         }
       }
       // Convert string to Boolean
