@@ -47,10 +47,8 @@ class Arguments extends Singleton {
           newVal = JSON.parse(newVal);
         }
         catch (error) {
-          newVal = newVal.split(',');
-          if (newVal.length === 1) {
-            newVal = newVal[0].trim();
-          }
+          newVal = newVal.split(',').map(v => v.trim());
+          newVal = newVal.length === 1 ? newVal[0] : newVal;
         }
       }
       // Convert string to Boolean
