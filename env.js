@@ -332,7 +332,7 @@ class Envs {
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
       const env = _.cloneDeep(allData.envs.find(g => g.name === v));
       if (env) {
-        const { dataExt = [], selectorsExt = [], envsExt = [] } = env;
+        const { dataExt = [], selectorsExt = [], envsExt = [], data = {}, selectors = {} } = env;
         envsExt.forEach(d => {
           const envsResolved = { ...allData.envs.find(g => g.name === d, {}) };
           env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser') || {});
@@ -343,11 +343,11 @@ class Envs {
         });
         dataExt.forEach(d => {
           const dataResolved = { ...allData.data.find(g => g.name === d, {}) };
-          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data') || {});
+          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data') || {}, data);
         });
         selectorsExt.forEach(d => {
           const selectorsResolved = { ...allData.selectors.find(g => g.name === d, {}) };
-          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data') || {});
+          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data') || {}, selectors);
         });
         return env;
       } else {
