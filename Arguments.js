@@ -1,5 +1,6 @@
 const _ = require('lodash');
 require('polyfill-object.fromentries');
+require('array-flat-polyfill');
 
 const { merge } = require('./helpers');
 
