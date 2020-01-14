@@ -110,9 +110,9 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
-  initOutput() {
+  initOutput(testName = 'test') {
     const { PPD_OUTPUT: output } = new Arguments();
-    const currentTest = this.get('current.test') || 'test';
+    const currentTest = this.get('current.test') || testName;
 
     if (!fs.existsSync(output)) {
       fs.mkdirSync(output);
