@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
@@ -40,6 +40,6 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "1.4.5"
+    "@puppedo/atoms": "2.0.0"
   }
 }
