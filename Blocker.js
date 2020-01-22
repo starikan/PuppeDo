@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { Singleton } = require('./singleton');
+const Singleton = require('./singleton');
 const EventEmitter = require('events');
 class Blocker extends Singleton {
   constructor() {
