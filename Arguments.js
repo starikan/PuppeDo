@@ -1,5 +1,6 @@
 const _ = require('lodash');
 require('polyfill-object.fromentries');
+require('array-flat-polyfill');
 
 const { merge } = require('./helpers');
 
@@ -27,6 +28,7 @@ class Arguments extends Singleton {
       PPD_DEBUG_MODE: false,
       PPD_LOG_DISABLED: false,
       PPD_LOG_TIMER: false,
+      PPD_DISABLE_ENV_CHECK: false,
     };
     this.params = Object.keys(this.argsDefault);
     this.argsJS = this.parser(args, this.params);
@@ -41,9 +43,12 @@ class Arguments extends Singleton {
       let newVal = _.get(args, val);
       // If comma in string try convert to array
       if (_.isString(newVal)) {
-        newVal = newVal.split(',');
-        if (newVal.length === 1) {
-          newVal = newVal[0];
+        try {
+          newVal = JSON.parse(newVal);
+        }
+        catch (error) {
+          newVal = newVal.split(',').map(v => v.trim());
+          newVal = newVal.length === 1 ? newVal[0] : newVal;
         }
       }
       // Convert string to Boolean
@@ -80,6 +85,9 @@ class Arguments extends Singleton {
 
     this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
     this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
+    this.args.PPD_ROOT_IGNORE = !_.isArray(this.args.PPD_ROOT_IGNORE)
+      ? [this.args.PPD_ROOT_IGNORE]
+      : this.args.PPD_ROOT_IGNORE;
 
     return this.args;
   }

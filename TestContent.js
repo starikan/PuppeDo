@@ -55,7 +55,12 @@ class TestsContent extends Singleton {
 
     if (dubNames.length || dubFiles.length) {
       throw {
-        message: `There is duplicates of '${key}' in files '${dubFiles.join(', ')}'. Names is '${dubNames.join(', ')}'`,
+        message: `
+There is duplicates of '${key}' in files:
+${dubFiles.join('\n')}
+
+Names is:
+${dubNames.join('\n')}`,
       };
     }
   }

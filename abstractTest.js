@@ -273,12 +273,16 @@ class Test {
       let { envs, log } = Environment({ envsId });
 
       try {
+        const { PPD_DISABLE_ENV_CHECK = false } = new Arguments();
+
         this.envs = envs;
         this.envName = this.envs.get('current.name');
         this.envPageName = this.envs.get('current.page');
         this.env = this.envs.get(`envs.${this.envName}`);
 
-        checkNeedEnv({ needEnv: this.needEnv, envName: this.envName });
+        if (!PPD_DISABLE_ENV_CHECK) {
+          checkNeedEnv({ needEnv: this.needEnv, envName: this.envName });
+        }
 
         let dataLocal = this.fetchData();
         let selectorsLocal = this.fetchSelectors();
@@ -367,7 +371,8 @@ class Test {
             funcs = [funcs];
           }
           if (_.isArray(funcs)) {
-            for (const fun of funcs) {
+            for (let f = 0; f < funcs.length; f++) {
+              const fun = funcs[f];
               let funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);

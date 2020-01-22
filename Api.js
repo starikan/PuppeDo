@@ -19,9 +19,9 @@ const main = async (args = {}) => {
       );
 
       ({ envsId, envs, log } = Environment({ envsId }));
-      await envs.init();
+      envs.initOutput(args.PPD_TESTS[i]);
       envs.set('current.test', args.PPD_TESTS[i]);
-      envs.initOutput();
+      await envs.init();
 
       const { fullJSON, textDescription } = getFullDepthJSON({ envsId });
 
