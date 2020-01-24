@@ -276,12 +276,12 @@ class Envs {
     const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
     const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
     const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
+    const run_args = [program, ...browserArgs];
 
     if (runtimeExecutable) {
-      const run_args = [program, ...browserArgs];
       process.env = Object.assign(process.env, browserEnv);
 
-      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browserEnv });
+      let prc = spawn(runtimeExecutable, run_args, { cwd, env: process.env });
 
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
