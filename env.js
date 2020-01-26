@@ -19,6 +19,7 @@ class Env {
     this.name = name;
     // Browser, pages, cookies, etc.
     this.state = {};
+    // TODO: 2020-01-26 S.Starodubov разобраться что тут
     this.env = {
       name: name,
       data: {},
@@ -246,7 +247,7 @@ class Envs {
         await pages.main.setViewport({ width, height });
       }
 
-      return { browser: browser, pages: pages };
+      return { browser, pages };
     }
 
     throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
