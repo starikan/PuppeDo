@@ -19,6 +19,7 @@ class Env {
     this.name = name;
     // Browser, pages, cookies, etc.
     this.state = {};
+    // TODO: 2020-01-26 S.Starodubov разобраться что тут
     this.env = {
       name: name,
       data: {},
@@ -26,7 +27,7 @@ class Env {
       logLevel: 'debug',
       screenshots: { isScreenshot: false, fullPage: false },
     };
-    this.env = Object.assign(this.env, env);
+    this.env = { ...this.env, ...env };
   }
 
   set(name, data) {
@@ -159,9 +160,9 @@ class Envs {
   }
 
   async runBrowsers() {
-    for (let i = 0; i < Object.keys(this.envs).length; i++) {
-      const key = Object.keys(this.envs)[i];
-      const env = this.envs[key];
+    const envsNames = Object.keys(this.envs);
+    for (let i = 0; i < envsNames.length; i++) {
+      const env = this.envs[envsNames[i]];
 
       const type = _.get(env, 'env.browser.type', 'puppeteer');
       const runtime = _.get(env, 'env.browser.runtime', 'run');
@@ -181,11 +182,11 @@ class Envs {
       if (type === 'electron') {
         if (runtime === 'connect') {
           const { browser, pages } = await this.connectElectron(browserSettings);
-          env.state = Object.assign(env.state, { browser, pages });
+          env.state = { ...env.state, ...{ browser, pages } };
         }
         if (runtime === 'run') {
           const { browser, pages, pid } = await this.runElectron(browserSettings, env);
-          env.state = Object.assign(env.state, { browser, pages, pid });
+          env.state = { ...env.state, ...{ browser, pages, pid } };
         }
       }
     }
@@ -246,24 +247,7 @@ class Envs {
         await pages.main.setViewport({ width, height });
       }
 
-      // Any tab.
-      // const {targetInfos: [{targetId}]} = await browser._connection.send(
-      //   'Target.getTargets'
-      // );
-
-      // Tab window.
-      // const {windowId} = await browser._connection.send(
-      //   'Browser.getWindowForTarget',
-      //   {targetId}
-      // );
-
-      // Resize.
-      // await browser._connection.send('Browser.setWindowBounds', {
-      //   bounds: {height, width},
-      //   windowId
-      // });
-
-      return { browser: browser, pages: pages };
+      return { browser, pages };
     }
 
     throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
@@ -276,22 +260,23 @@ class Envs {
     const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
     const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
     const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
+    const run_args = [program, ...browserArgs];
 
     if (runtimeExecutable) {
-      const run_args = [program, ...browserArgs];
-      process.env = Object.assign(process.env, browserEnv);
+      process.env = { ...process.env, ...browserEnv };
 
-      let prc = spawn(runtimeExecutable, run_args, { cwd, env: browserEnv });
+      let prc = spawn(runtimeExecutable, run_args, { cwd, env: process.env });
 
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
         fs.writeFileSync(path.join(this.output.folderLatest, `${env.name}.log`), '');
+
+        prc.stdout.on('data', data => {
+          fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
+          fs.appendFileSync(path.join(this.output.folderLatest, `${env.name}.log`), String(data));
+        });
       }
 
-      prc.stdout.on('data', data => {
-        fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
-        fs.appendFileSync(path.join(this.output.folderLatest, `${env.name}.log`), String(data));
-      });
       await sleep(pauseAfterStartApp);
 
       let { browser, pages } = await this.connectElectron(browserSettings);
