@@ -4,7 +4,8 @@
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"No test specified\""
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
   "license": "ISC",
@@ -40,6 +41,7 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.1"
+    "@puppedo/atoms": "2.0.1",
+    "jest": "^25.1.0"
   }
 }
