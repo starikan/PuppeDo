@@ -31,6 +31,7 @@ class Arguments extends Singleton {
       PPD_DISABLE_ENV_CHECK: false,
     };
     this.params = Object.keys(this.argsDefault);
+    this.argsTypes = this.getTypes(this.argsDefault);
     this.argsJS = this.parser(args, this.params);
     this.argsEnv = this.parser(_.pick(process.env, this.params), this.params);
     this.argsCLI = this.parseCLI(this.params);
@@ -38,26 +39,80 @@ class Arguments extends Singleton {
     return this.args;
   }
 
-  parser(args, params) {
+  getTypes(args) {
+    return Object.keys(args).reduce((s, v) => {
+      let vType;
+      if (_.isString(args[v])) {
+        vType = 'string';
+      }
+      if (_.isBoolean(args[v])) {
+        vType = 'boolean';
+      }
+      // Object must be before array
+      if (_.isObject(args[v])) {
+        vType = 'object';
+      }
+      if (_.isArray(args[v])) {
+        vType = 'array';
+      }
+      s[v] = vType;
+      return s;
+    }, {});
+  }
+
+  parser(args) {
+    const params = Object.keys(args);
     return params.reduce((s, val) => {
       let newVal = _.get(args, val);
+
+      if (this.argsTypes[val] === 'boolean') {
+        if (['true', 'false'].includes(newVal)) {
+          newVal = newVal === 'true' ? true : false;
+        }
+        newVal = !!newVal;
+      }
+
+      if (this.argsTypes[val] === 'object') {
+        if (_.isString(newVal)) {
+          try {
+            newVal = JSON.parse(newVal);
+          } catch (error) {
+            newVal = newVal.split(',').map(v => v.trim());
+            newVal = newVal.length === 1 ? newVal[0] : newVal;
+          }
+        } else if (!_.isObject(newVal)) {
+          // debugger;
+          throw { message: `Wrong type in argument '${val}', needed '${this.argsTypes[val]}'` };
+        }
+      }
+      if (this.argsTypes[val] === 'array') {
+        if (_.isString(newVal)) {
+          try {
+            newVal = JSON.parse(newVal);
+          } catch (error) {
+            newVal = newVal.split(',').map(v => v.trim());
+            newVal = newVal.length === 1 ? newVal[0] : newVal;
+          }
+        } else if (!_.isArray(newVal)) {
+          throw { message: `Wrong type in argument '${val}', needed '${this.argsTypes[val]}'` };
+        }
+      }
+
+      if (this.argsTypes[val] === 'string') {
+        newVal = String(newVal);
+      }
+
       // If comma in string try convert to array
-      if (_.isString(newVal)) {
-        try {
-          newVal = JSON.parse(newVal);
-        }
-        catch (error) {
-          newVal = newVal.split(',').map(v => v.trim());
-          newVal = newVal.length === 1 ? newVal[0] : newVal;
-        }
-      }
-      // Convert string to Boolean
-      if (['true', 'false'].includes(newVal)) {
-        newVal = newVal === 'true' ? true : false;
-      }
-      if (newVal) {
-        s[val] = newVal;
-      }
+      // if (_.isString(newVal)) {
+      //   try {
+      //     newVal = JSON.parse(newVal);
+      //   } catch (error) {
+      //     newVal = newVal.split(',').map(v => v.trim());
+      //     newVal = newVal.length === 1 ? newVal[0] : newVal;
+      //   }
+      // }
+
+      s[val] = newVal;
       return s;
     }, {});
   }
