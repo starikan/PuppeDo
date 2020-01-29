@@ -108,10 +108,29 @@ test('Arguments check', () => {
   expect(argResult).toEqual(['boo', 'bar']);
   [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo');
   expect(argResult).toEqual(['boo']);
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', '');
+  expect(argResult).toEqual(['']);
+
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', false)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', true)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', {})).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', { foo: 'bar' })).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', 1)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', 0)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
 
   // String
   [argData, argResult] = setArg('PPD_OUTPUT', 'output');
   expect(argData).toEqual(argResult);
+  [argData, argResult] = setArg('PPD_OUTPUT', '');
+  expect(argData).toEqual(argResult);
+  expect(() => setArg('PPD_OUTPUT', false)).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', true)).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', {})).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', { foo: 'bar' })).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', [])).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', ['bar'])).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', 1)).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', 0)).toThrowError(errors('PPD_OUTPUT', 'string'));
 
   [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
@@ -137,3 +156,7 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_TESTS', ['kii', 'loo']);
   expect(argData).toEqual(argResult);
 });
+
+test('Arguments CLI', () => {});
+
+test('Arguments ENV', () => {});

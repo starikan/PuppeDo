@@ -62,7 +62,7 @@ class Arguments extends Singleton {
 
   parser(args) {
     if (!args) {
-      return {}
+      return {};
     }
 
     const params = Object.keys(args);
@@ -104,7 +104,9 @@ class Arguments extends Singleton {
       }
 
       if (this.argsTypes[val] === 'string') {
-        newVal = String(newVal);
+        if (!_.isString(newVal)) {
+          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+        }
       }
 
       s[val] = newVal;
@@ -133,12 +135,6 @@ class Arguments extends Singleton {
     if (!this.args.PPD_ENVS || _.isEmpty(this.args.PPD_ENVS)) {
       throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
     }
-
-    // this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
-    // this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
-    // this.args.PPD_ROOT_IGNORE = !_.isArray(this.args.PPD_ROOT_IGNORE)
-    //   ? [this.args.PPD_ROOT_IGNORE]
-    //   : this.args.PPD_ROOT_IGNORE;
 
     return this.args;
   }
