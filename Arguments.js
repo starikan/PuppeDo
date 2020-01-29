@@ -72,19 +72,6 @@ class Arguments extends Singleton {
         newVal = !!newVal;
       }
 
-      if (this.argsTypes[val] === 'object') {
-        if (_.isString(newVal)) {
-          try {
-            newVal = JSON.parse(newVal);
-          } catch (error) {
-            newVal = newVal.split(',').map(v => v.trim());
-            newVal = newVal.length === 1 ? newVal[0] : newVal;
-          }
-        } else if (!_.isObject(newVal)) {
-          // debugger;
-          throw { message: `Wrong type in argument '${val}', needed '${this.argsTypes[val]}'` };
-        }
-      }
       if (this.argsTypes[val] === 'array') {
         if (_.isString(newVal)) {
           try {
@@ -94,7 +81,19 @@ class Arguments extends Singleton {
             newVal = newVal.length === 1 ? newVal[0] : newVal;
           }
         } else if (!_.isArray(newVal)) {
-          throw { message: `Wrong type in argument '${val}', needed '${this.argsTypes[val]}'` };
+          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+        }
+      }
+
+      if (this.argsTypes[val] === 'object') {
+        if (_.isString(newVal)) {
+          try {
+            newVal = JSON.parse(newVal);
+          } catch (error) {
+            throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          }
+        } else if (!_.isObject(newVal) || _.isArray(newVal)) {
+          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
         }
       }
 

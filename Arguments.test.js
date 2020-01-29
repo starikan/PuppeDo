@@ -57,12 +57,23 @@ test('Arguments check', () => {
 
   let argData, argResult;
 
+  // [argData, argResult] = setArg('PPD_DATA', '{\"foo\": \"bar\"}');
+  // expect(argData).toEqual({ foo: 'bar' });
   [argData, argResult] = setArg('PPD_DATA', { foo: 'bar' });
   expect(argData).toEqual(argResult);
   [argData, argResult] = setArg('PPD_DATA', {});
   expect(argData).toEqual(argResult);
   expect(() => setArg('PPD_DATA', false)).toThrowError({
-    message: "Wrong type in argument 'PPD_DATA', needed 'object'",
+    message: "Invalid argument type 'PPD_DATA', 'object' required.",
+  });
+  expect(() => setArg('PPD_DATA', [])).toThrowError({
+    message: "Invalid argument type 'PPD_DATA', 'object' required.",
+  });
+  expect(() => setArg('PPD_DATA', ['foo'])).toThrowError({
+    message: "Invalid argument type 'PPD_DATA', 'object' required.",
+  });
+  expect(() => setArg('PPD_DATA', 'foo')).toThrowError({
+    message: "Invalid argument type 'PPD_DATA', 'object' required.",
   });
 
   [argData, argResult] = setArg('PPD_DEBUG_MODE', false);
