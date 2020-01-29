@@ -85,7 +85,6 @@ class Arguments extends Singleton {
             newVal = JSON.parse(newVal);
           } catch (error) {
             newVal = newVal.split(',').map(v => v.trim());
-            newVal = newVal.length === 1 ? newVal[0] : newVal;
           }
         } else if (!_.isArray(newVal)) {
           throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
@@ -135,11 +134,11 @@ class Arguments extends Singleton {
       throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
     }
 
-    this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
-    this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
-    this.args.PPD_ROOT_IGNORE = !_.isArray(this.args.PPD_ROOT_IGNORE)
-      ? [this.args.PPD_ROOT_IGNORE]
-      : this.args.PPD_ROOT_IGNORE;
+    // this.args.PPD_TESTS = !_.isArray(this.args.PPD_TESTS) ? [this.args.PPD_TESTS] : this.args.PPD_TESTS;
+    // this.args.PPD_ENVS = !_.isArray(this.args.PPD_ENVS) ? [this.args.PPD_ENVS] : this.args.PPD_ENVS;
+    // this.args.PPD_ROOT_IGNORE = !_.isArray(this.args.PPD_ROOT_IGNORE)
+    //   ? [this.args.PPD_ROOT_IGNORE]
+    //   : this.args.PPD_ROOT_IGNORE;
 
     return this.args;
   }

@@ -16,6 +16,10 @@ function setArg(argName, argData) {
   return [argData, argResult];
 }
 
+function errors(name, type) {
+  return { message: `Invalid argument type '${name}', '${type}' required.` };
+}
+
 test('Arguments init Errors', () => {
   expect(() => new Arguments()).toThrowError({
     message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
@@ -57,10 +61,6 @@ test('Arguments check', () => {
 
   let argData, argResult;
 
-  const errors = (name, type) => {
-    return { message: `Invalid argument type '${name}', '${type}' required.` };
-  };
-
   // Object
   [argData, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
   expect(argResult).toEqual({ foo: 'bar' });
@@ -98,13 +98,21 @@ test('Arguments check', () => {
   expect(() => setArg('PPD_DEBUG_MODE', 0)).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
 
   // Array
-  [argData, argResult] = setArg('PPD_ENVS', ['boo']);
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', ['boo']);
   expect(argData).toEqual(argResult);
-  
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', []);
+  expect(argData).toEqual(argResult);
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,    bar');
+  expect(argResult).toEqual(['boo', 'bar']);
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,bar');
+  expect(argResult).toEqual(['boo', 'bar']);
+  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo');
+  expect(argResult).toEqual(['boo']);
+
   // String
   [argData, argResult] = setArg('PPD_OUTPUT', 'output');
   expect(argData).toEqual(argResult);
-  
+
   [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
 
@@ -117,13 +125,13 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_ROOT', 'test');
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', ['test']);
-  expect(argData).toEqual(argResult);
-
   [argData, argResult] = setArg('PPD_ROOT_IGNORE', ['huu']);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_SELECTORS', { foo: 'bar' });
+  expect(argData).toEqual(argResult);
+
+  [argData, argResult] = setArg('PPD_ENVS', ['test']);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_TESTS', ['kii', 'loo']);
