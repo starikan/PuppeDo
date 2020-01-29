@@ -30,11 +30,11 @@ class Arguments extends Singleton {
       PPD_LOG_TIMER: false,
       PPD_DISABLE_ENV_CHECK: false,
     };
-    this.params = Object.keys(this.argsDefault);
     this.argsTypes = this.getTypes(this.argsDefault);
-    this.argsJS = this.parser(args, this.params);
-    this.argsEnv = this.parser(_.pick(process.env, this.params), this.params);
-    this.argsCLI = this.parseCLI(this.params);
+
+    this.argsJS = this.parser(args);
+    this.argsEnv = this.parser(_.pick(process.env, Object.keys(this.argsDefault)));
+    this.argsCLI = this.parseCLI();
     this.args = this.mergeArgs();
     return this.args;
   }
@@ -61,6 +61,10 @@ class Arguments extends Singleton {
   }
 
   parser(args) {
+    if (!args) {
+      return {}
+    }
+
     const params = Object.keys(args);
     return params.reduce((s, val) => {
       let newVal = _.get(args, val);
@@ -68,6 +72,9 @@ class Arguments extends Singleton {
       if (this.argsTypes[val] === 'boolean') {
         if (['true', 'false'].includes(newVal)) {
           newVal = newVal === 'true' ? true : false;
+        }
+        if (!_.isBoolean(newVal)) {
+          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
         }
         newVal = !!newVal;
       }
@@ -101,29 +108,20 @@ class Arguments extends Singleton {
         newVal = String(newVal);
       }
 
-      // If comma in string try convert to array
-      // if (_.isString(newVal)) {
-      //   try {
-      //     newVal = JSON.parse(newVal);
-      //   } catch (error) {
-      //     newVal = newVal.split(',').map(v => v.trim());
-      //     newVal = newVal.length === 1 ? newVal[0] : newVal;
-      //   }
-      // }
-
       s[val] = newVal;
       return s;
     }, {});
   }
 
-  parseCLI(params) {
+  parseCLI() {
+    const params = Object.keys(this.argsDefault);
     const argsRaw = process.argv
       .map(v => v.split(/\s+/))
       .flat()
       .map(v => v.split('='))
       .filter(v => v.length > 1)
       .filter(v => params.includes(v[0]));
-    return this.parser(Object.fromEntries(argsRaw), params);
+    return this.parser(Object.fromEntries(argsRaw));
   }
 
   mergeArgs() {

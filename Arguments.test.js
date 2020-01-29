@@ -57,41 +57,61 @@ test('Arguments check', () => {
 
   let argData, argResult;
 
-  // [argData, argResult] = setArg('PPD_DATA', '{\"foo\": \"bar\"}');
-  // expect(argData).toEqual({ foo: 'bar' });
+  const errors = (name, type) => {
+    return { message: `Invalid argument type '${name}', '${type}' required.` };
+  };
+
+  // Object
+  [argData, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
+  expect(argResult).toEqual({ foo: 'bar' });
   [argData, argResult] = setArg('PPD_DATA', { foo: 'bar' });
   expect(argData).toEqual(argResult);
   [argData, argResult] = setArg('PPD_DATA', {});
   expect(argData).toEqual(argResult);
-  expect(() => setArg('PPD_DATA', false)).toThrowError({
-    message: "Invalid argument type 'PPD_DATA', 'object' required.",
-  });
-  expect(() => setArg('PPD_DATA', [])).toThrowError({
-    message: "Invalid argument type 'PPD_DATA', 'object' required.",
-  });
-  expect(() => setArg('PPD_DATA', ['foo'])).toThrowError({
-    message: "Invalid argument type 'PPD_DATA', 'object' required.",
-  });
-  expect(() => setArg('PPD_DATA', 'foo')).toThrowError({
-    message: "Invalid argument type 'PPD_DATA', 'object' required.",
-  });
 
+  expect(() => setArg('PPD_DATA', false)).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', true)).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', [])).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', ['foo'])).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 'foo')).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', '')).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 1)).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 0)).toThrowError(errors('PPD_DATA', 'object'));
+
+  // Boolean
   [argData, argResult] = setArg('PPD_DEBUG_MODE', false);
   expect(argData).toEqual(argResult);
-
-  [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
+  [argData, argResult] = setArg('PPD_DEBUG_MODE', 'false');
+  expect(argResult).toEqual(false);
+  [argData, argResult] = setArg('PPD_DEBUG_MODE', true);
   expect(argData).toEqual(argResult);
+  [argData, argResult] = setArg('PPD_DEBUG_MODE', 'true');
+  expect(argResult).toEqual(true);
 
+  expect(() => setArg('PPD_DEBUG_MODE', {})).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', { foo: 'bar' })).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', [])).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', ['foo'])).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 'foo')).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', '')).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 1)).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 0)).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+
+  // Array
   [argData, argResult] = setArg('PPD_ENVS', ['boo']);
+  expect(argData).toEqual(argResult);
+  
+  // String
+  [argData, argResult] = setArg('PPD_OUTPUT', 'output');
+  expect(argData).toEqual(argResult);
+  
+  [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_DISABLED', false);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_TIMER', false);
-  expect(argData).toEqual(argResult);
-
-  [argData, argResult] = setArg('PPD_OUTPUT', 'output');
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ROOT', 'test');
