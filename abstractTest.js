@@ -455,6 +455,7 @@ class Test {
           stepId: this.stepId,
           funcFile: this.funcFile,
           testFile: this.testFile,
+          levelIndent: this.levelIndent,
         });
         await this.errorTest();
         throw error;

@@ -146,17 +146,18 @@ class Logger {
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
-        console.log(styleFunction(logString));
         if (level === 'error') {
+          // debugger;
+          testSource.breadcrumbs &&
+            testSource.breadcrumbs.forEach((v, i) => {
+              console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(i)} ${v}`));
+            });
           if (testFile)
-            console.log(
-              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with test: ${testFile}`),
-            );
+            console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} [${testFile}]`));
           if (funcFile)
-            console.log(
-              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with function: ${funcFile}`),
-            );
+            console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} [${funcFile}]`));
         }
+        console.log(styleFunction(logString));
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -231,7 +232,6 @@ class Logger {
       err.socket = this.socket;
       err.debug = _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
       err.stepId = _.get(bindedData, 'stepId');
-      debugger;
       throw err;
     }
   }
