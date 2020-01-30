@@ -42,7 +42,7 @@ class Logger {
           await element.screenshot({ path: pathScreenshot });
         }
         if (fullpage) {
-          await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
+          await page.screenshot({ path: pathScreenshot, fullPage: true });
         }
         fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         // Timeout after screenshot
@@ -124,7 +124,6 @@ class Logger {
       let outputFolderLatest = this.envs.get('output.folderLatest');
       if (!outputFolder || !outputFolderLatest) return;
 
-      const screenshots = [];
       if (!_.get(activeLog, 'screenshot')) {
         screenshot = false;
       }
@@ -141,7 +140,7 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const nowWithPad = `${now} - ${level.padEnd(5)}`
+      const nowWithPad = `${now} - ${level.padEnd(5)}`;
       const logString = `${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`;
       const errorLogString = [];
       if (level === 'error') {
@@ -186,7 +185,13 @@ class Logger {
         });
       }
 
+      // SCREENSHOT ON ERROR
+      if (level === 'error') {
+        [screenshot, fullpage] = [true, true];
+      }
+
       // SCRENSHOTS
+      const screenshots = [];
       if (screenshot) {
         let src;
         selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
@@ -194,9 +199,9 @@ class Logger {
           src = await this.saveScreenshot({ selCSS: selCSS[css] });
           src ? screenshots.push(src) : null;
         }
-        src = element ? await this.saveScreenshot({ element: element }) : null;
+        src = element ? await this.saveScreenshot({ element }) : null;
         src ? screenshots.push(src) : null;
-        src = fullpage ? await this.saveScreenshot({ fullpage: fullpage }) : null;
+        src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
         src ? screenshots.push(src) : null;
       }
 
