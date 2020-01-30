@@ -382,6 +382,12 @@ class Test {
 
         // RESULTS
         // TODO: raise warning if not needed in allowResults
+
+        // If Test there is no JS return. Get all data to read values
+        if (this.type === 'test') {
+          resultFromTest = merge(this.fetchData(), this.fetchSelectors());
+        }
+
         let results = _.pick(resultFromTest, allowResults);
         let localResults = {};
 
