@@ -157,6 +157,57 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
 });
 
-test('Arguments CLI', () => {});
+test('Arguments CLI', () => {
+  const argsEnv = {
+    PPD_DATA: { foo: 'bar' },
+    PPD_DEBUG_MODE: true,
+    PPD_DISABLE_ENV_CHECK: true,
+    PPD_ENVS: ['hyy'],
+    PPD_LOG_DISABLED: true,
+    PPD_LOG_TIMER: true,
+    PPD_OUTPUT: 'zee',
+    PPD_ROOT: 'rrr',
+    PPD_ROOT_ADDITIONAL: ['iii'],
+    PPD_ROOT_IGNORE: ['dqq'],
+    PPD_SELECTORS: { joo: 'jii' },
+    PPD_TESTS: ['suu'],
+  };
+  const rawArgv = process.argv;
 
-test('Arguments ENV', () => {});
+  const argsJSON = Object.keys(argsEnv).map(key => {
+    const val = _.isString(argsEnv[key]) ? argsEnv[key] : JSON.stringify(argsEnv[key]);
+    return `${key}=${val}`;
+  });
+  process.argv = [...process.argv, ...argsJSON];
+  const argsSplited = new Arguments({}, true);
+  expect(argsEnv).toEqual(argsSplited);
+  process.argv = rawArgv;
+
+  process.argv = [...process.argv, argsJSON.join(' ')];
+  const argsSolid = new Arguments({}, true);
+  expect(argsEnv).toEqual(argsSolid);
+  process.argv = rawArgv;
+});
+
+test('Arguments ENV', () => {
+  const argsEnv = {
+    PPD_DATA: { foo: 'bar' },
+    PPD_DEBUG_MODE: true,
+    PPD_DISABLE_ENV_CHECK: true,
+    PPD_ENVS: ['hyy'],
+    PPD_LOG_DISABLED: true,
+    PPD_LOG_TIMER: true,
+    PPD_OUTPUT: 'zee',
+    PPD_ROOT: 'rrr',
+    PPD_ROOT_ADDITIONAL: ['iii'],
+    PPD_ROOT_IGNORE: ['dqq'],
+    PPD_SELECTORS: { joo: 'jii' },
+    PPD_TESTS: ['suu'],
+  };
+  process.env = { ...process.env, ...argsEnv };
+  const args = new Arguments({}, true);
+  expect(argsEnv).toEqual(args);
+  Object.keys(argsEnv).map(v => {
+    delete process.env[v];
+  });
+});
