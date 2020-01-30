@@ -11,3 +11,4 @@ output
 settings
 yarn.lock
 /target
+/coverage
