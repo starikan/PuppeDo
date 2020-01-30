@@ -141,23 +141,22 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const logString = `${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} ${text}`;
+      const nowWithPad = `${now} - ${level.padEnd(5)}`
+      const logString = `${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`;
+      const errorLogString = [];
+      if (level === 'error') {
+        (testSource.breadcrumbs || []).forEach((v, i) => {
+          errorLogString.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
+        });
+        testFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
+        funcFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`);
+      }
+      const fullLogString = [...errorLogString, logString].join('\n');
 
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
-        if (level === 'error') {
-          // debugger;
-          testSource.breadcrumbs &&
-            testSource.breadcrumbs.forEach((v, i) => {
-              console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(i)} ${v}`));
-            });
-          if (testFile)
-            console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} [${testFile}]`));
-          if (funcFile)
-            console.log(styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} [${funcFile}]`));
-        }
-        console.log(styleFunction(logString));
+        console.log(styleFunction(fullLogString));
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -176,8 +175,8 @@ class Logger {
       }
 
       // EXPORT TEXT LOG
-      fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n');
-      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), logString + '\n');
+      fs.appendFileSync(path.join(outputFolder, 'output.log'), fullLogString + '\n');
+      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), fullLogString + '\n');
 
       if (_.isEmpty(testStruct)) {
         testStruct = _.mapValues(testSource, v => {
