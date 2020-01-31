@@ -158,7 +158,7 @@ class Test {
       joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
       // * Get data from user function results and results
-      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
+      joinArray = [...joinArray, this.envs.get('results', {}), this.envs.get('resultsFunc', {})];
 
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
