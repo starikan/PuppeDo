@@ -156,6 +156,12 @@ class Logger {
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
         console.log(styleFunction(fullLogString));
+
+        // TODO: 2020-01-31 S.Starodubov make flag for this
+        if (testSource.breadcrumbs && testSource.breadcrumbs.length) {
+          const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
+          console.log(styleFunction(`${nowWithPad} ${' | '.repeat(levelIndent)}`), styleFunctionInfo(`[${testSource.breadcrumbs.join(' -> ')}]`))
+        }
       }
 
       // NO LOG FILES ONLY STDOUT
