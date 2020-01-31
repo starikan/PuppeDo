@@ -452,11 +452,10 @@ class Test {
         }
 
         // TIMER IN CONSOLE
-        const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
+        const timer = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
         if (timer) {
-          console.log(
-            `${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`,
-          );
+          const timeTest = new Date() - startTime;
+          console.log(`${' '.repeat(20)} ${' | '.repeat(this.levelIndent)} 🕝: ${timeTest} ms. (${this.name})`);
         }
       } catch (error) {
         const { PPD_DEBUG_MODE = false } = new Arguments();

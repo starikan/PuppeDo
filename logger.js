@@ -135,6 +135,8 @@ class Logger {
       let dataEnvs = null;
       let type = 'log';
 
+      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+
       // LEVEL RULES
       level = this.getLevel(level);
       if (!level) return;
@@ -158,7 +160,7 @@ class Logger {
         console.log(styleFunction(fullLogString));
 
         // TODO: 2020-01-31 S.Starodubov make flag for this
-        if (testSource.breadcrumbs && testSource.breadcrumbs.length && level !== 'raw') {
+        if (testSource.breadcrumbs && testSource.breadcrumbs.length && level !== 'raw' && isExtendLog) {
           const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
           console.log(
             styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),

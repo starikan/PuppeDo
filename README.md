@@ -162,6 +162,9 @@ Arguments applying order. From minor to major:
 # Socket
 #### Todo
 
+# RoadMap 2.0.0
+
+1. Rename 'PPD_LOG_TIMER' -> 'PPD_LOG_EXTEND' (+ atoms-core)
 <!-- # Editors Environment
 
 ## VSCode
