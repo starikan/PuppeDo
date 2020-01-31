@@ -10,15 +10,28 @@ const merge = (...objects) =>
   deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
 
 // https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
+
+const paintString = (str, color = 'noColor') => {
+  const colors = {
+    noColor: 0,
+    pink: 35,
+    green: 32,
+    yellow: 33,
+    red: 31,
+    blue: 36,
+    violet: 34,
+  };
+  return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
+};
 const stylesConsole = {
-  raw: _logString => _logString,
-  debug: _logString => _logString,
-  info: _logString => `\u001b[${35}m${_logString}\u001b[0m`, // pink
-  test: _logString => `\u001b[${32}m${_logString}\u001b[0m`, // green
-  warn: _logString => `\u001b[${33}m${_logString}\u001b[0m`, // yellow
-  error: _logString => `\u001b[${31}m${_logString}\u001b[0m`, // red
-  trace: _logString => `\u001b[${36}m${_logString}\u001b[0m`, // blue
-  env: _logString => `\u001b[${34}m${_logString}\u001b[0m`, // violet
+  raw: str => paintString(str, 'noColor'),
+  debug: str => paintString(str, 'noColor'),
+  info: str => paintString(str, 'pink'),
+  test: str => paintString(str, 'green'),
+  warn: str => paintString(str, 'yellow'),
+  error: str => paintString(str, 'red'),
+  trace: str => paintString(str, 'blue'),
+  env: str => paintString(str, 'violet'),
 };
 
 const blankSocket = {

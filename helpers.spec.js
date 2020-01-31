@@ -12,10 +12,13 @@ test('Helpers -> merge', () => {
 
 test('Helpers -> sleep', () => {});
 
-test('Helpers -> stylesConsole', () => {});
+test('Helpers -> stylesConsole', () => {
+  const fields = ['raw', 'debug', 'info', 'test', 'warn', 'error', 'trace', 'env'];
+  expect(Object.keys(stylesConsole)).toEqual(fields);
+});
 
 test('Helpers -> blankSocket', () => {
-  expect(Object.keys(blankSocket)).toEqual(['send','sendYAML'])
-  expect(_.isFunction(blankSocket.send)).toBe(true)
-  expect(_.isFunction(blankSocket.sendYAML)).toBe(true)
+  expect(Object.keys(blankSocket)).toEqual(['send', 'sendYAML']);
+  expect(_.isFunction(blankSocket.send)).toBe(true);
+  expect(_.isFunction(blankSocket.sendYAML)).toBe(true);
 });
