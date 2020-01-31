@@ -42,7 +42,7 @@ class Logger {
           await element.screenshot({ path: pathScreenshot });
         }
         if (fullpage) {
-          await page.screenshot({ path: pathScreenshot, fullPage: fullpage });
+          await page.screenshot({ path: pathScreenshot, fullPage: true });
         }
         fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         // Timeout after screenshot
@@ -124,7 +124,6 @@ class Logger {
       let outputFolderLatest = this.envs.get('output.folderLatest');
       if (!outputFolder || !outputFolderLatest) return;
 
-      const screenshots = [];
       if (!_.get(activeLog, 'screenshot')) {
         screenshot = false;
       }
@@ -141,22 +140,22 @@ class Logger {
       if (!level) return;
 
       // LOG STRINGS
-      const logString = `${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} ${text}`;
+      const nowWithPad = `${now} - ${level.padEnd(5)}`;
+      const logString = `${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`;
+      const errorLogString = [];
+      if (level === 'error') {
+        (testSource.breadcrumbs || []).forEach((v, i) => {
+          errorLogString.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
+        });
+        testFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
+        funcFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`);
+      }
+      const fullLogString = [...errorLogString, logString].join('\n');
 
       // STDOUT
       if (stdOut) {
         const styleFunction = _.get(stylesConsole, level, args => args);
-        console.log(styleFunction(logString));
-        if (level === 'error') {
-          if (testFile)
-            console.log(
-              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with test: ${testFile}`),
-            );
-          if (funcFile)
-            console.log(
-              styleFunction(`${now} - ${level.padEnd(5)} ${' | '.repeat(levelIndent)} File with function: ${funcFile}`),
-            );
-        }
+        console.log(styleFunction(fullLogString));
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -175,8 +174,8 @@ class Logger {
       }
 
       // EXPORT TEXT LOG
-      fs.appendFileSync(path.join(outputFolder, 'output.log'), logString + '\n');
-      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), logString + '\n');
+      fs.appendFileSync(path.join(outputFolder, 'output.log'), fullLogString + '\n');
+      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), fullLogString + '\n');
 
       if (_.isEmpty(testStruct)) {
         testStruct = _.mapValues(testSource, v => {
@@ -186,7 +185,13 @@ class Logger {
         });
       }
 
+      // SCREENSHOT ON ERROR
+      if (level === 'error') {
+        [screenshot, fullpage] = [true, true];
+      }
+
       // SCRENSHOTS
+      const screenshots = [];
       if (screenshot) {
         let src;
         selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
@@ -194,9 +199,9 @@ class Logger {
           src = await this.saveScreenshot({ selCSS: selCSS[css] });
           src ? screenshots.push(src) : null;
         }
-        src = element ? await this.saveScreenshot({ element: element }) : null;
+        src = element ? await this.saveScreenshot({ element }) : null;
         src ? screenshots.push(src) : null;
-        src = fullpage ? await this.saveScreenshot({ fullpage: fullpage }) : null;
+        src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
         src ? screenshots.push(src) : null;
       }
 
@@ -231,7 +236,6 @@ class Logger {
       err.socket = this.socket;
       err.debug = _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
       err.stepId = _.get(bindedData, 'stepId');
-      debugger;
       throw err;
     }
   }

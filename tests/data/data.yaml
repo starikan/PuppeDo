@@ -5,7 +5,7 @@ description: Simple Data
 data:
   data: test
   # wikiUrl: https://wikipedia.org/
-  wikiUrl: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+  wikiUrl: https://developer.mozilla.org/
 ---
 type: data
 name: dataExtMain
