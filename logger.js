@@ -136,10 +136,16 @@ class Logger {
       let type = 'log';
 
       const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+      const levelIndentMax = _.get(this.envs, ['args', 'PPD_LOG_LEVEL'], 0);
 
       // LEVEL RULES
       level = this.getLevel(level);
       if (!level) return;
+
+      // SKIP LOG BY LEVEL
+      if (levelIndentMax && levelIndent > levelIndentMax && level !== 'error') {
+        return
+      }
 
       // LOG STRINGS
       const nowWithPad = `${now} - ${level.padEnd(5)}`;

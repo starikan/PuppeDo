@@ -22,6 +22,7 @@
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "main",
         "PPD_DEBUG_MODE": "true",
+        "PPD_LOG_LEVEL": 1
       }
     },
     {

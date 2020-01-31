@@ -2,6 +2,38 @@ const _ = require('lodash');
 
 const { Arguments } = require('./Arguments');
 
+const argsDefault = {
+  PPD_DATA: {},
+  PPD_DEBUG_MODE: false,
+  PPD_DISABLE_ENV_CHECK: false,
+  PPD_ENVS: [],
+  PPD_LOG_DISABLED: false,
+  PPD_LOG_TIMER: false,
+  PPD_OUTPUT: 'output',
+  PPD_ROOT: process.cwd(),
+  PPD_ROOT_ADDITIONAL: [],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
+  PPD_SELECTORS: {},
+  PPD_TESTS: [],
+  PPD_LOG_LEVEL: 0,
+};
+
+const argsModify = {
+  PPD_DATA: { foo: 'bar' },
+  PPD_DEBUG_MODE: true,
+  PPD_DISABLE_ENV_CHECK: true,
+  PPD_ENVS: ['hyy'],
+  PPD_LOG_DISABLED: true,
+  PPD_LOG_TIMER: true,
+  PPD_OUTPUT: 'zee',
+  PPD_ROOT: 'rrr',
+  PPD_ROOT_ADDITIONAL: ['iii'],
+  PPD_ROOT_IGNORE: ['dqq'],
+  PPD_SELECTORS: { joo: 'jii' },
+  PPD_TESTS: ['suu'],
+  PPD_LOG_LEVEL: 10,
+};
+
 function setArg(argName, argData) {
   // Reset Arguments
   const env = {
@@ -36,21 +68,6 @@ test('Arguments is Singleton and Default args', () => {
   expect(() => new Arguments({}, true)).toThrowError({
     message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
   });
-
-  const argsDefault = {
-    PPD_DATA: {},
-    PPD_DEBUG_MODE: false,
-    PPD_DISABLE_ENV_CHECK: false,
-    PPD_ENVS: [],
-    PPD_LOG_DISABLED: false,
-    PPD_LOG_TIMER: false,
-    PPD_OUTPUT: 'output',
-    PPD_ROOT: process.cwd(),
-    PPD_ROOT_ADDITIONAL: [],
-    PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
-    PPD_SELECTORS: {},
-    PPD_TESTS: [],
-  };
   expect(new Arguments()).toEqual(argsDefault);
 });
 
@@ -132,6 +149,24 @@ test('Arguments check', () => {
   expect(() => setArg('PPD_OUTPUT', 1)).toThrowError(errors('PPD_OUTPUT', 'string'));
   expect(() => setArg('PPD_OUTPUT', 0)).toThrowError(errors('PPD_OUTPUT', 'string'));
 
+  // Number
+  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  expect(argData).toEqual(argResult);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL', 1);
+  expect(argData).toEqual(argResult);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL', '0');
+  expect(argResult).toEqual(0);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL', '1');
+  expect(argResult).toEqual(1);
+  expect(() => setArg('PPD_LOG_LEVEL', false)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', true)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', {})).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', [])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', 'foo')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL', '')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+
   [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
 
@@ -150,6 +185,9 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_SELECTORS', { foo: 'bar' });
   expect(argData).toEqual(argResult);
 
+  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  expect(argData).toEqual(argResult);
+
   [argData, argResult] = setArg('PPD_ENVS', ['test']);
   expect(argData).toEqual(argResult);
 
@@ -158,56 +196,28 @@ test('Arguments check', () => {
 });
 
 test('Arguments CLI', () => {
-  const argsEnv = {
-    PPD_DATA: { foo: 'bar' },
-    PPD_DEBUG_MODE: true,
-    PPD_DISABLE_ENV_CHECK: true,
-    PPD_ENVS: ['hyy'],
-    PPD_LOG_DISABLED: true,
-    PPD_LOG_TIMER: true,
-    PPD_OUTPUT: 'zee',
-    PPD_ROOT: 'rrr',
-    PPD_ROOT_ADDITIONAL: ['iii'],
-    PPD_ROOT_IGNORE: ['dqq'],
-    PPD_SELECTORS: { joo: 'jii' },
-    PPD_TESTS: ['suu'],
-  };
   const rawArgv = process.argv;
 
-  const argsJSON = Object.keys(argsEnv).map(key => {
-    const val = _.isString(argsEnv[key]) ? argsEnv[key] : JSON.stringify(argsEnv[key]);
+  const argsJSON = Object.keys(argsModify).map(key => {
+    const val = _.isString(argsModify[key]) ? argsModify[key] : JSON.stringify(argsModify[key]);
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];
   const argsSplited = new Arguments({}, true);
-  expect(argsEnv).toEqual(argsSplited);
+  expect(argsModify).toEqual(argsSplited);
   process.argv = rawArgv;
 
   process.argv = [...process.argv, argsJSON.join(' ')];
   const argsSolid = new Arguments({}, true);
-  expect(argsEnv).toEqual(argsSolid);
+  expect(argsModify).toEqual(argsSolid);
   process.argv = rawArgv;
 });
 
 test('Arguments ENV', () => {
-  const argsEnv = {
-    PPD_DATA: { foo: 'bar' },
-    PPD_DEBUG_MODE: true,
-    PPD_DISABLE_ENV_CHECK: true,
-    PPD_ENVS: ['hyy'],
-    PPD_LOG_DISABLED: true,
-    PPD_LOG_TIMER: true,
-    PPD_OUTPUT: 'zee',
-    PPD_ROOT: 'rrr',
-    PPD_ROOT_ADDITIONAL: ['iii'],
-    PPD_ROOT_IGNORE: ['dqq'],
-    PPD_SELECTORS: { joo: 'jii' },
-    PPD_TESTS: ['suu'],
-  };
-  process.env = { ...process.env, ...argsEnv };
+  process.env = { ...process.env, ...argsModify };
   const args = new Arguments({}, true);
-  expect(argsEnv).toEqual(args);
-  Object.keys(argsEnv).map(v => {
+  expect(argsModify).toEqual(args);
+  Object.keys(argsModify).map(v => {
     delete process.env[v];
   });
 });
