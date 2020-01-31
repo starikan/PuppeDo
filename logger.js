@@ -158,9 +158,12 @@ class Logger {
         console.log(styleFunction(fullLogString));
 
         // TODO: 2020-01-31 S.Starodubov make flag for this
-        if (testSource.breadcrumbs && testSource.breadcrumbs.length) {
+        if (testSource.breadcrumbs && testSource.breadcrumbs.length && level !== 'raw') {
           const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
-          console.log(styleFunction(`${nowWithPad} ${' | '.repeat(levelIndent)}`), styleFunctionInfo(`[${testSource.breadcrumbs.join(' -> ')}]`))
+          console.log(
+            styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),
+            styleFunctionInfo(`[${testSource.breadcrumbs.join(' -> ')}]`),
+          );
         }
       }
 
