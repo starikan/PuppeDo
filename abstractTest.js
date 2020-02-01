@@ -326,7 +326,7 @@ class Test {
 
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', logger.log, this.levelIndent, { dataLocal, selectorsLocal });
+          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent, { dataLocal, selectorsLocal });
           if (skip) {
             return;
           }
@@ -334,7 +334,7 @@ class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', logger.log, this.levelIndent, { dataLocal, selectorsLocal });
+          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent, { dataLocal, selectorsLocal });
         }
 
         // All data passed to log
@@ -362,7 +362,7 @@ class Test {
           browser: this.env ? this.env.getState('browser') : null,
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
-          log: logger.log,
+          log: logger.log.bind(logger),
           _,
           name: this.name,
           description: this.description,
@@ -432,7 +432,7 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log, this.levelIndent, {
+          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent, {
             dataLocal,
             selectorsLocal,
             localResults,

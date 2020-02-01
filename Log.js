@@ -7,8 +7,6 @@ require('array-flat-polyfill');
 const dayjs = require('dayjs');
 const yaml = require('js-yaml');
 
-// const { sleep, stylesConsole, blankSocket } = require('./helpers');
-// const Singleton = require('./singleton');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
 
@@ -28,7 +26,7 @@ class Log {
     this.binded = { ...this.binded, ...data };
   }
 
-  getLevel(level) {
+  checkLevel(level) {
     const levels = {
       0: 'raw',
       1: 'debug',
@@ -46,27 +44,18 @@ class Log {
       env: 6,
     };
 
-    const args = new Arguments();
+    const { PPD_LOG_LEVEL_TYPE } = new Arguments();
 
-    // let defaultLevel = 1;
+    const inputLevel = _.isNumber(level) ? level : _.get(levels, level, 0);
+    const limitLevel = _.get(levels, PPD_LOG_LEVEL_TYPE, 0);
 
-    // Active ENV log settings
-    // let activeEnv = this.envs.getEnv();
-    // let activeLog = _.get(activeEnv, 'env.log', {});
-
-    // let envLevel = _.get(activeLog, 'level', defaultLevel);
-    // envLevel = _.isNumber(envLevel) ? envLevel : _.get(levels, envLevel, defaultLevel);
-    // let inputLevel = level;
-    // inputLevel = _.isNumber(inputLevel) ? inputLevel : _.get(levels, inputLevel, defaultLevel);
-
-    // let inputLevelText = levels[inputLevel];
-
-    // // If input level higher or equal then global env level then logging
-    // if (envLevel > inputLevel) {
-    //   return false;
-    // } else {
-    //   return inputLevelText;
-    // }
+    // If input level higher or equal then logging
+    // If error always logging
+    if (limitLevel <= inputLevel || inputLevel === 5) {
+      return levels[inputLevel];
+    } else {
+      return false;
+    }
   }
 
   async log({
@@ -85,9 +74,13 @@ class Log {
     // testSource = {},
     // bindedData = {},
   }) {
-    const {PPD_DEBUG_MODE, PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_EXTEND, PPD_LOG_LEVEL_TYPE} = new Arguments();
-    debugger;
+    const { PPD_DEBUG_MODE, PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_EXTEND } = new Arguments();
 
+    level = this.checkLevel(level);
+    if (!level) return;
+
+    debugger;
+    return
     try {
       let activeEnv = this.envs.getEnv();
       let activeLog = _.get(activeEnv, 'env.log', {});
@@ -112,12 +105,10 @@ class Log {
       const levelIndentMax = _.get(this.envs, ['args', 'PPD_LOG_LEVEL_NESTED'], 0);
 
       // LEVEL RULES
-      level = this.getLevel(level);
-      if (!level) return;
 
       // SKIP LOG BY LEVEL
       if (levelIndentMax && levelIndent > levelIndentMax && level !== 'error') {
-        return
+        return;
       }
 
       // LOG STRINGS

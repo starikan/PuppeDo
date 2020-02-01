@@ -41,7 +41,7 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.5",
+    "@puppedo/atoms": "2.0.6",
     "jest": "^25.1.0"
   }
 }
