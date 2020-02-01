@@ -8,7 +8,7 @@ const argsDefault = {
   PPD_DISABLE_ENV_CHECK: false,
   PPD_ENVS: [],
   PPD_LOG_DISABLED: false,
-  PPD_LOG_TIMER: false,
+  PPD_LOG_EXTEND: false,
   PPD_OUTPUT: 'output',
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
@@ -16,6 +16,7 @@ const argsDefault = {
   PPD_SELECTORS: {},
   PPD_TESTS: [],
   PPD_LOG_LEVEL_NESTED: 0,
+  PPD_LOG_LEVEL_TYPE: 'raw',
 };
 
 const argsModify = {
@@ -24,7 +25,7 @@ const argsModify = {
   PPD_DISABLE_ENV_CHECK: true,
   PPD_ENVS: ['hyy'],
   PPD_LOG_DISABLED: true,
-  PPD_LOG_TIMER: true,
+  PPD_LOG_EXTEND: true,
   PPD_OUTPUT: 'zee',
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: ['iii'],
@@ -32,6 +33,7 @@ const argsModify = {
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
   PPD_LOG_LEVEL_NESTED: 10,
+  PPD_LOG_LEVEL_TYPE: 'info',
 };
 
 function setArg(argName, argData) {
@@ -173,7 +175,7 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_LOG_DISABLED', false);
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_LOG_TIMER', false);
+  [argData, argResult] = setArg('PPD_LOG_EXTEND', false);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ROOT', 'test');
@@ -186,6 +188,9 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
+  expect(argData).toEqual(argResult);
+
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_TYPE', 'raw');
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ENVS', ['test']);

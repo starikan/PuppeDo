@@ -456,7 +456,7 @@ class Test {
         }
 
         // TIMER IN CONSOLE
-        const timer = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+        const timer = _.get(this.envs, ['args', 'PPD_LOG_EXTEND'], false);
         if (timer) {
           const timeTest = new Date() - startTime;
           console.log(`${' '.repeat(20)} ${' | '.repeat(this.levelIndent)} 🕝: ${timeTest} ms. (${this.name})`);

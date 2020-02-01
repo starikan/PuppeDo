@@ -85,7 +85,7 @@ class Log {
     // testSource = {},
     // bindedData = {},
   }) {
-    const {PPD_DEBUG_MODE, PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_TIMER} = new Arguments();
+    const {PPD_DEBUG_MODE, PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_EXTEND, PPD_LOG_LEVEL_TYPE} = new Arguments();
     debugger;
 
     try {
@@ -108,7 +108,7 @@ class Log {
       let dataEnvs = null;
       let type = 'log';
 
-      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_EXTEND'], false);
       const levelIndentMax = _.get(this.envs, ['args', 'PPD_LOG_LEVEL_NESTED'], 0);
 
       // LEVEL RULES

@@ -38,7 +38,7 @@
         "PPD_ENVS=mainEnv",
         "PPD_TESTS=main",
         "PPD_DEBUG_MODE=true",
-        "PPD_LOG_TIMER=true",
+        "PPD_LOG_EXTEND=true",
       ]
     },
     {

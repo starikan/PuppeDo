@@ -135,7 +135,7 @@ class Logger {
       let dataEnvs = null;
       let type = 'log';
 
-      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_EXTEND'], false);
       const levelIndentMax = _.get(this.envs, ['args', 'PPD_LOG_LEVEL_NESTED'], 0);
 
       // LEVEL RULES
