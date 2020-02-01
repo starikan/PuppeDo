@@ -15,7 +15,7 @@ const argsDefault = {
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
   PPD_SELECTORS: {},
   PPD_TESTS: [],
-  PPD_LOG_LEVEL: 0,
+  PPD_LOG_LEVEL_NESTED: 0,
 };
 
 const argsModify = {
@@ -31,7 +31,7 @@ const argsModify = {
   PPD_ROOT_IGNORE: ['dqq'],
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
-  PPD_LOG_LEVEL: 10,
+  PPD_LOG_LEVEL_NESTED: 10,
 };
 
 function setArg(argName, argData) {
@@ -150,22 +150,22 @@ test('Arguments check', () => {
   expect(() => setArg('PPD_OUTPUT', 0)).toThrowError(errors('PPD_OUTPUT', 'string'));
 
   // Number
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 1);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 1);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', '0');
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '0');
   expect(argResult).toEqual(0);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', '1');
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '1');
   expect(argResult).toEqual(1);
-  expect(() => setArg('PPD_LOG_LEVEL', false)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', true)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', {})).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', [])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', 'foo')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', '')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', false)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', true)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', {})).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', [])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', 'foo')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', '')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
 
   [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
@@ -185,7 +185,7 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_SELECTORS', { foo: 'bar' });
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ENVS', ['test']);
