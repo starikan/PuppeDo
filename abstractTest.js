@@ -4,6 +4,7 @@ const safeEval = require('safe-eval');
 const { merge, blankSocket } = require('./helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
+const Log = require('./Log');
 const Environment = require('./env');
 const { TestsContent } = require('./TestContent');
 
@@ -283,7 +284,8 @@ class Test {
         throw { message: 'Test should have envsId' };
       }
 
-      let { envs, log } = Environment({ envsId });
+      const { envs } = Environment({ envsId });
+      const logger = new Log({ envsId });
 
       try {
         const { PPD_DISABLE_ENV_CHECK = false } = new Arguments();
@@ -324,7 +326,7 @@ class Test {
 
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', log, this.levelIndent, { dataLocal, selectorsLocal });
+          const skip = await this.checkIf(this.if, 'if', logger.log, this.levelIndent, { dataLocal, selectorsLocal });
           if (skip) {
             return;
           }
@@ -332,7 +334,7 @@ class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', log, this.levelIndent, { dataLocal, selectorsLocal });
+          await this.checkIf(this.errorIf, 'errorIf', logger.log, this.levelIndent, { dataLocal, selectorsLocal });
         }
 
         // All data passed to log
@@ -348,7 +350,9 @@ class Test {
         ];
         const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
 
-        const logBinded = bind(log, source, args);
+        // const logBinded = bind(log, source, args);
+
+        logger.bindData({ testSource: source, bindedData: args });
 
         // Extend with data passed to functions
         const argsExt = {
@@ -358,7 +362,7 @@ class Test {
           browser: this.env ? this.env.getState('browser') : null,
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
-          log: logBinded,
+          log: logger.log,
           _,
           name: this.name,
           description: this.description,
@@ -366,7 +370,7 @@ class Test {
         };
 
         // Descriptions in log
-        logBinded({
+        await logger.log({
           screenshot: false,
           text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
@@ -428,7 +432,7 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', log, this.levelIndent, {
+          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log, this.levelIndent, {
             dataLocal,
             selectorsLocal,
             localResults,
@@ -466,7 +470,7 @@ class Test {
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;
-        log({
+        logger.log({
           level: 'error',
           text: `Description: ${this.description || 'No test description'} (${this.name})`,
           screenshot: false,
