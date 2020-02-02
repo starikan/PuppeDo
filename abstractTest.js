@@ -8,12 +8,6 @@ const Log = require('./Log');
 const Environment = require('./env');
 const { TestsContent } = require('./TestContent');
 
-function bind(func, source, bindArgs) {
-  return function() {
-    return func.apply(this, [...arguments, source, bindArgs]);
-  };
-}
-
 const ALIASES = {
   bindData: ['bD', 'bd'],
   bindSelectors: ['bindSelector', 'bS', 'bs'],
@@ -371,7 +365,7 @@ class Test {
 
         // Descriptions in log
         await logger.log({
-          screenshot: false,
+          // screenshot: false,
           text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
           levelIndent,
@@ -470,7 +464,7 @@ class Test {
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;
-        logger.log({
+        await logger.log({
           level: 'error',
           text: `Description: ${this.description || 'No test description'} (${this.name})`,
           screenshot: false,

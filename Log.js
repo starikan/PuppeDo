@@ -7,6 +7,7 @@ require('array-flat-polyfill');
 const dayjs = require('dayjs');
 const yaml = require('js-yaml');
 
+const { sleep, stylesConsole } = require('./helpers');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
 
@@ -58,6 +59,52 @@ class Log {
     }
   }
 
+  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
+    try {
+
+      // Active ENV log settings
+      let activeEnv = this.envs.getEnv();
+      let pageName = this.envs.get('current.page');
+
+      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+      const name = `${now}.jpg`;
+
+      // TODO: 2020-02-02 S.Starodubov вынести это в функцию
+      if (!this.envs.get('output.folder') || !this.envs.get('output.folderLatest')) {
+        console.log('There is no output folder for screenshot');
+        return;
+      }
+
+      const pathScreenshot = path.join(this.envs.get('output.folder'), name);
+      const pathScreenshotLatest = path.join(this.envs.get('output.folderLatest'), name);
+
+      const page = _.get(activeEnv, `state.pages.${pageName}`);
+
+      if (_.isObject(page)) {
+        if (selCSS) {
+          const el = await page.$(selCSS);
+          await el.screenshot({ path: pathScreenshot });
+        }
+        if (element && _.isObject(element) && !_.isEmpty(element)) {
+          await element.screenshot({ path: pathScreenshot });
+        }
+        if (fullpage) {
+          await page.screenshot({ path: pathScreenshot, fullPage: true });
+        }
+        fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
+        // Timeout after screenshot
+        await sleep(25);
+        return name;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      err.message += ` || saveScreenshot selCSS = ${selCSS}`;
+      err.socket = this.socket;
+      throw err;
+    }
+  }
+
   async log({
     funcFile,
     testFile,
@@ -71,52 +118,47 @@ class Log {
     element = false,
     testStruct = null,
     levelIndent = 0,
-    // testSource = {},
-    // bindedData = {},
+    testSource = this.binded.testSource,
+    bindedData = this.binded.bindedData,
   }) {
-    const { PPD_DEBUG_MODE, PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_EXTEND } = new Arguments();
+
+    const {
+      PPD_DEBUG_MODE,
+      PPD_LOG_DISABLED,
+      PPD_LOG_LEVEL_NESTED,
+      PPD_LOG_EXTEND,
+      PPD_LOG_SCREENSHOT,
+      PPD_LOG_FULLPAGE,
+    } = new Arguments();
 
     level = this.checkLevel(level);
     if (!level) return;
 
-    debugger;
-    return
-    try {
-      let activeEnv = this.envs.getEnv();
-      let activeLog = _.get(activeEnv, 'env.log', {});
-      let debugMode = this.envs.get('args.PPD_DEBUG_MODE');
+    // SKIP LOG BY LEVEL
+    if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && level !== 'error') {
+      return;
+    }
 
-      let outputFolder = this.envs.get('output.folder');
-      let outputFolderLatest = this.envs.get('output.folderLatest');
+    try {
+      const { folder: outputFolder, folderLatest: outputFolderLatest } = _.get(this.envs, 'output', {});
       if (!outputFolder || !outputFolderLatest) return;
 
-      if (!_.get(activeLog, 'screenshot')) {
-        screenshot = false;
-      }
-      if (!_.get(activeLog, 'fullpage')) {
-        fullpage = false;
-      }
+      screenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
+      fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
+
       const now = dayjs().format('HH:mm:ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
       let type = 'log';
 
-      const isExtendLog = _.get(this.envs, ['args', 'PPD_LOG_EXTEND'], false);
-      const levelIndentMax = _.get(this.envs, ['args', 'PPD_LOG_LEVEL_NESTED'], 0);
-
-      // LEVEL RULES
-
-      // SKIP LOG BY LEVEL
-      if (levelIndentMax && levelIndent > levelIndentMax && level !== 'error') {
-        return;
-      }
-
       // LOG STRINGS
       const nowWithPad = `${now} - ${level.padEnd(5)}`;
       const logString = `${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`;
       const errorLogString = [];
+      const breadcrumbs = _.get(this.binded, 'testSource.breadcrumbs', []);
+
       if (level === 'error') {
-        (testSource.breadcrumbs || []).forEach((v, i) => {
+        breadcrumbs.forEach((v, i) => {
           errorLogString.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
         });
         testFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
@@ -129,18 +171,17 @@ class Log {
         const styleFunction = _.get(stylesConsole, level, args => args);
         console.log(styleFunction(fullLogString));
 
-        // TODO: 2020-01-31 S.Starodubov make flag for this
-        if (testSource.breadcrumbs && testSource.breadcrumbs.length && level !== 'raw' && isExtendLog) {
+        if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
           const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
           console.log(
             styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),
-            styleFunctionInfo(`[${testSource.breadcrumbs.join(' -> ')}]`),
+            styleFunctionInfo(`[${breadcrumbs.join(' -> ')}]`),
           );
         }
       }
 
       // NO LOG FILES ONLY STDOUT
-      if (this.envs.get('args.PPD_LOG_DISABLED')) {
+      if (PPD_LOG_DISABLED) {
         return;
       }
 
@@ -191,11 +232,11 @@ class Log {
         time: now,
         dataEnvs,
         dataEnvsGlobal,
-        testStruct: debugMode || type === 'env' ? testStruct : null,
+        testStruct: PPD_DEBUG_MODE || type === 'env' ? testStruct : null,
         screenshots,
         level,
         type,
-        bindedData: debugMode ? bindedData : null,
+        bindedData: PPD_DEBUG_MODE ? bindedData : null,
         levelIndent,
         stepId: _.get(bindedData, 'stepId'),
       };
@@ -203,9 +244,9 @@ class Log {
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
-      let indent = 2;
+      let indentYaml = 2;
       let yamlString =
-        '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indent }).replace(/^/gm, ' '.repeat(indent)) + '\n';
+        '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indentYaml }).replace(/^/gm, ' '.repeat(indentYaml)) + '\n';
       fs.appendFileSync(path.join(outputFolder, 'output.yaml'), yamlString);
       fs.appendFileSync(path.join(outputFolderLatest, 'output.yaml'), yamlString);
 

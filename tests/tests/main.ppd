@@ -20,6 +20,9 @@ runTest:
       #s: { input: '.wikiInput' }
       bS: { input: wikiInput }
       d: { text: 'Some text' }
+      o:
+        screenshot: true
+        fullpage: true
   # - cdpGetSelector:
   - waitTime:
       d: { time: 2000 }

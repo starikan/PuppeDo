@@ -14,6 +14,8 @@ const run = async () => {
     PPD_ENVS: ['mainEnv'],
     PPD_TESTS: ['main', 'subTest'],
     PPD_DEBUG_MODE: true,
+    PPD_LOG_SCREENSHOT: true,
+    PPD_LOG_FULLPAGE: true,
   });
 };
 
