@@ -51,8 +51,7 @@ class Log {
     const limitLevel = _.get(levels, PPD_LOG_LEVEL_TYPE, 0);
 
     // If input level higher or equal then logging
-    // If error always logging
-    if (limitLevel <= inputLevel || inputLevel === 5) {
+    if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
       return levels[inputLevel];
     } else {
       return false;
@@ -67,7 +66,7 @@ class Log {
       let pageName = this.envs.get('current.page');
 
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
-      const name = `${now}.jpg`;
+      const name = `${now}.png`;
 
       // TODO: 2020-02-02 S.Starodubov вынести это в функцию
       if (!this.envs.get('output.folder') || !this.envs.get('output.folderLatest')) {
@@ -94,6 +93,8 @@ class Log {
         fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
         // Timeout after screenshot
         await sleep(25);
+
+        // TODO: 2020-02-02 S.Starodubov сделать запись в логе что сделан скриншот
         return name;
       } else {
         return false;
@@ -118,6 +119,7 @@ class Log {
     element = false,
     testStruct = null,
     levelIndent = 0,
+    error = {},
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
   }) {
@@ -149,7 +151,7 @@ class Log {
       const now = dayjs().format('HH:mm:ss.SSS');
       let dataEnvsGlobal = null;
       let dataEnvs = null;
-      let type = 'log';
+      let typeSocket = 'log';
 
       // LOG STRINGS
       const nowWithPad = `${now} - ${level.padEnd(5)}`;
@@ -181,7 +183,7 @@ class Log {
       }
 
       // NO LOG FILES ONLY STDOUT
-      if (PPD_LOG_DISABLED) {
+      if (PPD_LOG_DISABLED && level !== 'error') {
         return;
       }
 
@@ -192,7 +194,7 @@ class Log {
           return _.omit(val, 'state');
         });
         text = '\n' + text;
-        type = 'env';
+        typeSocket = 'env';
       }
 
       // EXPORT TEXT LOG
@@ -209,6 +211,7 @@ class Log {
 
       // SCREENSHOT ON ERROR
       if (level === 'error') {
+        // debugger
         [screenshot, fullpage] = [true, true];
       }
 
@@ -232,10 +235,10 @@ class Log {
         time: now,
         dataEnvs,
         dataEnvsGlobal,
-        testStruct: PPD_DEBUG_MODE || type === 'env' ? testStruct : null,
+        testStruct: PPD_DEBUG_MODE || typeSocket === 'env' ? testStruct : null,
         screenshots,
         level,
-        type,
+        type: typeSocket,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         levelIndent,
         stepId: _.get(bindedData, 'stepId'),
@@ -254,9 +257,9 @@ class Log {
         debugger;
       }
     } catch (err) {
-      err.message += ' || error in _log';
+      err.message += ' || error in log';
       err.socket = this.socket;
-      err.debug = _.get(this.envs, ['args', 'PPD_DEBUG_MODE']);
+      err.debug = PPD_DEBUG_MODE;
       err.stepId = _.get(bindedData, 'stepId');
       throw err;
     }

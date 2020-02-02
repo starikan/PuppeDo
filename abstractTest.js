@@ -318,9 +318,20 @@ class Test {
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
+        // Descriptions in log
+        await logger.log({
+          // screenshot: false,
+          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
+          level: 'test',
+          levelIndent,
+        });
+
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent, { dataLocal, selectorsLocal });
+          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, {
+            dataLocal,
+            selectorsLocal,
+          });
           if (skip) {
             return;
           }
@@ -328,7 +339,10 @@ class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent, { dataLocal, selectorsLocal });
+          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
+            dataLocal,
+            selectorsLocal,
+          });
         }
 
         // All data passed to log
@@ -362,14 +376,6 @@ class Test {
           description: this.description,
           socket: this.socket,
         };
-
-        // Descriptions in log
-        await logger.log({
-          // screenshot: false,
-          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
-          level: 'test',
-          levelIndent,
-        });
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
@@ -426,7 +432,7 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent, {
+          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
             dataLocal,
             selectorsLocal,
             localResults,
@@ -472,6 +478,7 @@ class Test {
           funcFile: this.funcFile,
           testFile: this.testFile,
           levelIndent: this.levelIndent,
+          error,
         });
         await this.errorTest();
         throw error;
