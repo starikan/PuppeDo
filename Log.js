@@ -31,19 +31,21 @@ class Log {
   checkLevel(level) {
     const levels = {
       0: 'raw',
-      1: 'debug',
-      2: 'info',
-      3: 'test',
-      4: 'warn',
-      5: 'error',
-      6: 'env',
+      1: 'timer',
+      2: 'debug',
+      3: 'info',
+      4: 'test',
+      5: 'warn',
+      6: 'error',
+      7: 'env',
       raw: 0,
-      debug: 1,
-      info: 2,
-      test: 3,
-      warn: 4,
-      error: 5,
-      env: 6,
+      timer: 1,
+      debug: 2,
+      info: 3,
+      test: 4,
+      warn: 5,
+      error: 6,
+      env: 7,
     };
 
     const { PPD_LOG_LEVEL_TYPE } = new Arguments();
@@ -106,13 +108,14 @@ class Log {
     }
   }
 
-  consoleLog(level, fullLogString) {
+  consoleLog(level, levelIndent, fullLogString, breadcrumbs = []) {
     const { PPD_LOG_EXTEND } = new Arguments();
     const styleFunction = _.get(stylesConsole, level, args => args);
-    const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
+    // const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
     console.log(styleFunction(fullLogString));
 
+    // debugger
     if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
       const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
       console.log(
@@ -171,9 +174,9 @@ class Log {
       const now = dayjs();
       const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
       const logStrings = [`${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`];
+      const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
       if (level === 'error') {
-        const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
         breadcrumbs.forEach((v, i) => {
           logStrings.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
         });
@@ -183,7 +186,7 @@ class Log {
 
       // STDOUT
       if (stdOut) {
-        this.consoleLog(level, logStrings.join('\n'));
+        this.consoleLog(level, levelIndent, logStrings.join('\n'), breadcrumbs);
       }
 
       // NO LOG FILES ONLY STDOUT
