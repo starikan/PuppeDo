@@ -60,7 +60,6 @@ class Log {
 
   async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
     try {
-
       // Active ENV log settings
       let activeEnv = this.envs.getEnv();
       let pageName = this.envs.get('current.page');
@@ -106,6 +105,21 @@ class Log {
     }
   }
 
+  consoleLog(level, fullLogString, breadcrumbs = []) {
+    const { PPD_LOG_EXTEND } = new Arguments();
+    const styleFunction = _.get(stylesConsole, level, args => args);
+
+    console.log(styleFunction(fullLogString));
+
+    if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
+      const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
+      console.log(
+        styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),
+        styleFunctionInfo(`[${breadcrumbs.join(' -> ')}]`),
+      );
+    }
+  }
+
   async log({
     funcFile,
     testFile,
@@ -123,12 +137,10 @@ class Log {
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
   }) {
-
     const {
       PPD_DEBUG_MODE,
       PPD_LOG_DISABLED,
       PPD_LOG_LEVEL_NESTED,
-      PPD_LOG_EXTEND,
       PPD_LOG_SCREENSHOT,
       PPD_LOG_FULLPAGE,
     } = new Arguments();
@@ -170,31 +182,12 @@ class Log {
 
       // STDOUT
       if (stdOut) {
-        const styleFunction = _.get(stylesConsole, level, args => args);
-        console.log(styleFunction(fullLogString));
-
-        if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
-          const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
-          console.log(
-            styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),
-            styleFunctionInfo(`[${breadcrumbs.join(' -> ')}]`),
-          );
-        }
+        this.consoleLog(level, fullLogString, breadcrumbs);
       }
 
       // NO LOG FILES ONLY STDOUT
       if (PPD_LOG_DISABLED && level !== 'error') {
         return;
-      }
-
-      // ENVS TO LOG
-      if (level == 'env') {
-        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-          return _.omit(val, 'state');
-        });
-        text = '\n' + text;
-        typeSocket = 'env';
       }
 
       // EXPORT TEXT LOG
@@ -210,8 +203,8 @@ class Log {
       }
 
       // SCREENSHOT ON ERROR
-      if (level === 'error') {
-        // debugger
+      if (level === 'error' && levelIndent === 0) {
+        debugger
         [screenshot, fullpage] = [true, true];
       }
 
@@ -228,6 +221,16 @@ class Log {
         src ? screenshots.push(src) : null;
         src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
         src ? screenshots.push(src) : null;
+      }
+
+      // ENVS TO LOG
+      if (level == 'env') {
+        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
+          return _.omit(val, 'state');
+        });
+        text = '\n' + text;
+        typeSocket = 'env';
       }
 
       const logEntry = {
