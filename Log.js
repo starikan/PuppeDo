@@ -108,20 +108,21 @@ class Log {
     }
   }
 
-  consoleLog(level, levelIndent, fullLogString, breadcrumbs = []) {
+  consoleLog(level, levelIndent, fullLogString) {
     const { PPD_LOG_EXTEND } = new Arguments();
     const styleFunction = _.get(stylesConsole, level, args => args);
-    // const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
+    const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
     console.log(styleFunction(fullLogString));
 
-    // debugger
     if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
       const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
-      console.log(
-        styleFunction(`${' '.repeat(20)} ${' | '.repeat(levelIndent)}`),
-        styleFunctionInfo(`[${breadcrumbs.join(' -> ')}]`),
-      );
+      const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)}`;
+      const tail = `[${breadcrumbs.join(' -> ')}]`;
+      console.log(styleFunctionInfo(`${head} ${tail}`));
+      // TODO: 2020-02-02 S.Starodubov надо сделать после запись в файл, а то пишется перед тем что надо
+      // console.log(styleFunction(head), styleFunctionInfo(tail));
+      // this.fileLog(`${head} ${tail}`, 'output.log');
     }
   }
 
@@ -174,9 +175,9 @@ class Log {
       const now = dayjs();
       const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
       const logStrings = [`${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`];
-      const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
       if (level === 'error') {
+        const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
         breadcrumbs.forEach((v, i) => {
           logStrings.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
         });
@@ -186,7 +187,7 @@ class Log {
 
       // STDOUT
       if (stdOut) {
-        this.consoleLog(level, levelIndent, logStrings.join('\n'), breadcrumbs);
+        this.consoleLog(level, levelIndent, logStrings.join('\n'));
       }
 
       // NO LOG FILES ONLY STDOUT
