@@ -13,11 +13,12 @@ const Environment = require('./env');
 
 class Log {
   constructor({ envsId } = {}) {
-    this.init(envsId);
+    this.envsId = envsId;
+    this.init();
   }
 
-  init(envsId) {
-    const { socket, envs } = Environment({ envsId });
+  init() {
+    const { socket, envs } = Environment({ envsId: this.envsId });
     this.envs = envs;
     this.socket = socket;
     this.binded = {};
@@ -105,9 +106,10 @@ class Log {
     }
   }
 
-  consoleLog(level, fullLogString, breadcrumbs = []) {
+  consoleLog(level, fullLogString) {
     const { PPD_LOG_EXTEND } = new Arguments();
     const styleFunction = _.get(stylesConsole, level, args => args);
+    const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
     console.log(styleFunction(fullLogString));
 
@@ -120,6 +122,16 @@ class Log {
     }
   }
 
+  fileLog(fullLogString = '', fileName = 'output.log') {
+    const { folder, folderLatest } = _.get(this.envs, 'output', {});
+    if (!folder || !folderLatest) {
+      throw { message: 'There is no output folder' };
+    }
+
+    fs.appendFileSync(path.join(folder, fileName), fullLogString + '\n');
+    fs.appendFileSync(path.join(folderLatest, fileName), fullLogString + '\n');
+  }
+
   async log({
     funcFile,
     testFile,
@@ -129,7 +141,6 @@ class Log {
     screenshot = null,
     fullpage = null,
     level = 'info',
-    debug = false,
     element = false,
     testStruct = null,
     levelIndent = 0,
@@ -154,35 +165,25 @@ class Log {
     }
 
     try {
-      const { folder: outputFolder, folderLatest: outputFolderLatest } = _.get(this.envs, 'output', {});
-      if (!outputFolder || !outputFolderLatest) return;
-
       screenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
-      const now = dayjs().format('HH:mm:ss.SSS');
-      let dataEnvsGlobal = null;
-      let dataEnvs = null;
-      let typeSocket = 'log';
-
-      // LOG STRINGS
-      const nowWithPad = `${now} - ${level.padEnd(5)}`;
-      const logString = `${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`;
-      const errorLogString = [];
-      const breadcrumbs = _.get(this.binded, 'testSource.breadcrumbs', []);
+      const now = dayjs();
+      const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
+      const logStrings = [`${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`];
 
       if (level === 'error') {
+        const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
         breadcrumbs.forEach((v, i) => {
-          errorLogString.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
+          logStrings.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
         });
-        testFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
-        funcFile && errorLogString.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`);
+        testFile && logStrings.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
+        funcFile && logStrings.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`);
       }
-      const fullLogString = [...errorLogString, logString].join('\n');
 
       // STDOUT
       if (stdOut) {
-        this.consoleLog(level, fullLogString, breadcrumbs);
+        this.consoleLog(level, logStrings.join('\n'));
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -191,20 +192,10 @@ class Log {
       }
 
       // EXPORT TEXT LOG
-      fs.appendFileSync(path.join(outputFolder, 'output.log'), fullLogString + '\n');
-      fs.appendFileSync(path.join(outputFolderLatest, 'output.log'), fullLogString + '\n');
-
-      if (_.isEmpty(testStruct)) {
-        testStruct = _.mapValues(testSource, v => {
-          if (!_.isEmpty(v)) {
-            return v;
-          }
-        });
-      }
+      this.fileLog(logStrings.join('\n'), 'output.log');
 
       // SCREENSHOT ON ERROR
       if (level === 'error' && levelIndent === 0) {
-        debugger
         [screenshot, fullpage] = [true, true];
       }
 
@@ -224,25 +215,32 @@ class Log {
       }
 
       // ENVS TO LOG
+      let dataEnvs = null;
       if (level == 'env') {
-        dataEnvsGlobal = _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']);
         dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
           return _.omit(val, 'state');
         });
-        text = '\n' + text;
-        typeSocket = 'env';
+      }
+
+      if (_.isEmpty(testStruct)) {
+        testStruct = _.mapValues(testSource, v => {
+          if (!_.isEmpty(v)) {
+            return v;
+          }
+        });
       }
 
       const logEntry = {
         text,
-        time: now,
+        time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
+        // TODO: 2020-02-02 S.Starodubov разобраться с этими двумя, они нужны для хтмлки
         dataEnvs,
-        dataEnvsGlobal,
-        testStruct: PPD_DEBUG_MODE || typeSocket === 'env' ? testStruct : null,
-        screenshots,
-        level,
-        type: typeSocket,
+        dataEnvsGlobal: level == 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
+        testStruct: PPD_DEBUG_MODE || level == 'env' ? testStruct : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
+        screenshots,
+        type: level == 'env' ? 'env' : 'log',
+        level,
         levelIndent,
         stepId: _.get(bindedData, 'stepId'),
       };
@@ -250,15 +248,8 @@ class Log {
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
-      let indentYaml = 2;
-      let yamlString =
-        '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indentYaml }).replace(/^/gm, ' '.repeat(indentYaml)) + '\n';
-      fs.appendFileSync(path.join(outputFolder, 'output.yaml'), yamlString);
-      fs.appendFileSync(path.join(outputFolderLatest, 'output.yaml'), yamlString);
-
-      if (debug) {
-        debugger;
-      }
+      let yamlString = '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2));
+      this.fileLog(yamlString, 'output.yaml');
     } catch (err) {
       err.message += ' || error in log';
       err.socket = this.socket;
