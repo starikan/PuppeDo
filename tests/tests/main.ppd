@@ -15,17 +15,20 @@ beforeTest:
 runTest:
   - goTo:
       bD: { url: wikiUrl }
-  - typeInput:
-      description: Input some text in field INPUT
-      #s: { input: '.wikiInput' }
-      bS: { input: wikiInput }
-      d: { text: 'Some text' }
-  # - cdpGetSelector:
   - waitTime:
       d: { time: 2000 }
       if: '1 !== 1'
       errorIf: '1 === 1'
       errorIfResult: '1 === 1'
+  - typeInput:
+      description: Input some text in field INPUT
+      #s: { input: '.wikiInput' }
+      bS: { input: wikiInput }
+      d: { text: 'Some text' }
+      o:
+        screenshot: true
+        fullpage: true
+  # - cdpGetSelector:
   - todo:
       description: Make awesome test
   - subTest:

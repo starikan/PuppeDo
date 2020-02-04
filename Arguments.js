@@ -27,9 +27,12 @@ class Arguments extends Singleton {
       PPD_SELECTORS: {},
       PPD_DEBUG_MODE: false,
       PPD_LOG_DISABLED: false,
-      PPD_LOG_TIMER: false,
+      PPD_LOG_EXTEND: false,
       PPD_DISABLE_ENV_CHECK: false,
-      PPD_LOG_LEVEL: 0,
+      PPD_LOG_LEVEL_NESTED: 0,
+      PPD_LOG_LEVEL_TYPE: 'raw',
+      PPD_LOG_SCREENSHOT: false,
+      PPD_LOG_FULLPAGE: false,
     };
     this.argsTypes = this.getTypes(this.argsDefault);
 

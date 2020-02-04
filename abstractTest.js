@@ -4,14 +4,9 @@ const safeEval = require('safe-eval');
 const { merge, blankSocket } = require('./helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
+const Log = require('./Log');
 const Environment = require('./env');
 const { TestsContent } = require('./TestContent');
-
-function bind(func, source, bindArgs) {
-  return function() {
-    return func.apply(this, [...arguments, source, bindArgs]);
-  };
-}
 
 const ALIASES = {
   bindData: ['bD', 'bd'],
@@ -283,7 +278,8 @@ class Test {
         throw { message: 'Test should have envsId' };
       }
 
-      let { envs, log } = Environment({ envsId });
+      const { envs } = Environment({ envsId });
+      const logger = new Log({ envsId });
 
       try {
         const { PPD_DISABLE_ENV_CHECK = false } = new Arguments();
@@ -322,19 +318,6 @@ class Test {
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
-        // IF
-        if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', log, this.levelIndent, { dataLocal, selectorsLocal });
-          if (skip) {
-            return;
-          }
-        }
-
-        // ERROR IF
-        if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', log, this.levelIndent, { dataLocal, selectorsLocal });
-        }
-
         // All data passed to log
         const argsFields = [
           'envName',
@@ -348,7 +331,13 @@ class Test {
         ];
         const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
 
-        const logBinded = bind(log, source, args);
+        // LOG TEST
+        logger.bindData({ testSource: source, bindedData: args });
+        await logger.log({
+          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
+          level: 'test',
+          levelIndent,
+        });
 
         // Extend with data passed to functions
         const argsExt = {
@@ -358,20 +347,31 @@ class Test {
           browser: this.env ? this.env.getState('browser') : null,
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
-          log: logBinded,
+          log: logger.log.bind(logger),
           _,
           name: this.name,
           description: this.description,
           socket: this.socket,
         };
 
-        // Descriptions in log
-        logBinded({
-          screenshot: false,
-          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
-          level: 'test',
-          levelIndent,
-        });
+        // IF
+        if (this.if) {
+          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, {
+            dataLocal,
+            selectorsLocal,
+          });
+          if (skip) {
+            return;
+          }
+        }
+
+        // ERROR IF
+        if (this.errorIf) {
+          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
+            dataLocal,
+            selectorsLocal,
+          });
+        }
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
@@ -428,7 +428,7 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', log, this.levelIndent, {
+          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
             dataLocal,
             selectorsLocal,
             localResults,
@@ -452,7 +452,7 @@ class Test {
         }
 
         // TIMER IN CONSOLE
-        const timer = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
+        const timer = _.get(this.envs, ['args', 'PPD_LOG_EXTEND'], false);
         if (timer) {
           const timeTest = new Date() - startTime;
           console.log(`${' '.repeat(20)} ${' | '.repeat(this.levelIndent)} 🕝: ${timeTest} ms. (${this.name})`);
@@ -466,7 +466,7 @@ class Test {
         error.stepId = error.stepId || this.stepId;
         error.testDescription = error.testDescription || this.description;
         error.message += ` || error in test = ${this.name}`;
-        log({
+        await logger.log({
           level: 'error',
           text: `Description: ${this.description || 'No test description'} (${this.name})`,
           screenshot: false,
@@ -474,6 +474,7 @@ class Test {
           funcFile: this.funcFile,
           testFile: this.testFile,
           levelIndent: this.levelIndent,
+          error,
         });
         await this.errorTest();
         throw error;
