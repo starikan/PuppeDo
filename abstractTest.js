@@ -158,7 +158,7 @@ class Test {
       joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
       // * Get data from user function results and results
-      joinArray = [...joinArray, this.envs.get('resultsFunc', {}), this.envs.get('results', {})];
+      joinArray = [...joinArray, this.envs.get('results', {}), this.envs.get('resultsFunc', {})];
 
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
@@ -205,7 +205,7 @@ class Test {
       return error;
     };
 
-    this.checkIf = async (expr, type, log, locals = {}) => {
+    this.checkIf = async (expr, type, log, levelIndent, locals = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
 
@@ -217,14 +217,24 @@ class Test {
             level: 'error',
             screenshot: true,
             fullpage: true,
-            text: `Can't evaluate ${type} = ${err.message}`,
+            text: `(${this.name}) ${
+              this.description ? this.description : 'TODO: Fill description'
+            } -> Can't evaluate ${type} = '${err.message}'`,
           });
         }
         throw this.collectDebugData(err, locals);
       }
 
       if (!exprResult && type === 'if') {
-        await log({ level: 'info', screenshot: false, fullpage: false, text: `If skipping ${expr}` });
+        await log({
+          level: 'info',
+          screenshot: false,
+          fullpage: false,
+          text: `(${this.name}) ${
+            this.description ? this.description : 'TODO: Fill description'
+          } -> Skipping with expr '${expr}'`,
+          levelIndent,
+        });
         return true;
       }
 
@@ -233,7 +243,10 @@ class Test {
           level: 'error',
           screenshot: true,
           fullpage: true,
-          text: `Test stopped with expr ${type} = '${expr}'`,
+          text: `(${this.name}) ${
+            this.description ? this.description : 'TODO: Fill description'
+          } -> Test stopped with expr ${type} = '${expr}'`,
+          levelIndent,
         });
         throw this.collectDebugData({}, locals, `Test stopped with expr ${type} = '${expr}'`);
       }
@@ -311,7 +324,7 @@ class Test {
 
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', log, { dataLocal, selectorsLocal });
+          const skip = await this.checkIf(this.if, 'if', log, this.levelIndent, { dataLocal, selectorsLocal });
           if (skip) {
             return;
           }
@@ -319,7 +332,7 @@ class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', log, { dataLocal, selectorsLocal });
+          await this.checkIf(this.errorIf, 'errorIf', log, this.levelIndent, { dataLocal, selectorsLocal });
         }
 
         // All data passed to log
@@ -355,7 +368,7 @@ class Test {
         // Descriptions in log
         logBinded({
           screenshot: false,
-          text: this.description || `(${this.name}) TODO: Fill description`,
+          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
           levelIndent,
         });
@@ -415,7 +428,7 @@ class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', log, {
+          await this.checkIf(this.errorIfResult, 'errorIfResult', log, this.levelIndent, {
             dataLocal,
             selectorsLocal,
             localResults,
@@ -439,11 +452,10 @@ class Test {
         }
 
         // TIMER IN CONSOLE
-        const timer = (this.envs.args || {})['PPD_LOG_TIMER'] || false;
+        const timer = _.get(this.envs, ['args', 'PPD_LOG_TIMER'], false);
         if (timer) {
-          console.log(
-            `${' '.repeat(21)}${' | '.repeat(this.levelIndent)} 🕝: ${new Date() - startTime} ms. (${this.name})`,
-          );
+          const timeTest = new Date() - startTime;
+          console.log(`${' '.repeat(20)} ${' | '.repeat(this.levelIndent)} 🕝: ${timeTest} ms. (${this.name})`);
         }
       } catch (error) {
         const { PPD_DEBUG_MODE = false } = new Arguments();
@@ -461,6 +473,7 @@ class Test {
           stepId: this.stepId,
           funcFile: this.funcFile,
           testFile: this.testFile,
+          levelIndent: this.levelIndent,
         });
         await this.errorTest();
         throw error;

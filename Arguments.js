@@ -29,6 +29,7 @@ class Arguments extends Singleton {
       PPD_LOG_DISABLED: false,
       PPD_LOG_TIMER: false,
       PPD_DISABLE_ENV_CHECK: false,
+      PPD_LOG_LEVEL: 0,
     };
     this.argsTypes = this.getTypes(this.argsDefault);
 
@@ -54,6 +55,9 @@ class Arguments extends Singleton {
       }
       if (_.isArray(args[v])) {
         vType = 'array';
+      }
+      if (_.isNumber(args[v])) {
+        vType = 'number';
       }
       s[v] = vType;
       return s;
@@ -105,6 +109,15 @@ class Arguments extends Singleton {
 
       if (this.argsTypes[val] === 'string') {
         if (!_.isString(newVal)) {
+          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+        }
+      }
+
+      if (this.argsTypes[val] === 'number') {
+        if (_.isString(newVal)) {
+          newVal = parseInt(newVal)
+        }
+        if (!_.isNumber(newVal) || _.isNaN(newVal)) {
           throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
         }
       }

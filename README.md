@@ -150,7 +150,8 @@ PPD_SELECTORS | Object with selectors | `{}` | `Object`
 PPD_OUTPUT | Path to log folder | `output` | `String`
 PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
-PPD_LOG_TIMER | Log every atoms time for tuning | `false` | `Boolean`
+PPD_LOG_TIMER | Log every atoms time for tuning and breadcrumbs for test | `false` | `Boolean`
+PPD_LOG_LEVEL | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
 PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
@@ -162,6 +163,9 @@ Arguments applying order. From minor to major:
 # Socket
 #### Todo
 
+# RoadMap 2.0.0
+
+1. Rename 'PPD_LOG_TIMER' -> 'PPD_LOG_EXTEND' (+ atoms-core)
 <!-- # Editors Environment
 
 ## VSCode

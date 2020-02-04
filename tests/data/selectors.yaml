@@ -4,3 +4,4 @@ name: selectors
 description: Simple Selectors
 data:
   selector: test
+  wikiInput: '#main-q'
