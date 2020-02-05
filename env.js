@@ -9,7 +9,6 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
-const logger = require('./logger');
 const { merge, sleep, blankSocket } = require('./helpers');
 const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
@@ -387,13 +386,12 @@ module.exports = function({ envsId, socket = blankSocket } = {}) {
   } else {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
-    instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId }), socket };
+    instances[envsId] = { envs: newEnvs, socket };
   }
 
   return {
     envsId,
     envs: _.get(instances, [envsId, 'envs']),
-    log: _.get(instances, [envsId, 'log']),
     socket: _.get(instances, [envsId, 'socket']),
   };
 };

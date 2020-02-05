@@ -6,6 +6,7 @@ const { TestsContent } = require('./TestContent');
 const { Arguments } = require('./Arguments');
 const { Blocker } = require('./Blocker');
 const Environment = require('./env');
+const Log = require('./Log');
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
@@ -21,5 +22,6 @@ if (!module.parent) {
     Environment,
     Arguments,
     Blocker,
+    Log,
   };
 }
