@@ -143,15 +143,6 @@ class Arguments extends Singleton {
 
   mergeArgs() {
     this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
-
-    if (!this.args.PPD_TESTS || _.isEmpty(this.args.PPD_TESTS)) {
-      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
-    }
-
-    if (!this.args.PPD_ENVS || _.isEmpty(this.args.PPD_ENVS)) {
-      throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
-    }
-
     return this.args;
   }
 }

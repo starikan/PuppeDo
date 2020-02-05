@@ -58,30 +58,13 @@ function errors(name, type) {
   return { message: `Invalid argument type '${name}', '${type}' required.` };
 }
 
-test('Arguments init Errors', () => {
-  expect(() => new Arguments()).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-  expect(() => new Arguments({ PPD_TESTS: 'test' }, true)).toThrowError({
-    message: 'There is no environments to run. Pass any test in PPD_ENVS argument',
-  });
-});
-
 test('Arguments is Singleton and Default args', () => {
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
   expect(new Arguments()).toEqual(argsDefault);
+  expect(new Arguments()).toEqual(argsDefault);
+  expect(new Arguments({PPD_DEBUG_MODE: false}, true)).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-
   let argData, argResult;
 
   // Object

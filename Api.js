@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const dayjs = require('dayjs');
+
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { Arguments } = require('./Arguments');
@@ -11,6 +13,15 @@ const main = async (args = {}) => {
   try {
     const startTime = new Date();
     args = new Arguments(args);
+
+    if (_.isEmpty(args.PPD_TESTS)) {
+      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
+    }
+
+    if (_.isEmpty(args.PPD_ENVS)) {
+      throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
+    }
+
     const initArgsTime = (new Date() - startTime) / 1000;
 
     for (let i = 0; i < args.PPD_TESTS.length; i++) {
