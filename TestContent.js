@@ -9,16 +9,19 @@ const Singleton = require('./Singleton');
 const { Arguments } = require('./Arguments');
 
 class TestsContent extends Singleton {
-  constructor({ rootFolder, additionalFolders, ignorePaths } = {}) {
+  constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
     super();
     const args = new Arguments();
 
-    this.allData = this.allData || null;
-    this.ignorePaths = this.ignorePaths || ignorePaths || args.PPD_ROOT_IGNORE;
-    this.rootFolder = this.rootFolder || rootFolder || args.PPD_ROOT || process.cwd();
-    this.additionalFolders = this.additionalFolders || additionalFolders || args.PPD_ROOT_ADDITIONAL || [];
-    this.setRootFolder(rootFolder);
-    this.setAdditionalFolders(additionalFolders);
+    if (reInit || !this.allData) {
+      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
+      this.rootFolder = rootFolder || args.PPD_ROOT || process.cwd();
+      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL || [];
+      this.setRootFolder(this.rootFolder);
+      this.setAdditionalFolders(this.additionalFolders);
+      this.allData = this.getAllData();
+    }
+    return this.allData;
   }
 
   setRootFolder(rootFolder) {
@@ -99,7 +102,7 @@ ${dubNames.join('\n')}`,
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
+      this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
       for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
         this.checkDuplicates(this.allData[key], key);

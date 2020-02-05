@@ -24,7 +24,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   if (!testName) {
     testName = Environment({ envsId }).envs.get('current.test');
   }
-  const allTests = new TestsContent().getAllData();
+  const allTests = new TestsContent();
   if (!allTests) {
     throw { message: 'No tests content. Init it first with "TestsContent" class' };
   }

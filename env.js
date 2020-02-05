@@ -309,7 +309,7 @@ class Envs {
 
   async resolveLinks() {
     const args = new Arguments();
-    const allData = await new TestsContent().getAllData();
+    const allData = await new TestsContent();
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map(v => {

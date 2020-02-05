@@ -42,13 +42,9 @@ const argsModify = {
 
 function setArg(argName, argData) {
   // Reset Arguments
-  const env = {
-    PPD_TESTS: ['goo'],
-    PPD_ENVS: ['goo'],
-  };
-  new Arguments(env, true);
+  new Arguments({}, true);
 
-  const argMock = { ...env, [argName]: argData };
+  const argMock = { [argName]: argData };
   const argResult = _.get(new Arguments(argMock, true), argName);
 
   return [argData, argResult];
@@ -61,7 +57,7 @@ function errors(name, type) {
 test('Arguments is Singleton and Default args', () => {
   expect(new Arguments()).toEqual(argsDefault);
   expect(new Arguments()).toEqual(argsDefault);
-  expect(new Arguments({PPD_DEBUG_MODE: false}, true)).toEqual(argsDefault);
+  expect(new Arguments({ PPD_DEBUG_MODE: false }, true)).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
