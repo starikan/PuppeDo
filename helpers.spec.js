@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { merge, sleep, stylesConsole, blankSocket } = require('./helpers');
+const { merge, sleep, paintString, blankSocket } = require('./helpers');
 
 test('Helpers -> merge', () => {
   const foobar = { foo: { bar: 3 } };
@@ -12,9 +12,34 @@ test('Helpers -> merge', () => {
 
 test('Helpers -> sleep', () => {});
 
-test('Helpers -> stylesConsole', () => {
-  const fields = ['raw', 'debug', 'info', 'test', 'warn', 'error', 'trace', 'env'];
-  expect(Object.keys(stylesConsole)).toEqual(fields);
+test('Helpers -> paintString', () => {
+  expect(paintString('*******')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'some weird')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 0)).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', true)).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', [])).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', ['foo'])).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', {})).toEqual('\u001b[0m*******\u001b[0m');
+
+  expect(paintString('*******', 'sane')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'black')).toEqual('\u001b[30m*******\u001b[0m');
+  expect(paintString('*******', 'red')).toEqual('\u001b[31m*******\u001b[0m');
+  expect(paintString('*******', 'green')).toEqual('\u001b[32m*******\u001b[0m');
+  expect(paintString('*******', 'yellow')).toEqual('\u001b[33m*******\u001b[0m');
+  expect(paintString('*******', 'blue')).toEqual('\u001b[34m*******\u001b[0m');
+  expect(paintString('*******', 'magenta')).toEqual('\u001b[35m*******\u001b[0m');
+  expect(paintString('*******', 'cyan')).toEqual('\u001b[36m*******\u001b[0m');
+  expect(paintString('*******', 'white')).toEqual('\u001b[37m*******\u001b[0m');
+
+  expect(paintString('*******', 'raw')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'timer')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'debug')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'info')).toEqual('\u001b[36m*******\u001b[0m');
+  expect(paintString('*******', 'test')).toEqual('\u001b[32m*******\u001b[0m');
+  expect(paintString('*******', 'warn')).toEqual('\u001b[33m*******\u001b[0m');
+  expect(paintString('*******', 'error')).toEqual('\u001b[31m*******\u001b[0m');
+  expect(paintString('*******', 'trace')).toEqual('\u001b[36m*******\u001b[0m');
+  expect(paintString('*******', 'env')).toEqual('\u001b[34m*******\u001b[0m');
 });
 
 test('Helpers -> blankSocket', () => {

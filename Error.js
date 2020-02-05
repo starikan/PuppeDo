@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { stylesConsole } = require('./helpers');
+const { paintString } = require('./helpers');
 
 const errorHandler = async error => {
   error.messageObj = _.get(error, 'message').split(' || ');
@@ -12,10 +12,9 @@ const errorHandler = async error => {
   if (error.debug) {
     debugger;
   }
-  const styleFunction = _.get(stylesConsole, 'error', args => args);
-  console.log(styleFunction(error.message));
+  console.log(paintString(error.message, 'error'));
   console.log();
-  error.stack ? console.log(styleFunction(error.stack)) : '';
+  error.stack ? console.log(paintString(error.stack, 'error')) : '';
   // if (!module.parent) {
   process.exit(1);
   // }
