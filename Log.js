@@ -116,7 +116,7 @@ class Log {
 
     const stringsLog = [
       [
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, 'sane'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
         [text, level],
       ],
     ];
@@ -125,7 +125,7 @@ class Log {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
-        [head, 'sane'],
+        [head, level == 'error' ? 'error' : 'sane'],
         [tail, 'info'],
       ]);
     }

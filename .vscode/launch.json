@@ -37,7 +37,8 @@
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "mainWithError",
         "PPD_DEBUG_MODE": "true",
-        "PPD_LOG_LEVEL_NESTED": 1
+        "PPD_LOG_EXTEND": "true",
+        "PPD_LOG_LEVEL_NESTED": 0
       }
     },
     {
