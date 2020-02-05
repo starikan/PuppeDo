@@ -4,7 +4,7 @@ require('array-flat-polyfill');
 
 const { merge } = require('./helpers');
 
-const Singleton = require('./singleton');
+const Singleton = require('./Singleton');
 
 class Arguments extends Singleton {
   constructor(args, reInit = false) {

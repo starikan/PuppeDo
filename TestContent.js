@@ -5,7 +5,7 @@ const _ = require('lodash');
 const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
-const Singleton = require('./singleton');
+const Singleton = require('./Singleton');
 const { Arguments } = require('./Arguments');
 
 class TestsContent extends Singleton {
