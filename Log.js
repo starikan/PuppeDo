@@ -12,11 +12,11 @@ const { Arguments } = require('./Arguments');
 const Environment = require('./env');
 
 class Log {
-  constructor({ envsIdIncome } = {}) {
-    const { socket, envs, envsId } = Environment({ envsId: envsIdIncome });
+  constructor({ envsId } = {}) {
+    const { socket, envs, envsId: envsIdNew } = Environment({ envsId: envsId });
+    this.envsId = envsIdNew;
     this.envs = envs;
     this.socket = socket;
-    this.envsId = envsId;
     this.binded = {};
   }
 
