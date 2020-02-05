@@ -154,6 +154,8 @@ PPD_LOG_EXTEND | Log every atoms time for tuning and breadcrumbs for test | `fal
 PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
 PPD_LOG_LEVEL_TYPE | Log only type of log bellow this. `raw` - log all. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `raw` | `String`
 PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
+PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
+PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults
@@ -166,6 +168,12 @@ Arguments applying order. From minor to major:
 
 # RoadMap 2.0.0
 
+1. Arguments.
+  * PPD_LOG_TIMER -> PPD_LOG_EXTEND
+  * PPD_LOG_LEVEL_NESTED
+  * PPD_LOG_LEVEL_TYPE
+  * PPD_LOG_SCREENSHOT
+  * PPD_LOG_FULLPAGE
 <!-- # Editors Environment
 
 ## VSCode
