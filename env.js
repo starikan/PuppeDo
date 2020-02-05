@@ -18,13 +18,10 @@ class Env {
     this.name = name;
     // Browser, pages, cookies, etc.
     this.state = {};
-    // TODO: 2020-01-26 S.Starodubov разобраться что тут
     this.env = {
-      name: name,
+      name,
       data: {},
       selectors: {},
-      logLevel: 'debug',
-      screenshots: { isScreenshot: false, fullPage: false },
     };
     this.env = { ...this.env, ...env };
   }
@@ -129,6 +126,8 @@ class Envs {
     this.output.folder = folder;
 
     this.initOutputLatest();
+
+    this.__proto__.initOutput = () => {};
   }
 
   initOutputLatest() {
@@ -155,7 +154,7 @@ class Envs {
     this.output.folderLatest = folderLatest;
 
     // Drop this function after first use
-    this.initOutputLatest = () => {};
+    this.__proto__.initOutputLatest = () => {};
   }
 
   async runBrowsers() {
@@ -372,7 +371,7 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = async function() {};
+    this.__proto__.init = () => {};
   }
 }
 

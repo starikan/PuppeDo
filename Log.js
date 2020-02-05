@@ -196,6 +196,7 @@ class Log {
     }
 
     try {
+      // TODO: 2020-02-05 S.Starodubov get values from env.yaml
       screenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
