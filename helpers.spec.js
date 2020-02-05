@@ -10,7 +10,12 @@ test('Helpers -> merge', () => {
   expect(merge([1, 2, 3], [3, 2, 1])).toEqual([3, 2, 1]);
 });
 
-test('Helpers -> sleep', () => {});
+test('Helpers -> sleep', async () => {
+  const start = new Date();
+  await sleep(20);
+  const dellay = new Date() - start;
+  expect(dellay).toBeGreaterThanOrEqual(20);
+});
 
 test('Helpers -> paintString', () => {
   expect(paintString('*******')).toEqual('\u001b[0m*******\u001b[0m');
@@ -46,4 +51,6 @@ test('Helpers -> blankSocket', () => {
   expect(Object.keys(blankSocket)).toEqual(['send', 'sendYAML']);
   expect(_.isFunction(blankSocket.send)).toBe(true);
   expect(_.isFunction(blankSocket.sendYAML)).toBe(true);
+  expect(blankSocket.send()).toBeFalsy();
+  expect(blankSocket.sendYAML()).toBeFalsy();
 });
