@@ -22,7 +22,6 @@ runTest:
       errorIfResult: '1 === 1'
   - typeInput:
       description: Input some text in field INPUT
-      #s: { input: '.wikiInput' }
       bS: { input: wikiInput }
       d: { text: 'Some text' }
       o:
@@ -33,6 +32,32 @@ runTest:
       description: Make awesome test
   - subTest:
   - blank:
+
+---
+name: mainWithError
+type: test
+
+data:
+  mainTestData: foo
+
+dataExt:
+  - dataExtMain
+
+beforeTest:
+  - envSwitch:
+      data: { envName: 'mainEnv' }
+
+runTest:
+  - goTo:
+      bD: { url: wikiUrl }
+  - typeInput:
+      description: Input some text in field INPUT
+      s: { input: '.wikiInput' }
+      d: { text: 'Some text' }
+      o:
+        screenshot: true
+        fullpage: true
+
 
 ---
 name: oneFileTwoTests
