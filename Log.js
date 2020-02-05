@@ -7,7 +7,7 @@ require('array-flat-polyfill');
 const dayjs = require('dayjs');
 const yaml = require('js-yaml');
 
-const { sleep, stylesConsole } = require('./helpers');
+const { sleep, paintString } = require('./helpers');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
 
@@ -108,32 +108,62 @@ class Log {
     }
   }
 
-  consoleLog(level, levelIndent, fullLogString) {
+  makeLog(level, levelIndent, text, now, funcFile, testFile) {
     const { PPD_LOG_EXTEND } = new Arguments();
-    const styleFunction = _.get(stylesConsole, level, args => args);
+
+    const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
 
-    console.log(styleFunction(fullLogString));
+    const stringsLog = [
+      [
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, 'white'],
+        [text, level],
+      ],
+    ];
 
-    if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
-      const styleFunctionInfo = _.get(stylesConsole, 'info', args => args);
-      const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)}`;
+    if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error') {
+      const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `[${breadcrumbs.join(' -> ')}]`;
-      console.log(styleFunctionInfo(`${head} ${tail}`));
-      // TODO: 2020-02-02 S.Starodubov надо сделать после запись в файл, а то пишется перед тем что надо
-      // console.log(styleFunction(head), styleFunctionInfo(tail));
-      // this.fileLog(`${head} ${tail}`, 'output.log');
+      stringsLog.push([
+        [head, 'white'],
+        [tail, 'info'],
+      ]);
     }
+
+    if (level === 'error') {
+      breadcrumbs.forEach((v, i) => {
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(i)} ${v}`, 'error']]);
+      });
+      testFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
+      funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+    }
+
+    return stringsLog;
   }
 
-  fileLog(fullLogString = '', fileName = 'output.log') {
+  consoleLog(entries = []) {
+    entries.forEach(entrie => {
+      const line = entrie.map(part => paintString(part[0], part[1] || 'white')).join('');
+      console.log(line);
+    });
+  }
+
+  fileLog(texts = [], fileName = 'output.log') {
     const { folder, folderLatest } = _.get(this.envs, 'output', {});
     if (!folder || !folderLatest) {
       throw { message: 'There is no output folder' };
     }
 
-    fs.appendFileSync(path.join(folder, fileName), fullLogString + '\n');
-    fs.appendFileSync(path.join(folderLatest, fileName), fullLogString + '\n');
+    let textsJoin = '';
+    if (_.isArray(texts)) {
+      textsJoin = texts.map(text => text.map(log => log[0] || '').join('')).join('\n');
+    } else {
+      textsJoin = texts;
+    }
+
+    // debugger;
+    fs.appendFileSync(path.join(folder, fileName), textsJoin + '\n');
+    fs.appendFileSync(path.join(folderLatest, fileName), textsJoin + '\n');
   }
 
   async log({
@@ -151,6 +181,7 @@ class Log {
     error = {},
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
+    extendInfo = false,
   }) {
     const {
       PPD_DEBUG_MODE,
@@ -173,21 +204,11 @@ class Log {
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
       const now = dayjs();
-      const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
-      const logStrings = [`${nowWithPad} ${' | '.repeat(levelIndent)} ${text}`];
-
-      if (level === 'error') {
-        const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
-        breadcrumbs.forEach((v, i) => {
-          logStrings.push(`${nowWithPad} ${' | '.repeat(i)} ${v}`);
-        });
-        testFile && logStrings.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`);
-        funcFile && logStrings.push(`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`);
-      }
+      const logTexts = this.makeLog(level, levelIndent, text, now, funcFile, testFile);
 
       // STDOUT
-      if (stdOut) {
-        this.consoleLog(level, levelIndent, logStrings.join('\n'));
+      if (stdOut || level === 'error') {
+        this.consoleLog(logTexts);
       }
 
       // NO LOG FILES ONLY STDOUT
@@ -196,9 +217,9 @@ class Log {
       }
 
       // EXPORT TEXT LOG
-      this.fileLog(logStrings.join('\n'), 'output.log');
+      this.fileLog(logTexts, 'output.log');
 
-      // SCREENSHOT ON ERROR
+      // SCREENSHOT ON ERROR ONLY ONES
       if (level === 'error' && levelIndent === 0) {
         [screenshot, fullpage] = [true, true];
       }

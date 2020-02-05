@@ -44,6 +44,7 @@ const merge = (...objects) =>
 const paintString = (str, color = 'noColor') => {
   const colors = {
     noColor: 0,
+    white: 0,
     pink: 35,
     green: 32,
     yellow: 33,
@@ -51,8 +52,20 @@ const paintString = (str, color = 'noColor') => {
     blue: 36,
     violet: 34,
   };
+
+  colors.raw = colors.noColor;
+  colors.timer = colors.noColor;
+  colors.debug = colors.noColor;
+  colors.info = colors.blue;
+  colors.test = colors.green;
+  colors.warn = colors.yellow;
+  colors.error = colors.red;
+  colors.trace = colors.blue;
+  colors.env = colors.violet;
+
   return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
 };
+
 const stylesConsole = {
   raw: str => paintString(str, 'noColor'),
   debug: str => paintString(str, 'noColor'),
@@ -74,4 +87,5 @@ module.exports = {
   sleep,
   stylesConsole,
   blankSocket,
+  paintString,
 };

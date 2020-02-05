@@ -12,11 +12,13 @@ const argsDefault = {
   PPD_OUTPUT: 'output',
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
   PPD_SELECTORS: {},
   PPD_TESTS: [],
   PPD_LOG_LEVEL_NESTED: 0,
   PPD_LOG_LEVEL_TYPE: 'raw',
+  PPD_LOG_SCREENSHOT: false,
+  PPD_LOG_FULLPAGE: false,
 };
 
 const argsModify = {
@@ -34,6 +36,8 @@ const argsModify = {
   PPD_TESTS: ['suu'],
   PPD_LOG_LEVEL_NESTED: 10,
   PPD_LOG_LEVEL_TYPE: 'info',
+  PPD_LOG_SCREENSHOT: true,
+  PPD_LOG_FULLPAGE: true,
 };
 
 function setArg(argName, argData) {
