@@ -10,7 +10,7 @@ const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
 const { merge, sleep, blankSocket } = require('./helpers');
-const { TestsContent } = require('./TestContent');
+const TestsContent = require('./TestContent');
 const { Arguments } = require('./Arguments');
 
 class Env {

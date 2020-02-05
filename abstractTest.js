@@ -6,7 +6,7 @@ const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
 const Log = require('./Log');
 const Environment = require('./env');
-const { TestsContent } = require('./TestContent');
+const TestsContent = require('./TestContent');
 
 const ALIASES = {
   bindData: ['bD', 'bd'],

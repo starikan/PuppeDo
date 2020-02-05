@@ -1,3 +1,7 @@
 const _ = require('lodash');
 
-test('TestContent', () => {});
+const TestsContent = require('./TestContent');
+
+describe('TestContent', () => {
+  test('Init', () => {});
+});

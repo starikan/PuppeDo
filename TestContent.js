@@ -112,6 +112,4 @@ ${dubNames.join('\n')}`,
   }
 }
 
-module.exports = {
-  TestsContent,
-};
+module.exports = TestsContent;
