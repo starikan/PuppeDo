@@ -122,7 +122,7 @@ class Log {
 
     if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error' && !extendInfo) {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
-      const tail = `[${breadcrumbs.join(' -> ')}]`;
+      const tail = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
         [head, level == 'error' ? 'error' : 'sane'],
         [tail, 'info'],
