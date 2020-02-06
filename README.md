@@ -174,6 +174,8 @@ Arguments applying order. From minor to major:
   * PPD_LOG_LEVEL_TYPE
   * PPD_LOG_SCREENSHOT
   * PPD_LOG_FULLPAGE
+
+1. main() -> run()
 <!-- # Editors Environment
 
 ## VSCode

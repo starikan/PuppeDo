@@ -104,7 +104,7 @@ class Log {
     }
   }
 
-  makeLog(level, levelIndent, text, now, funcFile, testFile) {
+  makeLog(level, levelIndent, text, now, funcFile, testFile, extendInfo) {
     const { PPD_LOG_EXTEND } = new Arguments();
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
@@ -112,12 +112,15 @@ class Log {
 
     const stringsLog = [
       [
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
+        [
+          `${extendInfo ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
+          level == 'error' ? 'error' : 'sane',
+        ],
         [text, level],
       ],
     ];
 
-    if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error') {
+    if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error' && !extendInfo) {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
@@ -201,7 +204,7 @@ class Log {
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
       const now = dayjs();
-      const logTexts = this.makeLog(level, levelIndent, text, now, funcFile, testFile);
+      const logTexts = this.makeLog(level, levelIndent, text, now, funcFile, testFile, extendInfo);
 
       // STDOUT
       if (stdOut || level === 'error') {

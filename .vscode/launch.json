@@ -15,7 +15,7 @@
       "request": "launch",
       "name": "PuppeDo_ENV",
       "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./index').main()"],
+      "args": ["-e", "require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
         "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
@@ -30,7 +30,7 @@
       "request": "launch",
       "name": "PuppeDo_ENV_error",
       "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./index').main()"],
+      "args": ["-e", "require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
         "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
@@ -48,7 +48,7 @@
       "cwd": "${workspaceFolder}",
       "args": [
         "-e",
-        "require('./index').main()",
+        "require('./index').run()",
         "PPD_ROOT=tests",
         "PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms",
         "PPD_ENVS=mainEnv",

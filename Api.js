@@ -8,7 +8,7 @@ const { Blocker } = require('./Blocker');
 const Environment = require('./env');
 const Log = require('./Log');
 
-const main = async (args = {}) => {
+const run = async (args = {}) => {
   let envsId, envs, log;
   try {
     const startTime = new Date();
@@ -77,7 +77,7 @@ const main = async (args = {}) => {
       process.exit(1);
     }
   } catch (error) {
-    error.message += ` || error in 'main'`;
+    error.message += ` || error in 'run'`;
     if (String(error).startsWith('SyntaxError')) {
       error.debug = true;
       error.type = 'SyntaxError';
@@ -87,5 +87,5 @@ const main = async (args = {}) => {
 };
 
 module.exports = {
-  main,
+  run,
 };

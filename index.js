@@ -1,4 +1,4 @@
-const { main } = require('./Api');
+const { run } = require('./Api');
 const { errorHandler } = require('./Error');
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
@@ -12,10 +12,10 @@ process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
 
 if (!module.parent) {
-  main();
+  run();
 } else {
   module.exports = {
-    main,
+    run,
     getFullDepthJSON,
     getTest,
     TestsContent,
