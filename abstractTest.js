@@ -9,11 +9,11 @@ const Environment = require('./env');
 const TestsContent = require('./TestContent');
 
 const ALIASES = {
-  bindData: ['bD', 'bd'],
-  bindSelectors: ['bindSelector', 'bS', 'bs'],
+  bindData: ['bD', 'bd', '➡️📋'],
+  bindSelectors: ['bindSelector', 'bS', 'bs', '➡️☸️'],
   bindResults: ['bindResult', 'bR', 'br', 'result', 'r'],
   selectors: ['selector', 's'],
-  data: ['d'],
+  data: ['d', '📋'],
   options: ['option', 'opt', 'o'],
   selectorsFunction: ['selectorFunction', 'sF', 'sf'],
   dataFunction: ['dF', 'df'],
