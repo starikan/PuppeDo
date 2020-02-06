@@ -16,7 +16,7 @@ class TestsContent extends Singleton {
     if (reInit || !this.allData) {
       this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
       this.rootFolder = rootFolder || args.PPD_ROOT || process.cwd();
-      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL || [];
+      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
       this.setRootFolder(this.rootFolder);
       this.setAdditionalFolders(this.additionalFolders);
       this.allData = this.getAllData();
@@ -76,6 +76,9 @@ ${dubNames.join('\n')}`,
 
       let paths = [];
       for (let i = 0; i < folders.length; i++) {
+        if (!fs.existsSync(folders[i])) {
+          continue;
+        }
         const pathsFolder = walkSync(folders[i])
           .filter(v => !this.ignorePaths.filter(g => v.startsWith(g)).length)
           .map(v => path.join(folders[i], v));
