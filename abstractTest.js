@@ -325,6 +325,8 @@ class Test {
           'options',
           'allowResults',
           'bindResults',
+          'bindSelectors',
+          'bindData',
           'levelIndent',
           'repeat',
           'stepId',

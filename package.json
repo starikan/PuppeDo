@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "array-flat-polyfill": "1.0.1",
-    "dayjs": "1.8.19",
+    "dayjs": "1.8.20",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
@@ -41,7 +41,7 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.8",
+    "@puppedo/atoms": "2.0.10",
     "jest": "^25.1.0"
   }
 }
