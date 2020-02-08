@@ -167,7 +167,7 @@ class Log {
     if (_.isArray(texts)) {
       textsJoin = texts.map(text => text.map(log => log[0] || '').join('')).join('\n');
     } else {
-      textsJoin = texts;
+      textsJoin = texts.toString();
     }
 
     fs.appendFileSync(path.join(folder, fileName), textsJoin + '\n');

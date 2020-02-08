@@ -1,9 +1,22 @@
+const fs = require('fs');
+const path = require('path');
+
 const _ = require('lodash');
 const dayjs = require('dayjs');
-// const jest = require('jest');
+const walkSync = require('walk-sync');
 
 const Log = require('./Log');
 const { Arguments } = require('./Arguments');
+
+const clearFiles = fileName => {
+  const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
+  if (fs.existsSync(path.join(folder, fileName))) {
+    fs.unlinkSync(path.join(folder, fileName));
+  }
+  if (fs.existsSync(path.join(folderLatest, fileName))) {
+    fs.unlinkSync(path.join(folderLatest, fileName));
+  }
+};
 
 describe('Log', () => {
   let logger;
@@ -32,6 +45,60 @@ describe('Log', () => {
     console.log = jest.fn();
     logger.consoleLog([[['info ', 'sane'], ['text']]]);
     expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+  });
+
+  it('fileLog', () => {
+    const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder);
+    }
+    if (!fs.existsSync(folderLatest)) {
+      fs.mkdirSync(folderLatest);
+    }
+
+    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+    logger.envs.output = { folder };
+    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+    logger.envs.output = { folderLatest };
+    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+
+    logger.envs.output = { folder, folderLatest };
+
+    clearFiles('output.log');
+    logger.fileLog([
+      [
+        ['info ', 'sane'],
+        ['text', 'info'],
+      ],
+    ]);
+    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('info text\n');
+    expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
+
+    clearFiles('output_another.log');
+    logger.fileLog(
+      [
+        [
+          ['info ', 'sane'],
+          ['text', 'info'],
+        ],
+      ],
+      'output_another.log',
+    );
+    expect(fs.readFileSync(path.join(folder, 'output_another.log')).toString()).toBe('info text\n');
+    expect(fs.readFileSync(path.join(folderLatest, 'output_another.log')).toString()).toBe('info text\n');
+
+    clearFiles('output.log');
+    logger.fileLog('foo');
+    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');
+
+    clearFiles('output.log');
+    logger.fileLog( [
+      [
+        [],
+        ['text', 'info'],
+      ],
+    ],);
+    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
   });
 
   test('bindData', () => {

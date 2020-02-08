@@ -12,3 +12,4 @@ settings
 yarn.lock
 /target
 /coverage
+/.temp
