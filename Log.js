@@ -21,7 +21,9 @@ class Log {
   }
 
   bindData(data = {}) {
-    this.binded = { ...this.binded, ...data };
+    if (_.isObject(data)) {
+      this.binded = { ...this.binded, ...data };
+    }
   }
 
   checkLevel(level) {
@@ -104,7 +106,15 @@ class Log {
     }
   }
 
-  makeLog(level, levelIndent, text, now, funcFile, testFile, extendInfo) {
+  makeLog({
+    level = 'sane',
+    levelIndent = 0,
+    text = '',
+    now = dayjs(),
+    funcFile = null,
+    testFile = null,
+    extendInfo = false,
+  } = {}) {
     const { PPD_LOG_EXTEND } = new Arguments();
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
@@ -113,8 +123,8 @@ class Log {
     const stringsLog = [
       [
         [
-          `${extendInfo ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
-          level == 'error' ? 'error' : 'sane',
+          `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
+          level === 'error' ? 'error' : 'sane',
         ],
         [text, level],
       ],
@@ -141,8 +151,8 @@ class Log {
   }
 
   consoleLog(entries = []) {
-    entries.forEach(entrie => {
-      const line = entrie.map(part => paintString(part[0], part[1] || 'white')).join('');
+    entries.forEach(entry => {
+      const line = entry.map(part => paintString(part[0], part[1] || 'white')).join('');
       console.log(line);
     });
   }
@@ -204,7 +214,7 @@ class Log {
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
       const now = dayjs();
-      const logTexts = this.makeLog(level, levelIndent, text, now, funcFile, testFile, extendInfo);
+      const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo });
 
       // STDOUT
       if (stdOut || level === 'error') {
