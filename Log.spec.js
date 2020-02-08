@@ -47,58 +47,65 @@ describe('Log', () => {
     expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
   });
 
-  it('fileLog', () => {
+  describe('Write log into files', () => {
     const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
-    if (!fs.existsSync(folder)) {
-      fs.mkdirSync(folder);
-    }
-    if (!fs.existsSync(folderLatest)) {
-      fs.mkdirSync(folderLatest);
-    }
 
-    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
-    logger.envs.output = { folder };
-    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
-    logger.envs.output = { folderLatest };
-    expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+    beforeAll(() => {
+      if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+      }
+      if (!fs.existsSync(folderLatest)) {
+        fs.mkdirSync(folderLatest);
+      }
+    });
 
-    logger.envs.output = { folder, folderLatest };
+    test('Should thrown error if no folder to output', () => {
+      expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+      logger.envs.output = { folder };
+      expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+      logger.envs.output = { folderLatest };
+      expect(() => logger.fileLog()).toThrow({ message: 'There is no output folder' });
+    });
+    test('Simple output to default file', () => {
+      logger.envs.output = { folder, folderLatest };
 
-    clearFiles('output.log');
-    logger.fileLog([
-      [
-        ['info ', 'sane'],
-        ['text', 'info'],
-      ],
-    ]);
-    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('info text\n');
-    expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
-
-    clearFiles('output_another.log');
-    logger.fileLog(
-      [
+      clearFiles('output.log');
+      logger.fileLog([
         [
           ['info ', 'sane'],
           ['text', 'info'],
         ],
-      ],
-      'output_another.log',
-    );
-    expect(fs.readFileSync(path.join(folder, 'output_another.log')).toString()).toBe('info text\n');
-    expect(fs.readFileSync(path.join(folderLatest, 'output_another.log')).toString()).toBe('info text\n');
+      ]);
+      expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('info text\n');
+      expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
+    });
+    test('Write to optional file', () => {
+      logger.envs.output = { folder, folderLatest };
 
-    clearFiles('output.log');
-    logger.fileLog('foo');
-    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');
+      clearFiles('output_another.log');
+      logger.fileLog(
+        [
+          [
+            ['info ', 'sane'],
+            ['text', 'info'],
+          ],
+        ],
+        'output_another.log',
+      );
+      expect(fs.readFileSync(path.join(folder, 'output_another.log')).toString()).toBe('info text\n');
+      expect(fs.readFileSync(path.join(folderLatest, 'output_another.log')).toString()).toBe('info text\n');
+    });
+    test('Not standart input', () => {
+      logger.envs.output = { folder, folderLatest };
 
-    clearFiles('output.log');
-    logger.fileLog( [
-      [
-        [],
-        ['text', 'info'],
-      ],
-    ],);
-    expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
+      clearFiles('output.log');
+      logger.fileLog('foo');
+      expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');
+
+      clearFiles('output.log');
+      logger.fileLog([[[], ['text', 'info']]]);
+      expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
+    });
   });
 
   test('bindData', () => {
