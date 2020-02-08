@@ -32,19 +32,34 @@ describe('Log', () => {
     expect(logger.binded).toBeDefined();
   });
 
-  it('consoleLog', () => {
-    console.log = jest.fn();
-    logger.consoleLog([
-      [
-        ['info ', 'sane'],
-        ['text', 'info'],
-      ],
-    ]);
-    expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
+  describe('Write into console', () => {
+    beforeEach(() => {
+      console.log = jest.fn();
+    });
 
-    console.log = jest.fn();
-    logger.consoleLog([[['info ', 'sane'], ['text']]]);
-    expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+    test('Console with colorization', () => {
+      logger.consoleLog([
+        [
+          ['info ', 'sane'],
+          ['text', 'info'],
+        ],
+      ]);
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
+    });
+
+    test('Console with default colorization', () => {
+      logger.consoleLog([[['info ', 'sane'], ['text']]]);
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+    });
+
+    test('Console multiline', () => {
+      logger.consoleLog([
+        [['info '], ['text']],
+        [['info '], ['text']],
+      ]);
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+    });
   });
 
   describe('Write log into files', () => {
