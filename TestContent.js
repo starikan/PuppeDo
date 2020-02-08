@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const _ = require('lodash');
 const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
@@ -18,13 +17,13 @@ class TestsContent extends Singleton {
       this.rootFolder = path.normalize(this.rootFolder);
 
       this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
-      if (_.isString(this.additionalFolders)) {
+      if (typeof this.additionalFolders === 'string') {
         this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
       }
       this.additionalFolders = this.additionalFolders.map(v => path.normalize(v));
 
       this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
-      if (_.isString(this.ignorePaths)) {
+      if (typeof this.ignorePaths === 'string') {
         this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
       }
       this.ignorePaths = this.ignorePaths.map(v => path.normalize(v));
@@ -40,34 +39,28 @@ class TestsContent extends Singleton {
       throw { message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` };
     }
 
-    const dubTests = _(tests)
-      .groupBy('name')
-      .filter(v => v.length > 1)
-      .flatten()
-      .value();
-    const dubNames = dubTests.reduce((s, v) => {
-      if (!s.includes(v.name)) {
-        s = [...s, v.name];
-      }
+    const dubs = tests.reduce((s, v) => {
+      s[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
       return s;
-    }, []);
-    const dubFiles = dubTests.reduce((s, v) => {
-      if (!s.includes(v.testFile)) {
-        s = [...s, v.testFile];
+    }, {});
+
+    if (Object.keys(dubs).length) {
+      let isThrow = false;
+      let message = `There is duplicates of '${key}':\n`;
+      for (let key in dubs) {
+        message += ` - Name: '${key}'.\n`;
+        if (dubs[key].length > 1) {
+          isThrow = true;
+        }
+        dubs[key].forEach(fileName => {
+          message += `    * '${fileName}'\n`;
+        });
       }
-      return s;
-    }, []);
-
-    if (dubNames.length || dubFiles.length) {
-      throw {
-        message: `
-There is duplicates of '${key}' in files:
-${dubFiles.join('\n')}
-
-Names is:
-${dubNames.join('\n')}`,
-      };
+      if (isThrow) {
+        throw { message };
+      }
     }
+    return true;
   }
 
   getAllData(force = false) {
