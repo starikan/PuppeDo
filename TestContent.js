@@ -44,21 +44,16 @@ class TestsContent extends Singleton {
       return s;
     }, {});
 
-    if (Object.keys(dubs).length) {
-      let isThrow = false;
+    const isThrow = Object.values(dubs).some(v => v.length > 1);
+
+    if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;
       for (let key in dubs) {
+        if (dubs[key].length === 1) continue;
         message += ` - Name: '${key}'.\n`;
-        if (dubs[key].length > 1) {
-          isThrow = true;
-        }
-        dubs[key].forEach(fileName => {
-          message += `    * '${fileName}'\n`;
-        });
+        message += dubs[key].map(v => `    * '${v}'\n`).join('');
       }
-      if (isThrow) {
-        throw { message };
-      }
+      throw { message };
     }
     return true;
   }

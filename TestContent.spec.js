@@ -116,6 +116,7 @@ describe('TestContent', () => {
     expect(() =>
       CD(
         [
+          { name: 'puu', testFile: 'lee' },
           { name: 'dee', testFile: 'bar' },
           { name: 'dee', testFile: 'tyy' },
         ],
