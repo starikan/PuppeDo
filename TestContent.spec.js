@@ -40,7 +40,22 @@ describe('TestContent', () => {
     expect(instance.additionalFolders).toEqual(['bar']);
 
     // Args run
-    allData = new TestsContent({rootFolder: 'tests', additionalFolders: ['goo'], ignorePaths: ['.git', 'node_modules', '.history', 'output', 'zoo']}, true);
+    new Arguments(
+      {
+        PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', 'foo'],
+        PPD_ROOT_ADDITIONAL: ['bar'],
+        PPD_ROOT: 'tests_dee',
+      },
+      true,
+    );
+    allData = new TestsContent(
+      {
+        rootFolder: 'tests',
+        additionalFolders: 'goo',
+        ignorePaths: ['.git', 'node_modules', '.history', 'output', 'zoo'],
+      },
+      true,
+    );
     instance = allData.__instance;
     expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'zoo']);
     expect(instance.rootFolder).toEqual(path.normalize('tests'));

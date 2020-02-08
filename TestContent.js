@@ -15,26 +15,15 @@ class TestsContent extends Singleton {
 
     if (reInit || !this.allData) {
       this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
-      this.rootFolder = rootFolder || args.PPD_ROOT || process.cwd();
+      this.rootFolder = rootFolder || args.PPD_ROOT;
       this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
-      this.setRootFolder(this.rootFolder);
-      this.setAdditionalFolders(this.additionalFolders);
+      this.rootFolder = path.normalize(this.rootFolder);
+      if (_.isString(this.additionalFolders)) {
+        this.additionalFolders = [this.additionalFolders];
+      }
       this.allData = this.getAllData();
     }
     return this.allData;
-  }
-
-  setRootFolder(rootFolder) {
-    this.rootFolder = rootFolder || this.rootFolder;
-    this.rootFolder = path.normalize(this.rootFolder);
-  }
-
-  setAdditionalFolders(additionalFolders) {
-    this.additionalFolders = additionalFolders || this.additionalFolders;
-
-    if (_.isString(this.additionalFolders)) {
-      this.additionalFolders = [this.additionalFolders];
-    }
   }
 
   checkDuplicates(tests, key) {
