@@ -152,7 +152,7 @@ class Log {
 
   consoleLog(entries = []) {
     entries.forEach(entry => {
-      const line = entry.map(part => paintString(part[0], part[1] || 'white')).join('');
+      const line = entry.map(part => paintString(part[0], part[1] || 'sane')).join('');
       console.log(line);
     });
   }
@@ -170,7 +170,6 @@ class Log {
       textsJoin = texts;
     }
 
-    // debugger;
     fs.appendFileSync(path.join(folder, fileName), textsJoin + '\n');
     fs.appendFileSync(path.join(folderLatest, fileName), textsJoin + '\n');
   }
@@ -191,7 +190,7 @@ class Log {
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
     extendInfo = false,
-  }) {
+  } = {}) {
     const {
       PPD_DEBUG_MODE,
       PPD_LOG_DISABLED,

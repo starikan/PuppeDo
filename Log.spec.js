@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
+// const jest = require('jest');
 
 const Log = require('./Log');
 const { Arguments } = require('./Arguments');
@@ -16,6 +17,21 @@ describe('Log', () => {
     expect(logger.socket).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.binded).toBeDefined();
+  });
+
+  it('consoleLog', () => {
+    console.log = jest.fn();
+    logger.consoleLog([
+      [
+        ['info ', 'sane'],
+        ['text', 'info'],
+      ],
+    ]);
+    expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
+
+    console.log = jest.fn();
+    logger.consoleLog([[['info ', 'sane'], ['text']]]);
+    expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
   });
 
   test('bindData', () => {
