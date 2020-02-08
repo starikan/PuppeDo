@@ -25,9 +25,6 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
     testName = Environment({ envsId }).envs.get('current.test');
   }
   const allTests = new TestsContent();
-  if (!allTests) {
-    throw { message: 'No tests content. Init it first with "TestsContent" class' };
-  }
 
   const testJSON = _.cloneDeep(allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)));
   if (!testJSON) {

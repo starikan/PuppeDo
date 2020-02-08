@@ -68,7 +68,7 @@ class Log {
       const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
       const name = `${now}.png`;
 
-      // TODO: 2020-02-02 S.Starodubov вынести это в функцию
+      // TODO: 2020-02-02 S.Starodubov refactor this into function
       if (!this.envs.get('output.folder') || !this.envs.get('output.folderLatest')) {
         console.log('There is no output folder for screenshot');
         return;
@@ -94,7 +94,7 @@ class Log {
         // Timeout after screenshot
         await sleep(25);
 
-        // TODO: 2020-02-02 S.Starodubov сделать запись в логе что сделан скриншот
+        // TODO: 2020-02-02 S.Starodubov log that screenshot is done
         return name;
       } else {
         return false;
@@ -267,7 +267,7 @@ class Log {
       const logEntry = {
         text,
         time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
-        // TODO: 2020-02-02 S.Starodubov разобраться с этими двумя, они нужны для хтмлки
+        // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
         dataEnvsGlobal: level == 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
         testStruct: PPD_DEBUG_MODE || level == 'env' ? testStruct : null,
