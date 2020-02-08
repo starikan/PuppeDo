@@ -14,13 +14,21 @@ class TestsContent extends Singleton {
     const args = new Arguments();
 
     if (reInit || !this.allData) {
-      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
       this.rootFolder = rootFolder || args.PPD_ROOT;
-      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
       this.rootFolder = path.normalize(this.rootFolder);
+
+      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
       if (_.isString(this.additionalFolders)) {
-        this.additionalFolders = [this.additionalFolders];
+        this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
       }
+      this.additionalFolders = this.additionalFolders.map(v => path.normalize(v));
+
+      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
+      if (_.isString(this.ignorePaths)) {
+        this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
+      }
+      this.ignorePaths = this.ignorePaths.map(v => path.normalize(v));
+
       this.allData = this.getAllData();
     }
     return this.allData;
@@ -73,15 +81,13 @@ ${dubNames.join('\n')}`,
         if (!fs.existsSync(folders[i])) {
           continue;
         }
-        const pathsFolder = walkSync(folders[i])
-          .filter(v => !this.ignorePaths.filter(g => v.startsWith(g)).length)
+        const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
+          .filter(v => extensions.includes(path.parse(v).ext))
           .map(v => path.join(folders[i], v));
         paths = [...paths, ...pathsFolder];
       }
 
-      const allFiles = _.filter(paths, v => extensions.includes(path.parse(v).ext));
-
-      allFiles.forEach(filePath => {
+      paths.forEach(filePath => {
         try {
           const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           for (let v of full) {
@@ -89,7 +95,7 @@ ${dubNames.join('\n')}`,
             allContent.push(v);
           }
         } catch (e) {
-          throw e;
+          console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check in on https://yamlchecker.com/`);
         }
       });
 
@@ -99,7 +105,7 @@ ${dubNames.join('\n')}`,
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors, __instance: this };
+      this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
       for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
         this.checkDuplicates(this.allData[key], key);

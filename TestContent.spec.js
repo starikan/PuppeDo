@@ -10,16 +10,6 @@ describe('TestContent', () => {
     // Raw run
     let allData = new TestsContent();
     let instance = allData.__instance;
-    expect(allData).toBeDefined();
-    expect(allData.allFiles).toBeDefined();
-    expect(allData.allContent).toBeDefined();
-    expect(allData.atoms).toBeDefined();
-    expect(allData.tests).toBeDefined();
-    expect(allData.envs).toBeDefined();
-    expect(allData.data).toBeDefined();
-    expect(allData.selectors).toBeDefined();
-    expect(allData.__instance).toBeDefined();
-
     expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output']);
     expect(instance.rootFolder).toEqual(process.cwd());
     expect(instance.additionalFolders).toEqual([]);
@@ -52,7 +42,7 @@ describe('TestContent', () => {
       {
         rootFolder: 'tests',
         additionalFolders: 'goo',
-        ignorePaths: ['.git', 'node_modules', '.history', 'output', 'zoo'],
+        ignorePaths: '.git,node_modules , .history    , output,zoo',
       },
       true,
     );
@@ -67,5 +57,32 @@ describe('TestContent', () => {
     const allData2 = new TestsContent();
     expect(allData).toBeDefined();
     expect(allData).toEqual(allData2);
+  });
+
+  test('getAllData', () => {
+    let allData = new TestsContent();
+    instance = allData.__instance;
+    expect(allData).toBeDefined();
+    expect(allData.allFiles).toBeDefined();
+    expect(allData.allContent).toBeDefined();
+    expect(allData.atoms).toBeDefined();
+    expect(allData.tests).toBeDefined();
+    expect(allData.envs).toBeDefined();
+    expect(allData.data).toBeDefined();
+    expect(allData.selectors).toBeDefined();
+    expect(allData.__instance).toBeDefined();
+
+    expect(instance.getAllData()).toEqual(allData);
+
+    instance.rootFolder = 'notExistFolder';
+    instance.additionalFolders = [];
+    allData = instance.getAllData(true);
+    expect(allData.allFiles).toEqual([]);
+    expect(allData.allContent).toEqual([]);
+    expect(allData.atoms).toEqual([]);
+    expect(allData.tests).toEqual([]);
+    expect(allData.envs).toEqual([]);
+    expect(allData.data).toEqual([]);
+    expect(allData.selectors).toEqual([]);
   });
 });
