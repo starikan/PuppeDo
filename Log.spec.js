@@ -1,9 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const _ = require('lodash');
 const dayjs = require('dayjs');
-const walkSync = require('walk-sync');
 
 const Log = require('./Log');
 const { Arguments } = require('./Arguments');
