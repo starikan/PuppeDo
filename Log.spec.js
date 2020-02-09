@@ -199,6 +199,39 @@ describe('Log', () => {
       ],
     ]);
 
+    expect(
+      logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now: now, extendInfo: true, screenshots: [] }),
+    ).toEqual([
+      [
+        [`                      |  `, 'sane'],
+        ['text', 'info'],
+      ],
+    ]);
+
+    expect(
+      logger.makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        now: now,
+        extendInfo: true,
+        screenshots: ['foo', 'bar'],
+      }),
+    ).toEqual([
+      [
+        [`                      |  `, 'sane'],
+        ['text', 'info'],
+      ],
+      [
+        ['                      |  ', 'sane'],
+        ['🖼 screenshot: [foo]', 'info'],
+      ],
+      [
+        ['                      |  ', 'sane'],
+        ['🖼 screenshot: [bar]', 'info'],
+      ],
+    ]);
+
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now: now })).toEqual([
       [

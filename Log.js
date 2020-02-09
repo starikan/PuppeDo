@@ -48,8 +48,8 @@ class Log {
 
     const { PPD_LOG_LEVEL_TYPE } = new Arguments();
 
-    const inputLevel = _.isNumber(level) ? level : _.get(levels, level, 0);
-    const limitLevel = _.get(levels, PPD_LOG_LEVEL_TYPE, 0);
+    const inputLevel = _.isNumber(level) ? level : levels[level] || 0;
+    const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
 
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
@@ -59,48 +59,75 @@ class Log {
     }
   }
 
-  async saveScreenshot({ selCSS = false, fullpage = false, element = false } = {}) {
+  getActivePage() {
+    let activeEnv = this.envs.getEnv();
+    let pageName = this.envs.get('current.page');
+    return _.get(activeEnv, `state.pages.${pageName}`);
+  }
+
+  getOutputsFolders() {
+    const { folder, folderLatest } = _.get(this.envs, 'output', {});
+    if (!folder || !folderLatest) {
+      throw { message: 'There is no output folder' };
+    }
+    return { folder, folderLatest };
+  }
+
+  async getScreenshots(selCSS, element, fullpage, extendInfo) {
+    if (extendInfo) {
+      return [];
+    }
+
+    let src;
+    const screenshots = [];
+
+    selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
+    for (let css in selCSS) {
+      src = await this.saveScreenshot({ selCSS: selCSS[css] });
+      src ? screenshots.push(src) : null;
+    }
+    src = element ? await this.saveScreenshot({ element }) : null;
+    src ? screenshots.push(src) : null;
+    src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
+    src ? screenshots.push(src) : null;
+    return screenshots;
+  }
+
+  copyScreenshotToLatest(name) {
+    const { folder, folderLatest } = this.getOutputsFolders();
+    const pathScreenshot = path.join(folder, name);
+    const pathScreenshotLatest = path.join(folderLatest, name);
+    fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
+  }
+
+  async saveScreenshot({ selectors = false, fullpage = false, element = false } = {}) {
     try {
-      // Active ENV log settings
-      let activeEnv = this.envs.getEnv();
-      let pageName = this.envs.get('current.page');
+      const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
+      const { folder } = this.getOutputsFolders();
+      const pathScreenshot = path.join(folder, name);
 
-      const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
-      const name = `${now}.png`;
-
-      // TODO: 2020-02-02 S.Starodubov refactor this into function
-      if (!this.envs.get('output.folder') || !this.envs.get('output.folderLatest')) {
-        console.log('There is no output folder for screenshot');
-        return;
+      if (selectors) {
+        const page = this.getActivePage();
+        const el = await page.$(selectors);
+        await el.screenshot({ path: pathScreenshot });
+      }
+      if (fullpage) {
+        const page = this.getActivePage();
+        await page.screenshot({ path: pathScreenshot, fullPage: true });
+      }
+      if (element && _.isObject(element) && !_.isEmpty(element)) {
+        await element.screenshot({ path: pathScreenshot });
       }
 
-      const pathScreenshot = path.join(this.envs.get('output.folder'), name);
-      const pathScreenshotLatest = path.join(this.envs.get('output.folderLatest'), name);
-
-      const page = _.get(activeEnv, `state.pages.${pageName}`);
-
-      if (_.isObject(page)) {
-        if (selCSS) {
-          const el = await page.$(selCSS);
-          await el.screenshot({ path: pathScreenshot });
-        }
-        if (element && _.isObject(element) && !_.isEmpty(element)) {
-          await element.screenshot({ path: pathScreenshot });
-        }
-        if (fullpage) {
-          await page.screenshot({ path: pathScreenshot, fullPage: true });
-        }
-        fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
-        // Timeout after screenshot
+      if (fs.existsSync(pathScreenshot)) {
+        this.copyScreenshotToLatest(name);
         await sleep(25);
-
-        // TODO: 2020-02-02 S.Starodubov log that screenshot is done
         return name;
       } else {
         return false;
       }
     } catch (err) {
-      err.message += ` || saveScreenshot selCSS = ${selCSS}`;
+      err.message += ` || saveScreenshot selectors = ${selectors}`;
       err.socket = this.socket;
       throw err;
     }
@@ -114,6 +141,7 @@ class Log {
     funcFile = null,
     testFile = null,
     extendInfo = false,
+    screenshots = [],
   } = {}) {
     const { PPD_LOG_EXTEND } = new Arguments();
 
@@ -135,7 +163,7 @@ class Log {
       const tail = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
         [head, level == 'error' ? 'error' : 'sane'],
-        [tail, 'info'],
+        [tail, level == 'error' ? 'error' : 'info'],
       ]);
     }
 
@@ -146,6 +174,13 @@ class Log {
       testFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
       funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
     }
+
+    screenshots.forEach(v => {
+      stringsLog.push([
+        [`${' '.repeat(20)} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
+        [`🖼 screenshot: [${v}]`, level == 'error' ? 'error' : 'info'],
+      ]);
+    });
 
     return stringsLog;
   }
@@ -158,10 +193,7 @@ class Log {
   }
 
   fileLog(texts = [], fileName = 'output.log') {
-    const { folder, folderLatest } = _.get(this.envs, 'output', {});
-    if (!folder || !folderLatest) {
-      throw { message: 'There is no output folder' };
-    }
+    const { folder, folderLatest } = this.getOutputsFolders();
 
     let textsJoin = '';
     if (_.isArray(texts)) {
@@ -178,7 +210,6 @@ class Log {
     funcFile,
     testFile,
     text = '',
-    stdOut = true,
     selCSS = [],
     screenshot = null,
     fullpage = null,
@@ -207,46 +238,30 @@ class Log {
       return;
     }
 
+    // NO LOG FILES ONLY STDOUT
+    if (PPD_LOG_DISABLED && level !== 'error') {
+      return;
+    }
+
     try {
+      // SCREENSHOT ON ERROR ONLY ONES
       // TODO: 2020-02-05 S.Starodubov get values from env.yaml
       screenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
       fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
-      const now = dayjs();
-      const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo });
-
-      // STDOUT
-      if (stdOut || level === 'error') {
-        this.consoleLog(logTexts);
-      }
-
-      // NO LOG FILES ONLY STDOUT
-      if (PPD_LOG_DISABLED && level !== 'error') {
-        return;
-      }
-
-      // EXPORT TEXT LOG
-      this.fileLog(logTexts, 'output.log');
-
-      // SCREENSHOT ON ERROR ONLY ONES
       if (level === 'error' && levelIndent === 0) {
         [screenshot, fullpage] = [true, true];
       }
+      const screenshots = screenshot ? await this.getScreenshots(selCSS, element, fullpage, extendInfo) : [];
 
-      // SCRENSHOTS
-      const screenshots = [];
-      if (screenshot) {
-        let src;
-        selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
-        for (let css in selCSS) {
-          src = await this.saveScreenshot({ selCSS: selCSS[css] });
-          src ? screenshots.push(src) : null;
-        }
-        src = element ? await this.saveScreenshot({ element }) : null;
-        src ? screenshots.push(src) : null;
-        src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
-        src ? screenshots.push(src) : null;
-      }
+      const now = dayjs();
+      const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
+
+      // STDOUT
+      this.consoleLog(logTexts);
+
+      // EXPORT TEXT LOG
+      this.fileLog(logTexts, 'output.log');
 
       // ENVS TO LOG
       let dataEnvs = null;

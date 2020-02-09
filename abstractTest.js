@@ -10,13 +10,13 @@ const TestsContent = require('./TestContent');
 
 const ALIASES = {
   bindData: ['bD', 'bd', '📌📋'],
-  bindSelectors: ['bindSelector', 'bS', 'bs', '📌☸️'],
+  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
   bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
-  selectors: ['selector', 's', '☸️'],
+  selectors: ['selector', 's', '💠'],
   data: ['d', '📋'],
   options: ['option', 'opt', 'o', '⚙️'],
   selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑📋'],
-  dataFunction: ['dF', 'df', '🔑☸️'],
+  dataFunction: ['dF', 'df', '🔑💠'],
   resultFunction: ['rF', 'rf', '🔑↩️'],
 };
 
