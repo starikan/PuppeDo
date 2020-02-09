@@ -346,4 +346,17 @@ describe('Log', () => {
       // expect(await logger.getScreenshots('', {}, true)).toEqual([]);
     });
   });
+
+  describe('log', () => {
+    test('log', async () => {
+      new Arguments({PPD_LOG_LEVEL_TYPE: 'info'}, true)
+      expect(await logger.log({level: 'raw'})).toBeFalsy();
+
+      new Arguments({PPD_LOG_LEVEL_NESTED: 1}, true)
+      expect(await logger.log({levelIndent: 2})).toBeFalsy();
+
+      new Arguments({PPD_LOG_DISABLED: true}, true)
+      expect(await logger.log({})).toBeFalsy();
+    });
+  });
 });
