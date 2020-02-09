@@ -4,8 +4,8 @@ const _ = require('lodash');
 
 const { Blocker } = require('./Blocker');
 const { blankSocket } = require('./helpers');
-
 const abstractTest = require('./abstractTest');
+
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
 const resolveJS = (testJson, funcFile) => {

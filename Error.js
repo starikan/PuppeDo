@@ -1,8 +1,7 @@
-const _ = require('lodash');
 const { paintString } = require('./helpers');
 
 const errorHandler = async error => {
-  error.messageObj = _.get(error, 'message').split(' || ');
+  error.messageObj = (error['message'] || '').split(' || ');
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }

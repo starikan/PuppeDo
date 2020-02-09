@@ -66,6 +66,9 @@ describe('Log', () => {
     const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
 
     beforeAll(() => {
+      if (!fs.existsSync('.temp')) {
+        fs.mkdirSync('.temp');
+      }
       if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder);
       }
