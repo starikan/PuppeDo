@@ -73,23 +73,15 @@ class Log {
     return { folder, folderLatest };
   }
 
-  async getScreenshots(selCSS, element, fullpage, extendInfo) {
+  async getScreenshots(element, fullPage = false, extendInfo = false) {
     if (extendInfo) {
       return [];
     }
 
-    let src;
-    const screenshots = [];
+    const screenshots = [await this.saveScreenshot({ element }), await this.saveScreenshot({ fullPage })].filter(
+      v => v,
+    );
 
-    selCSS = selCSS && !_.isArray(selCSS) ? [selCSS.toString()] : selCSS || [];
-    for (let css in selCSS) {
-      src = await this.saveScreenshot({ selCSS: selCSS[css] });
-      src ? screenshots.push(src) : null;
-    }
-    src = element ? await this.saveScreenshot({ element }) : null;
-    src ? screenshots.push(src) : null;
-    src = fullpage ? await this.saveScreenshot({ fullpage }) : null;
-    src ? screenshots.push(src) : null;
     return screenshots;
   }
 
@@ -100,21 +92,17 @@ class Log {
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot({ selectors = false, fullpage = false, element = false } = {}) {
+  async saveScreenshot({ fullPage = false, element = false } = {}) {
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
       const { folder } = this.getOutputsFolders();
       const pathScreenshot = path.join(folder, name);
 
-      if (selectors) {
+      if (fullPage) {
         const page = this.getActivePage();
-        const el = await page.$(selectors);
-        await el.screenshot({ path: pathScreenshot });
+        await page.screenshot({ path: pathScreenshot, fullPage });
       }
-      if (fullpage) {
-        const page = this.getActivePage();
-        await page.screenshot({ path: pathScreenshot, fullPage: true });
-      }
+
       if (element && _.isObject(element) && !_.isEmpty(element)) {
         await element.screenshot({ path: pathScreenshot });
       }
@@ -127,7 +115,7 @@ class Log {
         return false;
       }
     } catch (err) {
-      err.message += ` || saveScreenshot selectors = ${selectors}`;
+      err.message += ` || saveScreenshot selectors`;
       err.socket = this.socket;
       throw err;
     }
@@ -210,7 +198,6 @@ class Log {
     funcFile,
     testFile,
     text = '',
-    selCSS = [],
     screenshot = null,
     fullpage = null,
     level = 'info',
@@ -252,7 +239,7 @@ class Log {
       if (level === 'error' && levelIndent === 0) {
         [screenshot, fullpage] = [true, true];
       }
-      const screenshots = screenshot ? await this.getScreenshots(selCSS, element, fullpage, extendInfo) : [];
+      const screenshots = screenshot ? await this.getScreenshots(element, fullpage, extendInfo) : [];
 
       const now = dayjs();
       const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
