@@ -347,14 +347,46 @@ describe('Log', () => {
 
   describe('log', () => {
     test('log', async () => {
-      new Arguments({PPD_LOG_LEVEL_TYPE: 'info'}, true)
-      expect(await logger.log({level: 'raw'})).toBeFalsy();
+      new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
+      expect(await logger.log({ level: 'raw' })).toBeFalsy();
 
-      new Arguments({PPD_LOG_LEVEL_NESTED: 1}, true)
-      expect(await logger.log({levelIndent: 2})).toBeFalsy();
+      new Arguments({ PPD_LOG_LEVEL_NESTED: 1 }, true);
+      expect(await logger.log({ levelIndent: 2 })).toBeFalsy();
 
-      new Arguments({PPD_LOG_DISABLED: true}, true)
+      new Arguments({ PPD_LOG_DISABLED: true }, true);
       expect(await logger.log({})).toBeFalsy();
     });
+  });
+
+  describe('saveScreenshot', () => {
+    // let fs;
+
+    beforeEach(() => {
+      // fs = jest.genMockFromModule('fs');
+      logger.envs = {};
+      logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
+      logger.envs.getActivePage.screenshot = jest.fn();
+      logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
+    });
+
+    test('should getOutputsFolders function to be called', async () => {
+      await logger.saveScreenshot();
+      expect(logger.envs.getOutputsFolders).toHaveBeenCalled();
+    });
+
+    test('should return false with no arguments', async () => {
+      expect(await logger.saveScreenshot()).toBe(false);
+    });
+
+    test('should getActivePage function to be called', async () => {
+      await logger.saveScreenshot({ fullPage: true });
+      // fs.existsSync = jest.fn(() => true);
+      expect(logger.envs.getActivePage).toHaveBeenCalled();
+    });
+
+    // test('should page.screenshot function to be called', async () => {
+    //   await logger.saveScreenshot({fullPage: true});
+    //   expect(logger.envs.getActivePage.screenshot).toHaveBeenCalled();
+    // });
   });
 });
