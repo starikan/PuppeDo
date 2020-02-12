@@ -59,20 +59,6 @@ class Log {
     }
   }
 
-  getActivePage() {
-    let activeEnv = this.envs.getEnv();
-    let pageName = this.envs.get('current.page');
-    return _.get(activeEnv, `state.pages.${pageName}`);
-  }
-
-  getOutputsFolders() {
-    const { folder, folderLatest } = _.get(this.envs, 'output', {});
-    if (!folder || !folderLatest) {
-      throw { message: 'There is no output folder' };
-    }
-    return { folder, folderLatest };
-  }
-
   async getScreenshots(element, fullPage = false, extendInfo = false) {
     if (extendInfo) {
       return [];
@@ -86,7 +72,7 @@ class Log {
   }
 
   copyScreenshotToLatest(name) {
-    const { folder, folderLatest } = this.getOutputsFolders();
+    const { folder, folderLatest } = this.envs.getOutputsFolders();
     const pathScreenshot = path.join(folder, name);
     const pathScreenshotLatest = path.join(folderLatest, name);
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
@@ -95,11 +81,11 @@ class Log {
   async saveScreenshot({ fullPage = false, element = false } = {}) {
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
-      const { folder } = this.getOutputsFolders();
+      const { folder } = this.envs.getOutputsFolders();
       const pathScreenshot = path.join(folder, name);
 
       if (fullPage) {
-        const page = this.getActivePage();
+        const page = this.envs.getActivePage();
         await page.screenshot({ path: pathScreenshot, fullPage });
       }
 
@@ -181,7 +167,7 @@ class Log {
   }
 
   fileLog(texts = [], fileName = 'output.log') {
-    const { folder, folderLatest } = this.getOutputsFolders();
+    const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
     if (_.isArray(texts)) {

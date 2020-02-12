@@ -107,6 +107,20 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
+  getActivePage() {
+    const activeEnv = this.getEnv();
+    const pageName = _.get(this, 'current.page');
+    return _.get(activeEnv, `state.pages.${pageName}`);
+  }
+
+  getOutputsFolders() {
+    const { folder, folderLatest } = _.get(this, 'output', {});
+    if (!folder || !folderLatest) {
+      throw { message: 'There is no output folder' };
+    }
+    return { folder, folderLatest };
+  }
+
   initOutput(testName = 'test') {
     const { PPD_OUTPUT: output } = new Arguments();
     const currentTest = this.get('current.test') || testName;
