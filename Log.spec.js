@@ -322,29 +322,6 @@ describe('Log', () => {
     ]);
   });
 
-  describe('getScreenshots', () => {
-    test('getScreenshots', async () => {
-      // logger.getOutputsFolders = () => ({
-      //   folder: path.join('.temp', 'folder'),
-      //   folderLatest: path.join('.temp', 'folderLatest'),
-      // });
-      // logger.getActivePage = () => ({
-      //   page: {
-      //     $: () => ({ screenshot: () => {} }),
-      //     screenshot: () => {},
-      //   },
-      // });
-
-      // const element = {
-      //   screenshot: () => {},
-      // };
-
-      // debugger
-      expect(await logger.getScreenshots({}, false, true)).toEqual([]);
-      // expect(await logger.getScreenshots('', {}, true)).toEqual([]);
-    });
-  });
-
   describe('log', () => {
     test('log', async () => {
       new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
@@ -369,24 +346,45 @@ describe('Log', () => {
       logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
     });
 
-    test('should getOutputsFolders function to be called', async () => {
-      await logger.saveScreenshot();
-      expect(logger.envs.getOutputsFolders).toHaveBeenCalled();
-    });
+    // test('should getOutputsFolders function to be called', async () => {
+    //   await logger.screenshot.saveScreenshot();
+    //   expect(logger.envs.getOutputsFolders).toHaveBeenCalled();
+    // });
 
-    test('should return false with no arguments', async () => {
-      expect(await logger.saveScreenshot()).toBe(false);
-    });
+    // test('should return false with no arguments', async () => {
+    //   expect(await logger.screenshot.saveScreenshot()).toBe(false);
+    // });
 
-    test('should getActivePage function to be called', async () => {
-      await logger.saveScreenshot({ fullPage: true });
-      // fs.existsSync = jest.fn(() => true);
-      expect(logger.envs.getActivePage).toHaveBeenCalled();
-    });
+    // test('should getActivePage function to be called', async () => {
+    //   await logger.screenshot.saveScreenshot({ fullPage: true });
+    //   // fs.existsSync = jest.fn(() => true);
+    //   expect(logger.envs.getActivePage).toHaveBeenCalled();
+    // });
 
     // test('should page.screenshot function to be called', async () => {
     //   await logger.saveScreenshot({fullPage: true});
     //   expect(logger.envs.getActivePage.screenshot).toHaveBeenCalled();
     // });
+  });
+
+  describe('getScreenshots', () => {
+    test('getScreenshots', async () => {
+      // logger.getOutputsFolders = () => ({
+      //   folder: path.join('.temp', 'folder'),
+      //   folderLatest: path.join('.temp', 'folderLatest'),
+      // });
+      // logger.getActivePage = () => ({
+      //   page: {
+      //     $: () => ({ screenshot: () => {} }),
+      //     screenshot: () => {},
+      //   },
+      // });
+      // const element = {
+      //   screenshot: () => {},
+      // };
+      // debugger
+      // expect(await logger.getScreenshots({}, false, true)).toEqual([]);
+      // expect(await logger.getScreenshots('', {}, true)).toEqual([]);
+    });
   });
 });

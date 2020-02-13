@@ -11,13 +11,68 @@ const { sleep, paintString } = require('./helpers');
 const { Arguments } = require('./Arguments');
 const Environment = require('./env');
 
+class Screenshot {
+  constructor({ envsId } = {}) {
+    const { socket, envs } = Environment({ envsId });
+    this.envs = envs;
+    this.socket = socket;
+  }
+
+  async getScreenshots(element, fullPage = false, extendInfo = false) {
+    if (extendInfo) {
+      return [];
+    }
+    const elementScreenshot = await this.saveScreenshot({ element });
+    const fullPageScreenshot = await this.saveScreenshot({ fullPage });
+    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter(v => v);
+    return screenshotsExists;
+  }
+
+  copyScreenshotToLatest(name) {
+    const { folder, folderLatest } = this.envs.getOutputsFolders();
+    const pathScreenshot = path.join(folder, name);
+    const pathScreenshotLatest = path.join(folderLatest, name);
+    fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
+  }
+
+  async saveScreenshot({ fullPage = false, element = false } = {}) {
+    const { folder } = this.envs.getOutputsFolders();
+    try {
+      const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
+      const pathScreenshot = path.join(folder, name);
+
+      if (fullPage) {
+        const page = this.envs.getActivePage();
+        await page.screenshot({ path: pathScreenshot, fullPage });
+      }
+
+      if (element && _.isObject(element) && !_.isEmpty(element)) {
+        await element.screenshot({ path: pathScreenshot });
+      }
+
+      if (fs.existsSync(pathScreenshot)) {
+        this.copyScreenshotToLatest(name);
+        await sleep(25);
+        return name;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      err.message += ` || saveScreenshot selectors`;
+      err.socket = this.socket;
+      throw err;
+    }
+  }
+}
+
 class Log {
   constructor({ envsId } = {}) {
-    const { socket, envs, envsId: envsIdNew } = Environment({ envsId: envsId });
+    const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
     this.envsId = envsIdNew;
     this.envs = envs;
     this.socket = socket;
     this.binded = {};
+    this.screenshot = new Screenshot({ envsId });
   }
 
   bindData(data = {}) {
@@ -56,54 +111,6 @@ class Log {
       return levels[inputLevel];
     } else {
       return false;
-    }
-  }
-
-  async getScreenshots(element, fullPage = false, extendInfo = false) {
-    if (extendInfo) {
-      return [];
-    }
-
-    const screenshots = [await this.saveScreenshot({ element }), await this.saveScreenshot({ fullPage })].filter(
-      v => v,
-    );
-
-    return screenshots;
-  }
-
-  copyScreenshotToLatest(name) {
-    const { folder, folderLatest } = this.envs.getOutputsFolders();
-    const pathScreenshot = path.join(folder, name);
-    const pathScreenshotLatest = path.join(folderLatest, name);
-    fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
-  }
-
-  async saveScreenshot({ fullPage = false, element = false } = {}) {
-    try {
-      const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
-      const { folder } = this.envs.getOutputsFolders();
-      const pathScreenshot = path.join(folder, name);
-
-      if (fullPage) {
-        const page = this.envs.getActivePage();
-        await page.screenshot({ path: pathScreenshot, fullPage });
-      }
-
-      if (element && _.isObject(element) && !_.isEmpty(element)) {
-        await element.screenshot({ path: pathScreenshot });
-      }
-
-      if (fs.existsSync(pathScreenshot)) {
-        this.copyScreenshotToLatest(name);
-        await sleep(25);
-        return name;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      err.message += ` || saveScreenshot selectors`;
-      err.socket = this.socket;
-      throw err;
     }
   }
 
@@ -225,7 +232,7 @@ class Log {
       if (level === 'error' && levelIndent === 0) {
         [screenshot, fullpage] = [true, true];
       }
-      const screenshots = screenshot ? await this.getScreenshots(element, fullpage, extendInfo) : [];
+      const screenshots = screenshot ? await this.screenshot.getScreenshots(element, fullpage, extendInfo) : [];
 
       const now = dayjs();
       const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
@@ -282,4 +289,4 @@ class Log {
   }
 }
 
-module.exports = { Log };
+module.exports = { Log, Screenshot };

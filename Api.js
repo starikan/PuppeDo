@@ -28,11 +28,11 @@ const run = async (args = {}) => {
       const startTimeTest = new Date();
 
       ({ envsId, envs } = Environment({ envsId }));
-      const logger = new Log({ envsId });
-      log = logger.log.bind(logger);
-
       envs.initOutput(args.PPD_TESTS[i]);
       envs.set('current.test', args.PPD_TESTS[i]);
+
+      const logger = new Log({ envsId });
+      log = logger.log.bind(logger);
 
       if (i === 0) {
         await log({ level: 'timer', text: `Init time 🕝: ${initArgsTime} sec.` });
