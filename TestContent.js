@@ -1,68 +1,61 @@
 const path = require('path');
 const fs = require('fs');
 
-const _ = require('lodash');
 const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
-const Singleton = require('./singleton');
+const Singleton = require('./Singleton');
 const { Arguments } = require('./Arguments');
 
 class TestsContent extends Singleton {
-  constructor({ rootFolder, additionalFolders, ignorePaths } = {}) {
+  constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
     super();
     const args = new Arguments();
 
-    this.allData = this.allData || null;
-    this.ignorePaths = this.ignorePaths || ignorePaths || args.PPD_ROOT_IGNORE;
-    this.rootFolder = this.rootFolder || rootFolder || args.PPD_ROOT || process.cwd();
-    this.additionalFolders = this.additionalFolders || additionalFolders || args.PPD_ROOT_ADDITIONAL || [];
-    this.setRootFolder(rootFolder);
-    this.setAdditionalFolders(additionalFolders);
-  }
+    if (reInit || !this.allData) {
+      this.rootFolder = rootFolder || args.PPD_ROOT;
+      this.rootFolder = path.normalize(this.rootFolder);
 
-  setRootFolder(rootFolder) {
-    this.rootFolder = rootFolder || this.rootFolder;
-    this.rootFolder = path.normalize(this.rootFolder);
-  }
+      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
+      if (typeof this.additionalFolders === 'string') {
+        this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
+      }
+      this.additionalFolders = this.additionalFolders.map(v => path.normalize(v));
 
-  setAdditionalFolders(additionalFolders) {
-    this.additionalFolders = additionalFolders || this.additionalFolders;
+      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
+      if (typeof this.ignorePaths === 'string') {
+        this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
+      }
+      this.ignorePaths = this.ignorePaths.map(v => path.normalize(v));
 
-    if (_.isString(this.additionalFolders)) {
-      this.additionalFolders = [this.additionalFolders];
+      this.allData = this.getAllData();
     }
+    return this.allData;
   }
 
   checkDuplicates(tests, key) {
-    const dubTests = _(tests)
-      .groupBy('name')
-      .filter(v => v.length > 1)
-      .flatten()
-      .value();
-    const dubNames = dubTests.reduce((s, v) => {
-      if (!s.includes(v.name)) {
-        s = [...s, v.name];
-      }
-      return s;
-    }, []);
-    const dubFiles = dubTests.reduce((s, v) => {
-      if (!s.includes(v.testFile)) {
-        s = [...s, v.testFile];
-      }
-      return s;
-    }, []);
-
-    if (dubNames.length || dubFiles.length) {
-      throw {
-        message: `
-There is duplicates of '${key}' in files:
-${dubFiles.join('\n')}
-
-Names is:
-${dubNames.join('\n')}`,
-      };
+    const blankNames = tests.filter(v => !v.name).map(v => v.testFile);
+    if (blankNames.length) {
+      throw { message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` };
     }
+
+    const dubs = tests.reduce((s, v) => {
+      s[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
+      return s;
+    }, {});
+
+    const isThrow = Object.values(dubs).some(v => v.length > 1);
+
+    if (Object.keys(dubs).length && isThrow) {
+      let message = `There is duplicates of '${key}':\n`;
+      for (let key in dubs) {
+        if (dubs[key].length === 1) continue;
+        message += ` - Name: '${key}'.\n`;
+        message += dubs[key].map(v => `    * '${v}'\n`).join('');
+      }
+      throw { message };
+    }
+    return true;
   }
 
   getAllData(force = false) {
@@ -73,15 +66,16 @@ ${dubNames.join('\n')}`,
 
       let paths = [];
       for (let i = 0; i < folders.length; i++) {
-        const pathsFolder = walkSync(folders[i])
-          .filter(v => !this.ignorePaths.filter(g => v.startsWith(g)).length)
+        if (!fs.existsSync(folders[i])) {
+          continue;
+        }
+        const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
+          .filter(v => extensions.includes(path.parse(v).ext))
           .map(v => path.join(folders[i], v));
         paths = [...paths, ...pathsFolder];
       }
 
-      const allFiles = _.filter(paths, v => extensions.includes(path.parse(v).ext));
-
-      allFiles.forEach(filePath => {
+      paths.forEach(filePath => {
         try {
           const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           for (let v of full) {
@@ -89,7 +83,7 @@ ${dubNames.join('\n')}`,
             allContent.push(v);
           }
         } catch (e) {
-          throw e;
+          console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check in on https://yamlchecker.com/`);
         }
       });
 
@@ -99,7 +93,7 @@ ${dubNames.join('\n')}`,
       const data = allContent.filter(v => v.type === 'data' && v);
       const selectors = allContent.filter(v => v.type === 'selectors' && v);
 
-      this.allData = { allFiles, allContent, atoms, tests, envs, data, selectors };
+      this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
       for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
         this.checkDuplicates(this.allData[key], key);
@@ -112,6 +106,4 @@ ${dubNames.join('\n')}`,
   }
 }
 
-module.exports = {
-  TestsContent,
-};
+module.exports = TestsContent;

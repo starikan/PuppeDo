@@ -8,14 +8,17 @@ const argsDefault = {
   PPD_DISABLE_ENV_CHECK: false,
   PPD_ENVS: [],
   PPD_LOG_DISABLED: false,
-  PPD_LOG_TIMER: false,
+  PPD_LOG_EXTEND: false,
   PPD_OUTPUT: 'output',
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
   PPD_SELECTORS: {},
   PPD_TESTS: [],
-  PPD_LOG_LEVEL: 0,
+  PPD_LOG_LEVEL_NESTED: 0,
+  PPD_LOG_LEVEL_TYPE: 'raw',
+  PPD_LOG_SCREENSHOT: false,
+  PPD_LOG_FULLPAGE: false,
 };
 
 const argsModify = {
@@ -24,25 +27,24 @@ const argsModify = {
   PPD_DISABLE_ENV_CHECK: true,
   PPD_ENVS: ['hyy'],
   PPD_LOG_DISABLED: true,
-  PPD_LOG_TIMER: true,
+  PPD_LOG_EXTEND: true,
   PPD_OUTPUT: 'zee',
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: ['iii'],
   PPD_ROOT_IGNORE: ['dqq'],
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
-  PPD_LOG_LEVEL: 10,
+  PPD_LOG_LEVEL_NESTED: 10,
+  PPD_LOG_LEVEL_TYPE: 'info',
+  PPD_LOG_SCREENSHOT: true,
+  PPD_LOG_FULLPAGE: true,
 };
 
 function setArg(argName, argData) {
   // Reset Arguments
-  const env = {
-    PPD_TESTS: ['goo'],
-    PPD_ENVS: ['goo'],
-  };
-  new Arguments(env, true);
+  new Arguments({}, true);
 
-  const argMock = { ...env, [argName]: argData };
+  const argMock = { [argName]: argData };
   const argResult = _.get(new Arguments(argMock, true), argName);
 
   return [argData, argResult];
@@ -52,30 +54,13 @@ function errors(name, type) {
   return { message: `Invalid argument type '${name}', '${type}' required.` };
 }
 
-test('Arguments init Errors', () => {
-  expect(() => new Arguments()).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-  expect(() => new Arguments({ PPD_TESTS: 'test' }, true)).toThrowError({
-    message: 'There is no environments to run. Pass any test in PPD_ENVS argument',
-  });
-});
-
 test('Arguments is Singleton and Default args', () => {
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
   expect(new Arguments()).toEqual(argsDefault);
+  expect(new Arguments()).toEqual(argsDefault);
+  expect(new Arguments({ PPD_DEBUG_MODE: false }, true)).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
-  expect(() => new Arguments({}, true)).toThrowError({
-    message: 'There is no tests to run. Pass any test in PPD_TESTS argument',
-  });
-
   let argData, argResult;
 
   // Object
@@ -150,22 +135,22 @@ test('Arguments check', () => {
   expect(() => setArg('PPD_OUTPUT', 0)).toThrowError(errors('PPD_OUTPUT', 'string'));
 
   // Number
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 1);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 1);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', '0');
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '0');
   expect(argResult).toEqual(0);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', '1');
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '1');
   expect(argResult).toEqual(1);
-  expect(() => setArg('PPD_LOG_LEVEL', false)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', true)).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', {})).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', [])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', 'foo')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL', '')).toThrowError(errors('PPD_LOG_LEVEL', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', false)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', true)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', {})).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', [])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', 'foo')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', '')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
 
   [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
   expect(argData).toEqual(argResult);
@@ -173,7 +158,7 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_LOG_DISABLED', false);
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_LOG_TIMER', false);
+  [argData, argResult] = setArg('PPD_LOG_EXTEND', false);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ROOT', 'test');
@@ -185,7 +170,10 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_SELECTORS', { foo: 'bar' });
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_LOG_LEVEL', 0);
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
+  expect(argData).toEqual(argResult);
+
+  [argData, argResult] = setArg('PPD_LOG_LEVEL_TYPE', 'raw');
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_ENVS', ['test']);

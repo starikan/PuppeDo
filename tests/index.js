@@ -3,7 +3,7 @@ const ppd = require('../index');
 
 const run = async () => {
   // Test with direct run from JS
-  await ppd.main({
+  await ppd.run({
     PPD_ROOT: 'tests',
     PPD_DATA: {
       PPD_DATA: 'BAZ',
@@ -14,6 +14,8 @@ const run = async () => {
     PPD_ENVS: ['mainEnv'],
     PPD_TESTS: ['main', 'subTest'],
     PPD_DEBUG_MODE: true,
+    PPD_LOG_SCREENSHOT: true,
+    PPD_LOG_FULLPAGE: true,
   });
 };
 

@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const { TestsContent } = require('./TestContent');
+const TestsContent = require('./TestContent');
 const Environment = require('./env');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
@@ -24,10 +24,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   if (!testName) {
     testName = Environment({ envsId }).envs.get('current.test');
   }
-  const allTests = new TestsContent().getAllData();
-  if (!allTests) {
-    throw { message: 'No tests content. Init it first with "TestsContent" class' };
-  }
+  const allTests = new TestsContent();
 
   const testJSON = _.cloneDeep(allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)));
   if (!testJSON) {

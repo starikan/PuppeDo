@@ -150,9 +150,12 @@ PPD_SELECTORS | Object with selectors | `{}` | `Object`
 PPD_OUTPUT | Path to log folder | `output` | `String`
 PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
-PPD_LOG_TIMER | Log every atoms time for tuning and breadcrumbs for test | `false` | `Boolean`
-PPD_LOG_LEVEL | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
+PPD_LOG_EXTEND | Log every atoms time for tuning and breadcrumbs for test | `false` | `Boolean`
+PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
+PPD_LOG_LEVEL_TYPE | Log only type of log bellow this. `raw` - log all. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `raw` | `String`
 PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
+PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
+PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults
@@ -165,7 +168,14 @@ Arguments applying order. From minor to major:
 
 # RoadMap 2.0.0
 
-1. Rename 'PPD_LOG_TIMER' -> 'PPD_LOG_EXTEND' (+ atoms-core)
+1. Arguments.
+  * PPD_LOG_TIMER -> PPD_LOG_EXTEND
+  * PPD_LOG_LEVEL_NESTED
+  * PPD_LOG_LEVEL_TYPE
+  * PPD_LOG_SCREENSHOT
+  * PPD_LOG_FULLPAGE
+
+1. main() -> run()
 <!-- # Editors Environment
 
 ## VSCode

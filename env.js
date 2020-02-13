@@ -9,9 +9,8 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
-const logger = require('./logger');
 const { merge, sleep, blankSocket } = require('./helpers');
-const { TestsContent } = require('./TestContent');
+const TestsContent = require('./TestContent');
 const { Arguments } = require('./Arguments');
 
 class Env {
@@ -19,13 +18,10 @@ class Env {
     this.name = name;
     // Browser, pages, cookies, etc.
     this.state = {};
-    // TODO: 2020-01-26 S.Starodubov разобраться что тут
     this.env = {
-      name: name,
+      name,
       data: {},
       selectors: {},
-      logLevel: 'debug',
-      screenshots: { isScreenshot: false, fullPage: false },
     };
     this.env = { ...this.env, ...env };
   }
@@ -111,6 +107,20 @@ class Envs {
     return _.get(this.envs, name, {});
   }
 
+  getActivePage() {
+    const activeEnv = this.getEnv();
+    const pageName = _.get(this, 'current.page');
+    return _.get(activeEnv, `state.pages.${pageName}`);
+  }
+
+  getOutputsFolders() {
+    const { folder, folderLatest } = _.get(this, 'output', {});
+    if (!folder || !folderLatest) {
+      throw { message: 'There is no output folder' };
+    }
+    return { folder, folderLatest };
+  }
+
   initOutput(testName = 'test') {
     const { PPD_OUTPUT: output } = new Arguments();
     const currentTest = this.get('current.test') || testName;
@@ -130,6 +140,8 @@ class Envs {
     this.output.folder = folder;
 
     this.initOutputLatest();
+
+    this.__proto__.initOutput = () => {};
   }
 
   initOutputLatest() {
@@ -156,7 +168,7 @@ class Envs {
     this.output.folderLatest = folderLatest;
 
     // Drop this function after first use
-    this.initOutputLatest = () => {};
+    this.__proto__.initOutputLatest = () => {};
   }
 
   async runBrowsers() {
@@ -311,7 +323,7 @@ class Envs {
 
   async resolveLinks() {
     const args = new Arguments();
-    const allData = await new TestsContent().getAllData();
+    const allData = await new TestsContent();
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map(v => {
@@ -373,7 +385,7 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = async function() {};
+    this.__proto__.init = () => {};
   }
 }
 
@@ -387,13 +399,12 @@ module.exports = function({ envsId, socket = blankSocket } = {}) {
   } else {
     envsId = crypto.randomBytes(16).toString('hex');
     let newEnvs = new Envs();
-    instances[envsId] = { envs: newEnvs, log: logger({ envs: newEnvs, socket, envsId }), socket };
+    instances[envsId] = { envs: newEnvs, socket };
   }
 
   return {
     envsId,
     envs: _.get(instances, [envsId, 'envs']),
-    log: _.get(instances, [envsId, 'log']),
     socket: _.get(instances, [envsId, 'socket']),
   };
 };

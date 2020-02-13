@@ -3,13 +3,13 @@
 const singleton = Symbol('singleton');
 
 class Singleton {
-  static get instance() {
-    if (!this[singleton]) {
-      this[singleton] = new this();
-    }
+  // static get instance() {
+  //   if (!this[singleton]) {
+  //     this[singleton] = new this();
+  //   }
 
-    return this[singleton];
-  }
+  //   return this[singleton];
+  // }
 
   constructor() {
     let Class = new.target; // or this.constructor

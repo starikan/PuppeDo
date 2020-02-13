@@ -4,7 +4,7 @@ require('array-flat-polyfill');
 
 const { merge } = require('./helpers');
 
-const Singleton = require('./singleton');
+const Singleton = require('./Singleton');
 
 class Arguments extends Singleton {
   constructor(args, reInit = false) {
@@ -19,7 +19,7 @@ class Arguments extends Singleton {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
       PPD_ROOT_ADDITIONAL: [],
-      PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history'],
+      PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
       PPD_ENVS: [],
       PPD_TESTS: [],
       PPD_OUTPUT: 'output',
@@ -27,9 +27,12 @@ class Arguments extends Singleton {
       PPD_SELECTORS: {},
       PPD_DEBUG_MODE: false,
       PPD_LOG_DISABLED: false,
-      PPD_LOG_TIMER: false,
+      PPD_LOG_EXTEND: false,
       PPD_DISABLE_ENV_CHECK: false,
-      PPD_LOG_LEVEL: 0,
+      PPD_LOG_LEVEL_NESTED: 0,
+      PPD_LOG_LEVEL_TYPE: 'raw',
+      PPD_LOG_SCREENSHOT: false,
+      PPD_LOG_FULLPAGE: false,
     };
     this.argsTypes = this.getTypes(this.argsDefault);
 
@@ -140,15 +143,6 @@ class Arguments extends Singleton {
 
   mergeArgs() {
     this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
-
-    if (!this.args.PPD_TESTS || _.isEmpty(this.args.PPD_TESTS)) {
-      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
-    }
-
-    if (!this.args.PPD_ENVS || _.isEmpty(this.args.PPD_ENVS)) {
-      throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
-    }
-
     return this.args;
   }
 }

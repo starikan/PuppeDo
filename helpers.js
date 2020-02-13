@@ -11,27 +11,51 @@ const merge = (...objects) =>
 
 // https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 
-const paintString = (str, color = 'noColor') => {
+// SANE = "\u001B[0m"
+
+// HIGH_INTENSITY = "\u001B[1m"
+// LOW_INTENSITY = "\u001B[2m"
+
+// ITALIC = "\u001B[3m"
+// UNDERLINE = "\u001B[4m"
+// BLINK = "\u001B[5m"
+// RAPID_BLINK = "\u001B[6m"
+// REVERSE_VIDEO = "\u001B[7m"
+// INVISIBLE_TEXT = "\u001B[8m"
+
+// BACKGROUND_BLACK = "\u001B[40m"
+// BACKGROUND_RED = "\u001B[41m"
+// BACKGROUND_GREEN = "\u001B[42m"
+// BACKGROUND_YELLOW = "\u001B[43m"
+// BACKGROUND_BLUE = "\u001B[44m"
+// BACKGROUND_MAGENTA = "\u001B[45m"
+// BACKGROUND_CYAN = "\u001B[46m"
+// BACKGROUND_WHITE = "\u001B[47m"
+
+const paintString = (str, color = 'sane') => {
   const colors = {
-    noColor: 0,
-    pink: 35,
+    sane: 0,
+    black: 30,
+    red: 31,
     green: 32,
     yellow: 33,
-    red: 31,
-    blue: 36,
-    violet: 34,
+    blue: 34,
+    magenta: 35,
+    cyan: 36,
+    white: 37,
   };
+
+  colors.raw = colors.sane;
+  colors.timer = colors.sane;
+  colors.debug = colors.sane;
+  colors.info = colors.cyan;
+  colors.test = colors.green;
+  colors.warn = colors.yellow;
+  colors.error = colors.red;
+  colors.trace = colors.cyan;
+  colors.env = colors.blue;
+
   return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
-};
-const stylesConsole = {
-  raw: str => paintString(str, 'noColor'),
-  debug: str => paintString(str, 'noColor'),
-  info: str => paintString(str, 'pink'),
-  test: str => paintString(str, 'green'),
-  warn: str => paintString(str, 'yellow'),
-  error: str => paintString(str, 'red'),
-  trace: str => paintString(str, 'blue'),
-  env: str => paintString(str, 'violet'),
 };
 
 const blankSocket = {
@@ -42,6 +66,6 @@ const blankSocket = {
 module.exports = {
   merge,
   sleep,
-  stylesConsole,
   blankSocket,
+  paintString,
 };
