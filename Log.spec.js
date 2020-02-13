@@ -3,7 +3,7 @@ const path = require('path');
 
 const dayjs = require('dayjs');
 
-const Log = require('./Log');
+const { Log } = require('./Log');
 const { Arguments } = require('./Arguments');
 
 const clearFiles = fileName => {

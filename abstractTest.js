@@ -4,7 +4,7 @@ const safeEval = require('safe-eval');
 const { merge, blankSocket } = require('./helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
-const Log = require('./Log');
+const { Log } = require('./Log');
 const Environment = require('./env');
 const TestsContent = require('./TestContent');
 
