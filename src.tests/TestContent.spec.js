@@ -1,9 +1,7 @@
 const path = require('path');
 
-const _ = require('lodash');
-
-const TestsContent = require('./TestContent');
-const { Arguments } = require('./Arguments');
+const TestsContent = require('../src/TestContent');
+const { Arguments } = require('../src/Arguments');
 
 describe('TestContent', () => {
   test('Init', () => {

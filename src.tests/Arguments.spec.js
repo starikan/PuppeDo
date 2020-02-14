@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { Arguments } = require('./Arguments');
+const { Arguments } = require('../src/Arguments');
 
 const argsDefault = {
   PPD_DATA: {},
@@ -205,7 +205,5 @@ test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsModify };
   const args = new Arguments({}, true);
   expect(argsModify).toEqual(args);
-  Object.keys(argsModify).map(v => {
-    delete process.env[v];
-  });
+  Object.keys(argsModify).map(v => (delete process.env[v]));
 });

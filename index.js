@@ -1,12 +1,12 @@
-const { run } = require('./Api');
-const { errorHandler } = require('./Error');
-const { getFullDepthJSON } = require('./getFullDepthJSON');
-const { getTest } = require('./getTest');
-const TestsContent = require('./TestContent');
-const { Arguments } = require('./Arguments');
-const { Blocker } = require('./Blocker');
-const Environment = require('./env');
-const { Log } = require('./Log');
+const { run } = require('./src/Api');
+const { errorHandler } = require('./src/Error');
+const { getFullDepthJSON } = require('./src/getFullDepthJSON');
+const { getTest } = require('./src/getTest');
+const TestsContent = require('./src/TestContent');
+const { Arguments } = require('./src/Arguments');
+const { Blocker } = require('./src/Blocker');
+const Environment = require('./src/env');
+const { Log } = require('./src/Log');
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
