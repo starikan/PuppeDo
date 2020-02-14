@@ -7,13 +7,11 @@ const errorHandler = async error => {
   }
   if (error.stack) {
     error.stack = error.stack.split('\n    ');
+    console.log(paintString(error.stack, 'error'))
   }
   if (error.debug) {
     debugger;
   }
-  console.log(paintString(error.message, 'error'));
-  console.log();
-  error.stack ? console.log(paintString(error.stack, 'error')) : '';
   // if (!module.parent) {
   process.exit(1);
   // }

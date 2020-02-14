@@ -50,14 +50,10 @@ beforeTest:
 runTest:
   - goTo:
       bD: { url: wikiUrl }
-  - typeInput:
+  - clickSelector:
       description: Input some text in field INPUT
       s: { input: '.wikiInput' }
       d: { text: 'Some text' }
-      o:
-        screenshot: true
-        fullpage: true
-
 
 ---
 name: oneFileTwoTests

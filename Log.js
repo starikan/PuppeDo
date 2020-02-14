@@ -148,9 +148,9 @@ class Log {
       ]);
     }
 
-    if (level === 'error') {
+    if (level === 'error' && !extendInfo) {
       breadcrumbs.forEach((v, i) => {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(i)} ${v}`, 'error']]);
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
       });
       testFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
       funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
@@ -158,10 +158,17 @@ class Log {
 
     screenshots.forEach(v => {
       stringsLog.push([
-        [`${' '.repeat(20)} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
         [`🖼 screenshot: [${v}]`, level == 'error' ? 'error' : 'info'],
       ]);
     });
+
+    if (level === 'error' && !extendInfo) {
+      stringsLog.push([
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
+        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level == 'error' ? 'error' : 'info'],
+      ]);
+    }
 
     return stringsLog;
   }
