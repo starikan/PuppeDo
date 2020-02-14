@@ -331,7 +331,14 @@ class Test {
           'repeat',
           'stepId',
         ];
-        const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
+        const args = {
+          envsId,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          dataTest: this.data,
+          selectorsTest: this.selectors,
+          ..._.pick(this, argsFields),
+        };
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
