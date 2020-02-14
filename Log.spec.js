@@ -221,11 +221,11 @@ describe('Log', () => {
         ['text', 'info'],
       ],
       [
-        ['                      |  ', 'sane'],
+        [`${nowFormated} - info   |  `, 'sane'],
         ['🖼 screenshot: [foo]', 'info'],
       ],
       [
-        ['                      |  ', 'sane'],
+        [`${nowFormated} - info   |  `, 'sane'],
         ['🖼 screenshot: [bar]', 'info'],
       ],
     ]);
@@ -286,8 +286,12 @@ describe('Log', () => {
         [`${nowFormated} - error  |  `, 'error'],
         ['text', 'error'],
       ],
-      [[`${nowFormated} - error  foo.runTest[0]`, 'error']],
-      [[`${nowFormated} - error  |  hee`, 'error']],
+      [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
+      [[`${nowFormated} - error  |     hee`, 'error']],
+      [
+        [`${nowFormated} - error  |  `, 'error'],
+        ['=============================================================================================', 'error'],
+      ],
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: false }, true);
@@ -315,10 +319,14 @@ describe('Log', () => {
         [`${nowFormated} - error  |  `, 'error'],
         ['text', 'error'],
       ],
-      [[`${nowFormated} - error  foo.runTest[0]`, 'error']],
-      [[`${nowFormated} - error  |  hee`, 'error']],
+      [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
+      [[`${nowFormated} - error  |     hee`, 'error']],
       [[`${nowFormated} - error  |  [testFile]`, 'error']],
       [[`${nowFormated} - error  |  [funcFile]`, 'error']],
+      [
+        [`${nowFormated} - error  |  `, 'error'],
+        ['=============================================================================================', 'error'],
+      ],
     ]);
   });
 

@@ -143,8 +143,8 @@ class Log {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
-        [head, level == 'error' ? 'error' : 'sane'],
-        [tail, level == 'error' ? 'error' : 'info'],
+        [head, level === 'error' ? 'error' : 'sane'],
+        [tail, level === 'error' ? 'error' : 'info'],
       ]);
     }
 
@@ -158,15 +158,15 @@ class Log {
 
     screenshots.forEach(v => {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
-        [`🖼 screenshot: [${v}]`, level == 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
+        [`🖼 screenshot: [${v}]`, level === 'error' ? 'error' : 'info'],
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
-        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level == 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
+        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level === 'error' ? 'error' : 'info'],
       ]);
     }
 
@@ -252,7 +252,7 @@ class Log {
 
       // ENVS TO LOG
       let dataEnvs = null;
-      if (level == 'env') {
+      if (level === 'env') {
         dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
           return _.omit(val, 'state');
         });
@@ -271,11 +271,11 @@ class Log {
         time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
-        dataEnvsGlobal: level == 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
-        testStruct: PPD_DEBUG_MODE || level == 'env' ? testStruct : null,
+        dataEnvsGlobal: level === 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
+        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStruct : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
-        type: level == 'env' ? 'env' : 'log',
+        type: level === 'env' ? 'env' : 'log',
         level,
         levelIndent,
         stepId: _.get(bindedData, 'stepId'),
