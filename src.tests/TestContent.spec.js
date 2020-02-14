@@ -5,9 +5,12 @@ const { Arguments } = require('../src/Arguments');
 
 describe('TestContent', () => {
   test('Init', () => {
+    const spy = jest.spyOn(console, 'log').mockImplementation();
     // Raw run
     let allData = new TestsContent();
     let instance = allData.__instance;
+    expect(console.log).toHaveBeenCalled();
+    spy.mockRestore();
     expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output']);
     expect(instance.rootFolder).toEqual(process.cwd());
     expect(instance.additionalFolders).toEqual([]);

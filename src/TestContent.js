@@ -83,7 +83,7 @@ class TestsContent extends Singleton {
             allContent.push(v);
           }
         } catch (e) {
-          console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check in on https://yamlchecker.com/`);
+          console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/`);
         }
       });
 
