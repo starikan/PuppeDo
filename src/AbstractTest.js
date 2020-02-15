@@ -23,10 +23,10 @@ const ALIASES = {
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
-  _.forEach(needs, d => {
+  _.forEach(needs, (d) => {
     if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
-    const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
+    const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
       throw { message: `Error: can't find data parameter "${d}" in ${testName} test` };
     }
@@ -43,7 +43,7 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
       funcEval[key] = safeEval(funcParams[key], allDataSel);
     }
     //TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
-    if (_.isArray(funcParams[key]) && funcParams[key].length == 2) {
+    if (_.isArray(funcParams[key]) && funcParams[key].length === 2) {
       let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
       funcEval[key] = dataFuncEval;
       funcEval[funcParams[key][1]] = dataFuncEval;
@@ -56,7 +56,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   try {
     let result = {};
     const values = [valueName, ..._.get(aliases, valueName, [])];
-    values.forEach(v => {
+    values.forEach((v) => {
       result = merge(result, _.get(inputs, v, {}));
     });
     return result;
@@ -142,8 +142,8 @@ class Test {
       // * Fetch data from ext files that passed in test itself
       const allTests = new TestsContent();
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      extFiles.forEach(v => {
-        const extData = allTests[dataName].find(d => v === d.name);
+      extFiles.forEach((v) => {
+        const extData = allTests[dataName].find((d) => v === d.name);
         if (extData) {
           joinArray = [...joinArray, extData.data];
         }
@@ -413,7 +413,7 @@ class Test {
         let results = _.pick(resultFromTest, allowResults);
         let localResults = {};
 
-        if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
+        if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
           throw { message: 'Can`t get results from test' };
         }
 
@@ -502,8 +502,8 @@ class Test {
         // setTimeout(() => {
         //   blocker.setBlock(this.stepId, false);
         // }, 2000);
-        return new Promise(resolve => {
-          blockEmitter.on('updateBlock', async newBlock => {
+        return new Promise((resolve) => {
+          blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
               await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
               resolve();
