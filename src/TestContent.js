@@ -20,13 +20,13 @@ class TestsContent extends Singleton {
       if (typeof this.additionalFolders === 'string') {
         this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
       }
-      this.additionalFolders = this.additionalFolders.map(v => path.normalize(v));
+      this.additionalFolders = this.additionalFolders.map((v) => path.normalize(v));
 
       this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
       if (typeof this.ignorePaths === 'string') {
         this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
       }
-      this.ignorePaths = this.ignorePaths.map(v => path.normalize(v));
+      this.ignorePaths = this.ignorePaths.map((v) => path.normalize(v));
 
       this.allData = this.getAllData();
     }
@@ -34,9 +34,9 @@ class TestsContent extends Singleton {
   }
 
   checkDuplicates(tests, key) {
-    const blankNames = tests.filter(v => !v.name).map(v => v.testFile);
+    const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
     if (blankNames.length) {
-      throw { message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` };
+      throw new Error({ message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` });
     }
 
     const dubs = tests.reduce((s, v) => {
@@ -44,16 +44,16 @@ class TestsContent extends Singleton {
       return s;
     }, {});
 
-    const isThrow = Object.values(dubs).some(v => v.length > 1);
+    const isThrow = Object.values(dubs).some((v) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;
-      for (let key in dubs) {
+      for (const key in dubs) {
         if (dubs[key].length === 1) continue;
         message += ` - Name: '${key}'.\n`;
-        message += dubs[key].map(v => `    * '${v}'\n`).join('');
+        message += dubs[key].map((v) => `    * '${v}'\n`).join('');
       }
-      throw { message };
+      throw new Error({ message });
     }
     return true;
   }
@@ -62,7 +62,7 @@ class TestsContent extends Singleton {
     if (force || !this.allData) {
       const allContent = [];
       const extensions = ['.yaml', '.yml', '.ppd'];
-      const folders = [this.rootFolder, ...this.additionalFolders].map(v => path.normalize(v));
+      const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
       let paths = [];
       for (let i = 0; i < folders.length; i++) {
@@ -70,15 +70,15 @@ class TestsContent extends Singleton {
           continue;
         }
         const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
-          .filter(v => extensions.includes(path.parse(v).ext))
-          .map(v => path.join(folders[i], v));
+          .filter((v) => extensions.includes(path.parse(v).ext))
+          .map((v) => path.join(folders[i], v));
         paths = [...paths, ...pathsFolder];
       }
 
-      paths.forEach(filePath => {
+      paths.forEach((filePath) => {
         try {
           const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
-          for (let v of full) {
+          for (const v of full) {
             v.testFile = filePath;
             allContent.push(v);
           }
@@ -87,11 +87,11 @@ class TestsContent extends Singleton {
         }
       });
 
-      const atoms = allContent.filter(v => v.type === 'atom' && v);
-      const tests = allContent.filter(v => v.type === 'test' && v);
-      const envs = allContent.filter(v => v.type === 'env' && v);
-      const data = allContent.filter(v => v.type === 'data' && v);
-      const selectors = allContent.filter(v => v.type === 'selectors' && v);
+      const atoms = allContent.filter((v) => v.type === 'atom' && v);
+      const tests = allContent.filter((v) => v.type === 'test' && v);
+      const envs = allContent.filter((v) => v.type === 'env' && v);
+      const data = allContent.filter((v) => v.type === 'data' && v);
+      const selectors = allContent.filter((v) => v.type === 'selectors' && v);
 
       this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
@@ -100,9 +100,8 @@ class TestsContent extends Singleton {
       }
 
       return this.allData;
-    } else {
-      return this.allData;
     }
+    return this.allData;
   }
 }
 

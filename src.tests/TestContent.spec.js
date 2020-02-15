@@ -99,36 +99,35 @@ describe('TestContent', () => {
     ];
     expect(CD(data, 'foo')).toBe(true);
 
-    expect(() => CD([{}], 'foo')).toThrow({ message: "There is no name of 'foo' in files:\n" });
-    expect(() => CD([{ name: '' }], 'foo')).toThrow({ message: "There is no name of 'foo' in files:\n" });
-    expect(() => CD([{ name: '', testFile: 'bar' }], 'foo')).toThrow({
-      message: "There is no name of 'foo' in files:\nbar",
-    });
-    expect(() =>
-      CD(
-        [
-          { name: '', testFile: 'bar' },
-          { name: '', testFile: 'tyy' },
-        ],
-        'foo',
-      ),
-    ).toThrow({ message: "There is no name of 'foo' in files:\nbar\ntyy" });
+    expect(() => CD([{}], 'foo')).toThrow(new Error({ message: "There is no name of 'foo' in files:\n" }));
+    expect(() => CD([{ name: '' }], 'foo')).toThrow(new Error({ message: "There is no name of 'foo' in files:\n" }));
+    expect(() => CD([{ name: '', testFile: 'bar' }], 'foo')).toThrow(
+      new Error({
+        message: "There is no name of 'foo' in files:\nbar",
+      }),
+    );
 
-    expect(() =>
-      CD(
-        [
-          { name: 'puu', testFile: 'lee' },
-          { name: 'dee', testFile: 'bar' },
-          { name: 'dee', testFile: 'tyy' },
-        ],
-        'foo',
-      ),
-    ).toThrow({
-      message: `There is duplicates of 'foo':
+    const testsObjects1 = [
+      { name: '', testFile: 'bar' },
+      { name: '', testFile: 'tyy' },
+    ];
+    expect(() => CD(testsObjects1, 'foo')).toThrow(
+      new Error({ message: "There is no name of 'foo' in files:\nbar\ntyy" }),
+    );
+
+    const testsObjects2 = [
+      { name: 'puu', testFile: 'lee' },
+      { name: 'dee', testFile: 'bar' },
+      { name: 'dee', testFile: 'tyy' },
+    ];
+    expect(() => CD(testsObjects2, 'foo')).toThrow(
+      new Error({
+        message: `There is duplicates of 'foo':
  - Name: 'dee'.
     * 'bar'
     * 'tyy'
 `,
-    });
+      }),
+    );
   });
 });
