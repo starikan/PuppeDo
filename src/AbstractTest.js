@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
-const { merge, blankSocket } = require('./Helpers');
-const { Blocker } = require('./Blocker');
-const { Arguments } = require('./Arguments');
-const { Log } = require('./Log');
-const Environment = require('./Env');
-const TestsContent = require('./TestContent');
+const { merge, blankSocket } = require('./Helpers.js');
+const { Blocker } = require('./Blocker.js');
+const { Arguments } = require('./Arguments.js');
+const { Log } = require('./Log.js');
+const Environment = require('./Environment.js');
+const TestsContent = require('./TestContent.js');
 
 const ALIASES = {
   bindData: ['bD', 'bd', '📌📋'],

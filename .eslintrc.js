@@ -15,7 +15,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint'],
   rules: {
-    'max-len': ['error', 120, 2, {
+    'max-len': ['error', {
+      code: 120,
       ignoreUrls: true,
       ignoreComments: false,
       ignoreRegExpLiterals: true,

@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const _ = require('lodash');
 const TestsContent = require('./TestContent');
-const Environment = require('./env');
+const Environment = require('./Environment.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 

@@ -9,7 +9,7 @@ const yaml = require('js-yaml');
 
 const { sleep, paintString } = require('./helpers');
 const { Arguments } = require('./Arguments');
-const Environment = require('./env');
+const Environment = require('./Environment.js');
 
 class Screenshot {
   constructor({ envsId } = {}) {

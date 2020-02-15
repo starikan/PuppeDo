@@ -5,7 +5,7 @@ const { getTest } = require('./src/getTest');
 const TestsContent = require('./src/TestContent');
 const { Arguments } = require('./src/Arguments');
 const { Blocker } = require('./src/Blocker');
-const Environment = require('./src/env');
+const Environment = require('./src/Environment.js');
 const { Log } = require('./src/Log');
 
 process.on('unhandledRejection', errorHandler);

@@ -5,7 +5,7 @@ const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
 const { Arguments } = require('./Arguments');
 const { Blocker } = require('./Blocker');
-const Environment = require('./env');
+const Environment = require('./Environment.js');
 const { Log } = require('./Log');
 
 const run = async (args = {}) => {
