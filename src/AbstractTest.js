@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
-const { merge, blankSocket } = require('./helpers');
+const { merge, blankSocket } = require('./Helpers');
 const { Blocker } = require('./Blocker');
 const { Arguments } = require('./Arguments');
 const { Log } = require('./Log');
-const Environment = require('./env');
+const Environment = require('./Env');
 const TestsContent = require('./TestContent');
 
 const ALIASES = {
@@ -28,15 +28,15 @@ const checkNeeds = (needs, data, testName) => {
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw { message: `Error: can't find data parameter "${d}" in ${testName} test` };
+      throw new Error({ message: `Error: can't find data parameter "${d}" in ${testName} test` });
     }
   });
-  return;
+  return true;
 };
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   const allDataSel = merge(dataLocal, selectorsLocal);
-  let funcEval = {};
+  const funcEval = {};
 
   for (const key in funcParams) {
     if (_.isString(funcParams[key])) {
@@ -70,12 +70,12 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
-      throw {
+      throw new Error({
         message: `Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`,
-      };
+      });
     }
   } else {
-    throw { message: 'needEnv wrong format, should be array or string' };
+    throw new Error({ message: 'needEnv wrong format, should be array or string' });
   }
 };
 
@@ -207,7 +207,7 @@ class Test {
       try {
         exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
       } catch (err) {
-        if (err.name == 'ReferenceError') {
+        if (err.name === 'ReferenceError') {
           await log({
             level: 'error',
             screenshot: true,
@@ -275,7 +275,7 @@ class Test {
         _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
-        throw { message: 'Test should have envsId' };
+        throw new Error({ message: 'Test should have envsId' });
       }
 
       const { envs } = Environment({ envsId });
@@ -295,11 +295,11 @@ class Test {
 
         let dataLocal = this.fetchData();
         let selectorsLocal = this.fetchSelectors();
-        let allData = merge(dataLocal, selectorsLocal);
+        const allData = merge(dataLocal, selectorsLocal);
 
         // FUNCTIONS
-        let dFResults = resolveDataFunctions(this.dataFunction, allData);
-        let sFResults = resolveDataFunctions(this.selectorsFunction, allData);
+        const dFResults = resolveDataFunctions(this.dataFunction, allData);
+        const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
         // Save all functions results into envs
         this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
@@ -395,7 +395,7 @@ class Test {
           if (_.isArray(funcs)) {
             for (let f = 0; f < funcs.length; f++) {
               const fun = funcs[f];
-              let funResult = (await fun(argsExt)) || {};
+              const funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);
             }
@@ -410,11 +410,11 @@ class Test {
           resultFromTest = merge(this.fetchData(), this.fetchSelectors());
         }
 
-        let results = _.pick(resultFromTest, allowResults);
+        const results = _.pick(resultFromTest, allowResults);
         let localResults = {};
 
         if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
-          throw { message: 'Can`t get results from test' };
+          throw new Error({ message: 'Can`t get results from test' });
         }
 
         for (const key in this.bindResults) {
