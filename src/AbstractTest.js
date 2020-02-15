@@ -42,9 +42,9 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
     if (_.isString(funcParams[key])) {
       funcEval[key] = safeEval(funcParams[key], allDataSel);
     }
-    //TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
+    // TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
     if (_.isArray(funcParams[key]) && funcParams[key].length === 2) {
-      let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
+      const dataFuncEval = safeEval(funcParams[key][0], allDataSel);
       funcEval[key] = dataFuncEval;
       funcEval[funcParams[key][1]] = dataFuncEval;
     }
@@ -92,10 +92,10 @@ class Test {
     selectors = {},
     dataExt = [],
     selectorsExt = [],
-    beforeTest = async function() {},
-    runTest = async function() {},
-    afterTest = async function() {},
-    errorTest = async function() {},
+    beforeTest = () => {},
+    runTest = () => {},
+    afterTest = () => {},
+    errorTest = () => {},
     source = '',
     repeat = 1,
     socket = blankSocket,
@@ -169,9 +169,7 @@ class Test {
       return dataLocal;
     };
 
-    this.fetchSelectors = () => {
-      return this.fetchData(true);
-    };
+    this.fetchSelectors = () => this.fetchData(true);
 
     this.collectDebugData = (error, locals = {}, message = null) => {
       const fields = [
@@ -428,7 +426,7 @@ class Test {
         // RESULT FUNCTIONS
         if (!_.isEmpty(this.resultFunction)) {
           const dataWithResults = merge(dataLocal, selectorsLocal, results);
-          let resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
+          const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
           dataLocal = merge(dataLocal, resultFunction);
           selectorsLocal = merge(selectorsLocal, resultFunction);
           localResults = merge(localResults, resultFunction);
@@ -510,9 +508,8 @@ class Test {
             }
           });
         });
-      } else {
-        return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
       }
+      return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
     };
   }
 }

@@ -4,24 +4,16 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
-  extends: ['airbnb-base'],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
+  extends: ['eslint:recommended', 'airbnb-base'],
+  globals: { Atomics: 'readonly', SharedArrayBuffer: 'readonly' },
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 2018,
-  },
-  plugins: ['@typescript-eslint'],
+  parserOptions: { ecmaVersion: 2018 },
+  plugins: ['@typescript-eslint', "prettier"],
   rules: {
-    'max-len': ['error', {
-      code: 120,
-      ignoreUrls: true,
-      ignoreComments: false,
-      ignoreRegExpLiterals: true,
-      ignoreStrings: true,
-      ignoreTemplateLiterals: true,
-    }],
+    'operator-linebreak': [0, 'after'],
+    'space-before-function-paren': [0],
+    'object-curly-newline': ['error', { consistent: true }],
+    'max-len': ['error', { code: 120 }],
+    "prettier/prettier": "warn",
   },
 };
