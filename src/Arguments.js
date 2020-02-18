@@ -2,9 +2,9 @@ const _ = require('lodash');
 require('polyfill-object.fromentries');
 require('array-flat-polyfill');
 
-const { merge } = require('./helpers');
+const { merge } = require('./Helpers.js');
 
-const Singleton = require('./Singleton');
+const Singleton = require('./Singleton.js');
 
 class Arguments extends Singleton {
   constructor(args, reInit = false) {
@@ -34,7 +34,7 @@ class Arguments extends Singleton {
       PPD_LOG_SCREENSHOT: false,
       PPD_LOG_FULLPAGE: false,
     };
-    this.argsTypes = this.getTypes(this.argsDefault);
+    this.argsTypes = Arguments.getTypes(this.argsDefault);
 
     this.argsJS = this.parser(args);
     this.argsEnv = this.parser(_.pick(process.env, Object.keys(this.argsDefault)));
@@ -43,7 +43,7 @@ class Arguments extends Singleton {
     return this.args;
   }
 
-  getTypes(args) {
+  static getTypes(args) {
     return Object.keys(args).reduce((s, v) => {
       let vType;
       if (_.isString(args[v])) {
@@ -62,8 +62,7 @@ class Arguments extends Singleton {
       if (_.isNumber(args[v])) {
         vType = 'number';
       }
-      s[v] = vType;
-      return s;
+      return { ...s, ...{ [v]: vType } };
     }, {});
   }
 
@@ -78,10 +77,10 @@ class Arguments extends Singleton {
 
       if (this.argsTypes[val] === 'boolean') {
         if (['true', 'false'].includes(newVal)) {
-          newVal = newVal === 'true' ? true : false;
+          newVal = newVal === 'true';
         }
         if (!_.isBoolean(newVal)) {
-          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
         }
         newVal = !!newVal;
       }
@@ -91,10 +90,10 @@ class Arguments extends Singleton {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
-            newVal = newVal.split(',').map(v => v.trim());
+            newVal = newVal.split(',').map((v) => v.trim());
           }
         } else if (!_.isArray(newVal)) {
-          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
         }
       }
 
@@ -103,41 +102,41 @@ class Arguments extends Singleton {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
-            throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+            throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
           }
         } else if (!_.isObject(newVal) || _.isArray(newVal)) {
-          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
         }
       }
 
       if (this.argsTypes[val] === 'string') {
         if (!_.isString(newVal)) {
-          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
         }
       }
 
       if (this.argsTypes[val] === 'number') {
         if (_.isString(newVal)) {
-          newVal = parseInt(newVal)
+          newVal = parseInt(newVal, 10);
         }
         if (!_.isNumber(newVal) || _.isNaN(newVal)) {
-          throw { message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` };
+          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
         }
       }
 
-      s[val] = newVal;
-      return s;
+      const collector = { ...s, ...{ [val]: newVal } };
+      return collector;
     }, {});
   }
 
   parseCLI() {
     const params = Object.keys(this.argsDefault);
     const argsRaw = process.argv
-      .map(v => v.split(/\s+/))
+      .map((v) => v.split(/\s+/))
       .flat()
-      .map(v => v.split('='))
-      .filter(v => v.length > 1)
-      .filter(v => params.includes(v[0]));
+      .map((v) => v.split('='))
+      .filter((v) => v.length > 1)
+      .filter((v) => params.includes(v[0]));
     return this.parser(Object.fromEntries(argsRaw));
   }
 
