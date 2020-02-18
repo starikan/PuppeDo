@@ -24,7 +24,7 @@ class Screenshot {
     }
     const elementScreenshot = await this.saveScreenshot({ element });
     const fullPageScreenshot = await this.saveScreenshot({ fullPage });
-    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter(v => v);
+    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => v);
     return screenshotsExists;
   }
 
@@ -54,11 +54,10 @@ class Screenshot {
         this.copyScreenshotToLatest(name);
         await sleep(25);
         return name;
-      } else {
-        return false;
       }
+      return false;
     } catch (err) {
-      err.message += ` || saveScreenshot selectors`;
+      err.message += ' || saveScreenshot selectors';
       err.socket = this.socket;
       throw err;
     }
@@ -109,9 +108,8 @@ class Log {
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
       return levels[inputLevel];
-    } else {
-      return false;
     }
+    return false;
   }
 
   makeLog({
@@ -156,7 +154,7 @@ class Log {
       funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
     }
 
-    screenshots.forEach(v => {
+    screenshots.forEach((v) => {
       stringsLog.push([
         [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
         [`🖼 screenshot: [${v}]`, level === 'error' ? 'error' : 'info'],
@@ -174,8 +172,8 @@ class Log {
   }
 
   consoleLog(entries = []) {
-    entries.forEach(entry => {
-      const line = entry.map(part => paintString(part[0], part[1] || 'sane')).join('');
+    entries.forEach((entry) => {
+      const line = entry.map((part) => paintString(part[0], part[1] || 'sane')).join('');
       console.log(line);
     });
   }
@@ -185,13 +183,13 @@ class Log {
 
     let textsJoin = '';
     if (_.isArray(texts)) {
-      textsJoin = texts.map(text => text.map(log => log[0] || '').join('')).join('\n');
+      textsJoin = texts.map((text) => text.map((log) => log[0] || '').join('')).join('\n');
     } else {
       textsJoin = texts.toString();
     }
 
-    fs.appendFileSync(path.join(folder, fileName), textsJoin + '\n');
-    fs.appendFileSync(path.join(folderLatest, fileName), textsJoin + '\n');
+    fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
+    fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
   }
 
   async log({
@@ -253,13 +251,11 @@ class Log {
       // ENVS TO LOG
       let dataEnvs = null;
       if (level === 'env') {
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-          return _.omit(val, 'state');
-        });
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), (val) => _.omit(val, 'state'));
       }
 
       if (_.isEmpty(testStruct)) {
-        testStruct = _.mapValues(testSource, v => {
+        testStruct = _.mapValues(testSource, (v) => {
           if (!_.isEmpty(v)) {
             return v;
           }
@@ -284,7 +280,7 @@ class Log {
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
-      let yamlString = '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2));
+      const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
       this.fileLog(yamlString, 'output.yaml');
     } catch (err) {
       err.message += ' || error in log';

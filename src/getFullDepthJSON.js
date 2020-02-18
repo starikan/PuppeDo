@@ -6,12 +6,12 @@ const Environment = require('./Environment.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
-const generateDescriptionStep = fullJSON => {
+const generateDescriptionStep = (fullJSON) => {
   const { description, name, todo, levelIndent } = fullJSON;
 
   const descriptionString = [
     '   '.repeat(levelIndent),
-    todo ? 'TODO: ' + todo + '== ' : '',
+    todo ? `TODO: ${todo}== ` : '',
     description ? `${description} ` : '',
     name ? `(${name})` : '',
     '\n',
@@ -26,7 +26,9 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   }
   const allTests = new TestsContent();
 
-  const testJSON = _.cloneDeep(allTests.allContent.find(v => v.name === testName && ['atom', 'test'].includes(v.type)));
+  const testJSON = _.cloneDeep(
+    allTests.allContent.find((v) => v.name === testName && ['atom', 'test'].includes(v.type)),
+  );
   if (!testJSON) {
     throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
   }
@@ -39,7 +41,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   let textDescription = generateDescriptionStep(fullJSON);
 
   for (const runnerBlock of RUNNER_BLOCK_NAMES) {
-    let runnerBlockValue = _.get(fullJSON, [runnerBlock]);
+    const runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
       for (const runnerNum in runnerBlockValue) {
         const runner = _.get(runnerBlockValue, [runnerNum], {});

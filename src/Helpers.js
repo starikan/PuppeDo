@@ -1,13 +1,10 @@
 const deepmerge = require('deepmerge');
 
-const sleep = ms => {
-  return new Promise(resolve => {
+const sleep = (ms) => new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-};
 
-const merge = (...objects) =>
-  deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
+const merge = (...objects) => deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray, options) => sourceArray });
 
 // https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 

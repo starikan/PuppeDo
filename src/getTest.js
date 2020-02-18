@@ -14,12 +14,12 @@ const resolveJS = (testJson, funcFile) => {
     const funcFromFile = _.get(atom, 'runTest');
     if (_.isFunction(funcFromFile)) {
       testJson.funcFile = path.resolve(funcFile);
-      testJson['runTest'] = [funcFromFile];
+      testJson.runTest = [funcFromFile];
     }
   } catch (err) {
     // If there is no JS file it`s fine.
     testJson.funcFile = 'No file';
-    testJson['runTest'] = [() => {}];
+    testJson.runTest = [() => {}];
   }
   return testJson;
 };
@@ -47,13 +47,13 @@ const getTest = function(testJsonIncome, envsId, socket = blankSocket) {
     const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
     testJson = resolveJS(testJson, funcFile);
   } else {
-    for (let funcKey in functions) {
-      let funcVal = functions[funcKey];
+    for (const funcKey in functions) {
+      const funcVal = functions[funcKey];
 
       // Resolve nested
       if (_.isArray(funcVal)) {
         testJson[funcKey] = [];
-        for (let test of funcVal) {
+        for (const test of funcVal) {
           if (['test', 'atom'].includes(test.type)) {
             testJson[funcKey].push(getTest(test, envsId, socket));
           }
