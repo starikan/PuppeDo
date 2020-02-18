@@ -242,7 +242,7 @@ class Test {
       return true;
     };
 
-    this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    this.runLogic = async ({ dataExt = [], selectorsExt = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date();
 
       const inputs = merge(inputArgs, constructorArgs);
@@ -297,8 +297,7 @@ class Test {
         const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
         // Save all functions results into envs
-        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
-        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), sFResults));
+        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults, sFResults));
 
         // Update data and selectors with functions result
         dataLocal = merge(dataLocal, dFResults);
@@ -451,7 +450,7 @@ class Test {
         // REPEAT
         if (this.repeat > 1) {
           this.repeat -= 1;
-          await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
+          await this.run({ dataExt: this.dataExt, selectorsExt: this.selectorsExt, ...inputArgs }, envsId);
         }
 
         // TIMER IN CONSOLE
@@ -487,7 +486,7 @@ class Test {
       }
     };
 
-    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId = null) => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
@@ -499,13 +498,13 @@ class Test {
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+              await this.runLogic({ dataExt: [], selectorsExt: [], inputArgs }, envsId);
               resolve();
             }
           });
         });
       }
-      return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+      return this.runLogic({ dataExt: [], selectorsExt: [], inputArgs }, envsId);
     };
   }
 }
