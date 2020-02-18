@@ -16,16 +16,20 @@ runTest:
   - goTo:
       bD: { url: baseUrl }
   - waitTime:
+      description: Checking If statement
       d: { time: 2000 }
       if: '1 !== 1'
       errorIf: '1 === 1'
       errorIfResult: '1 === 1'
+  - getText:
+      s: { selector: title }
+      r: { titleText: text }
   - blank:
       description: Some data function
-      🔑📋: { myDataFunction: '"text".replace("text", "Function text")' }
+      🔑📋: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
   - blank:
       description: Bind data from function
-      📌📋: { myDataBinded: myDataFunction }
+      📌📋: { myDataBinded: myDataFunction}
   - typeInput:
       description: Input some text in field INPUT
       bS: { input: wikiInput }

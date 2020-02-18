@@ -151,13 +151,14 @@ class Test {
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      for (const key in bindDataLocal) {
-        dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-      }
+      Object.entries(bindDataLocal).forEach((v) => {
+        const [key, val] = v;
+        dataLocal[key] = _.get(dataLocal, val);
+      });
 
       // * Update after all bindings with data from test itself passed in running
-      const data = isSelector ? this.selectors : this.data;
-      dataLocal = merge(dataLocal, data);
+      const collectedData = isSelector ? this.selectors : this.data;
+      dataLocal = merge(dataLocal, collectedData);
 
       return dataLocal;
     };
@@ -192,7 +193,7 @@ class Test {
       return error;
     };
 
-    this.checkIf = async (expr, type, log, levelIndent, locals = {}) => {
+    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
 
@@ -206,13 +207,13 @@ class Test {
             fullpage: true,
             text: `(${this.name}) ${
               this.description ? this.description : 'TODO: Fill description'
-            } -> Can't evaluate ${type} = '${error.message}'`,
+            } -> Can't evaluate ${ifType} = '${error.message}'`,
           });
         }
         throw this.collectDebugData(error, locals);
       }
 
-      if (!exprResult && type === 'if') {
+      if (!exprResult && ifType === 'if') {
         await log({
           level: 'info',
           screenshot: false,
@@ -220,23 +221,25 @@ class Test {
           text: `(${this.name}) ${
             this.description ? this.description : 'TODO: Fill description'
           } -> Skipping with expr '${expr}'`,
-          levelIndent,
+          ifLevelIndent,
         });
         return true;
       }
 
-      if (exprResult && type !== 'if') {
+      if (exprResult && ifType !== 'if') {
         await log({
           level: 'error',
           screenshot: true,
           fullpage: true,
           text: `(${this.name}) ${
             this.description ? this.description : 'TODO: Fill description'
-          } -> Test stopped with expr ${type} = '${expr}'`,
-          levelIndent,
+          } -> Test stopped with expr ${ifType} = '${expr}'`,
+          ifLevelIndent,
         });
-        throw this.collectDebugData({}, locals, `Test stopped with expr ${type} = '${expr}'`);
+        throw this.collectDebugData({}, locals, `Test stopped with expr ${ifType} = '${expr}'`);
       }
+
+      return true;
     };
 
     this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
@@ -387,8 +390,8 @@ class Test {
           if (_.isArray(funcs)) {
             for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
+              // eslint-disable-next-line no-await-in-loop
               const funResult = (await fun(argsExt)) || {};
-              // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
               resultFromTest = merge(resultFromTest, funResult);
             }
           }
@@ -403,17 +406,16 @@ class Test {
         }
 
         const results = _.pick(resultFromTest, allowResults);
-        let localResults = {};
 
         if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
           throw new Error({ message: 'Can`t get results from test' });
         }
 
-        for (const key in this.bindResults) {
-          // results[this.bindResults[key]] = _.get(results, key);
-          results[key] = _.get(results, this.bindResults[key]);
-        }
-        localResults = results;
+        Object.entries(this.bindResults).forEach((v) => {
+          const [key, val] = v;
+          results[key] = _.get(results, val);
+        });
+        let localResults = { ...results };
 
         envs.set('results', merge(envs.get('results'), results));
 

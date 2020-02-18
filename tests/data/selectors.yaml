@@ -6,3 +6,4 @@ data:
   wikiInput: '#main-q'
   loginBtn: .signin-link
   email: .newsletter-input-email
+  title: .highlight-span
