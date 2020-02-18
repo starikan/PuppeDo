@@ -9,53 +9,10 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
-const { merge, sleep, blankSocket } = require('./helpers');
-const TestsContent = require('./TestContent');
-const { Arguments } = require('./Arguments');
-
-class Env {
-  constructor(name, env = {}) {
-    this.name = name;
-    // Browser, pages, cookies, etc.
-    this.state = {};
-    this.env = {
-      name,
-      data: {},
-      selectors: {},
-    };
-    this.env = { ...this.env, ...env };
-  }
-
-  set(name, data) {
-    return _.set(this, name, data);
-  }
-
-  setState() {
-    // TODO: 2020-01-13 S.Starodubov cookies and other
-  }
-
-  get(name, def = null) {
-    return _.get(this.env, name, def);
-  }
-
-  getState(value = null) {
-    if (value) {
-      return _.get(this, `state.${value}`);
-    }
-    return this.state;
-  }
-
-  push(name, data) {
-    let arr = _.clone(this.get(name, []));
-    try {
-      arr.push(data);
-    } catch (err) {
-      console.log('class Env -> push');
-      console.log(err);
-    }
-    return _.set(this.env, name, arr);
-  }
-}
+const { merge, sleep, blankSocket } = require('./Helpers.js');
+const TestsContent = require('./TestContent.js');
+const { Arguments } = require('./Arguments.js');
+const { Env } = require('./Env.js');
 
 class Envs {
   constructor() {
