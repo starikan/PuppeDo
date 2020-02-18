@@ -168,14 +168,20 @@ Arguments applying order. From minor to major:
 
 # RoadMap 2.0.0
 
-1. Arguments.
+1. + Arguments.
   * PPD_LOG_TIMER -> PPD_LOG_EXTEND
   * PPD_LOG_LEVEL_NESTED
   * PPD_LOG_LEVEL_TYPE
   * PPD_LOG_SCREENSHOT
   * PPD_LOG_FULLPAGE
 
-1. main() -> run()
+1. + main() -> run()
+
+1. + Remove from dataFunction array as argument
+
+1. rename bindData -> dataBind
+
+1. rename bindSelectors -> selectorsBind
 <!-- # Editors Environment
 
 ## VSCode

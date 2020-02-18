@@ -9,15 +9,15 @@ const Environment = require('./Environment.js');
 const TestsContent = require('./TestContent.js');
 
 const ALIASES = {
-  bindData: ['bD', 'bd', '📌📋'],
-  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
-  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
-  selectors: ['selector', 's', '💠'],
   data: ['d', '📋'],
-  options: ['option', 'opt', 'o', '⚙️'],
-  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑📋'],
-  dataFunction: ['dF', 'df', '🔑💠'],
+  bindData: ['bD', 'bd', '📌📋'],
+  dataFunction: ['dF', 'df', '🔑📋'],
+  selectors: ['selector', 's', '💠'],
+  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
+  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠'],
+  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
   resultFunction: ['rF', 'rf', '🔑↩️'],
+  options: ['option', 'opt', 'o', '⚙️'],
 };
 
 const checkNeeds = (needs, data, testName) => {
@@ -36,19 +36,12 @@ const checkNeeds = (needs, data, testName) => {
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   const allDataSel = merge(dataLocal, selectorsLocal);
-  const funcEval = {};
-
-  for (const key in funcParams) {
-    if (_.isString(funcParams[key])) {
-      funcEval[key] = safeEval(funcParams[key], allDataSel);
-    }
-    // TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
-    if (_.isArray(funcParams[key]) && funcParams[key].length === 2) {
-      const dataFuncEval = safeEval(funcParams[key][0], allDataSel);
-      funcEval[key] = dataFuncEval;
-      funcEval[funcParams[key][1]] = dataFuncEval;
-    }
-  }
+  const funcEval = Object.entries(funcParams).reduce((s, v) => {
+    const [key, data] = v;
+    const evalData = safeEval(data.toString(), allDataSel);
+    const collector = { ...s, ...{ [key]: evalData } };
+    return collector;
+  }, {});
   return funcEval;
 };
 
@@ -171,7 +164,8 @@ class Test {
 
     this.fetchSelectors = () => this.fetchData(true);
 
-    this.collectDebugData = (error, locals = {}, message = null) => {
+    this.collectDebugData = (errorIncome, locals = {}, message = null) => {
+      const error = { ...errorIncome };
       const fields = [
         'data',
         'bindData',
@@ -204,18 +198,18 @@ class Test {
 
       try {
         exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
-      } catch (err) {
-        if (err.name === 'ReferenceError') {
+      } catch (error) {
+        if (error.name === 'ReferenceError') {
           await log({
             level: 'error',
             screenshot: true,
             fullpage: true,
             text: `(${this.name}) ${
               this.description ? this.description : 'TODO: Fill description'
-            } -> Can't evaluate ${type} = '${err.message}'`,
+            } -> Can't evaluate ${type} = '${error.message}'`,
           });
         }
-        throw this.collectDebugData(err, locals);
+        throw this.collectDebugData(error, locals);
       }
 
       if (!exprResult && type === 'if') {
@@ -384,14 +378,14 @@ class Test {
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
 
-        for (let i = 0; i < FUNCTIONS.length; i++) {
+        for (let i = 0; i < FUNCTIONS.length; i += 1) {
           let funcs = FUNCTIONS[i];
 
           if (_.isFunction(funcs)) {
             funcs = [funcs];
           }
           if (_.isArray(funcs)) {
-            for (let f = 0; f < funcs.length; f++) {
+            for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
               const funResult = (await fun(argsExt)) || {};
               // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);

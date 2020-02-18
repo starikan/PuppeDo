@@ -3,5 +3,6 @@ type: selectors
 name: selectors
 description: Simple Selectors
 data:
-  selector: test
   wikiInput: '#main-q'
+  loginBtn: .signin-link
+  email: .newsletter-input-email
