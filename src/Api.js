@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 const dayjs = require('dayjs');
 
@@ -8,23 +9,25 @@ const { Blocker } = require('./Blocker');
 const Environment = require('./Environment.js');
 const { Log } = require('./Log');
 
-const run = async (args = {}) => {
-  let envsId, envs, log;
+const run = async (argsInput = {}) => {
+  let envsId;
+  let envs;
+  let log;
   try {
     const startTime = new Date();
-    args = new Arguments(args);
+    const args = new Arguments(argsInput);
 
     if (_.isEmpty(args.PPD_TESTS)) {
-      throw { message: 'There is no tests to run. Pass any test in PPD_TESTS argument' };
+      throw new Error({ message: 'There is no tests to run. Pass any test in PPD_TESTS argument' });
     }
 
     if (_.isEmpty(args.PPD_ENVS)) {
-      throw { message: 'There is no environments to run. Pass any test in PPD_ENVS argument' };
+      throw new Error({ message: 'There is no environments to run. Pass any test in PPD_ENVS argument' });
     }
 
     const initArgsTime = (new Date() - startTime) / 1000;
 
-    for (let i = 0; i < args.PPD_TESTS.length; i++) {
+    for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
       const startTimeTest = new Date();
 
       ({ envsId, envs } = Environment({ envsId }));
@@ -46,11 +49,11 @@ const run = async (args = {}) => {
 
       const { fullJSON, textDescription } = getFullDepthJSON({ envsId });
 
-      await log({ level: 'env', text: '\n' + textDescription, testStruct: fullJSON });
+      await log({ level: 'env', text: `\n${textDescription}`, testStruct: fullJSON });
 
       const blocker = new Blocker();
       blocker.refresh();
-      let test = getTest(fullJSON, envsId);
+      const test = getTest(fullJSON, envsId);
 
       await log({
         level: 'timer',
@@ -77,7 +80,7 @@ const run = async (args = {}) => {
       process.exit(1);
     }
   } catch (error) {
-    error.message += ` || error in 'run'`;
+    error.message += " || error in 'run'";
     if (String(error).startsWith('SyntaxError')) {
       error.debug = true;
       error.type = 'SyntaxError';
