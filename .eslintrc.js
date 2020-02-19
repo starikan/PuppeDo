@@ -13,6 +13,7 @@ module.exports = {
     expect: true,
     jest: true,
     beforeAll: true,
+    beforeEach: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 2018 },

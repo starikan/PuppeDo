@@ -36,7 +36,7 @@ describe('Log', () => {
     });
 
     test('Console with colorization', () => {
-      logger.consoleLog([
+      Log.consoleLog([
         [
           ['info ', 'sane'],
           ['text', 'info'],
@@ -46,12 +46,12 @@ describe('Log', () => {
     });
 
     test('Console with default colorization', () => {
-      logger.consoleLog([[['info ', 'sane'], ['text']]]);
+      Log.consoleLog([[['info ', 'sane'], ['text']]]);
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
     test('Console multiline', () => {
-      logger.consoleLog([
+      Log.consoleLog([
         [['info '], ['text']],
         [['info '], ['text']],
       ]);
@@ -136,26 +136,26 @@ describe('Log', () => {
   });
 
   test('checkLevel', () => {
-    expect(logger.checkLevel(0)).toBe('raw');
-    expect(logger.checkLevel(1)).toBe('timer');
-    expect(logger.checkLevel(2)).toBe('debug');
-    expect(logger.checkLevel(3)).toBe('info');
-    expect(logger.checkLevel(4)).toBe('test');
-    expect(logger.checkLevel(5)).toBe('warn');
-    expect(logger.checkLevel(6)).toBe('error');
-    expect(logger.checkLevel(7)).toBe('env');
-    expect(logger.checkLevel('raw')).toBe('raw');
-    expect(logger.checkLevel('timer')).toBe('timer');
-    expect(logger.checkLevel('debug')).toBe('debug');
-    expect(logger.checkLevel('info')).toBe('info');
-    expect(logger.checkLevel('test')).toBe('test');
-    expect(logger.checkLevel('warn')).toBe('warn');
-    expect(logger.checkLevel('error')).toBe('error');
-    expect(logger.checkLevel('env')).toBe('env');
+    expect(Log.checkLevel(0)).toBe('raw');
+    expect(Log.checkLevel(1)).toBe('timer');
+    expect(Log.checkLevel(2)).toBe('debug');
+    expect(Log.checkLevel(3)).toBe('info');
+    expect(Log.checkLevel(4)).toBe('test');
+    expect(Log.checkLevel(5)).toBe('warn');
+    expect(Log.checkLevel(6)).toBe('error');
+    expect(Log.checkLevel(7)).toBe('env');
+    expect(Log.checkLevel('raw')).toBe('raw');
+    expect(Log.checkLevel('timer')).toBe('timer');
+    expect(Log.checkLevel('debug')).toBe('debug');
+    expect(Log.checkLevel('info')).toBe('info');
+    expect(Log.checkLevel('test')).toBe('test');
+    expect(Log.checkLevel('warn')).toBe('warn');
+    expect(Log.checkLevel('error')).toBe('error');
+    expect(Log.checkLevel('env')).toBe('env');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
-    expect(logger.checkLevel(2)).toBe(false);
-    expect(logger.checkLevel(3)).toBe('info');
+    expect(Log.checkLevel(2)).toBe(false);
+    expect(Log.checkLevel(3)).toBe('info');
   });
 
   test('makeLog', () => {

@@ -28,7 +28,7 @@ class Log {
     }
   }
 
-  checkLevel(level) {
+  static checkLevel(level) {
     const levels = {
       0: 'raw',
       1: 'timer',
@@ -98,8 +98,12 @@ class Log {
       breadcrumbs.forEach((v, i) => {
         stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
       });
-      testFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
-      funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+      if (testFile) {
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
+      }
+      if (funcFile) {
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+      }
     }
 
     screenshots.forEach((v) => {
@@ -119,9 +123,10 @@ class Log {
     return stringsLog;
   }
 
-  consoleLog(entries = []) {
+  static consoleLog(entries = []) {
     entries.forEach((entry) => {
       const line = entry.map((part) => paintString(part[0], part[1] || 'sane')).join('');
+      // eslint-disable-next-line no-console
       console.log(line);
     });
   }
@@ -163,7 +168,7 @@ class Log {
       PPD_LOG_FULLPAGE,
     } = new Arguments();
 
-    level = this.checkLevel(level);
+    level = Log.checkLevel(level);
     if (!level) return;
 
     // SKIP LOG BY LEVEL
@@ -191,7 +196,7 @@ class Log {
       const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
 
       // STDOUT
-      this.consoleLog(logTexts);
+      Log.consoleLog(logTexts);
 
       // EXPORT TEXT LOG
       this.fileLog(logTexts, 'output.log');
