@@ -4,8 +4,8 @@ const fs = require('fs');
 const walkSync = require('walk-sync');
 const yaml = require('js-yaml');
 
-const Singleton = require('./Singleton');
-const { Arguments } = require('./Arguments');
+const Singleton = require('./Singleton.js');
+const { Arguments } = require('./Arguments.js');
 
 class TestsContent extends Singleton {
   constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
@@ -33,26 +33,29 @@ class TestsContent extends Singleton {
     return this.allData;
   }
 
-  checkDuplicates(tests, key) {
+  static checkDuplicates(tests, key) {
     const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
     if (blankNames.length) {
       throw new Error({ message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` });
     }
 
     const dubs = tests.reduce((s, v) => {
-      s[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
-      return s;
+      const collector = { ...s };
+      collector[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
+      return collector;
     }, {});
 
     const isThrow = Object.values(dubs).some((v) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;
-      for (const key in dubs) {
-        if (dubs[key].length === 1) continue;
-        message += ` - Name: '${key}'.\n`;
-        message += dubs[key].map((v) => `    * '${v}'\n`).join('');
-      }
+      Object.entries(dubs).forEach((dub) => {
+        const [keyDub, valueDub] = dub;
+        if (valueDub.length > 1) {
+          message += ` - Name: '${keyDub}'.\n`;
+          message += valueDub.map((v) => `    * '${v}'\n`).join('');
+        }
+      });
       throw new Error({ message });
     }
     return true;
@@ -65,23 +68,22 @@ class TestsContent extends Singleton {
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
       let paths = [];
-      for (let i = 0; i < folders.length; i++) {
-        if (!fs.existsSync(folders[i])) {
-          continue;
+      for (let i = 0; i < folders.length; i += 1) {
+        if (fs.existsSync(folders[i])) {
+          const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
+            .filter((v) => extensions.includes(path.parse(v).ext))
+            .map((v) => path.join(folders[i], v));
+          paths = [...paths, ...pathsFolder];
         }
-        const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
-          .filter((v) => extensions.includes(path.parse(v).ext))
-          .map((v) => path.join(folders[i], v));
-        paths = [...paths, ...pathsFolder];
       }
 
       paths.forEach((filePath) => {
         try {
-          const full = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
-          for (const v of full) {
-            v.testFile = filePath;
-            allContent.push(v);
-          }
+          const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
+          testsYaml.forEach((v) => {
+            const collect = { ...v, ...{ testFile: filePath } };
+            allContent.push(collect);
+          });
         } catch (e) {
           console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/`);
         }
@@ -95,9 +97,9 @@ class TestsContent extends Singleton {
 
       this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
-      for (const key of ['atoms', 'tests', 'envs', 'data', 'selectors']) {
-        this.checkDuplicates(this.allData[key], key);
-      }
+      ['atoms', 'tests', 'envs', 'data', 'selectors'].forEach((key) => {
+        TestsContent.checkDuplicates(this.allData[key], key);
+      });
 
       return this.allData;
     }

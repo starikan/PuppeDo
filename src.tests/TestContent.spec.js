@@ -88,8 +88,7 @@ describe('TestContent', () => {
   });
 
   test('checkDuplicates', () => {
-    const allData = new TestsContent();
-    const CD = allData.__instance.checkDuplicates;
+    const CD = TestsContent.checkDuplicates;
 
     const data = [
       { type: 'foo', name: 'bar' },
