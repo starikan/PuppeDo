@@ -3,32 +3,35 @@ const path = require('path');
 const _ = require('lodash');
 
 const { Blocker } = require('./Blocker');
-const { blankSocket } = require('./helpers');
-const abstractTest = require('./abstractTest');
+const { blankSocket } = require('./Helpers.js');
+const AbstractTest = require('./AbstractTest.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
 const resolveJS = (testJson, funcFile) => {
+  const testJsonNew = { ...testJson };
   try {
+    /* eslint-disable */
     const atom = require(funcFile);
+    /* eslint-enable */
     const funcFromFile = _.get(atom, 'runTest');
     if (_.isFunction(funcFromFile)) {
-      testJson.funcFile = path.resolve(funcFile);
-      testJson.runTest = [funcFromFile];
+      testJsonNew.funcFile = path.resolve(funcFile);
+      testJsonNew.runTest = [funcFromFile];
     }
   } catch (err) {
     // If there is no JS file it`s fine.
-    testJson.funcFile = 'No file';
-    testJson.runTest = [() => {}];
+    testJsonNew.funcFile = 'No file';
+    testJsonNew.runTest = [() => {}];
   }
-  return testJson;
+  return testJsonNew;
 };
 
-const getTest = function(testJsonIncome, envsId, socket = blankSocket) {
-  let testJson = { ...testJsonIncome };
-  if (!testJson || !_.isObject(testJson) || !envsId) {
-    throw { message: 'getTest params error' };
+const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
+  if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
+    throw new Error({ message: 'getTest params error' });
   }
+  let testJson = { ...testJsonIncome };
   const functions = _.pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging
@@ -47,24 +50,23 @@ const getTest = function(testJsonIncome, envsId, socket = blankSocket) {
     const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
     testJson = resolveJS(testJson, funcFile);
   } else {
-    for (const funcKey in functions) {
-      const funcVal = functions[funcKey];
-
+    Object.entries(functions).forEach((v) => {
+      const [funcKey, funcVal] = v;
       // Resolve nested
       if (_.isArray(funcVal)) {
         testJson[funcKey] = [];
-        for (const test of funcVal) {
+        funcVal.forEach((test) => {
           if (['test', 'atom'].includes(test.type)) {
             testJson[funcKey].push(getTest(test, envsId, socket));
           }
-        }
+        });
       } else {
-        throw { message: `Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'` };
+        throw new Error({ message: `Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'` });
       }
-    }
+    });
   }
 
-  const test = new abstractTest(testJson);
+  const test = new AbstractTest(testJson);
 
   return async () => {
     await test.run(testJson, envsId);
