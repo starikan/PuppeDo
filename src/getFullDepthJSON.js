@@ -1,7 +1,8 @@
 const crypto = require('crypto');
 
 const _ = require('lodash');
-const TestsContent = require('./TestContent');
+
+const TestsContent = require('./TestContent.js');
 const Environment = require('./Environment.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
@@ -21,32 +22,36 @@ const generateDescriptionStep = (fullJSON) => {
 };
 
 const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
-  if (!testName) {
-    testName = Environment({ envsId }).envs.get('current.test');
-  }
+  const testNameResolved = testName || Environment({ envsId }).envs.get('current.test');
   const allTests = new TestsContent();
 
   const testJSON = _.cloneDeep(
-    allTests.allContent.find((v) => v.name === testName && ['atom', 'test'].includes(v.type)),
+    allTests.allContent.find((v) => v.name === testNameResolved && ['atom', 'test'].includes(v.type)),
   );
   if (!testJSON) {
-    throw { message: `Test with name '${testName}' not found in root folder and additional folders` };
+    throw new Error({
+      message: `Test with name '${testNameResolved}' not found in root folder and additional folders`,
+    });
   }
 
   const fullJSON = _.cloneDeep({ ...testJSON, ...testBody });
-  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testName]);
+  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testNameResolved]);
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
   let textDescription = generateDescriptionStep(fullJSON);
 
-  for (const runnerBlock of RUNNER_BLOCK_NAMES) {
+  RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
     const runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
-      for (const runnerNum in runnerBlockValue) {
-        const runner = _.get(runnerBlockValue, [runnerNum], {});
-        let [name, newRunner] = Object.entries(runner)[0] || [null, {}];
+      runnerBlockValue.forEach((v, runnerNum) => {
+        const runner = Object.entries(_.get(runnerBlockValue, [runnerNum], {}));
+
+        let [name, newRunner] = runner.length ? runner[0] : [null, {}];
+        // It`s important. Subtest may named but no body.
+        name = name || null;
         newRunner = newRunner || {};
+
         if (name) {
           newRunner.name = name;
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
@@ -59,15 +64,16 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
           fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
           textDescription += textDescriptionResponse;
         }
-      }
+      });
     } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
-      throw {
-        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' must be array of tests`,
-      };
+      throw new Error({
+        message: `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' \
+                  must be array of tests`,
+      });
     }
-  }
+  });
 
-  fullJSON.name = _.get(fullJSON, 'name', testName);
+  fullJSON.name = _.get(fullJSON, 'name', testNameResolved);
 
   return { fullJSON, textDescription };
 };
