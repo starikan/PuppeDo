@@ -182,6 +182,8 @@ Arguments applying order. From minor to major:
 1. rename bindData -> dataBind
 
 1. rename bindSelectors -> selectorsBind
+
+1. Puppeter out from core
 <!-- # Editors Environment
 
 ## VSCode
