@@ -115,6 +115,7 @@ describe('TestContent', () => {
       { name: 'dee', testFile: 'bar' },
       { name: 'dee', testFile: 'tyy' },
     ];
+    // TODO: ПОчему этот тест проходит хотя message вобще то нет
     expect(() => CD(testsObjects2, 'foo')).toThrow(
       new Error({
         message: `There is duplicates of 'foo':
