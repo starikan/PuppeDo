@@ -12,7 +12,7 @@ class Singleton {
   // }
 
   constructor() {
-    let Class = new.target; // or this.constructor
+    const Class = new.target; // or this.constructor
 
     if (!Class[singleton]) {
       Class[singleton] = this;

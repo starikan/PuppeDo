@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -9,53 +10,10 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
-const { merge, sleep, blankSocket } = require('./helpers');
-const TestsContent = require('./TestContent');
-const { Arguments } = require('./Arguments');
-
-class Env {
-  constructor(name, env = {}) {
-    this.name = name;
-    // Browser, pages, cookies, etc.
-    this.state = {};
-    this.env = {
-      name,
-      data: {},
-      selectors: {},
-    };
-    this.env = { ...this.env, ...env };
-  }
-
-  set(name, data) {
-    return _.set(this, name, data);
-  }
-
-  setState() {
-    // TODO: 2020-01-13 S.Starodubov cookies and other
-  }
-
-  get(name, def = null) {
-    return _.get(this.env, name, def);
-  }
-
-  getState(value = null) {
-    if (value) {
-      return _.get(this, `state.${value}`);
-    }
-    return this.state;
-  }
-
-  push(name, data) {
-    let arr = _.clone(this.get(name, []));
-    try {
-      arr.push(data);
-    } catch (err) {
-      console.log('class Env -> push');
-      console.log(err);
-    }
-    return _.set(this.env, name, arr);
-  }
-}
+const { merge, sleep, blankSocket } = require('./Helpers.js');
+const TestsContent = require('./TestContent.js');
+const { Arguments } = require('./Arguments.js');
+const { Env } = require('./Env.js');
 
 class Envs {
   constructor() {
@@ -77,7 +35,7 @@ class Envs {
   }
 
   push(name, data) {
-    let arr = _.clone(this.get(name, []));
+    const arr = _.clone(this.get(name, []));
     try {
       arr.push(data);
     } catch (err) {
@@ -101,10 +59,8 @@ class Envs {
   }
 
   getEnv(name) {
-    if (!name) {
-      name = _.get(this, 'current.name');
-    }
-    return _.get(this.envs, name, {});
+    const nameNew = name || _.get(this, 'current.name');
+    return _.get(this.envs, nameNew, {});
   }
 
   getActivePage() {
@@ -116,7 +72,7 @@ class Envs {
   getOutputsFolders() {
     const { folder, folderLatest } = _.get(this, 'output', {});
     if (!folder || !folderLatest) {
-      throw { message: 'There is no output folder' };
+      throw new Error('There is no output folder');
     }
     return { folder, folderLatest };
   }
@@ -141,13 +97,13 @@ class Envs {
 
     this.initOutputLatest();
 
-    this.__proto__.initOutput = () => {};
+    this.initOutput = () => {};
   }
 
   initOutputLatest() {
     const { PPD_OUTPUT: output } = new Arguments();
 
-    let folderLatest = path.join(output, 'latest');
+    const folderLatest = path.join(output, 'latest');
 
     if (!fs.existsSync(output)) {
       fs.mkdirSync(output);
@@ -157,8 +113,8 @@ class Envs {
     if (!fs.existsSync(folderLatest)) {
       fs.mkdirSync(folderLatest);
     } else {
-      let filesExists = walkSync(folderLatest);
-      for (let i = 0; i < filesExists.length; i++) {
+      const filesExists = walkSync(folderLatest);
+      for (let i = 0; i < filesExists.length; i += 1) {
         fs.unlinkSync(path.join(folderLatest, filesExists[i]));
       }
     }
@@ -168,12 +124,12 @@ class Envs {
     this.output.folderLatest = folderLatest;
 
     // Drop this function after first use
-    this.__proto__.initOutputLatest = () => {};
+    this.initOutputLatest = () => {};
   }
 
   async runBrowsers() {
     const envsNames = Object.keys(this.envs);
-    for (let i = 0; i < envsNames.length; i++) {
+    for (let i = 0; i < envsNames.length; i += 1) {
       const env = this.envs[envsNames[i]];
 
       const type = _.get(env, 'env.browser.type', 'puppeteer');
@@ -186,14 +142,14 @@ class Envs {
 
       if (type === 'puppeteer') {
         if (runtime === 'run') {
-          const { browser, pages } = await this.runPuppeteer(browserSettings);
+          const { browser, pages } = await Envs.runPuppeteer(browserSettings);
           env.state = { ...env.state, ...{ browser, pages } };
         }
       }
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const { browser, pages } = await this.connectElectron(browserSettings);
+          const { browser, pages } = await Envs.connectElectron(browserSettings);
           env.state = { ...env.state, ...{ browser, pages } };
         }
         if (runtime === 'run') {
@@ -204,7 +160,7 @@ class Envs {
     }
   }
 
-  async runPuppeteer(browserSettings) {
+  static async runPuppeteer(browserSettings) {
     const { PPD_DEBUG_MODE = false } = new Arguments();
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
@@ -221,23 +177,23 @@ class Envs {
     return { browser, pages };
   }
 
-  async connectElectron(browserSettings) {
+  static async connectElectron(browserSettings) {
     const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
 
     if (urlDevtoolsJson) {
-      const jsonPagesResponse = await fetch(urlDevtoolsJson + 'json', { method: 'GET' });
-      const jsonBrowserResponse = await fetch(urlDevtoolsJson + 'json/version', { method: 'GET' });
+      const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
+      const jsonBrowserResponse = await fetch(`${urlDevtoolsJson}json/version`, { method: 'GET' });
 
       const jsonPages = await jsonPagesResponse.json();
       const jsonBrowser = await jsonBrowserResponse.json();
 
       if (!jsonBrowser || !jsonPages) {
-        throw { message: `Can't connect to ${urlDevtoolsJson}` };
+        throw new Error(`Can't connect to ${urlDevtoolsJson}`);
       }
 
       const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
       if (!webSocketDebuggerUrl) {
-        throw { message: `webSocketDebuggerUrl empty. Possibly wrong Electron version running` };
+        throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
       const browser = await puppeteer.connect({
@@ -246,12 +202,12 @@ class Envs {
         slowMo: _.get(browserSettings, 'slowMo', 0),
       });
 
-      let pagesRaw = await browser.pages();
+      const pagesRaw = await browser.pages();
       let pages = {};
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
-        throw { message: 'Can`t find any pages in connection' };
+        throw new Error('Can`t find any pages in connection');
       }
 
       const { width, height } = _.get(browserSettings, 'windowSize');
@@ -262,7 +218,7 @@ class Envs {
       return { browser, pages };
     }
 
-    throw { message: `Can't connect to Electron ${urlDevtoolsJson}` };
+    throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
   }
 
   async runElectron(browserSettings, env) {
@@ -272,18 +228,18 @@ class Envs {
     const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
     const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
     const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
-    const run_args = [program, ...browserArgs];
+    const runArgs = [program, ...browserArgs];
 
     if (runtimeExecutable) {
       process.env = { ...process.env, ...browserEnv };
 
-      let prc = spawn(runtimeExecutable, run_args, { cwd, env: process.env });
+      const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env });
 
       if (prc) {
         fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
         fs.writeFileSync(path.join(this.output.folderLatest, `${env.name}.log`), '');
 
-        prc.stdout.on('data', data => {
+        prc.stdout.on('data', (data) => {
           fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
           fs.appendFileSync(path.join(this.output.folderLatest, `${env.name}.log`), String(data));
         });
@@ -291,17 +247,16 @@ class Envs {
 
       await sleep(pauseAfterStartApp);
 
-      let { browser, pages } = await this.connectElectron(browserSettings);
+      const { browser, pages } = await Envs.connectElectron(browserSettings);
       return { browser, pages, pid: prc.pid };
-    } else {
-      throw { message: `Can't run Electron ${runtimeExecutable}` };
     }
+    throw new Error(`Can't run Electron ${runtimeExecutable}`);
   }
 
   async closeBrowsers() {
-    for (let i = 0; i < Object.keys(this.envs).length; i++) {
+    for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
-      const state = this.envs[key].state;
+      const { state } = this.envs[key];
       try {
         state.browser.close();
       } catch (exc) {}
@@ -309,7 +264,7 @@ class Envs {
   }
 
   async closeProcesses() {
-    for (let i = 0; i < Object.keys(this.envs).length; i++) {
+    for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
       const pid = _.get(this.envs[key], 'state.pid');
       const killOnEnd = _.get(this.envs[key], 'env.browser.killOnEnd', true);
@@ -321,48 +276,47 @@ class Envs {
     }
   }
 
-  async resolveLinks() {
+  static async resolveLinks() {
     const args = new Arguments();
     const allData = await new TestsContent();
 
     // ENVS RESOLVING
-    args.PPD_ENVS = args.PPD_ENVS.map(v => {
-      const env = _.cloneDeep(allData.envs.find(g => g.name === v));
+    args.PPD_ENVS = args.PPD_ENVS.map((v) => {
+      const env = _.cloneDeep(allData.envs.find((g) => g.name === v));
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [], data = {}, selectors = {} } = env;
-        envsExt.forEach(d => {
-          const envsResolved = { ...allData.envs.find(g => g.name === d, {}) };
+        envsExt.forEach((d) => {
+          const envsResolved = { ...allData.envs.find((g) => g.name === d, {}) };
           env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser') || {});
           env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log') || {});
           env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data') || {});
           env.selectors = merge(_.get(env, 'selectors', {}), _.get(envsResolved, 'selectors') || {});
-          env.description = _.get(env, 'description', '') + ' -> ' + _.get(envsResolved, 'description', '');
+          env.description = `${_.get(env, 'description', '')} -> ${_.get(envsResolved, 'description', '')}`;
         });
-        dataExt.forEach(d => {
-          const dataResolved = { ...allData.data.find(g => g.name === d, {}) };
+        dataExt.forEach((d) => {
+          const dataResolved = { ...allData.data.find((g) => g.name === d, {}) };
           env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data') || {}, data);
         });
-        selectorsExt.forEach(d => {
-          const selectorsResolved = { ...allData.selectors.find(g => g.name === d, {}) };
+        selectorsExt.forEach((d) => {
+          const selectorsResolved = { ...allData.selectors.find((g) => g.name === d, {}) };
           env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data') || {}, selectors);
         });
         return env;
-      } else {
-        throw { message: `PuppeDo found unknown environment in yours args. It's name '${v}'.` };
       }
+      throw new Error(`PuppeDo found unknown environment in yours args. It's name '${v}'.`);
     });
 
     return args;
   }
 
   async init(runBrowsers = true) {
-    const args = { ...(await this.resolveLinks()) };
-    let { PPD_ENVS: envs, PPD_DATA: data, PPD_SELECTORS: selectors } = args;
+    const args = { ...(await Envs.resolveLinks()) };
+    const { PPD_ENVS: envs, PPD_DATA: data, PPD_SELECTORS: selectors } = args;
     this.set('args', args);
     this.set('data', data);
     this.set('selectors', selectors);
 
-    for (let i = 0; i < envs.length; i++) {
+    for (let i = 0; i < envs.length; i += 1) {
       const env = envs[i];
       const name = _.get(env, 'name');
 
@@ -377,7 +331,7 @@ class Envs {
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {
-      throw { message: `Can't init any environment. Check 'envs' parameter, should be array` };
+      throw new Error("Can't init any environment. Check 'envs' parameter, should be array");
     }
 
     if (runBrowsers) {
@@ -385,20 +339,20 @@ class Envs {
     }
 
     // If already init do nothing
-    this.__proto__.init = () => {};
+    this.init = () => {};
   }
 }
 
-let instances = {};
+const instances = {};
 
 module.exports = function({ envsId, socket = blankSocket } = {}) {
   if (envsId) {
     if (!_.get(instances, envsId)) {
-      throw { message: `Unknown ENV ID ${envsId}` };
+      throw new Error(`Unknown ENV ID ${envsId}`);
     }
   } else {
     envsId = crypto.randomBytes(16).toString('hex');
-    let newEnvs = new Envs();
+    const newEnvs = new Envs();
     instances[envsId] = { envs: newEnvs, socket };
   }
 

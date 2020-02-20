@@ -1,6 +1,8 @@
+const _ = require('lodash');
+
 const EventEmitter = require('events');
 
-const Singleton = require('./singleton');
+const Singleton = require('./Singleton.js');
 
 class Blocker extends Singleton {
   constructor() {
@@ -22,24 +24,24 @@ class Blocker extends Singleton {
     if (_.isArray(blockArray)) {
       this.blocks = blockArray;
     } else {
-      throw { message: 'Blocks must be array' };
+      throw new Error('Blocks must be array');
     }
-    this.blocks.forEach(v => {
+    this.blocks.forEach((v) => {
       this.blockEmitter.emit('updateBlock', v);
     });
   }
 
   setBlock(stepId, block) {
-    this.blocks.forEach(v => {
+    this.blocks.forEach((v) => {
       if (v.stepId === stepId) {
-        v.block = Boolean(block);
-        this.blockEmitter.emit('updateBlock', v);
+        const emmitData = { ...v, ...{ block: Boolean(block) } };
+        this.blockEmitter.emit('updateBlock', emmitData);
       }
     });
   }
 
   getBlock(stepId) {
-    return (this.blocks.find(v => v.stepId === stepId) || {}).block;
+    return (this.blocks.find((v) => v.stepId === stepId) || {}).block;
   }
 }
 

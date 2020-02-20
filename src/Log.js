@@ -7,63 +7,10 @@ require('array-flat-polyfill');
 const dayjs = require('dayjs');
 const yaml = require('js-yaml');
 
-const { sleep, paintString } = require('./helpers');
-const { Arguments } = require('./Arguments');
-const Environment = require('./env');
-
-class Screenshot {
-  constructor({ envsId } = {}) {
-    const { socket, envs } = Environment({ envsId });
-    this.envs = envs;
-    this.socket = socket;
-  }
-
-  async getScreenshots(element, fullPage = false, extendInfo = false) {
-    if (extendInfo) {
-      return [];
-    }
-    const elementScreenshot = await this.saveScreenshot({ element });
-    const fullPageScreenshot = await this.saveScreenshot({ fullPage });
-    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter(v => v);
-    return screenshotsExists;
-  }
-
-  copyScreenshotToLatest(name) {
-    const { folder, folderLatest } = this.envs.getOutputsFolders();
-    const pathScreenshot = path.join(folder, name);
-    const pathScreenshotLatest = path.join(folderLatest, name);
-    fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
-  }
-
-  async saveScreenshot({ fullPage = false, element = false } = {}) {
-    const { folder } = this.envs.getOutputsFolders();
-    try {
-      const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
-      const pathScreenshot = path.join(folder, name);
-
-      if (fullPage) {
-        const page = this.envs.getActivePage();
-        await page.screenshot({ path: pathScreenshot, fullPage });
-      }
-
-      if (element && _.isObject(element) && !_.isEmpty(element)) {
-        await element.screenshot({ path: pathScreenshot });
-      }
-
-      if (fs.existsSync(pathScreenshot)) {
-        this.copyScreenshotToLatest(name);
-        await sleep(25);
-        return name;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      err.message += ` || saveScreenshot selectors`;
-      err.socket = this.socket;
-      throw err;
-    }
-  }
-}
+const { paintString } = require('./Helpers.js');
+const { Arguments } = require('./Arguments.js');
+const { Screenshot } = require('./Screenshot.js');
+const Environment = require('./Environment.js');
 
 class Log {
   constructor({ envsId } = {}) {
@@ -81,7 +28,7 @@ class Log {
     }
   }
 
-  checkLevel(level) {
+  static checkLevel(level) {
     const levels = {
       0: 'raw',
       1: 'timer',
@@ -109,9 +56,8 @@ class Log {
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
       return levels[inputLevel];
-    } else {
-      return false;
     }
+    return false;
   }
 
   makeLog({
@@ -143,8 +89,8 @@ class Log {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
-        [head, level == 'error' ? 'error' : 'sane'],
-        [tail, level == 'error' ? 'error' : 'info'],
+        [head, level === 'error' ? 'error' : 'sane'],
+        [tail, level === 'error' ? 'error' : 'info'],
       ]);
     }
 
@@ -152,30 +98,35 @@ class Log {
       breadcrumbs.forEach((v, i) => {
         stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
       });
-      testFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
-      funcFile && stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+      if (testFile) {
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
+      }
+      if (funcFile) {
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+      }
     }
 
-    screenshots.forEach(v => {
+    screenshots.forEach((v) => {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
-        [`🖼 screenshot: [${v}]`, level == 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
+        [`🖼 screenshot: [${v}]`, level === 'error' ? 'error' : 'info'],
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level == 'error' ? 'error' : 'sane'],
-        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level == 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
+        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level === 'error' ? 'error' : 'info'],
       ]);
     }
 
     return stringsLog;
   }
 
-  consoleLog(entries = []) {
-    entries.forEach(entry => {
-      const line = entry.map(part => paintString(part[0], part[1] || 'sane')).join('');
+  static consoleLog(entries = []) {
+    entries.forEach((entry) => {
+      const line = entry.map((part) => paintString(part[0], part[1] || 'sane')).join('');
+      // eslint-disable-next-line no-console
       console.log(line);
     });
   }
@@ -185,13 +136,13 @@ class Log {
 
     let textsJoin = '';
     if (_.isArray(texts)) {
-      textsJoin = texts.map(text => text.map(log => log[0] || '').join('')).join('\n');
+      textsJoin = texts.map((text) => text.map((log) => log[0] || '').join('')).join('\n');
     } else {
       textsJoin = texts.toString();
     }
 
-    fs.appendFileSync(path.join(folder, fileName), textsJoin + '\n');
-    fs.appendFileSync(path.join(folderLatest, fileName), textsJoin + '\n');
+    fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
+    fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
   }
 
   async log({
@@ -217,7 +168,7 @@ class Log {
       PPD_LOG_FULLPAGE,
     } = new Arguments();
 
-    level = this.checkLevel(level);
+    level = Log.checkLevel(level);
     if (!level) return;
 
     // SKIP LOG BY LEVEL
@@ -245,21 +196,19 @@ class Log {
       const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
 
       // STDOUT
-      this.consoleLog(logTexts);
+      Log.consoleLog(logTexts);
 
       // EXPORT TEXT LOG
       this.fileLog(logTexts, 'output.log');
 
       // ENVS TO LOG
       let dataEnvs = null;
-      if (level == 'env') {
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), val => {
-          return _.omit(val, 'state');
-        });
+      if (level === 'env') {
+        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), (val) => _.omit(val, 'state'));
       }
 
       if (_.isEmpty(testStruct)) {
-        testStruct = _.mapValues(testSource, v => {
+        testStruct = _.mapValues(testSource, (v) => {
           if (!_.isEmpty(v)) {
             return v;
           }
@@ -271,11 +220,11 @@ class Log {
         time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
-        dataEnvsGlobal: level == 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
-        testStruct: PPD_DEBUG_MODE || level == 'env' ? testStruct : null,
+        dataEnvsGlobal: level === 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
+        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStruct : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
-        type: level == 'env' ? 'env' : 'log',
+        type: level === 'env' ? 'env' : 'log',
         level,
         levelIndent,
         stepId: _.get(bindedData, 'stepId'),
@@ -284,7 +233,7 @@ class Log {
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
-      let yamlString = '-\n' + yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2));
+      const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
       this.fileLog(yamlString, 'output.yaml');
     } catch (err) {
       err.message += ' || error in log';
@@ -296,4 +245,4 @@ class Log {
   }
 }
 
-module.exports = { Log, Screenshot };
+module.exports = { Log };

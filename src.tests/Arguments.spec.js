@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { Arguments } = require('./Arguments');
+const { Arguments } = require('../src/Arguments');
 
 const argsDefault = {
   PPD_DATA: {},
@@ -51,7 +51,7 @@ function setArg(argName, argData) {
 }
 
 function errors(name, type) {
-  return { message: `Invalid argument type '${name}', '${type}' required.` };
+  return new Error(`Invalid argument type '${name}', '${type}' required.`);
 }
 
 test('Arguments is Singleton and Default args', () => {
@@ -61,7 +61,8 @@ test('Arguments is Singleton and Default args', () => {
 });
 
 test('Arguments check', () => {
-  let argData, argResult;
+  let argData;
+  let argResult;
 
   // Object
   [argData, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
@@ -186,7 +187,7 @@ test('Arguments check', () => {
 test('Arguments CLI', () => {
   const rawArgv = process.argv;
 
-  const argsJSON = Object.keys(argsModify).map(key => {
+  const argsJSON = Object.keys(argsModify).map((key) => {
     const val = _.isString(argsModify[key]) ? argsModify[key] : JSON.stringify(argsModify[key]);
     return `${key}=${val}`;
   });
@@ -205,7 +206,5 @@ test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsModify };
   const args = new Arguments({}, true);
   expect(argsModify).toEqual(args);
-  Object.keys(argsModify).map(v => {
-    delete process.env[v];
-  });
+  Object.keys(argsModify).map((v) => delete process.env[v]);
 });

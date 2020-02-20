@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
@@ -36,12 +36,21 @@
     "lodash": "4.17.15",
     "node-fetch": "2.6.0",
     "polyfill-object.fromentries": "1.0.1",
-    "puppeteer": "1.4.0",
     "safe-eval": "0.4.1",
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.13",
-    "jest": "^25.1.0"
+    "@puppedo/atoms": "2.0.15",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.1.0",
+    "prettier": "1.19.1",
+    "prettier-eslint": "^9.0.1",
+    "puppeteer": "^2.1.1",
+    "typescript": "^3.7.5"
   }
 }

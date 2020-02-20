@@ -4,8 +4,8 @@ name: data
 description: Simple Data
 data:
   data: test
-  # wikiUrl: https://wikipedia.org/
-  wikiUrl: https://developer.mozilla.org/
+  baseUrl: https://developer.mozilla.org/
+
 ---
 type: data
 name: dataExtMain

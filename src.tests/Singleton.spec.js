@@ -1,4 +1,4 @@
-const Singleton = require('./Singleton');
+const Singleton = require('../src/Singleton');
 
 describe('Singleton', () => {
   test('Same instance', () => {

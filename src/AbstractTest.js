@@ -1,54 +1,47 @@
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
-const { merge, blankSocket } = require('./helpers');
-const { Blocker } = require('./Blocker');
-const { Arguments } = require('./Arguments');
-const { Log } = require('./Log');
-const Environment = require('./env');
-const TestsContent = require('./TestContent');
+const { merge, blankSocket } = require('./Helpers.js');
+const { Blocker } = require('./Blocker.js');
+const { Arguments } = require('./Arguments.js');
+const { Log } = require('./Log.js');
+const Environment = require('./Environment.js');
+const TestsContent = require('./TestContent.js');
 
 const ALIASES = {
-  bindData: ['bD', 'bd', '📌📋'],
-  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
-  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
-  selectors: ['selector', 's', '💠'],
   data: ['d', '📋'],
-  options: ['option', 'opt', 'o', '⚙️'],
-  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑📋'],
-  dataFunction: ['dF', 'df', '🔑💠'],
+  bindData: ['bD', 'bd', '📌📋'],
+  dataFunction: ['dF', 'df', '🔑📋'],
+  selectors: ['selector', 's', '💠'],
+  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
+  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠'],
+  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
   resultFunction: ['rF', 'rf', '🔑↩️'],
+  options: ['option', 'opt', 'o', '⚙️'],
 };
 
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
-  _.forEach(needs, d => {
+  _.forEach(needs, (d) => {
     if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
-    const intersectionData = new Set([...keysData].filter(x => keysDataIncome.has(x)));
+    const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw { message: `Error: can't find data parameter "${d}" in ${testName} test` };
+      throw new Error(`Error: can't find data parameter "${d}" in ${testName} test`);
     }
   });
-  return;
+  return true;
 };
 
 const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   const allDataSel = merge(dataLocal, selectorsLocal);
-  let funcEval = {};
-
-  for (const key in funcParams) {
-    if (_.isString(funcParams[key])) {
-      funcEval[key] = safeEval(funcParams[key], allDataSel);
-    }
-    //TODO: 2019-05-17 S.Starodubov Remove this. Fill it with functions.
-    if (_.isArray(funcParams[key]) && funcParams[key].length == 2) {
-      let dataFuncEval = safeEval(funcParams[key][0], allDataSel);
-      funcEval[key] = dataFuncEval;
-      funcEval[funcParams[key][1]] = dataFuncEval;
-    }
-  }
+  const funcEval = Object.entries(funcParams).reduce((s, v) => {
+    const [key, data] = v;
+    const evalData = safeEval(data.toString(), allDataSel);
+    const collector = { ...s, ...{ [key]: evalData } };
+    return collector;
+  }, {});
   return funcEval;
 };
 
@@ -56,7 +49,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   try {
     let result = {};
     const values = [valueName, ..._.get(aliases, valueName, [])];
-    values.forEach(v => {
+    values.forEach((v) => {
       result = merge(result, _.get(inputs, v, {}));
     });
     return result;
@@ -70,12 +63,12 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
-      throw {
+      throw new Error({
         message: `Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`,
-      };
+      });
     }
   } else {
-    throw { message: 'needEnv wrong format, should be array or string' };
+    throw new Error('needEnv wrong format, should be array or string');
   }
 };
 
@@ -92,10 +85,10 @@ class Test {
     selectors = {},
     dataExt = [],
     selectorsExt = [],
-    beforeTest = async function() {},
-    runTest = async function() {},
-    afterTest = async function() {},
-    errorTest = async function() {},
+    beforeTest = () => {},
+    runTest = () => {},
+    afterTest = () => {},
+    errorTest = () => {},
     source = '',
     repeat = 1,
     socket = blankSocket,
@@ -142,8 +135,8 @@ class Test {
       // * Fetch data from ext files that passed in test itself
       const allTests = new TestsContent();
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      extFiles.forEach(v => {
-        const extData = allTests[dataName].find(d => v === d.name);
+      extFiles.forEach((v) => {
+        const extData = allTests[dataName].find((d) => v === d.name);
         if (extData) {
           joinArray = [...joinArray, extData.data];
         }
@@ -158,22 +151,22 @@ class Test {
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      for (const key in bindDataLocal) {
-        dataLocal[key] = _.get(dataLocal, bindDataLocal[key]);
-      }
+      Object.entries(bindDataLocal).forEach((v) => {
+        const [key, val] = v;
+        dataLocal[key] = _.get(dataLocal, val);
+      });
 
       // * Update after all bindings with data from test itself passed in running
-      const data = isSelector ? this.selectors : this.data;
-      dataLocal = merge(dataLocal, data);
+      const collectedData = isSelector ? this.selectors : this.data;
+      dataLocal = merge(dataLocal, collectedData);
 
       return dataLocal;
     };
 
-    this.fetchSelectors = () => {
-      return this.fetchData(true);
-    };
+    this.fetchSelectors = () => this.fetchData(true);
 
-    this.collectDebugData = (error, locals = {}, message = null) => {
+    this.collectDebugData = (errorIncome, locals = {}, message = null) => {
+      const error = { ...errorIncome };
       const fields = [
         'data',
         'bindData',
@@ -200,27 +193,27 @@ class Test {
       return error;
     };
 
-    this.checkIf = async (expr, type, log, levelIndent, locals = {}) => {
+    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
 
       try {
         exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
-      } catch (err) {
-        if (err.name == 'ReferenceError') {
+      } catch (error) {
+        if (error.name === 'ReferenceError') {
           await log({
             level: 'error',
             screenshot: true,
             fullpage: true,
             text: `(${this.name}) ${
               this.description ? this.description : 'TODO: Fill description'
-            } -> Can't evaluate ${type} = '${err.message}'`,
+            } -> Can't evaluate ${ifType} = '${error.message}'`,
           });
         }
-        throw this.collectDebugData(err, locals);
+        throw this.collectDebugData(error, locals);
       }
 
-      if (!exprResult && type === 'if') {
+      if (!exprResult && ifType === 'if') {
         await log({
           level: 'info',
           screenshot: false,
@@ -228,26 +221,28 @@ class Test {
           text: `(${this.name}) ${
             this.description ? this.description : 'TODO: Fill description'
           } -> Skipping with expr '${expr}'`,
-          levelIndent,
+          ifLevelIndent,
         });
         return true;
       }
 
-      if (exprResult && type !== 'if') {
+      if (exprResult && ifType !== 'if') {
         await log({
           level: 'error',
           screenshot: true,
           fullpage: true,
           text: `(${this.name}) ${
             this.description ? this.description : 'TODO: Fill description'
-          } -> Test stopped with expr ${type} = '${expr}'`,
-          levelIndent,
+          } -> Test stopped with expr ${ifType} = '${expr}'`,
+          ifLevelIndent,
         });
-        throw this.collectDebugData({}, locals, `Test stopped with expr ${type} = '${expr}'`);
+        throw this.collectDebugData({}, locals, `Test stopped with expr ${ifType} = '${expr}'`);
       }
+
+      return true;
     };
 
-    this.runLogic = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date();
 
       const inputs = merge(inputArgs, constructorArgs);
@@ -255,12 +250,12 @@ class Test {
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
       this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
-      this.dataExt = [...new Set([...this.dataExt, ...dataExt])];
+      this.dataExt = [...new Set([...this.dataExt, ...dataExtLogic])];
 
       this.selectors = resolveAliases('selectors', inputs, ALIASES);
       this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);
-      this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExt])];
+      this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExtLogic])];
 
       this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
@@ -275,7 +270,7 @@ class Test {
         _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
-        throw { message: 'Test should have envsId' };
+        throw new Error('Test should have envsId');
       }
 
       const { envs } = Environment({ envsId });
@@ -295,15 +290,14 @@ class Test {
 
         let dataLocal = this.fetchData();
         let selectorsLocal = this.fetchSelectors();
-        let allData = merge(dataLocal, selectorsLocal);
+        const allData = merge(dataLocal, selectorsLocal);
 
         // FUNCTIONS
-        let dFResults = resolveDataFunctions(this.dataFunction, allData);
-        let sFResults = resolveDataFunctions(this.selectorsFunction, allData);
+        const dFResults = resolveDataFunctions(this.dataFunction, allData);
+        const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
         // Save all functions results into envs
-        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults));
-        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), sFResults));
+        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults, sFResults));
 
         // Update data and selectors with functions result
         dataLocal = merge(dataLocal, dFResults);
@@ -331,7 +325,14 @@ class Test {
           'repeat',
           'stepId',
         ];
-        const args = { envsId, data: dataLocal, selectors: selectorsLocal, ..._.pick(this, argsFields) };
+        const args = {
+          envsId,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          dataTest: this.data,
+          selectorsTest: this.selectors,
+          ..._.pick(this, argsFields),
+        };
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
@@ -379,17 +380,17 @@ class Test {
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
 
-        for (let i = 0; i < FUNCTIONS.length; i++) {
+        for (let i = 0; i < FUNCTIONS.length; i += 1) {
           let funcs = FUNCTIONS[i];
 
           if (_.isFunction(funcs)) {
             funcs = [funcs];
           }
           if (_.isArray(funcs)) {
-            for (let f = 0; f < funcs.length; f++) {
+            for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
-              let funResult = (await fun(argsExt)) || {};
-              // resultFromTest = merge(dataLocal, selectorsLocal, resultFromTest, funResult);
+              // eslint-disable-next-line no-await-in-loop
+              const funResult = (await fun(argsExt)) || {};
               resultFromTest = merge(resultFromTest, funResult);
             }
           }
@@ -403,25 +404,24 @@ class Test {
           resultFromTest = merge(this.fetchData(), this.fetchSelectors());
         }
 
-        let results = _.pick(resultFromTest, allowResults);
-        let localResults = {};
+        const results = _.pick(resultFromTest, allowResults);
 
-        if (Object.keys(results).length && Object.keys(results).length != [...new Set(allowResults)].length) {
-          throw { message: 'Can`t get results from test' };
+        if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
+          throw new Error('Can`t get results from test');
         }
 
-        for (const key in this.bindResults) {
-          // results[this.bindResults[key]] = _.get(results, key);
-          results[key] = _.get(results, this.bindResults[key]);
-        }
-        localResults = results;
+        Object.entries(this.bindResults).forEach((v) => {
+          const [key, val] = v;
+          results[key] = _.get(results, val);
+        });
+        let localResults = { ...results };
 
         envs.set('results', merge(envs.get('results'), results));
 
         // RESULT FUNCTIONS
         if (!_.isEmpty(this.resultFunction)) {
           const dataWithResults = merge(dataLocal, selectorsLocal, results);
-          let resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
+          const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
           dataLocal = merge(dataLocal, resultFunction);
           selectorsLocal = merge(selectorsLocal, resultFunction);
           localResults = merge(localResults, resultFunction);
@@ -450,7 +450,7 @@ class Test {
         // REPEAT
         if (this.repeat > 1) {
           this.repeat -= 1;
-          await this.run(({ dataExt = this.dataExt, selectorsExt = this.selectorsExt, ...inputArgs } = {}), envsId);
+          await this.run({ dataExt: this.dataExt, selectorsExt: this.selectorsExt, ...inputArgs }, envsId);
         }
 
         // TIMER IN CONSOLE
@@ -486,7 +486,8 @@ class Test {
       }
     };
 
-    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId) => {
+    // eslint-disable-next-line no-shadow
+    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId = null) => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
@@ -495,17 +496,16 @@ class Test {
         // setTimeout(() => {
         //   blocker.setBlock(this.stepId, false);
         // }, 2000);
-        return new Promise(resolve => {
-          blockEmitter.on('updateBlock', async newBlock => {
+        return new Promise((resolve) => {
+          blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              await this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
+              await this.runLogic({ dataExtLogic: dataExt, selectorsExtLogic: selectorsExt, inputArgs }, envsId);
               resolve();
             }
           });
         });
-      } else {
-        return this.runLogic(({ dataExt = [], selectorsExt = [], ...inputArgs } = {}), envsId);
       }
+      return this.runLogic({ dataExtLogic: dataExt, selectorsExtLogic: selectorsExt, inputArgs }, envsId);
     };
   }
 }
