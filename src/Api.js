@@ -18,11 +18,11 @@ const run = async (argsInput = {}) => {
     const args = new Arguments(argsInput);
 
     if (_.isEmpty(args.PPD_TESTS)) {
-      throw new Error({ message: 'There is no tests to run. Pass any test in PPD_TESTS argument' });
+      throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
     }
 
     if (_.isEmpty(args.PPD_ENVS)) {
-      throw new Error({ message: 'There is no environments to run. Pass any test in PPD_ENVS argument' });
+      throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 
     const initArgsTime = (new Date() - startTime) / 1000;

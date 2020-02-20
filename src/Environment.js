@@ -72,7 +72,7 @@ class Envs {
   getOutputsFolders() {
     const { folder, folderLatest } = _.get(this, 'output', {});
     if (!folder || !folderLatest) {
-      throw new Error({ message: 'There is no output folder' });
+      throw new Error('There is no output folder');
     }
     return { folder, folderLatest };
   }
@@ -188,12 +188,12 @@ class Envs {
       const jsonBrowser = await jsonBrowserResponse.json();
 
       if (!jsonBrowser || !jsonPages) {
-        throw new Error({ message: `Can't connect to ${urlDevtoolsJson}` });
+        throw new Error(`Can't connect to ${urlDevtoolsJson}`);
       }
 
       const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
       if (!webSocketDebuggerUrl) {
-        throw new Error({ message: 'webSocketDebuggerUrl empty. Possibly wrong Electron version running' });
+        throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
       const browser = await puppeteer.connect({
@@ -207,7 +207,7 @@ class Envs {
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
-        throw new Error({ message: 'Can`t find any pages in connection' });
+        throw new Error('Can`t find any pages in connection');
       }
 
       const { width, height } = _.get(browserSettings, 'windowSize');
@@ -218,7 +218,7 @@ class Envs {
       return { browser, pages };
     }
 
-    throw new Error({ message: `Can't connect to Electron ${urlDevtoolsJson}` });
+    throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
   }
 
   async runElectron(browserSettings, env) {
@@ -250,7 +250,7 @@ class Envs {
       const { browser, pages } = await Envs.connectElectron(browserSettings);
       return { browser, pages, pid: prc.pid };
     }
-    throw new Error({ message: `Can't run Electron ${runtimeExecutable}` });
+    throw new Error(`Can't run Electron ${runtimeExecutable}`);
   }
 
   async closeBrowsers() {
@@ -303,7 +303,7 @@ class Envs {
         });
         return env;
       }
-      throw new Error({ message: `PuppeDo found unknown environment in yours args. It's name '${v}'.` });
+      throw new Error(`PuppeDo found unknown environment in yours args. It's name '${v}'.`);
     });
 
     return args;
@@ -331,7 +331,7 @@ class Envs {
     }
 
     if (!this.envs || _.isEmpty(this.envs)) {
-      throw new Error({ message: "Can't init any environment. Check 'envs' parameter, should be array" });
+      throw new Error("Can't init any environment. Check 'envs' parameter, should be array");
     }
 
     if (runBrowsers) {
@@ -348,7 +348,7 @@ const instances = {};
 module.exports = function({ envsId, socket = blankSocket } = {}) {
   if (envsId) {
     if (!_.get(instances, envsId)) {
-      throw new Error({ message: `Unknown ENV ID ${envsId}` });
+      throw new Error(`Unknown ENV ID ${envsId}`);
     }
   } else {
     envsId = crypto.randomBytes(16).toString('hex');

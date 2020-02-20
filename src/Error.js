@@ -1,7 +1,7 @@
 const { paintString } = require('./Helpers.js');
 
 const errorHandler = async (errorIncome) => {
-  const error = { ...errorIncome };
+  const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
   error.messageObj = (error.message || '').split(' || ');
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });

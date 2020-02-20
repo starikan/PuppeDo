@@ -28,7 +28,7 @@ const checkNeeds = (needs, data, testName) => {
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw new Error({ message: `Error: can't find data parameter "${d}" in ${testName} test` });
+      throw new Error(`Error: can't find data parameter "${d}" in ${testName} test`);
     }
   });
   return true;
@@ -68,7 +68,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
       });
     }
   } else {
-    throw new Error({ message: 'needEnv wrong format, should be array or string' });
+    throw new Error('needEnv wrong format, should be array or string');
   }
 };
 
@@ -270,7 +270,7 @@ class Test {
         _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
-        throw new Error({ message: 'Test should have envsId' });
+        throw new Error('Test should have envsId');
       }
 
       const { envs } = Environment({ envsId });
@@ -407,7 +407,7 @@ class Test {
         const results = _.pick(resultFromTest, allowResults);
 
         if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
-          throw new Error({ message: 'Can`t get results from test' });
+          throw new Error('Can`t get results from test');
         }
 
         Object.entries(this.bindResults).forEach((v) => {

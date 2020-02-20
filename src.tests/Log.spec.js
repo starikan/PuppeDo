@@ -76,11 +76,11 @@ describe('Log', () => {
     });
 
     test('Should thrown error if no folder to output', () => {
-      expect(() => logger.fileLog()).toThrow(new Error({ message: 'There is no output folder' }));
+      expect(() => logger.fileLog()).toThrow(new Error('There is no output folder'));
       logger.envs.output = { folder };
-      expect(() => logger.fileLog()).toThrow(new Error({ message: 'There is no output folder' }));
+      expect(() => logger.fileLog()).toThrow(new Error('There is no output folder'));
       logger.envs.output = { folderLatest };
-      expect(() => logger.fileLog()).toThrow(new Error({ message: 'There is no output folder' }));
+      expect(() => logger.fileLog()).toThrow(new Error('There is no output folder'));
     });
     test('Simple output to default file', () => {
       logger.envs.output = { folder, folderLatest };

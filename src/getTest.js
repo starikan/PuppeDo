@@ -29,7 +29,7 @@ const resolveJS = (testJson, funcFile) => {
 
 const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
   if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
-    throw new Error({ message: 'getTest params error' });
+    throw new Error('getTest params error');
   }
   let testJson = { ...testJsonIncome };
   const functions = _.pick(testJson, RUNNER_BLOCK_NAMES);
@@ -61,7 +61,7 @@ const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
           }
         });
       } else {
-        throw new Error({ message: `Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'` });
+        throw new Error(`Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'`);
       }
     });
   }

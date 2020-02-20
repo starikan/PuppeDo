@@ -36,7 +36,7 @@ class TestsContent extends Singleton {
   static checkDuplicates(tests, key) {
     const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
     if (blankNames.length) {
-      throw new Error({ message: `There is no name of '${key}' in files:\n${blankNames.join('\n')}` });
+      throw new Error(`There is no name of '${key}' in files:\n${blankNames.join('\n')}`);
     }
 
     const dubs = tests.reduce((s, v) => {

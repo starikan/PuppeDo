@@ -80,7 +80,7 @@ class Arguments extends Singleton {
           newVal = newVal === 'true';
         }
         if (!_.isBoolean(newVal)) {
-          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
         }
         newVal = !!newVal;
       }
@@ -93,7 +93,7 @@ class Arguments extends Singleton {
             newVal = newVal.split(',').map((v) => v.trim());
           }
         } else if (!_.isArray(newVal)) {
-          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
         }
       }
 
@@ -102,16 +102,16 @@ class Arguments extends Singleton {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
-            throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+            throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
           }
         } else if (!_.isObject(newVal) || _.isArray(newVal)) {
-          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
         }
       }
 
       if (this.argsTypes[val] === 'string') {
         if (!_.isString(newVal)) {
-          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
         }
       }
 
@@ -120,7 +120,7 @@ class Arguments extends Singleton {
           newVal = parseInt(newVal, 10);
         }
         if (!_.isNumber(newVal) || _.isNaN(newVal)) {
-          throw new Error({ message: `Invalid argument type '${val}', '${this.argsTypes[val]}' required.` });
+          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
         }
       }
 

@@ -51,7 +51,7 @@ function setArg(argName, argData) {
 }
 
 function errors(name, type) {
-  return new Error({ message: `Invalid argument type '${name}', '${type}' required.` });
+  return new Error(`Invalid argument type '${name}', '${type}' required.`);
 }
 
 test('Arguments is Singleton and Default args', () => {

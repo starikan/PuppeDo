@@ -24,7 +24,7 @@ class Blocker extends Singleton {
     if (_.isArray(blockArray)) {
       this.blocks = blockArray;
     } else {
-      throw new Error({ message: 'Blocks must be array' });
+      throw new Error('Blocks must be array');
     }
     this.blocks.forEach((v) => {
       this.blockEmitter.emit('updateBlock', v);
