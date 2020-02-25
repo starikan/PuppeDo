@@ -69,6 +69,7 @@ class Log {
     testFile = null,
     extendInfo = false,
     screenshots = [],
+    error = {},
   } = {}) {
     const { PPD_LOG_EXTEND } = new Arguments();
 
@@ -120,6 +121,18 @@ class Log {
       ]);
     }
 
+    if (level === 'error' && !extendInfo && levelIndent === 0) {
+      const message = (error.message || '').split(' || ');
+      const stack = (error.stack || '').split('\n    ');
+
+      [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
+        stringsLog.push([
+          [' '.repeat(22), 'error'],
+          [v, 'error'],
+        ]);
+      });
+    }
+
     return stringsLog;
   }
 
@@ -168,32 +181,42 @@ class Log {
       PPD_LOG_FULLPAGE,
     } = new Arguments();
 
-    level = Log.checkLevel(level);
-    if (!level) return;
+    const levelText = Log.checkLevel(level);
+    if (!levelText) return;
 
     // SKIP LOG BY LEVEL
-    if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && level !== 'error') {
+    if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && levelText !== 'error') {
       return;
     }
 
     // NO LOG FILES ONLY STDOUT
-    if (PPD_LOG_DISABLED && level !== 'error') {
+    if (PPD_LOG_DISABLED && levelText !== 'error') {
       return;
     }
 
     try {
       // SCREENSHOT ON ERROR ONLY ONES
       // TODO: 2020-02-05 S.Starodubov get values from env.yaml
-      screenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
-      fullpage = PPD_LOG_FULLPAGE ? fullpage : false;
+      let isScreenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
+      let isFullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
       if (level === 'error' && levelIndent === 0) {
-        [screenshot, fullpage] = [true, true];
+        [isScreenshot, isFullpage] = [true, true];
       }
-      const screenshots = screenshot ? await this.screenshot.getScreenshots(element, fullpage, extendInfo) : [];
+      const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
 
       const now = dayjs();
-      const logTexts = this.makeLog({ level, levelIndent, text, now, funcFile, testFile, extendInfo, screenshots });
+      const logTexts = this.makeLog({
+        level: levelText,
+        levelIndent,
+        text,
+        now,
+        funcFile,
+        testFile,
+        extendInfo,
+        screenshots,
+        error,
+      });
 
       // STDOUT
       Log.consoleLog(logTexts);

@@ -7,6 +7,7 @@ const { Arguments } = require('./Arguments.js');
 const { Log } = require('./Log.js');
 const Environment = require('./Environment.js');
 const TestsContent = require('./TestContent.js');
+const { TestError } = require('./Error.js');
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -463,26 +464,10 @@ class Test {
           });
         }
       } catch (error) {
-        const { PPD_DEBUG_MODE = false } = new Arguments();
-        error.envsId = error.envsId || envsId;
-        error.envs = error.envs || this.envs;
-        error.socket = error.socket || this.socket;
-        error.debug = error.debug || PPD_DEBUG_MODE;
-        error.stepId = error.stepId || this.stepId;
-        error.testDescription = error.testDescription || this.description;
-        error.message += ` || error in test = ${this.name}`;
-        await logger.log({
-          level: 'error',
-          text: `Description: ${this.description || 'No test description'} (${this.name})`,
-          screenshot: false,
-          stepId: this.stepId,
-          funcFile: this.funcFile,
-          testFile: this.testFile,
-          levelIndent: this.levelIndent,
-          error,
-        });
+        const newError = new TestError({ logger, parentError: error, test: this, envsId });
+        await newError.log();
         await this.errorTest();
-        throw error;
+        throw newError;
       }
     };
 
