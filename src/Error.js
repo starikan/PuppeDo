@@ -24,7 +24,16 @@ class AbstractError extends Error {
 }
 
 class TestError extends AbstractError {
-  constructor({ logger, parentError = {}, test = {}, envsId = null }) {
+  constructor({
+    logger = {
+      log: () => {
+        throw new Error('No log function');
+      },
+    },
+    parentError = {},
+    test = {},
+    envsId = null,
+  }) {
     super();
 
     this.envsId = parentError.envsId || envsId;
