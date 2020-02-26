@@ -240,7 +240,7 @@ class Test {
         throw this.collectDebugData({}, locals, `Test stopped with expr ${ifType} = '${expr}'`);
       }
 
-      return true;
+      return false;
     };
 
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
