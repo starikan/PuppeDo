@@ -22,8 +22,10 @@ runTest:
       errorIf: '1 === 1'
       errorIfResult: '1 === 1'
   - getText:
+      description: Get text with repeat
       s: { selector: title }
       r: { titleText: text }
+      repeat: 3
   - blank:
       description: Some data function
       🔑📋: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }

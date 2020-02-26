@@ -93,6 +93,14 @@ class Log {
         [head, level === 'error' ? 'error' : 'sane'],
         [tail, level === 'error' ? 'error' : 'info'],
       ]);
+
+      const repeat = _.get(this, 'binded.bindedData.repeat', 1);
+      if (repeat > 1) {
+        stringsLog.push([
+          [head, level === 'error' ? 'error' : 'sane'],
+          [`🔆 repeats left: ${repeat - 1}`, level === 'error' ? 'error' : 'info'],
+        ]);
+      }
     }
 
     if (level === 'error' && !extendInfo) {

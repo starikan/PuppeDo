@@ -450,8 +450,10 @@ class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          this.repeat -= 1;
-          await this.run({ dataExt: this.dataExt, selectorsExt: this.selectorsExt, ...inputArgs }, envsId);
+          await this.run(
+            { dataExt: this.dataExt, selectorsExt: this.selectorsExt, ...inputArgs, ...{ repeat: this.repeat - 1 } },
+            envsId,
+          );
         }
 
         // TIMER IN CONSOLE
