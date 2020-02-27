@@ -1,21 +1,6 @@
 /* eslint-disable max-classes-per-file */
 const { Arguments } = require('./Arguments.js');
 
-const errorHandler = async (errorIncome) => {
-  const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
-  const { PPD_DEBUG_MODE = false } = new Arguments();
-  if (error.socket && error.socket.sendYAML) {
-    error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
-  }
-  if (PPD_DEBUG_MODE) {
-    // eslint-disable-next-line no-debugger
-    debugger;
-  }
-  // if (!module.parent) {
-  process.exit(1);
-  // }
-};
-
 class AbstractError extends Error {
   constructor() {
     super();
@@ -61,6 +46,25 @@ class TestError extends AbstractError {
     });
   }
 }
+
+const errorHandler = async (errorIncome) => {
+  const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
+  const { PPD_DEBUG_MODE = false } = new Arguments();
+  if (error.socket && error.socket.sendYAML) {
+    error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
+  }
+  if (!(errorIncome instanceof TestError)) {
+    // eslint-disable-next-line no-console
+    console.log(errorIncome);
+  }
+  if (PPD_DEBUG_MODE) {
+    // eslint-disable-next-line no-debugger
+    debugger;
+  }
+  // if (!module.parent) {
+  process.exit(1);
+  // }
+};
 
 module.exports = {
   errorHandler,
