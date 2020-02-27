@@ -206,6 +206,7 @@ class Test {
             level: 'error',
             screenshot: true,
             fullpage: true,
+            levelIndent: ifLevelIndent,
             text: `(${this.name}) ${
               this.description ? this.description : 'TODO: Fill description'
             } -> Can't evaluate ${ifType} = '${error.message}'`,
@@ -222,7 +223,7 @@ class Test {
           text: `(${this.name}) ${
             this.description ? this.description : 'TODO: Fill description'
           } -> Skipping with expr '${expr}'`,
-          ifLevelIndent,
+          levelIndent: ifLevelIndent,
         });
         return true;
       }
@@ -246,7 +247,7 @@ class Test {
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date();
 
-      const inputs = merge(inputArgs, constructorArgs);
+      const inputs = merge(constructorArgs, inputArgs);
 
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
@@ -262,13 +263,12 @@ class Test {
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
 
       this.options = resolveAliases('options', inputs, ALIASES);
-      this.description = _.get(inputArgs, 'description') || _.get(constructorArgs, 'description') || this.description;
-      this.repeat = _.get(inputArgs, 'repeat') || _.get(constructorArgs, 'repeat') || this.repeat;
-      this.while = _.get(inputArgs, 'while') || _.get(constructorArgs, 'while') || this.while;
-      this.if = _.get(inputArgs, 'if') || _.get(constructorArgs, 'if') || this.if;
-      this.errorIf = _.get(inputArgs, 'errorIf') || _.get(constructorArgs, 'errorIf') || this.errorIf;
-      this.errorIfResult =
-        _.get(inputArgs, 'errorIfResult') || _.get(constructorArgs, 'errorIfResult') || this.errorIfResult;
+      this.description = _.get(inputs, 'description') || this.description;
+      this.repeat = _.get(inputs, 'repeat') || this.repeat;
+      this.while = _.get(inputs, 'while') || this.while;
+      this.if = _.get(inputs, 'if') || this.if;
+      this.errorIf = _.get(inputs, 'errorIf') || this.errorIf;
+      this.errorIfResult = _.get(inputs, 'errorIfResult') || this.errorIfResult;
 
       if (!envsId) {
         throw new Error('Test should have envsId');
