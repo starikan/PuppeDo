@@ -264,6 +264,7 @@ class Log {
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step
+      // debugger
       const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
       this.fileLog(yamlString, 'output.yaml');
     } catch (err) {

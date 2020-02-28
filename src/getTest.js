@@ -68,8 +68,11 @@ const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
 
   const test = new AbstractTest(testJson);
 
-  return async () => {
-    await test.run(testJson, envsId);
+  return async (dynamicTestParams = {}) => {
+    // const updatedtestParams = { ...testJson, ...dynamicTestParams };
+    const updatedtestParams = { ...testJson, ...{ options: dynamicTestParams.options } };
+    // const updatedtestParams = { ...testJson };
+    await test.run(updatedtestParams, envsId);
   };
 };
 

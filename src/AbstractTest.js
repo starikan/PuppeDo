@@ -19,6 +19,7 @@ const ALIASES = {
   bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
   resultFunction: ['rF', 'rf', '🔑↩️'],
   options: ['option', 'opt', 'o', '⚙️'],
+  bindOptions: ['bindOption', 'bindOpt', 'bO', 'bo', 'ob', 'oB', '📌⚙️'],
 };
 
 const checkNeeds = (needs, data, testName) => {
@@ -82,6 +83,8 @@ class Test {
     needData = [],
     needSelectors = [],
     allowResults = [],
+    options = {},
+    allowOptions = [],
     data = {},
     selectors = {},
     dataExt = [],
@@ -107,6 +110,8 @@ class Test {
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
+    this.options = options;
+    this.allowOptions = allowOptions;
     this.beforeTest = beforeTest;
     this.runTest = runTest;
     this.afterTest = afterTest;
@@ -244,10 +249,21 @@ class Test {
       return false;
     };
 
+    this.resolveOptions = () => {
+      const localOptions = {};
+      Object.entries(this.bindOptions).forEach((v) => {
+        const [key, val] = v;
+        if (this.allowOptions.includes(key) && !_.isNil(val)) {
+          localOptions[key] = this.options[val];
+        }
+      });
+      return { ...this.options, ...localOptions };
+    };
+
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date();
 
-      const inputs = merge(constructorArgs, inputArgs);
+      const inputs = { ...constructorArgs, ...inputArgs };
 
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
@@ -262,7 +278,10 @@ class Test {
       this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
 
+      this.allowOptions = _.get(inputs, 'allowOptions') || this.allowOptions;
       this.options = resolveAliases('options', inputs, ALIASES);
+      this.bindOptions = resolveAliases('bindOptions', inputs, ALIASES);
+
       this.description = _.get(inputs, 'description') || this.description;
       this.repeat = _.get(inputs, 'repeat') || this.repeat;
       this.while = _.get(inputs, 'while') || this.while;
@@ -293,6 +312,12 @@ class Test {
         let selectorsLocal = this.fetchSelectors();
         const allData = merge(dataLocal, selectorsLocal);
 
+        const optionsLocal = this.resolveOptions();
+
+        if (this.name === 'clickSelector') debugger;
+        if (this.name === 'waitForSelector') debugger;
+        if (this.name === 'clickSelectorRaw') debugger;
+
         // FUNCTIONS
         const dFResults = resolveDataFunctions(this.dataFunction, allData);
         const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
@@ -317,11 +342,12 @@ class Test {
         const argsFields = [
           'envName',
           'envPageName',
-          'options',
           'allowResults',
+          'allowOptions',
           'bindResults',
           'bindSelectors',
           'bindData',
+          'bindOptions',
           'levelIndent',
           'repeat',
           'stepId',
@@ -330,6 +356,7 @@ class Test {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
+          options: optionsLocal,
           dataTest: this.data,
           selectorsTest: this.selectors,
           ..._.pick(this, argsFields),
@@ -356,6 +383,7 @@ class Test {
           name: this.name,
           description: this.description,
           socket: this.socket,
+          foo: 'bar',
         };
 
         // IF
@@ -466,6 +494,7 @@ class Test {
           });
         }
       } catch (error) {
+        debugger;
         const newError = new TestError({ logger, parentError: error, test: this, envsId });
         await newError.log();
         await this.errorTest();
@@ -475,6 +504,7 @@ class Test {
 
     // eslint-disable-next-line no-shadow
     this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId = null) => {
+      // debugger;
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;

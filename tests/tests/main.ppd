@@ -31,7 +31,7 @@ runTest:
       🔑📋: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
   - blank:
       description: Bind data from function
-      📌📋: { myDataBinded: myDataFunction}
+      📌📋: { myDataBinded: myDataFunction }
   - typeInput:
       description: Input some text in field INPUT
       bS: { input: wikiInput }
@@ -39,6 +39,13 @@ runTest:
       o:
         screenshot: true
         fullpage: true
+  - clickSelector:
+      description: Click on field INPUT
+      bS: { selector: wikiInput }
+      o:
+        # screenshot: true
+        # fullpage: true
+        timeDellay: 1000
   # - cdpGetSelector:
   - todo:
       description: Make awesome test
