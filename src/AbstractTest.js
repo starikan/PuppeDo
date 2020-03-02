@@ -64,9 +64,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
-      throw new Error({
-        message: `Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`,
-      });
+      throw new Error(`Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`);
     }
   } else {
     throw new Error('needEnv wrong format, should be array or string');
