@@ -82,6 +82,7 @@ class TestsContent extends Singleton {
           const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           testsYaml.forEach((v) => {
             const collect = { ...v, ...{ testFile: filePath } };
+            collect.type = collect.type || 'test';
             allContent.push(collect);
           });
         } catch (e) {

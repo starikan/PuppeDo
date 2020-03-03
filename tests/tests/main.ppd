@@ -1,6 +1,6 @@
 ---
 name: main
-type: test
+description: Main test
 
 data:
   mainTestData: foo
