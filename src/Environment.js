@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const crypto = require('crypto');
 
 const _ = require('lodash');
@@ -266,11 +266,11 @@ class Envs {
   async closeProcesses() {
     for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
-      const pid = _.get(this.envs[key], 'state.pid');
       const killOnEnd = _.get(this.envs[key], 'env.browser.killOnEnd', true);
+      const killProcessName = _.get(this.envs[key], 'env.browser.killProcessName');
       try {
-        if (killOnEnd) {
-          spawn('taskkill', ['/pid', pid, '/f', '/t']);
+        if (killOnEnd && killProcessName) {
+          spawnSync('taskkill', ['/f', '/im', killProcessName]);
         }
       } catch (exc) {}
     }
