@@ -64,8 +64,8 @@ const errorHandler = async (errorIncome) => {
 
   const { envs } = errorIncome;
   if (envs) {
-    envs.closeBrowsers();
-    envs.closeProcesses();
+    await envs.closeBrowsers();
+    await envs.closeProcesses();
   }
 
   // if (!module.parent) {
