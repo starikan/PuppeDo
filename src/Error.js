@@ -61,6 +61,13 @@ const errorHandler = async (errorIncome) => {
     // eslint-disable-next-line no-debugger
     debugger;
   }
+
+  const { envs } = errorIncome;
+  if (envs) {
+    envs.closeBrowsers();
+    envs.closeProcesses();
+  }
+
   // if (!module.parent) {
   process.exit(1);
   // }
