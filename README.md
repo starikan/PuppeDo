@@ -153,6 +153,7 @@ PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
 PPD_LOG_EXTEND | Log every atoms time for tuning and breadcrumbs for test | `false` | `Boolean`
 PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
 PPD_LOG_LEVEL_TYPE | Log only type of log bellow this. `raw` - log all. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `raw` | `String`
+PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. | `[]` | `String[]`
 PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`

@@ -48,10 +48,15 @@ class Log {
       env: 7,
     };
 
-    const { PPD_LOG_LEVEL_TYPE } = new Arguments();
+    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments();
 
     const inputLevel = _.isNumber(level) ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
+    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v) => levels[v]);
+
+    if (ignoreLevels.includes(inputLevel)) {
+      return false;
+    }
 
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
