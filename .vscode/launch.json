@@ -44,6 +44,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "PuppeDo_TEST_error",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "testWithNoAtom",
+        "PPD_DEBUG_MODE": "true",
+        "PPD_LOG_EXTEND": "true",
+        "PPD_LOG_LEVEL_NESTED": 0
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "PuppeDo_CLI",
       "cwd": "${workspaceFolder}",
       "args": [

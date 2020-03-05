@@ -45,7 +45,7 @@ const run = async (argsInput = {}) => {
         text: `Test '${args.PPD_TESTS[i]}' start on '${dayjs(startTimeTest).format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
       });
 
-      await envs.init();
+      await envs.init(false);
 
       const { fullJSON, textDescription } = getFullDepthJSON({ envsId });
 
@@ -53,7 +53,10 @@ const run = async (argsInput = {}) => {
 
       const blocker = new Blocker();
       blocker.refresh();
+
       const test = getTest(fullJSON, envsId);
+
+      await envs.runBrowsers();
 
       await log({
         level: 'timer',

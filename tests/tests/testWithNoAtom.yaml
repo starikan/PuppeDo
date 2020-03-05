@@ -1,0 +1,7 @@
+name: testWithNoAtom
+description: Test if some atom undefined
+
+runTest:
+  - todo:
+      description: Next undefined
+  - fakeUndefinedTest:

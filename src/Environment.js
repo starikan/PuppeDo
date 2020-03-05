@@ -158,6 +158,8 @@ class Envs {
         }
       }
     }
+
+    this.runBrowsers = () => {};
   }
 
   static async runPuppeteer(browserSettings) {
