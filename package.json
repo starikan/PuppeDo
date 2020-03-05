@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.11",
+  "version": "2.0.0-beta.12",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.16",
+    "@puppedo/atoms": "2.0.19",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
     "eslint": "^6.8.0",

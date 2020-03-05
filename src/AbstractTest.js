@@ -164,33 +164,33 @@ class Test {
 
     this.fetchSelectors = () => this.fetchData(true);
 
-    this.collectDebugData = (errorIncome, locals = {}, message = null) => {
-      const error = { ...errorIncome };
-      const fields = [
-        'data',
-        'bindData',
-        'dataFunction',
-        'dataExt',
-        'selectors',
-        'bindSelectors',
-        'selectorsFunction',
-        'selectorsExt',
-        'bindResults',
-        'resultFunction',
-        'options',
-        'repeat',
-        'while',
-        'if',
-        'errorIf',
-        'errorIfResult',
-      ];
-      error.test = _.pick(this, fields);
-      error.testLocal = locals;
-      if (message) {
-        error.message = message;
-      }
-      return error;
-    };
+    // this.collectDebugData = (errorIncome, locals = {}, message = null) => {
+    //   const error = { ...errorIncome };
+    //   const fields = [
+    //     'data',
+    //     'bindData',
+    //     'dataFunction',
+    //     'dataExt',
+    //     'selectors',
+    //     'bindSelectors',
+    //     'selectorsFunction',
+    //     'selectorsExt',
+    //     'bindResults',
+    //     'resultFunction',
+    //     'options',
+    //     'repeat',
+    //     'while',
+    //     'if',
+    //     'errorIf',
+    //     'errorIfResult',
+    //   ];
+    //   error.test = _.pick(this, fields);
+    //   error.testLocal = locals;
+    //   if (message) {
+    //     error.message = message;
+    //   }
+    //   return error;
+    // };
 
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
       let exprResult;
@@ -202,15 +202,11 @@ class Test {
         if (error.name === 'ReferenceError') {
           await log({
             level: 'error',
-            screenshot: true,
-            fullpage: true,
             levelIndent: ifLevelIndent,
-            text: `(${this.name}) ${
-              this.description ? this.description : 'TODO: Fill description'
-            } -> Can't evaluate ${ifType} = '${error.message}'`,
+            text: `Can't evaluate ${ifType} = '${error.message}'`,
           });
         }
-        throw this.collectDebugData(error, locals);
+        throw new Error(`Can't evaluate ${ifType} = '${error.message}'`);
       }
 
       if (!exprResult && ifType === 'if') {
@@ -218,10 +214,8 @@ class Test {
           level: 'info',
           screenshot: false,
           fullpage: false,
-          text: `(${this.name}) ${
-            this.description ? this.description : 'TODO: Fill description'
-          } -> Skipping with expr '${expr}'`,
           levelIndent: ifLevelIndent,
+          text: `Skipping with expr '${expr}'`,
         });
         return true;
       }
@@ -229,14 +223,10 @@ class Test {
       if (exprResult && ifType !== 'if') {
         await log({
           level: 'error',
-          screenshot: true,
-          fullpage: true,
-          text: `(${this.name}) ${
-            this.description ? this.description : 'TODO: Fill description'
-          } -> Test stopped with expr ${ifType} = '${expr}'`,
-          ifLevelIndent,
+          levelIndent: ifLevelIndent,
+          text: `Test stopped with expr ${ifType} = '${expr}'`,
         });
-        throw this.collectDebugData({}, locals, `Test stopped with expr ${ifType} = '${expr}'`);
+        throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
       }
 
       return false;
