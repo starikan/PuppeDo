@@ -11,13 +11,13 @@ const { TestError } = require('./Error.js');
 
 const ALIASES = {
   data: ['d', '📋'],
-  bindData: ['bD', 'bd', '📌📋'],
-  dataFunction: ['dF', 'df', '🔑📋'],
+  bindData: ['bD', 'bd', '📌📋', 'dataBind', 'db', 'dB'],
+  dataFunction: ['dF', 'df', '🔑📋', 'functionData', 'fd', 'fD'],
   selectors: ['selector', 's', '💠'],
-  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠'],
-  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠'],
-  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️'],
-  resultFunction: ['rF', 'rf', '🔑↩️'],
+  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠', 'selectorBind', 'selectorsBind', 'sb', 'sB'],
+  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠', 'functionSelector', 'functionSelectors', 'fs', 'fS'],
+  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️', 'R', 'rb', 'rB', 'resultBind', 'resultsBind'],
+  resultFunction: ['rF', 'rf', '🔑↩️', 'functionResult', 'fr', 'fR'],
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
