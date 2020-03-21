@@ -113,10 +113,10 @@ class Log {
         stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
       });
       if (testFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${testFile}]`, 'error']]);
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${testFile})`, 'error']]);
       }
       if (funcFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} [${funcFile}]`, 'error']]);
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${funcFile})`, 'error']]);
       }
     }
 
