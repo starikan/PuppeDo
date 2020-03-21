@@ -37,8 +37,10 @@ class Env {
     try {
       arr.push(data);
     } catch (err) {
+      /* eslint-disable no-console */
       console.log('class Env -> push');
       console.log(err);
+      /* eslint-enable no-console */
     }
     return _.set(this.env, name, arr);
   }

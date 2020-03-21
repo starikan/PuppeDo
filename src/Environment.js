@@ -39,8 +39,10 @@ class Envs {
     try {
       arr.push(data);
     } catch (err) {
+      /* eslint-disable no-console */
       console.log('class Envs -> push');
       console.log(err);
+      /* eslint-enable no-console */
     }
     return _.set(this, name, arr);
   }
@@ -261,7 +263,10 @@ class Envs {
       const { state } = this.envs[key];
       try {
         state.browser.close();
-      } catch (exc) {}
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      }
     }
   }
 
@@ -274,7 +279,10 @@ class Envs {
         if (killOnEnd && killProcessName) {
           spawnSync('taskkill', ['/f', '/im', killProcessName]);
         }
-      } catch (exc) {}
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      }
     }
   }
 
@@ -347,20 +355,21 @@ class Envs {
 
 const instances = {};
 
-module.exports = function({ envsId, socket = blankSocket } = {}) {
-  if (envsId) {
-    if (!_.get(instances, envsId)) {
-      throw new Error(`Unknown ENV ID ${envsId}`);
+module.exports = ({ envsId, socket = blankSocket } = {}) => {
+  let envsIdLocal = envsId;
+  if (envsIdLocal) {
+    if (!_.get(instances, envsIdLocal)) {
+      throw new Error(`Unknown ENV ID ${envsIdLocal}`);
     }
   } else {
-    envsId = crypto.randomBytes(16).toString('hex');
+    envsIdLocal = crypto.randomBytes(16).toString('hex');
     const newEnvs = new Envs();
-    instances[envsId] = { envs: newEnvs, socket };
+    instances[envsIdLocal] = { envs: newEnvs, socket };
   }
 
   return {
-    envsId,
-    envs: _.get(instances, [envsId, 'envs']),
-    socket: _.get(instances, [envsId, 'socket']),
+    envsId: envsIdLocal,
+    envs: _.get(instances, [envsIdLocal, 'envs']),
+    socket: _.get(instances, [envsIdLocal, 'socket']),
   };
 };

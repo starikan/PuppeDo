@@ -164,34 +164,6 @@ class Test {
 
     this.fetchSelectors = () => this.fetchData(true);
 
-    // this.collectDebugData = (errorIncome, locals = {}, message = null) => {
-    //   const error = { ...errorIncome };
-    //   const fields = [
-    //     'data',
-    //     'bindData',
-    //     'dataFunction',
-    //     'dataExt',
-    //     'selectors',
-    //     'bindSelectors',
-    //     'selectorsFunction',
-    //     'selectorsExt',
-    //     'bindResults',
-    //     'resultFunction',
-    //     'options',
-    //     'repeat',
-    //     'while',
-    //     'if',
-    //     'errorIf',
-    //     'errorIfResult',
-    //   ];
-    //   error.test = _.pick(this, fields);
-    //   error.testLocal = locals;
-    //   if (message) {
-    //     error.message = message;
-    //   }
-    //   return error;
-    // };
-
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
