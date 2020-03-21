@@ -30,7 +30,7 @@
   ],
   "dependencies": {
     "array-flat-polyfill": "1.0.1",
-    "dayjs": "1.8.21",
+    "dayjs": "1.8.23",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
@@ -40,11 +40,11 @@
     "walk-sync": "2.0.2"
   },
   "devDependencies": {
-    "@puppedo/atoms": "2.0.19",
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
-    "@typescript-eslint/parser": "^2.22.0",
+    "@puppedo/atoms": "2.0.21",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.1.0",
