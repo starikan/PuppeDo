@@ -6,9 +6,11 @@ const crypto = require('crypto');
 
 const _ = require('lodash');
 const dayjs = require('dayjs');
-const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
+
+const puppeteer = require('puppeteer');
+const playwright = require('playwright');
 
 const { merge, sleep, blankSocket } = require('./Helpers.js');
 const TestsContent = require('./TestContent.js');
@@ -134,7 +136,8 @@ class Envs {
     for (let i = 0; i < envsNames.length; i += 1) {
       const env = this.envs[envsNames[i]];
 
-      const type = _.get(env, 'env.browser.type', 'puppeteer');
+      const type = _.get(env, 'env.browser.type', 'browser');
+      const engine = _.get(env, 'env.browser.engine', 'puppeteer');
       const runtime = _.get(env, 'env.browser.runtime', 'run');
       const browserSettings = _.get(env, 'env.browser', {});
 
@@ -142,10 +145,16 @@ class Envs {
         // TODO: 2020-01-13 S.Starodubov
       }
 
-      if (type === 'puppeteer') {
+      if (type === 'browser') {
         if (runtime === 'run') {
-          const { browser, pages } = await Envs.runPuppeteer(browserSettings);
-          env.state = { ...env.state, ...{ browser, pages } };
+          if (engine === 'puppeteer') {
+            const { browser, pages } = await Envs.runPuppeteer(browserSettings);
+            env.state = { ...env.state, ...{ browser, pages } };
+          }
+          if (engine === 'playwright') {
+            const { browser, pages } = await Envs.runPlaywright(browserSettings);
+            env.state = { ...env.state, ...{ browser, pages } };
+          }
         }
       }
 
@@ -168,7 +177,7 @@ class Envs {
     const { PPD_DEBUG_MODE = false } = new Arguments();
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
-    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: !!PPD_DEBUG_MODE });
+    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
 
     const page = await browser.newPage();
     const pages = { main: page };
@@ -179,6 +188,26 @@ class Envs {
     }
 
     return { browser, pages };
+  }
+
+  static async runPlaywright(browserSettings) {
+    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { headless = true, slowMo = 0, args = [], browser: browserName } = browserSettings;
+    const { width = 1024, height = 768 } = _.get(browserSettings, 'windowSize');
+
+    const options = { headless, slowMo, args };
+    if (browserName === 'chromium') {
+      options.devtools = PPD_DEBUG_MODE;
+    }
+
+    const browser = await playwright[browserName].launch(options);
+    const context = await browser.newContext();
+    const page = await context.newPage({ viewport: { width, height } });
+
+    const pages = { main: page };
+    const contexts = { main: context };
+
+    return { browser, contexts, pages };
   }
 
   static async connectElectron(browserSettings) {

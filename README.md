@@ -89,7 +89,9 @@ log | [Logging settings](#logging-settings)
 ### Browser Settings
 Parameter | Description | Default Value | Dependence
 ------------- | ------------- | -------------  | -------------
-type | Type of browser: `puppeteer` - chrome browser, `electron` - electron app | `puppeteer`
+type | Engine target: `browser` - browser, `electron` - electron app | `browser`
+engine | Type of engine: `puppeteer` - puppeteer, `playwright` - playwright | `puppeteer`
+browser | Name of rowser: `chromium`, `firefox`, `webkit` | `chromium`
 runtime | `run` - run new browser instance, `connect` - connect to exist browser via [DevTools API](https://chromedevtools.github.io/devtools-protocol/) need `urlDevtoolsJson` parameter | `run` | `urlDevtoolsJson`
 urlDevtoolsJson | Link to devtool server `http://127.0.0.1:9222/`. To start electron or chrome with this feature run it with arg `--remote-debugging-port=9222`. Use your port number. | | runtime is `connect`
 args | Array of custom [Arguments](https://peter.sh/experiments/chromium-command-line-switches/) for Chrome

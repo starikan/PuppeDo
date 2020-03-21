@@ -1,7 +1,7 @@
 {
   "name": "@puppedo/core",
   "version": "2.0.0-beta.12",
-  "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Puppeteer.",
+  "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright orPuppeteer.",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -17,6 +17,7 @@
     "url": "https://github.com/starikan/PuppeDo/issues"
   },
   "keywords": [
+    "playwright",
     "puppeteer",
     "puppedo",
     "testing",
@@ -48,6 +49,7 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.1.0",
+    "playwright": "^0.11.1",
     "prettier": "^1.19.1",
     "prettier-eslint": "^9.0.1",
     "puppeteer": "^2.1.1",
