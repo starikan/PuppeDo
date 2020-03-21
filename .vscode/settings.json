@@ -2,4 +2,13 @@
   "terminal.integrated.env.windows": {
     "NODIST_X64": "1"
   },
+  "spellright.language": [
+    "en",
+    "ru"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext"
+  ],
 }

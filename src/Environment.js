@@ -136,10 +136,16 @@ class Envs {
     for (let i = 0; i < envsNames.length; i += 1) {
       const env = this.envs[envsNames[i]];
 
-      const type = _.get(env, 'env.browser.type', 'browser');
-      const engine = _.get(env, 'env.browser.engine', 'puppeteer');
-      const runtime = _.get(env, 'env.browser.runtime', 'run');
       const browserSettings = _.get(env, 'env.browser', {});
+      const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
+
+      if (
+        !['api', 'browser', 'electron'].includes(type) ||
+        !['puppeteer', 'playwright'].includes(engine) ||
+        !['run', 'connect'].includes(runtime)
+      ) {
+        throw new Error(`Error in environment browser parametr: '${JSON.stringify(browserSettings)}'`);
+      }
 
       if (type === 'api') {
         // TODO: 2020-01-13 S.Starodubov
