@@ -86,6 +86,7 @@ class TestsContent extends Singleton {
             allContent.push(collect);
           });
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/`);
         }
       });
