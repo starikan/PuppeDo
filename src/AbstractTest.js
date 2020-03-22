@@ -298,7 +298,9 @@ class Test {
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
         await logger.log({
-          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
+          text: this.description
+            ? `(${this.name}) ${this.description}`
+            : `(${this.name}) \u001B[41mTODO: Fill description\u001B[0m`,
           level: 'test',
           levelIndent,
         });
