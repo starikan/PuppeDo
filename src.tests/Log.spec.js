@@ -321,8 +321,8 @@ describe('Log', () => {
       ],
       [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
       [[`${nowFormated} - error  |     hee`, 'error']],
-      [[`${nowFormated} - error  |  [testFile]`, 'error']],
-      [[`${nowFormated} - error  |  [funcFile]`, 'error']],
+      [[`${nowFormated} - error  |  (file:///testFile)`, 'error']],
+      [[`${nowFormated} - error  |  (file:///funcFile)`, 'error']],
       [
         [`${nowFormated} - error  |  `, 'error'],
         ['=============================================================================================', 'error'],

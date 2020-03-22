@@ -14,10 +14,10 @@ const resolveJS = (testJson, funcFile) => {
     /* eslint-disable */
     const atom = require(funcFile);
     /* eslint-enable */
-    const funcFromFile = _.get(atom, 'runTest');
-    if (_.isFunction(funcFromFile)) {
+    const { runTest } = atom;
+    if (_.isFunction(runTest)) {
       testJsonNew.funcFile = path.resolve(funcFile);
-      testJsonNew.runTest = [funcFromFile];
+      testJsonNew.runTest = [runTest];
     }
   } catch (err) {
     // If there is no JS file it`s fine.

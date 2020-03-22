@@ -33,7 +33,7 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   }
 
   const fullJSON = _.cloneDeep({ ...testJSON, ...testBody });
-  fullJSON.breadcrumbs = _.get(fullJSON, 'breadcrumbs', [testNameResolved]);
+  fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testNameResolved];
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
