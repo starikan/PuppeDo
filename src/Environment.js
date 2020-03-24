@@ -9,8 +9,17 @@ const dayjs = require('dayjs');
 const fetch = require('node-fetch');
 const walkSync = require('walk-sync');
 
-const puppeteer = require('puppeteer');
-const playwright = require('playwright');
+/* eslint-disable */
+let puppeteer;
+try {
+  puppeteer = require('puppeteer');
+} catch (error) {}
+
+let playwright;
+try {
+  playwright = require('playwright');
+} catch (error) {}
+/* eslint-enaable */
 
 const { merge, sleep, blankSocket } = require('./Helpers.js');
 const TestsContent = require('./TestContent.js');
