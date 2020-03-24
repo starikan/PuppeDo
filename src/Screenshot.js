@@ -35,7 +35,7 @@ class Screenshot {
     const { folder } = this.envs.getOutputsFolders();
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
-      const pathScreenshot = path.join(folder, name);
+      const pathScreenshot = path.resolve(path.join(folder, name));
 
       if (fullPage) {
         const page = this.envs.getActivePage();
@@ -49,13 +49,13 @@ class Screenshot {
       if (fs.existsSync(pathScreenshot)) {
         this.copyScreenshotToLatest(name);
         await sleep(25);
-        return name;
+        return pathScreenshot;
       }
       return false;
     } catch (err) {
-      err.message += ' || saveScreenshot selectors';
-      err.socket = this.socket;
-      throw err;
+      // eslint-disable-next-line no-console
+      console.log('Can not create a screenshot');
+      return false;
     }
   }
 }

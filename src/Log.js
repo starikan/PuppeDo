@@ -113,10 +113,10 @@ class Log {
         stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
       });
       if (testFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${testFile})`, 'error']]);
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`, 'error']]);
       }
       if (funcFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${funcFile})`, 'error']]);
+        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`, 'error']]);
       }
     }
 
@@ -167,6 +167,9 @@ class Log {
       textsJoin = texts.toString();
     }
 
+    // eslint-disable-next-line no-control-regex
+    textsJoin = textsJoin.replace(new RegExp(/\[\d+m/gi), '');
+
     fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
     fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
   }
@@ -185,6 +188,7 @@ class Log {
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
     extendInfo = false,
+    stdOut = true,
   } = {}) {
     const {
       PPD_DEBUG_MODE,
@@ -232,7 +236,7 @@ class Log {
       });
 
       // STDOUT
-      Log.consoleLog(logTexts);
+      if (stdOut) Log.consoleLog(logTexts);
 
       // EXPORT TEXT LOG
       this.fileLog(logTexts, 'output.log');

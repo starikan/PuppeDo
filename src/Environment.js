@@ -98,6 +98,7 @@ class Envs {
     this.output.output = output;
     this.output.name = currentTest;
     this.output.folder = folder;
+    this.output.folderFull = path.resolve(folder);
 
     this.initOutputLatest();
 
@@ -126,6 +127,7 @@ class Envs {
     fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
+    this.output.folderLatestFull = path.resolve(folderLatest);
 
     // Drop this function after first use
     this.initOutputLatest = () => {};
