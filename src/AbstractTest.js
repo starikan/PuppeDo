@@ -127,11 +127,11 @@ class Test {
       // * Get data from ENV params global
       let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
 
-      // * Get data from global envs for all tests
-      joinArray = [...joinArray, this.envs.get(dataName, {})];
-
       // * Get data from current env
       joinArray = [...joinArray, this.env ? this.env.get(dataName) : {}];
+
+      // * Get data from global envs for all tests
+      joinArray = [...joinArray, this.envs.get(dataName, {})];
 
       // * Fetch data from ext files that passed in test itself
       const allTests = new TestsContent();
@@ -146,15 +146,12 @@ class Test {
       // * Get data from test itself in test describe
       joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
 
-      // * Get data from user function results and results
-      joinArray = [...joinArray, this.envs.get('results', {}), this.envs.get('resultsFunc', {})];
-
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
       Object.entries(bindDataLocal).forEach((v) => {
         const [key, val] = v;
-        dataLocal[key] = dataLocal[val];
+        dataLocal[key] = _.get(dataLocal, val);
       });
 
       // * Update after all bindings with data from test itself passed in running
@@ -168,10 +165,10 @@ class Test {
 
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
       let exprResult;
-      const { dataLocal = {}, selectorsLocal = {}, localResults = {}, results = {} } = locals;
+      const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
       try {
-        exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults, results));
+        exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults));
       } catch (error) {
         if (error.name === 'ReferenceError') {
           await log({
@@ -259,18 +256,9 @@ class Test {
         const dFResults = resolveDataFunctions(this.dataFunction, allData);
         const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
 
-        // Save all functions results into envs
-        this.envs.set('resultsFunc', merge(this.envs.get('resultsFunc', {}), dFResults, sFResults));
-
         // Update data and selectors with functions result
         dataLocal = merge(dataLocal, dFResults);
         selectorsLocal = merge(selectorsLocal, sFResults);
-
-        // Write data to local env. For next tests.
-        if (this.env) {
-          this.env.set('env.data', dataLocal);
-          this.env.set('env.selectors', selectorsLocal);
-        }
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
@@ -341,6 +329,12 @@ class Test {
           });
         }
 
+        // Set ENVS Data for the further nested tests
+        if (this.env) {
+          this.envs.set('data', merge(this.envs.get('data'), dataLocal));
+          this.envs.set('selectors', merge(this.envs.get('selectors'), selectorsLocal));
+        }
+
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
@@ -366,7 +360,7 @@ class Test {
 
         // If Test there is no JS return. Get all data to read values
         if (this.type === 'test') {
-          resultFromTest = merge(this.fetchData(), this.fetchSelectors());
+          resultFromTest = merge(this.envs.get('data'), this.envs.get('selectors'));
         }
 
         const results = _.pick(resultFromTest, allowResults);
@@ -377,11 +371,9 @@ class Test {
 
         Object.entries(this.bindResults).forEach((v) => {
           const [key, val] = v;
-          results[key] = results[val];
+          results[key] = _.get(results, val);
         });
         let localResults = { ...results };
-
-        envs.set('results', merge(envs.get('results'), results));
 
         // RESULT FUNCTIONS
         if (!_.isEmpty(this.resultFunction)) {
@@ -390,7 +382,12 @@ class Test {
           dataLocal = merge(dataLocal, resultFunction);
           selectorsLocal = merge(selectorsLocal, resultFunction);
           localResults = merge(localResults, resultFunction);
-          envs.set('results', merge(envs.get('results'), localResults));
+        }
+
+        // Set ENVS Data
+        if (this.env) {
+          this.envs.set('data', merge(this.envs.get('data'), dataLocal, localResults));
+          this.envs.set('selectors', merge(this.envs.get('selectors'), selectorsLocal, localResults));
         }
 
         // ERROR
@@ -399,7 +396,6 @@ class Test {
             dataLocal,
             selectorsLocal,
             localResults,
-            results,
           });
         }
 
