@@ -51,7 +51,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
     let result = {};
     const values = [valueName, ..._.get(aliases, valueName, [])];
     values.forEach((v) => {
-      result = merge(result, _.get(inputs, v, {}));
+      result = merge(result, inputs[v] || {});
     });
     return result;
   } catch (error) {
@@ -82,6 +82,7 @@ class Test {
     allowResults = [],
     data = {},
     selectors = {},
+    options = {},
     dataExt = [],
     selectorsExt = [],
     beforeTest = () => {},
@@ -102,6 +103,7 @@ class Test {
     this.needSelectors = needSelectors;
     this.dataTest = data;
     this.selectorsTest = selectors;
+    this.options = options;
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
@@ -152,7 +154,7 @@ class Test {
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
       Object.entries(bindDataLocal).forEach((v) => {
         const [key, val] = v;
-        dataLocal[key] = _.get(dataLocal, val);
+        dataLocal[key] = dataLocal[val];
       });
 
       // * Update after all bindings with data from test itself passed in running
@@ -222,13 +224,13 @@ class Test {
       this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
 
-      this.options = resolveAliases('options', inputs, ALIASES);
-      this.description = _.get(inputs, 'description') || this.description;
-      this.repeat = _.get(inputs, 'repeat') || this.repeat;
-      this.while = _.get(inputs, 'while') || this.while;
-      this.if = _.get(inputs, 'if') || this.if;
-      this.errorIf = _.get(inputs, 'errorIf') || this.errorIf;
-      this.errorIfResult = _.get(inputs, 'errorIfResult') || this.errorIfResult;
+      this.options = merge(this.options, inputs.options || {}, resolveAliases('options', inputs, ALIASES));
+      this.description = inputs.description || this.description;
+      this.repeat = inputs.repeat || this.repeat;
+      this.while = inputs.while || this.while;
+      this.if = inputs.if || this.if;
+      this.errorIf = inputs.errorIf || this.errorIf;
+      this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
 
       if (!envsId) {
         throw new Error('Test should have envsId');
@@ -375,7 +377,7 @@ class Test {
 
         Object.entries(this.bindResults).forEach((v) => {
           const [key, val] = v;
-          results[key] = _.get(results, val);
+          results[key] = results[val];
         });
         let localResults = { ...results };
 

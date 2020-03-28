@@ -3,7 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 
 const { Blocker } = require('./Blocker');
-const { blankSocket } = require('./Helpers.js');
+const { blankSocket, merge } = require('./Helpers.js');
 const AbstractTest = require('./AbstractTest.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
@@ -25,6 +25,14 @@ const resolveJS = (testJson, funcFile) => {
     testJsonNew.runTest = [() => {}];
   }
   return testJsonNew;
+};
+
+const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
+  const result = { ...source };
+  list.forEach((v) => {
+    result[v] = merge(result[v] || {}, args[v] || {});
+  });
+  return result;
 };
 
 const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
@@ -68,8 +76,9 @@ const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
 
   const test = new AbstractTest(testJson);
 
-  return async () => {
-    await test.run(testJson, envsId);
+  return async (args) => {
+    const updatetTestJson = propagateArgumentsOnAir(testJson, args, ['options']);
+    await test.run(updatetTestJson, envsId);
   };
 };
 

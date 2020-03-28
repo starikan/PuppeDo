@@ -1,0 +1,8 @@
+name: clickWithNestedWait
+type: atom
+runTest:
+  - waitForSelector:
+      bS: { selector: wikiInput }
+
+  - clickSelector:
+      bS: { selector: wikiInput }

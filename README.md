@@ -6,7 +6,8 @@ Puppeteer tests flow with node.js
 ## Windows
 
   1. Install [NodeJS](https://nodejs.org/)
-    * you can use [Nodist](https://github.com/nullivex/nodist/)
+    
+      * you can use [Nodist](https://github.com/nullivex/nodist/)
 
   1. Fetch node modules with `npm install` or `yarn`
   1. Run tests

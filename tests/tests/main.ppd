@@ -15,23 +15,38 @@ beforeTest:
 runTest:
   - goTo:
       bD: { url: baseUrl }
+
+  - clickWithNestedWait:
+      o:
+        hidden: false
+        visible: true
+        timeDellay: 0
+        count: 1
+        delay: 0
+        button: left
+        logAfter: false
+
   - waitTime:
       description: Checking If statement
       d: { time: 2000 }
       if: '1 !== 1'
       errorIf: '1 === 1'
       errorIfResult: '1 === 1'
+
   - getText:
       description: Get text with repeat
       s: { selector: title }
       r: { titleText: text }
       repeat: 3
+
   - blank:
       description: Some data function
       🔑📋: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
+
   - blank:
       description: Bind data from function
       📌📋: { myDataBinded: myDataFunction}
+
   - typeInput:
       description: Input some text in field INPUT
       bS: { input: wikiInput }
@@ -39,10 +54,14 @@ runTest:
       o:
         screenshot: true
         fullpage: true
+
   # - cdpGetSelector:
+
   - todo:
       description: Make awesome test
+
   - subTest:
+
   - blank:
 
 ---
