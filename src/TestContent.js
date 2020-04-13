@@ -56,7 +56,7 @@ class TestsContent extends Singleton {
           message += valueDub.map((v) => `    * '${v}'\n`).join('');
         }
       });
-      throw new Error({ message });
+      throw new Error(message);
     }
     return true;
   }
