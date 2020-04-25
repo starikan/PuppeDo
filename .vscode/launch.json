@@ -28,6 +28,21 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "PuppeDo_ENV_puppeteer",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv_puppeteer",
+        "PPD_TESTS": "main",
+        "PPD_DEBUG_MODE": "true",
+        "PPD_LOG_LEVEL_NESTED": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "PuppeDo_ENV_error",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./index').run()"],

@@ -168,7 +168,7 @@ class Envs {
             const { browser, pages } = await Envs.runPuppeteer(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
           }
-          if (engine === 'playwright') {
+          else {
             const { browser, pages } = await Envs.runPlaywright(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
           }

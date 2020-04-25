@@ -1,9 +1,13 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.17",
+  "version": "2.0.0-beta.18",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright orPuppeteer.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "prepare" : "npm run build",
+    "prepublishOnly" : "npm test && npm run lint",
+    "lint": "eslint src/**",
     "test": "jest",
     "coverage": "jest --coverage"
   },

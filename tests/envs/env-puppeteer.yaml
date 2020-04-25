@@ -1,0 +1,31 @@
+---
+name: mainEnv_puppeteer
+type: env
+description: My Env
+
+dataExt:
+  - data
+
+selectorsExt:
+  - selectors
+
+envsExt:
+  - envExt
+
+browser:
+  type: browser
+  engine: puppeteer
+  browser: chromium
+  runtime: run
+  args:
+  - "--window-size=1024,918"
+  headless: false
+  slowMo: 5
+  windowSize:
+    width: 1024
+    height: 768
+
+log:
+  level: test
+  screenshot: true
+  fullpage: true
