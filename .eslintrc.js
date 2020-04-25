@@ -15,6 +15,14 @@ module.exports = {
     beforeAll: true,
     beforeEach: true,
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'src/'],
+      },
+    },
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 2018 },
   plugins: ['@typescript-eslint', 'prettier'],
@@ -24,5 +32,6 @@ module.exports = {
     'object-curly-newline': ['error', { consistent: true }],
     'max-len': ['error', { code: 120 }],
     'prettier/prettier': 'warn',
+    'import/extensions': 'ignorePackages',
   },
 };

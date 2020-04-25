@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge';
+import { Colors } from './globals.d';
 
-export function sleep(ms: number): Promise<any> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
@@ -34,7 +35,7 @@ BACKGROUND_WHITE = "\u001B[47m"
 */
 
 export const paintString = (str: string, color: string = 'sane'): string => {
-  const colors = {
+  const colors: Colors = {
     sane: 0,
     black: 30,
     red: 31,
