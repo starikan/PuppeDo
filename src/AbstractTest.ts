@@ -1,3 +1,5 @@
+require('source-map-support').install();
+
 const _ = require('lodash');
 const safeEval = require('safe-eval');
 
@@ -212,7 +214,6 @@ class Test {
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
       this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
       this.dataExt = [...new Set([...this.dataExt, ...dataExtLogic])];
-
       this.selectors = resolveAliases('selectors', inputs, ALIASES);
       this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);

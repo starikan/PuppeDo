@@ -1,12 +1,14 @@
-const { run } = require('./src/Api.js');
-const { errorHandler } = require('./src/Error.js');
-const { getFullDepthJSON } = require('./src/getFullDepthJSON.js');
-const { getTest } = require('./src/getTest.js');
-const TestsContent = require('./src/TestContent.js');
-const { Arguments } = require('./src/Arguments.js');
-const { Blocker } = require('./src/Blocker.js');
-const Environment = require('./src/Environment.js');
-const { Log } = require('./src/Log.js');
+require('source-map-support').install();
+
+const { run } = require('./dist/Api');
+const { errorHandler } = require('./dist/Error');
+const { getFullDepthJSON } = require('./dist/getFullDepthJSON');
+const { getTest } = require('./dist/getTest');
+const TestsContent = require('./dist/TestContent');
+const { Arguments } = require('./dist/Arguments');
+const { Blocker } = require('./dist/Blocker');
+const Environment = require('./dist/Environment');
+const { Log } = require('./dist/Log');
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
