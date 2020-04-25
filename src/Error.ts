@@ -1,7 +1,4 @@
 /* eslint-disable max-classes-per-file */
-// declare function require(name: string);
-require('source-map-support').install();
-
 const { Arguments } = require('./Arguments.js');
 
 class AbstractError extends Error {

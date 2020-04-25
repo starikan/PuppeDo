@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "outDir": "dist",
     "sourceMap": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "esModuleInterop": true
     // "noImplicitAny": true,
     // "removeComments": true,
     // "preserveConstEnums": true

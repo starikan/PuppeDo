@@ -1,4 +1,4 @@
-require('source-map-support').install();
+// require('source-map-support').install();
 
 const { run } = require('./dist/Api');
 const { errorHandler } = require('./dist/Error');

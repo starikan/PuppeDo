@@ -1,15 +1,16 @@
-require('source-map-support').install();
+// require('source-map-support').install();
 
-const _ = require('lodash');
-const safeEval = require('safe-eval');
+import _ from 'lodash';
 
-const { merge, blankSocket } = require('./Helpers.js');
-const { Blocker } = require('./Blocker.js');
-const { Arguments } = require('./Arguments.js');
-const { Log } = require('./Log.js');
-const Environment = require('./Environment.js');
-const TestsContent = require('./TestContent.js');
-const { TestError } = require('./Error.js');
+import safeEval from 'safe-eval';
+
+import { merge, blankSocket } from './Helpers';
+import { Blocker } from './Blocker';
+import { Arguments } from './Arguments';
+import { Log } from './Log';
+import Environment from './Environment';
+import TestsContent from './TestContent';
+import { TestError } from './Error';
 
 const ALIASES = {
   data: ['d', '📋'],
