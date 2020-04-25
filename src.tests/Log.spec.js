@@ -3,8 +3,8 @@ const path = require('path');
 
 const dayjs = require('dayjs');
 
-const { Log } = require('../src/Log');
-const { Arguments } = require('../src/Arguments');
+const { Log } = require('../dist/Log');
+const { Arguments } = require('../dist/Arguments');
 
 const clearFiles = (fileName) => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
@@ -305,6 +305,8 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    const funcFile = path.resolve('funcFile');
+    const testFile = path.resolve('testFile');
     expect(
       logger.makeLog({
         level: 'error',
@@ -321,8 +323,8 @@ describe('Log', () => {
       ],
       [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
       [[`${nowFormated} - error  |     hee`, 'error']],
-      [[`${nowFormated} - error  |  (file:///testFile)`, 'error']],
-      [[`${nowFormated} - error  |  (file:///funcFile)`, 'error']],
+      [[`${nowFormated} - error  |  (file:///${testFile})`, 'error']],
+      [[`${nowFormated} - error  |  (file:///${funcFile})`, 'error']],
       [
         [`${nowFormated} - error  |  `, 'error'],
         ['=============================================================================================', 'error'],

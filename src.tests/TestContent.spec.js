@@ -1,7 +1,7 @@
 const path = require('path');
 
-const TestsContent = require('../src/TestContent');
-const { Arguments } = require('../src/Arguments');
+const TestsContent = require('../dist/TestContent');
+const { Arguments } = require('../dist/Arguments');
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -117,13 +117,13 @@ describe('TestContent', () => {
     ];
     // TODO: ПОчему этот тест проходит хотя message вобще то нет
     expect(() => CD(testsObjects2, 'foo')).toThrow(
-      new Error({
-        message: `There is duplicates of 'foo':
+      new Error(
+        `There is duplicates of 'foo':
  - Name: 'dee'.
     * 'bar'
     * 'tyy'
 `,
-      }),
+      ),
     );
   });
 });

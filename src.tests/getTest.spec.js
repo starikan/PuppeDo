@@ -1,4 +1,4 @@
-const { getTest } = require('../src/getTest');
+const { getTest } = require('../dist/getTest');
 
 describe('getTest', ()=>{
   test('getTest', ()=>{

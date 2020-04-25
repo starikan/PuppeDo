@@ -9,6 +9,7 @@
     // "removeComments": true,
     // "preserveConstEnums": true
   },
+  "lib": ["es2019"],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
