@@ -30,7 +30,7 @@ const run = async (argsInput = {}) => {
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
       const startTimeTest = new Date().getTime();
 
-      ({ envsId, envs } = Environment({ envsId }));
+      ({ envsId, envs } = Environment(envsId));
       envs.initOutput(args.PPD_TESTS[i]);
       envs.set('current.test', args.PPD_TESTS[i]);
 

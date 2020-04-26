@@ -26,13 +26,31 @@ import TestsContent from './TestContent';
 import Arguments from './Arguments';
 import Env from './Env';
 
+type PagesType = {
+  main?: any;
+};
+
+type Options = {
+  headless: any;
+  slowMo: any;
+  args: any;
+  devtools?: any;
+};
+
 class Envs {
   envs: any;
   data: any;
   selectors: any;
   current: any;
   results: any;
-  output: any;
+  output: {
+    folder?: string;
+    folderLatest?: string;
+    folderLatestFull?: string;
+    output?: string;
+    name?: string;
+    folderFull?: string;
+  };
   log: any;
 
   constructor() {
@@ -79,7 +97,7 @@ class Envs {
     }
   }
 
-  getEnv(name) {
+  getEnv(name = null) {
     const nameNew = name || _.get(this, 'current.name');
     return _.get(this.envs, nameNew, {});
   }
@@ -91,7 +109,7 @@ class Envs {
   }
 
   getOutputsFolders() {
-    const { folder, folderLatest } = _.get(this, 'output', {});
+    const { folder, folderLatest } = this.output || {};
     if (!folder || !folderLatest) {
       throw new Error('There is no output folder');
     }
@@ -175,8 +193,7 @@ class Envs {
           if (engine === 'puppeteer') {
             const { browser, pages } = await Envs.runPuppeteer(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
-          }
-          else {
+          } else {
             const { browser, pages } = await Envs.runPlaywright(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
           }
@@ -195,7 +212,7 @@ class Envs {
       }
     }
 
-    this.runBrowsers = () => {};
+    this.runBrowsers = async () => {};
   }
 
   static async runPuppeteer(browserSettings) {
@@ -220,7 +237,7 @@ class Envs {
     const { headless = true, slowMo = 0, args = [], browser: browserName } = browserSettings;
     const { width = 1024, height = 768 } = _.get(browserSettings, 'windowSize');
 
-    const options = { headless, slowMo, args };
+    const options: Options = { headless, slowMo, args };
     if (browserName === 'chromium') {
       options.devtools = PPD_DEBUG_MODE;
     }
@@ -261,7 +278,7 @@ class Envs {
       });
 
       const pagesRaw = await browser.pages();
-      let pages = {};
+      let pages: PagesType = {};
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
@@ -403,13 +420,13 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = () => {};
+    this.init = async () => {};
   }
 }
 
 const instances = {};
 
-export default ({ envsId, socket = blankSocket } = {}) => {
+export default (envsId, socket = blankSocket) => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!_.get(instances, envsIdLocal)) {

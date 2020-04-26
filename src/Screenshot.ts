@@ -16,7 +16,7 @@ export default class Screenshot {
   socket: any;
 
   constructor({ envsId = null } = {}) {
-    const { socket, envs } = Environment({ envsId });
+    const { socket, envs } = Environment(envsId);
     this.envs = envs;
     this.socket = socket;
   }

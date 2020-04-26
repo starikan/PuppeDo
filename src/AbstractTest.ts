@@ -284,7 +284,7 @@ export default class Test {
         throw new Error('Test should have envsId');
       }
 
-      const { envs } = Environment({ envsId });
+      const { envs } = Environment(envsId);
       const logger = new Log(envsId);
 
       try {

@@ -20,7 +20,7 @@ export default class Log {
   screenshot: any;
 
   constructor(envsId) {
-    const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
+    const { socket, envs, envsId: envsIdNew } = Environment(envsId);
     this.envsId = envsIdNew;
     this.envs = envs;
     this.socket = socket;
