@@ -173,7 +173,7 @@ export default class Test {
     this.testFile = constructorArgs.testFile;
 
     this.fetchData = (isSelector = false) => {
-      const { PPD_SELECTORS, PPD_DATA } = new Arguments();
+      const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
       const dataName = isSelector ? 'selectors' : 'data';
 
       // * Get data from ENV params global
@@ -288,7 +288,7 @@ export default class Test {
       const logger = new Log({ envsId });
 
       try {
-        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments();
+        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
 
         this.envs = envs;
         this.envName = this.envs.get('current.name');

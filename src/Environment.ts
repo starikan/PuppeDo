@@ -99,7 +99,7 @@ class Envs {
   }
 
   initOutput(testName = 'test') {
-    const { PPD_OUTPUT: output } = new Arguments();
+    const { PPD_OUTPUT: output } = new Arguments().args;
     const currentTest = this.get('current.test') || testName;
 
     if (!fs.existsSync(output)) {
@@ -123,7 +123,7 @@ class Envs {
   }
 
   initOutputLatest() {
-    const { PPD_OUTPUT: output } = new Arguments();
+    const { PPD_OUTPUT: output } = new Arguments().args;
 
     const folderLatest = path.join(output, 'latest');
 
@@ -199,7 +199,7 @@ class Envs {
   }
 
   static async runPuppeteer(browserSettings) {
-    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
@@ -216,7 +216,7 @@ class Envs {
   }
 
   static async runPlaywright(browserSettings) {
-    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [], browser: browserName } = browserSettings;
     const { width = 1024, height = 768 } = _.get(browserSettings, 'windowSize');
 
@@ -341,7 +341,7 @@ class Envs {
   }
 
   static async resolveLinks() {
-    const args = new Arguments();
+    const args = new Arguments().args;
     const allData = await new TestsContent();
 
     // ENVS RESOLVING

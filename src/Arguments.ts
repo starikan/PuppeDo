@@ -59,7 +59,6 @@ export default class Arguments extends Singleton {
     if (reInit || !this.args) {
       this.init(args);
     }
-    return this.args;
   }
 
   init(args: ArgumentsNotStrictType): void {

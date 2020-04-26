@@ -48,7 +48,7 @@ export default class Log {
       env: 7,
     };
 
-    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments();
+    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
 
     const inputLevel = _.isNumber(level) ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
@@ -76,7 +76,7 @@ export default class Log {
     screenshots = [],
     error = {},
   } = {}) {
-    const { PPD_LOG_EXTEND } = new Arguments();
+    const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
@@ -196,7 +196,7 @@ export default class Log {
       PPD_LOG_LEVEL_NESTED,
       PPD_LOG_SCREENSHOT,
       PPD_LOG_FULLPAGE,
-    } = new Arguments();
+    } = new Arguments().args;
 
     const levelText = Log.checkLevel(level);
     if (!levelText) return;

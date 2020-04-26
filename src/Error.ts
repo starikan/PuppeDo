@@ -49,7 +49,7 @@ export class TestError extends AbstractError {
 
 export const errorHandler = async (errorIncome) => {
   const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
-  const { PPD_DEBUG_MODE = false } = new Arguments();
+  const { PPD_DEBUG_MODE = false } = new Arguments().args;
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }

@@ -10,7 +10,7 @@ import Arguments from './Arguments';
 export default class TestsContent extends Singleton {
   constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
     super();
-    const args = new Arguments();
+    const args = new Arguments().args;
 
     if (reInit || !this.allData) {
       this.rootFolder = rootFolder || args.PPD_ROOT;
