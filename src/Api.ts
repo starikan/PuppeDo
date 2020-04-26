@@ -1,13 +1,13 @@
 /* eslint-disable no-await-in-loop */
-const _ = require('lodash');
-const dayjs = require('dayjs');
+import _ from 'lodash';
+import dayjs from 'dayjs';
 
 const { getFullDepthJSON } = require('./getFullDepthJSON');
 const { getTest } = require('./getTest');
-const { Arguments } = require('./Arguments');
-const { Blocker } = require('./Blocker');
+import Arguments from './Arguments';
+import Blocker from './Blocker';
 const Environment = require('./Environment.js');
-const { Log } = require('./Log');
+import Log from './Log';
 
 const run = async (argsInput = {}) => {
   let envsId;

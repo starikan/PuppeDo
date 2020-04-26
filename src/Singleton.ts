@@ -2,7 +2,7 @@
 
 const singleton = Symbol('singleton');
 
-class Singleton {
+export default class Singleton {
   // static get instance() {
   //   if (!this[singleton]) {
   //     this[singleton] = new this();
@@ -22,4 +22,4 @@ class Singleton {
   }
 }
 
-module.exports = Singleton;
+// module.exports = Singleton;

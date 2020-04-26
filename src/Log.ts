@@ -1,18 +1,18 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const _ = require('lodash');
-require('polyfill-object.fromentries');
-require('array-flat-polyfill');
-const dayjs = require('dayjs');
-const yaml = require('js-yaml');
+import _ from 'lodash';
+// require('polyfill-object.fromentries');
+// require('array-flat-polyfill');
+import dayjs from 'dayjs';
+import yaml from 'js-yaml';
 
-const { paintString } = require('./Helpers.js');
-const { Arguments } = require('./Arguments.js');
+import { paintString } from './Helpers';
+import Arguments from './Arguments';
 const { Screenshot } = require('./Screenshot.js');
 const Environment = require('./Environment.js');
 
-class Log {
+export default class Log {
   constructor({ envsId } = {}) {
     const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
     this.envsId = envsIdNew;
@@ -284,5 +284,3 @@ class Log {
     }
   }
 }
-
-module.exports = { Log };

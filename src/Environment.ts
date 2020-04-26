@@ -1,13 +1,13 @@
 /* eslint-disable no-await-in-loop */
-const fs = require('fs');
-const path = require('path');
-const { spawn, spawnSync } = require('child_process');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import { spawn, spawnSync } from 'child_process';
+import crypto from 'crypto';
 
-const _ = require('lodash');
-const dayjs = require('dayjs');
-const fetch = require('node-fetch');
-const walkSync = require('walk-sync');
+import _ from 'lodash';
+import dayjs from 'dayjs';
+import fetch from 'node-fetch';
+import walkSync from 'walk-sync';
 
 /* eslint-disable */
 let puppeteer;
@@ -21,9 +21,9 @@ try {
 } catch (error) {}
 /* eslint-enaable */
 
-const { merge, sleep, blankSocket } = require('./Helpers.js');
-const TestsContent = require('./TestContent.js');
-const { Arguments } = require('./Arguments.js');
+import { merge, sleep, blankSocket } from './Helpers';
+import TestsContent from './TestContent';
+import Arguments from './Arguments';
 const { Env } = require('./Env.js');
 
 class Envs {

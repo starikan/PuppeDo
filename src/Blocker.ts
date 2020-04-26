@@ -1,10 +1,10 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-const EventEmitter = require('events');
+import EventEmitter from 'events';
 
-const Singleton = require('./Singleton.js');
+import Singleton from './Singleton.js';
 
-class Blocker extends Singleton {
+export default class Blocker extends Singleton {
   constructor() {
     super();
     this.blocks = this.blocks || [];
@@ -44,7 +44,3 @@ class Blocker extends Singleton {
     return (this.blocks.find((v) => v.stepId === stepId) || {}).block;
   }
 }
-
-module.exports = {
-  Blocker,
-};

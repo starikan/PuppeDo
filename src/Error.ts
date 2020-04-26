@@ -1,14 +1,14 @@
 /* eslint-disable max-classes-per-file */
-const { Arguments } = require('./Arguments.js');
+import Arguments from './Arguments';
 
-class AbstractError extends Error {
+export class AbstractError extends Error {
   constructor() {
     super();
     this.name = this.constructor.name;
   }
 }
 
-class TestError extends AbstractError {
+export class TestError extends AbstractError {
   constructor({
     logger = {
       log: () => {
@@ -47,7 +47,7 @@ class TestError extends AbstractError {
   }
 }
 
-const errorHandler = async (errorIncome) => {
+export const errorHandler = async (errorIncome) => {
   const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
   const { PPD_DEBUG_MODE = false } = new Arguments();
   if (error.socket && error.socket.sendYAML) {
@@ -73,8 +73,3 @@ const errorHandler = async (errorIncome) => {
   // }
 };
 
-module.exports = {
-  errorHandler,
-  AbstractError,
-  TestError,
-};

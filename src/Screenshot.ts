@@ -1,10 +1,10 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const _ = require('lodash');
-const dayjs = require('dayjs');
+import _ from 'lodash';
+import dayjs from 'dayjs';
 
-const { sleep } = require('./Helpers.js');
+import { sleep } from './Helpers';
 const Environment = require('./Environment.js');
 
 class Screenshot {

@@ -5,9 +5,9 @@ import _ from 'lodash';
 import safeEval from 'safe-eval';
 
 import { merge, blankSocket } from './Helpers';
-import { Blocker } from './Blocker';
-import { Arguments } from './Arguments';
-import { Log } from './Log';
+import Blocker from './Blocker';
+import Arguments from './Arguments';
+import Log from './Log';
 import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';

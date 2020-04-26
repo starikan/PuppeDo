@@ -1,12 +1,12 @@
-const _ = require('lodash');
-require('polyfill-object.fromentries');
-require('array-flat-polyfill');
+import _ from 'lodash';
+// require('polyfill-object.fromentries');
+// require('array-flat-polyfill');
 
-const { merge } = require('./Helpers.js');
+import { merge } from './Helpers';
 
-const Singleton = require('./Singleton.js');
+import Singleton from './Singleton';
 
-class Arguments extends Singleton {
+export default class Arguments extends Singleton {
   constructor(args, reInit = false) {
     super();
     if (reInit || !this.args) {
@@ -146,7 +146,3 @@ class Arguments extends Singleton {
     return this.args;
   }
 }
-
-module.exports = {
-  Arguments,
-};

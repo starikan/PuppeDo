@@ -1,9 +1,9 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-const TestsContent = require('./TestContent.js');
-const Environment = require('./Environment.js');
+import TestsContent from './TestContent';
+const Environment = require('./Environment');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 

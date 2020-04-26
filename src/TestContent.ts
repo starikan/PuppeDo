@@ -1,13 +1,13 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const walkSync = require('walk-sync');
-const yaml = require('js-yaml');
+import walkSync from 'walk-sync';
+import yaml from 'js-yaml';
 
-const Singleton = require('./Singleton.js');
-const { Arguments } = require('./Arguments.js');
+import Singleton from './Singleton';
+import Arguments from './Arguments';
 
-class TestsContent extends Singleton {
+export default class TestsContent extends Singleton {
   constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
     super();
     const args = new Arguments();
@@ -108,5 +108,3 @@ class TestsContent extends Singleton {
     return this.allData;
   }
 }
-
-module.exports = TestsContent;

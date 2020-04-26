@@ -1,9 +1,9 @@
-const path = require('path');
+import path from 'path';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-const { Blocker } = require('./Blocker');
-const { blankSocket, merge } = require('./Helpers.js');
+import Blocker from './Blocker';
+import { blankSocket, merge } from './Helpers';
 const AbstractTest = require('./AbstractTest.js');
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];

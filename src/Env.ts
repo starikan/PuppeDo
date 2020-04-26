@@ -1,4 +1,4 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
 class Env {
   constructor(name, env = {}) {
