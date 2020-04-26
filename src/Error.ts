@@ -1,6 +1,23 @@
 /* eslint-disable max-classes-per-file */
 import Arguments from './Arguments';
 
+type ErrorType = {
+  envsId: any;
+  envs: any;
+  socket: any;
+  stepId: any;
+  testDescription: any;
+  message: any;
+  stack: any;
+};
+
+type ErrorConstructorType = {
+  logger: any;
+  parentError: ErrorType;
+  test: any;
+  envsId: any;
+};
+
 export class AbstractError extends Error {
   constructor() {
     super();
@@ -9,25 +26,35 @@ export class AbstractError extends Error {
 }
 
 export class TestError extends AbstractError {
+  envsId: any;
+  envs: any;
+  socket: any;
+  stepId: any;
+  testDescription: any;
+  message: any;
+  stack: any;
+  logger: any;
+  test: any;
+
   constructor({
     logger = {
       log: () => {
         throw new Error('No log function');
       },
     },
-    parentError = {},
+    parentError,
     test = {},
     envsId = null,
-  }) {
+  }: ErrorConstructorType) {
     super();
 
-    this.envsId = parentError.envsId || envsId;
-    this.envs = parentError.envs || test.envs;
-    this.socket = parentError.socket || test.socket;
-    this.stepId = parentError.stepId || test.stepId;
-    this.testDescription = parentError.testDescription || test.description;
-    this.message = `${parentError.message} || error in test = ${test.name}`;
-    this.stack = parentError.stack;
+    this.envsId = parentError?.envsId || envsId;
+    this.envs = parentError?.envs || test.envs;
+    this.socket = parentError?.socket || test.socket;
+    this.stepId = parentError?.stepId || test.stepId;
+    this.testDescription = parentError?.testDescription || test.description;
+    this.message = `${parentError?.message} || error in test = ${test.name}`;
+    this.stack = parentError?.stack;
 
     this.logger = logger;
     this.test = test;
@@ -72,4 +99,3 @@ export const errorHandler = async (errorIncome) => {
   process.exit(1);
   // }
 };
-

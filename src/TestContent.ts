@@ -8,9 +8,14 @@ import Singleton from './Singleton';
 import Arguments from './Arguments';
 
 export default class TestsContent extends Singleton {
+  allData: any;
+  rootFolder: any;
+  additionalFolders: any;
+  ignorePaths: any;
+
   constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
     super();
-    const args = new Arguments().args;
+    const args = { ...new Arguments().args };
 
     if (reInit || !this.allData) {
       this.rootFolder = rootFolder || args.PPD_ROOT;
@@ -45,7 +50,7 @@ export default class TestsContent extends Singleton {
       return collector;
     }, {});
 
-    const isThrow = Object.values(dubs).some((v) => v.length > 1);
+    const isThrow = Object.values(dubs).some((v: any[]) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;

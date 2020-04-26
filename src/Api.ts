@@ -15,7 +15,7 @@ const run = async (argsInput = {}) => {
   let log;
   try {
     const startTime = new Date();
-    const args = new Arguments(argsInput).args;
+    const args = { ...new Arguments(argsInput).args };
 
     if (_.isEmpty(args.PPD_TESTS)) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');

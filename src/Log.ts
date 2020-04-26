@@ -13,6 +13,12 @@ import Screenshot from './Screenshot';
 import Environment from './Environment';
 
 export default class Log {
+  envsId: any;
+  envs: any;
+  socket: any;
+  binded: any;
+  screenshot: any;
+
   constructor({ envsId } = {}) {
     const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
     this.envsId = envsIdNew;

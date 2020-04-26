@@ -1,6 +1,10 @@
 import _ from 'lodash';
 
 export default class Env {
+  name: any;
+  state: any;
+  env: any;
+
   constructor(name, env = {}) {
     this.name = name;
     // Browser, pages, cookies, etc.

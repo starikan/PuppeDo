@@ -2,9 +2,13 @@ import _ from 'lodash';
 
 import EventEmitter from 'events';
 
-import Singleton from './Singleton.js';
+import Singleton from './Singleton';
 
 export default class Blocker extends Singleton {
+  blocks: any;
+
+  blockEmitter: any;
+
   constructor() {
     super();
     this.blocks = this.blocks || [];

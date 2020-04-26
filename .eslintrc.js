@@ -32,6 +32,7 @@ module.exports = {
     'object-curly-newline': ['error', { consistent: true }],
     'max-len': ['error', { code: 120 }],
     'prettier/prettier': 'warn',
-    'import/extensions': 'ignorePackages',
+    'import/extensions': 0,
+    'lines-between-class-members': 0,
   },
 };
