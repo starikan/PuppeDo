@@ -74,7 +74,7 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
   }
 };
 
-class Test {
+export default class Test {
   name: any;
   type: any;
   needEnv: any;
@@ -507,5 +507,3 @@ class Test {
     };
   }
 }
-
-module.exports = Test;

@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import Blocker from './Blocker';
 import { blankSocket, merge } from './Helpers';
-const AbstractTest = require('./AbstractTest.js');
+import AbstractTest from './AbstractTest';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
