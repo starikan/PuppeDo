@@ -3,8 +3,8 @@ const path = require('path');
 
 const dayjs = require('dayjs');
 
-const { Log } = require('../dist/Log');
-const { Arguments } = require('../dist/Arguments');
+const Log = require('../dist/Log').default;
+const Arguments = require('../dist/Arguments').default;
 
 const clearFiles = (fileName) => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];

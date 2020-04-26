@@ -54,7 +54,7 @@ export default class Arguments extends Singleton {
   argsEnv: ArgumentsNotStrictType;
   argsCLI: ArgumentsNotStrictType;
 
-  constructor(args: ArgumentsNotStrictType, reInit: boolean = false) {
+  constructor(args: ArgumentsNotStrictType = {}, reInit: boolean = false) {
     super();
     if (reInit || !this.args) {
       this.init(args);

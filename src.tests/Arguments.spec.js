@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { Arguments } = require('../dist/Arguments');
+const Arguments = require('../dist/Arguments').default;
 
 const argsDefault = {
   PPD_DATA: {},

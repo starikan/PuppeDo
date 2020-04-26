@@ -1,7 +1,7 @@
 const path = require('path');
 
-const TestsContent = require('../dist/TestContent');
-const { Arguments } = require('../dist/Arguments');
+const TestsContent = require('../dist/TestContent').default;
+const Arguments = require('../dist/Arguments').default;
 
 describe('TestContent', () => {
   test('Init', () => {
