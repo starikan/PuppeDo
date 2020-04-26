@@ -6,16 +6,63 @@ import { merge } from './Helpers';
 
 import Singleton from './Singleton';
 
+type ArgumentsType = {
+  PPD_ROOT: any;
+  PPD_ROOT_ADDITIONAL: any;
+  PPD_ROOT_IGNORE: any;
+  PPD_ENVS: any;
+  PPD_TESTS: any;
+  PPD_OUTPUT: any;
+  PPD_DATA: any;
+  PPD_SELECTORS: any;
+  PPD_DEBUG_MODE: any;
+  PPD_LOG_DISABLED: any;
+  PPD_LOG_EXTEND: any;
+  PPD_DISABLE_ENV_CHECK: any;
+  PPD_LOG_LEVEL_NESTED: any;
+  PPD_LOG_LEVEL_TYPE: any;
+  PPD_LOG_LEVEL_TYPE_IGNORE: any;
+  PPD_LOG_SCREENSHOT: any;
+  PPD_LOG_FULLPAGE: any;
+};
+
+type ArgumentsNotStrictType = {
+  PPD_ROOT?: any;
+  PPD_ROOT_ADDITIONAL?: any;
+  PPD_ROOT_IGNORE?: any;
+  PPD_ENVS?: any;
+  PPD_TESTS?: any;
+  PPD_OUTPUT?: any;
+  PPD_DATA?: any;
+  PPD_SELECTORS?: any;
+  PPD_DEBUG_MODE?: any;
+  PPD_LOG_DISABLED?: any;
+  PPD_LOG_EXTEND?: any;
+  PPD_DISABLE_ENV_CHECK?: any;
+  PPD_LOG_LEVEL_NESTED?: any;
+  PPD_LOG_LEVEL_TYPE?: any;
+  PPD_LOG_LEVEL_TYPE_IGNORE?: any;
+  PPD_LOG_SCREENSHOT?: any;
+  PPD_LOG_FULLPAGE?: any;
+};
+
 export default class Arguments extends Singleton {
-  constructor(args, reInit = false) {
+  args: ArgumentsType;
+  argsDefault: ArgumentsType;
+  argsTypes: ArgumentsNotStrictType;
+  argsJS: ArgumentsNotStrictType;
+  argsEnv: ArgumentsNotStrictType;
+  argsCLI: ArgumentsNotStrictType;
+
+  constructor(args: ArgumentsNotStrictType, reInit: boolean = false) {
     super();
     if (reInit || !this.args) {
-      return this.init(args);
+      this.init(args);
     }
     return this.args;
   }
 
-  init(args) {
+  init(args: ArgumentsNotStrictType): void {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
       PPD_ROOT_ADDITIONAL: [],
@@ -41,7 +88,6 @@ export default class Arguments extends Singleton {
     this.argsEnv = this.parser(_.pick(process.env, Object.keys(this.argsDefault)));
     this.argsCLI = this.parseCLI();
     this.args = this.mergeArgs();
-    return this.args;
   }
 
   static getTypes(args) {
@@ -67,7 +113,7 @@ export default class Arguments extends Singleton {
     }, {});
   }
 
-  parser(args) {
+  parser(args: ArgumentsNotStrictType = {}) {
     if (!args) {
       return {};
     }
@@ -133,15 +179,15 @@ export default class Arguments extends Singleton {
   parseCLI() {
     const params = Object.keys(this.argsDefault);
     const argsRaw = process.argv
-      .map((v) => v.split(/\s+/))
+      .map((v: string) => v.split(/\s+/))
       .flat()
-      .map((v) => v.split('='))
-      .filter((v) => v.length > 1)
-      .filter((v) => params.includes(v[0]));
+      .map((v: string) => v.split('='))
+      .filter((v: string[]) => v.length > 1)
+      .filter((v: string[]) => params.includes(v[0]));
     return this.parser(Object.fromEntries(argsRaw));
   }
 
-  mergeArgs() {
+  mergeArgs(): ArgumentsType {
     this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
     return this.args;
   }
