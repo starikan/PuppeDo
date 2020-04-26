@@ -1,5 +1,25 @@
 import deepmerge from 'deepmerge';
-import { Colors } from './globals.d';
+
+export type Colors = {
+  sane: number;
+  black: number;
+  red: number;
+  green: number;
+  yellow: number;
+  blue: number;
+  magenta: number;
+  cyan: number;
+  white: number;
+  raw?: number;
+  timer?: number;
+  debug?: number;
+  info?: number;
+  test?: number;
+  warn?: number;
+  error?: number;
+  trace?: number;
+  env?: number;
+};
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {

@@ -5,10 +5,10 @@
     "outDir": "dist",
     "sourceMap": true,
     "downlevelIteration": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "removeComments": true,
+    "preserveConstEnums": true
     // "noImplicitAny": true,
-    // "removeComments": true,
-    // "preserveConstEnums": true
   },
   "lib": ["es2019", "es2019.array"],
   "include": ["src/**/*"],

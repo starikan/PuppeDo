@@ -2,8 +2,6 @@ import _ from 'lodash';
 // require('polyfill-object.fromentries');
 // require('array-flat-polyfill');
 
-import { merge } from './Helpers';
-
 import Singleton from './Singleton';
 
 type ArgumentsType = {
@@ -49,10 +47,10 @@ type ArgumentsNotStrictType = {
 export default class Arguments extends Singleton {
   args: ArgumentsType;
   argsDefault: ArgumentsType;
-  argsTypes: ArgumentsNotStrictType;
   argsJS: ArgumentsNotStrictType;
   argsEnv: ArgumentsNotStrictType;
   argsCLI: ArgumentsNotStrictType;
+  argsTypes: ArgumentsNotStrictType;
 
   constructor(args: ArgumentsNotStrictType = {}, reInit: boolean = false) {
     super();
@@ -61,7 +59,7 @@ export default class Arguments extends Singleton {
     }
   }
 
-  init(args: ArgumentsNotStrictType): void {
+  init(args: ArgumentsNotStrictType = {}): void {
     this.argsDefault = {
       PPD_ROOT: process.cwd(),
       PPD_ROOT_ADDITIONAL: [],
@@ -86,7 +84,7 @@ export default class Arguments extends Singleton {
     this.argsJS = this.parser(args);
     this.argsEnv = this.parser(_.pick(process.env, Object.keys(this.argsDefault)));
     this.argsCLI = this.parseCLI();
-    this.args = this.mergeArgs();
+    this.args = { ...this.argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
   }
 
   static getTypes(args) {
@@ -113,10 +111,6 @@ export default class Arguments extends Singleton {
   }
 
   parser(args: ArgumentsNotStrictType = {}) {
-    if (!args) {
-      return {};
-    }
-
     const params = Object.keys(args);
     return params.reduce((s, val) => {
       let newVal = _.get(args, val);
@@ -184,10 +178,5 @@ export default class Arguments extends Singleton {
       .filter((v: string[]) => v.length > 1)
       .filter((v: string[]) => params.includes(v[0]));
     return this.parser(Object.fromEntries(argsRaw));
-  }
-
-  mergeArgs(): ArgumentsType {
-    this.args = merge(this.argsDefault, this.argsEnv, this.argsCLI, this.argsJS);
-    return this.args;
   }
 }
