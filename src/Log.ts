@@ -19,7 +19,7 @@ export default class Log {
   binded: any;
   screenshot: any;
 
-  constructor({ envsId } = {}) {
+  constructor(envsId) {
     const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
     this.envsId = envsIdNew;
     this.envs = envs;

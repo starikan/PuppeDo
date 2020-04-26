@@ -63,7 +63,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   }
 };
 
-const checkNeedEnv = ({ needEnv, envName } = {}) => {
+const checkNeedEnv = (needEnv, envName) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -201,7 +201,7 @@ export default class Test {
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      Object.entries(bindDataLocal).forEach((v) => {
+      Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
         dataLocal[key] = _.get(dataLocal, val);
       });
@@ -256,7 +256,7 @@ export default class Test {
     };
 
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
-      const startTime = new Date();
+      const startTime = new Date().getTime();
 
       const inputs = merge(constructorArgs, inputArgs);
 
@@ -285,7 +285,7 @@ export default class Test {
       }
 
       const { envs } = Environment({ envsId });
-      const logger = new Log({ envsId });
+      const logger = new Log(envsId);
 
       try {
         const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
@@ -296,7 +296,7 @@ export default class Test {
         this.env = this.envs.get(`envs.${this.envName}`);
 
         if (!PPD_DISABLE_ENV_CHECK) {
-          checkNeedEnv({ needEnv: this.needEnv, envName: this.envName });
+          checkNeedEnv(this.needEnv, this.envName);
         }
 
         let dataLocal = this.fetchData();
@@ -420,7 +420,7 @@ export default class Test {
           throw new Error('Can`t get results from test');
         }
 
-        Object.entries(this.bindResults).forEach((v) => {
+        Object.entries(this.bindResults).forEach((v: [string, string]) => {
           const [key, val] = v;
           results[key] = _.get(results, val);
         });
@@ -470,7 +470,7 @@ export default class Test {
         // TIMER IN CONSOLE
         if (PPD_LOG_EXTEND) {
           await logger.log({
-            text: `🕝: ${new Date() - startTime} ms. (${this.name})`,
+            text: `🕝: ${new Date().getTime() - startTime} ms. (${this.name})`,
             level: 'timer',
             levelIndent,
             extendInfo: true,

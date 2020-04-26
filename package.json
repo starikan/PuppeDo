@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
     "lint": "eslint src/**",
     "test": "jest",
     "coverage": "jest --coverage"
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@puppedo/atoms": "3.1.1",
+    "@types/js-yaml": "^3.12.3",
     "@types/lodash": "4.14.150",
     "@typescript-eslint/eslint-plugin": "2.29.0",
     "@typescript-eslint/parser": "2.29.0",

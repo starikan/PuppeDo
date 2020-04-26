@@ -41,7 +41,7 @@ export default class TestsContent extends Singleton {
 
     if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;
-      Object.entries(dubs).forEach((dub) => {
+      Object.entries(dubs).forEach((dub: [string, []]) => {
         const [keyDub, valueDub] = dub;
         if (valueDub.length > 1) {
           message += ` - Name: '${keyDub}'.\n`;

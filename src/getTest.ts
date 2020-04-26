@@ -8,6 +8,15 @@ import AbstractTest from './AbstractTest';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
+type TestJsonType = {
+  source: any;
+  socket: any;
+  stepId: any;
+  breadcrumbs: any;
+  testFile: any;
+  type: any;
+};
+
 const resolveJS = (testJson, funcFile) => {
   const testJsonNew = { ...testJson };
   try {
@@ -35,7 +44,7 @@ const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
   return result;
 };
 
-const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
+const getTest = (testJsonIncome: TestJsonType, envsId: string, socket = blankSocket) => {
   if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
     throw new Error('getTest params error');
   }
