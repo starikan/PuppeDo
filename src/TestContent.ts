@@ -13,29 +13,16 @@ export default class TestsContent extends Singleton {
   additionalFolders: any;
   ignorePaths: any;
 
-  constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
+  constructor(reInit = false) {
     super();
     const args = { ...new Arguments().args };
 
     if (reInit || !this.allData) {
-      this.rootFolder = rootFolder || args.PPD_ROOT;
-      this.rootFolder = path.normalize(this.rootFolder);
-
-      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
-      if (typeof this.additionalFolders === 'string') {
-        this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
-      }
-      this.additionalFolders = this.additionalFolders.map((v) => path.normalize(v));
-
-      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
-      if (typeof this.ignorePaths === 'string') {
-        this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
-      }
-      this.ignorePaths = this.ignorePaths.map((v) => path.normalize(v));
-
+      this.rootFolder = path.normalize(args.PPD_ROOT);
+      this.additionalFolders = args.PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
+      this.ignorePaths = args.PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
       this.allData = this.getAllData();
     }
-    return this.allData;
   }
 
   static checkDuplicates(tests, key) {

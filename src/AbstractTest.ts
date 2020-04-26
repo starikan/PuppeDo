@@ -186,7 +186,7 @@ export default class Test {
       joinArray = [...joinArray, this.envs.get(dataName, {})];
 
       // * Fetch data from ext files that passed in test itself
-      const allTests = new TestsContent();
+      const allTests = new TestsContent().allData;
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
       extFiles.forEach((v) => {
         const extData = allTests[dataName].find((d) => v === d.name);
