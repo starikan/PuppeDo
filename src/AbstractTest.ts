@@ -75,6 +75,55 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
 };
 
 class Test {
+  name: any;
+  type: any;
+  needEnv: any;
+  needData: any;
+  needSelectors: any;
+  dataTest: any;
+  selectorsTest: any;
+  options: any;
+  dataExt: any;
+  selectorsExt: any;
+  allowResults: any;
+  beforeTest: any;
+  runTest: any;
+  afterTest: any;
+  errorTest: any;
+  levelIndent: any;
+  repeat: any;
+  source: any;
+  socket: any;
+  stepId: any;
+  breadcrumbs: any;
+  funcFile: any;
+  testFile: any;
+
+  data: any;
+  bindData: any;
+  dataFunction: any;
+  selectors: any;
+  bindSelectors: any;
+  selectorsFunction: any;
+  bindResults: any;
+  resultFunction: any;
+  description: any;
+  while: any;
+  if: any;
+  errorIf: any;
+  errorIfResult: any;
+
+  envs: any;
+  envName: any;
+  envPageName: any;
+  env: any;
+
+  fetchData: any;
+  fetchSelectors: any;
+  checkIf: any;
+  runLogic: any;
+  run: any;
+
   constructor({
     name,
     type = 'test',

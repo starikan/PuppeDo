@@ -8,7 +8,10 @@ import { sleep } from './Helpers';
 import Environment from './Environment';
 
 export default class Screenshot {
-  constructor({ envsId } = {}) {
+  envs: any;
+  socket: any;
+
+  constructor({ envsId = null } = {}) {
     const { socket, envs } = Environment({ envsId });
     this.envs = envs;
     this.socket = socket;

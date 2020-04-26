@@ -27,6 +27,14 @@ import Arguments from './Arguments';
 import Env from './Env';
 
 class Envs {
+  envs: any;
+  data: any;
+  selectors: any;
+  current: any;
+  results: any;
+  output: any;
+  log: any;
+
   constructor() {
     this.envs = {};
     this.data = {};
