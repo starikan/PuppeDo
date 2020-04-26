@@ -15,7 +15,7 @@ type TestJsonType = {
   breadcrumbs: any;
   testFile: any;
   type: any;
-};
+} | null;
 
 const resolveJS = (testJson, funcFile) => {
   const testJsonNew = { ...testJson };
@@ -44,7 +44,7 @@ const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
   return result;
 };
 
-const getTest = (testJsonIncome: TestJsonType, envsId: string, socket = blankSocket) => {
+const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, socket = blankSocket) => {
   if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
     throw new Error('getTest params error');
   }
@@ -85,7 +85,7 @@ const getTest = (testJsonIncome: TestJsonType, envsId: string, socket = blankSoc
 
   const test = new AbstractTest(testJson);
 
-  return async (args) => {
+  return async (args = {}) => {
     const updatetTestJson = propagateArgumentsOnAir(testJson, args, ['options']);
     await test.run(updatetTestJson, envsId);
   };

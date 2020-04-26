@@ -163,7 +163,7 @@ export default class Log {
     });
   }
 
-  fileLog(texts = [], fileName = 'output.log') {
+  fileLog(texts: string | string[][][] = [], fileName = 'output.log') {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
@@ -181,8 +181,8 @@ export default class Log {
   }
 
   async log({
-    funcFile,
-    testFile,
+    funcFile = null,
+    testFile = null,
     text = '',
     screenshot = null,
     fullpage = null,

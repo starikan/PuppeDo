@@ -12,6 +12,22 @@ import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 
+type LocalsType = {
+  dataLocal?: any;
+  selectorsLocal?: any;
+  localResults?: any;
+};
+
+type InputsType = {
+  options?: any;
+  description?: any;
+  repeat?: any;
+  while?: any;
+  if?: any;
+  errorIf?: any;
+  errorIfResult?: any;
+};
+
 const ALIASES = {
   data: ['d', '📋'],
   bindData: ['bD', 'bd', '📌📋', 'dataBind', 'db', 'dB'],
@@ -125,7 +141,7 @@ export default class Test {
   run: any;
 
   constructor({
-    name,
+    name = null,
     type = 'test',
     levelIndent = 0,
     needEnv = [],
@@ -146,6 +162,8 @@ export default class Test {
     socket = blankSocket,
     stepId = null,
     breadcrumbs = [],
+    funcFile = null,
+    testFile = null,
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -169,8 +187,8 @@ export default class Test {
     this.socket = socket;
     this.stepId = stepId;
     this.breadcrumbs = breadcrumbs;
-    this.funcFile = constructorArgs.funcFile;
-    this.testFile = constructorArgs.testFile;
+    this.funcFile = funcFile;
+    this.testFile = testFile;
 
     this.fetchData = (isSelector = false) => {
       const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
@@ -215,7 +233,7 @@ export default class Test {
 
     this.fetchSelectors = () => this.fetchData(true);
 
-    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
+    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
@@ -258,7 +276,7 @@ export default class Test {
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date().getTime();
 
-      const inputs = merge(constructorArgs, inputArgs);
+      const inputs: InputsType = merge(constructorArgs, inputArgs);
 
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
