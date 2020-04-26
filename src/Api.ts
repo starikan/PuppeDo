@@ -14,7 +14,7 @@ const run = async (argsInput = {}) => {
   let envs;
   let log;
   try {
-    const startTime = new Date();
+    const startTime = new Date().getTime();
     const args = { ...new Arguments(argsInput).args };
 
     if (_.isEmpty(args.PPD_TESTS)) {
@@ -25,10 +25,10 @@ const run = async (argsInput = {}) => {
       throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 
-    const initArgsTime = (new Date() - startTime) / 1000;
+    const initArgsTime = (new Date().getTime() - startTime) / 1000;
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
-      const startTimeTest = new Date();
+      const startTimeTest = new Date().getTime();
 
       ({ envsId, envs } = Environment({ envsId }));
       envs.initOutput(args.PPD_TESTS[i]);
@@ -60,14 +60,14 @@ const run = async (argsInput = {}) => {
 
       await log({
         level: 'timer',
-        text: `Prepare time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`,
+        text: `Prepare time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
       });
 
       await test();
 
       await log({
         level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`,
+        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
       });
     }
 
@@ -76,7 +76,7 @@ const run = async (argsInput = {}) => {
 
     await log({
       level: 'timer',
-      text: `Evaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`,
+      text: `Evaluated time 🕝: ${(new Date().getTime() - startTime) / 1000} sec.`,
     });
 
     if (!module.parent) {

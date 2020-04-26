@@ -21,7 +21,7 @@ const generateDescriptionStep = (fullJSON) => {
   return descriptionString;
 };
 
-const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
+const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
   const testNameResolved = testName || Environment({ envsId }).envs.get('current.test');
   const allTests = new TestsContent();
 
