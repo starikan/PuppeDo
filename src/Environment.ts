@@ -24,7 +24,7 @@ try {
 import { merge, sleep, blankSocket } from './Helpers';
 import TestsContent from './TestContent';
 import Arguments from './Arguments';
-const { Env } = require('./Env.js');
+import Env from './Env';
 
 class Envs {
   constructor() {
@@ -401,7 +401,7 @@ class Envs {
 
 const instances = {};
 
-module.exports = ({ envsId, socket = blankSocket } = {}) => {
+export default ({ envsId, socket = blankSocket } = {}) => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!_.get(instances, envsIdLocal)) {

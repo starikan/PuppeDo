@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import _ from 'lodash';
 
 import TestsContent from './TestContent';
-const Environment = require('./Environment');
+import Environment from './Environment';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -76,4 +76,4 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   return { fullJSON, textDescription };
 };
 
-module.exports = { getFullDepthJSON };
+export default getFullDepthJSON;

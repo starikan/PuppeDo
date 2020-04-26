@@ -21,5 +21,3 @@ export default class Singleton {
     return Class[singleton];
   }
 }
-
-// module.exports = Singleton;

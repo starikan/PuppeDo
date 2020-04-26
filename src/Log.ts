@@ -9,8 +9,8 @@ import yaml from 'js-yaml';
 
 import { paintString } from './Helpers';
 import Arguments from './Arguments';
-const { Screenshot } = require('./Screenshot.js');
-const Environment = require('./Environment.js');
+import Screenshot from './Screenshot';
+import Environment from './Environment';
 
 export default class Log {
   constructor({ envsId } = {}) {

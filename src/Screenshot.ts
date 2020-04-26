@@ -5,9 +5,9 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 
 import { sleep } from './Helpers';
-const Environment = require('./Environment.js');
+import Environment from './Environment';
 
-class Screenshot {
+export default class Screenshot {
   constructor({ envsId } = {}) {
     const { socket, envs } = Environment({ envsId });
     this.envs = envs;
@@ -59,5 +59,3 @@ class Screenshot {
     }
   }
 }
-
-module.exports = { Screenshot };

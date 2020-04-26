@@ -2,11 +2,11 @@
 import _ from 'lodash';
 import dayjs from 'dayjs';
 
-const { getFullDepthJSON } = require('./getFullDepthJSON');
-const { getTest } = require('./getTest');
+import getFullDepthJSON from './getFullDepthJSON';
+import getTest from './getTest';
 import Arguments from './Arguments';
 import Blocker from './Blocker';
-const Environment = require('./Environment.js');
+import Environment from './Environment';
 import Log from './Log';
 
 const run = async (argsInput = {}) => {

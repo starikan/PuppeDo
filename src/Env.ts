@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-class Env {
+export default class Env {
   constructor(name, env = {}) {
     this.name = name;
     // Browser, pages, cookies, etc.
@@ -45,5 +45,3 @@ class Env {
     return _.set(this.env, name, arr);
   }
 }
-
-module.exports = { Env };

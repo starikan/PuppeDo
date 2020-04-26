@@ -82,4 +82,4 @@ const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
   };
 };
 
-module.exports = { getTest };
+export default getTest;
