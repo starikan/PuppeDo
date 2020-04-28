@@ -43,7 +43,9 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
     const runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
       runnerBlockValue.forEach((v, runnerNum) => {
-        const runner = Object.entries(_.get(runnerBlockValue, [runnerNum], {}));
+        const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(
+          _.get(runnerBlockValue, [runnerNum], {}),
+        );
 
         let [name, newRunner] = runner.length ? runner[0] : [null, {}];
         // It`s important. Subtest may named but no body.

@@ -80,6 +80,7 @@ export default class Log {
     screenshots = [],
     error = {},
   } = {}) {
+    const errorTyped: { message?: string; stack?: string } = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
@@ -139,8 +140,8 @@ export default class Log {
     }
 
     if (level === 'error' && !extendInfo && levelIndent === 0) {
-      const message = (error.message || '').split(' || ');
-      const stack = (error.stack || '').split('\n    ');
+      const message = (errorTyped.message || '').split(' || ');
+      const stack = (errorTyped.stack || '').split('\n    ');
 
       [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
         stringsLog.push([

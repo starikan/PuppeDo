@@ -41,7 +41,7 @@ describe('TestContent', () => {
 
   test('getAllData', () => {
     let { allData } = new TestsContent();
-    instance = allData.__instance;
+    const instance = allData.__instance;
     expect(allData).toBeDefined();
     expect(allData.allFiles).toBeDefined();
     expect(allData.allContent).toBeDefined();
