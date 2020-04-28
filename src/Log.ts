@@ -258,7 +258,8 @@ export default class Log {
       //     return v;
       //   }
       // })
-      const testStructNormaize = _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
+      // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
+      const testStructNormaize = testStruct;
 
       const logEntry = {
         text,

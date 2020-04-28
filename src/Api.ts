@@ -9,6 +9,8 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
 
+require('source-map-support').install();
+
 const run = async (argsInput = {}) => {
   let envsId;
   let envs;

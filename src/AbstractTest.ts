@@ -1,5 +1,3 @@
-// require('source-map-support').install();
-
 import _ from 'lodash';
 
 import safeEval from 'safe-eval';
@@ -43,7 +41,7 @@ const ALIASES = {
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
-  _.forEach(needs, (d) => {
+  needs.forEach((d) => {
     if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
