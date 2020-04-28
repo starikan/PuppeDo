@@ -252,13 +252,13 @@ export default class Log {
         dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), (val) => _.omit(val, 'state'));
       }
 
-      if (_.isEmpty(testStruct)) {
-        testStruct = _.mapValues(testSource, (v) => {
-          if (!_.isEmpty(v)) {
-            return v;
-          }
-        });
-      }
+      // TODO: 2020-04-28 S.Starodubov todo
+      // _.mapValues(testSource, (v) => {
+      //   if (!_.isEmpty(v)) {
+      //     return v;
+      //   }
+      // })
+      const testStructNormaize = _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
 
       const logEntry = {
         text,
@@ -266,7 +266,7 @@ export default class Log {
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
         dataEnvsGlobal: level === 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
-        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStruct : null,
+        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
         type: level === 'env' ? 'env' : 'log',

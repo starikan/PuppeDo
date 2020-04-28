@@ -34,6 +34,7 @@
     "automatization"
   ],
   "dependencies": {
+    "@types/node-fetch": "^2.5.7",
     "dayjs": "1.8.25",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
