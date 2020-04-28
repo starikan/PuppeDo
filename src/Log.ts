@@ -2,8 +2,6 @@ import path from 'path';
 import fs from 'fs';
 
 import _ from 'lodash';
-// require('polyfill-object.fromentries');
-// require('array-flat-polyfill');
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 

@@ -1,6 +1,4 @@
 import _ from 'lodash';
-// require('polyfill-object.fromentries');
-// require('array-flat-polyfill');
 
 import Singleton from './Singleton';
 

@@ -18,13 +18,13 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.ts', '.tsx'],
         moduleDirectory: ['node_modules', 'src/'],
       },
     },
   },
   parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 2018 },
+  parserOptions: { ecmaVersion: 2019 },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     'operator-linebreak': [0, 'after'],
