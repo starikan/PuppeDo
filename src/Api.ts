@@ -9,7 +9,7 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
 
-require('source-map-support').install();
+// require('source-map-support').install();
 
 const run = async (argsInput = {}) => {
   let envsId;
@@ -94,6 +94,4 @@ const run = async (argsInput = {}) => {
   }
 };
 
-module.exports = {
-  run,
-};
+export default run;

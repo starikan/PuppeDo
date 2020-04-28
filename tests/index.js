@@ -1,5 +1,5 @@
 require('@puppedo/atoms');
-const ppd = require('../index');
+const ppd = require('../dist/bundle');
 
 const run = async () => {
   // Test with direct run from JS
