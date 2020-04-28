@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.18",
+  "version": "2.0.0-beta.19",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright orPuppeteer.",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,10 @@
   "bugs": {
     "url": "https://github.com/starikan/PuppeDo/issues"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "keywords": [
     "playwright",
     "puppeteer",
