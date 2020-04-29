@@ -11,6 +11,6 @@
     // "noImplicitAny": true,
   },
   "lib": ["es2019", "es2019.array"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "index.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

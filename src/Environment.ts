@@ -9,18 +9,6 @@ import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
 
-/* eslint-disable */
-let puppeteer;
-try {
-  puppeteer = require('puppeteer');
-} catch (error) {}
-
-let playwright;
-try {
-  playwright = require('playwright');
-} catch (error) {}
-/* eslint-enaable */
-
 import { merge, sleep, blankSocket } from './Helpers';
 import TestsContent from './TestContent';
 import Arguments from './Arguments';
@@ -219,6 +207,7 @@ class Envs {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
+    const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
 
     const page = await browser.newPage();
@@ -242,6 +231,7 @@ class Envs {
       options.devtools = PPD_DEBUG_MODE;
     }
 
+    const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
     const context = await browser.newContext();
     const page = await context.newPage({ viewport: { width, height } });
@@ -271,6 +261,7 @@ class Envs {
         throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
+      const puppeteer = __non_webpack_require__('puppeteer');
       const browser = await puppeteer.connect({
         browserWSEndpoint: webSocketDebuggerUrl,
         ignoreHTTPSErrors: true,
@@ -358,8 +349,8 @@ class Envs {
   }
 
   static async resolveLinks() {
-    const args = new Arguments().args;
-    const allData = new TestsContent().allData;
+    const { args } = new Arguments();
+    const { allData } = new TestsContent();
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map((v) => {
