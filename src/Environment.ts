@@ -207,6 +207,7 @@ class Envs {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
+    // eslint-disable-next-line no-undef
     const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
 
@@ -231,6 +232,7 @@ class Envs {
       options.devtools = PPD_DEBUG_MODE;
     }
 
+    // eslint-disable-next-line no-undef
     const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
     const context = await browser.newContext();
@@ -261,6 +263,7 @@ class Envs {
         throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
+      // eslint-disable-next-line no-undef
       const puppeteer = __non_webpack_require__('puppeteer');
       const browser = await puppeteer.connect({
         browserWSEndpoint: webSocketDebuggerUrl,
