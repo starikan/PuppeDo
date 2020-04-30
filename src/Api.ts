@@ -9,7 +9,7 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
 
-// require('source-map-support').install();
+__non_webpack_require__('source-map-support').install();
 
 const run = async (argsInput = {}) => {
   let envsId;
