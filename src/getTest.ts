@@ -21,7 +21,7 @@ const resolveJS = (testJson, funcFile) => {
   const testJsonNew = { ...testJson };
   try {
     /* eslint-disable */
-    const atom = require(funcFile);
+    const atom = __non_webpack_require__(funcFile);
     /* eslint-enable */
     const { runTest } = atom;
     if (_.isFunction(runTest)) {

@@ -116,7 +116,7 @@ class Envs {
     const folder = path.join(output, `${now}_${currentTest}`);
     fs.mkdirSync(folder);
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
+    fs.copyFileSync('output.html', path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = currentTest;
@@ -147,7 +147,7 @@ class Envs {
       }
     }
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync('output.html', path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
     this.output.folderLatestFull = path.resolve(folderLatest);

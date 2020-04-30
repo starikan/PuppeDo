@@ -3,13 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './src/index.ts',
   devtool: '#source-map',
-  externals: {
-    // lodash : {
-    //   commonjs: 'lodash',
-    //   amd: 'lodash',
-    //   root: '_' // indicates global variable
-    // }
-  },
+  mode: 'production',
   target: 'node',
   module: {
     rules: [
@@ -25,18 +19,11 @@ module.exports = {
   },
   optimization: {
     minimize: false,
-    // children: true,
     namedModules: true,
     namedChunks: true,
-    // splitChunks: {
-    //   chunks: 'all',
-    // },
   },
-  // experiments: {
-  //   outputModule: true,
-  // },
   output: {
-    filename: '[name].js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'commonjs2',
   },
