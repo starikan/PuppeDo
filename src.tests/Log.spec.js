@@ -3,8 +3,8 @@ const path = require('path');
 
 const dayjs = require('dayjs');
 
-const Log = require('../dist/Log').default;
-const Arguments = require('../dist/Arguments').default;
+const { Log } = require('../dist/index');
+const { Arguments } = require('../dist/index');
 
 const clearFiles = (fileName) => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
@@ -32,6 +32,7 @@ describe('Log', () => {
 
   describe('Write into console', () => {
     beforeEach(() => {
+      // eslint-disable-next-line no-console
       console.log = jest.fn();
     });
 
@@ -42,11 +43,13 @@ describe('Log', () => {
           ['text', 'info'],
         ],
       ]);
+      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
     });
 
     test('Console with default colorization', () => {
       Log.consoleLog([[['info ', 'sane'], ['text']]]);
+      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
@@ -55,7 +58,9 @@ describe('Log', () => {
         [['info '], ['text']],
         [['info '], ['text']],
       ]);
+      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
   });

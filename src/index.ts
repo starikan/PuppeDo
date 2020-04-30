@@ -7,6 +7,8 @@ import Arguments from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
+import Singleton from './Singleton';
+import { sleep, merge, paintString, blankSocket } from './Helpers';
 
 module.exports = {
   run,
@@ -18,4 +20,9 @@ module.exports = {
   Arguments,
   Blocker,
   Log,
+  Singleton,
+  sleep,
+  merge,
+  paintString,
+  blankSocket,
 };

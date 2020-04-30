@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { merge, sleep, paintString, blankSocket } = require('../dist/Helpers');
+const { merge, sleep, paintString, blankSocket } = require('../dist/index');
 
 test('Helpers -> merge', () => {
   const foobar = { foo: { bar: 3 } };

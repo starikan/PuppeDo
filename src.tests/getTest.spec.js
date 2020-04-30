@@ -1,7 +1,5 @@
-const getTest = require('../dist/getTest').default;
+const { getTest } = require('../dist/index');
 
-describe('getTest', ()=>{
-  test('getTest', ()=>{
-    
-  })
-})
+describe('getTest', () => {
+  test('getTest', () => {});
+});

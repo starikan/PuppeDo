@@ -1,7 +1,7 @@
 const path = require('path');
 
-const TestsContent = require('../dist/TestContent').default;
-const Arguments = require('../dist/Arguments').default;
+const { TestsContent } = require('../dist/index');
+const { Arguments } = require('../dist/index');
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -9,6 +9,7 @@ describe('TestContent', () => {
     // Raw run
     let { allData } = new TestsContent();
     let instance = allData.__instance;
+    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalled();
     spy.mockRestore();
     // const realIgnorePaths = ['.git', 'node_modules', '.history', 'output'].map((v) => path.normalize(v));

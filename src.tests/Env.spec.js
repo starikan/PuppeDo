@@ -1,4 +1,4 @@
-const Environment = require('../dist/Environment.js').default;
+const { Environment } = require('../dist/index');
 
 describe('Environment', () => {
   test('Constructor', () => {
