@@ -18,8 +18,23 @@
       "args": ["-e", "require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "main",
+        "PPD_DEBUG_MODE": "true",
+        "PPD_LOG_LEVEL_NESTED": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "PuppeDo_ENV_puppeteer",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv_puppeteer",
         "PPD_TESTS": "main",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1
@@ -33,7 +48,7 @@
       "args": ["-e", "require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "mainWithError",
         "PPD_DEBUG_MODE": "true",
@@ -49,7 +64,7 @@
       "args": ["-e", "require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms"],
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "testWithNoAtom",
         "PPD_DEBUG_MODE": "true",
@@ -66,7 +81,7 @@
         "-e",
         "require('./index').run()",
         "PPD_ROOT=tests",
-        "PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms",
+        "PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
         "PPD_ENVS=mainEnv",
         "PPD_TESTS=main",
         "PPD_DEBUG_MODE=true",
@@ -82,7 +97,7 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}\\tests\\index.js",
       "args": [
-        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=P:\\PPD\\PuppeDo\\node_modules\\@puppedo\\atoms",
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
       ]
     }
   ]

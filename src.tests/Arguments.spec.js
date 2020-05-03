@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { Arguments } = require('../src/Arguments');
+const { Arguments } = require('../dist/index');
 
 const argsDefault = {
   PPD_DATA: {},
@@ -47,7 +47,7 @@ function setArg(argName, argData) {
   new Arguments({}, true);
 
   const argMock = { [argName]: argData };
-  const argResult = _.get(new Arguments(argMock, true), argName);
+  const argResult = _.get(new Arguments(argMock, true).args, argName);
 
   return [argData, argResult];
 }
@@ -57,9 +57,9 @@ function errors(name, type) {
 }
 
 test('Arguments is Singleton and Default args', () => {
-  expect(new Arguments()).toEqual(argsDefault);
-  expect(new Arguments()).toEqual(argsDefault);
-  expect(new Arguments({ PPD_DEBUG_MODE: false }, true)).toEqual(argsDefault);
+  expect(new Arguments().args).toEqual(argsDefault);
+  expect(new Arguments().args).toEqual(argsDefault);
+  expect(new Arguments({ PPD_DEBUG_MODE: false }, true).args).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
@@ -197,19 +197,19 @@ test('Arguments CLI', () => {
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];
-  const argsSplited = new Arguments({}, true);
+  const argsSplited = new Arguments({}, true).args;
   expect(argsModify).toEqual(argsSplited);
   process.argv = rawArgv;
 
   process.argv = [...process.argv, argsJSON.join(' ')];
-  const argsSolid = new Arguments({}, true);
+  const argsSolid = new Arguments({}, true).args;
   expect(argsModify).toEqual(argsSolid);
   process.argv = rawArgv;
 });
 
 test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsModify };
-  const args = new Arguments({}, true);
+  const { args } = new Arguments({}, true);
   expect(argsModify).toEqual(args);
   Object.keys(argsModify).map((v) => delete process.env[v]);
 });

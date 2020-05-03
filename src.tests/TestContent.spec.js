@@ -1,16 +1,18 @@
 const path = require('path');
 
-const TestsContent = require('../src/TestContent');
-const { Arguments } = require('../src/Arguments');
+const { TestsContent } = require('../dist/index');
+const { Arguments } = require('../dist/index');
 
 describe('TestContent', () => {
   test('Init', () => {
     const spy = jest.spyOn(console, 'log').mockImplementation();
     // Raw run
-    let allData = new TestsContent();
+    let { allData } = new TestsContent();
     let instance = allData.__instance;
+    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalled();
     spy.mockRestore();
+    // const realIgnorePaths = ['.git', 'node_modules', '.history', 'output'].map((v) => path.normalize(v));
     expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output']);
     expect(instance.rootFolder).toEqual(process.cwd());
     expect(instance.additionalFolders).toEqual([]);
@@ -24,45 +26,23 @@ describe('TestContent', () => {
       },
       true,
     );
-    allData = new TestsContent({}, true);
+    allData = new TestsContent(true).allData;
     instance = allData.__instance;
     expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'foo']);
     expect(instance.rootFolder).toEqual(path.normalize('tests'));
     expect(instance.additionalFolders).toEqual(['bar']);
-
-    // Args run
-    new Arguments(
-      {
-        PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', 'foo'],
-        PPD_ROOT_ADDITIONAL: ['bar'],
-        PPD_ROOT: 'tests_dee',
-      },
-      true,
-    );
-    allData = new TestsContent(
-      {
-        rootFolder: 'tests',
-        additionalFolders: 'goo',
-        ignorePaths: '.git,node_modules , .history    , output,zoo',
-      },
-      true,
-    );
-    instance = allData.__instance;
-    expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'zoo']);
-    expect(instance.rootFolder).toEqual(path.normalize('tests'));
-    expect(instance.additionalFolders).toEqual(['goo']);
   });
 
   test('Getting data', () => {
-    const allData = new TestsContent();
-    const allData2 = new TestsContent();
+    const { allData } = new TestsContent();
+    const allData2 = new TestsContent().allData;
     expect(allData).toBeDefined();
     expect(allData).toEqual(allData2);
   });
 
   test('getAllData', () => {
-    let allData = new TestsContent();
-    instance = allData.__instance;
+    let { allData } = new TestsContent();
+    const instance = allData.__instance;
     expect(allData).toBeDefined();
     expect(allData.allFiles).toBeDefined();
     expect(allData.allContent).toBeDefined();
@@ -117,13 +97,13 @@ describe('TestContent', () => {
     ];
     // TODO: ПОчему этот тест проходит хотя message вобще то нет
     expect(() => CD(testsObjects2, 'foo')).toThrow(
-      new Error({
-        message: `There is duplicates of 'foo':
+      new Error(
+        `There is duplicates of 'foo':
  - Name: 'dee'.
     * 'bar'
     * 'tyy'
 `,
-      }),
+      ),
     );
   });
 });

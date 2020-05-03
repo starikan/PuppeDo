@@ -1,6 +1,10 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-class Env {
+export default class Env {
+  name: any;
+  state: any;
+  env: any;
+
   constructor(name, env = {}) {
     this.name = name;
     // Browser, pages, cookies, etc.
@@ -45,5 +49,3 @@ class Env {
     return _.set(this.env, name, arr);
   }
 }
-
-module.exports = { Env };

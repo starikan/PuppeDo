@@ -1,18 +1,27 @@
-const path = require('path');
+import path from 'path';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-const { Blocker } = require('./Blocker');
-const { blankSocket, merge } = require('./Helpers.js');
-const AbstractTest = require('./AbstractTest.js');
+import Blocker from './Blocker';
+import { blankSocket, merge } from './Helpers';
+import AbstractTest from './AbstractTest';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+
+type TestJsonType = {
+  source: any;
+  socket: any;
+  stepId: any;
+  breadcrumbs: any;
+  testFile: any;
+  type: any;
+} | null;
 
 const resolveJS = (testJson, funcFile) => {
   const testJsonNew = { ...testJson };
   try {
     /* eslint-disable */
-    const atom = require(funcFile);
+    const atom = __non_webpack_require__(funcFile);
     /* eslint-enable */
     const { runTest } = atom;
     if (_.isFunction(runTest)) {
@@ -35,7 +44,7 @@ const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
   return result;
 };
 
-const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
+const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, socket = blankSocket) => {
   if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
     throw new Error('getTest params error');
   }
@@ -76,10 +85,10 @@ const getTest = (testJsonIncome, envsId, socket = blankSocket) => {
 
   const test = new AbstractTest(testJson);
 
-  return async (args) => {
+  return async (args = {}) => {
     const updatetTestJson = propagateArgumentsOnAir(testJson, args, ['options']);
     await test.run(updatetTestJson, envsId);
   };
 };
 
-module.exports = { getTest };
+export default getTest;

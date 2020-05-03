@@ -1,13 +1,30 @@
-const _ = require('lodash');
-const safeEval = require('safe-eval');
+import _ from 'lodash';
 
-const { merge, blankSocket } = require('./Helpers.js');
-const { Blocker } = require('./Blocker.js');
-const { Arguments } = require('./Arguments.js');
-const { Log } = require('./Log.js');
-const Environment = require('./Environment.js');
-const TestsContent = require('./TestContent.js');
-const { TestError } = require('./Error.js');
+import safeEval from 'safe-eval';
+
+import { merge, blankSocket } from './Helpers';
+import Blocker from './Blocker';
+import Arguments from './Arguments';
+import Log from './Log';
+import Environment from './Environment';
+import TestsContent from './TestContent';
+import { TestError } from './Error';
+
+type LocalsType = {
+  dataLocal?: any;
+  selectorsLocal?: any;
+  localResults?: any;
+};
+
+type InputsType = {
+  options?: any;
+  description?: any;
+  repeat?: any;
+  while?: any;
+  if?: any;
+  errorIf?: any;
+  errorIfResult?: any;
+};
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -24,7 +41,7 @@ const ALIASES = {
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
-  _.forEach(needs, (d) => {
+  needs.forEach((d) => {
     if (_.isString(d) && d.endsWith('?')) return; // optional parameter
     const keysDataIncome = new Set(_.isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
@@ -60,7 +77,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   }
 };
 
-const checkNeedEnv = ({ needEnv, envName } = {}) => {
+const checkNeedEnv = (needEnv, envName) => {
   const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
   if (_.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -71,9 +88,58 @@ const checkNeedEnv = ({ needEnv, envName } = {}) => {
   }
 };
 
-class Test {
+export default class Test {
+  name: any;
+  type: any;
+  needEnv: any;
+  needData: any;
+  needSelectors: any;
+  dataTest: any;
+  selectorsTest: any;
+  options: any;
+  dataExt: any;
+  selectorsExt: any;
+  allowResults: any;
+  beforeTest: any;
+  runTest: any;
+  afterTest: any;
+  errorTest: any;
+  levelIndent: any;
+  repeat: any;
+  source: any;
+  socket: any;
+  stepId: any;
+  breadcrumbs: any;
+  funcFile: any;
+  testFile: any;
+
+  data: any;
+  bindData: any;
+  dataFunction: any;
+  selectors: any;
+  bindSelectors: any;
+  selectorsFunction: any;
+  bindResults: any;
+  resultFunction: any;
+  description: any;
+  while: any;
+  if: any;
+  errorIf: any;
+  errorIfResult: any;
+
+  envs: any;
+  envName: any;
+  envPageName: any;
+  env: any;
+
+  fetchData: any;
+  fetchSelectors: any;
+  checkIf: any;
+  runLogic: any;
+  run: any;
+
   constructor({
-    name,
+    name = null,
     type = 'test',
     levelIndent = 0,
     needEnv = [],
@@ -94,6 +160,8 @@ class Test {
     socket = blankSocket,
     stepId = null,
     breadcrumbs = [],
+    funcFile = null,
+    testFile = null,
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -117,11 +185,11 @@ class Test {
     this.socket = socket;
     this.stepId = stepId;
     this.breadcrumbs = breadcrumbs;
-    this.funcFile = constructorArgs.funcFile;
-    this.testFile = constructorArgs.testFile;
+    this.funcFile = funcFile;
+    this.testFile = testFile;
 
     this.fetchData = (isSelector = false) => {
-      const { PPD_SELECTORS, PPD_DATA } = new Arguments();
+      const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
       const dataName = isSelector ? 'selectors' : 'data';
 
       // * Get data from ENV params global
@@ -134,7 +202,7 @@ class Test {
       joinArray = [...joinArray, this.envs.get(dataName, {})];
 
       // * Fetch data from ext files that passed in test itself
-      const allTests = new TestsContent();
+      const allTests = new TestsContent().allData;
       const extFiles = isSelector ? this.selectorsExt : this.dataExt;
       extFiles.forEach((v) => {
         const extData = allTests[dataName].find((d) => v === d.name);
@@ -149,7 +217,7 @@ class Test {
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      Object.entries(bindDataLocal).forEach((v) => {
+      Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
         dataLocal[key] = _.get(dataLocal, val);
       });
@@ -163,7 +231,7 @@ class Test {
 
     this.fetchSelectors = () => this.fetchData(true);
 
-    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals = {}) => {
+    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
       let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
@@ -204,15 +272,14 @@ class Test {
     };
 
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
-      const startTime = new Date();
+      const startTime = new Date().getTime();
 
-      const inputs = merge(constructorArgs, inputArgs);
+      const inputs: InputsType = merge(constructorArgs, inputArgs);
 
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
       this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
       this.dataExt = [...new Set([...this.dataExt, ...dataExtLogic])];
-
       this.selectors = resolveAliases('selectors', inputs, ALIASES);
       this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);
@@ -233,11 +300,11 @@ class Test {
         throw new Error('Test should have envsId');
       }
 
-      const { envs } = Environment({ envsId });
-      const logger = new Log({ envsId });
+      const { envs } = Environment(envsId);
+      const logger = new Log(envsId);
 
       try {
-        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments();
+        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
 
         this.envs = envs;
         this.envName = this.envs.get('current.name');
@@ -245,7 +312,7 @@ class Test {
         this.env = this.envs.get(`envs.${this.envName}`);
 
         if (!PPD_DISABLE_ENV_CHECK) {
-          checkNeedEnv({ needEnv: this.needEnv, envName: this.envName });
+          checkNeedEnv(this.needEnv, this.envName);
         }
 
         let dataLocal = this.fetchData();
@@ -369,7 +436,7 @@ class Test {
           throw new Error('Can`t get results from test');
         }
 
-        Object.entries(this.bindResults).forEach((v) => {
+        Object.entries(this.bindResults).forEach((v: [string, string]) => {
           const [key, val] = v;
           results[key] = _.get(results, val);
         });
@@ -419,7 +486,7 @@ class Test {
         // TIMER IN CONSOLE
         if (PPD_LOG_EXTEND) {
           await logger.log({
-            text: `🕝: ${new Date() - startTime} ms. (${this.name})`,
+            text: `🕝: ${new Date().getTime() - startTime} ms. (${this.name})`,
             level: 'timer',
             levelIndent,
             extendInfo: true,
@@ -456,5 +523,3 @@ class Test {
     };
   }
 }
-
-module.exports = Test;

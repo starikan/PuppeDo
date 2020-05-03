@@ -1,20 +1,24 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const _ = require('lodash');
-require('polyfill-object.fromentries');
-require('array-flat-polyfill');
-const dayjs = require('dayjs');
-const yaml = require('js-yaml');
+import _ from 'lodash';
+import dayjs from 'dayjs';
+import yaml from 'js-yaml';
 
-const { paintString } = require('./Helpers.js');
-const { Arguments } = require('./Arguments.js');
-const { Screenshot } = require('./Screenshot.js');
-const Environment = require('./Environment.js');
+import { paintString } from './Helpers';
+import Arguments from './Arguments';
+import Screenshot from './Screenshot';
+import Environment from './Environment';
 
-class Log {
-  constructor({ envsId } = {}) {
-    const { socket, envs, envsId: envsIdNew } = Environment({ envsId });
+export default class Log {
+  envsId: any;
+  envs: any;
+  socket: any;
+  binded: any;
+  screenshot: any;
+
+  constructor(envsId) {
+    const { socket, envs, envsId: envsIdNew } = Environment(envsId);
     this.envsId = envsIdNew;
     this.envs = envs;
     this.socket = socket;
@@ -48,7 +52,7 @@ class Log {
       env: 7,
     };
 
-    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments();
+    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
 
     const inputLevel = _.isNumber(level) ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
@@ -76,7 +80,8 @@ class Log {
     screenshots = [],
     error = {},
   } = {}) {
-    const { PPD_LOG_EXTEND } = new Arguments();
+    const errorTyped: { message?: string; stack?: string } = error;
+    const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
@@ -135,8 +140,8 @@ class Log {
     }
 
     if (level === 'error' && !extendInfo && levelIndent === 0) {
-      const message = (error.message || '').split(' || ');
-      const stack = (error.stack || '').split('\n    ');
+      const message = (errorTyped.message || '').split(' || ');
+      const stack = (errorTyped.stack || '').split('\n    ');
 
       [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
         stringsLog.push([
@@ -157,7 +162,7 @@ class Log {
     });
   }
 
-  fileLog(texts = [], fileName = 'output.log') {
+  fileLog(texts: string | string[][][] = [], fileName = 'output.log') {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
@@ -175,8 +180,8 @@ class Log {
   }
 
   async log({
-    funcFile,
-    testFile,
+    funcFile = null,
+    testFile = null,
     text = '',
     screenshot = null,
     fullpage = null,
@@ -196,7 +201,7 @@ class Log {
       PPD_LOG_LEVEL_NESTED,
       PPD_LOG_SCREENSHOT,
       PPD_LOG_FULLPAGE,
-    } = new Arguments();
+    } = new Arguments().args;
 
     const levelText = Log.checkLevel(level);
     if (!levelText) return;
@@ -247,13 +252,14 @@ class Log {
         dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), (val) => _.omit(val, 'state'));
       }
 
-      if (_.isEmpty(testStruct)) {
-        testStruct = _.mapValues(testSource, (v) => {
-          if (!_.isEmpty(v)) {
-            return v;
-          }
-        });
-      }
+      // TODO: 2020-04-28 S.Starodubov todo
+      // _.mapValues(testSource, (v) => {
+      //   if (!_.isEmpty(v)) {
+      //     return v;
+      //   }
+      // })
+      // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
+      const testStructNormaize = _.isEmpty(testStruct) ? testSource : testStruct;
 
       const logEntry = {
         text,
@@ -261,7 +267,7 @@ class Log {
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
         dataEnvsGlobal: level === 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
-        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStruct : null,
+        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
         type: level === 'env' ? 'env' : 'log',
@@ -284,5 +290,3 @@ class Log {
     }
   }
 }
-
-module.exports = { Log };

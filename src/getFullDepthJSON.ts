@@ -1,9 +1,9 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-const TestsContent = require('./TestContent.js');
-const Environment = require('./Environment.js');
+import TestsContent from './TestContent';
+import Environment from './Environment';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
@@ -21,9 +21,9 @@ const generateDescriptionStep = (fullJSON) => {
   return descriptionString;
 };
 
-const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
-  const testNameResolved = testName || Environment({ envsId }).envs.get('current.test');
-  const allTests = new TestsContent();
+const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
+  const testNameResolved = testName || Environment(envsId).envs.get('current.test');
+  const allTests = new TestsContent().allData;
 
   const testJSON = _.cloneDeep(
     allTests.allContent.find((v) => v.name === testNameResolved && ['atom', 'test'].includes(v.type)),
@@ -43,7 +43,9 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
     const runnerBlockValue = _.get(fullJSON, [runnerBlock]);
     if (_.isArray(runnerBlockValue)) {
       runnerBlockValue.forEach((v, runnerNum) => {
-        const runner = Object.entries(_.get(runnerBlockValue, [runnerNum], {}));
+        const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(
+          _.get(runnerBlockValue, [runnerNum], {}),
+        );
 
         let [name, newRunner] = runner.length ? runner[0] : [null, {}];
         // It`s important. Subtest may named but no body.
@@ -76,4 +78,4 @@ const getFullDepthJSON = ({ testName, testBody = {}, levelIndent = 0, envsId = n
   return { fullJSON, textDescription };
 };
 
-module.exports = { getFullDepthJSON };
+export default getFullDepthJSON;

@@ -1,21 +1,24 @@
 /* eslint-disable no-await-in-loop */
-const _ = require('lodash');
-const dayjs = require('dayjs');
+import _ from 'lodash';
+import dayjs from 'dayjs';
 
-const { getFullDepthJSON } = require('./getFullDepthJSON');
-const { getTest } = require('./getTest');
-const { Arguments } = require('./Arguments');
-const { Blocker } = require('./Blocker');
-const Environment = require('./Environment.js');
-const { Log } = require('./Log');
+import getFullDepthJSON from './getFullDepthJSON';
+import getTest from './getTest';
+import Arguments from './Arguments';
+import Blocker from './Blocker';
+import Environment from './Environment';
+import Log from './Log';
+
+// eslint-disable-next-line no-undef
+__non_webpack_require__('source-map-support').install();
 
 const run = async (argsInput = {}) => {
   let envsId;
   let envs;
   let log;
   try {
-    const startTime = new Date();
-    const args = new Arguments(argsInput);
+    const startTime = new Date().getTime();
+    const args = { ...new Arguments(argsInput).args };
 
     if (_.isEmpty(args.PPD_TESTS)) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -25,16 +28,16 @@ const run = async (argsInput = {}) => {
       throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 
-    const initArgsTime = (new Date() - startTime) / 1000;
+    const initArgsTime = (new Date().getTime() - startTime) / 1000;
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
-      const startTimeTest = new Date();
+      const startTimeTest = new Date().getTime();
 
-      ({ envsId, envs } = Environment({ envsId }));
+      ({ envsId, envs } = Environment(envsId));
       envs.initOutput(args.PPD_TESTS[i]);
       envs.set('current.test', args.PPD_TESTS[i]);
 
-      const logger = new Log({ envsId });
+      const logger = new Log(envsId);
       log = logger.log.bind(logger);
 
       if (i === 0) {
@@ -60,14 +63,14 @@ const run = async (argsInput = {}) => {
 
       await log({
         level: 'timer',
-        text: `Prepare time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`,
+        text: `Prepare time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
       });
 
       await test();
 
       await log({
         level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date() - startTimeTest) / 1000} sec.`,
+        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
       });
     }
 
@@ -76,7 +79,7 @@ const run = async (argsInput = {}) => {
 
     await log({
       level: 'timer',
-      text: `Evaluated time 🕝: ${(new Date() - startTime) / 1000} sec.`,
+      text: `Evaluated time 🕝: ${(new Date().getTime() - startTime) / 1000} sec.`,
     });
 
     if (!module.parent) {
@@ -84,7 +87,7 @@ const run = async (argsInput = {}) => {
     }
   } catch (error) {
     error.message += " || error in 'run'";
-    if (String(error).startsWith('SyntaxError')) {
+    if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;
       error.type = 'SyntaxError';
     }
@@ -92,6 +95,4 @@ const run = async (argsInput = {}) => {
   }
 };
 
-module.exports = {
-  run,
-};
+export default run;

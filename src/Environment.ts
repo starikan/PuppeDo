@@ -1,32 +1,46 @@
 /* eslint-disable no-await-in-loop */
-const fs = require('fs');
-const path = require('path');
-const { spawn, spawnSync } = require('child_process');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import { spawn, spawnSync } from 'child_process';
+import crypto from 'crypto';
 
-const _ = require('lodash');
-const dayjs = require('dayjs');
-const fetch = require('node-fetch');
-const walkSync = require('walk-sync');
+import _ from 'lodash';
+import dayjs from 'dayjs';
+import fetch from 'node-fetch';
+import walkSync from 'walk-sync';
 
-/* eslint-disable */
-let puppeteer;
-try {
-  puppeteer = require('puppeteer');
-} catch (error) {}
+import { merge, sleep, blankSocket } from './Helpers';
+import TestsContent from './TestContent';
+import Arguments from './Arguments';
+import Env from './Env';
 
-let playwright;
-try {
-  playwright = require('playwright');
-} catch (error) {}
-/* eslint-enaable */
+type PagesType = {
+  main?: any;
+};
 
-const { merge, sleep, blankSocket } = require('./Helpers.js');
-const TestsContent = require('./TestContent.js');
-const { Arguments } = require('./Arguments.js');
-const { Env } = require('./Env.js');
+type Options = {
+  headless: any;
+  slowMo: any;
+  args: any;
+  devtools?: any;
+};
 
 class Envs {
+  envs: any;
+  data: any;
+  selectors: any;
+  current: any;
+  results: any;
+  output: {
+    folder?: string;
+    folderLatest?: string;
+    folderLatestFull?: string;
+    output?: string;
+    name?: string;
+    folderFull?: string;
+  };
+  log: any;
+
   constructor() {
     this.envs = {};
     this.data = {};
@@ -71,7 +85,7 @@ class Envs {
     }
   }
 
-  getEnv(name) {
+  getEnv(name = null) {
     const nameNew = name || _.get(this, 'current.name');
     return _.get(this.envs, nameNew, {});
   }
@@ -83,15 +97,26 @@ class Envs {
   }
 
   getOutputsFolders() {
-    const { folder, folderLatest } = _.get(this, 'output', {});
+    const { folder, folderLatest } = this.output || {};
     if (!folder || !folderLatest) {
       throw new Error('There is no output folder');
     }
     return { folder, folderLatest };
   }
 
+  static resolveOutputFile(): string {
+    const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
+    const outputSourceModule = path.resolve(
+      path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
+    );
+
+    const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
+
+    return outputSource;
+  }
+
   initOutput(testName = 'test') {
-    const { PPD_OUTPUT: output } = new Arguments();
+    const { PPD_OUTPUT: output } = new Arguments().args;
     const currentTest = this.get('current.test') || testName;
 
     if (!fs.existsSync(output)) {
@@ -102,7 +127,7 @@ class Envs {
     const folder = path.join(output, `${now}_${currentTest}`);
     fs.mkdirSync(folder);
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folder, 'output.html'));
+    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = currentTest;
@@ -115,7 +140,7 @@ class Envs {
   }
 
   initOutputLatest() {
-    const { PPD_OUTPUT: output } = new Arguments();
+    const { PPD_OUTPUT: output } = new Arguments().args;
 
     const folderLatest = path.join(output, 'latest');
 
@@ -133,7 +158,7 @@ class Envs {
       }
     }
 
-    fs.copyFileSync(path.join(path.resolve(__dirname), 'output.html'), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
     this.output.folderLatestFull = path.resolve(folderLatest);
@@ -167,8 +192,7 @@ class Envs {
           if (engine === 'puppeteer') {
             const { browser, pages } = await Envs.runPuppeteer(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
-          }
-          if (engine === 'playwright') {
+          } else {
             const { browser, pages } = await Envs.runPlaywright(browserSettings);
             env.state = { ...env.state, ...{ browser, pages } };
           }
@@ -187,13 +211,15 @@ class Envs {
       }
     }
 
-    this.runBrowsers = () => {};
+    this.runBrowsers = async () => {};
   }
 
   static async runPuppeteer(browserSettings) {
-    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [] } = browserSettings;
 
+    // eslint-disable-next-line no-undef
+    const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
 
     const page = await browser.newPage();
@@ -208,15 +234,17 @@ class Envs {
   }
 
   static async runPlaywright(browserSettings) {
-    const { PPD_DEBUG_MODE = false } = new Arguments();
+    const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [], browser: browserName } = browserSettings;
     const { width = 1024, height = 768 } = _.get(browserSettings, 'windowSize');
 
-    const options = { headless, slowMo, args };
+    const options: Options = { headless, slowMo, args };
     if (browserName === 'chromium') {
       options.devtools = PPD_DEBUG_MODE;
     }
 
+    // eslint-disable-next-line no-undef
+    const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
     const context = await browser.newContext();
     const page = await context.newPage({ viewport: { width, height } });
@@ -246,6 +274,8 @@ class Envs {
         throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
+      // eslint-disable-next-line no-undef
+      const puppeteer = __non_webpack_require__('puppeteer');
       const browser = await puppeteer.connect({
         browserWSEndpoint: webSocketDebuggerUrl,
         ignoreHTTPSErrors: true,
@@ -253,7 +283,7 @@ class Envs {
       });
 
       const pagesRaw = await browser.pages();
-      let pages = {};
+      let pages: PagesType = {};
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
@@ -333,8 +363,8 @@ class Envs {
   }
 
   static async resolveLinks() {
-    const args = new Arguments();
-    const allData = await new TestsContent();
+    const { args } = new Arguments();
+    const { allData } = new TestsContent();
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map((v) => {
@@ -395,13 +425,13 @@ class Envs {
     }
 
     // If already init do nothing
-    this.init = () => {};
+    this.init = async () => {};
   }
 }
 
 const instances = {};
 
-module.exports = ({ envsId, socket = blankSocket } = {}) => {
+export default (envsId, socket = blankSocket) => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!_.get(instances, envsIdLocal)) {

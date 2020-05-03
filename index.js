@@ -1,12 +1,19 @@
-const { run } = require('./src/Api.js');
-const { errorHandler } = require('./src/Error.js');
-const { getFullDepthJSON } = require('./src/getFullDepthJSON.js');
-const { getTest } = require('./src/getTest.js');
-const TestsContent = require('./src/TestContent.js');
-const { Arguments } = require('./src/Arguments.js');
-const { Blocker } = require('./src/Blocker.js');
-const Environment = require('./src/Environment.js');
-const { Log } = require('./src/Log.js');
+const {
+  run,
+  errorHandler,
+  getFullDepthJSON,
+  getTest,
+  TestsContent,
+  Environment,
+  Arguments,
+  Blocker,
+  Log,
+  Singleton,
+  sleep,
+  merge,
+  paintString,
+  blankSocket,
+} = require('./dist/index');
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
@@ -23,5 +30,10 @@ if (!module.parent) {
     Arguments,
     Blocker,
     Log,
+    Singleton,
+    sleep,
+    merge,
+    paintString,
+    blankSocket,
   };
 }

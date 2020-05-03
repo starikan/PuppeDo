@@ -1,36 +1,28 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const walkSync = require('walk-sync');
-const yaml = require('js-yaml');
+import walkSync from 'walk-sync';
+import yaml from 'js-yaml';
 
-const Singleton = require('./Singleton.js');
-const { Arguments } = require('./Arguments.js');
+import Singleton from './Singleton';
+import Arguments from './Arguments';
 
-class TestsContent extends Singleton {
-  constructor({ rootFolder, additionalFolders, ignorePaths } = {}, reInit = false) {
+export default class TestsContent extends Singleton {
+  allData: any;
+  rootFolder: any;
+  additionalFolders: any;
+  ignorePaths: any;
+
+  constructor(reInit = false) {
     super();
-    const args = new Arguments();
+    const args = { ...new Arguments().args };
 
     if (reInit || !this.allData) {
-      this.rootFolder = rootFolder || args.PPD_ROOT;
-      this.rootFolder = path.normalize(this.rootFolder);
-
-      this.additionalFolders = additionalFolders || args.PPD_ROOT_ADDITIONAL;
-      if (typeof this.additionalFolders === 'string') {
-        this.additionalFolders = this.additionalFolders.split(/\s*,\s*/);
-      }
-      this.additionalFolders = this.additionalFolders.map((v) => path.normalize(v));
-
-      this.ignorePaths = ignorePaths || args.PPD_ROOT_IGNORE;
-      if (typeof this.ignorePaths === 'string') {
-        this.ignorePaths = this.ignorePaths.split(/\s*,\s*/);
-      }
-      this.ignorePaths = this.ignorePaths.map((v) => path.normalize(v));
-
+      this.rootFolder = path.normalize(args.PPD_ROOT);
+      this.additionalFolders = args.PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
+      this.ignorePaths = args.PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
       this.allData = this.getAllData();
     }
-    return this.allData;
   }
 
   static checkDuplicates(tests, key) {
@@ -45,11 +37,11 @@ class TestsContent extends Singleton {
       return collector;
     }, {});
 
-    const isThrow = Object.values(dubs).some((v) => v.length > 1);
+    const isThrow = Object.values(dubs).some((v: any[]) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
       let message = `There is duplicates of '${key}':\n`;
-      Object.entries(dubs).forEach((dub) => {
+      Object.entries(dubs).forEach((dub: [string, []]) => {
         const [keyDub, valueDub] = dub;
         if (valueDub.length > 1) {
           message += ` - Name: '${keyDub}'.\n`;
@@ -108,5 +100,3 @@ class TestsContent extends Singleton {
     return this.allData;
   }
 }
-
-module.exports = TestsContent;

@@ -1,33 +1,60 @@
 /* eslint-disable max-classes-per-file */
-const { Arguments } = require('./Arguments.js');
+import Arguments from './Arguments';
 
-class AbstractError extends Error {
+type ErrorType = {
+  envsId: any;
+  envs: any;
+  socket: any;
+  stepId: any;
+  testDescription: any;
+  message: any;
+  stack: any;
+};
+
+type ErrorConstructorType = {
+  logger: any;
+  parentError: ErrorType;
+  test: any;
+  envsId: any;
+};
+
+export class AbstractError extends Error {
   constructor() {
     super();
     this.name = this.constructor.name;
   }
 }
 
-class TestError extends AbstractError {
+export class TestError extends AbstractError {
+  envsId: any;
+  envs: any;
+  socket: any;
+  stepId: any;
+  testDescription: any;
+  message: any;
+  stack: any;
+  logger: any;
+  test: any;
+
   constructor({
     logger = {
       log: () => {
         throw new Error('No log function');
       },
     },
-    parentError = {},
+    parentError,
     test = {},
     envsId = null,
-  }) {
+  }: ErrorConstructorType) {
     super();
 
-    this.envsId = parentError.envsId || envsId;
-    this.envs = parentError.envs || test.envs;
-    this.socket = parentError.socket || test.socket;
-    this.stepId = parentError.stepId || test.stepId;
-    this.testDescription = parentError.testDescription || test.description;
-    this.message = `${parentError.message} || error in test = ${test.name}`;
-    this.stack = parentError.stack;
+    this.envsId = parentError?.envsId || envsId;
+    this.envs = parentError?.envs || test.envs;
+    this.socket = parentError?.socket || test.socket;
+    this.stepId = parentError?.stepId || test.stepId;
+    this.testDescription = parentError?.testDescription || test.description;
+    this.message = `${parentError?.message} || error in test = ${test.name}`;
+    this.stack = parentError?.stack;
 
     this.logger = logger;
     this.test = test;
@@ -47,9 +74,9 @@ class TestError extends AbstractError {
   }
 }
 
-const errorHandler = async (errorIncome) => {
+export const errorHandler = async (errorIncome) => {
   const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
-  const { PPD_DEBUG_MODE = false } = new Arguments();
+  const { PPD_DEBUG_MODE = false } = new Arguments().args;
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
@@ -71,10 +98,4 @@ const errorHandler = async (errorIncome) => {
   // if (!module.parent) {
   process.exit(1);
   // }
-};
-
-module.exports = {
-  errorHandler,
-  AbstractError,
-  TestError,
 };

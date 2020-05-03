@@ -1,12 +1,33 @@
-const deepmerge = require('deepmerge');
+import deepmerge from 'deepmerge';
 
-function sleep(ms) {
+export type Colors = {
+  sane: number;
+  black: number;
+  red: number;
+  green: number;
+  yellow: number;
+  blue: number;
+  magenta: number;
+  cyan: number;
+  white: number;
+  raw?: number;
+  timer?: number;
+  debug?: number;
+  info?: number;
+  test?: number;
+  warn?: number;
+  error?: number;
+  trace?: number;
+  env?: number;
+};
+
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
-const merge = (...objects) => deepmerge.all(objects, { arrayMerge: (destinationArray, sourceArray) => sourceArray });
+export const merge = (...objects) => deepmerge.all(objects, { arrayMerge: (destArray, sourceArray) => sourceArray });
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -33,8 +54,8 @@ BACKGROUND_CYAN = "\u001B[46m"
 BACKGROUND_WHITE = "\u001B[47m"
 */
 
-const paintString = (str, color = 'sane') => {
-  const colors = {
+export const paintString = (str: string, color: string = 'sane'): string => {
+  const colors: Colors = {
     sane: 0,
     black: 30,
     red: 31,
@@ -59,14 +80,7 @@ const paintString = (str, color = 'sane') => {
   return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
 };
 
-const blankSocket = {
+export const blankSocket = {
   send: () => {},
   sendYAML: () => {},
-};
-
-module.exports = {
-  merge,
-  sleep,
-  blankSocket,
-  paintString,
 };

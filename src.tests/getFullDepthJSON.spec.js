@@ -1,7 +1,5 @@
-const { getFullDepthJSON } = require('../src/getFullDepthJSON');
+const { getFullDepthJSON } = require('../dist/index');
 
-describe('getFullDepthJSON', ()=>{
-  test('getFullDepthJSON', ()=>{
-    
-  })
-})
+describe('getFullDepthJSON', () => {
+  test('getFullDepthJSON', () => {});
+});

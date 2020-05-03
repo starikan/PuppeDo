@@ -1,37 +1,44 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-const _ = require('lodash');
-const dayjs = require('dayjs');
+import _ from 'lodash';
+import dayjs from 'dayjs';
 
-const { sleep } = require('./Helpers.js');
-const Environment = require('./Environment.js');
+import { sleep } from './Helpers';
+import Environment from './Environment';
 
-class Screenshot {
-  constructor({ envsId } = {}) {
-    const { socket, envs } = Environment({ envsId });
+type ElementType = {
+  screenshot: Function;
+} | null;
+
+export default class Screenshot {
+  envs: any;
+  socket: any;
+
+  constructor({ envsId = null } = {}) {
+    const { socket, envs } = Environment(envsId);
     this.envs = envs;
     this.socket = socket;
   }
 
-  async getScreenshots(element, fullPage = false, extendInfo = false) {
+  async getScreenshots(element: ElementType, fullPage = false, extendInfo = false) {
     if (extendInfo) {
       return [];
     }
-    const elementScreenshot = await this.saveScreenshot({ element });
-    const fullPageScreenshot = await this.saveScreenshot({ fullPage });
+    const elementScreenshot = await this.saveScreenshot(element, null);
+    const fullPageScreenshot = await this.saveScreenshot(null, fullPage);
     const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => v);
     return screenshotsExists;
   }
 
-  copyScreenshotToLatest(name) {
+  copyScreenshotToLatest(name: string): void {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
     const pathScreenshot = path.join(folder, name);
     const pathScreenshotLatest = path.join(folderLatest, name);
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot({ fullPage = false, element = false } = {}) {
+  async saveScreenshot(element: ElementType = null, fullPage = false): Promise<string | boolean> {
     const { folder } = this.envs.getOutputsFolders();
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
@@ -59,5 +66,3 @@ class Screenshot {
     }
   }
 }
-
-module.exports = { Screenshot };

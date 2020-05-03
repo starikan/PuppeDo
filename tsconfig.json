@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "types": ["node"],
+    "module": "CommonJS",
+    "outDir": "dist",
+    "sourceMap": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "removeComments": true,
+    "preserveConstEnums": true
+    // "noImplicitAny": true,
+  },
+  "lib": ["es2019", "es2019.array"],
+  "include": ["src/**/*", "index.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
