@@ -87,7 +87,7 @@ const run = async (argsInput = {}) => {
     }
   } catch (error) {
     error.message += " || error in 'run'";
-    if (String(error).startsWith('SyntaxError')) {
+    if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;
       error.type = 'SyntaxError';
     }

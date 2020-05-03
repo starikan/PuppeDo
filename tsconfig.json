@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2019",
+    "types": ["node"],
     "module": "CommonJS",
     "outDir": "dist",
     "sourceMap": true,

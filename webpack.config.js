@@ -1,16 +1,23 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.ts',
+  cache: true,
+  entry: {
+    main: './src/index.ts',
+  },
   devtool: '#source-map',
   mode: 'production',
   target: 'node',
+  node: {
+    __filename: true,
+    __dirname: true,
+  },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.(js|jsx|tsx|ts)$/,
         exclude: /node_modules/,
+        loader: 'babel-loader',
       },
     ],
   },
@@ -21,6 +28,9 @@ module.exports = {
     minimize: false,
     namedModules: true,
     namedChunks: true,
+    // splitChunks: {
+    //   chunks: 'all',
+    // },
   },
   output: {
     filename: 'index.js',

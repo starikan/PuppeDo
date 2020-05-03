@@ -104,6 +104,17 @@ class Envs {
     return { folder, folderLatest };
   }
 
+  static resolveOutputFile(): string {
+    const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
+    const outputSourceModule = path.resolve(
+      path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
+    );
+
+    const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
+
+    return outputSource;
+  }
+
   initOutput(testName = 'test') {
     const { PPD_OUTPUT: output } = new Arguments().args;
     const currentTest = this.get('current.test') || testName;
@@ -116,7 +127,7 @@ class Envs {
     const folder = path.join(output, `${now}_${currentTest}`);
     fs.mkdirSync(folder);
 
-    fs.copyFileSync('output.html', path.join(folder, 'output.html'));
+    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = currentTest;
@@ -147,7 +158,7 @@ class Envs {
       }
     }
 
-    fs.copyFileSync('output.html', path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
     this.output.folderLatestFull = path.resolve(folderLatest);

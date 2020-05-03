@@ -10,7 +10,7 @@ import Log from './Log';
 import Singleton from './Singleton';
 import { sleep, merge, paintString, blankSocket } from './Helpers';
 
-module.exports = {
+export {
   run,
   errorHandler,
   getFullDepthJSON,
