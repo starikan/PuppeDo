@@ -24,7 +24,7 @@ type ArgumentsType = typeof argsDefault;
 // type ArgumentsKeysType = keyof typeof argsDefault;
 
 const resolveBoolean = <T>(key: string, val: T): boolean | T => {
-  if (typeof argsDefault[key] !== 'boolean') {
+  if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
     return val;
   }
 
@@ -59,6 +59,32 @@ const resolveArray = <T>(key: string, val: T): string[] | T => {
   return newVal;
 };
 
+const resolveObject = <T>(key: string, val: T): Object | T => {
+  if (
+    typeof argsDefault[key] !== 'object' ||
+    Array.isArray(argsDefault[key]) ||
+    (typeof val === 'object' && !Array.isArray(val))
+  ) {
+    return val;
+  }
+
+  let newVal: Object;
+
+  if (typeof val === 'string') {
+    try {
+      newVal = JSON.parse(val);
+    } catch (error) {
+      throw new Error(`Invalid argument type '${key}', 'object' required.`);
+    }
+  }
+
+  if (typeof newVal !== 'object' || Array.isArray(newVal)) {
+    throw new Error(`Invalid argument type '${key}', 'object' required.`);
+  }
+
+  return newVal;
+};
+
 const parser = (args: Object = {}): Object => {
   const params = Object.keys(argsDefault);
   return params.reduce((s, val) => {
@@ -69,20 +95,7 @@ const parser = (args: Object = {}): Object => {
 
     newVal = resolveBoolean(val, newVal);
     newVal = resolveArray(val, newVal);
-
-    if (typeof argsDefault[val] === 'object' && !Array.isArray(argsDefault[val])) {
-      if (typeof newVal === 'string') {
-        try {
-          newVal = JSON.parse(newVal);
-        } catch (error) {
-          throw new Error(`Invalid argument type '${val}', 'object' required.`);
-        }
-      }
-
-      if (typeof newVal !== 'object' || Array.isArray(newVal)) {
-        throw new Error(`Invalid argument type '${val}', 'object' required.`);
-      }
-    }
+    newVal = resolveObject(val, newVal);
 
     if (typeof argsDefault[val] === 'string' && typeof newVal !== 'string') {
       throw new Error(`Invalid argument type '${val}', 'string' required.`);
