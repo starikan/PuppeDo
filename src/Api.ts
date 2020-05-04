@@ -82,9 +82,9 @@ const run = async (argsInput = {}) => {
       text: `Evaluated time 🕝: ${(new Date().getTime() - startTime) / 1000} sec.`,
     });
 
-    if (!module.parent) {
-      process.exit(1);
-    }
+    // if (!module.parent) {
+    process.exit(1);
+    // }
   } catch (error) {
     error.message += " || error in 'run'";
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {

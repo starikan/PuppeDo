@@ -8,6 +8,8 @@ import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 
+const vm = require('vm');
+
 type LocalsType = {
   dataLocal?: any;
   selectorsLocal?: any;
@@ -40,7 +42,6 @@ const runScriptInContext = (source: string, context: object): boolean | object |
   let result;
 
   try {
-    const vm = require('vm');
     const script = new vm.Script(source);
     vm.createContext(context);
     result = script.runInContext(context);
