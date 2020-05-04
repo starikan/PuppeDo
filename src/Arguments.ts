@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import Singleton from './Singleton';
 
 const argsDefault = {
@@ -30,7 +28,6 @@ export default class Arguments extends Singleton {
   argsJS: Object;
   argsEnv: Object;
   argsCLI: Object;
-  argsTypes: Object;
 
   constructor(args: Object = {}, reInit: boolean = false) {
     super();
@@ -40,37 +37,13 @@ export default class Arguments extends Singleton {
   }
 
   init(args: Object = {}): void {
-    this.argsTypes = Arguments.getTypes();
-    this.argsJS = this.parser(args);
-    this.argsEnv = this.parser(_.pick(process.env, Object.keys(argsDefault)));
-    this.argsCLI = this.parseCLI();
+    this.argsJS = Arguments.parser(args);
+    this.argsEnv = Arguments.parser(process.env);
+    this.argsCLI = Arguments.parseCLI();
     this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
   }
 
-  static getTypes(): Object {
-    return Object.keys(argsDefault).reduce((s, v) => {
-      let vType: string;
-      if (_.isString(argsDefault[v])) {
-        vType = 'string';
-      }
-      if (_.isBoolean(argsDefault[v])) {
-        vType = 'boolean';
-      }
-      // Object must be before array
-      if (_.isObject(argsDefault[v])) {
-        vType = 'object';
-      }
-      if (_.isArray(argsDefault[v])) {
-        vType = 'array';
-      }
-      if (_.isNumber(argsDefault[v])) {
-        vType = 'number';
-      }
-      return { ...s, ...{ [v]: vType } };
-    }, {});
-  }
-
-  parser(args: Object = {}): Object {
+  static parser(args: Object = {}): Object {
     const params = Object.keys(argsDefault);
     return params.reduce((s, val) => {
       let newVal = args[val];
@@ -119,11 +92,12 @@ export default class Arguments extends Singleton {
         throw new Error(`Invalid argument type '${val}', 'string' required.`);
       }
 
-      if (this.argsTypes[val] === 'number') {
-        if (_.isString(newVal)) {
+      if (typeof argsDefault[val] === 'number') {
+        if (typeof newVal === 'string') {
           newVal = parseInt(newVal, 10);
         }
-        if (!_.isNumber(newVal) || _.isNaN(newVal)) {
+
+        if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
           throw new Error(`Invalid argument type '${val}', 'number' required.`);
         }
       }
@@ -133,7 +107,7 @@ export default class Arguments extends Singleton {
     }, {});
   }
 
-  parseCLI(): Object {
+  static parseCLI(): Object {
     const params = Object.keys(argsDefault);
     const argsRaw = process.argv
       .map((v: string) => v.split(/\s+/))
@@ -141,6 +115,6 @@ export default class Arguments extends Singleton {
       .map((v: string) => v.split('='))
       .filter((v: string[]) => v.length > 1)
       .filter((v: string[]) => params.includes(v[0]));
-    return this.parser(Object.fromEntries(argsRaw));
+    return Arguments.parser(Object.fromEntries(argsRaw));
   }
 }
