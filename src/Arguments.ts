@@ -37,6 +37,28 @@ const resolveBoolean = <T>(key: string, val: T): boolean | T => {
   return newVal;
 };
 
+const resolveArray = <T>(key: string, val: T): string[] | T => {
+  if (!Array.isArray(argsDefault[key]) || Array.isArray(val)) {
+    return val;
+  }
+
+  let newVal: string[];
+
+  if (typeof val === 'string') {
+    try {
+      newVal = JSON.parse(val);
+    } catch (error) {
+      newVal = val.split(',').map((v: string) => v.trim());
+    }
+  }
+
+  if (!Array.isArray(newVal)) {
+    throw new Error(`Invalid argument type '${key}', 'array' required.`);
+  }
+
+  return newVal;
+};
+
 const parser = (args: Object = {}): Object => {
   const params = Object.keys(argsDefault);
   return params.reduce((s, val) => {
@@ -46,20 +68,7 @@ const parser = (args: Object = {}): Object => {
     }
 
     newVal = resolveBoolean(val, newVal);
-
-    if (Array.isArray(argsDefault[val])) {
-      if (typeof newVal === 'string') {
-        try {
-          newVal = JSON.parse(newVal);
-        } catch (error) {
-          newVal = newVal.split(',').map((v: string) => v.trim());
-        }
-      }
-
-      if (!Array.isArray(newVal)) {
-        throw new Error(`Invalid argument type '${val}', 'array' required.`);
-      }
-    }
+    newVal = resolveArray(val, newVal);
 
     if (typeof argsDefault[val] === 'object' && !Array.isArray(argsDefault[val])) {
       if (typeof newVal === 'string') {
