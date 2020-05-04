@@ -1,7 +1,5 @@
 import _ from 'lodash';
 
-import safeEval from 'safe-eval';
-
 import { merge, blankSocket } from './Helpers';
 import Blocker from './Blocker';
 import Arguments from './Arguments';
@@ -38,6 +36,21 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
+const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
+  let result;
+
+  try {
+    const vm = require('vm');
+    const script = new vm.Script(source);
+    vm.createContext(context);
+    result = script.runInContext(context);
+  } catch (error) {
+    throw new Error(`Can't evaluate ${source} = '${error.message}'`);
+  }
+
+  return result;
+};
+
 const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
@@ -56,7 +69,7 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   const allDataSel = merge(dataLocal, selectorsLocal);
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
-    const evalData = safeEval(data.toString(), allDataSel);
+    const evalData = runScriptInContext(data.toString(), allDataSel);
     const collector = { ...s, ...{ [key]: evalData } };
     return collector;
   }, {});
@@ -232,21 +245,10 @@ export default class Test {
     this.fetchSelectors = () => this.fetchData(true);
 
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
-      let exprResult;
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
-      try {
-        exprResult = safeEval(expr, merge(dataLocal, selectorsLocal, localResults));
-      } catch (error) {
-        if (error.name === 'ReferenceError') {
-          await log({
-            level: 'error',
-            levelIndent: ifLevelIndent,
-            text: `Can't evaluate ${ifType} = '${error.message}'`,
-          });
-        }
-        throw new Error(`Can't evaluate ${ifType} = '${error.message}'`);
-      }
+      const context = _.cloneDeep(merge(dataLocal, selectorsLocal, localResults));
+      const exprResult = runScriptInContext(expr, context);
 
       if (!exprResult && ifType === 'if') {
         await log({
@@ -469,7 +471,7 @@ export default class Test {
         // WHILE
         if (this.while) {
           const allDataSel = merge(dataLocal, selectorsLocal);
-          const whileEval = safeEval(this.while, allDataSel);
+          const whileEval = runScriptInContext(this.while, allDataSel);
           if (!whileEval) {
             return;
           }

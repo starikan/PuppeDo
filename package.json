@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch",
     "prepare": "npm run build",
     "prepublishOnly": "webpack && npm test && npm run lint",
     "lint": "eslint src/**",
@@ -43,7 +44,6 @@
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
     "node-fetch": "2.6.0",
-    "safe-eval": "0.4.1",
     "source-map-support": "0.5.19",
     "walk-sync": "2.1.0"
   },
