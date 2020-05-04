@@ -83,7 +83,7 @@ const run = async (argsInput = {}) => {
     });
 
     // if (!module.parent) {
-    process.exit(1);
+    process.exit(0);
     // }
   } catch (error) {
     error.message += " || error in 'run'";

@@ -85,9 +85,9 @@ export default class Arguments extends Singleton {
     this.args = { ...this.argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
   }
 
-  static getTypes(args) {
+  static getTypes(args: ArgumentsType): any {
     return Object.keys(args).reduce((s, v) => {
-      let vType;
+      let vType: string;
       if (_.isString(args[v])) {
         vType = 'string';
       }
@@ -108,7 +108,7 @@ export default class Arguments extends Singleton {
     }, {});
   }
 
-  parser(args: ArgumentsNotStrictType = {}) {
+  parser(args: ArgumentsNotStrictType = {}): any {
     const params = Object.keys(args);
     return params.reduce((s, val) => {
       let newVal = _.get(args, val);
@@ -128,7 +128,7 @@ export default class Arguments extends Singleton {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
-            newVal = newVal.split(',').map((v) => v.trim());
+            newVal = newVal.split(',').map((v: string) => v.trim());
           }
         } else if (!_.isArray(newVal)) {
           throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
@@ -167,7 +167,7 @@ export default class Arguments extends Singleton {
     }, {});
   }
 
-  parseCLI() {
+  parseCLI(): any {
     const params = Object.keys(this.argsDefault);
     const argsRaw = process.argv
       .map((v: string) => v.split(/\s+/))
