@@ -1,6 +1,6 @@
 import path from 'path';
 
-import _ from 'lodash';
+import { pick, isObject, isFunction } from 'lodash';
 
 import Blocker from './Blocker';
 import { blankSocket, merge } from './Helpers';
@@ -24,7 +24,7 @@ const resolveJS = (testJson, funcFile) => {
     const atom = __non_webpack_require__(funcFile);
     /* eslint-enable */
     const { runTest } = atom;
-    if (_.isFunction(runTest)) {
+    if (isFunction(runTest)) {
       testJsonNew.funcFile = path.resolve(funcFile);
       testJsonNew.runTest = [runTest];
     }
@@ -45,11 +45,11 @@ const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
 };
 
 const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, socket = blankSocket) => {
-  if (!testJsonIncome || !_.isObject(testJsonIncome) || !envsId) {
+  if (!testJsonIncome || !isObject(testJsonIncome) || !envsId) {
     throw new Error('getTest params error');
   }
   let testJson = { ...testJsonIncome };
-  const functions = _.pick(testJson, RUNNER_BLOCK_NAMES);
+  const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging
   testJson.source = { ...testJsonIncome };
@@ -70,7 +70,7 @@ const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, soc
     Object.entries(functions).forEach((v) => {
       const [funcKey, funcVal] = v;
       // Resolve nested
-      if (_.isArray(funcVal)) {
+      if (Array.isArray(funcVal)) {
         testJson[funcKey] = [];
         funcVal.forEach((test) => {
           if (['test', 'atom'].includes(test.type)) {

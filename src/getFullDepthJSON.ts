@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import _ from 'lodash';
+import { cloneDeep, isString, isUndefined, get } from 'lodash';
 
 import TestsContent from './TestContent';
 import Environment from './Environment';
@@ -25,14 +25,14 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
   const testNameResolved = testName || Environment(envsId).envs.get('current.test');
   const allTests = new TestsContent().allData;
 
-  const testJSON = _.cloneDeep(
+  const testJSON = cloneDeep(
     allTests.allContent.find((v) => v.name === testNameResolved && ['atom', 'test'].includes(v.type)),
   );
   if (!testJSON) {
     throw new Error(`Test with name '${testNameResolved}' not found in root folder and additional folders`);
   }
 
-  const fullJSON = _.cloneDeep({ ...testJSON, ...testBody });
+  const fullJSON = cloneDeep({ ...testJSON, ...testBody });
   fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testNameResolved];
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');
@@ -40,11 +40,11 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
   let textDescription = generateDescriptionStep(fullJSON);
 
   RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
-    const runnerBlockValue = _.get(fullJSON, [runnerBlock]);
-    if (_.isArray(runnerBlockValue)) {
+    const runnerBlockValue = get(fullJSON, [runnerBlock]);
+    if (Array.isArray(runnerBlockValue)) {
       runnerBlockValue.forEach((v, runnerNum) => {
         const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(
-          _.get(runnerBlockValue, [runnerNum], {}),
+          get(runnerBlockValue, [runnerNum], {}),
         );
 
         let [name, newRunner] = runner.length ? runner[0] : [null, {}];
@@ -65,7 +65,7 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
           textDescription += textDescriptionResponse;
         }
       });
-    } else if (!_.isString(runnerBlockValue) && !_.isArray(runnerBlockValue) && !_.isUndefined(runnerBlockValue)) {
+    } else if (!isString(runnerBlockValue) && !Array.isArray(runnerBlockValue) && !isUndefined(runnerBlockValue)) {
       throw new Error(
         `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' \
         must be array of tests`,
@@ -73,7 +73,7 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
     }
   });
 
-  fullJSON.name = _.get(fullJSON, 'name', testNameResolved);
+  fullJSON.name = get(fullJSON, 'name', testNameResolved);
 
   return { fullJSON, textDescription };
 };

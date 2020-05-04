@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { EventEmitter } from 'events';
 
 import Singleton from './Singleton';
@@ -24,7 +22,7 @@ export default class Blocker extends Singleton {
   }
 
   setAll(blockArray) {
-    if (_.isArray(blockArray)) {
+    if (Array.isArray(blockArray)) {
       this.blocks = blockArray;
     } else {
       throw new Error('Blocks must be array');

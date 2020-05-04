@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isString, cloneDeep, isFunction, pick, get, isEmpty } from 'lodash';
 
 import { merge, blankSocket } from './Helpers';
 import Blocker from './Blocker';
@@ -56,8 +56,8 @@ const checkNeeds = (needs, data, testName) => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
-    if (_.isString(d) && d.endsWith('?')) return; // optional parameter
-    const keysDataIncome = new Set(_.isString(d) ? [d] : d);
+    if (isString(d) && d.endsWith('?')) return; // optional parameter
+    const keysDataIncome = new Set(isString(d) ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
       throw new Error(`Error: can't find data parameter "${d}" in ${testName} test`);
@@ -80,7 +80,7 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
 const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   try {
     let result = {};
-    const values = [valueName, ..._.get(aliases, valueName, [])];
+    const values = [valueName, ...get(aliases, valueName, [])];
     values.forEach((v) => {
       result = merge(result, inputs[v] || {});
     });
@@ -92,8 +92,8 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
 };
 
 const checkNeedEnv = (needEnv, envName) => {
-  const needEnvs = _.isString(needEnv) ? [needEnv] : needEnv;
-  if (_.isArray(needEnvs)) {
+  const needEnvs = isString(needEnv) ? [needEnv] : needEnv;
+  if (Array.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
       throw new Error(`Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`);
     }
@@ -233,7 +233,7 @@ export default class Test {
       const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
       Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
-        dataLocal[key] = _.get(dataLocal, val);
+        dataLocal[key] = get(dataLocal, val);
       });
 
       // * Update after all bindings with data from test itself passed in running
@@ -248,7 +248,7 @@ export default class Test {
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
-      const context = _.cloneDeep(merge(dataLocal, selectorsLocal, localResults));
+      const context = cloneDeep(merge(dataLocal, selectorsLocal, localResults));
       const exprResult = runScriptInContext(expr, context);
 
       if (!exprResult && ifType === 'if') {
@@ -352,7 +352,7 @@ export default class Test {
           selectors: selectorsLocal,
           dataTest: this.data,
           selectorsTest: this.selectors,
-          ..._.pick(this, argsFields),
+          ...pick(this, argsFields),
         };
 
         // LOG TEST
@@ -374,7 +374,6 @@ export default class Test {
           // If there is no page it`s might be API
           page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
           log: logger.log.bind(logger),
-          _,
           name: this.name,
           description: this.description,
           socket: this.socket,
@@ -412,10 +411,10 @@ export default class Test {
         for (let i = 0; i < FUNCTIONS.length; i += 1) {
           let funcs = FUNCTIONS[i];
 
-          if (_.isFunction(funcs)) {
+          if (isFunction(funcs)) {
             funcs = [funcs];
           }
-          if (_.isArray(funcs)) {
+          if (Array.isArray(funcs)) {
             for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
               // eslint-disable-next-line no-await-in-loop
@@ -433,7 +432,7 @@ export default class Test {
           resultFromTest = merge(this.envs.get('data'), this.envs.get('selectors'));
         }
 
-        const results = _.pick(resultFromTest, allowResults);
+        const results = pick(resultFromTest, allowResults);
 
         if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
           throw new Error('Can`t get results from test');
@@ -441,12 +440,12 @@ export default class Test {
 
         Object.entries(this.bindResults).forEach((v: [string, string]) => {
           const [key, val] = v;
-          results[key] = _.get(results, val);
+          results[key] = get(results, val);
         });
         let localResults = { ...results };
 
         // RESULT FUNCTIONS
-        if (!_.isEmpty(this.resultFunction)) {
+        if (!isEmpty(this.resultFunction)) {
           const dataWithResults = merge(dataLocal, selectorsLocal, results);
           const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
           dataLocal = merge(dataLocal, resultFunction);

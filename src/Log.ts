@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import _ from 'lodash';
+import { isObject, isNumber, get, mapValues, omit, isEmpty, pick } from 'lodash';
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
@@ -27,7 +27,7 @@ export default class Log {
   }
 
   bindData(data = {}) {
-    if (_.isObject(data)) {
+    if (isObject(data)) {
       this.binded = { ...this.binded, ...data };
     }
   }
@@ -54,7 +54,7 @@ export default class Log {
 
     const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
 
-    const inputLevel = _.isNumber(level) ? level : levels[level] || 0;
+    const inputLevel = isNumber(level) ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
     const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v) => levels[v]);
 
@@ -84,7 +84,7 @@ export default class Log {
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
-    const breadcrumbs = _.get(this.binded, ['testSource', 'breadcrumbs'], []);
+    const breadcrumbs = get(this.binded, ['testSource', 'breadcrumbs'], []);
 
     const stringsLog = [
       [
@@ -104,7 +104,7 @@ export default class Log {
         [tail, level === 'error' ? 'error' : 'info'],
       ]);
 
-      const repeat = _.get(this, 'binded.bindedData.repeat', 1);
+      const repeat = get(this, 'binded.bindedData.repeat', 1);
       if (repeat > 1) {
         stringsLog.push([
           [head, level === 'error' ? 'error' : 'sane'],
@@ -166,7 +166,7 @@ export default class Log {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
-    if (_.isArray(texts)) {
+    if (Array.isArray(texts)) {
       textsJoin = texts.map((text) => text.map((log) => log[0] || '').join('')).join('\n');
     } else {
       textsJoin = texts.toString();
@@ -249,7 +249,7 @@ export default class Log {
       // ENVS TO LOG
       let dataEnvs = null;
       if (level === 'env') {
-        dataEnvs = _.mapValues(_.get(this.envs, ['envs'], {}), (val) => _.omit(val, 'state'));
+        dataEnvs = mapValues(get(this.envs, ['envs'], {}), (val) => omit(val, 'state'));
       }
 
       // TODO: 2020-04-28 S.Starodubov todo
@@ -259,21 +259,21 @@ export default class Log {
       //   }
       // })
       // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
-      const testStructNormaize = _.isEmpty(testStruct) ? testSource : testStruct;
+      const testStructNormaize = isEmpty(testStruct) ? testSource : testStruct;
 
       const logEntry = {
         text,
         time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
-        dataEnvsGlobal: level === 'env' ? _.pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
+        dataEnvsGlobal: level === 'env' ? pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
         testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
         type: level === 'env' ? 'env' : 'log',
         level,
         levelIndent,
-        stepId: _.get(bindedData, 'stepId'),
+        stepId: get(bindedData, 'stepId'),
       };
       this.envs.push('log', logEntry);
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -285,7 +285,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = _.get(bindedData, 'stepId');
+      err.stepId = get(bindedData, 'stepId');
       throw err;
     }
   }

@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import dayjs from 'dayjs';
 
 import getFullDepthJSON from './getFullDepthJSON';
@@ -20,11 +20,11 @@ const run = async (argsInput = {}) => {
     const startTime = new Date().getTime();
     const args = { ...new Arguments(argsInput).args };
 
-    if (_.isEmpty(args.PPD_TESTS)) {
+    if (isEmpty(args.PPD_TESTS)) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
     }
 
-    if (_.isEmpty(args.PPD_ENVS)) {
+    if (isEmpty(args.PPD_ENVS)) {
       throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 

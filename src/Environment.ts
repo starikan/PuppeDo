@@ -4,7 +4,7 @@ import path from 'path';
 import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import _ from 'lodash';
+import { get, set, clone, cloneDeep, isEmpty } from 'lodash';
 import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
@@ -52,15 +52,15 @@ class Envs {
   }
 
   get(name, def = null) {
-    return _.get(this, name, def);
+    return get(this, name, def);
   }
 
   set(name, data) {
-    return _.set(this, name, data);
+    return set(this, name, data);
   }
 
   push(name, data) {
-    const arr = _.clone(this.get(name, []));
+    const arr = clone(this.get(name, []));
     try {
       arr.push(data);
     } catch (err) {
@@ -69,15 +69,15 @@ class Envs {
       console.log(err);
       /* eslint-enable no-console */
     }
-    return _.set(this, name, arr);
+    return set(this, name, arr);
   }
 
   setEnv(name, page = null) {
     if (name && Object.keys(this.envs).includes(name)) {
       this.current.name = name;
-      if (page && _.get(this.envs[name], `state.pages.${page}`)) {
+      if (page && get(this.envs[name], `state.pages.${page}`)) {
         this.current.page = page;
-      } else if (_.get(this.envs[name], 'state.pages.main')) {
+      } else if (get(this.envs[name], 'state.pages.main')) {
         this.current.page = 'main';
       } else {
         this.current.page = null;
@@ -86,14 +86,14 @@ class Envs {
   }
 
   getEnv(name = null) {
-    const nameNew = name || _.get(this, 'current.name');
-    return _.get(this.envs, nameNew, {});
+    const nameNew = name || get(this, 'current.name');
+    return get(this.envs, nameNew, {});
   }
 
   getActivePage() {
     const activeEnv = this.getEnv();
-    const pageName = _.get(this, 'current.page');
-    return _.get(activeEnv, `state.pages.${pageName}`);
+    const pageName = get(this, 'current.page');
+    return get(activeEnv, `state.pages.${pageName}`);
   }
 
   getOutputsFolders() {
@@ -172,7 +172,7 @@ class Envs {
     for (let i = 0; i < envsNames.length; i += 1) {
       const env = this.envs[envsNames[i]];
 
-      const browserSettings = _.get(env, 'env.browser', {});
+      const browserSettings = get(env, 'env.browser', {});
       const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
 
       if (
@@ -225,7 +225,7 @@ class Envs {
     const page = await browser.newPage();
     const pages = { main: page };
 
-    const { width, height } = _.get(browserSettings, 'windowSize');
+    const { width, height } = get(browserSettings, 'windowSize');
     if (width && height) {
       await pages.main.setViewport({ width, height });
     }
@@ -236,7 +236,7 @@ class Envs {
   static async runPlaywright(browserSettings) {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [], browser: browserName } = browserSettings;
-    const { width = 1024, height = 768 } = _.get(browserSettings, 'windowSize');
+    const { width = 1024, height = 768 } = get(browserSettings, 'windowSize');
 
     const options: Options = { headless, slowMo, args };
     if (browserName === 'chromium') {
@@ -256,7 +256,7 @@ class Envs {
   }
 
   static async connectElectron(browserSettings) {
-    const urlDevtoolsJson = _.get(browserSettings, 'urlDevtoolsJson');
+    const urlDevtoolsJson = get(browserSettings, 'urlDevtoolsJson');
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
@@ -269,7 +269,7 @@ class Envs {
         throw new Error(`Can't connect to ${urlDevtoolsJson}`);
       }
 
-      const webSocketDebuggerUrl = _.get(jsonBrowser, 'webSocketDebuggerUrl');
+      const webSocketDebuggerUrl = get(jsonBrowser, 'webSocketDebuggerUrl');
       if (!webSocketDebuggerUrl) {
         throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
@@ -279,7 +279,7 @@ class Envs {
       const browser = await puppeteer.connect({
         browserWSEndpoint: webSocketDebuggerUrl,
         ignoreHTTPSErrors: true,
-        slowMo: _.get(browserSettings, 'slowMo', 0),
+        slowMo: get(browserSettings, 'slowMo', 0),
       });
 
       const pagesRaw = await browser.pages();
@@ -290,7 +290,7 @@ class Envs {
         throw new Error('Can`t find any pages in connection');
       }
 
-      const { width, height } = _.get(browserSettings, 'windowSize');
+      const { width, height } = get(browserSettings, 'windowSize');
       if (width && height) {
         await pages.main.setViewport({ width, height });
       }
@@ -302,12 +302,12 @@ class Envs {
   }
 
   async runElectron(browserSettings, env) {
-    const runtimeExecutable = _.get(browserSettings, 'runtimeEnv.runtimeExecutable');
-    const program = _.get(browserSettings, 'runtimeEnv.program');
-    const cwd = _.get(browserSettings, 'runtimeEnv.cwd');
-    const browserArgs = _.get(browserSettings, 'runtimeEnv.args', []);
-    const browserEnv = _.get(browserSettings, 'runtimeEnv.env', {});
-    const pauseAfterStartApp = _.get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
+    const runtimeExecutable = get(browserSettings, 'runtimeEnv.runtimeExecutable');
+    const program = get(browserSettings, 'runtimeEnv.program');
+    const cwd = get(browserSettings, 'runtimeEnv.cwd');
+    const browserArgs = get(browserSettings, 'runtimeEnv.args', []);
+    const browserEnv = get(browserSettings, 'runtimeEnv.env', {});
+    const pauseAfterStartApp = get(browserSettings, 'runtimeEnv.pauseAfterStartApp', 5000);
     const runArgs = [program, ...browserArgs];
 
     if (runtimeExecutable) {
@@ -349,8 +349,8 @@ class Envs {
   async closeProcesses() {
     for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
-      const killOnEnd = _.get(this.envs[key], 'env.browser.killOnEnd', true);
-      const killProcessName = _.get(this.envs[key], 'env.browser.killProcessName');
+      const killOnEnd = get(this.envs[key], 'env.browser.killOnEnd', true);
+      const killProcessName = get(this.envs[key], 'env.browser.killProcessName');
       try {
         if (killOnEnd && killProcessName) {
           spawnSync('taskkill', ['/f', '/im', killProcessName]);
@@ -368,24 +368,24 @@ class Envs {
 
     // ENVS RESOLVING
     args.PPD_ENVS = args.PPD_ENVS.map((v) => {
-      const env = _.cloneDeep(allData.envs.find((g) => g.name === v));
+      const env = cloneDeep(allData.envs.find((g) => g.name === v));
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [], data = {}, selectors = {} } = env;
         envsExt.forEach((d) => {
           const envsResolved = { ...allData.envs.find((g) => g.name === d, {}) };
-          env.browser = merge(_.get(env, 'browser', {}), _.get(envsResolved, 'browser') || {});
-          env.log = merge(_.get(env, 'log', {}), _.get(envsResolved, 'log') || {});
-          env.data = merge(_.get(env, 'data', {}), _.get(envsResolved, 'data') || {});
-          env.selectors = merge(_.get(env, 'selectors', {}), _.get(envsResolved, 'selectors') || {});
-          env.description = `${_.get(env, 'description', '')} -> ${_.get(envsResolved, 'description', '')}`;
+          env.browser = merge(get(env, 'browser', {}), get(envsResolved, 'browser') || {});
+          env.log = merge(get(env, 'log', {}), get(envsResolved, 'log') || {});
+          env.data = merge(get(env, 'data', {}), get(envsResolved, 'data') || {});
+          env.selectors = merge(get(env, 'selectors', {}), get(envsResolved, 'selectors') || {});
+          env.description = `${get(env, 'description', '')} -> ${get(envsResolved, 'description', '')}`;
         });
         dataExt.forEach((d) => {
           const dataResolved = { ...allData.data.find((g) => g.name === d, {}) };
-          env.data = merge(_.get(env, 'data', {}), _.get(dataResolved, 'data') || {}, data);
+          env.data = merge(get(env, 'data', {}), get(dataResolved, 'data') || {}, data);
         });
         selectorsExt.forEach((d) => {
           const selectorsResolved = { ...allData.selectors.find((g) => g.name === d, {}) };
-          env.selectors = merge(_.get(env, 'selectors', {}), _.get(selectorsResolved, 'data') || {}, selectors);
+          env.selectors = merge(get(env, 'selectors', {}), get(selectorsResolved, 'data') || {}, selectors);
         });
         return env;
       }
@@ -404,7 +404,7 @@ class Envs {
 
     for (let i = 0; i < envs.length; i += 1) {
       const env = envs[i];
-      const name = _.get(env, 'name');
+      const name = get(env, 'name');
 
       if (env) {
         env.data = merge(data, env.data || {});
@@ -416,7 +416,7 @@ class Envs {
       }
     }
 
-    if (!this.envs || _.isEmpty(this.envs)) {
+    if (!this.envs || isEmpty(this.envs)) {
       throw new Error("Can't init any environment. Check 'envs' parameter, should be array");
     }
 
@@ -434,7 +434,7 @@ const instances = {};
 export default (envsId, socket = blankSocket) => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
-    if (!_.get(instances, envsIdLocal)) {
+    if (!get(instances, envsIdLocal)) {
       throw new Error(`Unknown ENV ID ${envsIdLocal}`);
     }
   } else {
@@ -445,7 +445,7 @@ export default (envsId, socket = blankSocket) => {
 
   return {
     envsId: envsIdLocal,
-    envs: _.get(instances, [envsIdLocal, 'envs']),
-    socket: _.get(instances, [envsIdLocal, 'socket']),
+    envs: get(instances, [envsIdLocal, 'envs']),
+    socket: get(instances, [envsIdLocal, 'socket']),
   };
 };

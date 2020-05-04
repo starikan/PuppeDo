@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, clone, set } from 'lodash';
 
 export default class Env {
   name: any;
@@ -18,7 +18,7 @@ export default class Env {
   }
 
   set(name, data) {
-    return _.set(this, name, data);
+    return set(this, name, data);
   }
 
   static setState() {
@@ -26,18 +26,18 @@ export default class Env {
   }
 
   get(name, def = null) {
-    return _.get(this.env, name, def);
+    return get(this.env, name, def);
   }
 
   getState(value = null) {
     if (value) {
-      return _.get(this, `state.${value}`);
+      return get(this, `state.${value}`);
     }
     return this.state;
   }
 
   push(name, data) {
-    const arr = _.clone(this.get(name, []));
+    const arr = clone(this.get(name, []));
     try {
       arr.push(data);
     } catch (err) {
@@ -46,6 +46,6 @@ export default class Env {
       console.log(err);
       /* eslint-enable no-console */
     }
-    return _.set(this.env, name, arr);
+    return set(this.env, name, arr);
   }
 }

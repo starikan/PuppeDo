@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import _ from 'lodash';
+import { isObject, isEmpty } from 'lodash';
 import dayjs from 'dayjs';
 
 import { sleep } from './Helpers';
@@ -49,7 +49,7 @@ export default class Screenshot {
         await page.screenshot({ path: pathScreenshot, fullPage });
       }
 
-      if (element && _.isObject(element) && !_.isEmpty(element)) {
+      if (element && isObject(element) && !isEmpty(element)) {
         await element.screenshot({ path: pathScreenshot });
       }
 
