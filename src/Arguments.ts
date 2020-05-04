@@ -87,34 +87,36 @@ export default class Arguments extends Singleton {
         }
       }
 
-      if (this.argsTypes[val] === 'array') {
-        if (_.isString(newVal)) {
+      if (Array.isArray(argsDefault[val])) {
+        if (typeof newVal === 'string') {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
             newVal = newVal.split(',').map((v: string) => v.trim());
           }
-        } else if (!_.isArray(newVal)) {
+        }
+
+        if (!Array.isArray(newVal)) {
           throw new Error(`Invalid argument type '${val}', 'array' required.`);
         }
       }
 
-      if (this.argsTypes[val] === 'object') {
-        if (_.isString(newVal)) {
+      if (typeof argsDefault[val] === 'object' && !Array.isArray(argsDefault[val])) {
+        if (typeof newVal === 'string') {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
             throw new Error(`Invalid argument type '${val}', 'object' required.`);
           }
-        } else if (!_.isObject(newVal) || _.isArray(newVal)) {
+        }
+
+        if (typeof newVal !== 'object' || Array.isArray(newVal)) {
           throw new Error(`Invalid argument type '${val}', 'object' required.`);
         }
       }
 
-      if (this.argsTypes[val] === 'string') {
-        if (!_.isString(newVal)) {
-          throw new Error(`Invalid argument type '${val}', 'string' required.`);
-        }
+      if (typeof argsDefault[val] === 'string' && typeof newVal !== 'string') {
+        throw new Error(`Invalid argument type '${val}', 'string' required.`);
       }
 
       if (this.argsTypes[val] === 'number') {
