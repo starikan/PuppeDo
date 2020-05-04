@@ -23,6 +23,88 @@ const argsDefault = {
 type ArgumentsType = typeof argsDefault;
 // type ArgumentsKeysType = keyof typeof argsDefault;
 
+const resolveBoolean = <T>(key: string, val: T): boolean | T => {
+  if (typeof argsDefault[key] !== 'boolean') {
+    return val;
+  }
+
+  const newVal = typeof val === 'string' && ['true', 'false'].includes(val) ? val === 'true' : val;
+
+  if (typeof newVal !== 'boolean') {
+    throw new Error(`Invalid argument type '${key}', 'boolean' required.`);
+  }
+
+  return newVal;
+};
+
+const parser = (args: Object = {}): Object => {
+  const params = Object.keys(argsDefault);
+  return params.reduce((s, val) => {
+    let newVal = args[val];
+    if (newVal === undefined) {
+      return s;
+    }
+
+    newVal = resolveBoolean(val, newVal);
+
+    if (Array.isArray(argsDefault[val])) {
+      if (typeof newVal === 'string') {
+        try {
+          newVal = JSON.parse(newVal);
+        } catch (error) {
+          newVal = newVal.split(',').map((v: string) => v.trim());
+        }
+      }
+
+      if (!Array.isArray(newVal)) {
+        throw new Error(`Invalid argument type '${val}', 'array' required.`);
+      }
+    }
+
+    if (typeof argsDefault[val] === 'object' && !Array.isArray(argsDefault[val])) {
+      if (typeof newVal === 'string') {
+        try {
+          newVal = JSON.parse(newVal);
+        } catch (error) {
+          throw new Error(`Invalid argument type '${val}', 'object' required.`);
+        }
+      }
+
+      if (typeof newVal !== 'object' || Array.isArray(newVal)) {
+        throw new Error(`Invalid argument type '${val}', 'object' required.`);
+      }
+    }
+
+    if (typeof argsDefault[val] === 'string' && typeof newVal !== 'string') {
+      throw new Error(`Invalid argument type '${val}', 'string' required.`);
+    }
+
+    if (typeof argsDefault[val] === 'number') {
+      if (typeof newVal === 'string') {
+        newVal = parseInt(newVal, 10);
+      }
+
+      if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
+        throw new Error(`Invalid argument type '${val}', 'number' required.`);
+      }
+    }
+
+    const collector = { ...s, ...{ [val]: newVal } };
+    return collector;
+  }, {});
+};
+
+const parseCLI = (): Object => {
+  const params = Object.keys(argsDefault);
+  const argsRaw = process.argv
+    .map((v: string) => v.split(/\s+/))
+    .flat()
+    .map((v: string) => v.split('='))
+    .filter((v: string[]) => v.length > 1)
+    .filter((v: string[]) => params.includes(v[0]));
+  return parser(Object.fromEntries(argsRaw));
+};
+
 export default class Arguments extends Singleton {
   args: ArgumentsType;
   argsJS: Object;
@@ -37,84 +119,9 @@ export default class Arguments extends Singleton {
   }
 
   init(args: Object = {}): void {
-    this.argsJS = Arguments.parser(args);
-    this.argsEnv = Arguments.parser(process.env);
-    this.argsCLI = Arguments.parseCLI();
+    this.argsJS = parser(args);
+    this.argsEnv = parser(process.env);
+    this.argsCLI = parseCLI();
     this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
-  }
-
-  static parser(args: Object = {}): Object {
-    const params = Object.keys(argsDefault);
-    return params.reduce((s, val) => {
-      let newVal = args[val];
-      if (newVal === undefined) {
-        return s;
-      }
-
-      if (typeof argsDefault[val] === 'boolean') {
-        if (['true', 'false'].includes(newVal)) {
-          newVal = newVal === 'true';
-        }
-        if (typeof newVal !== 'boolean') {
-          throw new Error(`Invalid argument type '${val}', 'boolean' required.`);
-        }
-      }
-
-      if (Array.isArray(argsDefault[val])) {
-        if (typeof newVal === 'string') {
-          try {
-            newVal = JSON.parse(newVal);
-          } catch (error) {
-            newVal = newVal.split(',').map((v: string) => v.trim());
-          }
-        }
-
-        if (!Array.isArray(newVal)) {
-          throw new Error(`Invalid argument type '${val}', 'array' required.`);
-        }
-      }
-
-      if (typeof argsDefault[val] === 'object' && !Array.isArray(argsDefault[val])) {
-        if (typeof newVal === 'string') {
-          try {
-            newVal = JSON.parse(newVal);
-          } catch (error) {
-            throw new Error(`Invalid argument type '${val}', 'object' required.`);
-          }
-        }
-
-        if (typeof newVal !== 'object' || Array.isArray(newVal)) {
-          throw new Error(`Invalid argument type '${val}', 'object' required.`);
-        }
-      }
-
-      if (typeof argsDefault[val] === 'string' && typeof newVal !== 'string') {
-        throw new Error(`Invalid argument type '${val}', 'string' required.`);
-      }
-
-      if (typeof argsDefault[val] === 'number') {
-        if (typeof newVal === 'string') {
-          newVal = parseInt(newVal, 10);
-        }
-
-        if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
-          throw new Error(`Invalid argument type '${val}', 'number' required.`);
-        }
-      }
-
-      const collector = { ...s, ...{ [val]: newVal } };
-      return collector;
-    }, {});
-  }
-
-  static parseCLI(): Object {
-    const params = Object.keys(argsDefault);
-    const argsRaw = process.argv
-      .map((v: string) => v.split(/\s+/))
-      .flat()
-      .map((v: string) => v.split('='))
-      .filter((v: string[]) => v.length > 1)
-      .filter((v: string[]) => params.includes(v[0]));
-    return Arguments.parser(Object.fromEntries(argsRaw));
   }
 }
