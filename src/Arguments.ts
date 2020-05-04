@@ -85,6 +85,14 @@ const resolveObject = <T>(key: string, val: T): Object | T => {
   return newVal;
 };
 
+const resolveString = <T>(key: string, val: T): string | T => {
+  if (typeof argsDefault[key] !== 'string' || (typeof argsDefault[key] === 'string' && typeof val === 'string')) {
+    return val;
+  }
+
+  throw new Error(`Invalid argument type '${key}', 'string' required.`);
+};
+
 const parser = (args: Object = {}): Object => {
   const params = Object.keys(argsDefault);
   return params.reduce((s, val) => {
@@ -96,10 +104,7 @@ const parser = (args: Object = {}): Object => {
     newVal = resolveBoolean(val, newVal);
     newVal = resolveArray(val, newVal);
     newVal = resolveObject(val, newVal);
-
-    if (typeof argsDefault[val] === 'string' && typeof newVal !== 'string') {
-      throw new Error(`Invalid argument type '${val}', 'string' required.`);
-    }
+    newVal = resolveString(val, newVal);
 
     if (typeof argsDefault[val] === 'number') {
       if (typeof newVal === 'string') {
