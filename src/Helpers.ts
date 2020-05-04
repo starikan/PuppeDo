@@ -1,6 +1,8 @@
 import deepmerge from 'deepmerge';
 
-export type Colors = {
+import { SocketType } from './globals.d';
+
+type ColorsMainType = {
   sane: number;
   black: number;
   red: number;
@@ -10,15 +12,18 @@ export type Colors = {
   magenta: number;
   cyan: number;
   white: number;
-  raw?: number;
-  timer?: number;
-  debug?: number;
-  info?: number;
-  test?: number;
-  warn?: number;
-  error?: number;
-  trace?: number;
-  env?: number;
+};
+
+type ColorsExtendType = {
+  raw: number;
+  timer: number;
+  debug: number;
+  info: number;
+  test: number;
+  warn: number;
+  error: number;
+  trace: number;
+  env: number;
 };
 
 export function sleep(ms: number): Promise<void> {
@@ -55,7 +60,7 @@ BACKGROUND_WHITE = "\u001B[47m"
 */
 
 export const paintString = (str: string, color: string = 'sane'): string => {
-  const colors: Colors = {
+  const mainColors: ColorsMainType = {
     sane: 0,
     black: 30,
     red: 31,
@@ -67,20 +72,22 @@ export const paintString = (str: string, color: string = 'sane'): string => {
     white: 37,
   };
 
-  colors.raw = colors.sane;
-  colors.timer = colors.sane;
-  colors.debug = colors.sane;
-  colors.info = colors.cyan;
-  colors.test = colors.green;
-  colors.warn = colors.yellow;
-  colors.error = colors.red;
-  colors.trace = colors.cyan;
-  colors.env = colors.blue;
+  const extendColors: ColorsExtendType = {
+    raw: mainColors.sane,
+    timer: mainColors.sane,
+    debug: mainColors.sane,
+    info: mainColors.cyan,
+    test: mainColors.green,
+    warn: mainColors.yellow,
+    error: mainColors.red,
+    trace: mainColors.cyan,
+    env: mainColors.blue,
+  };
 
-  return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
+  return `\u001b[${{ ...mainColors, ...extendColors }[color] || 0}m${str}\u001b[0m`;
 };
 
-export const blankSocket = {
+export const blankSocket: SocketType = {
   send: () => {},
   sendYAML: () => {},
 };
