@@ -2,125 +2,89 @@ import _ from 'lodash';
 
 import Singleton from './Singleton';
 
-type ArgumentsType = {
-  PPD_ROOT: any;
-  PPD_ROOT_ADDITIONAL: any;
-  PPD_ROOT_IGNORE: any;
-  PPD_ENVS: any;
-  PPD_TESTS: any;
-  PPD_OUTPUT: any;
-  PPD_DATA: any;
-  PPD_SELECTORS: any;
-  PPD_DEBUG_MODE: any;
-  PPD_LOG_DISABLED: any;
-  PPD_LOG_EXTEND: any;
-  PPD_DISABLE_ENV_CHECK: any;
-  PPD_LOG_LEVEL_NESTED: any;
-  PPD_LOG_LEVEL_TYPE: any;
-  PPD_LOG_LEVEL_TYPE_IGNORE: any;
-  PPD_LOG_SCREENSHOT: any;
-  PPD_LOG_FULLPAGE: any;
+const argsDefault = {
+  PPD_ROOT: process.cwd(),
+  PPD_ROOT_ADDITIONAL: [],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
+  PPD_ENVS: [],
+  PPD_TESTS: [],
+  PPD_OUTPUT: 'output',
+  PPD_DATA: {},
+  PPD_SELECTORS: {},
+  PPD_DEBUG_MODE: false,
+  PPD_LOG_DISABLED: false,
+  PPD_LOG_EXTEND: false,
+  PPD_DISABLE_ENV_CHECK: false,
+  PPD_LOG_LEVEL_NESTED: 0,
+  PPD_LOG_LEVEL_TYPE: 'raw',
+  PPD_LOG_LEVEL_TYPE_IGNORE: [],
+  PPD_LOG_SCREENSHOT: false,
+  PPD_LOG_FULLPAGE: false,
 };
 
-type ArgumentsNotStrictType = {
-  PPD_ROOT?: any;
-  PPD_ROOT_ADDITIONAL?: any;
-  PPD_ROOT_IGNORE?: any;
-  PPD_ENVS?: any;
-  PPD_TESTS?: any;
-  PPD_OUTPUT?: any;
-  PPD_DATA?: any;
-  PPD_SELECTORS?: any;
-  PPD_DEBUG_MODE?: any;
-  PPD_LOG_DISABLED?: any;
-  PPD_LOG_EXTEND?: any;
-  PPD_DISABLE_ENV_CHECK?: any;
-  PPD_LOG_LEVEL_NESTED?: any;
-  PPD_LOG_LEVEL_TYPE?: any;
-  PPD_LOG_LEVEL_TYPE_IGNORE?: any;
-  PPD_LOG_SCREENSHOT?: any;
-  PPD_LOG_FULLPAGE?: any;
-};
+type ArgumentsType = typeof argsDefault;
+// type ArgumentsKeysType = keyof typeof argsDefault;
 
 export default class Arguments extends Singleton {
   args: ArgumentsType;
-  argsDefault: ArgumentsType;
-  argsJS: ArgumentsNotStrictType;
-  argsEnv: ArgumentsNotStrictType;
-  argsCLI: ArgumentsNotStrictType;
-  argsTypes: ArgumentsNotStrictType;
+  argsJS: Object;
+  argsEnv: Object;
+  argsCLI: Object;
+  argsTypes: Object;
 
-  constructor(args: ArgumentsNotStrictType = {}, reInit: boolean = false) {
+  constructor(args: Object = {}, reInit: boolean = false) {
     super();
     if (reInit || !this.args) {
       this.init(args);
     }
   }
 
-  init(args: ArgumentsNotStrictType = {}): void {
-    this.argsDefault = {
-      PPD_ROOT: process.cwd(),
-      PPD_ROOT_ADDITIONAL: [],
-      PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
-      PPD_ENVS: [],
-      PPD_TESTS: [],
-      PPD_OUTPUT: 'output',
-      PPD_DATA: {},
-      PPD_SELECTORS: {},
-      PPD_DEBUG_MODE: false,
-      PPD_LOG_DISABLED: false,
-      PPD_LOG_EXTEND: false,
-      PPD_DISABLE_ENV_CHECK: false,
-      PPD_LOG_LEVEL_NESTED: 0,
-      PPD_LOG_LEVEL_TYPE: 'raw',
-      PPD_LOG_LEVEL_TYPE_IGNORE: [],
-      PPD_LOG_SCREENSHOT: false,
-      PPD_LOG_FULLPAGE: false,
-    };
-    this.argsTypes = Arguments.getTypes(this.argsDefault);
-
+  init(args: Object = {}): void {
+    this.argsTypes = Arguments.getTypes();
     this.argsJS = this.parser(args);
-    this.argsEnv = this.parser(_.pick(process.env, Object.keys(this.argsDefault)));
+    this.argsEnv = this.parser(_.pick(process.env, Object.keys(argsDefault)));
     this.argsCLI = this.parseCLI();
-    this.args = { ...this.argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
+    this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
   }
 
-  static getTypes(args: ArgumentsType): any {
-    return Object.keys(args).reduce((s, v) => {
+  static getTypes(): Object {
+    return Object.keys(argsDefault).reduce((s, v) => {
       let vType: string;
-      if (_.isString(args[v])) {
+      if (_.isString(argsDefault[v])) {
         vType = 'string';
       }
-      if (_.isBoolean(args[v])) {
+      if (_.isBoolean(argsDefault[v])) {
         vType = 'boolean';
       }
       // Object must be before array
-      if (_.isObject(args[v])) {
+      if (_.isObject(argsDefault[v])) {
         vType = 'object';
       }
-      if (_.isArray(args[v])) {
+      if (_.isArray(argsDefault[v])) {
         vType = 'array';
       }
-      if (_.isNumber(args[v])) {
+      if (_.isNumber(argsDefault[v])) {
         vType = 'number';
       }
       return { ...s, ...{ [v]: vType } };
     }, {});
   }
 
-  parser(args: ArgumentsNotStrictType = {}): any {
-    const params = Object.keys(args);
+  parser(args: Object = {}): Object {
+    const params = Object.keys(argsDefault);
     return params.reduce((s, val) => {
-      let newVal = _.get(args, val);
+      let newVal = args[val];
+      if (newVal === undefined) {
+        return s;
+      }
 
-      if (this.argsTypes[val] === 'boolean') {
+      if (typeof argsDefault[val] === 'boolean') {
         if (['true', 'false'].includes(newVal)) {
           newVal = newVal === 'true';
         }
-        if (!_.isBoolean(newVal)) {
-          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+        if (typeof newVal !== 'boolean') {
+          throw new Error(`Invalid argument type '${val}', 'boolean' required.`);
         }
-        newVal = !!newVal;
       }
 
       if (this.argsTypes[val] === 'array') {
@@ -131,7 +95,7 @@ export default class Arguments extends Singleton {
             newVal = newVal.split(',').map((v: string) => v.trim());
           }
         } else if (!_.isArray(newVal)) {
-          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+          throw new Error(`Invalid argument type '${val}', 'array' required.`);
         }
       }
 
@@ -140,16 +104,16 @@ export default class Arguments extends Singleton {
           try {
             newVal = JSON.parse(newVal);
           } catch (error) {
-            throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+            throw new Error(`Invalid argument type '${val}', 'object' required.`);
           }
         } else if (!_.isObject(newVal) || _.isArray(newVal)) {
-          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+          throw new Error(`Invalid argument type '${val}', 'object' required.`);
         }
       }
 
       if (this.argsTypes[val] === 'string') {
         if (!_.isString(newVal)) {
-          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+          throw new Error(`Invalid argument type '${val}', 'string' required.`);
         }
       }
 
@@ -158,7 +122,7 @@ export default class Arguments extends Singleton {
           newVal = parseInt(newVal, 10);
         }
         if (!_.isNumber(newVal) || _.isNaN(newVal)) {
-          throw new Error(`Invalid argument type '${val}', '${this.argsTypes[val]}' required.`);
+          throw new Error(`Invalid argument type '${val}', 'number' required.`);
         }
       }
 
@@ -167,8 +131,8 @@ export default class Arguments extends Singleton {
     }, {});
   }
 
-  parseCLI(): any {
-    const params = Object.keys(this.argsDefault);
+  parseCLI(): Object {
+    const params = Object.keys(argsDefault);
     const argsRaw = process.argv
       .map((v: string) => v.split(/\s+/))
       .flat()
