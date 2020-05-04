@@ -8,7 +8,8 @@
     "watch": "webpack --watch",
     "prepublishOnly": "npm install && npm test && npm run lint",
     "lint": "eslint src/**/*.*",
-    "test": "jest --coverage"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
   "license": "ISC",
