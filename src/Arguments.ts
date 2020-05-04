@@ -93,6 +93,20 @@ const resolveString = <T>(key: string, val: T): string | T => {
   throw new Error(`Invalid argument type '${key}', 'string' required.`);
 };
 
+const resolveNumber = <T>(key: string, val: T): number | T => {
+  if (typeof argsDefault[key] !== 'number' || typeof val === 'number') {
+    return val;
+  }
+
+  const newVal = typeof val === 'string' && parseInt(val, 10);
+
+  if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
+    throw new Error(`Invalid argument type '${key}', 'number' required.`);
+  }
+
+  return newVal;
+};
+
 const parser = (args: Object = {}): Object => {
   const params = Object.keys(argsDefault);
   return params.reduce((s, val) => {
@@ -105,19 +119,9 @@ const parser = (args: Object = {}): Object => {
     newVal = resolveArray(val, newVal);
     newVal = resolveObject(val, newVal);
     newVal = resolveString(val, newVal);
+    newVal = resolveNumber(val, newVal);
 
-    if (typeof argsDefault[val] === 'number') {
-      if (typeof newVal === 'string') {
-        newVal = parseInt(newVal, 10);
-      }
-
-      if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
-        throw new Error(`Invalid argument type '${val}', 'number' required.`);
-      }
-    }
-
-    const collector = { ...s, ...{ [val]: newVal } };
-    return collector;
+    return { ...s, ...{ [val]: newVal } };
   }, {});
 };
 
