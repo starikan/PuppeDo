@@ -13,8 +13,8 @@ const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 type TestJsonType = {
   source: any;
   socket: any;
-  stepId: any;
-  breadcrumbs: any;
+  stepId: string;
+  breadcrumbs: string[];
   testFile: any;
   type: any;
 } | null;

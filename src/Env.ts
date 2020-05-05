@@ -3,11 +3,11 @@ import clone from 'lodash/clone';
 import set from 'lodash/set';
 
 export default class Env {
-  name: any;
+  name: string;
   state: any;
-  env: any;
+  env: EnvType;
 
-  constructor(name, env = {}) {
+  constructor(name: string, env: EnvType) {
     this.name = name;
     // Browser, pages, cookies, etc.
     this.state = {};

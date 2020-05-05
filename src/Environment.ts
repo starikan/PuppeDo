@@ -408,19 +408,15 @@ class Envs {
     this.set('data', data);
     this.set('selectors', selectors);
 
-    for (let i = 0; i < envs.length; i += 1) {
-      const env = envs[i];
-      const name = get(env, 'name');
+    envs.forEach((env: EnvType = { name: 'BlankEnv' }) => {
+      const envLocal = { ...env };
+      const { name, data: dataLocalEnv = {}, selectors: selectorsLocalEnv = {} } = envLocal;
 
-      if (env) {
-        env.data = merge(data, env.data || {});
-        env.selectors = merge(selectors, env.selectors || {});
-      }
+      envLocal.data = merge(data, dataLocalEnv);
+      envLocal.selectors = merge(selectors, selectorsLocalEnv);
 
-      if (name && env) {
-        this.envs[name] = new Env(name, env);
-      }
-    }
+      this.envs[name] = new Env(name, envLocal);
+    });
 
     if (!this.envs || isEmpty(this.envs)) {
       throw new Error("Can't init any environment. Check 'envs' parameter, should be array");

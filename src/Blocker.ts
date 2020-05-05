@@ -2,9 +2,15 @@ import { EventEmitter } from 'events';
 
 import Singleton from './Singleton';
 
+type BlockType = {
+  stepId: string;
+  block: boolean;
+  breadcrumbs?: string[];
+};
+
 export default class Blocker extends Singleton {
-  blocks: any;
-  blockEmitter: any;
+  blocks: Array<BlockType>;
+  blockEmitter: EventEmitter;
 
   constructor() {
     super();
@@ -13,26 +19,22 @@ export default class Blocker extends Singleton {
     this.blockEmitter.setMaxListeners(1000);
   }
 
-  push(data) {
+  push(data: BlockType): void {
     this.blocks.push(data);
   }
 
-  refresh() {
+  refresh(): void {
     this.blocks = [];
   }
 
-  setAll(blockArray) {
-    if (Array.isArray(blockArray)) {
-      this.blocks = blockArray;
-    } else {
-      throw new Error('Blocks must be array');
-    }
+  setAll(blockArray: Array<BlockType>) {
+    this.blocks = blockArray;
     this.blocks.forEach((v) => {
       this.blockEmitter.emit('updateBlock', v);
     });
   }
 
-  setBlock(stepId, block) {
+  setBlock(stepId: string, block: boolean) {
     this.blocks.forEach((v) => {
       if (v.stepId === stepId) {
         const emmitData = { ...v, ...{ block: Boolean(block) } };
@@ -41,7 +43,7 @@ export default class Blocker extends Singleton {
     });
   }
 
-  getBlock(stepId) {
+  getBlock(stepId: string): boolean {
     return (this.blocks.find((v) => v.stepId === stepId) || {}).block;
   }
 }

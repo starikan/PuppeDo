@@ -8,9 +8,16 @@ import get from 'lodash/get';
 import TestsContent from './TestContent';
 import Environment from './Environment';
 
+type FyllJsonType = {
+  description: string;
+  name: string;
+  todo: string;
+  levelIndent: number;
+};
+
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
-const generateDescriptionStep = (fullJSON) => {
+const generateDescriptionStep = (fullJSON: FyllJsonType): string => {
   const { description, name, todo, levelIndent } = fullJSON;
 
   const descriptionString = [

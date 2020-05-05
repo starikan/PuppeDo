@@ -1,7 +1,5 @@
 import deepmerge from 'deepmerge';
 
-import { SocketType } from './globals.d';
-
 type ColorsMainType = {
   sane: number;
   black: number;
