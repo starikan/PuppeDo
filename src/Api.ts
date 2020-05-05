@@ -50,7 +50,7 @@ const run = async (argsInput = {}) => {
 
       await envs.init(false);
 
-      const { fullJSON, textDescription } = getFullDepthJSON({ envsId });
+      const { fullJSON, textDescription } = getFullDepthJSON(envsId);
 
       await log({ level: 'env', text: `\n${textDescription}`, testStruct: fullJSON });
 

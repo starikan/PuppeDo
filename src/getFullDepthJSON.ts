@@ -8,7 +8,7 @@ import get from 'lodash/get';
 import TestsContent from './TestContent';
 import Environment from './Environment';
 
-type FyllJsonType = {
+type FullJsonType = {
   description: string;
   name: string;
   todo: string;
@@ -17,7 +17,7 @@ type FyllJsonType = {
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
 
-const generateDescriptionStep = (fullJSON: FyllJsonType): string => {
+const generateDescriptionStep = (fullJSON: FullJsonType): string => {
   const { description, name, todo, levelIndent } = fullJSON;
 
   const descriptionString = [
@@ -31,19 +31,15 @@ const generateDescriptionStep = (fullJSON: FyllJsonType): string => {
   return descriptionString;
 };
 
-const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
-  const testNameResolved = testName || Environment(envsId).envs.current.test;
+const getFullDepthJSONRecurce = (testName: string, testBody = {}, levelIndent: number = 0) => {
   const allTests = new TestsContent().allData;
-
-  const testJSON = cloneDeep(
-    allTests.allContent.find((v) => v.name === testNameResolved && ['atom', 'test'].includes(v.type)),
-  );
+  const testJSON = cloneDeep(allTests.allContent.find((v) => v.name === testName && ['atom', 'test'].includes(v.type)));
   if (!testJSON) {
-    throw new Error(`Test with name '${testNameResolved}' not found in root folder and additional folders`);
+    throw new Error(`Test with name '${testName}' not found in root folder and additional folders`);
   }
 
   const fullJSON = cloneDeep({ ...testJSON, ...testBody });
-  fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testNameResolved];
+  fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
   fullJSON.levelIndent = levelIndent;
   fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
@@ -54,7 +50,7 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
     if (Array.isArray(runnerBlockValue)) {
       runnerBlockValue.forEach((v, runnerNum) => {
         const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(
-          get(runnerBlockValue, [runnerNum], {}),
+          runnerBlockValue[runnerNum] || {},
         );
 
         let [name, newRunner] = runner.length ? runner[0] : [null, {}];
@@ -65,11 +61,11 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
         if (name) {
           newRunner.name = name;
           newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
-          const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSON({
-            testName: name,
-            testBody: newRunner,
-            levelIndent: levelIndent + 1,
-          });
+          const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = getFullDepthJSONRecurce(
+            name,
+            newRunner,
+            levelIndent + 1,
+          );
 
           fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
           textDescription += textDescriptionResponse;
@@ -83,9 +79,14 @@ const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, env
     }
   });
 
-  fullJSON.name = get(fullJSON, 'name', testNameResolved);
+  fullJSON.name = fullJSON.name || testName;
 
   return { fullJSON, textDescription };
+};
+
+const getFullDepthJSON = (envsId: string) => {
+  const testName = Environment(envsId).envs.current.test;
+  return getFullDepthJSONRecurce(testName);
 };
 
 export default getFullDepthJSON;
