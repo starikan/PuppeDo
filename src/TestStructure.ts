@@ -9,17 +9,18 @@ import TestsContent from './TestContent';
 import Environment from './Environment';
 
 type FullJsonType = {
-  description: string;
+  description?: string;
   name: string;
-  todo: string;
-  levelIndent: number;
+  todo?: string;
+  levelIndent?: number;
+  breadcrumbs?: string[];
 };
 
 export default class TestStructure {
   fullJSON: any;
   textDescription: any;
 
-  constructor(envsId) {
+  constructor(envsId: string) {
     const testNameStart = Environment(envsId)?.envs?.current?.test;
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testNameStart);
     this.fullJSON = fullJSON;
@@ -40,16 +41,38 @@ export default class TestStructure {
     return descriptionString;
   }
 
-  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0) {
+  static getTestRaw(name: string): any {
     const allTests = new TestsContent().allData;
-    const testJSON = cloneDeep(
-      allTests.allContent.find((v) => v.name === testName && ['atom', 'test'].includes(v.type)),
-    );
+    const testJSON = cloneDeep(allTests.allContent.find((v) => v.name === name && ['atom', 'test'].includes(v.type)));
     if (!testJSON) {
-      throw new Error(`Test with name '${testName}' not found in root folder and additional folders`);
+      throw new Error(`Test with name '${name}' not found in root folder and additional folders`);
     }
+    return testJSON;
+  }
 
-    const fullJSON = cloneDeep({ ...testJSON, ...testBody });
+  resolveRunner(runnerValue, runnerNum, fullJSON, runnerBlock, levelIndent) {
+    const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(runnerValue);
+    let [name, newRunner] = runner.length ? runner[0] : [null, {}];
+    // It`s important. Subtest may named but no body.
+    name = name || null;
+    newRunner = newRunner || {};
+
+    if (name) {
+      newRunner.name = name;
+      newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
+      const { fullJSON: fullJSONResponse, textDescription: textDescriptionResponse } = this.getFullDepthJSONRecurce(
+        name,
+        newRunner,
+        levelIndent + 1,
+      );
+
+      return { fullJSONResponse, textDescriptionResponse };
+    }
+    return { fullJSONResponse: null, textDescriptionResponse: null };
+  }
+
+  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0) {
+    const fullJSON = cloneDeep({ ...TestStructure.getTestRaw(testName), ...testBody });
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');
@@ -58,29 +81,19 @@ export default class TestStructure {
 
     const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
+      // const runnerBlockValue = fullJSON[runnerBlock];
       const runnerBlockValue = get(fullJSON, [runnerBlock]);
       if (Array.isArray(runnerBlockValue)) {
-        runnerBlockValue.forEach((v, runnerNum) => {
-          const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(
-            runnerBlockValue[runnerNum] || {},
+        runnerBlockValue.forEach((runnerValue, runnerNum) => {
+          const { fullJSONResponse, textDescriptionResponse } = this.resolveRunner(
+            runnerValue,
+            runnerNum,
+            fullJSON,
+            runnerBlock,
+            levelIndent,
           );
-
-          let [name, newRunner] = runner.length ? runner[0] : [null, {}];
-          // It`s important. Subtest may named but no body.
-          name = name || null;
-          newRunner = newRunner || {};
-
-          if (name) {
-            newRunner.name = name;
-            newRunner.breadcrumbs = [...fullJSON.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
-            const {
-              fullJSON: fullJSONResponse,
-              textDescription: textDescriptionResponse,
-            } = this.getFullDepthJSONRecurce(name, newRunner, levelIndent + 1);
-
-            fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
-            textDescription += textDescriptionResponse;
-          }
+          if (fullJSONResponse) fullJSON[runnerBlock][runnerNum] = fullJSONResponse;
+          if (textDescriptionResponse) textDescription += textDescriptionResponse;
         });
       } else if (!isString(runnerBlockValue) && !Array.isArray(runnerBlockValue) && !isUndefined(runnerBlockValue)) {
         throw new Error(
