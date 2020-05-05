@@ -375,9 +375,8 @@ export default class Test {
           ...args,
           env: this.env,
           envs: this.envs,
-          browser: this.env ? this.env.getState('browser') : null,
-          // If there is no page it`s might be API
-          page: this.env ? this.env.getState(`pages.${this.envPageName}`) : null,
+          browser: this.env && this.env.state.browser,
+          page: this.env && this.env.state.pages[this.envPageName], // If there is no page it`s might be API
           log: logger.log.bind(logger),
           name: this.name,
           description: this.description,

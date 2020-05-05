@@ -3,6 +3,12 @@ declare type SocketType = {
   sendYAML: Function;
 };
 
+type EnvsPoolType = {
+  name: string;
+  state: EnvStateType;
+  env: EnvType;
+};
+
 declare type EnvType = {
   name: string;
   data?: Object;
@@ -10,7 +16,7 @@ declare type EnvType = {
 };
 
 declare type EnvStateType = {
-  browser?: any;
-  pages?: any;
+  browser: any;
+  pages: Object;
   pid?: any;
 };

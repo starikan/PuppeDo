@@ -175,7 +175,7 @@ class Envs {
   async runBrowsers() {
     const envsNames = Object.keys(this.envs);
     for (let i = 0; i < envsNames.length; i += 1) {
-      const env = this.envs[envsNames[i]];
+      const env: EnvsPoolType = this.envs[envsNames[i]];
 
       const browserSettings = get(env, 'env.browser', {});
       const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
