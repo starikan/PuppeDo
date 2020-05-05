@@ -36,5 +36,6 @@ module.exports = {
     'lines-between-class-members': 0,
     'no-unused-vars': 0,
     '@typescript-eslint/no-unused-vars': 'error',
+    'import/no-extraneous-dependencies': ["error", {"devDependencies": true}],
   },
 };

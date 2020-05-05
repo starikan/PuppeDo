@@ -5,7 +5,7 @@ module.exports = {
       {
         useBuiltIns: 'usage',
         targets: {
-          node: 4,
+          node: 10,
         },
         corejs: 3,
         // debug: true,
