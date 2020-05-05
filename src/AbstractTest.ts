@@ -218,7 +218,7 @@ export default class Test {
       joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
 
       // * Get data from global envs for all tests
-      joinArray = [...joinArray, this.envs.get(dataName, {})];
+      joinArray = [...joinArray, this.envs[dataName] || {}];
 
       // * Fetch data from ext files that passed in test itself
       const allTests = new TestsContent().allData;
@@ -315,9 +315,9 @@ export default class Test {
         const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
 
         this.envs = envs;
-        this.envName = this.envs.get('current.name');
-        this.envPageName = this.envs.get('current.page');
-        this.env = this.envs.get(`envs.${this.envName}`);
+        this.envName = this.envs.current.name;
+        this.envPageName = this.envs.current.page;
+        this.env = this.envs.envs[this.envName];
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
@@ -404,8 +404,8 @@ export default class Test {
 
         // Set ENVS Data for the further nested tests
         if (this.env) {
-          this.envs.data = merge(this.envs.get('data'), dataLocal);
-          this.envs.selectors = merge(this.envs.get('selectors'), selectorsLocal);
+          this.envs.data = merge(this.envs.data, dataLocal);
+          this.envs.selectors = merge(this.envs.selectors, selectorsLocal);
         }
 
         // RUN FUNCTIONS
@@ -433,7 +433,7 @@ export default class Test {
 
         // If Test there is no JS return. Get all data to read values
         if (this.type === 'test') {
-          resultFromTest = merge(this.envs.get('data'), this.envs.get('selectors'));
+          resultFromTest = merge(this.envs.data, this.envs.selectors);
         }
 
         const results = pick(resultFromTest, allowResults);
@@ -459,8 +459,8 @@ export default class Test {
 
         // Set ENVS Data
         if (this.env) {
-          this.envs.data = merge(this.envs.get('data'), dataLocal, localResults);
-          this.envs.selectors = merge(this.envs.get('selectors'), selectorsLocal, localResults);
+          this.envs.data = merge(this.envs.data, dataLocal, localResults);
+          this.envs.selectors = merge(this.envs.selectors, selectorsLocal, localResults);
         }
 
         // ERROR

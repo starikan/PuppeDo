@@ -32,7 +32,11 @@ class Envs {
   envs: any;
   data: any;
   selectors: any;
-  current: any;
+  current: {
+    name?: string;
+    page?: string;
+    test?: any;
+  };
   results: any;
   args: any;
   output: {
@@ -55,10 +59,6 @@ class Envs {
     this.log = [];
   }
 
-  get(name, def = null) {
-    return get(this, name, def);
-  }
-
   setEnv(name, page = null) {
     if (name && Object.keys(this.envs).includes(name)) {
       this.current.name = name;
@@ -72,13 +72,8 @@ class Envs {
     }
   }
 
-  getEnv(name = null) {
-    const nameNew = name || get(this, 'current.name');
-    return get(this.envs, nameNew, {});
-  }
-
   getActivePage() {
-    const activeEnv = this.getEnv();
+    const activeEnv = get(this.envs, get(this, 'current.name'), {});
     const pageName = get(this, 'current.page');
     return get(activeEnv, `state.pages.${pageName}`);
   }
@@ -104,7 +99,7 @@ class Envs {
 
   initOutput(testName = 'test') {
     const { PPD_OUTPUT: output } = new Arguments().args;
-    const currentTest = this.get('current.test') || testName;
+    const currentTest = this.current.test || testName;
 
     if (!fs.existsSync(output)) {
       fs.mkdirSync(output);

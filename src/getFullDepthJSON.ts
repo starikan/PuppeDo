@@ -32,7 +32,7 @@ const generateDescriptionStep = (fullJSON: FyllJsonType): string => {
 };
 
 const getFullDepthJSON = ({ testName = null, testBody = {}, levelIndent = 0, envsId = null } = {}) => {
-  const testNameResolved = testName || Environment(envsId).envs.get('current.test');
+  const testNameResolved = testName || Environment(envsId).envs.current.test;
   const allTests = new TestsContent().allData;
 
   const testJSON = cloneDeep(
