@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ESNext",
     "types": ["node"],
     "module": "CommonJS",
+    "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
-    "downlevelIteration": true,
     "esModuleInterop": true,
     "removeComments": true,
-    "preserveConstEnums": true
     // "noImplicitAny": true,
+    // "strict": true,
   },
   "lib": ["es2019", "es2019.array"],
   "include": ["src/**/*", "index.ts"],
