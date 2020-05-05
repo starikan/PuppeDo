@@ -122,7 +122,6 @@ export default class Test {
   beforeTest: any;
   runTest: any;
   afterTest: any;
-  errorTest: any;
   levelIndent: any;
   repeat: any;
   source: any;
@@ -173,7 +172,6 @@ export default class Test {
     beforeTest = () => {},
     runTest = () => {},
     afterTest = () => {},
-    errorTest = () => {},
     source = '',
     repeat = 1,
     socket = blankSocket,
@@ -197,7 +195,6 @@ export default class Test {
     this.beforeTest = beforeTest;
     this.runTest = runTest;
     this.afterTest = afterTest;
-    this.errorTest = errorTest;
     this.levelIndent = levelIndent;
     this.repeat = repeat;
     this.source = source;
@@ -501,7 +498,6 @@ export default class Test {
       } catch (error) {
         const newError = new TestError({ logger, parentError: error, test: this, envsId });
         await newError.log();
-        await this.errorTest();
         throw newError;
       }
     };

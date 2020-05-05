@@ -16,13 +16,12 @@ type FullJsonType = {
 };
 
 export default class TestStructure {
-  testNameStart: string;
   fullJSON: any;
   textDescription: any;
 
   constructor(envsId) {
-    this.testNameStart = Environment(envsId)?.envs?.current?.test;
-    const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(this.testNameStart);
+    const testNameStart = Environment(envsId)?.envs?.current?.test;
+    const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testNameStart);
     this.fullJSON = fullJSON;
     this.textDescription = textDescription;
   }
@@ -57,7 +56,7 @@ export default class TestStructure {
 
     let textDescription = TestStructure.generateDescriptionStep(fullJSON);
 
-    const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+    const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
       const runnerBlockValue = get(fullJSON, [runnerBlock]);
       if (Array.isArray(runnerBlockValue)) {

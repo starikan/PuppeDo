@@ -8,7 +8,7 @@ import Blocker from './Blocker';
 import { blankSocket, merge } from './Helpers';
 import AbstractTest from './AbstractTest';
 
-const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest', 'errorTest'];
+const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
 type TestJsonType = {
   source: any;
