@@ -1,6 +1,6 @@
 import run from './Api';
 import { errorHandler } from './Error';
-import getFullDepthJSON from './getFullDepthJSON';
+import TestStructure from './TestStructure';
 import getTest from './getTest';
 import TestsContent from './TestContent';
 import Arguments from './Arguments';
@@ -13,7 +13,7 @@ import { sleep, merge, paintString, blankSocket } from './Helpers';
 export {
   run,
   errorHandler,
-  getFullDepthJSON,
+  TestStructure,
   getTest,
   TestsContent,
   Environment,

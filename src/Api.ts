@@ -2,7 +2,7 @@
 import isEmpty from 'lodash/isEmpty';
 import dayjs from 'dayjs';
 
-import getFullDepthJSON from './getFullDepthJSON';
+import TestStructure from './TestStructure';
 import getTest from './getTest';
 import Arguments from './Arguments';
 import Blocker from './Blocker';
@@ -50,7 +50,7 @@ const run = async (argsInput = {}) => {
 
       await envs.init(false);
 
-      const { fullJSON, textDescription } = getFullDepthJSON(envsId);
+      const { fullJSON, textDescription } = new TestStructure(envsId);
 
       await log({ level: 'env', text: `\n${textDescription}`, testStruct: fullJSON });
 

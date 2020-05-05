@@ -1,7 +1,7 @@
 const {
   run,
   errorHandler,
-  getFullDepthJSON,
+  TestStructure,
   getTest,
   TestsContent,
   Environment,
@@ -23,7 +23,7 @@ if (!module.parent) {
 } else {
   module.exports = {
     run,
-    getFullDepthJSON,
+    TestStructure,
     getTest,
     TestsContent,
     Environment,
