@@ -401,9 +401,9 @@ class Envs {
     return args;
   }
 
-  async init(runBrowsers = true) {
+  async init(runBrowsers = true): Promise<void> {
     const args = { ...(await Envs.resolveLinks()) };
-    const { PPD_ENVS: envs, PPD_DATA: data, PPD_SELECTORS: selectors } = args;
+    const { PPD_ENVS: envs, PPD_DATA: data = {}, PPD_SELECTORS: selectors = {} } = args;
     this.set('args', args);
     this.set('data', data);
     this.set('selectors', selectors);

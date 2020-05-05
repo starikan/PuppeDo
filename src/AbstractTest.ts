@@ -215,7 +215,7 @@ export default class Test {
       let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
 
       // * Get data from current env
-      joinArray = [...joinArray, this.env ? this.env.get(dataName) : {}];
+      joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
 
       // * Get data from global envs for all tests
       joinArray = [...joinArray, this.envs.get(dataName, {})];

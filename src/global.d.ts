@@ -8,3 +8,9 @@ declare type EnvType = {
   data?: Object;
   selectors?: Object;
 };
+
+declare type EnvStateType = {
+  browser?: any;
+  pages?: any;
+  pid?: any;
+};
