@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 
-import { cloneDeep, isString, isUndefined, get } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import isString from 'lodash/isString';
+import isUndefined from 'lodash/isUndefined';
+import get from 'lodash/get';
 
 import TestsContent from './TestContent';
 import Environment from './Environment';

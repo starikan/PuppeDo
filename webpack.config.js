@@ -28,6 +28,7 @@ module.exports = {
     minimize: false,
     namedModules: true,
     namedChunks: true,
+    usedExports: true,
     // splitChunks: {
     //   chunks: 'all',
     // },

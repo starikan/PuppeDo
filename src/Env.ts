@@ -1,4 +1,6 @@
-import { get, clone, set } from 'lodash';
+import get from 'lodash/get';
+import clone from 'lodash/clone';
+import set from 'lodash/set';
 
 export default class Env {
   name: any;

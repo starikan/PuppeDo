@@ -4,7 +4,12 @@ import path from 'path';
 import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import { get, set, clone, cloneDeep, isEmpty } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
+import clone from 'lodash/clone';
+import cloneDeep from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
+
 import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';

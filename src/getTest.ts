@@ -1,6 +1,8 @@
 import path from 'path';
 
-import { pick, isObject, isFunction } from 'lodash';
+import pick from 'lodash/pick';
+import isObject from 'lodash/isObject';
+import isFunction from 'lodash/isFunction';
 
 import Blocker from './Blocker';
 import { blankSocket, merge } from './Helpers';

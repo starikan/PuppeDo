@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 
-import { isObject, isEmpty } from 'lodash';
+import isObject from 'lodash/isObject';
+import isEmpty from 'lodash/isEmpty';
 import dayjs from 'dayjs';
 
 import { sleep } from './Helpers';

@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import dayjs from 'dayjs';
 
 import getFullDepthJSON from './getFullDepthJSON';

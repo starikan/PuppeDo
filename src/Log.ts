@@ -1,7 +1,14 @@
 import path from 'path';
 import fs from 'fs';
 
-import { isObject, isNumber, get, mapValues, omit, isEmpty, pick } from 'lodash';
+import isObject from 'lodash/isObject';
+import isNumber from 'lodash/isNumber';
+import get from 'lodash/get';
+import mapValues from 'lodash/mapValues';
+import omit from 'lodash/omit';
+import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
+
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
