@@ -282,7 +282,7 @@ export default class Log {
         levelIndent,
         stepId: get(bindedData, 'stepId'),
       };
-      this.envs.push('log', logEntry);
+      this.envs.log = [...this.envs.log, logEntry];
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
       // Export YAML log every step

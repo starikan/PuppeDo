@@ -11,6 +11,11 @@ type EnvsPoolType = {
 
 declare type EnvType = {
   name: string;
+  browser: {
+    type: string;
+    engine: string;
+    runtime: string;
+  };
   data?: Object;
   selectors?: Object;
 };

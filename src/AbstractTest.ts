@@ -404,8 +404,8 @@ export default class Test {
 
         // Set ENVS Data for the further nested tests
         if (this.env) {
-          this.envs.set('data', merge(this.envs.get('data'), dataLocal));
-          this.envs.set('selectors', merge(this.envs.get('selectors'), selectorsLocal));
+          this.envs.data = merge(this.envs.get('data'), dataLocal);
+          this.envs.selectors = merge(this.envs.get('selectors'), selectorsLocal);
         }
 
         // RUN FUNCTIONS
@@ -459,8 +459,8 @@ export default class Test {
 
         // Set ENVS Data
         if (this.env) {
-          this.envs.set('data', merge(this.envs.get('data'), dataLocal, localResults));
-          this.envs.set('selectors', merge(this.envs.get('selectors'), selectorsLocal, localResults));
+          this.envs.data = merge(this.envs.get('data'), dataLocal, localResults);
+          this.envs.selectors = merge(this.envs.get('selectors'), selectorsLocal, localResults);
         }
 
         // ERROR

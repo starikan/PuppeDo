@@ -35,7 +35,7 @@ const run = async (argsInput = {}) => {
 
       ({ envsId, envs } = Environment(envsId));
       envs.initOutput(args.PPD_TESTS[i]);
-      envs.set('current.test', args.PPD_TESTS[i]);
+      envs.current.test = args.PPD_TESTS[i];
 
       const logger = new Log(envsId);
       log = logger.log.bind(logger);

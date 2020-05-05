@@ -5,8 +5,6 @@ import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
 import get from 'lodash/get';
-import set from 'lodash/set';
-import clone from 'lodash/clone';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
@@ -36,6 +34,7 @@ class Envs {
   selectors: any;
   current: any;
   results: any;
+  args: any;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -58,23 +57,6 @@ class Envs {
 
   get(name, def = null) {
     return get(this, name, def);
-  }
-
-  set(name, data) {
-    return set(this, name, data);
-  }
-
-  push(name, data) {
-    const arr = clone(this.get(name, []));
-    try {
-      arr.push(data);
-    } catch (err) {
-      /* eslint-disable no-console */
-      console.log('class Envs -> push');
-      console.log(err);
-      /* eslint-enable no-console */
-    }
-    return set(this, name, arr);
   }
 
   setEnv(name, page = null) {
@@ -175,9 +157,8 @@ class Envs {
   async runBrowsers() {
     const envsNames = Object.keys(this.envs);
     for (let i = 0; i < envsNames.length; i += 1) {
-      const env: EnvsPoolType = this.envs[envsNames[i]];
-
-      const browserSettings = get(env, 'env.browser', {});
+      const envPool: EnvsPoolType = this.envs[envsNames[i]];
+      const browserSettings = envPool.env.browser;
       const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
 
       if (
@@ -196,11 +177,11 @@ class Envs {
         if (runtime === 'run') {
           if (engine === 'puppeteer') {
             const { browser, pages } = await Envs.runPuppeteer(browserSettings);
-            env.state = { ...env.state, ...{ browser, pages } };
+            envPool.state = { ...envPool.state, ...{ browser, pages } };
           }
           if (engine === 'playwright') {
             const { browser, pages } = await Envs.runPlaywright(browserSettings);
-            env.state = { ...env.state, ...{ browser, pages } };
+            envPool.state = { ...envPool.state, ...{ browser, pages } };
           }
         }
       }
@@ -208,11 +189,11 @@ class Envs {
       if (type === 'electron') {
         if (runtime === 'connect') {
           const { browser, pages } = await Envs.connectElectron(browserSettings);
-          env.state = { ...env.state, ...{ browser, pages } };
+          envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
         if (runtime === 'run') {
-          const { browser, pages, pid } = await this.runElectron(browserSettings, env);
-          env.state = { ...env.state, ...{ browser, pages, pid } };
+          const { browser, pages, pid } = await this.runElectron(browserSettings, envPool);
+          envPool.state = { ...envPool.state, ...{ browser, pages, pid } };
         }
       }
     }
@@ -404,18 +385,14 @@ class Envs {
   async init(runBrowsers = true): Promise<void> {
     const args = { ...(await Envs.resolveLinks()) };
     const { PPD_ENVS: envs, PPD_DATA: data = {}, PPD_SELECTORS: selectors = {} } = args;
-    this.set('args', args);
-    this.set('data', data);
-    this.set('selectors', selectors);
+    this.args = args;
+    this.data = data;
+    this.selectors = selectors;
 
-    envs.forEach((env: EnvType = { name: 'BlankEnv' }) => {
+    envs.forEach((env: EnvType) => {
       const envLocal = { ...env };
-      const { name, data: dataLocalEnv = {}, selectors: selectorsLocalEnv = {} } = envLocal;
-
-      envLocal.data = merge(data, dataLocalEnv);
-      envLocal.selectors = merge(selectors, selectorsLocalEnv);
-
-      this.envs[name] = new Env(name, envLocal);
+      const newEnv = new Env(envLocal);
+      this.envs[newEnv.name] = newEnv;
     });
 
     if (!this.envs || isEmpty(this.envs)) {

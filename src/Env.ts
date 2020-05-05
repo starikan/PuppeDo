@@ -3,8 +3,8 @@ export default class Env implements EnvsPoolType {
   state: EnvStateType; // Browser, pages, cookies, etc.
   env: EnvType;
 
-  constructor(name: string, env: EnvType) {
-    this.name = name;
+  constructor(env: EnvType) {
+    this.name = env.name || 'BlankEnv';
     this.state = {
       browser: null,
       pages: {},
