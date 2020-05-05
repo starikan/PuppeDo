@@ -10,7 +10,7 @@ dataExt:
 
 beforeTest:
   - envSwitch:
-      data: { envName: 'mainEnv' }
+      bindData: { envName: myEnv }
 
 runTest:
   - goTo:

@@ -3,6 +3,9 @@ name: mainEnv_puppeteer
 type: env
 description: My Env
 
+data:
+  myTestEnvData: myTestEnvData
+
 dataExt:
   - data
 

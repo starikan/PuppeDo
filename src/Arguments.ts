@@ -130,6 +130,7 @@ const parseCLI = (): Object => {
   const argsRaw = process.argv
     .map((v: string) => v.split(/\s+/))
     .flat()
+    .map((v: string) => v.replace(/\'/g, '"'))
     .map((v: string) => v.split('='))
     .filter((v: string[]) => v.length > 1)
     .filter((v: string[]) => params.includes(v[0]));

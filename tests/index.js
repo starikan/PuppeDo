@@ -7,6 +7,7 @@ const run = async () => {
     PPD_ROOT: 'tests',
     PPD_DATA: {
       PPD_DATA: 'BAZ',
+      myEnv: 'mainEnv',
     },
     PPD_SELECTORS: {
       PPD_SELECTORS: 'DDD',

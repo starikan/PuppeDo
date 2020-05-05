@@ -91,6 +91,8 @@ const run = async (argsInput = {}) => {
       error.debug = true;
       error.type = 'SyntaxError';
     }
+    // eslint-disable-next-line no-console
+    console.log(error);
     throw error;
   }
 };

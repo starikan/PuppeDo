@@ -21,6 +21,7 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "main",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1
       }
@@ -36,6 +37,7 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv_puppeteer",
         "PPD_TESTS": "main",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv_puppeteer\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1
       }
@@ -51,6 +53,7 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "mainWithError",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
@@ -67,6 +70,7 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "testWithNoAtom",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
@@ -84,6 +88,7 @@
         "PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
         "PPD_ENVS=mainEnv",
         "PPD_TESTS=main",
+        "PPD_DATA={'myEnv':'mainEnv'}",
         "PPD_DEBUG_MODE=true",
         "PPD_LOG_EXTEND=true",
         "PPD_LOG_SCREENSHOT=true",
@@ -97,7 +102,7 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}\\tests\\index.js",
       "args": [
-        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
       ]
     }
   ]
