@@ -1,6 +1,6 @@
 import Singleton from './Singleton';
 
-const argsDefault = {
+const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
@@ -20,10 +20,9 @@ const argsDefault = {
   PPD_LOG_FULLPAGE: false,
 };
 
-type ArgumentsType = typeof argsDefault;
-// type ArgumentsKeysType = keyof typeof argsDefault;
+// type ArgumentsType = typeof argsDefault;
 
-const resolveBoolean = <T>(key: string, val: T): boolean | T => {
+const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
   if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
     return val;
   }
@@ -37,7 +36,7 @@ const resolveBoolean = <T>(key: string, val: T): boolean | T => {
   return newVal;
 };
 
-const resolveArray = <T>(key: string, val: T): string[] | T => {
+const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   if (!Array.isArray(argsDefault[key]) || Array.isArray(val)) {
     return val;
   }
@@ -59,7 +58,7 @@ const resolveArray = <T>(key: string, val: T): string[] | T => {
   return newVal;
 };
 
-const resolveObject = <T>(key: string, val: T): Object | T => {
+const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
   if (
     typeof argsDefault[key] !== 'object' ||
     Array.isArray(argsDefault[key]) ||
@@ -85,7 +84,7 @@ const resolveObject = <T>(key: string, val: T): Object | T => {
   return newVal;
 };
 
-const resolveString = <T>(key: string, val: T): string | T => {
+const resolveString = <T>(key: ArgumentsKeysType, val: T): string | T => {
   if (typeof argsDefault[key] !== 'string' || (typeof argsDefault[key] === 'string' && typeof val === 'string')) {
     return val;
   }
@@ -93,7 +92,7 @@ const resolveString = <T>(key: string, val: T): string | T => {
   throw new Error(`Invalid argument type '${key}', 'string' required.`);
 };
 
-const resolveNumber = <T>(key: string, val: T): number | T => {
+const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
   if (typeof argsDefault[key] !== 'number' || typeof val === 'number') {
     return val;
   }
@@ -107,21 +106,21 @@ const resolveNumber = <T>(key: string, val: T): number | T => {
   return newVal;
 };
 
-const parser = (args: Object = {}): Object => {
+const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   const params = Object.keys(argsDefault);
-  return params.reduce((s, val) => {
-    let newVal = args[val];
+  return params.reduce((s: Partial<ArgumentsType>, key: ArgumentsKeysType) => {
+    let newVal = args[key];
     if (newVal === undefined) {
       return s;
     }
 
-    newVal = resolveBoolean(val, newVal);
-    newVal = resolveArray(val, newVal);
-    newVal = resolveObject(val, newVal);
-    newVal = resolveString(val, newVal);
-    newVal = resolveNumber(val, newVal);
+    newVal = resolveBoolean(key, newVal);
+    newVal = resolveArray(key, newVal);
+    newVal = resolveObject(key, newVal);
+    newVal = resolveString(key, newVal);
+    newVal = resolveNumber(key, newVal);
 
-    return { ...s, ...{ [val]: newVal } };
+    return { ...s, ...{ [key]: newVal } };
   }, {});
 };
 
@@ -139,11 +138,11 @@ const parseCLI = (): Object => {
 
 export default class Arguments extends Singleton {
   args: ArgumentsType;
-  argsJS: Object;
-  argsEnv: Object;
-  argsCLI: Object;
+  argsJS: Partial<ArgumentsType>;
+  argsEnv: Partial<ArgumentsType>;
+  argsCLI: Partial<ArgumentsType>;
 
-  constructor(args: Object = {}, reInit: boolean = false) {
+  constructor(args: Partial<ArgumentsType> = {}, reInit: boolean = false) {
     super();
     if (reInit || !this.args) {
       this.init(args);
