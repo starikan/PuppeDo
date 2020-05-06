@@ -41,7 +41,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
     return val;
   }
 
-  let newVal: string[];
+  let newVal: string[] | null = null;
 
   if (typeof val === 'string') {
     try {
@@ -67,7 +67,7 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
     return val;
   }
 
-  let newVal: Object;
+  let newVal: Object | null = null;
 
   if (typeof val === 'string') {
     try {
@@ -77,10 +77,9 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
     }
   }
 
-  if (typeof newVal !== 'object' || Array.isArray(newVal)) {
+  if (!newVal || Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'object' required.`);
   }
-
   return newVal;
 };
 
