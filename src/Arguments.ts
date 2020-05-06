@@ -109,7 +109,7 @@ const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   return result;
 };
 
-const parseCLI = (): Object => {
+const parseCLI = (): Partial<ArgumentsType> => {
   const params = Object.keys(argsDefault);
   const argsRaw = process.argv
     .map((v: string) => v.split(/\s+/))
@@ -130,14 +130,10 @@ export default class Arguments extends Singleton {
   constructor(args: Partial<ArgumentsType> = {}, reInit: boolean = false) {
     super();
     if (reInit || !this.args) {
-      this.init(args);
+      this.argsJS = parser(args);
+      this.argsEnv = parser(process.env);
+      this.argsCLI = parseCLI();
+      this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
     }
-  }
-
-  init(args: Object = {}): void {
-    this.argsJS = parser(args);
-    this.argsEnv = parser(process.env);
-    this.argsCLI = parseCLI();
-    this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
   }
 }
