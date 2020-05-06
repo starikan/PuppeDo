@@ -20,19 +20,14 @@ const argsDefault: ArgumentsType = {
   PPD_LOG_FULLPAGE: false,
 };
 
-// type ArgumentsType = typeof argsDefault;
-
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
   if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
     return val;
   }
-
   const newVal = typeof val === 'string' && ['true', 'false'].includes(val) ? val === 'true' : val;
-
   if (typeof newVal !== 'boolean') {
     throw new Error(`Invalid argument type '${key}', 'boolean' required.`);
   }
-
   return newVal;
 };
 
@@ -40,9 +35,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   if (!Array.isArray(argsDefault[key]) || Array.isArray(val)) {
     return val;
   }
-
   let newVal: string[] | null = null;
-
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
@@ -50,11 +43,9 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
       newVal = val.split(',').map((v: string) => v.trim());
     }
   }
-
   if (!Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'array' required.`);
   }
-
   return newVal;
 };
 
@@ -66,9 +57,7 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
   ) {
     return val;
   }
-
   let newVal: Object | null = null;
-
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
@@ -76,7 +65,6 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
       throw new Error(`Invalid argument type '${key}', 'object' required.`);
     }
   }
-
   if (!newVal || Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'object' required.`);
   }
@@ -87,7 +75,6 @@ const resolveString = <T>(key: ArgumentsKeysType, val: T): string | T => {
   if (typeof argsDefault[key] !== 'string' || (typeof argsDefault[key] === 'string' && typeof val === 'string')) {
     return val;
   }
-
   throw new Error(`Invalid argument type '${key}', 'string' required.`);
 };
 
@@ -95,32 +82,31 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
   if (typeof argsDefault[key] !== 'number' || typeof val === 'number') {
     return val;
   }
-
   const newVal = typeof val === 'string' && parseInt(val, 10);
-
   if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'number' required.`);
   }
-
   return newVal;
 };
 
 const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
-  const params = Object.keys(argsDefault);
-  return params.reduce((s: Partial<ArgumentsType>, key: ArgumentsKeysType) => {
-    let newVal = args[key];
-    if (newVal === undefined) {
-      return s;
-    }
-
-    newVal = resolveBoolean(key, newVal);
-    newVal = resolveArray(key, newVal);
-    newVal = resolveObject(key, newVal);
-    newVal = resolveString(key, newVal);
-    newVal = resolveNumber(key, newVal);
-
-    return { ...s, ...{ [key]: newVal } };
-  }, {});
+  const params: ArgumentsKeysType[] = Object.keys(argsDefault) as ArgumentsKeysType[];
+  const result = params.reduce<Partial<ArgumentsType>>(
+    (acc: Partial<ArgumentsType> = {}, key: ArgumentsKeysType): Partial<ArgumentsType> => {
+      let newVal = args[key];
+      if (newVal === undefined) {
+        return acc;
+      }
+      newVal = resolveBoolean(key, newVal);
+      newVal = resolveArray(key, newVal);
+      newVal = resolveObject(key, newVal);
+      newVal = resolveString(key, newVal);
+      newVal = resolveNumber(key, newVal);
+      return { ...acc, ...{ [key]: newVal } };
+    },
+    {},
+  );
+  return result;
 };
 
 const parseCLI = (): Object => {
