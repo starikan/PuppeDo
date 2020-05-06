@@ -122,10 +122,10 @@ const parseCLI = (): Partial<ArgumentsType> => {
 };
 
 export default class Arguments extends Singleton {
-  args: ArgumentsType;
-  argsJS: Partial<ArgumentsType>;
-  argsEnv: Partial<ArgumentsType>;
-  argsCLI: Partial<ArgumentsType>;
+  args!: ArgumentsType;
+  argsJS!: Partial<ArgumentsType>;
+  argsEnv!: Partial<ArgumentsType>;
+  argsCLI!: Partial<ArgumentsType>;
 
   constructor(args: Partial<ArgumentsType> = {}, reInit: boolean = false) {
     super();
