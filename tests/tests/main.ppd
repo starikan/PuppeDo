@@ -17,6 +17,7 @@ runTest:
       bD: { url: baseUrl }
 
   - clickWithNestedWait:
+      # debug: true
       o:
         hidden: false
         visible: true

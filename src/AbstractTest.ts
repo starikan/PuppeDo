@@ -29,6 +29,7 @@ type InputsType = {
   if?: any;
   errorIf?: any;
   errorIfResult?: any;
+  debug?: boolean;
 };
 
 const ALIASES = {
@@ -130,6 +131,7 @@ export default class Test {
   breadcrumbs: any;
   funcFile: any;
   testFile: any;
+  debug: boolean;
 
   data: any;
   bindData: any;
@@ -179,6 +181,7 @@ export default class Test {
     breadcrumbs = [],
     funcFile = null,
     testFile = null,
+    debug = false,
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -203,6 +206,7 @@ export default class Test {
     this.breadcrumbs = breadcrumbs;
     this.funcFile = funcFile;
     this.testFile = testFile;
+    this.debug = debug;
 
     this.fetchData = (isSelector = false) => {
       const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
@@ -300,6 +304,7 @@ export default class Test {
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
+      this.debug = inputs.debug || this.debug;
 
       if (!envsId) {
         throw new Error('Test should have envsId');
@@ -347,6 +352,7 @@ export default class Test {
           'levelIndent',
           'repeat',
           'stepId',
+          'debug',
         ];
         const args = {
           envsId,

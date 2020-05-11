@@ -38,10 +38,18 @@ const resolveJS = (testJson, funcFile) => {
   return testJsonNew;
 };
 
-const propagateArgumentsOnAir = (source = {}, args = {}, list = []) => {
+const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []) => {
   const result = { ...source };
   list.forEach((v) => {
     result[v] = merge(result[v] || {}, args[v] || {});
+  });
+  return result;
+};
+
+const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []) => {
+  const result = { ...source };
+  list.forEach((v) => {
+    result[v] = result[v] || args[v];
   });
   return result;
 };
@@ -88,7 +96,8 @@ const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, soc
   const test = new AbstractTest(testJson);
 
   return async (args = {}) => {
-    const updatetTestJson = propagateArgumentsOnAir(testJson, args, ['options']);
+    let updatetTestJson = propagateArgumentsObjectsOnAir(testJson, args, ['options']);
+    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
     await test.run(updatetTestJson, envsId);
   };
 };
