@@ -9,8 +9,8 @@ type BlockType = {
 };
 
 export default class Blocker extends Singleton {
-  blocks: Array<BlockType>;
-  blockEmitter: EventEmitter;
+  blocks!: Array<BlockType>;
+  blockEmitter!: EventEmitter;
 
   constructor() {
     super();
@@ -44,6 +44,6 @@ export default class Blocker extends Singleton {
   }
 
   getBlock(stepId: string): boolean {
-    return (this.blocks.find((v) => v.stepId === stepId) || {}).block;
+    return Boolean((this.blocks.find((v) => v.stepId === stepId) || {}).block);
   }
 }

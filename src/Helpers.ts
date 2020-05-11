@@ -30,7 +30,7 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-export const merge = (...objects) => deepmerge.all(objects, { arrayMerge: (destArray, sourceArray) => sourceArray });
+export const merge = (...objects) => deepmerge.all(objects, { arrayMerge: (dest, source) => source });
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
