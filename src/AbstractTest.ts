@@ -283,6 +283,7 @@ export default class Test {
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
       const startTime = new Date().getTime();
 
+      const { PPD_DEBUG_MODE } = new Arguments().args;
       const inputs: InputsType = merge(constructorArgs, inputArgs);
 
       this.data = resolveAliases('data', inputs, ALIASES);
@@ -304,7 +305,7 @@ export default class Test {
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
-      this.debug = inputs.debug || this.debug;
+      this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
 
       if (!envsId) {
         throw new Error('Test should have envsId');
