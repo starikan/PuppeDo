@@ -89,3 +89,5 @@ export const blankSocket: SocketType = {
   send: () => {},
   sendYAML: () => {},
 };
+
+export const getTimer = (timeStart: bigint): string => (Number(process.hrtime.bigint() - timeStart) / 1e9).toFixed(3);

@@ -8,16 +8,17 @@ import Arguments from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
+import { getTimer } from './Helpers';
 
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 
 const run = async (argsInput = {}) => {
-  let envsId;
+  let envsId: string;
   let envs;
   let log;
   try {
-    const startTime = new Date().getTime();
+    const startTime = process.hrtime.bigint();
     const args = { ...new Arguments(argsInput).args };
 
     if (isEmpty(args.PPD_TESTS)) {
@@ -28,10 +29,10 @@ const run = async (argsInput = {}) => {
       throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 
-    const initArgsTime = (new Date().getTime() - startTime) / 1000;
+    const initArgsTime = getTimer(startTime);
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
-      const startTimeTest = new Date().getTime();
+      const startTimeTest = process.hrtime.bigint();
 
       ({ envsId, envs } = Environment(envsId));
       envs.initOutput(args.PPD_TESTS[i]);
@@ -45,7 +46,7 @@ const run = async (argsInput = {}) => {
       }
       await log({
         level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' start on '${dayjs(startTimeTest).format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
+        text: `Test '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
       });
 
       await envs.init(false);
@@ -63,14 +64,14 @@ const run = async (argsInput = {}) => {
 
       await log({
         level: 'timer',
-        text: `Prepare time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
+        text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.`,
       });
 
       await test();
 
       await log({
         level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${(new Date().getTime() - startTimeTest) / 1000} sec.`,
+        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${getTimer(startTimeTest)} sec.`,
       });
     }
 
@@ -79,7 +80,7 @@ const run = async (argsInput = {}) => {
 
     await log({
       level: 'timer',
-      text: `Evaluated time 🕝: ${(new Date().getTime() - startTime) / 1000} sec.`,
+      text: `Evaluated time 🕝: ${getTimer(startTime)} sec.`,
     });
 
     // if (!module.parent) {

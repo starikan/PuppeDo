@@ -5,7 +5,7 @@ import pick from 'lodash/pick';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
-import { merge, blankSocket } from './Helpers';
+import { merge, blankSocket, getTimer } from './Helpers';
 import Blocker from './Blocker';
 import Arguments from './Arguments';
 import Log from './Log';
@@ -281,7 +281,7 @@ export default class Test {
     };
 
     this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
-      const startTime = new Date().getTime();
+      const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
       const inputs: InputsType = merge(constructorArgs, inputArgs);
@@ -496,7 +496,7 @@ export default class Test {
         // TIMER IN CONSOLE
         if (PPD_LOG_EXTEND) {
           await logger.log({
-            text: `🕝: ${new Date().getTime() - startTime} ms. (${this.name})`,
+            text: `🕝: ${getTimer(startTime)} s. (${this.name})`,
             level: 'timer',
             levelIndent,
             extendInfo: true,
