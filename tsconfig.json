@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "types": ["node"],
+    "types": ["node", "webpack-env"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    "removeComments": true,
     // "strict": true,
+    "removeComments": true
   },
   "lib": ["es2019", "es2019.array"],
   "include": ["src/**/*", "index.ts"],

@@ -61,7 +61,7 @@ declare type EnvYamlType = {
   selectorsExt?: Array<string>;
   envsExt?: Array<string>;
   browser?: {
-    type?: 'browser' | 'electron';
+    type?: 'browser' | 'electron' | 'api';
     runtime?: 'run' | 'connect';
     engine?: 'puppeteer' | 'playwright';
     browserName?: 'chromium' | 'firefox' | 'webkit';

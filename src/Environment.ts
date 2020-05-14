@@ -381,7 +381,7 @@ class Envs {
     this.data = data;
     this.selectors = selectors;
 
-    envs.forEach((env: EnvYamlType) => {
+    envs.forEach((env: any) => {
       const envLocal = { ...env };
       const newEnv = new Env(envLocal);
       this.envs[newEnv.name] = newEnv;

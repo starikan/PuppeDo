@@ -38,7 +38,7 @@
     "automatization"
   ],
   "dependencies": {
-    "dayjs": "1.8.26",
+    "dayjs": "1.8.27",
     "deepmerge": "4.2.2",
     "js-yaml": "3.13.1",
     "node-fetch": "2.6.0",
@@ -52,12 +52,13 @@
     "@babel/preset-env": "7.9.6",
     "@babel/preset-typescript": "7.9.0",
     "@puppedo/atoms": "3.3.1",
+    "@types/jest": "25.2.2",
     "@types/js-yaml": "3.12.3",
     "@types/lodash": "4.14.150",
     "@types/node-fetch": "2.5.7",
     "@types/webpack-env": "1.15.2",
-    "@typescript-eslint/eslint-plugin": "2.32.0",
-    "@typescript-eslint/parser": "2.32.0",
+    "@typescript-eslint/eslint-plugin": "2.33.0",
+    "@typescript-eslint/parser": "2.33.0",
     "babel-loader": "8.1.0",
     "core-js": "3.6.5",
     "eslint": "7.0.0",
@@ -70,7 +71,8 @@
     "prettier": "2.0.5",
     "prettier-eslint": "9.0.1",
     "puppeteer": "3.0.4",
-    "typescript": "3.8.3",
+    "ts-jest": "25.5.1",
+    "typescript": "3.9.2",
     "webpack": "4.43.0",
     "webpack-cli": "3.3.11"
   }
