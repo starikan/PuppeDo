@@ -53,7 +53,7 @@ export default class TestsContent extends Singleton {
     return true;
   }
 
-  getAllData(force = false) {
+  getAllData(force: boolean = false) {
     if (force || !this.allData) {
       const allContent = [];
       const extensions = ['.yaml', '.yml', '.ppd'];

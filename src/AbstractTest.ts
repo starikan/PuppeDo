@@ -109,28 +109,28 @@ const checkNeedEnv = (needEnv, envName) => {
 };
 
 export default class Test {
-  name: any;
-  type: any;
-  needEnv: any;
-  needData: any;
-  needSelectors: any;
-  dataTest: any;
-  selectorsTest: any;
-  options: any;
-  dataExt: any;
-  selectorsExt: any;
-  allowResults: any;
+  name: string;
+  type: string;
+  needEnv: Array<string>;
+  needData: Array<string>;
+  needSelectors: Array<string>;
+  dataTest: Object;
+  selectorsTest: Object;
+  options: Object;
+  dataExt: Array<string>;
+  selectorsExt: Array<string>;
+  allowResults: Array<string>;
   beforeTest: any;
   runTest: any;
   afterTest: any;
-  levelIndent: any;
-  repeat: any;
-  source: any;
-  socket: any;
-  stepId: any;
-  breadcrumbs: any;
-  funcFile: any;
-  testFile: any;
+  levelIndent: number;
+  repeat: number;
+  source: Object;
+  socket: SocketType;
+  stepId: string;
+  breadcrumbs: Array<string>;
+  funcFile: string;
+  testFile: string;
   debug: boolean;
 
   data: any;

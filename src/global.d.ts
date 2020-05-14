@@ -47,3 +47,17 @@ declare type EnvStateType = {
   pages: Object;
   pid?: any;
 };
+
+declare type TestJsonExtendType = {
+  source: any;
+  socket: any;
+  stepId: string;
+  breadcrumbs: string[];
+  testFile: any;
+  type: any;
+};
+
+declare type TestSourceType = {
+  name: string;
+  type?: 'atom' | 'test';
+};

@@ -8,7 +8,7 @@ import Arguments from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
-import { getTimer } from './Helpers';
+import { getTimer, blankSocket } from './Helpers';
 
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
@@ -17,6 +17,8 @@ const run = async (argsInput = {}) => {
   let envsId: string;
   let envs;
   let log;
+  const socket = blankSocket;
+
   try {
     const startTime = process.hrtime.bigint();
     const args = { ...new Arguments(argsInput).args };
@@ -58,7 +60,7 @@ const run = async (argsInput = {}) => {
       const blocker = new Blocker();
       blocker.refresh();
 
-      const test = getTest(fullJSON, envsId);
+      const test = getTest(fullJSON, envsId, socket);
 
       await envs.runBrowsers();
 

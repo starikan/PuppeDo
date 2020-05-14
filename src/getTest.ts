@@ -1,23 +1,14 @@
 import path from 'path';
 
 import pick from 'lodash/pick';
-import isObject from 'lodash/isObject';
+// import isObject from 'lodash/isObject';
 import isFunction from 'lodash/isFunction';
 
 import Blocker from './Blocker';
-import { blankSocket, merge } from './Helpers';
+import { merge } from './Helpers';
 import AbstractTest from './AbstractTest';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
-
-type TestJsonType = {
-  source: any;
-  socket: any;
-  stepId: string;
-  breadcrumbs: string[];
-  testFile: any;
-  type: any;
-} | null;
 
 const resolveJS = (testJson, funcFile) => {
   const testJsonNew = { ...testJson };
@@ -54,16 +45,12 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []) => {
   return result;
 };
 
-const getTest = (testJsonIncome: TestJsonType = null, envsId: string = null, socket = blankSocket) => {
-  if (!testJsonIncome || !isObject(testJsonIncome) || !envsId) {
-    throw new Error('getTest params error');
-  }
-  let testJson = { ...testJsonIncome };
+const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: SocketType) => {
+  let testJson: TestJsonExtendType = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging
   testJson.source = { ...testJsonIncome };
-
   testJson.socket = socket;
 
   const blocker = new Blocker();
