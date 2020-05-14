@@ -56,7 +56,7 @@ export default class TestsContent extends Singleton {
   getAllData(force: boolean = false) {
     if (force || !this.allData) {
       const allContent: Array<TestYamlType | EnvYamlType | DataYamlType> = [];
-      const extensions = ['.yaml', '.yml', '.ppd', '.json'];
+      const extensions = ['.yaml', '.yml', '.ppd'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
       let paths: string[] = [];

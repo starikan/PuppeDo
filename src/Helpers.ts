@@ -33,14 +33,14 @@ BACKGROUND_MAGENTA = "\u001B[45m"
 BACKGROUND_CYAN = "\u001B[46m"
 BACKGROUND_WHITE = "\u001B[47m"
 */
-enum colors {
+export enum colors {
   sane = 0,
   black = 30,
   red = 31,
   green = 32,
   yellow = 33,
   blue = 34,
-  magenta = 3,
+  magenta = 35,
   cyan = 36,
   white = 37,
   raw = colors.sane,

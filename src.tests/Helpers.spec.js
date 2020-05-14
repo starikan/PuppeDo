@@ -18,9 +18,9 @@ test('Helpers -> sleep', async () => {
 });
 
 test('Helpers -> paintString', () => {
+  // expect(paintString('*******', 0)).toEqual('\u001b[0m*******\u001b[0m');
   expect(paintString('*******')).toEqual('\u001b[0m*******\u001b[0m');
   expect(paintString('*******', 'some weird')).toEqual('\u001b[0m*******\u001b[0m');
-  expect(paintString('*******', 0)).toEqual('\u001b[0m*******\u001b[0m');
   expect(paintString('*******', true)).toEqual('\u001b[0m*******\u001b[0m');
   expect(paintString('*******', [])).toEqual('\u001b[0m*******\u001b[0m');
   expect(paintString('*******', ['foo'])).toEqual('\u001b[0m*******\u001b[0m');
