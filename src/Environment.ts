@@ -214,7 +214,7 @@ class Envs {
 
   static async runPlaywright(browserSettings) {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const { headless = true, slowMo = 0, args = [], browser: browserName, windowSize = {} } = browserSettings;
+    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings;
     const { width = 1024, height = 768 } = windowSize;
 
     const options: Options = { headless, slowMo, args };
@@ -381,7 +381,7 @@ class Envs {
     this.data = data;
     this.selectors = selectors;
 
-    envs.forEach((env: EnvType) => {
+    envs.forEach((env: EnvYamlType) => {
       const envLocal = { ...env };
       const newEnv = new Env(envLocal);
       this.envs[newEnv.name] = newEnv;
@@ -402,7 +402,7 @@ class Envs {
 
 const instances = {};
 
-export default (envsId, socket = blankSocket) => {
+export default (envsId: string, socket = blankSocket) => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!instances[envsIdLocal]) {

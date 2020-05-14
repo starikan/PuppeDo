@@ -1,29 +1,5 @@
 import deepmerge from 'deepmerge';
 
-type ColorsMainType = {
-  sane: number;
-  black: number;
-  red: number;
-  green: number;
-  yellow: number;
-  blue: number;
-  magenta: number;
-  cyan: number;
-  white: number;
-};
-
-type ColorsExtendType = {
-  raw: number;
-  timer: number;
-  debug: number;
-  info: number;
-  test: number;
-  warn: number;
-  error: number;
-  trace: number;
-  env: number;
-};
-
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

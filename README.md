@@ -49,8 +49,10 @@ envsExt:
   - privateEnv
 
 browser:
-  type: puppeteer
+  type: browser
   runtime: run
+  engine: puppeteer
+  browser: chrome
   args:
   - "--window-size=1024,768"
   headless: false

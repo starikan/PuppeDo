@@ -55,11 +55,11 @@ export default class TestsContent extends Singleton {
 
   getAllData(force: boolean = false) {
     if (force || !this.allData) {
-      const allContent = [];
-      const extensions = ['.yaml', '.yml', '.ppd'];
+      const allContent: Array<TestYamlType | EnvYamlType | DataYamlType> = [];
+      const extensions = ['.yaml', '.yml', '.ppd', '.json'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
-      let paths = [];
+      let paths: string[] = [];
       for (let i = 0; i < folders.length; i += 1) {
         if (fs.existsSync(folders[i])) {
           const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
