@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    // "strict": true,
     "target": "ESNext",
-    "types": ["node", "webpack-env"],
+    "types": ["node", "webpack-env", "jest"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    // "strict": true,
     "removeComments": true
   },
   "lib": ["es2019", "es2019.array"],
