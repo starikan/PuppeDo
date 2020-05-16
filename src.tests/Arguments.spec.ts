@@ -1,6 +1,6 @@
-const _ = require('lodash');
+import isString from 'lodash/isString';
 
-const { Arguments } = require('../dist/index');
+import Arguments from '../src/Arguments';
 
 const argsDefault = {
   PPD_DATA: {},
@@ -31,7 +31,7 @@ const argsModify = {
   PPD_LOG_EXTEND: true,
   PPD_OUTPUT: 'zee',
   PPD_ROOT: 'rrr',
-  PPD_ROOT_ADDITIONAL: ['iii'],
+  PPD_ROOT_ADDITIONAL: ['iii', 'ooo'],
   PPD_ROOT_IGNORE: ['dqq'],
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
@@ -42,17 +42,38 @@ const argsModify = {
   PPD_LOG_FULLPAGE: true,
 };
 
-function setArg(argName, argData) {
+const argsENV = {
+  PPD_DATA: '{"foo":"bar"}',
+  PPD_DEBUG_MODE: 'true',
+  PPD_DISABLE_ENV_CHECK: 'true',
+  PPD_ENVS: 'hyy',
+  PPD_LOG_DISABLED: 'true',
+  PPD_LOG_EXTEND: 'true',
+  PPD_OUTPUT: 'zee',
+  PPD_ROOT: 'rrr',
+  PPD_ROOT_ADDITIONAL: 'iii, ooo',
+  PPD_ROOT_IGNORE: 'dqq',
+  PPD_SELECTORS: '{"joo": "jii"}',
+  PPD_TESTS: 'suu',
+  PPD_LOG_LEVEL_NESTED: '10',
+  PPD_LOG_LEVEL_TYPE: 'info',
+  PPD_LOG_LEVEL_TYPE_IGNORE: 'joo',
+  PPD_LOG_SCREENSHOT: 'true',
+  PPD_LOG_FULLPAGE: 'true',
+};
+
+function setArg<T>(argName: string, argData: T) {
   // Reset Arguments
+  // eslint-disable-next-line no-new
   new Arguments({}, true);
 
   const argMock = { [argName]: argData };
-  const argResult = _.get(new Arguments(argMock, true).args, argName);
+  const argResult = new Arguments(argMock, true).args[argName];
 
   return [argData, argResult];
 }
 
-function errors(name, type) {
+function errors(name: string, type: string) {
   return new Error(`Invalid argument type '${name}', '${type}' required.`);
 }
 
@@ -63,8 +84,8 @@ test('Arguments is Singleton and Default args', () => {
 });
 
 test('Arguments check', () => {
-  let argData;
-  let argResult;
+  let argData: string;
+  let argResult: string | Object;
 
   // Object
   [argData, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
@@ -193,7 +214,7 @@ test('Arguments CLI', () => {
   const rawArgv = process.argv;
 
   const argsJSON = Object.keys(argsModify).map((key) => {
-    const val = _.isString(argsModify[key]) ? argsModify[key] : JSON.stringify(argsModify[key]);
+    const val = isString(argsModify[key]) ? argsModify[key] : JSON.stringify(argsModify[key]);
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];
@@ -208,7 +229,7 @@ test('Arguments CLI', () => {
 });
 
 test('Arguments ENV', () => {
-  process.env = { ...process.env, ...argsModify };
+  process.env = { ...process.env, ...argsENV };
   const { args } = new Arguments({}, true);
   expect(argsModify).toEqual(args);
   Object.keys(argsModify).map((v) => delete process.env[v]);
