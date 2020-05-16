@@ -86,7 +86,7 @@ test('Arguments check', () => {
   let argResult: string | Object;
 
   // Object
-  [argData, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
+  [, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
   expect(argResult).toEqual({ foo: 'bar' });
   [argData, argResult] = setArg('PPD_DATA', { foo: 'bar' });
   expect(argData).toEqual(argResult);
@@ -126,13 +126,13 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
   [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', []);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,    bar');
+  [, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,    bar');
   expect(argResult).toEqual(['boo', 'bar']);
-  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,bar');
+  [, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo,bar');
   expect(argResult).toEqual(['boo', 'bar']);
-  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo');
+  [, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo');
   expect(argResult).toEqual(['boo']);
-  [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', '');
+  [, argResult] = setArg('PPD_ROOT_ADDITIONAL', '');
   expect(argResult).toEqual(['']);
 
   expect(() => setArg('PPD_ROOT_ADDITIONAL', false)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
@@ -161,9 +161,9 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
   [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 1);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '0');
+  [, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '0');
   expect(argResult).toEqual(0);
-  [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '1');
+  [, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '1');
   expect(argResult).toEqual(1);
   expect(() => setArg('PPD_LOG_LEVEL_NESTED', false)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
   expect(() => setArg('PPD_LOG_LEVEL_NESTED', true)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
