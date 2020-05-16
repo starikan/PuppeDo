@@ -9,4 +9,10 @@ module.exports = {
   transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.ts'],
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.json',
+      babelConfig: true,
+    },
+  },
 };
