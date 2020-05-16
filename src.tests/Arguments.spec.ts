@@ -1,5 +1,3 @@
-import isString from 'lodash/isString';
-
 import Arguments from '../src/Arguments';
 
 const argsDefault = {
@@ -214,7 +212,8 @@ test('Arguments CLI', () => {
   const rawArgv = process.argv;
 
   const argsJSON = Object.keys(argsModify).map((key) => {
-    const val = isString(argsModify[key]) ? argsModify[key] : JSON.stringify(argsModify[key]);
+    const isString = typeof argsModify[key] === 'string';
+    const val = isString ? argsModify[key] : JSON.stringify(argsModify[key]);
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];

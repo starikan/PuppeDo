@@ -1,5 +1,3 @@
-import isFunction from 'lodash/isFunction';
-
 import { merge, sleep, paintString, blankSocket } from '../src/Helpers';
 
 test('Helpers -> merge', () => {
@@ -49,8 +47,8 @@ test('Helpers -> paintString', () => {
 
 test('Helpers -> blankSocket', () => {
   expect(Object.keys(blankSocket)).toEqual(['send', 'sendYAML']);
-  expect(isFunction(blankSocket.send)).toBe(true);
-  expect(isFunction(blankSocket.sendYAML)).toBe(true);
+  expect(typeof blankSocket.send === 'function').toBe(true);
+  expect(typeof blankSocket.sendYAML === 'function').toBe(true);
   expect(blankSocket.send()).toBeFalsy();
   expect(blankSocket.sendYAML()).toBeFalsy();
 });
