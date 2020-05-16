@@ -1,12 +1,13 @@
-const fs = require('fs');
-const path = require('path');
+/* eslint-disable no-new */
+import fs from 'fs';
+import path from 'path';
 
-const dayjs = require('dayjs');
+import dayjs from 'dayjs';
 
-const { Log } = require('../dist/index');
-const { Arguments } = require('../dist/index');
+import Log from '../src/Log';
+import Arguments from '../src/Arguments';
 
-const clearFiles = (fileName) => {
+const clearFiles = (fileName: string) => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
   if (fs.existsSync(path.join(folder, fileName))) {
     fs.unlinkSync(path.join(folder, fileName));
@@ -20,7 +21,7 @@ describe('Log', () => {
   let logger;
 
   beforeEach(() => {
-    logger = new Log();
+    logger = new Log('');
   });
 
   test('Constructor', () => {

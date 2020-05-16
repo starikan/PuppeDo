@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
+    // "strict": true,
     "target": "ESNext",
-    "types": ["node", "webpack-env"],
+    "types": ["node", "webpack-env", "jest"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    // "strict": true,
     "removeComments": true
   },
-  "lib": ["es2019", "es2019.array"],
-  "include": ["src/**/*", "index.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "lib": ["es2020", "es2020.array"],
+  "include": ["src/**/*", "src.tests/**/*", "index.ts"],
+  "exclude": ["node_modules"]
 }
