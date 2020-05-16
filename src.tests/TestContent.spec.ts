@@ -1,7 +1,8 @@
-const path = require('path');
+/* eslint-disable no-underscore-dangle */
+import path from 'path';
 
-const { TestsContent } = require('../dist/index');
-const { Arguments } = require('../dist/index');
+import TestsContent from '../src/TestContent';
+import Arguments from '../src/Arguments';
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -18,6 +19,7 @@ describe('TestContent', () => {
     expect(instance.additionalFolders).toEqual([]);
 
     // Global Arguments run
+    // eslint-disable-next-line no-new
     new Arguments(
       {
         PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', 'foo'],
