@@ -1,4 +1,4 @@
-declare type ArgumentsType = {
+type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
   PPD_ROOT_IGNORE: string[];
@@ -18,9 +18,9 @@ declare type ArgumentsType = {
   PPD_LOG_FULLPAGE: boolean;
 };
 
-declare type ArgumentsKeysType = keyof ArgumentsType;
+type ArgumentsKeysType = keyof ArgumentsType;
 
-declare type SocketType = {
+type SocketType = {
   send: Function;
   sendYAML: Function;
 };
@@ -57,7 +57,7 @@ type EnvBrowserType = {
   };
 };
 
-declare type EnvYamlType = {
+type EnvYamlType = {
   name: string;
   type: 'env';
   description?: string;
@@ -74,13 +74,25 @@ declare type EnvYamlType = {
   };
 };
 
-declare type DataYamlType = {
+interface EnvType extends EnvYamlType {
+  testFile: string;
+}
+
+// ================ DATA / SELECTORS ====================
+
+type DataYamlType = {
   name: string;
   type: 'data' | 'selectors';
   data: Object;
 };
 
-declare type TestJsonExtendType = {
+interface DataType extends DataYamlType {
+  testFile: string;
+}
+
+// ================ TESTS / ATOMS ====================
+
+type TestJsonExtendType = {
   source: any;
   socket: any;
   stepId: string;
@@ -89,7 +101,11 @@ declare type TestJsonExtendType = {
   type: any;
 };
 
-declare type TestYamlType = {
+type TestYamlType = {
   name: string;
   type?: 'atom' | 'test';
 };
+
+interface TestType extends TestYamlType {
+  testFile: string;
+}

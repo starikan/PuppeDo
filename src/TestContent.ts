@@ -9,13 +9,12 @@ import Arguments from './Arguments';
 
 type AllDataType = {
   allFiles: Array<string>;
-  allContent: Array<TestYamlType | EnvYamlType | DataYamlType>;
-  atoms: Array<TestYamlType>;
-  tests: Array<TestYamlType>;
-  envs: Array<EnvYamlType>;
-  data: Array<DataYamlType>;
-  selectors: Array<DataYamlType>;
-  __instance: any;
+  allContent: Array<TestType | EnvType | DataType>;
+  atoms: Array<TestType>;
+  tests: Array<TestType>;
+  envs: Array<EnvType>;
+  data: Array<DataType>;
+  selectors: Array<DataType>;
 };
 
 export default class TestsContent extends Singleton {
@@ -36,10 +35,10 @@ export default class TestsContent extends Singleton {
     }
   }
 
-  static checkDuplicates(tests, key: string) {
+  static checkDuplicates<T extends TestType | EnvType | DataType>(tests: Array<T>): Array<T> {
     const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
     if (blankNames.length) {
-      throw new Error(`There is no name of '${key}' in files:\n${blankNames.join('\n')}`);
+      throw new Error(`There is blank 'name' value in files:\n${blankNames.join('\n')}`);
     }
 
     const dubs = tests.reduce((s, v) => {
@@ -51,6 +50,7 @@ export default class TestsContent extends Singleton {
     const isThrow = Object.values(dubs).some((v: any[]) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
+      const key = tests[0].type;
       let message = `There is duplicates of '${key}':\n`;
       Object.entries(dubs).forEach((dub: [string, []]) => {
         const [keyDub, valueDub] = dub;
@@ -66,7 +66,7 @@ export default class TestsContent extends Singleton {
 
   getAllData(force: boolean = false): AllDataType {
     if (force || !this.allData) {
-      const allContent: Array<TestYamlType | EnvYamlType | DataYamlType> = [];
+      const allContent: Array<TestType | EnvType | DataType> = [];
       const extensions = ['.yaml', '.yml', '.ppd'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
@@ -94,28 +94,23 @@ export default class TestsContent extends Singleton {
         }
       });
 
-      const atoms: Array<TestYamlType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestYamlType => v.type === 'atom'),
-        'atom',
+      const atoms: Array<TestType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is TestType => v.type === 'atom'),
       );
-      const tests: Array<TestYamlType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestYamlType => v.type === 'test'),
-        'test',
+      const tests: Array<TestType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is TestType => v.type === 'test'),
       );
-      const envs: Array<EnvYamlType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is EnvYamlType => v.type === 'env'),
-        'env',
+      const envs: Array<EnvType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is EnvType => v.type === 'env'),
       );
-      const data: Array<DataYamlType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is DataYamlType => v.type === 'data'),
-        'data',
+      const data: Array<DataType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is DataType => v.type === 'data'),
       );
-      const selectors: Array<DataYamlType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is DataYamlType => v.type === 'selectors'),
-        'selectors',
+      const selectors: Array<DataType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
 
-      this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
+      this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors };
     }
 
     return this.allData;

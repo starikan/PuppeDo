@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import path from 'path';
 
 import TestsContent from '../src/TestContent';
@@ -7,18 +6,16 @@ import Arguments from '../src/Arguments';
 describe('TestContent', () => {
   test('Init', () => {
     const spy = jest.spyOn(console, 'log').mockImplementation();
-    // Raw run
-    let { allData } = new TestsContent();
-    let instance = allData.__instance;
+    const { ignorePaths, rootFolder, additionalFolders } = new TestsContent();
     // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalled();
     spy.mockRestore();
-    // const realIgnorePaths = ['.git', 'node_modules', '.history', 'output'].map((v) => path.normalize(v));
-    expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output']);
-    expect(instance.rootFolder).toEqual(process.cwd());
-    expect(instance.additionalFolders).toEqual([]);
+    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output']);
+    expect(rootFolder).toEqual(process.cwd());
+    expect(additionalFolders).toEqual([]);
+  });
 
-    // Global Arguments run
+  test('Init with args', () => {
     // eslint-disable-next-line no-new
     new Arguments(
       {
@@ -28,23 +25,21 @@ describe('TestContent', () => {
       },
       true,
     );
-    allData = new TestsContent(true).allData;
-    instance = allData.__instance;
-    expect(instance.ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'foo']);
-    expect(instance.rootFolder).toEqual(path.normalize('tests'));
-    expect(instance.additionalFolders).toEqual(['bar']);
+    const { ignorePaths, rootFolder, additionalFolders } = new TestsContent(true);
+    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'foo']);
+    expect(rootFolder).toEqual(path.normalize('tests'));
+    expect(additionalFolders).toEqual(['bar']);
   });
 
   test('Getting data', () => {
     const { allData } = new TestsContent();
-    const allData2 = new TestsContent().allData;
+    const { allData: allData2 } = new TestsContent();
     expect(allData).toBeDefined();
     expect(allData).toEqual(allData2);
   });
 
   test('getAllData', () => {
-    let { allData } = new TestsContent();
-    const instance = allData.__instance;
+    const allData = new TestsContent().getAllData();
     expect(allData).toBeDefined();
     expect(allData.allFiles).toBeDefined();
     expect(allData.allContent).toBeDefined();
@@ -53,13 +48,19 @@ describe('TestContent', () => {
     expect(allData.envs).toBeDefined();
     expect(allData.data).toBeDefined();
     expect(allData.selectors).toBeDefined();
-    expect(allData.__instance).toBeDefined();
+  });
 
-    expect(instance.getAllData()).toEqual(allData);
+  test('getAllData with args', () => {
+    // eslint-disable-next-line no-new
+    new Arguments(
+      {
+        PPD_ROOT_ADDITIONAL: [],
+        PPD_ROOT: 'notExistFolder',
+      },
+      true,
+    );
 
-    instance.rootFolder = 'notExistFolder';
-    instance.additionalFolders = [];
-    allData = instance.getAllData(true);
+    const allData = new TestsContent(true).getAllData(true);
     expect(allData.allFiles).toEqual([]);
     expect(allData.allContent).toEqual([]);
     expect(allData.atoms).toEqual([]);
@@ -72,40 +73,38 @@ describe('TestContent', () => {
   test('checkDuplicates', () => {
     const CD = TestsContent.checkDuplicates;
 
-    const data = [
-      { type: 'foo', name: 'bar' },
-      { type: 'foo', name: 'goo' },
-      { type: 'foo', name: 'zoo' },
-      { type: 'foo', name: 'daa' },
+    const data: Array<TestType> = [
+      { type: 'atom', name: 'bar', testFile: 'lee' },
+      { type: 'atom', name: 'goo', testFile: 'bar' },
+      { type: 'atom', name: 'zoo', testFile: 'tyy' },
+      { type: 'atom', name: 'daa', testFile: 'tee' },
     ];
-    expect(CD(data, 'foo')).toEqual([
-      { name: 'bar', type: 'foo' },
-      { name: 'goo', type: 'foo' },
-      { name: 'zoo', type: 'foo' },
-      { name: 'daa', type: 'foo' },
+    expect(CD(data)).toEqual([
+      { type: 'atom', name: 'bar', testFile: 'lee' },
+      { type: 'atom', name: 'goo', testFile: 'bar' },
+      { type: 'atom', name: 'zoo', testFile: 'tyy' },
+      { type: 'atom', name: 'daa', testFile: 'tee' },
     ]);
 
-    expect(() => CD([{}], 'foo')).toThrow(new Error("There is no name of 'foo' in files:\n"));
-    expect(() => CD([{ name: '' }], 'foo')).toThrow(new Error("There is no name of 'foo' in files:\n"));
-    expect(() => CD([{ name: '', testFile: 'bar' }], 'foo')).toThrow(
-      new Error("There is no name of 'foo' in files:\nbar"),
+    expect(() => CD([{ name: '', testFile: 'bar', type: 'env' }])).toThrow(
+      new Error("There is blank 'name' value in files:\nbar"),
     );
 
-    const testsObjects1 = [
-      { name: '', testFile: 'bar' },
-      { name: '', testFile: 'tyy' },
+    const testsObjects1: Array<DataType> = [
+      { name: '', testFile: 'bar', type: 'data', data: {} },
+      { name: '', testFile: 'tyy', type: 'data', data: {} },
     ];
-    expect(() => CD(testsObjects1, 'foo')).toThrow(new Error("There is no name of 'foo' in files:\nbar\ntyy"));
+    expect(() => CD(testsObjects1)).toThrow(new Error("There is blank 'name' value in files:\nbar\ntyy"));
 
-    const testsObjects2 = [
-      { name: 'puu', testFile: 'lee' },
-      { name: 'dee', testFile: 'bar' },
-      { name: 'dee', testFile: 'tyy' },
+    const testsObjects2: Array<DataType> = [
+      { name: 'puu', testFile: 'lee', type: 'selectors', data: {} },
+      { name: 'dee', testFile: 'bar', type: 'selectors', data: {} },
+      { name: 'dee', testFile: 'tyy', type: 'selectors', data: {} },
     ];
     // TODO: ПОчему этот тест проходит хотя message вобще то нет
-    expect(() => CD(testsObjects2, 'foo')).toThrow(
+    expect(() => CD(testsObjects2)).toThrow(
       new Error(
-        `There is duplicates of 'foo':
+        `There is duplicates of 'selectors':
  - Name: 'dee'.
     * 'bar'
     * 'tyy'
