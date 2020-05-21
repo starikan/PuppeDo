@@ -12,3 +12,17 @@ runTest:
   - todo:
   - test:
       description: Make awesome sub test 2
+# ---
+# name: subTest
+# type: test
+# description: SubTest
+# runTest:
+#   - loop:
+#       runTest:
+#         - todo:
+#         - todo:
+#   - todo:
+#       description: Make awesome sub test
+#   - todo:
+#   - test:
+#       description: Make awesome sub test 2

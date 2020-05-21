@@ -7,11 +7,22 @@ import yaml from 'js-yaml';
 import Singleton from './Singleton';
 import Arguments from './Arguments';
 
+type AllDataType = {
+  allFiles: Array<string>;
+  allContent: Array<TestYamlType | EnvYamlType | DataYamlType>;
+  atoms: Array<TestYamlType>;
+  tests: Array<TestYamlType>;
+  envs: Array<EnvYamlType>;
+  data: Array<DataYamlType>;
+  selectors: Array<DataYamlType>;
+  __instance: any;
+};
+
 export default class TestsContent extends Singleton {
-  allData: any;
-  rootFolder: any;
-  additionalFolders: any;
-  ignorePaths: any;
+  allData!: AllDataType;
+  rootFolder!: string;
+  additionalFolders!: Array<string>;
+  ignorePaths!: Array<string>;
 
   constructor(reInit = false) {
     super();
@@ -25,7 +36,7 @@ export default class TestsContent extends Singleton {
     }
   }
 
-  static checkDuplicates(tests, key) {
+  static checkDuplicates(tests, key: string) {
     const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
     if (blankNames.length) {
       throw new Error(`There is no name of '${key}' in files:\n${blankNames.join('\n')}`);
@@ -50,24 +61,25 @@ export default class TestsContent extends Singleton {
       });
       throw new Error(message);
     }
-    return true;
+    return tests;
   }
 
-  getAllData(force: boolean = false) {
+  getAllData(force: boolean = false): AllDataType {
     if (force || !this.allData) {
       const allContent: Array<TestYamlType | EnvYamlType | DataYamlType> = [];
       const extensions = ['.yaml', '.yml', '.ppd'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
-      let paths: string[] = [];
-      for (let i = 0; i < folders.length; i += 1) {
-        if (fs.existsSync(folders[i])) {
-          const pathsFolder = walkSync(folders[i], { ignore: this.ignorePaths, directories: false })
-            .filter((v) => extensions.includes(path.parse(v).ext))
-            .map((v) => path.join(folders[i], v));
-          paths = [...paths, ...pathsFolder];
-        }
-      }
+      const paths = folders
+        .map((folder) => {
+          if (fs.existsSync(folder)) {
+            return walkSync(folder, { ignore: this.ignorePaths, directories: false })
+              .filter((v) => extensions.includes(path.parse(v).ext))
+              .map((v) => path.join(folder, v));
+          }
+          return [];
+        })
+        .flat();
 
       paths.forEach((filePath) => {
         try {
@@ -82,20 +94,30 @@ export default class TestsContent extends Singleton {
         }
       });
 
-      const atoms: Array<TestYamlType> = allContent.filter((v): v is TestYamlType => v.type === 'atom');
-      const tests: Array<TestYamlType> = allContent.filter((v): v is TestYamlType => v.type === 'test');
-      const envs: Array<EnvYamlType> = allContent.filter((v): v is EnvYamlType => v.type === 'env');
-      const data: Array<DataYamlType> = allContent.filter((v): v is DataYamlType => v.type === 'data');
-      const selectors: Array<DataYamlType> = allContent.filter((v): v is DataYamlType => v.type === 'selectors');
+      const atoms: Array<TestYamlType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is TestYamlType => v.type === 'atom'),
+        'atom',
+      );
+      const tests: Array<TestYamlType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is TestYamlType => v.type === 'test'),
+        'test',
+      );
+      const envs: Array<EnvYamlType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is EnvYamlType => v.type === 'env'),
+        'env',
+      );
+      const data: Array<DataYamlType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is DataYamlType => v.type === 'data'),
+        'data',
+      );
+      const selectors: Array<DataYamlType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is DataYamlType => v.type === 'selectors'),
+        'selectors',
+      );
 
       this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
-
-      ['atoms', 'tests', 'envs', 'data', 'selectors'].forEach((key) => {
-        TestsContent.checkDuplicates(this.allData[key], key);
-      });
-
-      return this.allData;
     }
+
     return this.allData;
   }
 }

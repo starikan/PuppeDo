@@ -78,7 +78,12 @@ describe('TestContent', () => {
       { type: 'foo', name: 'zoo' },
       { type: 'foo', name: 'daa' },
     ];
-    expect(CD(data, 'foo')).toBe(true);
+    expect(CD(data, 'foo')).toEqual([
+      { name: 'bar', type: 'foo' },
+      { name: 'goo', type: 'foo' },
+      { name: 'zoo', type: 'foo' },
+      { name: 'daa', type: 'foo' },
+    ]);
 
     expect(() => CD([{}], 'foo')).toThrow(new Error("There is no name of 'foo' in files:\n"));
     expect(() => CD([{ name: '' }], 'foo')).toThrow(new Error("There is no name of 'foo' in files:\n"));

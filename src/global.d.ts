@@ -46,7 +46,7 @@ type EnvBrowserType = {
     width?: number;
     height?: number;
   };
-  killOnEnd: boolean;
+  killOnEnd?: boolean;
   runtimeEnv?: {
     runtimeExecutable?: string;
     program?: string;

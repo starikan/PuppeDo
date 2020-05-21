@@ -36,6 +36,8 @@ module.exports = {
     'lines-between-class-members': 0,
     'no-unused-vars': 0,
     '@typescript-eslint/no-unused-vars': 'error',
-    'import/no-extraneous-dependencies': ["error", {"devDependencies": true}],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/explicit-function-return-type': 'warn',
   },
 };
