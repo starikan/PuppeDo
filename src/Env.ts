@@ -1,4 +1,4 @@
-export default class Env implements EnvsPoolType {
+export default class Env {
   name: string;
   state: EnvStateType; // Browser, pages, cookies, etc.
   env: EnvYamlType;

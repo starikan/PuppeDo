@@ -25,16 +25,59 @@ declare type SocketType = {
   sendYAML: Function;
 };
 
-type EnvsPoolType = {
-  name: string;
-  state: EnvStateType;
-  env: EnvYamlType;
-};
+// ================ ENVS ====================
 
-declare type EnvStateType = {
+type EnvStateType = {
   browser: any;
   pages: Object;
   pid?: any;
+};
+
+type EnvBrowserType = {
+  type?: 'browser' | 'electron' | 'api';
+  runtime?: 'run' | 'connect';
+  engine?: 'puppeteer' | 'playwright';
+  browserName?: 'chromium' | 'firefox' | 'webkit';
+  args?: Array<string>;
+  headless?: boolean;
+  slowMo?: number;
+  urlDevtoolsJson?: string;
+  windowSize?: {
+    width?: number;
+    height?: number;
+  };
+  killOnEnd: boolean;
+  runtimeEnv?: {
+    runtimeExecutable?: string;
+    program?: string;
+    cwd?: string;
+    args?: Array<string>;
+    env?: { [key: string]: string };
+    pauseAfterStartApp?: number;
+  };
+};
+
+declare type EnvYamlType = {
+  name: string;
+  type: 'env';
+  description?: string;
+  data?: Object;
+  selectors?: Object;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
+  envsExt?: Array<string>;
+  browser?: EnvBrowserType;
+  log?: {
+    level?: string;
+    screenshot?: boolean;
+    fullpage?: boolean;
+  };
+};
+
+declare type DataYamlType = {
+  name: string;
+  type: 'data' | 'selectors';
+  data: Object;
 };
 
 declare type TestJsonExtendType = {
@@ -49,49 +92,4 @@ declare type TestJsonExtendType = {
 declare type TestYamlType = {
   name: string;
   type?: 'atom' | 'test';
-};
-
-declare type EnvYamlType = {
-  name: string;
-  type: 'env';
-  description?: string;
-  data?: Object;
-  selectors?: Object;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  envsExt?: Array<string>;
-  browser?: {
-    type?: 'browser' | 'electron' | 'api';
-    runtime?: 'run' | 'connect';
-    engine?: 'puppeteer' | 'playwright';
-    browserName?: 'chromium' | 'firefox' | 'webkit';
-    args?: Array<string>;
-    headless?: boolean;
-    slowMo?: number;
-    urlDevtoolsJson?: string;
-    windowSize?: {
-      width?: number;
-      height?: number;
-    };
-    killOnEnd: boolean;
-    runtimeEnv?: {
-      runtimeExecutable?: string;
-      program?: string;
-      cwd?: string;
-      args?: Array<string>;
-      env?: Object;
-      pauseAfterStartApp?: number;
-    };
-  };
-  log?: {
-    level?: string;
-    screenshot?: boolean;
-    fullpage?: boolean;
-  };
-};
-
-declare type DataYamlType = {
-  name: string;
-  type: 'data' | 'selectors';
-  data: Object;
 };

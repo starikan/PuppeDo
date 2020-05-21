@@ -73,8 +73,7 @@ export default class TestsContent extends Singleton {
         try {
           const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           testsYaml.forEach((v) => {
-            const collect = { ...v, ...{ testFile: filePath } };
-            collect.type = collect.type || 'test';
+            const collect = { ...{ type: 'test' }, ...v, ...{ testFile: filePath } };
             allContent.push(collect);
           });
         } catch (e) {
@@ -83,11 +82,11 @@ export default class TestsContent extends Singleton {
         }
       });
 
-      const atoms = allContent.filter((v) => v.type === 'atom' && v);
-      const tests = allContent.filter((v) => v.type === 'test' && v);
-      const envs = allContent.filter((v) => v.type === 'env' && v);
-      const data = allContent.filter((v) => v.type === 'data' && v);
-      const selectors = allContent.filter((v) => v.type === 'selectors' && v);
+      const atoms: Array<TestYamlType> = allContent.filter((v): v is TestYamlType => v.type === 'atom');
+      const tests: Array<TestYamlType> = allContent.filter((v): v is TestYamlType => v.type === 'test');
+      const envs: Array<EnvYamlType> = allContent.filter((v): v is EnvYamlType => v.type === 'env');
+      const data: Array<DataYamlType> = allContent.filter((v): v is DataYamlType => v.type === 'data');
+      const selectors: Array<DataYamlType> = allContent.filter((v): v is DataYamlType => v.type === 'selectors');
 
       this.allData = { allFiles: paths, allContent, atoms, tests, envs, data, selectors, __instance: this };
 
