@@ -36,23 +36,23 @@ export default class TestsContent extends Singleton {
   }
 
   static checkDuplicates<T extends TestType | EnvType | DataType>(tests: Array<T>): Array<T> {
-    const blankNames = tests.filter((v) => !v.name).map((v) => v.testFile);
+    const blankNames = tests.filter((v) => !v.name);
     if (blankNames.length) {
-      throw new Error(`There is blank 'name' value in files:\n${blankNames.join('\n')}`);
+      throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
     }
 
-    const dubs = tests.reduce((s, v) => {
+    const dubs = tests.reduce((s: { [key: string]: Array<string> }, v: T) => {
       const collector = { ...s };
       collector[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
       return collector;
     }, {});
 
-    const isThrow = Object.values(dubs).some((v: any[]) => v.length > 1);
+    const isThrow = Object.values(dubs).some((v) => v.length > 1);
 
     if (Object.keys(dubs).length && isThrow) {
       const key = tests[0].type;
       let message = `There is duplicates of '${key}':\n`;
-      Object.entries(dubs).forEach((dub: [string, []]) => {
+      Object.entries(dubs).forEach((dub) => {
         const [keyDub, valueDub] = dub;
         if (valueDub.length > 1) {
           message += ` - Name: '${keyDub}'.\n`;
