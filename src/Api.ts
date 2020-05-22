@@ -14,9 +14,9 @@ import { getTimer, blankSocket } from './Helpers';
 __non_webpack_require__('source-map-support').install();
 
 const run = async (argsInput = {}) => {
-  let envsId: string;
-  let envs;
-  let log;
+  const { envsId, envs } = Environment();
+  const logger = new Log(envsId);
+  const log = logger.log.bind(logger);
   const socket = blankSocket;
 
   try {
@@ -36,12 +36,7 @@ const run = async (argsInput = {}) => {
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
       const startTimeTest = process.hrtime.bigint();
 
-      ({ envsId, envs } = Environment(envsId));
-      envs.initOutput(args.PPD_TESTS[i]);
-      envs.current.test = args.PPD_TESTS[i];
-
-      const logger = new Log(envsId);
-      log = logger.log.bind(logger);
+      envs.setCurrentTest(args.PPD_TESTS[i]);
 
       if (i === 0) {
         await log({ level: 'timer', text: `Init time 🕝: ${initArgsTime} sec.` });
@@ -64,26 +59,17 @@ const run = async (argsInput = {}) => {
 
       await envs.runBrowsers();
 
-      await log({
-        level: 'timer',
-        text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.`,
-      });
+      await log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.` });
 
       await test();
 
-      await log({
-        level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${getTimer(startTimeTest)} sec.`,
-      });
+      await log({ level: 'timer', text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${getTimer(startTimeTest)} sec.` });
     }
 
     await envs.closeBrowsers();
     await envs.closeProcesses();
 
-    await log({
-      level: 'timer',
-      text: `Evaluated time 🕝: ${getTimer(startTime)} sec.`,
-    });
+    await log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime)} sec.` });
 
     // if (!module.parent) {
     process.exit(0);

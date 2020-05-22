@@ -26,7 +26,7 @@ type Options = {
   devtools?: any;
 };
 
-interface EnvsType {
+interface EnvsPoolType {
   envs: any;
   data: Object;
   selectors: Object;
@@ -49,12 +49,12 @@ interface EnvsType {
 }
 
 type EnvsInstanceType = {
-  envs: EnvsType;
+  envs: EnvsPool;
   socket: SocketType;
   envsId: string;
 };
 
-class Envs implements EnvsType {
+class EnvsPool implements EnvsPoolType {
   envs: any;
   data: Object;
   selectors: Object;
@@ -105,7 +105,7 @@ class Envs implements EnvsType {
   }
 
   getOutputsFolders(): { folder: string; folderLatest: string } {
-    const { folder, folderLatest } = this.output || {};
+    const { folder, folderLatest } = this.output;
     if (!folder || !folderLatest) {
       throw new Error('There is no output folder');
     }
@@ -123,26 +123,23 @@ class Envs implements EnvsType {
 
   initOutput(testName = 'test'): void {
     const { PPD_OUTPUT: output } = new Arguments().args;
-    const currentTest = this.current.test || testName;
 
     if (!fs.existsSync(output)) {
       fs.mkdirSync(output);
     }
     const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
 
-    const folder = path.join(output, `${now}_${currentTest}`);
+    const folder = path.join(output, `${now}_${testName}`);
     fs.mkdirSync(folder);
 
-    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folder, 'output.html'));
+    fs.copyFileSync(EnvsPool.resolveOutputFile(), path.join(folder, 'output.html'));
 
     this.output.output = output;
-    this.output.name = currentTest;
+    this.output.name = testName;
     this.output.folder = folder;
     this.output.folderFull = path.resolve(folder);
 
     this.initOutputLatest();
-
-    this.initOutput = (): void => {};
   }
 
   initOutputLatest(): void {
@@ -164,7 +161,7 @@ class Envs implements EnvsType {
       }
     }
 
-    fs.copyFileSync(Envs.resolveOutputFile(), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(EnvsPool.resolveOutputFile(), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
     this.output.folderLatestFull = path.resolve(folderLatest);
@@ -195,11 +192,11 @@ class Envs implements EnvsType {
       if (type === 'browser') {
         if (runtime === 'run') {
           if (engine === 'puppeteer') {
-            const { browser, pages } = await Envs.runPuppeteer(browserSettings);
+            const { browser, pages } = await EnvsPool.runPuppeteer(browserSettings);
             envPool.state = { ...envPool.state, ...{ browser, pages } };
           }
           if (engine === 'playwright') {
-            const { browser, pages } = await Envs.runPlaywright(browserSettings);
+            const { browser, pages } = await EnvsPool.runPlaywright(browserSettings);
             envPool.state = { ...envPool.state, ...{ browser, pages } };
           }
         }
@@ -207,7 +204,7 @@ class Envs implements EnvsType {
 
       if (type === 'electron') {
         if (runtime === 'connect') {
-          const { browser, pages } = await Envs.connectElectron(browserSettings);
+          const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
           envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
         if (runtime === 'run') {
@@ -335,7 +332,7 @@ class Envs implements EnvsType {
 
       await sleep(pauseAfterStartApp);
 
-      const { browser, pages } = await Envs.connectElectron(browserSettings);
+      const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
       return { browser, pages, pid: prc.pid };
     }
     throw new Error(`Can't run Electron ${runtimeExecutable}`);
@@ -426,7 +423,7 @@ class Envs implements EnvsType {
 
   async init(runBrowsers: boolean = true): Promise<void> {
     const { args } = new Arguments();
-    const envs: Array<EnvType> = await Envs.resolveLinks();
+    const envs: Array<EnvType> = await EnvsPool.resolveLinks();
     const { PPD_DATA: data = {}, PPD_SELECTORS: selectors = {} } = args;
     this.args = args;
     this.data = data;
@@ -449,11 +446,18 @@ class Envs implements EnvsType {
     // If already init do nothing
     this.init = async (): Promise<void> => {};
   }
+
+  setCurrentTest(testName: string = ''): void {
+    if (testName) {
+      this.current.test = testName;
+      this.initOutput(testName);
+    }
+  }
 }
 
 const instances: { [key: string]: EnvsInstanceType } = {};
 
-export default (envsId: string, socket: SocketType = blankSocket): EnvsInstanceType => {
+export default (envsId: string = '', testName: string = '', socket: SocketType = blankSocket): EnvsInstanceType => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!instances[envsIdLocal]) {
@@ -461,9 +465,11 @@ export default (envsId: string, socket: SocketType = blankSocket): EnvsInstanceT
     }
   } else {
     envsIdLocal = crypto.randomBytes(16).toString('hex');
-    const newEnvs = new Envs();
+    const newEnvs = new EnvsPool();
     instances[envsIdLocal] = { envs: newEnvs, socket, envsId: envsIdLocal };
   }
+
+  instances[envsIdLocal].envs.setCurrentTest(testName);
 
   return instances[envsIdLocal];
 };
