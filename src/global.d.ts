@@ -30,7 +30,8 @@ type SocketType = {
 type EnvStateType = {
   browser: any;
   pages: Object;
-  pid?: any;
+  contexts?: Object;
+  pid?: number;
 };
 
 type EnvBrowserType = {

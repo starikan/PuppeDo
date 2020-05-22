@@ -4,7 +4,6 @@ import path from 'path';
 import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
 import dayjs from 'dayjs';
@@ -86,7 +85,7 @@ class Envs implements EnvsType {
     this.log = [];
   }
 
-  setEnv(name: string, page: any = null): void {
+  setEnv(name: string, page: string = ''): void {
     if (name && Object.keys(this.envs).includes(name)) {
       this.current.name = name;
       if (page && this.envs[name]?.state?.pages[page]) {
@@ -99,13 +98,13 @@ class Envs implements EnvsType {
     }
   }
 
-  getActivePage() {
-    const activeEnv = this.envs[this.current?.name] || {};
+  getActivePage(): any {
+    const activeEnv = this.envs[this.current?.name || ''] || {};
     const pageName = this.current?.page;
-    return activeEnv.state.pages[pageName];
+    return activeEnv.state.pages[pageName || ''];
   }
 
-  getOutputsFolders() {
+  getOutputsFolders(): { folder: string; folderLatest: string } {
     const { folder, folderLatest } = this.output || {};
     if (!folder || !folderLatest) {
       throw new Error('There is no output folder');
@@ -122,7 +121,7 @@ class Envs implements EnvsType {
     return outputSource;
   }
 
-  initOutput(testName = 'test') {
+  initOutput(testName = 'test'): void {
     const { PPD_OUTPUT: output } = new Arguments().args;
     const currentTest = this.current.test || testName;
 
@@ -143,10 +142,10 @@ class Envs implements EnvsType {
 
     this.initOutputLatest();
 
-    this.initOutput = () => {};
+    this.initOutput = (): void => {};
   }
 
-  initOutputLatest() {
+  initOutputLatest(): void {
     const { PPD_OUTPUT: output } = new Arguments().args;
 
     const folderLatest = path.join(output, 'latest');
@@ -171,10 +170,10 @@ class Envs implements EnvsType {
     this.output.folderLatestFull = path.resolve(folderLatest);
 
     // Drop this function after first use
-    this.initOutputLatest = () => {};
+    this.initOutputLatest = (): void => {};
   }
 
-  async runBrowsers() {
+  async runBrowsers(): Promise<void> {
     const envsNames = Object.keys(this.envs);
     for (let i = 0; i < envsNames.length; i += 1) {
       const envPool = this.envs[envsNames[i]];
@@ -212,16 +211,16 @@ class Envs implements EnvsType {
           envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
         if (runtime === 'run') {
-          const { browser, pages, pid } = await this.runElectron(browserSettings, envPool);
+          const { browser, pages, pid } = await this.runElectron(browserSettings, envPool.name);
           envPool.state = { ...envPool.state, ...{ browser, pages, pid } };
         }
       }
     }
 
-    this.runBrowsers = async () => {};
+    this.runBrowsers = async (): Promise<void> => {};
   }
 
-  static async runPuppeteer(browserSettings) {
+  static async runPuppeteer(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [], windowSize = {} } = browserSettings;
 
@@ -240,7 +239,7 @@ class Envs implements EnvsType {
     return { browser, pages };
   }
 
-  static async runPlaywright(browserSettings) {
+  static async runPlaywright(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings;
     const { width = 1024, height = 768 } = windowSize;
@@ -262,7 +261,7 @@ class Envs implements EnvsType {
     return { browser, contexts, pages };
   }
 
-  static async connectElectron(browserSettings) {
+  static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { urlDevtoolsJson, windowSize = {}, slowMo = 0 } = browserSettings;
 
     if (urlDevtoolsJson) {
@@ -308,27 +307,29 @@ class Envs implements EnvsType {
     throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
   }
 
-  async runElectron(browserSettings: EnvBrowserType, env: any): Promise<EnvStateType> {
+  async runElectron(browserSettings: EnvBrowserType, envName: string): Promise<EnvStateType> {
     const runtimeExecutable = browserSettings?.runtimeEnv?.runtimeExecutable;
-    const program = browserSettings?.runtimeEnv?.program;
-    const cwd = browserSettings?.runtimeEnv?.cwd;
+    const program = browserSettings?.runtimeEnv?.program || '';
+    const cwd = browserSettings?.runtimeEnv?.cwd || '';
     const browserArgs = browserSettings?.runtimeEnv?.args || [];
     const browserEnv = browserSettings?.runtimeEnv?.env || {};
     const pauseAfterStartApp = browserSettings?.runtimeEnv?.pauseAfterStartApp || 5000;
     const runArgs = [program, ...browserArgs];
 
-    if (runtimeExecutable) {
+    const { folder, folderLatest } = this.output;
+
+    if (runtimeExecutable && folder && folderLatest) {
       process.env = { ...process.env, ...browserEnv };
 
       const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env });
 
       if (prc) {
-        fs.writeFileSync(path.join(this.output.folder, `${env.name}.log`), '');
-        fs.writeFileSync(path.join(this.output.folderLatest, `${env.name}.log`), '');
+        fs.writeFileSync(path.join(folder, `${envName}.log`), '');
+        fs.writeFileSync(path.join(folderLatest, `${envName}.log`), '');
 
         prc.stdout.on('data', (data) => {
-          fs.appendFileSync(path.join(this.output.folder, `${env.name}.log`), String(data));
-          fs.appendFileSync(path.join(this.output.folderLatest, `${env.name}.log`), String(data));
+          fs.appendFileSync(path.join(folder, `${envName}.log`), String(data));
+          fs.appendFileSync(path.join(folderLatest, `${envName}.log`), String(data));
         });
       }
 
@@ -340,7 +341,7 @@ class Envs implements EnvsType {
     throw new Error(`Can't run Electron ${runtimeExecutable}`);
   }
 
-  async closeBrowsers() {
+  async closeBrowsers(): Promise<void> {
     for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
       const { state } = this.envs[key];
@@ -353,7 +354,7 @@ class Envs implements EnvsType {
     }
   }
 
-  async closeProcesses() {
+  async closeProcesses(): Promise<void> {
     for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
       const key = Object.keys(this.envs)[i];
       const killOnEnd = this.envs[key]?.env?.browser?.killOnEnd || true;
@@ -369,34 +370,50 @@ class Envs implements EnvsType {
     }
   }
 
-  static async resolveLinks(): Promise<Array<EnvYamlType>> {
+  static async resolveLinks(): Promise<Array<EnvType>> {
     const { args } = new Arguments();
     const { allData } = new TestsContent();
     const { envs: envsAll, data: dataAll, selectors: selectorsAll } = allData;
 
     // ENVS RESOLVING
-    const envsResult: Array<EnvYamlType> = args.PPD_ENVS.map((v: string) => {
-      const env = cloneDeep(envsAll.find((g: EnvYamlType) => g.name === v));
+    const envsResult: Array<EnvType> = args.PPD_ENVS.map((v: string) => {
+      const env = JSON.parse(JSON.stringify(envsAll.find((g: EnvType) => g.name === v)));
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
 
-        envsExt.forEach((d: string) => {
-          const envsResolved = { ...envsAll.find((g: EnvYamlType) => g.name === d, {}) };
-          env.browser = merge(env.browser || {}, envsResolved.browser || {});
-          env.log = merge(env.log || {}, envsResolved.log || {});
-          env.data = merge(env.data || {}, envsResolved.data || {});
-          env.selectors = merge(env.selectors || {}, envsResolved.selectors || {});
-          env.description = `${env.description || ''} -> ${envsResolved.description || ''}`;
+        envsExt.forEach((envsExtName: string) => {
+          const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
+          if (envsResolved) {
+            env.browser = merge(env.browser || {}, envsResolved.browser || {});
+            env.log = merge(env.log || {}, envsResolved.log || {});
+            env.data = merge(env.data || {}, envsResolved.data || {});
+            env.selectors = merge(env.selectors || {}, envsResolved.selectors || {});
+            env.description = `${env.description || ''} -> ${envsResolved.description || ''}`;
+          } else {
+            throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
+          }
         });
 
-        dataExt.forEach((d: string) => {
-          const dataResolved = { ...dataAll.find((g: DataYamlType) => g.name === d, {}) };
-          env.data = merge(env.data || {}, dataResolved.data || {}, dataEnv);
+        dataExt.forEach((dataExtName: string) => {
+          const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
+          if (dataResolved) {
+            env.data = merge(env.data || {}, dataResolved.data || {}, dataEnv);
+          } else {
+            throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in environment '${env.name}'`);
+          }
         });
 
-        selectorsExt.forEach((d: string) => {
-          const selectorsResolved = { ...selectorsAll.find((g: DataYamlType) => g.name === d, {}) };
-          env.selectors = merge(env.selectors || {}, selectorsResolved.data || {}, selectorsEnv);
+        selectorsExt.forEach((selectorsExtName: string) => {
+          const selectorsResolved: DataType | undefined = selectorsAll.find(
+            (g: DataType) => g.name === selectorsExtName,
+          );
+          if (selectorsResolved) {
+            env.selectors = merge(env.selectors || {}, selectorsResolved.data || {}, selectorsEnv);
+          } else {
+            throw new Error(
+              `PuppeDo can't resolve extended selectors '${selectorsExtName}' in environment '${env.name}'`,
+            );
+          }
         });
 
         return env;
@@ -409,13 +426,13 @@ class Envs implements EnvsType {
 
   async init(runBrowsers: boolean = true): Promise<void> {
     const { args } = new Arguments();
-    const envs: Array<EnvYamlType> = await Envs.resolveLinks();
+    const envs: Array<EnvType> = await Envs.resolveLinks();
     const { PPD_DATA: data = {}, PPD_SELECTORS: selectors = {} } = args;
     this.args = args;
     this.data = data;
     this.selectors = selectors;
 
-    envs.forEach((env: any) => {
+    envs.forEach((env: EnvType) => {
       const envLocal = { ...env };
       const newEnv = new Env(envLocal);
       this.envs[newEnv.name] = newEnv;
@@ -430,13 +447,13 @@ class Envs implements EnvsType {
     }
 
     // If already init do nothing
-    this.init = async () => {};
+    this.init = async (): Promise<void> => {};
   }
 }
 
 const instances: { [key: string]: EnvsInstanceType } = {};
 
-export default (envsId: string, socket: SocketType = blankSocket) => {
+export default (envsId: string, socket: SocketType = blankSocket): EnvsInstanceType => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!instances[envsIdLocal]) {
