@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import isEmpty from 'lodash/isEmpty';
 import dayjs from 'dayjs';
 
 import TestStructure from './TestStructure';
@@ -13,21 +12,22 @@ import { getTimer, blankSocket } from './Helpers';
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 
-const run = async (argsInput = {}) => {
-  const { envsId, envs } = Environment();
+const run = async (argsInput = {}): Promise<void> => {
+  const { envsId, envsPool: envs } = Environment();
   const logger = new Log(envsId);
   const log = logger.log.bind(logger);
   const socket = blankSocket;
+  const blocker = new Blocker();
 
   try {
     const startTime = process.hrtime.bigint();
     const args = { ...new Arguments(argsInput).args };
 
-    if (isEmpty(args.PPD_TESTS)) {
+    if (!args.PPD_TESTS.length) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
     }
 
-    if (isEmpty(args.PPD_ENVS)) {
+    if (!args.PPD_ENVS.length) {
       throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
     }
 
@@ -47,18 +47,12 @@ const run = async (argsInput = {}) => {
       });
 
       await envs.init(false);
-
       const { fullJSON, textDescription } = new TestStructure(envsId);
+      const test = getTest(fullJSON, envsId, socket);
+      await envs.runBrowsers();
+      blocker.reset();
 
       await log({ level: 'env', text: `\n${textDescription}`, testStruct: fullJSON });
-
-      const blocker = new Blocker();
-      blocker.refresh();
-
-      const test = getTest(fullJSON, envsId, socket);
-
-      await envs.runBrowsers();
-
       await log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.` });
 
       await test();

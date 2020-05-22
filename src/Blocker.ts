@@ -23,18 +23,18 @@ export default class Blocker extends Singleton {
     this.blocks.push(data);
   }
 
-  refresh(): void {
+  reset(): void {
     this.blocks = [];
   }
 
-  setAll(blockArray: Array<BlockType>) {
+  setAll(blockArray: Array<BlockType>): void {
     this.blocks = blockArray;
     this.blocks.forEach((v) => {
       this.blockEmitter.emit('updateBlock', v);
     });
   }
 
-  setBlock(stepId: string, block: boolean) {
+  setBlock(stepId: string, block: boolean): void {
     this.blocks.forEach((v) => {
       if (v.stepId === stepId) {
         const emmitData = { ...v, ...{ block: Boolean(block) } };

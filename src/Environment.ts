@@ -49,7 +49,7 @@ interface EnvsPoolType {
 }
 
 type EnvsInstanceType = {
-  envs: EnvsPool;
+  envsPool: EnvsPool;
   socket: SocketType;
   envsId: string;
 };
@@ -466,10 +466,10 @@ export default (envsId: string = '', testName: string = '', socket: SocketType =
   } else {
     envsIdLocal = crypto.randomBytes(16).toString('hex');
     const newEnvs = new EnvsPool();
-    instances[envsIdLocal] = { envs: newEnvs, socket, envsId: envsIdLocal };
+    instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal };
   }
 
-  instances[envsIdLocal].envs.setCurrentTest(testName);
+  instances[envsIdLocal].envsPool.setCurrentTest(testName);
 
   return instances[envsIdLocal];
 };

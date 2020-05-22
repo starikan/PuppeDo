@@ -21,7 +21,7 @@ export default class TestStructure {
   textDescription: any;
 
   constructor(envsId: string) {
-    const testNameStart = Environment(envsId)?.envs?.current?.test;
+    const testNameStart = Environment(envsId)?.envsPool?.current?.test;
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testNameStart);
     this.fullJSON = fullJSON;
     this.textDescription = textDescription;
