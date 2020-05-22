@@ -36,7 +36,6 @@ interface EnvsPoolType {
     test?: any;
   };
   results: any;
-  args: any;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -64,7 +63,6 @@ class EnvsPool implements EnvsPoolType {
     test?: any;
   };
   results: any;
-  args: any;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -367,7 +365,7 @@ class EnvsPool implements EnvsPoolType {
     }
   }
 
-  static async resolveLinks(): Promise<Array<EnvType>> {
+  static async resolveEnvsLinks(): Promise<Array<EnvType>> {
     const { args } = new Arguments();
     const { allData } = new TestsContent();
     const { envs: envsAll, data: dataAll, selectors: selectorsAll } = allData;
@@ -422,15 +420,10 @@ class EnvsPool implements EnvsPoolType {
   }
 
   async init(runBrowsers: boolean = true): Promise<void> {
-    const { args } = new Arguments();
-    const envs: Array<EnvType> = await EnvsPool.resolveLinks();
-    const { PPD_DATA: data = {}, PPD_SELECTORS: selectors = {} } = args;
-    this.args = args;
-    this.data = data;
-    this.selectors = selectors;
+    const envs: Array<EnvType> = await EnvsPool.resolveEnvsLinks();
 
     envs.forEach((env: EnvType) => {
-      const envLocal = { ...env };
+      const envLocal = JSON.parse(JSON.stringify(env));
       const newEnv = new Env(envLocal);
       this.envs[newEnv.name] = newEnv;
     });
