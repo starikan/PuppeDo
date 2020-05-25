@@ -30,6 +30,8 @@ type InputsType = {
   errorIf?: any;
   errorIfResult?: any;
   debug?: boolean;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
 };
 
 const ALIASES = {
@@ -280,7 +282,7 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async ({ dataExtLogic = [], selectorsExtLogic = [], inputArgs = {} } = {}, envsId = null) => {
+    this.runLogic = async (inputArgs = {}, envsId = null) => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
@@ -289,11 +291,11 @@ export default class Test {
       this.data = resolveAliases('data', inputs, ALIASES);
       this.bindData = resolveAliases('bindData', inputs, ALIASES);
       this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
-      this.dataExt = [...new Set([...this.dataExt, ...dataExtLogic])];
+      this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
       this.selectors = resolveAliases('selectors', inputs, ALIASES);
       this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);
-      this.selectorsExt = [...new Set([...this.selectorsExt, ...selectorsExtLogic])];
+      this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
       this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
@@ -322,7 +324,6 @@ export default class Test {
         this.envPageName = this.envsPool.current.page;
         this.env = this.envsPool.envs[this.envName];
 
-        // debugger
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
         }
@@ -488,10 +489,7 @@ export default class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          await this.run(
-            { dataExt: this.dataExt, selectorsExt: this.selectorsExt, ...inputArgs, ...{ repeat: this.repeat - 1 } },
-            envsId,
-          );
+          await this.run({ ...inputArgs, ...{ repeat: this.repeat - 1 } }, envsId);
         }
 
         // TIMER IN CONSOLE
@@ -511,7 +509,7 @@ export default class Test {
     };
 
     // eslint-disable-next-line no-shadow
-    this.run = async ({ dataExt = [], selectorsExt = [], ...inputArgs } = {}, envsId = null) => {
+    this.run = async (inputArgs = {}, envsId = null) => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
@@ -523,13 +521,13 @@ export default class Test {
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              await this.runLogic({ dataExtLogic: dataExt, selectorsExtLogic: selectorsExt, inputArgs }, envsId);
+              await this.runLogic(inputArgs, envsId);
               resolve();
             }
           });
         });
       }
-      return this.runLogic({ dataExtLogic: dataExt, selectorsExtLogic: selectorsExt, inputArgs }, envsId);
+      return this.runLogic(inputArgs, envsId);
     };
   }
 }
