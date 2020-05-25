@@ -147,9 +147,9 @@ export default class Test {
   errorIf: any;
   errorIfResult: any;
 
-  envs: any;
-  envName: any;
-  envPageName: any;
+  envsPool: any;
+  envName: string;
+  envPageName: string;
   env: any;
 
   fetchData: any;
@@ -208,7 +208,7 @@ export default class Test {
     this.testFile = testFile;
     this.debug = debug;
 
-    this.fetchData = (isSelector = false) => {
+    this.fetchData = (isSelector: boolean = false): Object => {
       const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
       const dataName = isSelector ? 'selectors' : 'data';
 
@@ -219,7 +219,7 @@ export default class Test {
       joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
 
       // * Get data from global envs for all tests
-      joinArray = [...joinArray, this.envs[dataName] || {}];
+      joinArray = [...joinArray, this.envsPool[dataName] || {}];
 
       // * Fetch data from ext files that passed in test itself
       const allTests = new TestsContent().allData;
@@ -249,7 +249,7 @@ export default class Test {
       return dataLocal;
     };
 
-    this.fetchSelectors = () => this.fetchData(true);
+    this.fetchSelectors = (): Object => this.fetchData(true);
 
     this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
@@ -311,17 +311,18 @@ export default class Test {
         throw new Error('Test should have envsId');
       }
 
-      const { envsPool: envs } = Environment(envsId);
+      const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
 
       try {
         const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
 
-        this.envs = envs;
-        this.envName = this.envs.current.name;
-        this.envPageName = this.envs.current.page;
-        this.env = this.envs.envs[this.envName];
+        this.envsPool = envsPool;
+        this.envName = this.envsPool.current.name;
+        this.envPageName = this.envsPool.current.page;
+        this.env = this.envsPool.envs[this.envName];
 
+        // debugger
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
         }
@@ -378,7 +379,7 @@ export default class Test {
         const argsExt = {
           ...args,
           env: this.env,
-          envs: this.envs,
+          envs: this.envsPool,
           browser: this.env && this.env.state.browser,
           page: this.env && this.env.state.pages[this.envPageName], // If there is no page it`s might be API
           log: logger.log.bind(logger),
@@ -408,8 +409,8 @@ export default class Test {
 
         // Set ENVS Data for the further nested tests
         if (this.env) {
-          this.envs.data = merge(this.envs.data, dataLocal);
-          this.envs.selectors = merge(this.envs.selectors, selectorsLocal);
+          this.envsPool.data = merge(this.envsPool.data, dataLocal);
+          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal);
         }
 
         // RUN FUNCTIONS
@@ -437,7 +438,7 @@ export default class Test {
 
         // If Test there is no JS return. Get all data to read values
         if (this.type === 'test') {
-          resultFromTest = merge(this.envs.data, this.envs.selectors);
+          resultFromTest = merge(this.envsPool.data, this.envsPool.selectors);
         }
 
         const results = pick(resultFromTest, allowResults);
@@ -463,8 +464,8 @@ export default class Test {
 
         // Set ENVS Data
         if (this.env) {
-          this.envs.data = merge(this.envs.data, dataLocal, localResults);
-          this.envs.selectors = merge(this.envs.selectors, selectorsLocal, localResults);
+          this.envsPool.data = merge(this.envsPool.data, dataLocal, localResults);
+          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal, localResults);
         }
 
         // ERROR
