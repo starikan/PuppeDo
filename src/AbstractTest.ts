@@ -99,7 +99,7 @@ const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
   }
 };
 
-const checkNeedEnv = (needEnv, envName) => {
+const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
   const needEnvs = isString(needEnv) ? [needEnv] : needEnv;
   if (Array.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -282,7 +282,7 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (inputArgs = {}, envsId = null) => {
+    this.runLogic = async (envsId: string, inputArgs = {}) => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
@@ -308,10 +308,6 @@ export default class Test {
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
-
-      if (!envsId) {
-        throw new Error('Test should have envsId');
-      }
 
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
@@ -489,7 +485,7 @@ export default class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          await this.run({ ...inputArgs, ...{ repeat: this.repeat - 1 } }, envsId);
+          await this.run(envsId, { ...inputArgs, ...{ repeat: this.repeat - 1 } });
         }
 
         // TIMER IN CONSOLE
@@ -509,7 +505,7 @@ export default class Test {
     };
 
     // eslint-disable-next-line no-shadow
-    this.run = async (inputArgs = {}, envsId = null) => {
+    this.run = async (envsId: string, inputArgs = {}) => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
@@ -521,13 +517,13 @@ export default class Test {
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              await this.runLogic(inputArgs, envsId);
+              await this.runLogic(envsId, inputArgs);
               resolve();
             }
           });
         });
       }
-      return this.runLogic(inputArgs, envsId);
+      return this.runLogic(envsId, inputArgs);
     };
   }
 }

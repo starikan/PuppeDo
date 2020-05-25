@@ -84,7 +84,7 @@ const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: Soc
   return async (args = {}) => {
     let updatetTestJson = propagateArgumentsObjectsOnAir(testJson, args, ['options']);
     updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
-    await test.run(updatetTestJson, envsId);
+    await test.run(envsId, updatetTestJson);
   };
 };
 
