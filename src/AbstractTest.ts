@@ -16,22 +16,24 @@ import { TestError } from './Error';
 const vm = require('vm');
 
 type LocalsType = {
-  dataLocal?: any;
-  selectorsLocal?: any;
-  localResults?: any;
+  dataLocal?: Object;
+  selectorsLocal?: Object;
+  localResults?: Object;
 };
 
 type InputsType = {
   options?: any;
-  description?: any;
-  repeat?: any;
-  while?: any;
-  if?: any;
-  errorIf?: any;
-  errorIfResult?: any;
+  description?: string;
+  repeat?: number;
+  while?: string;
+  if?: string;
+  errorIf?: string;
+  errorIfResult?: string;
   debug?: boolean;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
+  data?: Object;
+  selectors?: Object;
 };
 
 const ALIASES = {
@@ -47,7 +49,7 @@ const ALIASES = {
 };
 
 const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
-  let result;
+  let result: boolean | object | string | number | null;
 
   try {
     const script = new vm.Script(source);
@@ -60,7 +62,7 @@ const runScriptInContext = (source: string, context: object): boolean | object |
   return result;
 };
 
-const checkNeeds = (needs, data, testName) => {
+const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -74,7 +76,7 @@ const checkNeeds = (needs, data, testName) => {
   return true;
 };
 
-const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
+const resolveDataFunctions = (funcParams: Object, dataLocal: Object, selectorsLocal: Object = {}): Object => {
   const allDataSel = merge(dataLocal, selectorsLocal);
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
@@ -85,13 +87,10 @@ const resolveDataFunctions = (funcParams, dataLocal, selectorsLocal = {}) => {
   return funcEval;
 };
 
-const resolveAliases = (valueName, inputs = {}, aliases = {}) => {
+const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
   try {
-    let result = {};
-    const values = [valueName, ...get(aliases, valueName, [])];
-    values.forEach((v) => {
-      result = merge(result, inputs[v] || {});
-    });
+    const values = [valueName, ...(ALIASES[valueName] || [])];
+    const result = values.reduce((collector: Object, name: string) => ({ ...collector, ...(inputs[name] || {}) }), {});
     return result;
   } catch (error) {
     error.message += ` || function resolveAliases(${valueName})`;
@@ -135,19 +134,19 @@ export default class Test {
   testFile: string;
   debug: boolean;
 
-  data: any;
-  bindData: any;
-  dataFunction: any;
-  selectors: any;
-  bindSelectors: any;
-  selectorsFunction: any;
-  bindResults: any;
-  resultFunction: any;
-  description: any;
-  while: any;
-  if: any;
-  errorIf: any;
-  errorIfResult: any;
+  data: Object;
+  bindData: Object;
+  dataFunction: Object;
+  selectors: Object;
+  bindSelectors: Object;
+  selectorsFunction: Object;
+  bindResults: Object;
+  resultFunction: Object;
+  description: string;
+  while: string;
+  if: string;
+  errorIf: string;
+  errorIfResult: string;
 
   envsPool: any;
   envName: string;
@@ -173,9 +172,9 @@ export default class Test {
     options = {},
     dataExt = [],
     selectorsExt = [],
-    beforeTest = () => {},
-    runTest = () => {},
-    afterTest = () => {},
+    beforeTest = (): void => {},
+    runTest = (): void => {},
+    afterTest = (): void => {},
     source = '',
     repeat = 1,
     socket = blankSocket,
@@ -253,7 +252,13 @@ export default class Test {
 
     this.fetchSelectors = (): Object => this.fetchData(true);
 
-    this.checkIf = async (expr, ifType, log, ifLevelIndent, locals: LocalsType = {}) => {
+    this.checkIf = async (
+      expr: string,
+      ifType: string,
+      log: Function,
+      ifLevelIndent: number,
+      locals: LocalsType = {},
+    ): Promise<boolean> => {
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
       const context = cloneDeep(merge(dataLocal, selectorsLocal, localResults));
@@ -282,25 +287,28 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (envsId: string, inputArgs = {}) => {
+    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<void> => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
       const inputs: InputsType = merge(constructorArgs, inputArgs);
 
-      this.data = resolveAliases('data', inputs, ALIASES);
-      this.bindData = resolveAliases('bindData', inputs, ALIASES);
-      this.dataFunction = resolveAliases('dataFunction', inputs, ALIASES);
+      this.data = resolveAliases('data', inputs);
+      // this.data = merge(this.data, inputs.data || {}, resolveAliases('data', inputs));
+      this.bindData = resolveAliases('bindData', inputs);
+      this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
-      this.selectors = resolveAliases('selectors', inputs, ALIASES);
-      this.bindSelectors = resolveAliases('bindSelectors', inputs, ALIASES);
-      this.selectorsFunction = resolveAliases('selectorsFunction', inputs, ALIASES);
+
+      this.selectors = resolveAliases('selectors', inputs);
+      // this.selectors = merge(this.selectors, inputs.selectors || {}, resolveAliases('selectors', inputs));
+      this.bindSelectors = resolveAliases('bindSelectors', inputs);
+      this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
-      this.bindResults = resolveAliases('bindResults', inputs, ALIASES);
-      this.resultFunction = resolveAliases('resultFunction', inputs, ALIASES);
+      this.bindResults = resolveAliases('bindResults', inputs);
+      this.resultFunction = resolveAliases('resultFunction', inputs);
 
-      this.options = merge(this.options, inputs.options || {}, resolveAliases('options', inputs, ALIASES));
+      this.options = merge(this.options, inputs.options || {}, resolveAliases('options', inputs));
       this.description = inputs.description || this.description;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -505,7 +513,7 @@ export default class Test {
     };
 
     // eslint-disable-next-line no-shadow
-    this.run = async (envsId: string, inputArgs = {}) => {
+    this.run = async (envsId: string, inputArgs = {}): Promise<Function> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
