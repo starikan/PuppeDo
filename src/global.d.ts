@@ -100,6 +100,8 @@ type TestJsonExtendType = {
   breadcrumbs: string[];
   testFile: any;
   type: any;
+  resultsFromParent?: Object;
+  resultsFromChildren?: Object;
 };
 
 type TestYamlType = {
@@ -110,3 +112,22 @@ type TestYamlType = {
 interface TestType extends TestYamlType {
   testFile: string;
 }
+
+type InputsTestType = {
+  options?: any;
+  description?: string;
+  repeat?: number;
+  while?: string;
+  if?: string;
+  errorIf?: string;
+  errorIfResult?: string;
+  debug?: boolean;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
+  data?: Object;
+  selectors?: Object;
+  dataParent?: Object;
+  selectorsParent?: Object;
+  optionsParent?: Object;
+  resultsFromParent?: Object;
+};

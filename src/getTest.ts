@@ -23,20 +23,20 @@ const resolveJS = (testJson, funcFile) => {
   } catch (err) {
     // If there is no JS file it`s fine.
     testJsonNew.funcFile = 'No file';
-    testJsonNew.runTest = [() => {}];
+    testJsonNew.runTest = [(): void => {}];
   }
   return testJsonNew;
 };
 
-const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []) => {
+const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Object => {
   const result = { ...source };
   list.forEach((v) => {
-    result[v] = merge(result[v] || {}, args[v] || {});
+    result[`${v}Parent`] = merge(result[v] || {}, args[v] || {});
   });
   return result;
 };
 
-const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []) => {
+const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Object => {
   const result = { ...source };
   list.forEach((v) => {
     result[v] = result[v] || args[v];
@@ -44,7 +44,7 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []) => {
   return result;
 };
 
-const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: SocketType) => {
+const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: SocketType, parentTest = {}) => {
   let testJson: TestJsonExtendType = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
@@ -70,7 +70,7 @@ const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: Soc
         testJson[funcKey] = [];
         funcVal.forEach((test) => {
           if (['test', 'atom'].includes(test.type)) {
-            testJson[funcKey].push(getTest(test, envsId, socket));
+            testJson[funcKey].push(getTest(test, envsId, socket, testJson));
           }
         });
       } else {
@@ -81,10 +81,17 @@ const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: Soc
 
   const test = new AbstractTest(testJson);
 
-  return async (args = {}) => {
-    let updatetTestJson = propagateArgumentsObjectsOnAir(testJson, args, ['options']);
+  return async (args) => {
+    let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
+      'options',
+      'data',
+      'selectors',
+    ]);
     updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
-    await test.run(envsId, updatetTestJson);
+    updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
+    const result = await test.run(envsId, updatetTestJson);
+    parentTest.resultsFromChildren = { ...parentTest.resultsFromChildren, ...result };
+    return result;
   };
 };
 

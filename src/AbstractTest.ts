@@ -21,21 +21,6 @@ type LocalsType = {
   localResults?: Object;
 };
 
-type InputsType = {
-  options?: any;
-  description?: string;
-  repeat?: number;
-  while?: string;
-  if?: string;
-  errorIf?: string;
-  errorIfResult?: string;
-  debug?: boolean;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  data?: Object;
-  selectors?: Object;
-};
-
 const ALIASES = {
   data: ['d', '📋'],
   bindData: ['bD', 'bd', '📌📋', 'dataBind', 'db', 'dB'],
@@ -76,11 +61,10 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   return true;
 };
 
-const resolveDataFunctions = (funcParams: Object, dataLocal: Object, selectorsLocal: Object = {}): Object => {
-  const allDataSel = merge(dataLocal, selectorsLocal);
+const resolveDataFunctions = (funcParams: Object, allData: Object): Object => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
-    const evalData = runScriptInContext(data.toString(), allDataSel);
+    const evalData = runScriptInContext(data.toString(), allData);
     const collector = { ...s, ...{ [key]: evalData } };
     return collector;
   }, {});
@@ -115,8 +99,8 @@ export default class Test {
   needEnv: Array<string>;
   needData: Array<string>;
   needSelectors: Array<string>;
-  dataTest: Object;
-  selectorsTest: Object;
+  dataParent: Object;
+  selectorsParent: Object;
   options: Object;
   dataExt: Array<string>;
   selectorsExt: Array<string>;
@@ -147,6 +131,8 @@ export default class Test {
   if: string;
   errorIf: string;
   errorIfResult: string;
+  resultsFromChildren: any;
+  resultsFromParent: any;
 
   envsPool: any;
   envName: string;
@@ -154,6 +140,7 @@ export default class Test {
   env: any;
 
   fetchData: any;
+  fetchDataNew: any;
   fetchSelectors: any;
   checkIf: any;
   runLogic: any;
@@ -190,8 +177,8 @@ export default class Test {
     this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
-    this.dataTest = data;
-    this.selectorsTest = selectors;
+    this.data = data;
+    this.selectors = selectors;
     this.options = options;
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
@@ -233,7 +220,7 @@ export default class Test {
       });
 
       // * Get data from test itself in test describe
-      joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
+      joinArray = [...joinArray, isSelector ? this.selectorsParent : this.dataParent];
 
       // * Update local data with bindings
       let dataLocal = merge(...joinArray);
@@ -251,6 +238,33 @@ export default class Test {
     };
 
     this.fetchSelectors = (): Object => this.fetchData(true);
+
+    this.fetchDataNew = () => {
+      const { PPD_DATA } = new Arguments().args;
+
+      const { data: allData } = new TestsContent().allData;
+      const dataExtResolved = this.dataExt.reduce((collect, v) => {
+        const extData = allData.find((d) => v === d.name);
+        return { ...collect, ...extData };
+      }, {});
+
+      const dataFlow = [
+        PPD_DATA,
+        this.env?.env?.data || {},
+        dataExtResolved,
+        this.dataParent,
+        this.resultsFromParent,
+        this.data,
+      ];
+      const dataLocal = merge(...dataFlow);
+      const bindDataLocal = this.bindData;
+      Object.entries(bindDataLocal).forEach((v: [string, string]) => {
+        const [key, val] = v;
+        dataLocal[key] = dataLocal[val];
+      });
+      // debugger;
+      return dataLocal;
+    };
 
     this.checkIf = async (
       expr: string,
@@ -287,28 +301,30 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<void> => {
+    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<any> => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
-      const inputs: InputsType = merge(constructorArgs, inputArgs);
+      const inputs: InputsTestType = merge(constructorArgs, inputArgs);
 
-      this.data = resolveAliases('data', inputs);
-      // this.data = merge(this.data, inputs.data || {}, resolveAliases('data', inputs));
+      // Get Data from parent test and merge it with current test
+      this.data = merge(resolveAliases('data', inputs));
+      this.dataParent = inputs.dataParent;
       this.bindData = resolveAliases('bindData', inputs);
       this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
-      this.selectors = resolveAliases('selectors', inputs);
-      // this.selectors = merge(this.selectors, inputs.selectors || {}, resolveAliases('selectors', inputs));
+      this.selectors = merge(resolveAliases('selectors', inputs));
+      this.selectorsParent = inputs.selectorsParent;
       this.bindSelectors = resolveAliases('bindSelectors', inputs);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs);
       this.resultFunction = resolveAliases('resultFunction', inputs);
+      this.resultsFromParent = inputs.resultsFromParent;
 
-      this.options = merge(this.options, inputs.options || {}, resolveAliases('options', inputs));
+      this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
       this.description = inputs.description || this.description;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -332,7 +348,7 @@ export default class Test {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        let dataLocal = this.fetchData();
+        let dataLocal = this.fetchDataNew();
         let selectorsLocal = this.fetchSelectors();
         const allData = merge(dataLocal, selectorsLocal);
 
@@ -365,8 +381,6 @@ export default class Test {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
-          dataTest: this.data,
-          selectorsTest: this.selectors,
           ...pick(this, argsFields),
         };
 
@@ -442,21 +456,25 @@ export default class Test {
         // TODO: raise warning if not needed in allowResults
 
         // If Test there is no JS return. Get all data to read values
-        if (this.type === 'test') {
-          resultFromTest = merge(this.envsPool.data, this.envsPool.selectors);
-        }
+        // if (this.type === 'test') {
+        //   debugger
+        //   resultFromTest = merge(this.envsPool.data, this.envsPool.selectors);
+        // }
 
-        const results = pick(resultFromTest, allowResults);
+        const results = allowResults ? pick(resultFromTest, allowResults) : resultFromTest;
 
         if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
           throw new Error('Can`t get results from test');
         }
 
-        Object.entries(this.bindResults).forEach((v: [string, string]) => {
-          const [key, val] = v;
-          results[key] = get(results, val);
-        });
-        let localResults = { ...results };
+        // Object.entries(this.bindResults).forEach((v: [string, string]) => {
+        //   const [key, val] = v;
+        //   // results[key] = get(results, val);
+        //   debugger
+        //   results[key] = resolveDataFunctions(val, merge(dataLocal, selectorsLocal, results));
+        // });
+        // results = resolveDataFunctions(this.bindResults, merge(dataLocal, selectorsLocal, results));
+        let localResults = resolveDataFunctions(this.bindResults, merge(dataLocal, selectorsLocal, results));
 
         // RESULT FUNCTIONS
         if (!isEmpty(this.resultFunction)) {
@@ -505,6 +523,8 @@ export default class Test {
             extendInfo: true,
           });
         }
+
+        return localResults;
       } catch (error) {
         const newError = new TestError({ logger, parentError: error, test: this, envsId });
         await newError.log();

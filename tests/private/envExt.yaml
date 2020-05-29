@@ -3,6 +3,9 @@ type: env
 name: envExt
 description: My Secret Env Ext
 
+data:
+  CHECK_DATA: ENV_DATA_FROM_EXT_ENV
+
 log:
   level: raw
   screenshot: true

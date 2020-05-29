@@ -1,0 +1,24 @@
+name: testDataCheck
+type: test
+
+data:
+  CHECK_DATA: TEST_DATA
+
+runTest:
+  - blank:
+      errorIf: "CHECK_DATA !== 'TEST_DATA'"
+
+  - blank:
+      data: { CHECK_DATA: BLOCK_DATA }
+      errorIf: "CHECK_DATA !== 'BLOCK_DATA'"
+
+  - blank:
+      bindData: { CHECK_DATA: CHECK_DATA }
+      errorIf: "CHECK_DATA !== 'TEST_DATA'"
+
+  - blank:
+      result: { CHECK_DATA: "CHECK_DATA + '1'" }
+
+  - blank:
+      bindData: { CHECK_DATA: CHECK_DATA }
+      errorIf: "CHECK_DATA !== 'TEST_DATA1'"

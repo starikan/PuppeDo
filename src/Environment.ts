@@ -28,8 +28,6 @@ type Options = {
 
 interface EnvsPoolType {
   envs: any;
-  data: Object;
-  selectors: Object;
   current: {
     name?: string;
     page?: string | null;
@@ -55,13 +53,12 @@ type EnvsInstanceType = {
 
 class EnvsPool implements EnvsPoolType {
   envs: any;
-  data: Object;
-  selectors: Object;
   current: {
     name?: string;
     page?: string | null;
     test?: any;
   };
+  // TODO
   results: any;
   output: {
     folder?: string;
@@ -75,8 +72,6 @@ class EnvsPool implements EnvsPoolType {
 
   constructor() {
     this.envs = {};
-    this.data = {};
-    this.selectors = {};
     this.current = {};
     this.results = {};
     this.output = {};
