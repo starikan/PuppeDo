@@ -12,7 +12,7 @@ import { getTimer, blankSocket } from './Helpers';
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 
-const run = async (argsInput = {}): Promise<void> => {
+const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> => {
   const { envsId, envsPool: envs } = Environment();
   const logger = new Log(envsId);
   const log = logger.log.bind(logger);
@@ -21,7 +21,7 @@ const run = async (argsInput = {}): Promise<void> => {
 
   try {
     const startTime = process.hrtime.bigint();
-    const args = { ...new Arguments(argsInput).args };
+    const args = { ...new Arguments(argsInput, true).args };
 
     if (!args.PPD_TESTS.length) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -66,7 +66,9 @@ const run = async (argsInput = {}): Promise<void> => {
     await log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime)} sec.` });
 
     // if (!module.parent) {
-    process.exit(0);
+    if (closeProcess) {
+      process.exit(0);
+    }
     // }
   } catch (error) {
     error.message += " || error in 'run'";
