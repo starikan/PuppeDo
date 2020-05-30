@@ -44,8 +44,8 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: TestJsonExtendType, envsId: string, socket: SocketType, parentTest = {}) => {
-  let testJson: TestJsonExtendType = { ...testJsonIncome };
+const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketType, parentTest: AbstractTest = {}) => {
+  let testJson: AbstractTest = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging

@@ -17,6 +17,7 @@ runTest:
       bD: { url: baseUrl }
 
   - clickWithNestedWait:
+      bS: { wikiInputInside: wikiInput }
       # debug: true
       o:
         hidden: false

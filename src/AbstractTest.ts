@@ -2,8 +2,8 @@ import isString from 'lodash/isString';
 import cloneDeep from 'lodash/cloneDeep';
 import isFunction from 'lodash/isFunction';
 import pick from 'lodash/pick';
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
+// import get from 'lodash/get';
+// import isEmpty from 'lodash/isEmpty';
 
 import { merge, blankSocket, getTimer } from './Helpers';
 import Blocker from './Blocker';
@@ -28,8 +28,27 @@ const ALIASES = {
   selectors: ['selector', 's', '💠'],
   bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠', 'selectorBind', 'selectorsBind', 'sb', 'sB'],
   selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠', 'functionSelector', 'functionSelectors', 'fs', 'fS'],
-  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️', 'R', 'rb', 'rB', 'resultBind', 'resultsBind'],
-  resultFunction: ['rF', 'rf', '🔑↩️', 'functionResult', 'fr', 'fR'],
+  bindResults: [
+    'bindResult',
+    'bR',
+    'br',
+    'result',
+    'r',
+    '↩️',
+    'R',
+    'rb',
+    'rB',
+    'resultBind',
+    'resultsBind',
+    'rF',
+    'rf',
+    '🔑↩️',
+    'functionResult',
+    'fr',
+    'fR',
+    'resultFunction',
+  ],
+  // resultFunction: ['rF', 'rf', '🔑↩️', 'functionResult', 'fr', 'fR'],
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
@@ -125,7 +144,7 @@ export default class Test {
   bindSelectors: Object;
   selectorsFunction: Object;
   bindResults: Object;
-  resultFunction: Object;
+  // resultFunction: Object;
   description: string;
   while: string;
   if: string;
@@ -139,9 +158,10 @@ export default class Test {
   envPageName: string;
   env: any;
 
-  fetchData: any;
+  // fetchData: any;
   fetchDataNew: any;
-  fetchSelectors: any;
+  // fetchSelectors: any;
+  fetchSelectorsNew: any;
   checkIf: any;
   runLogic: any;
   run: any;
@@ -196,48 +216,48 @@ export default class Test {
     this.testFile = testFile;
     this.debug = debug;
 
-    this.fetchData = (isSelector: boolean = false): Object => {
-      const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
-      const dataName = isSelector ? 'selectors' : 'data';
+    // this.fetchData = (isSelector: boolean = false): Object => {
+    //   const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
+    //   const dataName = isSelector ? 'selectors' : 'data';
 
-      // * Get data from ENV params global
-      let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
+    //   // * Get data from ENV params global
+    //   let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
 
-      // * Get data from current env
-      joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
+    //   // * Get data from current env
+    //   joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
 
-      // * Get data from global envs for all tests
-      joinArray = [...joinArray, this.envsPool[dataName] || {}];
+    //   // * Get data from global envs for all tests
+    //   joinArray = [...joinArray, this.envsPool[dataName] || {}];
 
-      // * Fetch data from ext files that passed in test itself
-      const allTests = new TestsContent().allData;
-      const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      extFiles.forEach((v) => {
-        const extData = allTests[dataName].find((d) => v === d.name);
-        if (extData) {
-          joinArray = [...joinArray, extData.data];
-        }
-      });
+    //   // * Fetch data from ext files that passed in test itself
+    //   const allTests = new TestsContent().allData;
+    //   const extFiles = isSelector ? this.selectorsExt : this.dataExt;
+    //   extFiles.forEach((v) => {
+    //     const extData = allTests[dataName].find((d) => v === d.name);
+    //     if (extData) {
+    //       joinArray = [...joinArray, extData.data];
+    //     }
+    //   });
 
-      // * Get data from test itself in test describe
-      joinArray = [...joinArray, isSelector ? this.selectorsParent : this.dataParent];
+    //   // * Get data from test itself in test describe
+    //   joinArray = [...joinArray, isSelector ? this.selectorsParent : this.dataParent];
 
-      // * Update local data with bindings
-      let dataLocal = merge(...joinArray);
-      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-      Object.entries(bindDataLocal).forEach((v: [string, string]) => {
-        const [key, val] = v;
-        dataLocal[key] = get(dataLocal, val);
-      });
+    //   // * Update local data with bindings
+    //   let dataLocal = merge(...joinArray);
+    //   const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
+    //   Object.entries(bindDataLocal).forEach((v: [string, string]) => {
+    //     const [key, val] = v;
+    //     dataLocal[key] = get(dataLocal, val);
+    //   });
 
-      // * Update after all bindings with data from test itself passed in running
-      const collectedData = isSelector ? this.selectors : this.data;
-      dataLocal = merge(dataLocal, collectedData);
+    //   // * Update after all bindings with data from test itself passed in running
+    //   const collectedData = isSelector ? this.selectors : this.data;
+    //   dataLocal = merge(dataLocal, collectedData);
 
-      return dataLocal;
-    };
+    //   return dataLocal;
+    // };
 
-    this.fetchSelectors = (): Object => this.fetchData(true);
+    // this.fetchSelectors = (): Object => this.fetchData(true);
 
     this.fetchDataNew = () => {
       const { PPD_DATA } = new Arguments().args;
@@ -266,6 +286,33 @@ export default class Test {
       return dataLocal;
     };
 
+    this.fetchSelectorsNew = () => {
+      const { PPD_SELECTORS } = new Arguments().args;
+
+      const { selectors: allSelectors } = new TestsContent().allData;
+      const selectorsExtResolved = this.selectorsExt.reduce((collect, v) => {
+        const extData = allSelectors.find((d) => v === d.name);
+        return { ...collect, ...extData };
+      }, {});
+
+      const dataFlow = [
+        PPD_SELECTORS,
+        this.env?.env?.selectors || {},
+        selectorsExtResolved,
+        this.selectorsParent,
+        this.resultsFromParent,
+        this.selectors,
+      ];
+      const SelectorsLocal = merge(...dataFlow);
+      const bindSelectorsLocal = this.bindSelectors;
+      Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
+        const [key, val] = v;
+        SelectorsLocal[key] = SelectorsLocal[val];
+      });
+      // debugger;
+      return SelectorsLocal;
+    };
+
     this.checkIf = async (
       expr: string,
       ifType: string,
@@ -275,7 +322,7 @@ export default class Test {
     ): Promise<boolean> => {
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
-      const context = cloneDeep(merge(dataLocal, selectorsLocal, localResults));
+      const context = cloneDeep(merge(selectorsLocal, dataLocal, localResults));
       const exprResult = runScriptInContext(expr, context);
 
       if (!exprResult && ifType === 'if') {
@@ -309,19 +356,19 @@ export default class Test {
 
       // Get Data from parent test and merge it with current test
       this.data = merge(resolveAliases('data', inputs));
-      this.dataParent = inputs.dataParent;
+      this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
       this.bindData = resolveAliases('bindData', inputs);
       this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = merge(resolveAliases('selectors', inputs));
-      this.selectorsParent = inputs.selectorsParent;
+      this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
       this.bindSelectors = resolveAliases('bindSelectors', inputs);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs);
-      this.resultFunction = resolveAliases('resultFunction', inputs);
+      // this.resultFunction = resolveAliases('resultFunction', inputs);
       this.resultsFromParent = inputs.resultsFromParent;
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
@@ -344,12 +391,14 @@ export default class Test {
         this.envPageName = this.envsPool.current.page;
         this.env = this.envsPool.envs[this.envName];
 
+        // if (this.name === 'clickWithNestedWait') debugger;
+
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
         let dataLocal = this.fetchDataNew();
-        let selectorsLocal = this.fetchSelectors();
+        let selectorsLocal = this.fetchSelectorsNew();
         const allData = merge(dataLocal, selectorsLocal);
 
         // FUNCTIONS
@@ -420,17 +469,18 @@ export default class Test {
 
         // ERROR IF
         if (this.errorIf) {
+          // debugger;
           await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
-            dataLocal,
             selectorsLocal,
+            dataLocal,
           });
         }
 
         // Set ENVS Data for the further nested tests
-        if (this.env) {
-          this.envsPool.data = merge(this.envsPool.data, dataLocal);
-          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal);
-        }
+        // if (this.env) {
+        //   this.envsPool.data = merge(this.envsPool.data, dataLocal);
+        //   this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal);
+        // }
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
@@ -463,7 +513,11 @@ export default class Test {
 
         const results = allowResults ? pick(resultFromTest, allowResults) : resultFromTest;
 
-        if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
+        if (
+          allowResults &&
+          Object.keys(results).length &&
+          Object.keys(results).length !== [...new Set(allowResults)].length
+        ) {
           throw new Error('Can`t get results from test');
         }
 
@@ -474,35 +528,35 @@ export default class Test {
         //   results[key] = resolveDataFunctions(val, merge(dataLocal, selectorsLocal, results));
         // });
         // results = resolveDataFunctions(this.bindResults, merge(dataLocal, selectorsLocal, results));
-        let localResults = resolveDataFunctions(this.bindResults, merge(dataLocal, selectorsLocal, results));
+        const localResults = resolveDataFunctions(this.bindResults, merge(selectorsLocal, dataLocal, results));
 
         // RESULT FUNCTIONS
-        if (!isEmpty(this.resultFunction)) {
-          const dataWithResults = merge(dataLocal, selectorsLocal, results);
-          const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
-          dataLocal = merge(dataLocal, resultFunction);
-          selectorsLocal = merge(selectorsLocal, resultFunction);
-          localResults = merge(localResults, resultFunction);
-        }
+        // if (!isEmpty(this.resultFunction)) {
+        //   const dataWithResults = merge(dataLocal, selectorsLocal, results);
+        //   const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
+        //   dataLocal = merge(dataLocal, resultFunction);
+        //   selectorsLocal = merge(selectorsLocal, resultFunction);
+        //   localResults = merge(localResults, resultFunction);
+        // }
 
         // Set ENVS Data
-        if (this.env) {
-          this.envsPool.data = merge(this.envsPool.data, dataLocal, localResults);
-          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal, localResults);
-        }
+        // if (this.env) {
+        //   this.envsPool.data = merge(this.envsPool.data, dataLocal, localResults);
+        //   this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal, localResults);
+        // }
 
         // ERROR
         if (this.errorIfResult) {
           await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
-            dataLocal,
             selectorsLocal,
+            dataLocal,
             localResults,
           });
         }
 
         // WHILE
         if (this.while) {
-          const allDataSel = merge(dataLocal, selectorsLocal);
+          const allDataSel = merge(selectorsLocal, dataLocal);
           const whileEval = runScriptInContext(this.while, allDataSel);
           if (!whileEval) {
             return;
