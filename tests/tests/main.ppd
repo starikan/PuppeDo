@@ -16,6 +16,11 @@ runTest:
   - goTo:
       bD: { url: baseUrl }
 
+  - blank:
+      runTest:
+        - clickSelector:
+            bS: { selector: nested.wikiInput }
+
   - clickWithNestedWait:
       bS: { wikiInputInside: wikiInput }
       # debug: true

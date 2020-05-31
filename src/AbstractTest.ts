@@ -2,7 +2,7 @@ import isString from 'lodash/isString';
 import cloneDeep from 'lodash/cloneDeep';
 import isFunction from 'lodash/isFunction';
 import pick from 'lodash/pick';
-// import get from 'lodash/get';
+import get from 'lodash/get';
 // import isEmpty from 'lodash/isEmpty';
 
 import { merge, blankSocket, getTimer } from './Helpers';
@@ -280,7 +280,8 @@ export default class Test {
       const bindDataLocal = this.bindData;
       Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
-        dataLocal[key] = dataLocal[val];
+        //  GET is important with nested data
+        dataLocal[key] = get(dataLocal, val);
       });
       // debugger;
       return dataLocal;
@@ -303,14 +304,16 @@ export default class Test {
         this.resultsFromParent,
         this.selectors,
       ];
-      const SelectorsLocal = merge(...dataFlow);
+      // debugger
+      const selectorsLocal = merge(...dataFlow);
       const bindSelectorsLocal = this.bindSelectors;
       Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
-        SelectorsLocal[key] = SelectorsLocal[val];
+        //  GET is important with nested data
+        selectorsLocal[key] = get(selectorsLocal, val);
       });
       // debugger;
-      return SelectorsLocal;
+      return selectorsLocal;
     };
 
     this.checkIf = async (

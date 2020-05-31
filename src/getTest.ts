@@ -81,7 +81,7 @@ const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketTyp
 
   const test = new AbstractTest(testJson);
 
-  return async (args) => {
+  return async (args = {}) => {
     let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
       'options',
       'data',
