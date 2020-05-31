@@ -12,7 +12,7 @@ import { getTimer, blankSocket } from './Helpers';
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 
-const run = async (argsInput = {}): Promise<void> => {
+const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> => {
   const { envsId, envsPool: envs } = Environment();
   const logger = new Log(envsId);
   const log = logger.log.bind(logger);
@@ -21,7 +21,7 @@ const run = async (argsInput = {}): Promise<void> => {
 
   try {
     const startTime = process.hrtime.bigint();
-    const args = { ...new Arguments(argsInput).args };
+    const args = { ...new Arguments(argsInput, true).args };
 
     if (!args.PPD_TESTS.length) {
       throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -34,16 +34,21 @@ const run = async (argsInput = {}): Promise<void> => {
     const initArgsTime = getTimer(startTime);
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
+      const testName = args.PPD_TESTS[i];
+      if (!testName) {
+        throw new Error('There is blank test name. Pass any test in PPD_TESTS argument');
+      }
+
       const startTimeTest = process.hrtime.bigint();
 
-      envs.setCurrentTest(args.PPD_TESTS[i]);
+      envs.setCurrentTest(testName);
 
       if (i === 0) {
         await log({ level: 'timer', text: `Init time 🕝: ${initArgsTime} sec.` });
       }
       await log({
         level: 'timer',
-        text: `Test '${args.PPD_TESTS[i]}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
+        text: `Test '${testName}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
       });
 
       await envs.init(false);
@@ -57,7 +62,7 @@ const run = async (argsInput = {}): Promise<void> => {
 
       await test();
 
-      await log({ level: 'timer', text: `Test '${args.PPD_TESTS[i]}' time 🕝: ${getTimer(startTimeTest)} sec.` });
+      await log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest)} sec.` });
     }
 
     await envs.closeBrowsers();
@@ -66,10 +71,11 @@ const run = async (argsInput = {}): Promise<void> => {
     await log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime)} sec.` });
 
     // if (!module.parent) {
-    process.exit(0);
+    if (closeProcess) {
+      process.exit(0);
+    }
     // }
   } catch (error) {
-    error.message += " || error in 'run'";
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;
       error.type = 'SyntaxError';
