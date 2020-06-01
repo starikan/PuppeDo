@@ -3,7 +3,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import isFunction from 'lodash/isFunction';
 import pick from 'lodash/pick';
 import get from 'lodash/get';
-// import isEmpty from 'lodash/isEmpty';
 
 import { merge, blankSocket, getTimer } from './Helpers';
 import Blocker from './Blocker';
@@ -48,7 +47,6 @@ const ALIASES = {
     'fR',
     'resultFunction',
   ],
-  // resultFunction: ['rF', 'rf', '🔑↩️', 'functionResult', 'fr', 'fR'],
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
@@ -144,7 +142,6 @@ export default class Test {
   bindSelectors: Object;
   selectorsFunction: Object;
   bindResults: Object;
-  // resultFunction: Object;
   description: string;
   while: string;
   if: string;
@@ -158,9 +155,7 @@ export default class Test {
   envPageName: string;
   env: any;
 
-  // fetchData: any;
   fetchDataNew: any;
-  // fetchSelectors: any;
   fetchSelectorsNew: any;
   checkIf: any;
   runLogic: any;
@@ -216,50 +211,7 @@ export default class Test {
     this.testFile = testFile;
     this.debug = debug;
 
-    // this.fetchData = (isSelector: boolean = false): Object => {
-    //   const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
-    //   const dataName = isSelector ? 'selectors' : 'data';
-
-    //   // * Get data from ENV params global
-    //   let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
-
-    //   // * Get data from current env
-    //   joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
-
-    //   // * Get data from global envs for all tests
-    //   joinArray = [...joinArray, this.envsPool[dataName] || {}];
-
-    //   // * Fetch data from ext files that passed in test itself
-    //   const allTests = new TestsContent().allData;
-    //   const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-    //   extFiles.forEach((v) => {
-    //     const extData = allTests[dataName].find((d) => v === d.name);
-    //     if (extData) {
-    //       joinArray = [...joinArray, extData.data];
-    //     }
-    //   });
-
-    //   // * Get data from test itself in test describe
-    //   joinArray = [...joinArray, isSelector ? this.selectorsParent : this.dataParent];
-
-    //   // * Update local data with bindings
-    //   let dataLocal = merge(...joinArray);
-    //   const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
-    //   Object.entries(bindDataLocal).forEach((v: [string, string]) => {
-    //     const [key, val] = v;
-    //     dataLocal[key] = get(dataLocal, val);
-    //   });
-
-    //   // * Update after all bindings with data from test itself passed in running
-    //   const collectedData = isSelector ? this.selectors : this.data;
-    //   dataLocal = merge(dataLocal, collectedData);
-
-    //   return dataLocal;
-    // };
-
-    // this.fetchSelectors = (): Object => this.fetchData(true);
-
-    this.fetchDataNew = () => {
+    this.fetchDataNew = (): Object => {
       const { PPD_DATA } = new Arguments().args;
 
       const { data: allData } = new TestsContent().allData;
@@ -283,11 +235,10 @@ export default class Test {
         //  GET is important with nested data
         dataLocal[key] = get(dataLocal, val);
       });
-      // debugger;
       return dataLocal;
     };
 
-    this.fetchSelectorsNew = () => {
+    this.fetchSelectorsNew = (): Object => {
       const { PPD_SELECTORS } = new Arguments().args;
 
       const { selectors: allSelectors } = new TestsContent().allData;
@@ -304,7 +255,6 @@ export default class Test {
         this.resultsFromParent,
         this.selectors,
       ];
-      // debugger
       const selectorsLocal = merge(...dataFlow);
       const bindSelectorsLocal = this.bindSelectors;
       Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
@@ -312,7 +262,6 @@ export default class Test {
         //  GET is important with nested data
         selectorsLocal[key] = get(selectorsLocal, val);
       });
-      // debugger;
       return selectorsLocal;
     };
 
@@ -393,8 +342,6 @@ export default class Test {
         this.envName = this.envsPool.current.name;
         this.envPageName = this.envsPool.current.page;
         this.env = this.envsPool.envs[this.envName];
-
-        // if (this.name === 'clickWithNestedWait') debugger;
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
@@ -479,12 +426,6 @@ export default class Test {
           });
         }
 
-        // Set ENVS Data for the further nested tests
-        // if (this.env) {
-        //   this.envsPool.data = merge(this.envsPool.data, dataLocal);
-        //   this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal);
-        // }
-
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
@@ -506,16 +447,7 @@ export default class Test {
         }
 
         // RESULTS
-        // TODO: raise warning if not needed in allowResults
-
-        // If Test there is no JS return. Get all data to read values
-        // if (this.type === 'test') {
-        //   debugger
-        //   resultFromTest = merge(this.envsPool.data, this.envsPool.selectors);
-        // }
-
         const results = allowResults ? pick(resultFromTest, allowResults) : resultFromTest;
-
         if (
           allowResults &&
           Object.keys(results).length &&
@@ -523,30 +455,7 @@ export default class Test {
         ) {
           throw new Error('Can`t get results from test');
         }
-
-        // Object.entries(this.bindResults).forEach((v: [string, string]) => {
-        //   const [key, val] = v;
-        //   // results[key] = get(results, val);
-        //   debugger
-        //   results[key] = resolveDataFunctions(val, merge(dataLocal, selectorsLocal, results));
-        // });
-        // results = resolveDataFunctions(this.bindResults, merge(dataLocal, selectorsLocal, results));
-        const localResults = resolveDataFunctions(this.bindResults, merge(selectorsLocal, dataLocal, results));
-
-        // RESULT FUNCTIONS
-        // if (!isEmpty(this.resultFunction)) {
-        //   const dataWithResults = merge(dataLocal, selectorsLocal, results);
-        //   const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
-        //   dataLocal = merge(dataLocal, resultFunction);
-        //   selectorsLocal = merge(selectorsLocal, resultFunction);
-        //   localResults = merge(localResults, resultFunction);
-        // }
-
-        // Set ENVS Data
-        // if (this.env) {
-        //   this.envsPool.data = merge(this.envsPool.data, dataLocal, localResults);
-        //   this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal, localResults);
-        // }
+        let localResults = resolveDataFunctions(this.bindResults, merge(selectorsLocal, dataLocal, results));
 
         // ERROR
         if (this.errorIfResult) {
@@ -568,7 +477,14 @@ export default class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          await this.run(envsId, { ...inputArgs, ...{ repeat: this.repeat - 1 } });
+          const repeatArgs = JSON.parse(JSON.stringify(inputArgs));
+          repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
+          repeatArgs.data = { ...repeatArgs.data, ...localResults };
+          const repeatResult = await this.run(envsId, {
+            ...repeatArgs,
+            ...{ repeat: this.repeat - 1 },
+          });
+          localResults = { ...localResults, ...repeatResult };
         }
 
         // TIMER IN CONSOLE

@@ -33,7 +33,6 @@ interface EnvsPoolType {
     page?: string | null;
     test?: any;
   };
-  results: any;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -58,8 +57,6 @@ class EnvsPool implements EnvsPoolType {
     page?: string | null;
     test?: any;
   };
-  // TODO
-  results: any;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -73,7 +70,6 @@ class EnvsPool implements EnvsPoolType {
   constructor() {
     this.envs = {};
     this.current = {};
-    this.results = {};
     this.output = {};
     this.log = [];
   }
