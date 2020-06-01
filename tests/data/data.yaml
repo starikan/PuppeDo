@@ -5,6 +5,7 @@ description: Simple Data
 data:
   data: test
   baseUrl: https://developer.mozilla.org/
+  CHECK_DATA: ENV_DATA_EXT
 
 ---
 type: data

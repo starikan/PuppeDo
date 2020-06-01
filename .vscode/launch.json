@@ -104,6 +104,12 @@
       "args": [
         "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Data_check",
+      "program": "${workspaceFolder}\\tests\\indexData.js",
     }
   ]
 }

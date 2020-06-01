@@ -1,0 +1,40 @@
+name: testDataCheck
+type: test
+description: Check Data Flow. Pass in atoms.
+
+data:
+  CHECK_DATA: TEST_DATA
+
+runTest:
+  - blank:
+      description: Data parent test
+      errorIf: "CHECK_DATA !== 'TEST_DATA'"
+
+  - blank:
+      description: Data direct inject
+      data: { CHECK_DATA: BLOCK_DATA }
+      errorIf: "CHECK_DATA !== 'BLOCK_DATA'"
+
+  - blank:
+      description: Data binding from parent test
+      bindData: { CHECK_DATA: CHECK_DATA }
+      errorIf: "CHECK_DATA !== 'TEST_DATA'"
+
+  - blank:
+      description: Data create result from parent test
+      result: { CHECK_DATA: "CHECK_DATA + '1'" }
+
+  - blank:
+      description: Data check result
+      bindData: { CHECK_DATA: CHECK_DATA }
+      errorIf: "CHECK_DATA !== 'TEST_DATA1'"
+
+  - blank:
+      description: Data check direct inject after result
+      data: { CHECK_DATA: BLOCK_DATA }
+      errorIf: "CHECK_DATA !== 'BLOCK_DATA'"
+
+  - blank:
+      description: Data check binding after result
+      bindData: { CHECK_DATA: CHECK_DATA }
+      errorIf: "CHECK_DATA !== 'TEST_DATA1'"

@@ -16,7 +16,33 @@ runTest:
   - goTo:
       bD: { url: baseUrl }
 
+  - checkSelector:
+      bindSelectors: { selector: nested.wikiInput }
+      errorIfResult: 'exists === false'
+      options:
+        screenshot: true
+
+  - blank:
+      runTest:
+        - clickSelector:
+            bS: { selector: nested.wikiInput }
+
+  - blank:
+      result: { $i: 0 }
+
+  - typeInput:
+      bS: { input: wikiInput }
+      bD: { text: $i }
+      result: { $i: $i + 1 }
+      repeat: 2
+
+  - getText:
+      bS: { selector: wikiInput }
+      r: { result: text }
+      errorIfResult: "result !== '01'"
+
   - clickWithNestedWait:
+      bS: { wikiInputInside: wikiInput }
       # debug: true
       o:
         hidden: false

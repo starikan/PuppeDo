@@ -3,7 +3,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import isFunction from 'lodash/isFunction';
 import pick from 'lodash/pick';
 import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
 
 import { merge, blankSocket, getTimer } from './Helpers';
 import Blocker from './Blocker';
@@ -21,21 +20,6 @@ type LocalsType = {
   localResults?: Object;
 };
 
-type InputsType = {
-  options?: any;
-  description?: string;
-  repeat?: number;
-  while?: string;
-  if?: string;
-  errorIf?: string;
-  errorIfResult?: string;
-  debug?: boolean;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  data?: Object;
-  selectors?: Object;
-};
-
 const ALIASES = {
   data: ['d', '📋'],
   bindData: ['bD', 'bd', '📌📋', 'dataBind', 'db', 'dB'],
@@ -43,8 +27,26 @@ const ALIASES = {
   selectors: ['selector', 's', '💠'],
   bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠', 'selectorBind', 'selectorsBind', 'sb', 'sB'],
   selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠', 'functionSelector', 'functionSelectors', 'fs', 'fS'],
-  bindResults: ['bindResult', 'bR', 'br', 'result', 'r', '↩️', 'R', 'rb', 'rB', 'resultBind', 'resultsBind'],
-  resultFunction: ['rF', 'rf', '🔑↩️', 'functionResult', 'fr', 'fR'],
+  bindResults: [
+    'bindResult',
+    'bR',
+    'br',
+    'result',
+    'r',
+    '↩️',
+    'R',
+    'rb',
+    'rB',
+    'resultBind',
+    'resultsBind',
+    'rF',
+    'rf',
+    '🔑↩️',
+    'functionResult',
+    'fr',
+    'fR',
+    'resultFunction',
+  ],
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
@@ -76,11 +78,10 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   return true;
 };
 
-const resolveDataFunctions = (funcParams: Object, dataLocal: Object, selectorsLocal: Object = {}): Object => {
-  const allDataSel = merge(dataLocal, selectorsLocal);
+const resolveDataFunctions = (funcParams: Object, allData: Object): Object => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
-    const evalData = runScriptInContext(data.toString(), allDataSel);
+    const evalData = runScriptInContext(data.toString(), allData);
     const collector = { ...s, ...{ [key]: evalData } };
     return collector;
   }, {});
@@ -115,8 +116,8 @@ export default class Test {
   needEnv: Array<string>;
   needData: Array<string>;
   needSelectors: Array<string>;
-  dataTest: Object;
-  selectorsTest: Object;
+  dataParent: Object;
+  selectorsParent: Object;
   options: Object;
   dataExt: Array<string>;
   selectorsExt: Array<string>;
@@ -141,20 +142,21 @@ export default class Test {
   bindSelectors: Object;
   selectorsFunction: Object;
   bindResults: Object;
-  resultFunction: Object;
   description: string;
   while: string;
   if: string;
   errorIf: string;
   errorIfResult: string;
+  resultsFromChildren: any;
+  resultsFromParent: any;
 
   envsPool: any;
   envName: string;
   envPageName: string;
   env: any;
 
-  fetchData: any;
-  fetchSelectors: any;
+  fetchDataNew: any;
+  fetchSelectorsNew: any;
   checkIf: any;
   runLogic: any;
   run: any;
@@ -190,8 +192,8 @@ export default class Test {
     this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
-    this.dataTest = data;
-    this.selectorsTest = selectors;
+    this.data = data;
+    this.selectors = selectors;
     this.options = options;
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
@@ -209,48 +211,59 @@ export default class Test {
     this.testFile = testFile;
     this.debug = debug;
 
-    this.fetchData = (isSelector: boolean = false): Object => {
-      const { PPD_SELECTORS, PPD_DATA } = new Arguments().args;
-      const dataName = isSelector ? 'selectors' : 'data';
+    this.fetchDataNew = (): Object => {
+      const { PPD_DATA } = new Arguments().args;
 
-      // * Get data from ENV params global
-      let joinArray = isSelector ? [PPD_SELECTORS] : [PPD_DATA];
+      const { data: allData } = new TestsContent().allData;
+      const dataExtResolved = this.dataExt.reduce((collect, v) => {
+        const extData = allData.find((d) => v === d.name);
+        return { ...collect, ...extData };
+      }, {});
 
-      // * Get data from current env
-      joinArray = [...joinArray, this.env ? this.env.env[dataName] : {}];
-
-      // * Get data from global envs for all tests
-      joinArray = [...joinArray, this.envsPool[dataName] || {}];
-
-      // * Fetch data from ext files that passed in test itself
-      const allTests = new TestsContent().allData;
-      const extFiles = isSelector ? this.selectorsExt : this.dataExt;
-      extFiles.forEach((v) => {
-        const extData = allTests[dataName].find((d) => v === d.name);
-        if (extData) {
-          joinArray = [...joinArray, extData.data];
-        }
-      });
-
-      // * Get data from test itself in test describe
-      joinArray = [...joinArray, isSelector ? this.selectorsTest : this.dataTest];
-
-      // * Update local data with bindings
-      let dataLocal = merge(...joinArray);
-      const bindDataLocal = isSelector ? this.bindSelectors : this.bindData;
+      const dataFlow = [
+        PPD_DATA,
+        this.env?.env?.data || {},
+        dataExtResolved,
+        this.dataParent,
+        this.resultsFromParent,
+        this.data,
+      ];
+      const dataLocal = merge(...dataFlow);
+      const bindDataLocal = this.bindData;
       Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
+        //  GET is important with nested data
         dataLocal[key] = get(dataLocal, val);
       });
-
-      // * Update after all bindings with data from test itself passed in running
-      const collectedData = isSelector ? this.selectors : this.data;
-      dataLocal = merge(dataLocal, collectedData);
-
       return dataLocal;
     };
 
-    this.fetchSelectors = (): Object => this.fetchData(true);
+    this.fetchSelectorsNew = (): Object => {
+      const { PPD_SELECTORS } = new Arguments().args;
+
+      const { selectors: allSelectors } = new TestsContent().allData;
+      const selectorsExtResolved = this.selectorsExt.reduce((collect, v) => {
+        const extData = allSelectors.find((d) => v === d.name);
+        return { ...collect, ...extData };
+      }, {});
+
+      const dataFlow = [
+        PPD_SELECTORS,
+        this.env?.env?.selectors || {},
+        selectorsExtResolved,
+        this.selectorsParent,
+        this.resultsFromParent,
+        this.selectors,
+      ];
+      const selectorsLocal = merge(...dataFlow);
+      const bindSelectorsLocal = this.bindSelectors;
+      Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
+        const [key, val] = v;
+        //  GET is important with nested data
+        selectorsLocal[key] = get(selectorsLocal, val);
+      });
+      return selectorsLocal;
+    };
 
     this.checkIf = async (
       expr: string,
@@ -261,7 +274,7 @@ export default class Test {
     ): Promise<boolean> => {
       const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
 
-      const context = cloneDeep(merge(dataLocal, selectorsLocal, localResults));
+      const context = cloneDeep(merge(selectorsLocal, dataLocal, localResults));
       const exprResult = runScriptInContext(expr, context);
 
       if (!exprResult && ifType === 'if') {
@@ -287,28 +300,29 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<void> => {
+    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<any> => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
-      const inputs: InputsType = merge(constructorArgs, inputArgs);
+      const inputs: InputsTestType = merge(constructorArgs, inputArgs);
 
+      // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
-      // this.data = merge(this.data, inputs.data || {}, resolveAliases('data', inputs));
+      this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
       this.bindData = resolveAliases('bindData', inputs);
       this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases('selectors', inputs);
-      // this.selectors = merge(this.selectors, inputs.selectors || {}, resolveAliases('selectors', inputs));
+      this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
       this.bindSelectors = resolveAliases('bindSelectors', inputs);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs);
-      this.resultFunction = resolveAliases('resultFunction', inputs);
+      this.resultsFromParent = inputs.resultsFromParent;
 
-      this.options = merge(this.options, inputs.options || {}, resolveAliases('options', inputs));
+      this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
       this.description = inputs.description || this.description;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -332,8 +346,8 @@ export default class Test {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        let dataLocal = this.fetchData();
-        let selectorsLocal = this.fetchSelectors();
+        let dataLocal = this.fetchDataNew();
+        let selectorsLocal = this.fetchSelectorsNew();
         const allData = merge(dataLocal, selectorsLocal);
 
         // FUNCTIONS
@@ -365,8 +379,6 @@ export default class Test {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
-          dataTest: this.data,
-          selectorsTest: this.selectors,
           ...pick(this, argsFields),
         };
 
@@ -407,15 +419,9 @@ export default class Test {
         // ERROR IF
         if (this.errorIf) {
           await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
-            dataLocal,
             selectorsLocal,
+            dataLocal,
           });
-        }
-
-        // Set ENVS Data for the further nested tests
-        if (this.env) {
-          this.envsPool.data = merge(this.envsPool.data, dataLocal);
-          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal);
         }
 
         // RUN FUNCTIONS
@@ -439,52 +445,32 @@ export default class Test {
         }
 
         // RESULTS
-        // TODO: raise warning if not needed in allowResults
-
-        // If Test there is no JS return. Get all data to read values
-        if (this.type === 'test') {
-          resultFromTest = merge(this.envsPool.data, this.envsPool.selectors);
-        }
-
-        const results = pick(resultFromTest, allowResults);
-
-        if (Object.keys(results).length && Object.keys(results).length !== [...new Set(allowResults)].length) {
+        const results = allowResults.length ? pick(resultFromTest, allowResults) : resultFromTest;
+        if (
+          allowResults.length &&
+          Object.keys(results).length &&
+          Object.keys(results).length !== [...new Set(allowResults)].length
+        ) {
           throw new Error('Can`t get results from test');
         }
-
-        Object.entries(this.bindResults).forEach((v: [string, string]) => {
-          const [key, val] = v;
-          results[key] = get(results, val);
-        });
-        let localResults = { ...results };
-
-        // RESULT FUNCTIONS
-        if (!isEmpty(this.resultFunction)) {
-          const dataWithResults = merge(dataLocal, selectorsLocal, results);
-          const resultFunction = resolveDataFunctions(this.resultFunction, dataWithResults);
-          dataLocal = merge(dataLocal, resultFunction);
-          selectorsLocal = merge(selectorsLocal, resultFunction);
-          localResults = merge(localResults, resultFunction);
-        }
-
-        // Set ENVS Data
-        if (this.env) {
-          this.envsPool.data = merge(this.envsPool.data, dataLocal, localResults);
-          this.envsPool.selectors = merge(this.envsPool.selectors, selectorsLocal, localResults);
-        }
+        const allowResultsObject = allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+        let localResults = resolveDataFunctions(
+          { ...this.bindResults, ...allowResultsObject },
+          merge(selectorsLocal, dataLocal, results),
+        );
 
         // ERROR
         if (this.errorIfResult) {
           await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
-            dataLocal,
             selectorsLocal,
+            dataLocal,
             localResults,
           });
         }
 
         // WHILE
         if (this.while) {
-          const allDataSel = merge(dataLocal, selectorsLocal);
+          const allDataSel = merge(selectorsLocal, dataLocal);
           const whileEval = runScriptInContext(this.while, allDataSel);
           if (!whileEval) {
             return;
@@ -493,7 +479,12 @@ export default class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          await this.run(envsId, { ...inputArgs, ...{ repeat: this.repeat - 1 } });
+          const repeatArgs = JSON.parse(JSON.stringify(inputArgs));
+          repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
+          repeatArgs.data = { ...repeatArgs.data, ...localResults };
+          repeatArgs.repeat = this.repeat - 1;
+          const repeatResult = await this.run(envsId, repeatArgs);
+          localResults = { ...localResults, ...repeatResult };
         }
 
         // TIMER IN CONSOLE
@@ -505,6 +496,9 @@ export default class Test {
             extendInfo: true,
           });
         }
+
+        // eslint-disable-next-line consistent-return
+        return localResults;
       } catch (error) {
         const newError = new TestError({ logger, parentError: error, test: this, envsId });
         await newError.log();
