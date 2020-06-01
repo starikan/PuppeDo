@@ -68,16 +68,16 @@ runTest:
 
   - blank:
       description: Some data function
-      🔑📋: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
+      let: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
 
   - blank:
       description: Bind data from function
-      📌📋: { myDataBinded: myDataFunction}
+      const: { myDataBinded: myDataFunction}
 
   - typeInput:
       description: Input some text in field INPUT
       bS: { input: wikiInput }
-      bD: { text: myDataBinded }
+      🔑📋: { text: myDataBinded }
       o:
         screenshot: true
         fullpage: true

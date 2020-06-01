@@ -1,8 +1,6 @@
 import isString from 'lodash/isString';
-import cloneDeep from 'lodash/cloneDeep';
 import isFunction from 'lodash/isFunction';
 import pick from 'lodash/pick';
-import get from 'lodash/get';
 
 import { merge, blankSocket, getTimer } from './Helpers';
 import Blocker from './Blocker';
@@ -14,19 +12,43 @@ import { TestError } from './Error';
 
 const vm = require('vm');
 
-type LocalsType = {
-  dataLocal?: Object;
-  selectorsLocal?: Object;
-  localResults?: Object;
-};
-
 const ALIASES = {
   data: ['d', '📋'],
-  bindData: ['bD', 'bd', '📌📋', 'dataBind', 'db', 'dB'],
-  dataFunction: ['dF', 'df', '🔑📋', 'functionData', 'fd', 'fD'],
+  bindData: [
+    'bD',
+    'bd',
+    '📌📋',
+    'dataBind',
+    'db',
+    'dB',
+    'dataFunction',
+    'dF',
+    'df',
+    '🔑📋',
+    'functionData',
+    'fd',
+    'fD',
+  ],
   selectors: ['selector', 's', '💠'],
-  bindSelectors: ['bindSelector', 'bS', 'bs', '📌💠', 'selectorBind', 'selectorsBind', 'sb', 'sB'],
-  selectorsFunction: ['selectorFunction', 'sF', 'sf', '🔑💠', 'functionSelector', 'functionSelectors', 'fs', 'fS'],
+  bindSelectors: [
+    'bindSelector',
+    'bS',
+    'bs',
+    '📌💠',
+    'selectorBind',
+    'selectorsBind',
+    'sb',
+    'sB',
+    'selectorsFunction',
+    'selectorFunction',
+    'sF',
+    'sf',
+    '🔑💠',
+    'functionSelector',
+    'functionSelectors',
+    'fs',
+    'fS',
+  ],
   bindResults: [
     'bindResult',
     'bR',
@@ -46,6 +68,14 @@ const ALIASES = {
     'fr',
     'fR',
     'resultFunction',
+    'values',
+    'value',
+    'v',
+    'var',
+    'vars',
+    'const',
+    'c',
+    'let',
   ],
   options: ['option', 'opt', 'o', '⚙️'],
 };
@@ -78,10 +108,10 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   return true;
 };
 
-const resolveDataFunctions = (funcParams: Object, allData: Object): Object => {
+const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
-    const evalData = runScriptInContext(data.toString(), allData);
+    const evalData = runScriptInContext(data, allData);
     const collector = { ...s, ...{ [key]: evalData } };
     return collector;
   }, {});
@@ -137,10 +167,8 @@ export default class Test {
 
   data: Object;
   bindData: Object;
-  dataFunction: Object;
   selectors: Object;
   bindSelectors: Object;
-  selectorsFunction: Object;
   bindResults: Object;
   description: string;
   while: string;
@@ -150,7 +178,6 @@ export default class Test {
   resultsFromChildren: any;
   resultsFromParent: any;
 
-  envsPool: any;
   envName: string;
   envPageName: string;
   env: any;
@@ -228,12 +255,11 @@ export default class Test {
         this.resultsFromParent,
         this.data,
       ];
-      const dataLocal = merge(...dataFlow);
+      let dataLocal = merge(...dataFlow);
       const bindDataLocal = this.bindData;
       Object.entries(bindDataLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
-        //  GET is important with nested data
-        dataLocal[key] = get(dataLocal, val);
+        dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
       });
       return dataLocal;
     };
@@ -255,12 +281,11 @@ export default class Test {
         this.resultsFromParent,
         this.selectors,
       ];
-      const selectorsLocal = merge(...dataFlow);
+      let selectorsLocal = merge(...dataFlow);
       const bindSelectorsLocal = this.bindSelectors;
       Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
         const [key, val] = v;
-        //  GET is important with nested data
-        selectorsLocal[key] = get(selectorsLocal, val);
+        selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, selectorsLocal) };
       });
       return selectorsLocal;
     };
@@ -270,12 +295,9 @@ export default class Test {
       ifType: string,
       log: Function,
       ifLevelIndent: number,
-      locals: LocalsType = {},
+      allData: Object = {},
     ): Promise<boolean> => {
-      const { dataLocal = {}, selectorsLocal = {}, localResults = {} } = locals;
-
-      const context = cloneDeep(merge(selectorsLocal, dataLocal, localResults));
-      const exprResult = runScriptInContext(expr, context);
+      const exprResult = runScriptInContext(expr, allData);
 
       if (!exprResult && ifType === 'if') {
         await log({
@@ -310,13 +332,11 @@ export default class Test {
       this.data = resolveAliases('data', inputs);
       this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
       this.bindData = resolveAliases('bindData', inputs);
-      this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases('selectors', inputs);
       this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
       this.bindSelectors = resolveAliases('bindSelectors', inputs);
-      this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs);
@@ -337,26 +357,17 @@ export default class Test {
       try {
         const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
 
-        this.envsPool = envsPool;
-        this.envName = this.envsPool.current.name;
-        this.envPageName = this.envsPool.current.page;
-        this.env = this.envsPool.envs[this.envName];
+        this.envName = envsPool.current.name;
+        this.envPageName = envsPool.current.page;
+        this.env = envsPool.envs[this.envName];
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        let dataLocal = this.fetchDataNew();
-        let selectorsLocal = this.fetchSelectorsNew();
-        const allData = merge(dataLocal, selectorsLocal);
-
-        // FUNCTIONS
-        const dFResults = resolveDataFunctions(this.dataFunction, allData);
-        const sFResults = resolveDataFunctions(this.selectorsFunction, allData);
-
-        // Update data and selectors with functions result
-        dataLocal = merge(dataLocal, dFResults);
-        selectorsLocal = merge(selectorsLocal, sFResults);
+        const dataLocal = this.fetchDataNew();
+        const selectorsLocal = this.fetchSelectorsNew();
+        const allData = merge(selectorsLocal, dataLocal);
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
@@ -396,7 +407,7 @@ export default class Test {
         const argsExt = {
           ...args,
           env: this.env,
-          envs: this.envsPool,
+          envs: envsPool,
           browser: this.env && this.env.state.browser,
           page: this.env && this.env.state.pages[this.envPageName], // If there is no page it`s might be API
           log: logger.log.bind(logger),
@@ -407,10 +418,7 @@ export default class Test {
 
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, {
-            dataLocal,
-            selectorsLocal,
-          });
+          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
           if (skip) {
             return;
           }
@@ -418,10 +426,7 @@ export default class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
-            selectorsLocal,
-            dataLocal,
-          });
+          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
         }
 
         // RUN FUNCTIONS
@@ -462,16 +467,14 @@ export default class Test {
         // ERROR
         if (this.errorIfResult) {
           await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
-            selectorsLocal,
-            dataLocal,
-            localResults,
+            ...allData,
+            ...localResults,
           });
         }
 
         // WHILE
         if (this.while) {
-          const allDataSel = merge(selectorsLocal, dataLocal);
-          const whileEval = runScriptInContext(this.while, allDataSel);
+          const whileEval = runScriptInContext(this.while, allData);
           if (!whileEval) {
             return;
           }

@@ -23,6 +23,7 @@ runTest:
   - blank:
       description: Data create result from parent test
       result: { CHECK_DATA: "CHECK_DATA + '1'" }
+      errorIfResult: "CHECK_DATA !== 'TEST_DATA1'"
 
   - blank:
       description: Data check result
