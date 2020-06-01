@@ -182,8 +182,7 @@ export default class Test {
   envPageName: string;
   env: any;
 
-  fetchDataNew: any;
-  fetchSelectorsNew: any;
+  fetchData: any;
   checkIf: any;
   runLogic: any;
   run: any;
@@ -212,6 +211,7 @@ export default class Test {
     funcFile = null,
     testFile = null,
     debug = false,
+    // TODO нужно ли это?
     ...constructorArgs
   } = {}) {
     this.name = name;
@@ -238,12 +238,16 @@ export default class Test {
     this.testFile = testFile;
     this.debug = debug;
 
-    this.fetchDataNew = (): Object => {
-      const { PPD_DATA } = new Arguments().args;
+    this.fetchData = (): Object => {
+      const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
+      const { data: allData, selectors: allSelectors } = new TestsContent().allData;
 
-      const { data: allData } = new TestsContent().allData;
       const dataExtResolved = this.dataExt.reduce((collect, v) => {
         const extData = allData.find((d) => v === d.name);
+        return { ...collect, ...extData };
+      }, {});
+      const selectorsExtResolved = this.selectorsExt.reduce((collect, v) => {
+        const extData = allSelectors.find((d) => v === d.name);
         return { ...collect, ...extData };
       }, {});
 
@@ -256,24 +260,8 @@ export default class Test {
         this.data,
       ];
       let dataLocal = merge(...dataFlow);
-      const bindDataLocal = this.bindData;
-      Object.entries(bindDataLocal).forEach((v: [string, string]) => {
-        const [key, val] = v;
-        dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
-      });
-      return dataLocal;
-    };
 
-    this.fetchSelectorsNew = (): Object => {
-      const { PPD_SELECTORS } = new Arguments().args;
-
-      const { selectors: allSelectors } = new TestsContent().allData;
-      const selectorsExtResolved = this.selectorsExt.reduce((collect, v) => {
-        const extData = allSelectors.find((d) => v === d.name);
-        return { ...collect, ...extData };
-      }, {});
-
-      const dataFlow = [
+      const selectorsFlow = [
         PPD_SELECTORS,
         this.env?.env?.selectors || {},
         selectorsExtResolved,
@@ -281,13 +269,19 @@ export default class Test {
         this.resultsFromParent,
         this.selectors,
       ];
-      let selectorsLocal = merge(...dataFlow);
-      const bindSelectorsLocal = this.bindSelectors;
-      Object.entries(bindSelectorsLocal).forEach((v: [string, string]) => {
+      let selectorsLocal = merge(...selectorsFlow);
+
+      Object.entries(this.bindData).forEach((v: [string, string]) => {
+        const [key, val] = v;
+        dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
+      });
+
+      Object.entries(this.bindSelectors).forEach((v: [string, string]) => {
         const [key, val] = v;
         selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, selectorsLocal) };
       });
-      return selectorsLocal;
+
+      return { dataLocal, selectorsLocal };
     };
 
     this.checkIf = async (
@@ -365,8 +359,7 @@ export default class Test {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        const dataLocal = this.fetchDataNew();
-        const selectorsLocal = this.fetchSelectorsNew();
+        const { dataLocal, selectorsLocal } = this.fetchData();
         const allData = merge(selectorsLocal, dataLocal);
 
         checkNeeds(needData, dataLocal, this.name);
@@ -509,7 +502,6 @@ export default class Test {
       }
     };
 
-    // eslint-disable-next-line no-shadow
     this.run = async (envsId: string, inputArgs = {}): Promise<Function> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
