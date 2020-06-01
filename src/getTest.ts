@@ -44,8 +44,8 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketType, parentTest: AbstractTest = {}) => {
-  let testJson: AbstractTest = { ...testJsonIncome };
+const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketType, parentTest: any = {}) => {
+  let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging
@@ -90,6 +90,7 @@ const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketTyp
     updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
     const result = await test.run(envsId, updatetTestJson);
+    // eslint-disable-next-line no-param-reassign
     parentTest.resultsFromChildren = { ...parentTest.resultsFromChildren, ...result };
     return result;
   };
