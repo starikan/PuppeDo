@@ -307,20 +307,19 @@ export default class Test {
       const inputs: InputsTestType = merge(constructorArgs, inputArgs);
 
       // Get Data from parent test and merge it with current test
-      this.data = merge(resolveAliases('data', inputs));
+      this.data = resolveAliases('data', inputs);
       this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
       this.bindData = resolveAliases('bindData', inputs);
       this.dataFunction = resolveAliases('dataFunction', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
-      this.selectors = merge(resolveAliases('selectors', inputs));
+      this.selectors = resolveAliases('selectors', inputs);
       this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
       this.bindSelectors = resolveAliases('bindSelectors', inputs);
       this.selectorsFunction = resolveAliases('selectorsFunction', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs);
-      // this.resultFunction = resolveAliases('resultFunction', inputs);
       this.resultsFromParent = inputs.resultsFromParent;
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
@@ -419,7 +418,6 @@ export default class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          // debugger;
           await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, {
             selectorsLocal,
             dataLocal,
@@ -447,15 +445,19 @@ export default class Test {
         }
 
         // RESULTS
-        const results = allowResults ? pick(resultFromTest, allowResults) : resultFromTest;
+        const results = allowResults.length ? pick(resultFromTest, allowResults) : resultFromTest;
         if (
-          allowResults &&
+          allowResults.length &&
           Object.keys(results).length &&
           Object.keys(results).length !== [...new Set(allowResults)].length
         ) {
           throw new Error('Can`t get results from test');
         }
-        let localResults = resolveDataFunctions(this.bindResults, merge(selectorsLocal, dataLocal, results));
+        const allowResultsObject = allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+        let localResults = resolveDataFunctions(
+          { ...this.bindResults, ...allowResultsObject },
+          merge(selectorsLocal, dataLocal, results),
+        );
 
         // ERROR
         if (this.errorIfResult) {
@@ -480,10 +482,8 @@ export default class Test {
           const repeatArgs = JSON.parse(JSON.stringify(inputArgs));
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
-          const repeatResult = await this.run(envsId, {
-            ...repeatArgs,
-            ...{ repeat: this.repeat - 1 },
-          });
+          repeatArgs.repeat = this.repeat - 1;
+          const repeatResult = await this.run(envsId, repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
 
@@ -497,6 +497,7 @@ export default class Test {
           });
         }
 
+        // eslint-disable-next-line consistent-return
         return localResults;
       } catch (error) {
         const newError = new TestError({ logger, parentError: error, test: this, envsId });

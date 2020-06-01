@@ -16,6 +16,12 @@ runTest:
   - goTo:
       bD: { url: baseUrl }
 
+  - checkSelector:
+      bindSelectors: { selector: nested.wikiInput }
+      errorIfResult: 'exists === false'
+      options:
+        screenshot: true
+
   - blank:
       runTest:
         - clickSelector:
