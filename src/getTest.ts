@@ -5,7 +5,7 @@ import isFunction from 'lodash/isFunction';
 
 import Blocker from './Blocker';
 import { merge } from './Helpers';
-import AbstractTest from './AbstractTest';
+import Test from './Test';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
@@ -44,7 +44,7 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketType, parentTest: any = {}) => {
+const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}) => {
   let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
@@ -79,7 +79,7 @@ const getTest = (testJsonIncome: AbstractTest, envsId: string, socket: SocketTyp
     });
   }
 
-  const test = new AbstractTest(testJson);
+  const test = new Test(testJson);
 
   return async (args = {}) => {
     let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
