@@ -1,5 +1,5 @@
-import isString from 'lodash/isString';
-import isFunction from 'lodash/isFunction';
+import vm from 'vm';
+
 import pick from 'lodash/pick';
 
 import { merge, blankSocket, getTimer } from './Helpers';
@@ -9,8 +9,6 @@ import Log from './Log';
 import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
-
-const vm = require('vm');
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -98,8 +96,8 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
-    if (isString(d) && d.endsWith('?')) return; // optional parameter
-    const keysDataIncome = new Set(isString(d) ? [d] : d);
+    if (typeof d === 'string' && d.endsWith('?')) return; // optional parameter
+    const keysDataIncome = new Set(typeof d === 'string' ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
       throw new Error(`Error: can't find data parameter "${d}" in ${testName} test`);
@@ -130,7 +128,7 @@ const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
 };
 
 const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
-  const needEnvs = isString(needEnv) ? [needEnv] : needEnv;
+  const needEnvs = typeof needEnv === 'string' ? [needEnv] : needEnv;
   if (Array.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
       throw new Error(`Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`);
@@ -211,8 +209,6 @@ export default class Test {
     funcFile = null,
     testFile = null,
     debug = false,
-    // TODO нужно ли это?
-    ...constructorArgs
   } = {}) {
     this.name = name;
     this.type = type;
@@ -316,11 +312,11 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (envsId: string, inputArgs: Object = {}): Promise<any> => {
+    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<any> => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
-      const inputs: InputsTestType = merge(constructorArgs, inputArgs);
+      // const inputs: InputsTestType = merge(constructorArgs, inputArgs);
 
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
@@ -366,24 +362,21 @@ export default class Test {
         checkNeeds(needSelectors, selectorsLocal, this.name);
 
         // All data passed to log
-        const argsFields = [
-          'envName',
-          'envPageName',
-          'options',
-          'allowResults',
-          'bindResults',
-          'bindSelectors',
-          'bindData',
-          'levelIndent',
-          'repeat',
-          'stepId',
-          'debug',
-        ];
         const args = {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
-          ...pick(this, argsFields),
+          envName: this.envName,
+          envPageName: this.envPageName,
+          options: this.options,
+          allowResults: this.allowResults,
+          bindResults: this.bindResults,
+          bindSelectors: this.bindSelectors,
+          bindData: this.bindData,
+          levelIndent: this.levelIndent,
+          repeat: this.repeat,
+          stepId: this.stepId,
+          debug: this.debug,
         };
 
         // LOG TEST
@@ -429,7 +422,7 @@ export default class Test {
         for (let i = 0; i < FUNCTIONS.length; i += 1) {
           let funcs = FUNCTIONS[i];
 
-          if (isFunction(funcs)) {
+          if (typeof funcs === 'function') {
             funcs = [funcs];
           }
           if (Array.isArray(funcs)) {
@@ -475,7 +468,7 @@ export default class Test {
 
         // REPEAT
         if (this.repeat > 1) {
-          const repeatArgs = JSON.parse(JSON.stringify(inputArgs));
+          const repeatArgs = JSON.parse(JSON.stringify(inputs));
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
