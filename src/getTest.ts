@@ -8,7 +8,7 @@ import Test from './Test';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
-const resolveJS = (testJson, funcFile) => {
+const resolveJS = (testJson: any, funcFile: string): any => {
   const testJsonNew = { ...testJson };
   try {
     /* eslint-disable */
@@ -43,7 +43,7 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}) => {
+const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}): any => {
   let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
@@ -80,7 +80,7 @@ const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, paren
 
   const test = new Test(testJson);
 
-  return async (args = {}) => {
+  return async (args = {}): Promise<Test> => {
     let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
       'options',
       'data',

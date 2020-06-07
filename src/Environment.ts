@@ -15,30 +15,6 @@ import TestsContent from './TestContent';
 import Arguments from './Arguments';
 import Env from './Env';
 
-interface EnvsPoolType {
-  envs: {
-    [key: string]: {
-      env: EnvType;
-      name: string;
-      state: EnvStateType;
-    };
-  };
-  current: {
-    name?: string;
-    page?: string;
-    test?: string;
-  };
-  output: {
-    folder?: string;
-    folderLatest?: string;
-    folderLatestFull?: string;
-    output?: string;
-    name?: string;
-    folderFull?: string;
-  };
-  log: Array<string>;
-}
-
 type EnvsInstanceType = {
   envsPool: EnvsPool;
   socket: SocketType;
@@ -66,7 +42,7 @@ class EnvsPool implements EnvsPoolType {
     name?: string;
     folderFull?: string;
   };
-  log: Array<string>;
+  log: Array<LogEntry>;
 
   constructor() {
     this.envs = {};

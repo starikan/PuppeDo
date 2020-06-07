@@ -114,6 +114,33 @@ interface EnvType extends EnvYamlType {
   testFile: string;
 }
 
+interface EnvsPoolType {
+  envs: {
+    [key: string]: {
+      env: EnvType;
+      name: string;
+      state: EnvStateType;
+    };
+  };
+  current: {
+    name?: string;
+    page?: string;
+    test?: string;
+  };
+  output: {
+    folder?: string;
+    folderLatest?: string;
+    folderLatestFull?: string;
+    output?: string;
+    name?: string;
+    folderFull?: string;
+  };
+  log: Array<LogEntry>;
+  getOutputsFolders: Function;
+  closeBrowsers: Function;
+  closeProcesses: Function;
+}
+
 // ================ DATA / SELECTORS ====================
 
 type DataYamlType = {
@@ -165,4 +192,18 @@ type InputsTestType = {
   selectorsParent?: Object;
   optionsParent?: Object;
   resultsFromParent?: Object;
+};
+
+type LogEntry = {
+  text: string;
+  time: string;
+  dataEnvs: Object;
+  dataEnvsGlobal: Object;
+  testStruct: Object;
+  bindedData: Object;
+  screenshots: Array<string>;
+  type: string;
+  level: string;
+  levelIndent: number;
+  stepId: string;
 };

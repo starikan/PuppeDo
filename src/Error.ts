@@ -1,21 +1,24 @@
 /* eslint-disable max-classes-per-file */
 import Arguments from './Arguments';
+import Test from './Test';
+import Log from './Log';
 
-type ErrorType = {
-  envsId: any;
-  envs: any;
-  socket: any;
-  stepId: any;
-  testDescription: any;
-  message: any;
-  stack: any;
-};
+interface ErrorType extends Error {
+  envsId: string;
+  envs: EnvsPoolType;
+  socket: SocketType;
+  stepId: string;
+  testDescription: string;
+  message: string;
+  stack: string;
+  type: string;
+}
 
 type ErrorConstructorType = {
-  logger: any;
+  logger: Log;
   parentError: ErrorType;
-  test: any;
-  envsId: any;
+  test: Test;
+  envsId: string;
 };
 
 export class AbstractError extends Error {
@@ -26,30 +29,21 @@ export class AbstractError extends Error {
 }
 
 export class TestError extends AbstractError {
-  envsId: any;
-  envs: any;
-  socket: any;
-  stepId: any;
-  testDescription: any;
-  message: any;
-  stack: any;
-  logger: any;
-  test: any;
+  envsId: string;
+  envs: EnvsPoolType;
+  socket: SocketType;
+  stepId: string;
+  testDescription: string;
+  message: string;
+  stack: string;
+  logger: Log;
+  test: Test;
 
-  constructor({
-    logger = {
-      log: () => {
-        throw new Error('No log function');
-      },
-    },
-    parentError,
-    test = {},
-    envsId = null,
-  }: ErrorConstructorType) {
+  constructor({ logger, parentError, test, envsId }: ErrorConstructorType) {
     super();
 
     this.envsId = parentError?.envsId || envsId;
-    this.envs = parentError?.envs || test.envs;
+    this.envs = parentError?.envs || test.env;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
     this.testDescription = parentError?.testDescription || test.description;
@@ -60,7 +54,7 @@ export class TestError extends AbstractError {
     this.test = test;
   }
 
-  async log() {
+  async log(): Promise<void> {
     await this.logger.log({
       level: 'error',
       text: `Description: ${this.test.description || 'No test description'} (${this.test.name})`,
@@ -74,7 +68,7 @@ export class TestError extends AbstractError {
   }
 }
 
-export const errorHandler = async (errorIncome) => {
+export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
   const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
   const { PPD_DEBUG_MODE = false } = new Arguments().args;
   if (error.socket && error.socket.sendYAML) {

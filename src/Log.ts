@@ -18,7 +18,7 @@ type LogEntriesType = [string, Colors][][];
 
 export default class Log {
   envsId: string;
-  envs: any;
+  envs: EnvsPoolType;
   socket: SocketType;
   binded: {
     testSource?: {
@@ -40,7 +40,7 @@ export default class Log {
     this.screenshot = new Screenshot({ envsId });
   }
 
-  bindData(data: { [key: string]: any } = {}): void {
+  bindData(data: { [key: string]: string | Object } = {}): void {
     this.binded = { ...this.binded, ...data };
   }
 
@@ -198,6 +198,7 @@ export default class Log {
     bindedData = this.binded.bindedData,
     extendInfo = false,
     stdOut = true,
+    stepId = '',
   } = {}): Promise<void> {
     const {
       PPD_DEBUG_MODE,
@@ -265,7 +266,7 @@ export default class Log {
       // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
       const testStructNormaize = isEmpty(testStruct) ? testSource : testStruct;
 
-      const logEntry = {
+      const logEntry: LogEntry = {
         text,
         time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
@@ -277,7 +278,7 @@ export default class Log {
         type: level === 'env' ? 'env' : 'log',
         level,
         levelIndent,
-        stepId: bindedData?.stepId,
+        stepId: bindedData?.stepId || stepId,
       };
       this.envs.log = [...this.envs.log, logEntry];
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });

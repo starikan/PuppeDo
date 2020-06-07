@@ -150,9 +150,9 @@ export default class Test {
   dataExt: Array<string>;
   selectorsExt: Array<string>;
   allowResults: Array<string>;
-  beforeTest: any;
-  runTest: any;
-  afterTest: any;
+  beforeTest: Function | Function[];
+  runTest: Function | Function[];
+  afterTest: Function | Function[];
   levelIndent: number;
   repeat: number;
   source: Object;
@@ -173,17 +173,17 @@ export default class Test {
   if: string;
   errorIf: string;
   errorIfResult: string;
-  resultsFromChildren: any;
-  resultsFromParent: any;
+  resultsFromChildren: Object;
+  resultsFromParent: Object;
 
   envName: string;
   envPageName: string;
   env: any;
 
-  fetchData: any;
-  checkIf: any;
-  runLogic: any;
-  run: any;
+  fetchData: Function;
+  checkIf: Function;
+  runLogic: Function;
+  run: Function;
 
   constructor({
     name = null,
