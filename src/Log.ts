@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 
-import get from 'lodash/get';
 import mapValues from 'lodash/mapValues';
 import omit from 'lodash/omit';
 import isEmpty from 'lodash/isEmpty';
@@ -15,15 +14,21 @@ import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 
-type LogEntriesType = [string, keyof colors][][];
+type LogEntriesType = [string, keyof typeof colors][][];
+type Colors = keyof typeof colors;
 
 export default class Log {
   envsId: string;
   envs: any;
   socket: SocketType;
   binded: {
-    testSource?: any;
-    bindedData?: any;
+    testSource?: {
+      breadcrumbs: Array<string>;
+    };
+    bindedData?: {
+      repeat: number;
+      stepId: string;
+    };
   };
   screenshot: Screenshot;
 
@@ -40,7 +45,7 @@ export default class Log {
     this.binded = { ...this.binded, ...data };
   }
 
-  static checkLevel(level: number | string): string {
+  static checkLevel(level: number | string): Colors | null {
     enum levels {
       raw,
       timer,
@@ -59,39 +64,39 @@ export default class Log {
     const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v) => levels[v]);
 
     if (ignoreLevels.includes(inputLevel)) {
-      return '';
+      return null;
     }
 
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
-      return levels[inputLevel];
+      return levels[inputLevel] as Colors;
     }
-    return '';
+    return null;
   }
 
   makeLog(
-    level: string = 'sane',
+    level: Colors = 'sane',
     levelIndent: number = 0,
     text: string = '',
     now = dayjs(),
     funcFile = null,
     testFile = null,
-    extendInfo = false,
+    extendInfo: boolean = false,
     screenshots = [],
-    error = {},
-  ): any {
-    const errorTyped: { message?: string; stack?: string } = error;
+    error: { message?: string; stack?: string } = {},
+  ): LogEntriesType {
+    const errorTyped = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
-    const breadcrumbs = get(this.binded, ['testSource', 'breadcrumbs'], []);
+    const breadcrumbs = this.binded?.testSource?.breadcrumbs || [];
 
-    const stringsLog = [
+    const headLevel: Colors = level === 'error' ? 'error' : 'sane';
+    const tailLevel: Colors = level === 'error' ? 'error' : 'info';
+
+    const stringsLog: LogEntriesType = [
       [
-        [
-          `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
-          level === 'error' ? 'error' : 'sane',
-        ],
+        [`${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
         [text, level],
       ],
     ];
@@ -100,15 +105,15 @@ export default class Log {
       const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
       const tail = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
-        [head, level === 'error' ? 'error' : 'sane'],
-        [tail, level === 'error' ? 'error' : 'info'],
+        [head, headLevel],
+        [tail, tailLevel],
       ]);
 
-      const repeat = get(this, 'binded.bindedData.repeat', 1);
+      const repeat = this.binded?.bindedData?.repeat || 1;
       if (repeat > 1) {
         stringsLog.push([
-          [head, level === 'error' ? 'error' : 'sane'],
-          [`🔆 repeats left: ${repeat - 1}`, level === 'error' ? 'error' : 'info'],
+          [head, headLevel],
+          [`🔆 repeats left: ${repeat - 1}`, tailLevel],
         ]);
       }
     }
@@ -127,15 +132,15 @@ export default class Log {
 
     screenshots.forEach((v) => {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
-        [`🖼 screenshot: [${v}]`, level === 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
+        [`🖼 screenshot: [${v}]`, tailLevel],
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, level === 'error' ? 'error' : 'sane'],
-        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), level === 'error' ? 'error' : 'info'],
+        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
+        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), tailLevel],
       ]);
     }
 
@@ -154,15 +159,15 @@ export default class Log {
     return stringsLog;
   }
 
-  static consoleLog(entries: any): void {
+  static consoleLog(entries: LogEntriesType): void {
     entries.forEach((entry) => {
-      const line = entry.map((part) => paintString(part[0], part[1] || 'sane')).join('');
+      const line = entry.map((part) => paintString(part[0], part[1])).join('');
       // eslint-disable-next-line no-console
       console.log(line);
     });
   }
 
-  fileLog(texts: string | string[][][] = [], fileName = 'output.log'): void {
+  fileLog(texts: string | LogEntriesType = [], fileName = 'output.log'): void {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
@@ -249,7 +254,7 @@ export default class Log {
       // ENVS TO LOG
       let dataEnvs = null;
       if (level === 'env') {
-        dataEnvs = mapValues(get(this.envs, ['envs'], {}), (val) => omit(val, 'state'));
+        dataEnvs = mapValues(this.envs?.envs || {}, (val) => omit(val, 'state'));
       }
 
       // TODO: 2020-04-28 S.Starodubov todo
@@ -273,7 +278,7 @@ export default class Log {
         type: level === 'env' ? 'env' : 'log',
         level,
         levelIndent,
-        stepId: get(bindedData, 'stepId'),
+        stepId: bindedData?.stepId,
       };
       this.envs.log = [...this.envs.log, logEntry];
       this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -285,7 +290,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = get(bindedData, 'stepId');
+      err.stepId = bindedData?.stepId;
       throw err;
     }
   }

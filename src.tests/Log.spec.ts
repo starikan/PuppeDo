@@ -49,20 +49,31 @@ describe('Log', () => {
     });
 
     test('Console with default colorization', () => {
-      Log.consoleLog([[['info ', 'sane'], ['text']]]);
+      Log.consoleLog([
+        [
+          ['info ', 'sane'],
+          ['text', 'sane'],
+        ],
+      ]);
       // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
     test('Console multiline', () => {
       Log.consoleLog([
-        [['info '], ['text']],
-        [['info '], ['text']],
+        [
+          ['info ', 'sane'],
+          ['text', 'sane'],
+        ],
+        [
+          ['info', 'sane'],
+          ['text', 'sane'],
+        ],
       ]);
       // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
       // eslint-disable-next-line no-console
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo\u001b[0m\u001b[0mtext\u001b[0m');
     });
   });
 
@@ -125,7 +136,12 @@ describe('Log', () => {
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');
 
       clearFiles('output.log');
-      logger.fileLog([[[], ['text', 'info']]]);
+      logger.fileLog([
+        [
+          ['', 'sane'],
+          ['text', 'info'],
+        ],
+      ]);
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
     });
   });
@@ -160,8 +176,18 @@ describe('Log', () => {
     expect(Log.checkLevel('env')).toBe('env');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
-    expect(Log.checkLevel(2)).toBe('');
+    expect(Log.checkLevel(2)).toBe(null);
     expect(Log.checkLevel(3)).toBe('info');
+
+    new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, true);
+    expect(Log.checkLevel('raw')).toBe('raw');
+    expect(Log.checkLevel('timer')).toBe('timer');
+    expect(Log.checkLevel('debug')).toBe(null);
+    expect(Log.checkLevel('info')).toBe(null);
+    expect(Log.checkLevel('test')).toBe('test');
+    expect(Log.checkLevel('warn')).toBe('warn');
+    expect(Log.checkLevel('error')).toBe('error');
+    expect(Log.checkLevel('env')).toBe(null);
   });
 
   test('makeLog', () => {
