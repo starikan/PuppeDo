@@ -139,6 +139,7 @@ interface EnvsPoolType {
   getOutputsFolders: Function;
   closeBrowsers: Function;
   closeProcesses: Function;
+  getActivePage: Function;
 }
 
 // ================ DATA / SELECTORS ====================

@@ -16,9 +16,19 @@ type FullJsonType = {
   breadcrumbs?: string[];
 };
 
-export default class TestStructure {
+type TestStructureResponse = {
+  fullJSONResponse: any;
+  textDescriptionResponse: string | null;
+};
+
+interface TestStructureType {
   fullJSON: any;
-  textDescription: any;
+  textDescription: string;
+}
+
+export default class TestStructure implements TestStructureType {
+  fullJSON: any;
+  textDescription: string;
 
   constructor(envsId: string) {
     const testNameStart = Environment(envsId)?.envsPool?.current?.test;
@@ -50,7 +60,7 @@ export default class TestStructure {
     return testJSON;
   }
 
-  resolveRunner(runnerValue, runnerNum, fullJSON, runnerBlock, levelIndent) {
+  resolveRunner(runnerValue, runnerNum, fullJSON, runnerBlock, levelIndent): TestStructureResponse {
     const runner: [string, { name?: string; breadcrumbs?: any[] }][] = Object.entries(runnerValue);
     let [name, newRunner] = runner.length ? runner[0] : [null, {}];
     // It`s important. Subtest may named but no body.
@@ -71,7 +81,7 @@ export default class TestStructure {
     return { fullJSONResponse: null, textDescriptionResponse: null };
   }
 
-  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0) {
+  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0): TestStructureType {
     const fullJSON = cloneDeep({ ...TestStructure.getTestRaw(testName), ...testBody });
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;

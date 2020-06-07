@@ -13,10 +13,10 @@ type ElementType = {
 } | null;
 
 export default class Screenshot {
-  envs: any;
-  socket: any;
+  envs: EnvsPoolType;
+  socket: SocketType;
 
-  constructor({ envsId = null } = {}) {
+  constructor(envsId: string) {
     const { socket, envsPool: envs } = Environment(envsId);
     this.envs = envs;
     this.socket = socket;
@@ -26,7 +26,7 @@ export default class Screenshot {
     if (extendInfo || !element) {
       return [];
     }
-    const elementScreenshot = await this.saveScreenshot(element, null);
+    const elementScreenshot = await this.saveScreenshot(element, false);
     const fullPageScreenshot = await this.saveScreenshot(null, fullPage);
     const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => !!v);
     return screenshotsExists;
@@ -39,7 +39,7 @@ export default class Screenshot {
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot(element: ElementType = null, fullPage = false): Promise<string> {
+  async saveScreenshot(element: ElementType = null, fullPage: boolean = false): Promise<string> {
     const { folder } = this.envs.getOutputsFolders();
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;

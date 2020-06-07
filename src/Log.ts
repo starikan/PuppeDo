@@ -37,7 +37,7 @@ export default class Log {
     this.envs = envs;
     this.socket = socket;
     this.binded = {};
-    this.screenshot = new Screenshot({ envsId });
+    this.screenshot = new Screenshot(envsId);
   }
 
   bindData(data: { [key: string]: string | Object } = {}): void {
@@ -78,8 +78,8 @@ export default class Log {
     levelIndent: number = 0,
     text: string = '',
     now = dayjs(),
-    funcFile = null,
-    testFile = null,
+    funcFile = '',
+    testFile = '',
     extendInfo: boolean = false,
     screenshots = [],
     error: { message?: string; stack?: string } = {},
@@ -184,11 +184,11 @@ export default class Log {
   }
 
   async log({
-    funcFile = null,
-    testFile = null,
+    funcFile = '',
+    testFile = '',
     text = '',
-    screenshot = null,
-    fullpage = null,
+    screenshot = false,
+    fullpage = false,
     level = 'info',
     element = null,
     testStruct = null,
