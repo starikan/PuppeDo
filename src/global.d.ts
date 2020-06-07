@@ -1,3 +1,23 @@
+type Colors =
+  | 'sane'
+  | 'black'
+  | 'red'
+  | 'green'
+  | 'yellow'
+  | 'blue'
+  | 'magenta'
+  | 'cyan'
+  | 'white'
+  | 'raw'
+  | 'timer'
+  | 'debug'
+  | 'info'
+  | 'test'
+  | 'warn'
+  | 'error'
+  | 'trace'
+  | 'env';
+
 type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
@@ -12,8 +32,8 @@ type ArgumentsType = {
   PPD_LOG_EXTEND: boolean;
   PPD_DISABLE_ENV_CHECK: boolean;
   PPD_LOG_LEVEL_NESTED: number;
-  PPD_LOG_LEVEL_TYPE: string;
-  PPD_LOG_LEVEL_TYPE_IGNORE: string[];
+  PPD_LOG_LEVEL_TYPE: Colors;
+  PPD_LOG_LEVEL_TYPE_IGNORE: Colors[];
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;
 };

@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import Log from '../src/Log';
 import Arguments from '../src/Arguments';
 
-const clearFiles = (fileName: string) => {
+const clearFiles = (fileName: string): void => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
   if (fs.existsSync(path.join(folder, fileName))) {
     fs.unlinkSync(path.join(folder, fileName));

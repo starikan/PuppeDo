@@ -60,8 +60,8 @@ const argsENV = {
   PPD_LOG_FULLPAGE: 'true',
 };
 
-function setArg<T>(argName: string, argData: T) {
-  // Reset Arguments
+// Reset Arguments
+function setArg<T>(argName: string, argData: T): any {
   // eslint-disable-next-line no-new
   new Arguments({}, true);
 
@@ -71,7 +71,7 @@ function setArg<T>(argName: string, argData: T) {
   return [argData, argResult];
 }
 
-function errors(name: string, type: string) {
+function errors(name: string, type: string): Error {
   return new Error(`Invalid argument type '${name}', '${type}' required.`);
 }
 

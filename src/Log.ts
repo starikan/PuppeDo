@@ -9,13 +9,12 @@ import pick from 'lodash/pick';
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
-import { paintString, colors } from './Helpers';
+import { paintString } from './Helpers';
 import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 
-type LogEntriesType = [string, keyof typeof colors][][];
-type Colors = keyof typeof colors;
+type LogEntriesType = [string, Colors][][];
 
 export default class Log {
   envsId: string;
@@ -61,7 +60,7 @@ export default class Log {
 
     const inputLevel = typeof level === 'number' ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
-    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v) => levels[v]);
+    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v: Colors) => levels[v]);
 
     if (ignoreLevels.includes(inputLevel)) {
       return null;
