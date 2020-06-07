@@ -405,10 +405,10 @@ describe('Log', () => {
 
     beforeEach(() => {
       // fs = jest.genMockFromModule('fs');
-      logger.envs = {};
-      logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
-      logger.envs.getActivePage.screenshot = jest.fn();
-      logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
+      // logger.envs = {};
+      // logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
+      // logger.envs.getActivePage.screenshot = jest.fn();
+      // logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
     });
 
     // test('should getOutputsFolders function to be called', async () => {
