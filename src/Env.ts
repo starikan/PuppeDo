@@ -1,9 +1,9 @@
 export default class Env {
   name: string;
   state: EnvStateType; // Browser, pages, cookies, etc.
-  env: EnvYamlType;
+  env: EnvType;
 
-  constructor(env: EnvYamlType) {
+  constructor(env: EnvType) {
     this.name = env.name || 'BlankEnv';
     this.state = {
       browser: null,

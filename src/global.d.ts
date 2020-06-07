@@ -47,9 +47,23 @@ type SocketType = {
 
 // ================ ENVS ====================
 
+type BrowserType = any;
+type BrowserPageType = any;
+
+type BrouserLaunchOptions = {
+  headless: boolean;
+  slowMo: number;
+  args: Array<string>;
+  devtools?: boolean;
+};
+
+type PagesType = {
+  [key: string]: BrowserPageType;
+};
+
 type EnvStateType = {
-  browser: any;
-  pages: Object;
+  browser: BrowserType;
+  pages: PagesType;
   contexts?: Object;
   pid?: number;
 };
@@ -68,6 +82,7 @@ type EnvBrowserType = {
     height?: number;
   };
   killOnEnd?: boolean;
+  killProcessName: string;
   runtimeEnv?: {
     runtimeExecutable?: string;
     program?: string;
@@ -115,11 +130,11 @@ interface DataType extends DataYamlType {
 
 type TestJsonExtendType = {
   source: any;
-  socket: any;
+  socket: SocketType;
   stepId: string;
   breadcrumbs: string[];
-  testFile: any;
-  type: any;
+  testFile: string;
+  type: 'atom' | 'test';
   resultsFromParent?: Object;
   resultsFromChildren?: Object;
 };
@@ -134,7 +149,7 @@ interface TestType extends TestYamlType {
 }
 
 type InputsTestType = {
-  options?: any;
+  options?: { [key: string]: string };
   description?: string;
   repeat?: number;
   while?: string;

@@ -15,23 +15,18 @@ import TestsContent from './TestContent';
 import Arguments from './Arguments';
 import Env from './Env';
 
-type PagesType = {
-  main?: any;
-};
-
-type Options = {
-  headless: any;
-  slowMo: any;
-  args: any;
-  devtools?: any;
-};
-
 interface EnvsPoolType {
-  envs: any;
+  envs: {
+    [key: string]: {
+      env: EnvType;
+      name: string;
+      state: EnvStateType;
+    };
+  };
   current: {
     name?: string;
-    page?: string | null;
-    test?: any;
+    page?: string;
+    test?: string;
   };
   output: {
     folder?: string;
@@ -41,7 +36,7 @@ interface EnvsPoolType {
     name?: string;
     folderFull?: string;
   };
-  log: any;
+  log: Array<string>;
 }
 
 type EnvsInstanceType = {
@@ -51,11 +46,17 @@ type EnvsInstanceType = {
 };
 
 class EnvsPool implements EnvsPoolType {
-  envs: any;
+  envs: {
+    [key: string]: {
+      env: EnvType;
+      name: string;
+      state: EnvStateType;
+    };
+  };
   current: {
     name?: string;
-    page?: string | null;
-    test?: any;
+    page?: string;
+    test?: string;
   };
   output: {
     folder?: string;
@@ -65,7 +66,7 @@ class EnvsPool implements EnvsPoolType {
     name?: string;
     folderFull?: string;
   };
-  log: any;
+  log: Array<string>;
 
   constructor() {
     this.envs = {};
@@ -75,7 +76,7 @@ class EnvsPool implements EnvsPoolType {
   }
 
   setEnv(name: string, page: string = ''): void {
-    if (name && Object.keys(this.envs).includes(name)) {
+    if (name && this.envs[name]) {
       this.current.name = name;
       if (page && this.envs[name]?.state?.pages[page]) {
         this.current.page = page;
@@ -87,8 +88,8 @@ class EnvsPool implements EnvsPoolType {
     }
   }
 
-  getActivePage(): any {
-    const activeEnv = this.envs[this.current?.name || ''] || {};
+  getActivePage(): BrowserPageType {
+    const activeEnv = this.envs[this.current?.name || ''];
     const pageName = this.current?.page;
     return activeEnv.state.pages[pageName || ''];
   }
@@ -230,7 +231,7 @@ class EnvsPool implements EnvsPoolType {
     const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings;
     const { width = 1024, height = 768 } = windowSize;
 
-    const options: Options = { headless, slowMo, args };
+    const options: BrouserLaunchOptions = { headless, slowMo, args };
     if (browserName === 'chromium') {
       options.devtools = PPD_DEBUG_MODE;
     }
