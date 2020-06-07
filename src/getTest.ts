@@ -43,7 +43,7 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}): any => {
+const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}): Function => {
   let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
@@ -90,7 +90,7 @@ const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, paren
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
     const result = await test.run(envsId, updatetTestJson);
     // eslint-disable-next-line no-param-reassign
-    parentTest.resultsFromChildren = { ...parentTest.resultsFromChildren, ...result };
+    parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
     return result;
   };
 };

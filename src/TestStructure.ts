@@ -1,7 +1,5 @@
 import crypto from 'crypto';
 
-// import get from 'lodash/get';
-
 import TestsContent from './TestContent';
 import Environment from './Environment';
 
@@ -89,7 +87,6 @@ export default class TestStructure implements TestStructureType {
     const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
       const runnerBlockValue = fullJSON[runnerBlock];
-      // const runnerBlockValue = get(fullJSON, [runnerBlock]);
       if (Array.isArray(runnerBlockValue)) {
         runnerBlockValue.forEach((runnerValue, runnerNum) => {
           const { fullJSON: fullJSONResponce, textDescription: textDescriptionResponse } = this.resolveRunner(

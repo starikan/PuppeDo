@@ -7,6 +7,7 @@ import Blocker from './Blocker';
 import Arguments from './Arguments';
 import Log from './Log';
 import Environment from './Environment';
+import Env from './Env';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 
@@ -178,7 +179,7 @@ export default class Test {
 
   envName: string;
   envPageName: string;
-  env: any;
+  env: Env;
 
   fetchData: Function;
   checkIf: Function;
@@ -312,11 +313,10 @@ export default class Test {
       return false;
     };
 
-    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<any> => {
+    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
-      // const inputs: InputsTestType = merge(constructorArgs, inputArgs);
 
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
