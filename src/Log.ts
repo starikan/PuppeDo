@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 
-import isObject from 'lodash/isObject';
-import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
 import mapValues from 'lodash/mapValues';
 import omit from 'lodash/omit';
@@ -12,19 +10,24 @@ import pick from 'lodash/pick';
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
-import { paintString } from './Helpers';
+import { paintString, colors } from './Helpers';
 import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 
-export default class Log {
-  envsId: any;
-  envs: any;
-  socket: any;
-  binded: any;
-  screenshot: any;
+type LogEntriesType = [string, keyof colors][][];
 
-  constructor(envsId) {
+export default class Log {
+  envsId: string;
+  envs: any;
+  socket: SocketType;
+  binded: {
+    testSource?: any;
+    bindedData?: any;
+  };
+  screenshot: Screenshot;
+
+  constructor(envsId: string) {
     const { socket, envsPool: envs, envsId: envsIdNew } = Environment(envsId);
     this.envsId = envsIdNew;
     this.envs = envs;
@@ -33,60 +36,50 @@ export default class Log {
     this.screenshot = new Screenshot({ envsId });
   }
 
-  bindData(data = {}) {
-    if (isObject(data)) {
-      this.binded = { ...this.binded, ...data };
-    }
+  bindData(data: { [key: string]: any } = {}): void {
+    this.binded = { ...this.binded, ...data };
   }
 
-  static checkLevel(level) {
-    const levels = {
-      0: 'raw',
-      1: 'timer',
-      2: 'debug',
-      3: 'info',
-      4: 'test',
-      5: 'warn',
-      6: 'error',
-      7: 'env',
-      raw: 0,
-      timer: 1,
-      debug: 2,
-      info: 3,
-      test: 4,
-      warn: 5,
-      error: 6,
-      env: 7,
-    };
+  static checkLevel(level: number | string): string {
+    enum levels {
+      raw,
+      timer,
+      debug,
+      info,
+      test,
+      warn,
+      error,
+      env,
+    }
 
     const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
 
-    const inputLevel = isNumber(level) ? level : levels[level] || 0;
+    const inputLevel = typeof level === 'number' ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
     const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v) => levels[v]);
 
     if (ignoreLevels.includes(inputLevel)) {
-      return false;
+      return '';
     }
 
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
       return levels[inputLevel];
     }
-    return false;
+    return '';
   }
 
-  makeLog({
-    level = 'sane',
-    levelIndent = 0,
-    text = '',
+  makeLog(
+    level: string = 'sane',
+    levelIndent: number = 0,
+    text: string = '',
     now = dayjs(),
     funcFile = null,
     testFile = null,
     extendInfo = false,
     screenshots = [],
     error = {},
-  } = {}) {
+  ): any {
     const errorTyped: { message?: string; stack?: string } = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
@@ -161,7 +154,7 @@ export default class Log {
     return stringsLog;
   }
 
-  static consoleLog(entries = []) {
+  static consoleLog(entries: any): void {
     entries.forEach((entry) => {
       const line = entry.map((part) => paintString(part[0], part[1] || 'sane')).join('');
       // eslint-disable-next-line no-console
@@ -169,7 +162,7 @@ export default class Log {
     });
   }
 
-  fileLog(texts: string | string[][][] = [], fileName = 'output.log') {
+  fileLog(texts: string | string[][][] = [], fileName = 'output.log'): void {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
@@ -193,7 +186,7 @@ export default class Log {
     screenshot = null,
     fullpage = null,
     level = 'info',
-    element = false,
+    element = null,
     testStruct = null,
     levelIndent = 0,
     error = {},
@@ -201,7 +194,7 @@ export default class Log {
     bindedData = this.binded.bindedData,
     extendInfo = false,
     stdOut = true,
-  } = {}) {
+  } = {}): Promise<void> {
     const {
       PPD_DEBUG_MODE,
       PPD_LOG_DISABLED,
@@ -235,8 +228,8 @@ export default class Log {
       const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
 
       const now = dayjs();
-      const logTexts = this.makeLog({
-        level: levelText,
+      const logTexts = this.makeLog(
+        levelText,
         levelIndent,
         text,
         now,
@@ -245,7 +238,7 @@ export default class Log {
         extendInfo,
         screenshots,
         error,
-      });
+      );
 
       // STDOUT
       if (stdOut) Log.consoleLog(logTexts);

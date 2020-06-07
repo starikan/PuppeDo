@@ -18,7 +18,7 @@ const clearFiles = (fileName: string) => {
 };
 
 describe('Log', () => {
-  let logger;
+  let logger: Log;
 
   beforeEach(() => {
     logger = new Log('');
@@ -137,8 +137,8 @@ describe('Log', () => {
     expect(logger.binded).toEqual({ foo: 'bar' });
     logger.bindData({ gii: 'huu' });
     expect(logger.binded).toEqual({ foo: 'bar', gii: 'huu' });
-    logger.bindData('foo');
-    expect(logger.binded).toEqual({ foo: 'bar', gii: 'huu' });
+    // logger.bindData('foo');
+    // expect(logger.binded).toEqual({ foo: 'bar', gii: 'huu' });
   });
 
   test('checkLevel', () => {
@@ -160,7 +160,7 @@ describe('Log', () => {
     expect(Log.checkLevel('env')).toBe('env');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
-    expect(Log.checkLevel(2)).toBe(false);
+    expect(Log.checkLevel(2)).toBe('');
     expect(Log.checkLevel(3)).toBe('info');
   });
 
@@ -168,60 +168,49 @@ describe('Log', () => {
     const now = dayjs();
     const nowFormated = now.format('HH:mm:ss.SSS');
 
-    expect(logger.makeLog({ level: 'info', levelIndent: 0, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 0, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   `, 'sane'],
         ['text', 'info'],
       ],
     ]);
 
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  `, 'sane'],
         ['text', 'info'],
       ],
     ]);
 
-    expect(logger.makeLog({ level: 'info', levelIndent: 2, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 2, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  |  `, 'sane'],
         ['text', 'info'],
       ],
     ]);
 
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now, extendInfo: true })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
         ['                      |  ', 'sane'],
         ['text', 'info'],
       ],
     ]);
 
-    expect(logger.makeLog({ level: 'error', levelIndent: 1, text: 'text', now, extendInfo: true })).toEqual([
+    expect(logger.makeLog('error', 1, 'text', now, null, null, true)).toEqual([
       [
         [`${nowFormated} - error  |  `, 'error'],
         ['text', 'error'],
       ],
     ]);
 
-    expect(
-      logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now, extendInfo: true, screenshots: [] }),
-    ).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now, null, null, true, [])).toEqual([
       [
         ['                      |  ', 'sane'],
         ['text', 'info'],
       ],
     ]);
 
-    expect(
-      logger.makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        now,
-        extendInfo: true,
-        screenshots: ['foo', 'bar'],
-      }),
-    ).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now, null, null, true, ['foo', 'bar'])).toEqual([
       [
         ['                      |  ', 'sane'],
         ['text', 'info'],
@@ -237,7 +226,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  `, 'sane'],
         ['text', 'info'],
@@ -247,7 +236,7 @@ describe('Log', () => {
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: [] } });
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  `, 'sane'],
         ['text', 'info'],
@@ -256,7 +245,7 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  `, 'sane'],
         ['text', 'info'],
@@ -269,7 +258,7 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now, extendInfo: true })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
         ['                      |  ', 'sane'],
         ['text', 'info'],
@@ -278,7 +267,7 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
-    expect(logger.makeLog({ level: 'raw', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('raw', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - raw    |  `, 'sane'],
         ['text', 'raw'],
@@ -287,7 +276,7 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
-    expect(logger.makeLog({ level: 'error', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('error', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - error  |  `, 'error'],
         ['text', 'error'],
@@ -302,7 +291,7 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: false }, true);
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
-    expect(logger.makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         [`${nowFormated} - info   |  `, 'sane'],
         ['text', 'info'],
@@ -313,16 +302,7 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');
-    expect(
-      logger.makeLog({
-        level: 'error',
-        levelIndent: 1,
-        text: 'text',
-        now,
-        funcFile: 'funcFile',
-        testFile: 'testFile',
-      }),
-    ).toEqual([
+    expect(logger.makeLog('error', 1, 'text', now, 'funcFile', 'testFile')).toEqual([
       [
         [`${nowFormated} - error  |  `, 'error'],
         ['text', 'error'],

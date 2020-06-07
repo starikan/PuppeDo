@@ -1,7 +1,6 @@
 import path from 'path';
 
 import pick from 'lodash/pick';
-import isFunction from 'lodash/isFunction';
 
 import Blocker from './Blocker';
 import { merge } from './Helpers';
@@ -16,7 +15,7 @@ const resolveJS = (testJson, funcFile) => {
     const atom = __non_webpack_require__(funcFile);
     /* eslint-enable */
     const { runTest } = atom;
-    if (isFunction(runTest)) {
+    if (typeof runTest === 'function') {
       testJsonNew.funcFile = path.resolve(funcFile);
       testJsonNew.runTest = [runTest];
     }

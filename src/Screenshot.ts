@@ -22,13 +22,13 @@ export default class Screenshot {
     this.socket = socket;
   }
 
-  async getScreenshots(element: ElementType, fullPage = false, extendInfo = false) {
-    if (extendInfo) {
+  async getScreenshots(element: ElementType | null, fullPage = false, extendInfo = false): Promise<Array<string>> {
+    if (extendInfo || !element) {
       return [];
     }
     const elementScreenshot = await this.saveScreenshot(element, null);
     const fullPageScreenshot = await this.saveScreenshot(null, fullPage);
-    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => v);
+    const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => !!v);
     return screenshotsExists;
   }
 
@@ -39,7 +39,7 @@ export default class Screenshot {
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot(element: ElementType = null, fullPage = false): Promise<string | boolean> {
+  async saveScreenshot(element: ElementType = null, fullPage = false): Promise<string> {
     const { folder } = this.envs.getOutputsFolders();
     try {
       const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
@@ -59,11 +59,11 @@ export default class Screenshot {
         await sleep(25);
         return pathScreenshot;
       }
-      return false;
+      return '';
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('Can not create a screenshot');
-      return false;
+      return '';
     }
   }
 }
