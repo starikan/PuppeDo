@@ -342,6 +342,49 @@ describe('Log', () => {
         ['=============================================================================================', 'error'],
       ],
     ]);
+
+    describe('Repeat in makeLog', () => {
+      logger.bindData({ bindedData: { repeat: 2 } });
+      expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+        [
+          [`${nowFormated} - info   |  `, 'sane'],
+          ['text', 'info'],
+        ],
+        [
+          ['                      |  ', 'sane'],
+          ['👣[foo.runTest[0] -> hee]', 'info'],
+        ],
+        [
+          ['                      |  ', 'sane'],
+          ['🔆 repeats left: 1', 'info'],
+        ],
+      ]);
+    });
+
+    expect(logger.makeLog('error', 0, 'text', now)).toEqual([
+      [
+        [`${nowFormated} - error  `, 'error'],
+        ['text', 'error'],
+      ],
+      [[`${nowFormated} - error  foo.runTest[0]`, 'error']],
+      [[`${nowFormated} - error     hee`, 'error']],
+      [
+        [`${nowFormated} - error  `, 'error'],
+        ['================================================================================================', 'error'],
+      ],
+      [
+        ['                      ', 'error'],
+        ['', 'error'],
+      ],
+      [
+        ['                      ', 'error'],
+        ['================================================================================================', 'error'],
+      ],
+      [
+        ['                      ', 'error'],
+        ['', 'error'],
+      ],
+    ]);
   });
 
   describe('log', () => {
