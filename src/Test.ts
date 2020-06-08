@@ -79,7 +79,7 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
-const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
+export const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
   let result: boolean | object | string | number | null;
 
   try {
@@ -93,7 +93,7 @@ const runScriptInContext = (source: string, context: object): boolean | object |
   return result;
 };
 
-const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
+export const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -107,7 +107,7 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   return true;
 };
 
-const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
+export const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
     const evalData = runScriptInContext(data, allData);
@@ -117,7 +117,7 @@ const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Ob
   return funcEval;
 };
 
-const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
+export const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
   try {
     const values = [valueName, ...(ALIASES[valueName] || [])];
     const result = values.reduce((collector: Object, name: string) => ({ ...collector, ...(inputs[name] || {}) }), {});
@@ -128,7 +128,7 @@ const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
   }
 };
 
-const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
+export const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
   const needEnvs = typeof needEnv === 'string' ? [needEnv] : needEnv;
   if (Array.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -139,7 +139,39 @@ const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
   }
 };
 
-export default class Test {
+export const checkIf = async (
+  expr: string,
+  ifType: 'if' | 'errorIf' | 'errorIfResult',
+  log: Function,
+  levelIndent: number = 0,
+  allData: Object = {},
+): Promise<boolean> => {
+  const exprResult = runScriptInContext(expr, allData);
+
+  if (!exprResult && ifType === 'if') {
+    await log({
+      level: 'info',
+      screenshot: false,
+      fullpage: false,
+      levelIndent,
+      text: `Skipping with expr '${expr}'`,
+    });
+    return true;
+  }
+
+  if (exprResult && ifType !== 'if') {
+    await log({
+      level: 'error',
+      levelIndent,
+      text: `Test stopped with expr ${ifType} = '${expr}'`,
+    });
+    throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
+  }
+
+  return false;
+};
+
+export class Test {
   name: string;
   type: string;
   needEnv: Array<string>;
@@ -182,7 +214,6 @@ export default class Test {
   env: Env;
 
   fetchData: Function;
-  checkIf: Function;
   runLogic: Function;
   run: Function;
 
@@ -281,38 +312,6 @@ export default class Test {
       return { dataLocal, selectorsLocal };
     };
 
-    this.checkIf = async (
-      expr: string,
-      ifType: string,
-      log: Function,
-      ifLevelIndent: number,
-      allData: Object = {},
-    ): Promise<boolean> => {
-      const exprResult = runScriptInContext(expr, allData);
-
-      if (!exprResult && ifType === 'if') {
-        await log({
-          level: 'info',
-          screenshot: false,
-          fullpage: false,
-          levelIndent: ifLevelIndent,
-          text: `Skipping with expr '${expr}'`,
-        });
-        return true;
-      }
-
-      if (exprResult && ifType !== 'if') {
-        await log({
-          level: 'error',
-          levelIndent: ifLevelIndent,
-          text: `Test stopped with expr ${ifType} = '${expr}'`,
-        });
-        throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
-      }
-
-      return false;
-    };
-
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
       const startTime = process.hrtime.bigint();
 
@@ -404,7 +403,7 @@ export default class Test {
 
         // IF
         if (this.if) {
-          const skip = await this.checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
+          const skip = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
           if (skip) {
             return;
           }
@@ -412,7 +411,7 @@ export default class Test {
 
         // ERROR IF
         if (this.errorIf) {
-          await this.checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
+          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
         }
 
         // RUN FUNCTIONS
@@ -452,7 +451,7 @@ export default class Test {
 
         // ERROR
         if (this.errorIfResult) {
-          await this.checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
+          await checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
             ...allData,
             ...localResults,
           });

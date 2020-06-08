@@ -4,7 +4,7 @@ import pick from 'lodash/pick';
 
 import Blocker from './Blocker';
 import { merge } from './Helpers';
-import Test from './Test';
+import { Test } from './Test';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
