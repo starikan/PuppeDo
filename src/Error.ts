@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import Arguments from './Arguments';
-import Test from './Test';
+import { Test } from './Test';
 import Log from './Log';
 
 interface ErrorType extends Error {
@@ -30,7 +30,7 @@ export class AbstractError extends Error {
 
 export class TestError extends AbstractError {
   envsId: string;
-  envs: EnvsPoolType;
+  envs: any; // EnvsPoolType;
   socket: SocketType;
   stepId: string;
   testDescription: string;

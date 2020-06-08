@@ -43,7 +43,7 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: Test, envsId: string, socket: SocketType, parentTest: any = {}): Function => {
+const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parentTest: any = {}): Function => {
   let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
