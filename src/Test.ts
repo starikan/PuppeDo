@@ -75,6 +75,7 @@ const ALIASES = {
     'const',
     'c',
     'let',
+    'set',
   ],
   options: ['option', 'opt', 'o', '⚙️'],
 };
