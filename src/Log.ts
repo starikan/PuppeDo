@@ -83,7 +83,10 @@ export default class Log {
     extendInfo: boolean = false,
     screenshots = [],
     error: { message?: string; stack?: string } = {},
+    textColor,
+    backgroundColor,
   ): LogEntriesType {
+    // if (textColor !== 'sane' || backgroundColor !== 'sane') debugger
     const errorTyped = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
@@ -199,6 +202,8 @@ export default class Log {
     extendInfo = false,
     stdOut = true,
     stepId = '',
+    textColor = 'sane',
+    backgroundColor = 'sane',
   } = {}): Promise<void> {
     const {
       PPD_DEBUG_MODE,
@@ -243,6 +248,8 @@ export default class Log {
         extendInfo,
         screenshots,
         error,
+        textColor,
+        backgroundColor,
       );
 
       // STDOUT

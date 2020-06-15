@@ -193,6 +193,14 @@ type InputsTestType = {
   selectorsParent?: Object;
   optionsParent?: Object;
   resultsFromParent?: Object;
+  logOptions?: {
+    screenshot?: boolean;
+    fullpage?: boolean;
+    levelIndent?: number;
+    level?: string | number;
+    textColor?: string;
+    backgroundColor?: string;
+  };
 };
 
 type LogEntry = {

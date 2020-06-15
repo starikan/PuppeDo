@@ -14,6 +14,9 @@ beforeTest:
 
 runTest:
   - case:
+      logOptions:
+        textColor: green
+        backgroundColor: yellow
       runTest:
         - goTo:
             bD: { url: baseUrl }
