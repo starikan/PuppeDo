@@ -172,6 +172,32 @@ export const checkIf = async (
   return false;
 };
 
+export const updateDataWithNeeds = (needData, needSelectors, dataLocal, selectorsLocal) => {
+  const allData = merge(selectorsLocal, dataLocal);
+
+  const dataLocalCopy = JSON.parse(JSON.stringify(dataLocal));
+  const selectorsLocalCopy = JSON.parse(JSON.stringify(selectorsLocal));
+
+  needData
+    .map((v) => v.replace('?', ''))
+    .forEach((v) => {
+      dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
+      selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
+    });
+
+  needSelectors
+    .map((v) => v.replace('?', ''))
+    .forEach((v) => {
+      dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
+      selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
+    });
+
+  return {
+    dataLocal: dataLocalCopy,
+    selectorsLocal: selectorsLocalCopy,
+  };
+};
+
 export class Test {
   name: string;
   type: string;
@@ -366,11 +392,14 @@ export class Test {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        const { dataLocal, selectorsLocal } = this.fetchData();
-        const allData = merge(selectorsLocal, dataLocal);
+        let { dataLocal, selectorsLocal } = this.fetchData();
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
+
+        ({ dataLocal, selectorsLocal } = updateDataWithNeeds(needData, needSelectors, dataLocal, selectorsLocal));
+
+        const allData = merge(selectorsLocal, dataLocal);
 
         // All data passed to log
         const args = {
