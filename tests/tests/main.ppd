@@ -14,9 +14,7 @@ beforeTest:
 
 runTest:
   - case:
-      logOptions:
-        textColor: green
-        backgroundColor: yellow
+      description: Colored Case atom
       runTest:
         - goTo:
             bD: { url: baseUrl }
@@ -28,11 +26,19 @@ runTest:
               screenshot: true
 
   - blank:
+      description: Nested click
+      logOptions:
+        textColor: black
+        backgroundColor: white
       runTest:
         - clickSelector:
             bS: { selector: nested.wikiInput }
 
   - blank:
+      description: Set result
+      logOptions:
+        textColor: colorUnknown
+        backgroundColor: colorUnknown
       result: { $i: 0 }
 
   - typeInput:

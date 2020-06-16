@@ -201,8 +201,8 @@ export class Test {
     fullpage?: boolean;
     levelIndent?: number;
     level?: string | number;
-    textColor?: string;
-    backgroundColor?: string;
+    textColor?: Colors;
+    backgroundColor?: Colors;
   };
 
   data: Object;
@@ -398,7 +398,7 @@ export class Test {
           level: 'test',
           levelIndent,
           textColor: this.logOptions.textColor || 'sane',
-          backgroundColor: this.description ? 'red' : this.logOptions.backgroundColor || 'sane',
+          backgroundColor: !this.description ? 'red' : this.logOptions.backgroundColor || 'sane',
         });
 
         // Extend with data passed to functions

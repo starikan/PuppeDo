@@ -8,6 +8,14 @@ type Colors =
   | 'magenta'
   | 'cyan'
   | 'white'
+  | 'blackBackground'
+  | 'redBackground'
+  | 'greenBackground'
+  | 'yellowBackground'
+  | 'blueBackground'
+  | 'magentaBackground'
+  | 'cyanBackground'
+  | 'whiteBackground'
   | 'raw'
   | 'timer'
   | 'debug'
@@ -198,8 +206,8 @@ type InputsTestType = {
     fullpage?: boolean;
     levelIndent?: number;
     level?: string | number;
-    textColor?: string;
-    backgroundColor?: string;
+    textColor?: Colors;
+    backgroundColor?: Colors;
   };
 };
 
