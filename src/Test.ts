@@ -196,6 +196,14 @@ export class Test {
   funcFile: string;
   testFile: string;
   debug: boolean;
+  logOptions: {
+    screenshot?: boolean;
+    fullpage?: boolean;
+    levelIndent?: number;
+    level?: string | number;
+    textColor?: Colors;
+    backgroundColor?: Colors;
+  };
 
   data: Object;
   bindData: Object;
@@ -242,6 +250,7 @@ export class Test {
     funcFile = null,
     testFile = null,
     debug = false,
+    logOptions = {},
   } = {}) {
     this.name = name;
     this.type = type;
@@ -266,6 +275,7 @@ export class Test {
     this.funcFile = funcFile;
     this.testFile = testFile;
     this.debug = debug;
+    this.logOptions = logOptions;
 
     this.fetchData = (): Object => {
       const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
@@ -340,6 +350,7 @@ export class Test {
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
+      this.logOptions = merge(inputs.logOptions || {}, this.logOptions);
 
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
@@ -377,16 +388,17 @@ export class Test {
           repeat: this.repeat,
           stepId: this.stepId,
           debug: this.debug,
+          logOptions: this.logOptions,
         };
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
         await logger.log({
-          text: this.description
-            ? `(${this.name}) ${this.description}`
-            : `(${this.name}) \u001B[41mTODO: Fill description\u001B[0m`,
+          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
           levelIndent,
+          textColor: this.logOptions.textColor || 'sane',
+          backgroundColor: !this.description ? 'red' : this.logOptions.backgroundColor || 'sane',
         });
 
         // Extend with data passed to functions

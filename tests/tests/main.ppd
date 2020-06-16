@@ -13,21 +13,32 @@ beforeTest:
       bindData: { envName: myEnv }
 
 runTest:
-  - goTo:
-      bD: { url: baseUrl }
+  - case:
+      description: Colored Case atom
+      runTest:
+        - goTo:
+            bD: { url: baseUrl }
 
-  - checkSelector:
-      bindSelectors: { selector: nested.wikiInput }
-      errorIfResult: 'exists === false'
-      options:
-        screenshot: true
+        - checkSelector:
+            bindSelectors: { selector: nested.wikiInput }
+            errorIfResult: 'exists === false'
+            options:
+              screenshot: true
 
   - blank:
+      description: Nested click
+      logOptions:
+        textColor: black
+        backgroundColor: white
       runTest:
         - clickSelector:
             bS: { selector: nested.wikiInput }
 
   - blank:
+      description: Set result
+      logOptions:
+        textColor: colorUnknown
+        backgroundColor: colorUnknown
       result: { $i: 0 }
 
   - typeInput:

@@ -9,12 +9,32 @@ import pick from 'lodash/pick';
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
-import { paintString } from './Helpers';
+import { paintString, colors } from './Helpers';
 import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 
-type LogEntriesType = [string, Colors][][];
+type LogEntrieType = { text: string; textColor: Colors; backgroundColor?: Colors };
+
+type LogInputType = {
+  text: string;
+  funcFile?: string;
+  testFile?: string;
+  screenshot?: boolean;
+  fullpage?: boolean;
+  level?: Colors;
+  element?: any;
+  testStruct?: string;
+  levelIndent?: number;
+  error?: any;
+  testSource?: any;
+  bindedData?: any;
+  extendInfo?: boolean;
+  stdOut?: boolean;
+  stepId?: string;
+  textColor?: Colors;
+  backgroundColor?: Colors;
+};
 
 export default class Log {
   envsId: string;
@@ -83,63 +103,88 @@ export default class Log {
     extendInfo: boolean = false,
     screenshots = [],
     error: { message?: string; stack?: string } = {},
-  ): LogEntriesType {
+    textColor: Colors = 'sane',
+    backgroundColor: Colors = 'sane',
+  ): LogEntrieType[][] {
     const errorTyped = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = this.binded?.testSource?.breadcrumbs || [];
 
-    const headLevel: Colors = level === 'error' ? 'error' : 'sane';
-    const tailLevel: Colors = level === 'error' ? 'error' : 'info';
+    const headColor: Colors = level === 'error' ? 'error' : 'sane';
+    const tailColor: Colors = level === 'error' ? 'error' : 'info';
+    const backColor =
+      backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
+        ? (colors[colors[backgroundColor] + 10] as Colors)
+        : 'sane';
 
-    const stringsLog: LogEntriesType = [
-      [
-        [`${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
-        [text, level],
-      ],
-    ];
+    const head: LogEntrieType = {
+      text: `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
+      textColor: headColor,
+    };
+    const tail: LogEntrieType = {
+      text,
+      textColor: textColor !== 'sane' ? textColor : level,
+    };
+    if (backColor !== 'sane') {
+      tail.backgroundColor = backColor;
+    }
+
+    const stringsLog: LogEntrieType[][] = [[head, tail]];
 
     if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error' && !extendInfo) {
-      const head = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
-      const tail = `👣[${breadcrumbs.join(' -> ')}]`;
+      const headText = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
+      const tailText = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
-        [head, headLevel],
-        [tail, tailLevel],
+        { text: headText, textColor: headColor },
+        { text: tailText, textColor: tailColor },
       ]);
 
       const repeat = this.binded?.bindedData?.repeat || 1;
       if (repeat > 1) {
         stringsLog.push([
-          [head, headLevel],
-          [`🔆 repeats left: ${repeat - 1}`, tailLevel],
+          { text: headText, textColor: headColor },
+          { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor },
         ]);
       }
     }
 
     if (level === 'error' && !extendInfo) {
       breadcrumbs.forEach((v, i) => {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, 'error']]);
+        stringsLog.push([
+          { text: `${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, textColor: 'error' },
+        ]);
       });
       if (testFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`, 'error']]);
+        stringsLog.push([
+          {
+            text: `${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`,
+            textColor: 'error',
+          },
+        ]);
       }
       if (funcFile) {
-        stringsLog.push([[`${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`, 'error']]);
+        stringsLog.push([
+          {
+            text: `${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`,
+            textColor: 'error',
+          },
+        ]);
       }
     }
 
     screenshots.forEach((v) => {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
-        [`🖼 screenshot: [${v}]`, tailLevel],
+        { text: `${nowWithPad} ${' | '.repeat(levelIndent)} `, textColor: headColor },
+        { text: `🖼 screenshot: [${v}]`, textColor: tailColor },
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        [`${nowWithPad} ${' | '.repeat(levelIndent)} `, headLevel],
-        ['='.repeat(120 - (levelIndent + 1) * 3 - 21), tailLevel],
+        { text: `${nowWithPad} ${' | '.repeat(levelIndent)} `, textColor: headColor },
+        { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor },
       ]);
     }
 
@@ -149,8 +194,8 @@ export default class Log {
 
       [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
         stringsLog.push([
-          [' '.repeat(22), 'error'],
-          [v, 'error'],
+          { text: ' '.repeat(22), textColor: 'error' },
+          { text: v, textColor: 'error' },
         ]);
       });
     }
@@ -158,20 +203,28 @@ export default class Log {
     return stringsLog;
   }
 
-  static consoleLog(entries: LogEntriesType): void {
+  static consoleLog(entries: LogEntrieType[][]): void {
     entries.forEach((entry) => {
-      const line = entry.map((part) => paintString(part[0], part[1])).join('');
+      const line = entry
+        .map((part) => {
+          let text = paintString(part.text, part.textColor);
+          if (part.backgroundColor && part.backgroundColor !== 'sane') {
+            text = paintString(text, part.backgroundColor);
+          }
+          return text;
+        })
+        .join('');
       // eslint-disable-next-line no-console
       console.log(line);
     });
   }
 
-  fileLog(texts: string | LogEntriesType = [], fileName = 'output.log'): void {
+  fileLog(texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void {
     const { folder, folderLatest } = this.envs.getOutputsFolders();
 
     let textsJoin = '';
     if (Array.isArray(texts)) {
-      textsJoin = texts.map((text) => text.map((log) => log[0] || '').join('')).join('\n');
+      textsJoin = texts.map((text) => text.map((log) => log.text || '').join('')).join('\n');
     } else {
       textsJoin = texts.toString();
     }
@@ -199,7 +252,9 @@ export default class Log {
     extendInfo = false,
     stdOut = true,
     stepId = '',
-  } = {}): Promise<void> {
+    textColor = 'sane',
+    backgroundColor = 'sane',
+  }: LogInputType): Promise<void> {
     const {
       PPD_DEBUG_MODE,
       PPD_LOG_DISABLED,
@@ -243,6 +298,8 @@ export default class Log {
         extendInfo,
         screenshots,
         error,
+        textColor,
+        backgroundColor,
       );
 
       // STDOUT

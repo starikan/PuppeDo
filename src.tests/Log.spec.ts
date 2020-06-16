@@ -40,8 +40,8 @@ describe('Log', () => {
     test('Console with colorization', () => {
       Log.consoleLog([
         [
-          ['info ', 'sane'],
-          ['text', 'info'],
+          { text: 'info ', textColor: 'sane' },
+          { text: 'text', textColor: 'info' },
         ],
       ]);
       // eslint-disable-next-line no-console
@@ -51,23 +51,47 @@ describe('Log', () => {
     test('Console with default colorization', () => {
       Log.consoleLog([
         [
-          ['info ', 'sane'],
-          ['text', 'sane'],
+          { text: 'info ', textColor: 'sane' },
+          { text: 'text', textColor: 'sane' },
         ],
       ]);
       // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
+    test('Console with background colorization default', () => {
+      Log.consoleLog([
+        [
+          { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+          { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
+        ],
+      ]);
+      // eslint-disable-next-line no-console
+      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+    });
+
+    test('Console with background colorization exist color', () => {
+      Log.consoleLog([
+        [
+          { text: 'info ', textColor: 'sane', backgroundColor: 'redBackground' },
+          { text: 'text', textColor: 'sane', backgroundColor: 'redBackground' },
+        ],
+      ]);
+      // eslint-disable-next-line no-console
+      expect(console.log).toHaveBeenCalledWith(
+        '\u001b[41m\u001b[0minfo \u001b[0m\u001b[0m\u001b[41m\u001b[0mtext\u001b[0m\u001b[0m',
+      );
+    });
+
     test('Console multiline', () => {
       Log.consoleLog([
         [
-          ['info ', 'sane'],
-          ['text', 'sane'],
+          { text: 'info ', textColor: 'sane' },
+          { text: 'text', textColor: 'sane' },
         ],
         [
-          ['info', 'sane'],
-          ['text', 'sane'],
+          { text: 'info', textColor: 'sane' },
+          { text: 'text', textColor: 'sane' },
         ],
       ]);
       // eslint-disable-next-line no-console
@@ -105,8 +129,8 @@ describe('Log', () => {
       clearFiles('output.log');
       logger.fileLog([
         [
-          ['info ', 'sane'],
-          ['text', 'info'],
+          { text: 'info ', textColor: 'sane' },
+          { text: 'text', textColor: 'info' },
         ],
       ]);
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('info text\n');
@@ -119,8 +143,8 @@ describe('Log', () => {
       logger.fileLog(
         [
           [
-            ['info ', 'sane'],
-            ['text', 'info'],
+            { text: 'info ', textColor: 'sane' },
+            { text: 'text', textColor: 'info' },
           ],
         ],
         'output_another.log',
@@ -138,8 +162,8 @@ describe('Log', () => {
       clearFiles('output.log');
       logger.fileLog([
         [
-          ['', 'sane'],
-          ['text', 'info'],
+          { text: '', textColor: 'sane' },
+          { text: 'text', textColor: 'info' },
         ],
       ]);
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
@@ -196,66 +220,66 @@ describe('Log', () => {
 
     expect(logger.makeLog('info', 0, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('info', 2, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
-        ['                      |  ', 'sane'],
-        ['text', 'info'],
+        { text: '                      |  ', textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('error', 1, 'text', now, null, null, true)).toEqual([
       [
-        [`${nowFormated} - error  |  `, 'error'],
-        ['text', 'error'],
+        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        { text: 'text', textColor: 'error' },
       ],
     ]);
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true, [])).toEqual([
       [
-        ['                      |  ', 'sane'],
-        ['text', 'info'],
+        { text: '                      |  ', textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true, ['foo', 'bar'])).toEqual([
       [
-        ['                      |  ', 'sane'],
-        ['text', 'info'],
+        { text: '                      |  ', textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['🖼 screenshot: [foo]', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: '🖼 screenshot: [foo]', textColor: 'info' },
       ],
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['🖼 screenshot: [bar]', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: '🖼 screenshot: [bar]', textColor: 'info' },
       ],
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
@@ -264,8 +288,8 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: [] } });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
@@ -273,12 +297,12 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
       [
-        ['                      |  ', 'sane'],
-        ['👣[foo.runTest[0] -> hee]', 'info'],
+        { text: '                      |  ', textColor: 'sane' },
+        { text: '👣[foo.runTest[0] -> hee]', textColor: 'info' },
       ],
     ]);
 
@@ -286,8 +310,8 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
-        ['                      |  ', 'sane'],
-        ['text', 'info'],
+        { text: '                      |  ', textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
@@ -295,8 +319,8 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     expect(logger.makeLog('raw', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - raw    |  `, 'sane'],
-        ['text', 'raw'],
+        { text: `${nowFormated} - raw    |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'raw' },
       ],
     ]);
 
@@ -304,14 +328,17 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     expect(logger.makeLog('error', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - error  |  `, 'error'],
-        ['text', 'error'],
+        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        { text: 'text', textColor: 'error' },
       ],
-      [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
-      [[`${nowFormated} - error  |     hee`, 'error']],
+      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error' }],
       [
-        [`${nowFormated} - error  |  `, 'error'],
-        ['=============================================================================================', 'error'],
+        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        {
+          text: '=============================================================================================',
+          textColor: 'error',
+        },
       ],
     ]);
 
@@ -319,8 +346,8 @@ describe('Log', () => {
     logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
-        [`${nowFormated} - info   |  `, 'sane'],
-        ['text', 'info'],
+        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+        { text: 'text', textColor: 'info' },
       ],
     ]);
 
@@ -330,16 +357,19 @@ describe('Log', () => {
     const testFile = path.resolve('testFile');
     expect(logger.makeLog('error', 1, 'text', now, 'funcFile', 'testFile')).toEqual([
       [
-        [`${nowFormated} - error  |  `, 'error'],
-        ['text', 'error'],
+        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        { text: 'text', textColor: 'error' },
       ],
-      [[`${nowFormated} - error  |  foo.runTest[0]`, 'error']],
-      [[`${nowFormated} - error  |     hee`, 'error']],
-      [[`${nowFormated} - error  |  (file:///${testFile})`, 'error']],
-      [[`${nowFormated} - error  |  (file:///${funcFile})`, 'error']],
+      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |  (file:///${testFile})`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |  (file:///${funcFile})`, textColor: 'error' }],
       [
-        [`${nowFormated} - error  |  `, 'error'],
-        ['=============================================================================================', 'error'],
+        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        {
+          text: '=============================================================================================',
+          textColor: 'error',
+        },
       ],
     ]);
 
@@ -347,58 +377,71 @@ describe('Log', () => {
       logger.bindData({ bindedData: { repeat: 2 } });
       expect(logger.makeLog('info', 1, 'text', now)).toEqual([
         [
-          [`${nowFormated} - info   |  `, 'sane'],
-          ['text', 'info'],
+          { text: `${nowFormated} - info   |  `, textColor: 'sane' },
+          { text: 'text', textColor: 'info' },
         ],
         [
-          ['                      |  ', 'sane'],
-          ['👣[foo.runTest[0] -> hee]', 'info'],
+          { text: '                      |  ', textColor: 'sane' },
+          { text: '👣[foo.runTest[0] -> hee]', textColor: 'info' },
         ],
         [
-          ['                      |  ', 'sane'],
-          ['🔆 repeats left: 1', 'info'],
+          { text: '                      |  ', textColor: 'sane' },
+          { text: '🔆 repeats left: 1', textColor: 'info' },
         ],
       ]);
     });
 
     expect(logger.makeLog('error', 0, 'text', now)).toEqual([
       [
-        [`${nowFormated} - error  `, 'error'],
-        ['text', 'error'],
+        { text: `${nowFormated} - error  `, textColor: 'error' },
+        { text: 'text', textColor: 'error' },
       ],
-      [[`${nowFormated} - error  foo.runTest[0]`, 'error']],
-      [[`${nowFormated} - error     hee`, 'error']],
+      [{ text: `${nowFormated} - error  foo.runTest[0]`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error     hee`, textColor: 'error' }],
       [
-        [`${nowFormated} - error  `, 'error'],
-        ['================================================================================================', 'error'],
-      ],
-      [
-        ['                      ', 'error'],
-        ['', 'error'],
-      ],
-      [
-        ['                      ', 'error'],
-        ['================================================================================================', 'error'],
+        { text: `${nowFormated} - error  `, textColor: 'error' },
+        {
+          text: '================================================================================================',
+          textColor: 'error',
+        },
       ],
       [
-        ['                      ', 'error'],
-        ['', 'error'],
+        { text: '                      ', textColor: 'error' },
+        { text: '', textColor: 'error' },
+      ],
+      [
+        { text: '                      ', textColor: 'error' },
+        {
+          text: '================================================================================================',
+          textColor: 'error',
+        },
+      ],
+      [
+        { text: '                      ', textColor: 'error' },
+        { text: '', textColor: 'error' },
+      ],
+    ]);
+
+    expect(logger.makeLog('info', 1, 'text', now, null, null, true, [], null, 'red', 'red')).toEqual([
+      [
+        { text: '                      |  ', textColor: 'sane' },
+        { text: 'text', textColor: 'red', backgroundColor: 'redBackground' },
       ],
     ]);
   });
 
-  describe('log', () => {
-    test('log', async () => {
-      new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
-      expect(await logger.log({ level: 'raw' })).toBeFalsy();
+  // describe('log', () => {
+  //   test('log', async () => {
+  //     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
+  //     expect(await logger.log({ level: 'raw' })).toBeFalsy();
 
-      new Arguments({ PPD_LOG_LEVEL_NESTED: 1 }, true);
-      expect(await logger.log({ levelIndent: 2 })).toBeFalsy();
+  //     new Arguments({ PPD_LOG_LEVEL_NESTED: 1 }, true);
+  //     expect(await logger.log({ levelIndent: 2 })).toBeFalsy();
 
-      new Arguments({ PPD_LOG_DISABLED: true }, true);
-      expect(await logger.log({})).toBeFalsy();
-    });
-  });
+  //     new Arguments({ PPD_LOG_DISABLED: true }, true);
+  //     expect(await logger.log({})).toBeFalsy();
+  //   });
+  // });
 
   describe('saveScreenshot', () => {
     // let fs;
