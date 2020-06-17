@@ -375,7 +375,7 @@ export class Test {
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
-      this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
+      this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       this.logOptions = merge(inputs.logOptions || {}, this.logOptions);
 
       const { envsPool } = Environment(envsId);
@@ -387,6 +387,10 @@ export class Test {
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
         this.env = envsPool.envs[this.envName];
+
+        if (this.debug) {
+          debugger;
+        }
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
