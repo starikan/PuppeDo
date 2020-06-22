@@ -45,7 +45,7 @@
     "walk-sync": "2.1.0"
   },
   "devDependencies": {
-    "@babel/cli": "7.10.1",
+    "@babel/cli": "7.10.3",
     "@babel/core": "7.10.2",
     "@babel/polyfill": "7.10.1",
     "@babel/preset-env": "7.10.2",
