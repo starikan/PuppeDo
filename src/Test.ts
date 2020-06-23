@@ -389,6 +389,7 @@ export class Test {
         this.env = envsPool.envs[this.envName];
 
         if (this.debug) {
+          // eslint-disable-next-line no-debugger
           debugger;
         }
 
