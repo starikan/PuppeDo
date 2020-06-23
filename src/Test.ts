@@ -234,8 +234,8 @@ export class Test {
   data: Object;
   bindData: Object;
   selectors: Object;
-  bindSelectors: Object;
-  bindResults: Object;
+  bindSelectors: { [key: string]: string };
+  bindResults: { [key: string]: string };
   description: string;
   while: string;
   if: string;
@@ -362,10 +362,10 @@ export class Test {
 
       this.selectors = resolveAliases('selectors', inputs);
       this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
-      this.bindSelectors = resolveAliases('bindSelectors', inputs);
+      this.bindSelectors = resolveAliases('bindSelectors', inputs) as { [key: string]: string };
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
-      this.bindResults = resolveAliases('bindResults', inputs);
+      this.bindResults = resolveAliases('bindResults', inputs) as { [key: string]: string };
       this.resultsFromParent = inputs.resultsFromParent;
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
@@ -482,15 +482,15 @@ export class Test {
         }
 
         // RESULTS
-        const results = allowResults.length ? pick(resultFromTest, allowResults) : resultFromTest;
+        const results = this.allowResults.length ? pick(resultFromTest, this.allowResults) : resultFromTest;
         if (
-          allowResults.length &&
+          this.allowResults.length &&
           Object.keys(results).length &&
-          Object.keys(results).length !== [...new Set(allowResults)].length
+          Object.keys(results).length !== [...new Set(this.allowResults)].length
         ) {
           throw new Error('Can`t get results from test');
         }
-        const allowResultsObject = allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+        const allowResultsObject = this.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
         let localResults = resolveDataFunctions(
           { ...this.bindResults, ...allowResultsObject },
           merge(selectorsLocal, dataLocal, results),
