@@ -187,6 +187,7 @@ interface TestType extends TestYamlType {
 type InputsTestType = {
   options?: { [key: string]: string };
   description?: string;
+  bindDescription?: string;
   repeat?: number;
   while?: string;
   if?: string;

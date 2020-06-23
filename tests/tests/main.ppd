@@ -26,7 +26,7 @@ runTest:
               screenshot: true
 
   - blank:
-      description: Nested click
+      bindDescription: "'Nested click ' + nested.wikiInput"
       logOptions:
         textColor: black
         backgroundColor: white
@@ -35,7 +35,7 @@ runTest:
             bS: { selector: nested.wikiInput }
 
   - blank:
-      description: Set result
+      description: Set result with colors
       logOptions:
         textColor: colorUnknown
         backgroundColor: colorUnknown

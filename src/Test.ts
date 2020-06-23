@@ -237,6 +237,7 @@ export class Test {
   bindSelectors: { [key: string]: string };
   bindResults: { [key: string]: string };
   description: string;
+  bindDescription: string;
   while: string;
   if: string;
   errorIf: string;
@@ -265,6 +266,8 @@ export class Test {
     options = {},
     dataExt = [],
     selectorsExt = [],
+    description = '',
+    bindDescription = '',
     beforeTest = (): void => {},
     runTest = (): void => {},
     afterTest = (): void => {},
@@ -289,6 +292,8 @@ export class Test {
     this.dataExt = dataExt;
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
+    this.description = description;
+    this.bindDescription = bindDescription;
     this.beforeTest = beforeTest;
     this.runTest = runTest;
     this.afterTest = afterTest;
@@ -370,6 +375,7 @@ export class Test {
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
       this.description = inputs.description || this.description;
+      this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
       this.if = inputs.if || this.if;
@@ -424,6 +430,10 @@ export class Test {
           debug: this.debug,
           logOptions: this.logOptions,
         };
+
+        if (this.bindDescription) {
+          this.description = String(runScriptInContext(this.bindDescription, allData));
+        }
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
