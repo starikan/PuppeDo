@@ -506,9 +506,9 @@ export class Test {
 
         // WHILE
         if (this.while) {
-          const whileEval = runScriptInContext(this.while, allData);
-          if (!whileEval) {
-            return;
+          const whileEval = runScriptInContext(this.while, { ...allData, ...localResults });
+          if (whileEval) {
+            this.repeat += 1;
           }
         }
 
