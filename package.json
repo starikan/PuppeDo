@@ -51,7 +51,7 @@
     "@babel/preset-env": "7.10.3",
     "@babel/preset-typescript": "7.10.1",
     "@puppedo/atoms": "3.3.3",
-    "@types/jest": "26.0.0",
+    "@types/jest": "26.0.4",
     "@types/js-yaml": "3.12.4",
     "@types/lodash": "4.14.156",
     "@types/node-fetch": "2.5.7",
