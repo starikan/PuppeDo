@@ -42,8 +42,9 @@ runTest:
       result: { $i: 0 }
 
   - typeInput:
-      bS: { input: wikiInput }
+      bS: { selector: wikiInput }
       bD: { text: $i }
+      options: { noClearInput: true }
       result: { $i: $i + 1 }
       repeat: 2
 
@@ -87,7 +88,7 @@ runTest:
 
   - typeInput:
       description: Input some text in field INPUT
-      bS: { input: wikiInput }
+      bS: { selector: wikiInput }
       🔑📋: { text: myDataBinded }
       o:
         screenshot: true
