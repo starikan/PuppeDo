@@ -42,6 +42,7 @@ runTest:
       result: { $i: 0 }
 
   - typeInput:
+      bindDescription: "`Format description ${wikiInput}`"
       bS: { input: wikiInput }
       bD: { text: $i }
       result: { $i: $i + 1 }

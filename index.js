@@ -1,5 +1,6 @@
 const {
   run,
+  socketServer,
   errorHandler,
   TestStructure,
   getTest,
@@ -23,6 +24,7 @@ if (!module.parent) {
 } else {
   module.exports = {
     run,
+    socketServer,
     TestStructure,
     getTest,
     TestsContent,

@@ -12,7 +12,7 @@ import { getTimer, blankSocket } from './Helpers';
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 
-const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> => {
+export const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> => {
   const { envsId, envsPool: envs } = Environment();
   const logger = new Log(envsId);
   const log = logger.log.bind(logger);
@@ -86,4 +86,6 @@ const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> 
   }
 };
 
-export default run;
+export const socketServer = (): void => {};
+
+// export default run;
