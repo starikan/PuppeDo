@@ -59,7 +59,7 @@ runTest:
       o:
         hidden: false
         visible: true
-        timeDellay: 0
+        timeDelay: 0
         count: 1
         delay: 0
         button: left

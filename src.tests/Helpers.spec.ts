@@ -11,8 +11,8 @@ test('Helpers -> merge', () => {
 test('Helpers -> sleep', async () => {
   const start = process.hrtime.bigint();
   await sleep(20);
-  const dellay = process.hrtime.bigint() - start;
-  expect(dellay).toBeGreaterThanOrEqual(20);
+  const delay = process.hrtime.bigint() - start;
+  expect(delay).toBeGreaterThanOrEqual(20);
 });
 
 test('Helpers -> paintString', () => {
