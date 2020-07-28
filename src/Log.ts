@@ -2,14 +2,11 @@ import path from 'path';
 import fs from 'fs';
 
 import mapValues from 'lodash/mapValues';
-import omit from 'lodash/omit';
-import isEmpty from 'lodash/isEmpty';
-import pick from 'lodash/pick';
 
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
-import { paintString, colors } from './Helpers';
+import { paintString, colors, pick, omit } from './Helpers';
 import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
@@ -311,7 +308,7 @@ export default class Log {
       // ENVS TO LOG
       let dataEnvs = null;
       if (level === 'env') {
-        dataEnvs = mapValues(this.envs?.envs || {}, (val) => omit(val, 'state'));
+        dataEnvs = mapValues(this.envs?.envs || {}, (val) => omit(val, ['state']));
       }
 
       // TODO: 2020-04-28 S.Starodubov todo
@@ -321,7 +318,7 @@ export default class Log {
       //   }
       // })
       // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
-      const testStructNormaize = isEmpty(testStruct) ? testSource : testStruct;
+      const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
 
       const logEntry: LogEntry = {
         text,

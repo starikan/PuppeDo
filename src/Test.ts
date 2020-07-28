@@ -1,8 +1,6 @@
 import vm from 'vm';
 
-import pick from 'lodash/pick';
-
-import { merge, blankSocket, getTimer } from './Helpers';
+import { merge, blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
 import Arguments from './Arguments';
 import Log from './Log';

@@ -4,8 +4,6 @@ import path from 'path';
 import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import isEmpty from 'lodash/isEmpty';
-
 import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
@@ -396,7 +394,7 @@ class EnvsPool implements EnvsPoolType {
       this.envs[newEnv.name] = newEnv;
     });
 
-    if (!this.envs || isEmpty(this.envs)) {
+    if (!this.envs || (this.envs && !Object.keys(this.envs).length)) {
       throw new Error("Can't init any environment. Check 'envs' parameter, should be array");
     }
 

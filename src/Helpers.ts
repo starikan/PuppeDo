@@ -72,3 +72,9 @@ export const blankSocket: SocketType = {
 };
 
 export const getTimer = (timeStart: bigint): string => (Number(process.hrtime.bigint() - timeStart) / 1e9).toFixed(3);
+
+export const pick = (obj: object, fields: string[]): object =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key)));
+
+export const omit = (obj: object, fields: string[]): object =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
