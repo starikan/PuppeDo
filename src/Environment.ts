@@ -307,7 +307,7 @@ class EnvsPool implements EnvsPoolType {
       const key = Object.keys(this.envs)[i];
       const { state } = this.envs[key];
       try {
-        state.browser.close();
+        await state.browser.close();
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error);

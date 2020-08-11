@@ -2,10 +2,12 @@
 import Arguments from './Arguments';
 import { Test } from './Test';
 import Log from './Log';
+import Environment from './Environment';
+import Env from './Env';
 
 interface ErrorType extends Error {
   envsId: string;
-  envs: EnvsPoolType;
+  envs: Env;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -30,7 +32,7 @@ export class AbstractError extends Error {
 
 export class TestError extends AbstractError {
   envsId: string;
-  envs: any; // EnvsPoolType;
+  envs: Env;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -83,10 +85,13 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     debugger;
   }
 
-  const { envs } = errorIncome;
-  if (envs) {
-    await envs.closeBrowsers();
-    await envs.closeProcesses();
+  const { envsPool } = Environment(errorIncome.envsId);
+
+  if (envsPool.closeBrowsers) {
+    await envsPool.closeBrowsers();
+  }
+  if (envsPool.closeProcesses) {
+    await envsPool.closeProcesses();
   }
 
   // if (!module.parent) {
