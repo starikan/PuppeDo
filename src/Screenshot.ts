@@ -49,7 +49,7 @@ export default class Screenshot {
       }
 
       try {
-        if (!Object.keys(element).length) {
+        if (element && !Object.keys(element).length) {
           await element.screenshot({ path: pathScreenshot });
         }
       } catch (error) {

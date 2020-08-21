@@ -170,22 +170,27 @@ export const checkIf = async (
   return false;
 };
 
-export const updateDataWithNeeds = (needData, needSelectors, dataLocal, selectorsLocal) => {
+export const updateDataWithNeeds = (
+  needData: string[],
+  needSelectors: string[],
+  dataLocal: object,
+  selectorsLocal: object,
+): { dataLocal: object; selectorsLocal: object } => {
   const allData = merge(selectorsLocal, dataLocal);
 
   const dataLocalCopy = JSON.parse(JSON.stringify(dataLocal));
   const selectorsLocalCopy = JSON.parse(JSON.stringify(selectorsLocal));
 
   needData
-    .map((v) => v.replace('?', ''))
-    .forEach((v) => {
+    .map((v: string) => v.replace('?', ''))
+    .forEach((v: string) => {
       dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
       selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
     });
 
   needSelectors
-    .map((v) => v.replace('?', ''))
-    .forEach((v) => {
+    .map((v: string) => v.replace('?', ''))
+    .forEach((v: string) => {
       dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
       selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
     });

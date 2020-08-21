@@ -27,7 +27,7 @@ const resolveJS = (testJson: any, funcFile: string): any => {
 
 const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Object => {
   const result = { ...source };
-  list.forEach((v) => {
+  list.forEach((v: string) => {
     result[`${v}Parent`] = merge(result[v] || {}, args[v] || {});
   });
   return result;
