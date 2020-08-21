@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 
-import mapValues from 'lodash/mapValues';
-
 import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
@@ -308,7 +306,7 @@ export default class Log {
       // ENVS TO LOG
       let dataEnvs = null;
       if (level === 'env') {
-        dataEnvs = mapValues(this.envs?.envs || {}, (val) => omit(val, ['state']));
+        dataEnvs = Object.values(this.envs?.envs || {}).map((val) => omit(val, ['state']));
       }
 
       // TODO: 2020-04-28 S.Starodubov todo

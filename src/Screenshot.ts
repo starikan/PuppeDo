@@ -1,7 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 
-import isObject from 'lodash/isObject';
 import dayjs from 'dayjs';
 
 import { sleep } from './Helpers';
@@ -49,8 +48,12 @@ export default class Screenshot {
         await page.screenshot({ path: pathScreenshot, fullPage });
       }
 
-      if (element && isObject(element) && !Object.keys(element).length) {
-        await element.screenshot({ path: pathScreenshot });
+      try {
+        if (!Object.keys(element).length) {
+          await element.screenshot({ path: pathScreenshot });
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-empty
       }
 
       if (fs.existsSync(pathScreenshot)) {
