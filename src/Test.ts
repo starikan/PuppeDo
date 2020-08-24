@@ -438,6 +438,19 @@ export class Test {
           this.description = String(runScriptInContext(this.bindDescription, allData));
         }
 
+        // IF
+        if (this.if) {
+          const skip = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
+          if (skip) {
+            return;
+          }
+        }
+
+        // ERROR IF
+        if (this.errorIf) {
+          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
+        }
+
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
         if (!this.description) {
@@ -464,19 +477,6 @@ export class Test {
           description: this.description,
           socket: this.socket,
         };
-
-        // IF
-        if (this.if) {
-          const skip = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
-          if (skip) {
-            return;
-          }
-        }
-
-        // ERROR IF
-        if (this.errorIf) {
-          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
-        }
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
