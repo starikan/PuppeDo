@@ -412,8 +412,12 @@ export class Test {
 
         const allData = merge(selectorsLocal, dataLocal);
 
-        const descriptionLocal = runScriptInContext(this.bindDescription, allData) as string;
-        this.description = descriptionLocal || this.description;
+        if (this.bindDescription) {
+          this.description = String(runScriptInContext(this.bindDescription, allData));
+        }
+        if (!this.description) {
+          this.logOptions.backgroundColor = 'red';
+        }
 
         // All data passed to log
         const args = {
@@ -427,16 +431,13 @@ export class Test {
           bindResults: this.bindResults,
           bindSelectors: this.bindSelectors,
           bindData: this.bindData,
+          bindDescription: this.bindDescription,
           levelIndent: this.levelIndent,
           repeat: this.repeat,
           stepId: this.stepId,
           debug: this.debug,
           logOptions: this.logOptions,
         };
-
-        if (this.bindDescription) {
-          this.description = String(runScriptInContext(this.bindDescription, allData));
-        }
 
         // IF
         if (this.if) {
@@ -453,9 +454,6 @@ export class Test {
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
-        if (!this.description) {
-          this.logOptions.backgroundColor = 'red';
-        }
         await logger.log({
           text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
