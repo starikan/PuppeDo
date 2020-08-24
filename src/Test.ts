@@ -419,6 +419,8 @@ export class Test {
           this.logOptions.backgroundColor = 'red';
         }
 
+        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
+
         // All data passed to log
         const args = {
           envsId,
