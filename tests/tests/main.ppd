@@ -17,6 +17,7 @@ runTest:
       description: Colored Case atom
       runTest:
         - goTo:
+            bindDescription: "'Going on page ' + url"
             bD: { url: baseUrl }
 
         - checkSelector:

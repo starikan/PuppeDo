@@ -25,7 +25,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   optimization: {
-    minimize: true,
+    minimize: false,
     namedModules: true,
     namedChunks: true,
     // usedExports: true,

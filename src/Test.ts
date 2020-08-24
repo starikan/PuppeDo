@@ -412,6 +412,9 @@ export class Test {
 
         const allData = merge(selectorsLocal, dataLocal);
 
+        const descriptionLocal = runScriptInContext(this.bindDescription, allData) as string;
+        this.description = descriptionLocal || this.description;
+
         // All data passed to log
         const args = {
           envsId,
