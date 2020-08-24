@@ -225,15 +225,7 @@ export class Test {
   funcFile: string;
   testFile: string;
   debug: boolean;
-  logOptions: {
-    screenshot?: boolean;
-    fullpage?: boolean;
-    levelIndent?: number;
-    level?: string | number;
-    textColor?: Colors;
-    backgroundColor?: Colors;
-  };
-
+  logOptions: LogOptionsType;
   data: Object;
   bindData: Object;
   selectors: Object;
@@ -385,7 +377,12 @@ export class Test {
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
-      this.logOptions = merge(inputs.logOptions || {}, this.logOptions);
+
+      this.logOptions = merge(
+        { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
+        inputs.logOptions || {},
+        this.logOptions,
+      );
 
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
@@ -440,12 +437,16 @@ export class Test {
 
         // LOG TEST
         logger.bindData({ testSource: source, bindedData: args });
+        if (!this.description) {
+          this.logOptions.backgroundColor = 'red';
+        }
         await logger.log({
           text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
           level: 'test',
           levelIndent,
-          textColor: this.logOptions.textColor || 'sane',
-          backgroundColor: !this.description ? 'red' : this.logOptions.backgroundColor || 'sane',
+          textColor: this.logOptions.textColor,
+          backgroundColor: this.logOptions.backgroundColor,
+          notShow: this.logOptions.notShow,
         });
 
         // Extend with data passed to functions

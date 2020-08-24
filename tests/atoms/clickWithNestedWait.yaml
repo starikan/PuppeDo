@@ -3,8 +3,9 @@ type: atom
 needSelectors: ['wikiInputInside']
 description: Nested Click Atom
 logOptions:
-    textColor: magenta
-    backgroundColor: yellow
+  textColor: magenta
+  backgroundColor: yellow
+
 runTest:
   - waitForSelector:
       bS: { selector: wikiInputInside }

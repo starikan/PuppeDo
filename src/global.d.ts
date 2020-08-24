@@ -202,15 +202,10 @@ type InputsTestType = {
   selectorsParent?: Object;
   optionsParent?: Object;
   resultsFromParent?: Object;
-  logOptions?: {
-    screenshot?: boolean;
-    fullpage?: boolean;
-    levelIndent?: number;
-    level?: string | number;
-    textColor?: Colors;
-    backgroundColor?: Colors;
-  };
+  logOptions?: LogOptionsType;
 };
+
+// ================ LOGGER ====================
 
 type LogEntry = {
   text: string;
@@ -224,4 +219,41 @@ type LogEntry = {
   level: string;
   levelIndent: number;
   stepId: string;
+};
+
+type LogOptionsType = {
+  notShow?: boolean;
+  screenshot?: boolean;
+  fullpage?: boolean;
+  levelIndent?: number;
+  level?: string | number;
+  textColor?: Colors;
+  backgroundColor?: Colors;
+};
+
+type LogEntrieType = {
+  text: string;
+  textColor: Colors;
+  backgroundColor?: Colors;
+};
+
+type LogInputType = {
+  text: string;
+  funcFile?: string;
+  testFile?: string;
+  screenshot?: boolean;
+  fullpage?: boolean;
+  level?: Colors;
+  element?: any;
+  testStruct?: string;
+  levelIndent?: number;
+  error?: any;
+  testSource?: any;
+  bindedData?: any;
+  extendInfo?: boolean;
+  stdOut?: boolean;
+  stepId?: string;
+  textColor?: Colors;
+  backgroundColor?: Colors;
+  notShow?: boolean;
 };

@@ -9,28 +9,6 @@ import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 
-type LogEntrieType = { text: string; textColor: Colors; backgroundColor?: Colors };
-
-type LogInputType = {
-  text: string;
-  funcFile?: string;
-  testFile?: string;
-  screenshot?: boolean;
-  fullpage?: boolean;
-  level?: Colors;
-  element?: any;
-  testStruct?: string;
-  levelIndent?: number;
-  error?: any;
-  testSource?: any;
-  bindedData?: any;
-  extendInfo?: boolean;
-  stdOut?: boolean;
-  stepId?: string;
-  textColor?: Colors;
-  backgroundColor?: Colors;
-};
-
 export default class Log {
   envsId: string;
   envs: EnvsPoolType;
@@ -247,6 +225,7 @@ export default class Log {
     extendInfo = false,
     stdOut = true,
     stepId = '',
+    notShow = false,
     textColor = 'sane',
     backgroundColor = 'sane',
   }: LogInputType): Promise<void> {
@@ -260,6 +239,8 @@ export default class Log {
 
     const levelText = Log.checkLevel(level);
     if (!levelText) return;
+
+    if (levelText !== 'error' && notShow) return;
 
     // SKIP LOG BY LEVEL
     if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && levelText !== 'error') {
