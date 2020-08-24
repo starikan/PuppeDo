@@ -55,8 +55,8 @@ type SocketType = {
 
 // ================ ENVS ====================
 
-type BrowserType = any;
-type BrowserPageType = any;
+type BrowserType = import('playwright').Browser | import('puppeteer').Browser;
+type BrowserPageType = import('playwright').Page | import('puppeteer').Page;
 
 type BrouserLaunchOptions = {
   headless: boolean;

@@ -250,7 +250,7 @@ class EnvsPool implements EnvsPoolType {
       });
 
       const pagesRaw = await browser.pages();
-      let pages: PagesType = {};
+      let pages: typeof pagesRaw = {};
       if (pagesRaw.length) {
         pages = { main: pagesRaw[0] };
       } else {
