@@ -353,6 +353,12 @@ export class Test {
       const startTime = process.hrtime.bigint();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
+      this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
+
+      if (this.debug) {
+        // eslint-disable-next-line no-debugger
+        debugger;
+      }
 
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
@@ -376,12 +382,11 @@ export class Test {
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
-      this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
-      const { logThis = true } = inputs.logOptionsParent;
+      const { logThis = true, logChildren = true } = inputs.logOptionsParent;
       this.logOptions = merge(
         { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
-        { logThis },
+        { logThis, logChildren },
         this.logOptions,
       );
 
@@ -394,11 +399,6 @@ export class Test {
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
         this.env = envsPool.envs[this.envName];
-
-        if (this.debug) {
-          // eslint-disable-next-line no-debugger
-          debugger;
-        }
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
@@ -463,7 +463,7 @@ export class Test {
           levelIndent,
           textColor: this.logOptions.textColor,
           backgroundColor: this.logOptions.backgroundColor,
-          logThis: this.logOptions.logThis,
+          logShowFlag: this.logOptions.logThis && logChildren,
         });
 
         // Extend with data passed to functions

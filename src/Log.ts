@@ -225,7 +225,7 @@ export default class Log {
     extendInfo = false,
     stdOut = true,
     stepId = '',
-    logThis = true,
+    logShowFlag = true,
     textColor = 'sane',
     backgroundColor = 'sane',
   }: LogInputType): Promise<void> {
@@ -240,7 +240,7 @@ export default class Log {
     const levelText = Log.checkLevel(level);
     if (!levelText) return;
 
-    if (levelText !== 'error' && !logThis) return;
+    if (levelText !== 'error' && !logShowFlag) return;
 
     // SKIP LOG BY LEVEL
     if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && levelText !== 'error') {
