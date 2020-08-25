@@ -222,7 +222,7 @@ type LogEntry = {
 };
 
 type LogOptionsType = {
-  notShow?: boolean;
+  logThis?: boolean;
   screenshot?: boolean;
   fullpage?: boolean;
   levelIndent?: number;
@@ -255,5 +255,5 @@ type LogInputType = {
   stepId?: string;
   textColor?: Colors;
   backgroundColor?: Colors;
-  notShow?: boolean;
+  logThis?: boolean;
 };

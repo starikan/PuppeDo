@@ -378,8 +378,12 @@ export class Test {
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
-      this.logOptions = merge({ textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors }, this.logOptions);
-      this.logOptions.notShow = this.logOptions.notShow || inputs.logOptionsParent?.notShow || false;
+      const { logThis = true } = inputs.logOptionsParent;
+      this.logOptions = merge(
+        { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
+        { logThis },
+        this.logOptions,
+      );
 
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
@@ -459,7 +463,7 @@ export class Test {
           levelIndent,
           textColor: this.logOptions.textColor,
           backgroundColor: this.logOptions.backgroundColor,
-          notShow: this.logOptions.notShow,
+          logThis: this.logOptions.logThis,
         });
 
         // Extend with data passed to functions
