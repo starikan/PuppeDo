@@ -202,7 +202,7 @@ type InputsTestType = {
   selectorsParent?: Object;
   optionsParent?: Object;
   resultsFromParent?: Object;
-  logOptions?: LogOptionsType;
+  logOptionsParent?: LogOptionsType;
 };
 
 // ================ LOGGER ====================

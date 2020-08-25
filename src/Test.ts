@@ -378,11 +378,8 @@ export class Test {
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
-      this.logOptions = merge(
-        { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
-        inputs.logOptions || {},
-        this.logOptions,
-      );
+      this.logOptions = merge({ textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors }, this.logOptions);
+      this.logOptions.notShow = this.logOptions.notShow || inputs.logOptionsParent?.notShow || false;
 
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);

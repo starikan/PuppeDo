@@ -83,6 +83,7 @@ const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parent
       'options',
       'data',
       'selectors',
+      'logOptions',
     ]);
     updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
