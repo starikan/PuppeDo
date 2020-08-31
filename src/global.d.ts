@@ -97,7 +97,7 @@ type EnvBrowserType = {
     cwd?: string;
     args?: Array<string>;
     env?: { [key: string]: string };
-    pauseAfterStartApp?: number;
+    secondsToStartApp?: number;
   };
 };
 

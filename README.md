@@ -6,7 +6,7 @@ Puppeteer tests flow with node.js
 ## Windows
 
   1. Install [NodeJS](https://nodejs.org/)
-    
+
       * you can use [Nodist](https://github.com/nullivex/nodist/)
 
   1. Fetch node modules with `npm install` or `yarn`
@@ -66,7 +66,7 @@ browser:
     cwd: optional
     args: optional
     env: optional
-    pauseAfterStartApp: optional
+    secondsToStartApp: optional
 
 log:
   level: raw
@@ -112,7 +112,7 @@ program | todo
 cwd | todo
 args | todo
 env | todo
-pauseAfterStartApp | todo
+secondsToStartApp | todo
 
 ### Logging Settings
 Parameter  | Description

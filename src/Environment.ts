@@ -274,7 +274,7 @@ class EnvsPool implements EnvsPoolType {
     const cwd = browserSettings?.runtimeEnv?.cwd || '';
     const browserArgs = browserSettings?.runtimeEnv?.args || [];
     const browserEnv = browserSettings?.runtimeEnv?.env || {};
-    const pauseAfterStartApp = browserSettings?.runtimeEnv?.pauseAfterStartApp || 5000;
+    const secondsToStartApp = browserSettings?.runtimeEnv?.secondsToStartApp || 30;
     const runArgs = [program, ...browserArgs];
 
     const { folder, folderLatest } = this.output;
@@ -294,10 +294,17 @@ class EnvsPool implements EnvsPoolType {
         });
       }
 
-      await sleep(pauseAfterStartApp);
-
-      const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
-      return { browser, pages, pid: prc.pid };
+      let connectionTryes = 0;
+      while (connectionTryes < secondsToStartApp) {
+        try {
+          const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+          connectionTryes = secondsToStartApp;
+          return { browser, pages, pid: prc.pid };
+        } catch (error) {
+          await sleep(1000);
+          connectionTryes += 1;
+        }
+      }
     }
     throw new Error(`Can't run Electron ${runtimeExecutable}`);
   }
