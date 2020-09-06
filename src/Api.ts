@@ -79,9 +79,9 @@ const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> 
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;
       error.type = 'SyntaxError';
+      // eslint-disable-next-line no-console
+      console.log(error);
     }
-    // eslint-disable-next-line no-console
-    console.log(error);
     throw error;
   }
 };

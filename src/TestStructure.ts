@@ -45,12 +45,12 @@ export default class TestStructure implements TestStructureType {
 
   static getTestRaw(name: string): any {
     const allTests = new TestsContent().allData;
-    const testJSON = JSON.parse(
-      JSON.stringify(allTests.allContent.find((v) => v.name === name && ['atom', 'test'].includes(v.type))),
-    );
-    if (!testJSON) {
+
+    const testSource = allTests.allContent.find((v) => v.name === name && ['atom', 'test'].includes(v.type));
+    if (!testSource) {
       throw new Error(`Test with name '${name}' not found in root folder and additional folders`);
     }
+    const testJSON = JSON.parse(JSON.stringify(testSource));
     return testJSON;
   }
 
