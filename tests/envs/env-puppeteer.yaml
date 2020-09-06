@@ -15,7 +15,7 @@ envsExt:
 browser:
   type: browser
   engine: puppeteer
-  browser: chromium
+  browserName: chrome
   runtime: run
   args:
   - "--window-size=1024,918"

@@ -183,11 +183,17 @@ class EnvsPool implements EnvsPoolType {
 
   static async runPuppeteer(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const { headless = true, slowMo = 0, args = [], windowSize = {} } = browserSettings;
+    const {
+      headless = true,
+      slowMo = 0,
+      args = [],
+      windowSize = {},
+      browserName: product = 'chrome',
+    } = browserSettings;
 
     // eslint-disable-next-line no-undef
     const puppeteer = __non_webpack_require__('puppeteer');
-    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE });
+    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE, product });
 
     const page = await browser.newPage();
     const pages = { main: page };

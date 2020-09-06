@@ -80,7 +80,7 @@ type EnvBrowserType = {
   type?: 'browser' | 'electron' | 'api';
   runtime?: 'run' | 'connect';
   engine?: 'puppeteer' | 'playwright';
-  browserName?: 'chromium' | 'firefox' | 'webkit';
+  browserName?: 'chrome' | 'chromium' | 'firefox' | 'webkit';
   args?: Array<string>;
   headless?: boolean;
   slowMo?: number;
