@@ -81,6 +81,10 @@ const ALIASES = {
 export const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
   let result: boolean | object | string | number | null;
 
+  if (source === '{}') {
+    return {};
+  }
+
   try {
     const script = new vm.Script(source);
     vm.createContext(context);

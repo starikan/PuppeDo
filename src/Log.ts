@@ -242,6 +242,11 @@ export default class Log {
 
     if (levelText !== 'error' && !logShowFlag) return;
 
+    if (levelText === 'error') {
+      // eslint-disable-next-line no-param-reassign
+      backgroundColor = 'sane';
+    }
+
     // SKIP LOG BY LEVEL
     if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && levelText !== 'error') {
       return;
