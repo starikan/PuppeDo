@@ -358,6 +358,8 @@ export class Test {
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
       const startTime = process.hrtime.bigint();
+      const { envsPool } = Environment(envsId);
+      const logger = new Log(envsId);
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
@@ -396,10 +398,8 @@ export class Test {
         { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
         { logThis, logChildren },
         this.logOptions,
+        { output: envsPool.output },
       );
-
-      const { envsPool } = Environment(envsId);
-      const logger = new Log(envsId);
 
       try {
         const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
