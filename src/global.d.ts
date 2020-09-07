@@ -203,6 +203,7 @@ type InputsTestType = {
   optionsParent?: Object;
   resultsFromParent?: Object;
   logOptionsParent?: LogOptionsType;
+  frame?: string;
 };
 
 // ================ LOGGER ====================

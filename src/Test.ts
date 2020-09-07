@@ -226,6 +226,7 @@ export class Test {
   testFile: string;
   debug: boolean;
   logOptions: LogOptionsType;
+  frame: string;
   data: Object;
   bindData: Object;
   selectors: Object;
@@ -275,6 +276,7 @@ export class Test {
     testFile = null,
     debug = false,
     logOptions = {},
+    frame = '',
   } = {}) {
     this.name = name;
     this.type = type;
@@ -302,6 +304,7 @@ export class Test {
     this.testFile = testFile;
     this.debug = debug;
     this.logOptions = logOptions;
+    this.frame = frame;
 
     this.fetchData = (): Object => {
       const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
@@ -382,6 +385,7 @@ export class Test {
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
+      this.frame = this.frame || inputs.frame;
 
       const { logThis = true, logChildren = true } = inputs.logOptionsParent;
       this.logOptions = merge(
@@ -440,6 +444,7 @@ export class Test {
           stepId: this.stepId,
           debug: this.debug,
           logOptions: this.logOptions,
+          frame: this.frame,
         };
 
         // IF

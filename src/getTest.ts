@@ -85,7 +85,7 @@ const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parent
       'selectors',
       'logOptions',
     ]);
-    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug']);
+    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
     const result = await test.run(envsId, updatetTestJson);
     // eslint-disable-next-line no-param-reassign
