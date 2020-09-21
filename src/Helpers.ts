@@ -1,5 +1,6 @@
 /* eslint-disable implicit-arrow-linebreak */
 import deepmerge from 'deepmerge';
+import dayjs from 'dayjs';
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -78,3 +79,5 @@ export const pick = (obj: object, fields: string[]): object =>
 
 export const omit = (obj: object, fields: string[]): object =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
+
+export const getNowDateTime = (): string => dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');

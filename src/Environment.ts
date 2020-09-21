@@ -4,11 +4,10 @@ import path from 'path';
 import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import dayjs from 'dayjs';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
 
-import { merge, sleep, blankSocket } from './Helpers';
+import { merge, sleep, blankSocket, getNowDateTime } from './Helpers';
 import TestsContent from './TestContent';
 import Arguments from './Arguments';
 import Env from './Env';
@@ -91,7 +90,7 @@ class EnvsPool implements EnvsPoolType {
     if (!fs.existsSync(output)) {
       fs.mkdirSync(output);
     }
-    const now = dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+    const now = getNowDateTime();
 
     const folder = path.join(output, `${now}_${testName}`);
     fs.mkdirSync(folder);

@@ -1,13 +1,11 @@
 /* eslint-disable no-await-in-loop */
-import dayjs from 'dayjs';
-
 import TestStructure from './TestStructure';
 import getTest from './getTest';
 import Arguments from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
-import { getTimer, blankSocket } from './Helpers';
+import { getTimer, blankSocket, getNowDateTime } from './Helpers';
 
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
@@ -48,7 +46,7 @@ const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> 
       }
       await log({
         level: 'timer',
-        text: `Test '${testName}' start on '${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}'`,
+        text: `Test '${testName}' start on '${getNowDateTime()}'`,
       });
 
       await envs.init(false);

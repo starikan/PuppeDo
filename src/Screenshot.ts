@@ -1,9 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import dayjs from 'dayjs';
-
-import { sleep } from './Helpers';
+import { getNowDateTime, sleep } from './Helpers';
 import Environment from './Environment';
 
 type ElementType = {
@@ -40,7 +38,7 @@ export default class Screenshot {
   async saveScreenshot(element: ElementType = null, fullPage: boolean = false): Promise<string> {
     const { folder } = this.envs.getOutputsFolders();
     try {
-      const name = `${dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS')}.png`;
+      const name = `${getNowDateTime()}.png`;
       const pathScreenshot = path.resolve(path.join(folder, name));
 
       if (fullPage) {
