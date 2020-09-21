@@ -229,6 +229,7 @@ export class Test {
   funcFile: string;
   testFile: string;
   debug: boolean;
+  disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
   data: Object;
@@ -279,6 +280,7 @@ export class Test {
     funcFile = null,
     testFile = null,
     debug = false,
+    disable = false,
     logOptions = {},
     frame = '',
   } = {}) {
@@ -307,6 +309,7 @@ export class Test {
     this.funcFile = funcFile;
     this.testFile = testFile;
     this.debug = debug;
+    this.disable = disable;
     this.logOptions = logOptions;
     this.frame = frame;
 
@@ -367,6 +370,10 @@ export class Test {
       if (this.debug) {
         // eslint-disable-next-line no-debugger
         debugger;
+      }
+
+      if (this.disable) {
+        return {};
       }
 
       // Get Data from parent test and merge it with current test
@@ -453,9 +460,9 @@ export class Test {
 
         // IF
         if (this.if) {
-          const skip = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
-          if (skip) {
-            return;
+          const skipIf = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
+          if (skipIf) {
+            return {};
           }
         }
 

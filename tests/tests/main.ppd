@@ -49,6 +49,11 @@ runTest:
       result: { $i: $i + 1 }
       repeat: 2
 
+  - typeInput:
+      bS: { selector: wikiInput }
+      bD: { text: $i }
+      disable: true
+
   - getText:
       bS: { selector: wikiInput }
       r: { result: text }
