@@ -80,4 +80,5 @@ export const pick = (obj: object, fields: string[]): object =>
 export const omit = (obj: object, fields: string[]): object =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
 
-export const getNowDateTime = (): string => dayjs().format('YYYY-MM-DD_HH-mm-ss.SSS');
+export const getNowDateTime = (now: dayjs.Dayjs | Date = dayjs(), format: string = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
+  dayjs(now).format(format);

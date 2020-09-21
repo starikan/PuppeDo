@@ -1,10 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 
-import dayjs from 'dayjs';
 import yaml from 'js-yaml';
 
-import { paintString, colors, pick, omit } from './Helpers';
+import { paintString, colors, pick, omit, getNowDateTime } from './Helpers';
 import Arguments from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
@@ -70,7 +69,7 @@ export default class Log {
     level: Colors = 'sane',
     levelIndent: number = 0,
     text: string = '',
-    now = dayjs(),
+    now = new Date(),
     funcFile = '',
     testFile = '',
     extendInfo: boolean = false,
@@ -82,7 +81,7 @@ export default class Log {
     const errorTyped = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
-    const nowWithPad = `${now.format('HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
+    const nowWithPad = `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = this.binded?.testSource?.breadcrumbs || [];
 
     const headColor: Colors = level === 'error' ? 'error' : 'sane';
@@ -268,7 +267,7 @@ export default class Log {
       }
       const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
 
-      const now = dayjs();
+      const now = new Date();
       const logTexts = this.makeLog(
         levelText,
         levelIndent,
@@ -306,7 +305,7 @@ export default class Log {
 
       const logEntry: LogEntry = {
         text,
-        time: now.format('YYYY-MM-DD_HH-mm-ss.SSS'),
+        time: getNowDateTime(now),
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         dataEnvs,
         dataEnvsGlobal: level === 'env' ? pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
