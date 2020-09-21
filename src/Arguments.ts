@@ -18,6 +18,7 @@ const argsDefault: ArgumentsType = {
   PPD_LOG_LEVEL_TYPE_IGNORE: [],
   PPD_LOG_SCREENSHOT: false,
   PPD_LOG_FULLPAGE: false,
+  PPD_LOG_TEST_NAME: true,
 };
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {

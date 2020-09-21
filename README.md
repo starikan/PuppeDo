@@ -162,6 +162,7 @@ PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. | `[]` | `String[]`
 PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
+PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults

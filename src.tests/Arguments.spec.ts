@@ -18,6 +18,7 @@ const argsDefault = {
   PPD_LOG_LEVEL_TYPE_IGNORE: [],
   PPD_LOG_SCREENSHOT: false,
   PPD_LOG_FULLPAGE: false,
+  PPD_LOG_TEST_NAME: true,
 };
 
 const argsModify = {
@@ -38,6 +39,7 @@ const argsModify = {
   PPD_LOG_LEVEL_TYPE_IGNORE: ['joo'],
   PPD_LOG_SCREENSHOT: true,
   PPD_LOG_FULLPAGE: true,
+  PPD_LOG_TEST_NAME: false,
 };
 
 const argsENV = {
@@ -58,6 +60,7 @@ const argsENV = {
   PPD_LOG_LEVEL_TYPE_IGNORE: 'joo',
   PPD_LOG_SCREENSHOT: 'true',
   PPD_LOG_FULLPAGE: 'true',
+  PPD_LOG_TEST_NAME: 'false',
 };
 
 // Reset Arguments

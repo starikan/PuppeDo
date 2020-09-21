@@ -44,6 +44,7 @@ type ArgumentsType = {
   PPD_LOG_LEVEL_TYPE_IGNORE: Colors[];
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;
+  PPD_LOG_TEST_NAME: boolean;
 };
 
 type ArgumentsKeysType = keyof ArgumentsType;

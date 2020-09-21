@@ -2,10 +2,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import dayjs from 'dayjs';
-
 import Log from '../src/Log';
 import Arguments from '../src/Arguments';
+import { getNowDateTime } from '../src/Helpers';
 
 const clearFiles = (fileName: string): void => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
@@ -215,8 +214,8 @@ describe('Log', () => {
   });
 
   test('makeLog', () => {
-    const now = dayjs();
-    const nowFormated = now.format('HH:mm:ss.SSS');
+    const now = new Date();
+    const nowFormated = getNowDateTime(now, 'HH:mm:ss.SSS');
 
     expect(logger.makeLog('info', 0, 'text', now)).toEqual([
       [

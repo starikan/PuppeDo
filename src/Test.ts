@@ -409,7 +409,7 @@ export class Test {
       );
 
       try {
-        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND } = new Arguments().args;
+        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME } = new Arguments().args;
 
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
@@ -472,9 +472,14 @@ export class Test {
         }
 
         // LOG TEST
+        const logText = [
+          PPD_LOG_TEST_NAME ? `(${this.name}) ` : '',
+          this.description ? this.description : `(${this.name}) TODO: Fill description`,
+        ].join('');
+
         logger.bindData({ testSource: source, bindedData: args });
         await logger.log({
-          text: this.description ? `(${this.name}) ${this.description}` : `(${this.name}) TODO: Fill description`,
+          text: logText,
           level: 'test',
           levelIndent,
           textColor: this.logOptions.textColor,
