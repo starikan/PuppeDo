@@ -3,19 +3,20 @@ import path from 'path';
 import Blocker from './Blocker';
 import { merge, pick } from './Helpers';
 import { Test } from './Test';
+import Atom from './AtomCore';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
 const resolveJS = (testJson: any, funcFile: string): any => {
   const testJsonNew = { ...testJson };
   try {
-    /* eslint-disable */
-    const atom = __non_webpack_require__(funcFile);
-    /* eslint-enable */
-    const { runTest } = atom;
-    if (typeof runTest === 'function') {
+    const instance = new Atom();
+    // eslint-disable-next-line no-undef
+    const atomRun = __non_webpack_require__(funcFile);
+    instance.atomRun = atomRun;
+    if (typeof atomRun === 'function') {
       testJsonNew.funcFile = path.resolve(funcFile);
-      testJsonNew.runTest = [runTest];
+      testJsonNew.runTest = [instance.runTest.bind(instance)];
     }
   } catch (err) {
     // If there is no JS file it`s fine.

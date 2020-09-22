@@ -166,6 +166,8 @@ export const checkIf = async (
     await log({
       level: 'error',
       levelIndent,
+      screenshot: true,
+      fullpage: true,
       text: `Test stopped with expr ${ifType} = '${expr}'`,
     });
     throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
@@ -238,6 +240,7 @@ export class Test {
   bindSelectors: { [key: string]: string };
   bindResults: { [key: string]: string };
   description: string;
+  descriptionError: string;
   bindDescription: string;
   while: string;
   if: string;
@@ -268,6 +271,7 @@ export class Test {
     dataExt = [],
     selectorsExt = [],
     description = '',
+    descriptionError = '',
     bindDescription = '',
     beforeTest = (): void => {},
     runTest = (): void => {},
@@ -296,6 +300,7 @@ export class Test {
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
     this.description = description;
+    this.descriptionError = descriptionError;
     this.bindDescription = bindDescription;
     this.beforeTest = beforeTest;
     this.runTest = runTest;
