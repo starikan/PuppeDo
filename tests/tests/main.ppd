@@ -36,6 +36,11 @@ runTest:
             bS: { selector: nested.wikiInput }
 
   - blank:
+      description: I am not showing in log
+      logOptions:
+        logThis: false
+
+  - blank:
       description: Set result with colors
       logOptions:
         textColor: colorUnknown

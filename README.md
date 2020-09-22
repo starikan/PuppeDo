@@ -163,6 +163,7 @@ PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boole
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
+PPD_LOG_IGNORE_HIDE_LOG | Show all log even if it ignore inline | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults

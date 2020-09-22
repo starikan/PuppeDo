@@ -2,6 +2,7 @@ import crypto from 'crypto';
 
 import TestsContent from './TestContent';
 import Environment from './Environment';
+import { merge } from './Helpers';
 
 type FullJsonType = {
   description?: string;
@@ -77,7 +78,7 @@ export default class TestStructure implements TestStructureType {
   }
 
   getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0): TestStructureType {
-    const fullJSON = JSON.parse(JSON.stringify({ ...TestStructure.getTestRaw(testName), ...testBody }));
+    const fullJSON = JSON.parse(JSON.stringify(merge(TestStructure.getTestRaw(testName), testBody)));
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');

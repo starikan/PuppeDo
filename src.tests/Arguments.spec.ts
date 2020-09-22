@@ -19,6 +19,7 @@ const argsDefault = {
   PPD_LOG_SCREENSHOT: false,
   PPD_LOG_FULLPAGE: false,
   PPD_LOG_TEST_NAME: true,
+  PPD_LOG_IGNORE_HIDE_LOG: false,
 };
 
 const argsModify = {
@@ -40,6 +41,7 @@ const argsModify = {
   PPD_LOG_SCREENSHOT: true,
   PPD_LOG_FULLPAGE: true,
   PPD_LOG_TEST_NAME: false,
+  PPD_LOG_IGNORE_HIDE_LOG: true,
 };
 
 const argsENV = {
@@ -61,6 +63,7 @@ const argsENV = {
   PPD_LOG_SCREENSHOT: 'true',
   PPD_LOG_FULLPAGE: 'true',
   PPD_LOG_TEST_NAME: 'false',
+  PPD_LOG_IGNORE_HIDE_LOG: 'true',
 };
 
 // Reset Arguments

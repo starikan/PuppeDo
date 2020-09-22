@@ -45,6 +45,7 @@ type ArgumentsType = {
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;
   PPD_LOG_TEST_NAME: boolean;
+  PPD_LOG_IGNORE_HIDE_LOG: boolean;
 };
 
 type ArgumentsKeysType = keyof ArgumentsType;

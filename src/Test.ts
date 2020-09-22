@@ -364,7 +364,13 @@ export class Test {
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
 
-      const { PPD_DEBUG_MODE } = new Arguments().args;
+      const {
+        PPD_DEBUG_MODE,
+        PPD_DISABLE_ENV_CHECK,
+        PPD_LOG_EXTEND,
+        PPD_LOG_TEST_NAME,
+        PPD_LOG_IGNORE_HIDE_LOG,
+      } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug) {
@@ -407,10 +413,12 @@ export class Test {
         this.logOptions,
         { output: envsPool.output },
       );
+      if (PPD_LOG_IGNORE_HIDE_LOG) {
+        this.logOptions.logThis = true;
+        this.logOptions.logChildren = true;
+      }
 
       try {
-        const { PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME } = new Arguments().args;
-
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
         this.env = envsPool.envs[this.envName];
