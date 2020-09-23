@@ -4,7 +4,7 @@ name: data
 description: Simple Data
 data:
   data: test
-  baseUrl: https://developer.mozilla.org/
+  baseUrl: http://localhost:3000/
   CHECK_DATA: ENV_DATA_EXT
 
 ---

@@ -4,8 +4,5 @@ name: selectors
 description: Simple Selectors
 data:
   nested:
-    wikiInput: '#main-q'
-  wikiInput: '#main-q'
-  loginBtn: .signin-link
-  email: .newsletter-input-email
-  title: .highlight-span
+    mainInput: '#main-input'
+  mainInput: '#main-input'

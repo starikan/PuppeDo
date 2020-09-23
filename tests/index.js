@@ -1,5 +1,6 @@
 require('@puppedo/atoms');
 const ppd = require('../index');
+const runServer = require('./server');
 
 const run = async () => {
   // Test with direct run from JS
@@ -21,6 +22,7 @@ const run = async () => {
 };
 
 try {
+  runServer();
   run();
 } catch (error) {
   console.log(error);

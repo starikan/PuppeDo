@@ -21,19 +21,19 @@ runTest:
             bD: { url: baseUrl }
 
         - checkSelector:
-            bindSelectors: { selector: nested.wikiInput }
+            bindSelectors: { selector: nested.mainInput }
             errorIfResult: 'exists === false'
             options:
               screenshot: true
 
   - blank:
-      bindDescription: "'Nested click ' + nested.wikiInput"
+      bindDescription: "'Nested click ' + nested.mainInput"
       logOptions:
         textColor: black
         backgroundColor: white
       runTest:
         - clickSelector:
-            bS: { selector: nested.wikiInput }
+            bS: { selector: nested.mainInput }
 
   - blank:
       description: I am not showing in log
@@ -48,24 +48,24 @@ runTest:
       result: { $i: 0 }
 
   - typeInput:
-      bS: { selector: wikiInput }
+      bS: { selector: mainInput }
       bD: { text: $i }
       options: { noClearInput: true }
       result: { $i: $i + 1 }
       repeat: 2
 
   - typeInput:
-      bS: { selector: wikiInput }
+      bS: { selector: mainInput }
       bD: { text: $i }
       disable: true
 
   - getText:
-      bS: { selector: wikiInput }
+      bS: { selector: mainInput }
       r: { result: text }
       errorIfResult: "result !== '01'"
 
   - clickWithNestedWait:
-      bS: { wikiInputInside: wikiInput }
+      bS: { mainInputInside: mainInput }
       # debug: true
       o:
         hidden: false
@@ -91,7 +91,7 @@ runTest:
 
   - blank:
       description: Some data function
-      let: { myDataFunction: '"text".replace("text", "Function text: ") + titleText' }
+      let: { myDataFunction: '"text".replace("text", "Title of HTML: ") + titleText' }
 
   - blank:
       description: Bind data from function
@@ -99,7 +99,7 @@ runTest:
 
   - typeInput:
       description: Input some text in field INPUT
-      bS: { selector: wikiInput }
+      bS: { selector: mainInput }
       🔑📋: { text: myDataBinded }
       o:
         screenshot: true
@@ -133,4 +133,4 @@ runTest:
       bD: { url: baseUrl }
   - clickSelector:
       description: Input some text in field INPUT
-      s: { selector: '.wikiInputFake' }
+      s: { selector: '.mainInputFake' }

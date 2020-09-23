@@ -1,6 +1,6 @@
 name: clickWithNestedWait
 type: atom
-needSelectors: ['wikiInputInside']
+needSelectors: ['mainInputInside']
 description: Nested Click Atom
 logOptions:
   textColor: magenta
@@ -8,7 +8,7 @@ logOptions:
 
 runTest:
   - waitForSelector:
-      bS: { selector: wikiInputInside }
+      bS: { selector: mainInputInside }
 
   - clickSelector:
-      bS: { selector: wikiInputInside }
+      bS: { selector: mainInputInside }
