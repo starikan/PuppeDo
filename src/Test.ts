@@ -486,8 +486,8 @@ export class Test {
 
         // LOG TEST
         const logText = [
-          PPD_LOG_TEST_NAME ? `(${this.name}) ` : '',
-          this.description ? this.description : `(${this.name}) TODO: Fill description`,
+          PPD_LOG_TEST_NAME || !this.description ? `(${this.name}) ` : '',
+          this.description ? this.description : 'TODO: Fill description',
         ].join('');
 
         logger.bindData({ testSource: source, bindedData: args });
