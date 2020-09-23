@@ -15,11 +15,13 @@ class AtomError extends Error {
   }
 }
 
+type LogFunctionType = (options: LogInputType) => Promise<void>;
+
 export default class Atom {
   env: Env;
   envs: EnvsPoolType;
   page: BrowserPageType;
-  log: (options: LogInputType) => Promise<void>;
+  log: LogFunctionType;
 
   levelIndent: number;
   logOptions: LogOptionsType;
@@ -117,22 +119,27 @@ export default class Atom {
     }
   }
 
-  async logSpliter(): Promise<void> {
-    await this.log({
-      text: '='.repeat(120 - (this.levelIndent + 1) * 3 - 21),
-      levelIndent: this.levelIndent + 1,
+  static async logSpliter(logFunction: LogFunctionType, levelIndent: number = 0): Promise<void> {
+    await logFunction({
+      text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
+      levelIndent: levelIndent + 1,
       level: 'error',
       extendInfo: true,
     });
   }
 
-  async logTimer(startTime: bigint, isError = false): Promise<void> {
+  static async logTimer(
+    logFunction: LogFunctionType,
+    levelIndent: number = 0,
+    startTime: bigint,
+    isError = false,
+  ): Promise<void> {
     const { PPD_LOG_EXTEND } = new Arguments().args;
     if (PPD_LOG_EXTEND || isError) {
-      await this.log({
+      await logFunction({
         text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
         level: isError ? 'error' : 'timer',
-        levelIndent: this.levelIndent + 1,
+        levelIndent: levelIndent + 1,
         extendInfo: true,
       });
     }
@@ -266,7 +273,7 @@ export default class Atom {
     try {
       await this.updateFrame();
       const result = await this.atomRun();
-      await this.logTimer(startTime);
+      await Atom.logTimer(this.log, this.levelIndent, startTime);
       await this.logExtend();
       return result;
     } catch (error) {
@@ -283,13 +290,13 @@ export default class Atom {
         level: 'error',
       });
 
-      await this.logSpliter();
-      await this.logTimer(startTime, true);
+      await Atom.logSpliter(this.log, this.levelIndent);
+      await Atom.logTimer(this.log, this.levelIndent, startTime, true);
       await this.logExtend(true);
       await this.logDebug();
       await this.logArgs();
       await this.logStack(error);
-      await this.logSpliter();
+      await Atom.logSpliter(this.log, this.levelIndent);
 
       throw new AtomError('Error in Atom');
     }
