@@ -111,6 +111,21 @@
       "request": "launch",
       "name": "Data_check",
       "program": "${workspaceFolder}\\tests\\indexData.js",
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Atoms Test",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "atomsTest",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
+        "PPD_DEBUG_MODE": "true"
+      }
     }
   ]
 }

@@ -1,0 +1,23 @@
+name: atomsTest
+description: Test all Atoms
+runTest:
+  - blank:
+      description: '[BLANK]'
+
+  - case:
+      description: '[CASE]'
+
+  - if:
+      description: '[IF]'
+
+  - initData:
+      description: '[INIT_DATA]'
+
+  - loop:
+      description: '[LOOP]'
+
+  - test:
+      description: '[TEST]'
+
+  - todo:
+      description: '[TODO]'
