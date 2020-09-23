@@ -526,7 +526,6 @@ export class Test {
           if (Array.isArray(funcs)) {
             for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
-              // eslint-disable-next-line no-await-in-loop
               const funResult = (await fun(argsExt)) || {};
               resultFromTest = merge(resultFromTest, funResult);
             }

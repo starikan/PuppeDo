@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import TestStructure from './TestStructure';
 import getTest from './getTest';
 import Arguments from './Arguments';
