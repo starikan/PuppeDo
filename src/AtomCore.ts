@@ -1,17 +1,39 @@
 /* eslint-disable max-classes-per-file */
-const path = require('path');
+import path from 'path';
+import Arguments from './Arguments';
+import Env from './Env';
+import { ErrorType } from './Error';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
+type EnginesType = 'puppeteer' | 'playwright';
+
 class AtomError extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'AtomError';
   }
 }
 
 export default class Atom {
-  getEngine(engine) {
+  env: Env;
+  envs: EnvsPoolType;
+  page: BrowserPageType;
+  log: (options: LogInputType) => Promise<void>;
+
+  levelIndent: number;
+  logOptions: LogOptionsType;
+  data: Object;
+  selectors: Object;
+  dataTest: Object;
+  selectorsTest: Object;
+  bindData: { [key: string]: string };
+  bindSelectors: { [key: string]: string };
+  bindResults: { [key: string]: string };
+  options: Object;
+  frame: string;
+
+  getEngine(engine: EnginesType | null): boolean | EnginesType {
     const atomEngine = this.env.env.browser.engine;
 
     if (!enginesAvailable.includes(atomEngine)) {
@@ -21,11 +43,11 @@ export default class Atom {
     return engine ? atomEngine === engine : atomEngine;
   }
 
-  async getElement(selector, allElements = false, elementPatent = null) {
-    if (!elementPatent) {
-      elementPatent = this.page;
-    }
-
+  async getElement(
+    selector: string,
+    allElements: boolean = false,
+    elementPatent: PagesType = this.page,
+  ): Promise<Element[] | boolean> {
     if (selector && typeof selector === 'string') {
       const selectorClean = selector
         .replace(/^css[:=]/, '')
@@ -42,7 +64,7 @@ export default class Atom {
           elements = await elementPatent.$x(selectorClean);
         }
         if (isText) {
-          elements = await elementPatent.$x(`//\*[text()[contains(.,"${selectorClean}")]]`);
+          elements = await elementPatent.$x(`//*[text()[contains(.,"${selectorClean}")]]`);
         }
         if (isCSS) {
           elements = await elementPatent.$$(selectorClean);
@@ -70,20 +92,22 @@ export default class Atom {
     return false;
   }
 
-  async atomRun() {
+  // eslint-disable-next-line class-methods-use-this
+  async atomRun(): Promise<void> {
     throw new AtomError('Empty Atom Run');
   }
 
-  async logStack(error) {
-    error.stack = error.stack || '';
-    const errorStrings = [error.message, ...error.stack.split('\n')];
+  async logStack(error: ErrorType): Promise<void> {
+    const newError = { ...error };
+    newError.stack = error.stack || '';
+    const errorStrings = [newError.message, ...newError.stack.split('\n')];
     await this.log({
       text: 'Error in Atom:',
       levelIndent: this.levelIndent + 1,
       level: 'error',
       extendInfo: true,
     });
-    for (let i = 0; i < errorStrings.length; i++) {
+    for (let i = 0; i < errorStrings.length; i += 1) {
       await this.log({
         text: errorStrings[i],
         levelIndent: this.levelIndent + 2,
@@ -93,7 +117,7 @@ export default class Atom {
     }
   }
 
-  async logSpliter() {
+  async logSpliter(): Promise<void> {
     await this.log({
       text: '='.repeat(120 - (this.levelIndent + 1) * 3 - 21),
       levelIndent: this.levelIndent + 1,
@@ -102,8 +126,8 @@ export default class Atom {
     });
   }
 
-  async logTimer(startTime, isError = false) {
-    const PPD_LOG_EXTEND = (this.envs.args || {}).PPD_LOG_EXTEND || false;
+  async logTimer(startTime: bigint, isError = false): Promise<void> {
+    const { PPD_LOG_EXTEND } = new Arguments().args;
     if (PPD_LOG_EXTEND || isError) {
       await this.log({
         text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
@@ -114,8 +138,8 @@ export default class Atom {
     }
   }
 
-  async logExtend(isError = false) {
-    const PPD_LOG_EXTEND = (this.envs.args || {}).PPD_LOG_EXTEND || false;
+  async logExtend(isError: boolean = false): Promise<void> {
+    const { PPD_LOG_EXTEND } = new Arguments().args;
     if (PPD_LOG_EXTEND || isError) {
       const dataSources = [
         ['📌📋 (bD):', this.bindData],
@@ -126,7 +150,7 @@ export default class Atom {
         ['⚙️ (options):', this.options],
       ].filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length);
 
-      for (let i = 0; i < dataSources.length; i++) {
+      for (let i = 0; i < dataSources.length; i += 1) {
         const [text, object] = dataSources[i];
         await this.log({
           text: `${text} ${JSON.stringify(object)}`,
@@ -138,7 +162,7 @@ export default class Atom {
     }
   }
 
-  async logDebug() {
+  async logDebug(): Promise<void> {
     if (this.data && Object.keys(this.data).length) {
       const dataDebug = JSON.stringify(this.data, null, 2).split('\n');
       await this.log({
@@ -148,7 +172,7 @@ export default class Atom {
         extendInfo: true,
         stdOut: false,
       });
-      for (let i = 0; i < dataDebug.length; i++) {
+      for (let i = 0; i < dataDebug.length; i += 1) {
         await this.log({
           text: dataDebug[i],
           levelIndent: this.levelIndent + 2,
@@ -167,7 +191,7 @@ export default class Atom {
         extendInfo: true,
         stdOut: false,
       });
-      for (let i = 0; i < selectorsDebug.length; i++) {
+      for (let i = 0; i < selectorsDebug.length; i += 1) {
         await this.log({
           text: selectorsDebug[i],
           levelIndent: this.levelIndent + 2,
@@ -179,8 +203,8 @@ export default class Atom {
     }
   }
 
-  async logArgs() {
-    const args = Object.entries(this.envs.args);
+  async logArgs(): Promise<void> {
+    const args = Object.entries(new Arguments().args);
     await this.log({
       text: 'Arguments:',
       levelIndent: this.levelIndent + 1,
@@ -188,7 +212,7 @@ export default class Atom {
       extendInfo: true,
       stdOut: false,
     });
-    for (let i = 0; i < args.length; i++) {
+    for (let i = 0; i < args.length; i += 1) {
       const [key, val] = args[i];
       await this.log({
         text: `${key}: ${JSON.stringify(val)}`,
@@ -200,7 +224,7 @@ export default class Atom {
     }
   }
 
-  async updateFrame() {
+  async updateFrame(): Promise<void> {
     if (!this.frame) {
       return;
     }
@@ -213,14 +237,16 @@ export default class Atom {
     }
   }
 
-  async runTest(args = {}) {
+  async runTest(args): Promise<void> {
     const startTime = process.hrtime.bigint();
 
-    for (const key in args) {
-      if (args.hasOwnProperty(key)) {
-        this[key] = args[key];
+    const entries = Object.entries(args);
+    entries.forEach((entry) => {
+      const [key, value] = entry;
+      if (Object.prototype.hasOwnProperty.call(args, key)) {
+        this[key] = value;
       }
-    }
+    });
 
     const logOptionsDefault = {
       screenshot: false,
@@ -230,7 +256,7 @@ export default class Atom {
     };
     const logOptions = { ...logOptionsDefault, ...(this.options || {}), ...(this.logOptions || {}) };
 
-    this.log = async function (customLog) {
+    this.log = async (customLog): Promise<void> => {
       await args.log({
         ...logOptions,
         ...customLog,

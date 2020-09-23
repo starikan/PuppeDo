@@ -235,7 +235,7 @@ export class Test {
   logOptions: LogOptionsType;
   frame: string;
   data: Object;
-  bindData: Object;
+  bindData: { [key: string]: string };
   selectors: Object;
   bindSelectors: { [key: string]: string };
   bindResults: { [key: string]: string };
@@ -390,7 +390,7 @@ export class Test {
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
       this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
-      this.bindData = resolveAliases('bindData', inputs);
+      this.bindData = resolveAliases('bindData', inputs) as { [key: string]: string };
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases('selectors', inputs);
