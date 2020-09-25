@@ -1,23 +1,68 @@
 name: atomsTest
 description: Test all Atoms
+
 runTest:
-  - blank:
-      description: '[BLANK]'
+
+  - envSwitch:
+      description: '[ENV_SWITCH] First of all you need chose environment.'
+      data: { envName: mainEnv }
 
   - case:
-      description: '[CASE]'
+      description: Blank Atoms
+      runTest:
+        - blank:
+            description: '[BLANK]'
 
-  - if:
-      description: '[IF]'
+        - case:
+            description: '[CASE]'
 
-  - initData:
-      description: '[INIT_DATA]'
+        - if:
+            description: '[IF]'
 
-  - loop:
-      description: '[LOOP]'
+        - initData:
+            description: '[INIT_DATA]'
 
-  - test:
-      description: '[TEST]'
+        - loop:
+            description: '[LOOP]'
+
+        - test:
+            description: '[TEST]'
+
+        - todo:
+            description: '[TODO]'
+
+  - case:
+      description: Main Atoms
+      runTest:
+        - goTo:
+            description: '[GO_TO]'
+            bindData: { url: baseUrl }
+
+        - case:
+            description: '[CLICK_SELECTOR]'
+            runTest:
+              - clickSelector:
+                  description: Simple Click on link
+                  bindSelectors: { selector: mainLink }
+
+              - clickSelector:
+                  description: Simple Click on button
+                  bindSelectors: { selector: mainButton }
 
   - todo:
-      description: '[TODO]'
+      description: CDP Atoms
+
+  - todo:
+      description: Checks Atoms
+
+  - todo:
+      description: Files Atoms
+
+  - todo:
+      description: Modify Atoms
+
+  - todo:
+      description: Mouse Atoms
+
+  - todo:
+      description: Selectors Atoms

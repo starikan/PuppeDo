@@ -6,3 +6,5 @@ data:
   nested:
     mainInput: '#main-input'
   mainInput: '#main-input'
+  mainLink: '#main-link'
+  mainButton: '#main-button'
