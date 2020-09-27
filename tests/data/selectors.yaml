@@ -7,4 +7,5 @@ data:
     mainInput: '#main-input'
   mainInput: '#main-input'
   mainLink: '#main-link'
+  mainLinkChild: '#child-link'
   mainButton: '#main-button'

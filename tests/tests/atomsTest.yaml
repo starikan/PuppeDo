@@ -46,8 +46,8 @@ runTest:
                   bindSelectors: { selector: mainLink }
 
               - clickSelector:
-                  description: Simple Click on button
-                  bindSelectors: { selector: mainButton }
+                  description: Link Click after wait it (auto waitForSelector include)
+                  bindSelectors: { selector: mainLinkChild }
 
   - todo:
       description: CDP Atoms
