@@ -78,7 +78,7 @@ export default class TestStructure implements TestStructureType {
   }
 
   getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0): TestStructureType {
-    const fullJSON = JSON.parse(JSON.stringify(merge(TestStructure.getTestRaw(testName), testBody)));
+    const fullJSON = merge(TestStructure.getTestRaw(testName), testBody) as FullJsonType;
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');
