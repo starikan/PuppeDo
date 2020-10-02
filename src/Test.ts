@@ -411,17 +411,40 @@ export class Test {
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
 
-      const { logThis = true, logChildren = true } = inputs.logOptionsParent;
+      const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = inputs.logOptionsParent;
+      const { logThis } = this.logOptions;
       this.logOptions = merge(
         { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
-        { logThis, logChildren },
-        this.logOptions,
         { output: envsPool.output },
+        { logChildren: logChildrenParent },
+        this.logOptions,
+        { logThis: logThisParent },
       );
+
+      let logShowFlag = true;
+
+      if (logChildrenParent === false) {
+        logShowFlag = false;
+      }
+
+      if (logThis === true) {
+        logShowFlag = true;
+      }
+
+      if (logThis === false) {
+        logShowFlag = false;
+      }
+
       if (PPD_LOG_IGNORE_HIDE_LOG) {
         this.logOptions.logThis = true;
         this.logOptions.logChildren = true;
+        logShowFlag = true;
       }
+
+      // console.log('logShowFlag', logShowFlag);
+      // console.log('THIS', logThisParent, logThis, this.logOptions.logThis);
+      // console.log('CHIL', logChildrenParent, logChildren, this.logOptions.logChildren);
+      // console.log('');
 
       try {
         this.envName = envsPool.current.name;
@@ -497,7 +520,7 @@ export class Test {
           levelIndent,
           textColor: this.logOptions.textColor,
           backgroundColor: this.logOptions.backgroundColor,
-          logShowFlag: this.logOptions.logThis && logChildren,
+          logShowFlag,
         });
 
         // Extend with data passed to functions
