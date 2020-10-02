@@ -2,6 +2,9 @@ name: logOptions
 description: logOptions test
 
 runTest:
+  - blank:
+      description: 'Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦'
+
   - case:
       description: Check logOptions.logThis and logOptions.logChildren
       runTest:
@@ -9,39 +12,35 @@ runTest:
             description: '[1] I am no logOptions block and I am visible'
 
         - blank:
-            description: "[2] I am 'logThis = true' and I am visible"
+            description: "[2] I am '🧑 = ✔️' and I am visible"
             logOptions: { logThis: true }
 
         - blank:
-            description: "[3] I am 'logChildren = true' and I am visible"
+            description: "[3] I am '👨‍👦‍👦 = ✔️' and I am visible"
             logOptions: { logChildren: true }
 
         - blank:
-            description: I am 'logThis = false' and I am NOT visible
+            description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
             logOptions: { logThis: false, backgroundColor: red }
 
         - blank:
-            description: "[4] I am 'logChildren = false' and I am visible"
+            description: "[4] I am '👨‍👦‍👦 = ❌' and I am visible"
             logOptions: { logChildren: false }
 
         - blank:
-            description: "[5] I am 'logChildren = true + logThis = true' and I am visible"
+            description: "[5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
             logOptions: { logThis: true, logChildren: true }
 
         - blank:
-            description: I am 'logChildren = false + logThis = false' and I am NOT visible
+            description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
             logOptions: { logThis: false, logChildren: false, backgroundColor: red }
 
         - blank:
-            description: "[6] I am 'logChildren = true + logThis = true' and I am visible"
-            logOptions: { logThis: true, logChildren: true }
-
-        - blank:
-            description: "[7] I am 'logChildren = false + logThis = true' and I am visible"
+            description: "[6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
             logOptions: { logThis: true, logChildren: false }
 
         - blank:
-            description: "I am 'logChildren = true + logThis = false' and I am NOT visible"
+            description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
             logOptions: { logThis: false, logChildren: true, backgroundColor: red }
 
         - blank:
@@ -51,73 +50,73 @@ runTest:
                   description: '[1] I am no logOptions block and I am visible'
 
               - blank:
-                  description: "[2] I am 'logThis = true' and I am visible"
+                  description: "[2] I am '🧑 = ✔️' and I am visible"
                   logOptions: { logThis: true }
 
               - blank:
-                  description: "[3] I am 'logChildren = true' and I am visible"
+                  description: "[3] I am '👨‍👦‍👦 = ✔️' and I am visible"
                   logOptions: { logChildren: true }
 
               - blank:
-                  description: I am 'logThis = false' and I am NOT visible
+                  description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
                   logOptions: { logThis: false, backgroundColor: red }
 
               - blank:
-                  description: "[4] I am 'logChildren = false' and I am visible"
+                  description: "[4] I am '👨‍👦‍👦 = ❌' and I am visible"
                   logOptions: { logChildren: false }
 
               - blank:
-                  description: "[5] I am 'logChildren = true + logThis = true' and I am visible"
+                  description: "[5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
                   logOptions: { logThis: true, logChildren: true }
 
               - blank:
-                  description: "I am 'logChildren = false + logThis = false' and I am NOT visible"
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
                   logOptions: { logThis: false, logChildren: false, backgroundColor: red }
 
               - blank:
-                  description: "[6] I am 'logChildren = false + logThis = true' and I am visible"
+                  description: "[6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
                   logOptions: { logThis: true, logChildren: false }
 
               - blank:
-                  description: "I am 'logChildren = true + logThis = false' and I am NOT visible"
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
                   logOptions: { logThis: false, logChildren: true, backgroundColor: red }
 
         - blank:
-            description: I am 'logChildren = false' parent block and I am visible
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
             logOptions: { logChildren: false }
             runTest:
               - blank:
-                  description: I am no logOptions visible block and I am NOT visible
+                  description: "[-] I am no logOptions visible block and I am NOT🔴 visible"
                   logOptions: { backgroundColor: red }
 
               - blank:
-                  description: "[1] I am 'logThis = true' and I am visible"
+                  description: "[1] I am '🧑 = ✔️' and I am visible"
                   logOptions: { logThis: true }
 
               - blank:
-                  description: "I am 'logChildren = true' and I am NOT visible"
+                  description: "[-] I am '👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
                   logOptions: { logChildren: true, backgroundColor: red }
 
               - blank:
-                  description: "I am 'logThis = false' and I am NOT visible"
+                  description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
                   logOptions: { logThis: false, backgroundColor: red }
 
               - blank:
-                  description: "I am 'logChildren.logThis = false' and I am NOT visible"
+                  description: "[-] I am '👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
                   logOptions: { logChildren: false, backgroundColor: red }
 
               - blank:
-                  description: "[2] I am 'logChildren = true + logThis = true' and I am visible"
+                  description: "[2] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
                   logOptions: { logThis: true, logChildren: true }
 
               - blank:
-                  description: "I am 'logChildren = false + logThis = false' and I am NOT visible"
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
                   logOptions: { logThis: false, logChildren: false, backgroundColor: red }
 
               - blank:
-                  description: "I am 'logChildren = true + logThis = false' and I am NOT visible"
-                  logOptions: { logThis: false, logChildren: true, backgroundColor: red }
+                  description: "[3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+                  logOptions: { logThis: true, logChildren: false }
 
               - blank:
-                  description: "[3] I am 'logChildren = false + logThis = true' and I am visible"
-                  logOptions: { logThis: true, logChildren: false }
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, logChildren: true, backgroundColor: red }
