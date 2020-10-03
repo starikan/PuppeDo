@@ -458,7 +458,7 @@ export class Test {
           this.description = String(runScriptInContext(this.bindDescription, allData));
         }
         if (!this.description) {
-          logForChild.backgroundColor = 'red';
+          this.logOptions.backgroundColor = 'red';
         }
 
         this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
@@ -508,8 +508,8 @@ export class Test {
           text: logText,
           level: 'test',
           levelIndent,
-          textColor: this.logOptions.textColor,
-          backgroundColor: this.logOptions.backgroundColor,
+          textColor: this.logOptions.textColor || 'sane',
+          backgroundColor: this.logOptions.backgroundColor || 'sane',
           logShowFlag,
         });
 

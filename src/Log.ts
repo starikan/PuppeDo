@@ -86,10 +86,15 @@ export default class Log {
 
     const headColor: Colors = level === 'error' ? 'error' : 'sane';
     const tailColor: Colors = level === 'error' ? 'error' : 'info';
-    const backColor =
+
+    let backColor =
       backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
         ? (colors[colors[backgroundColor] + 10] as Colors)
-        : 'sane';
+        : backgroundColor;
+
+    if (!Object.keys(colors).includes(backColor)) {
+      backColor = 'sane';
+    }
 
     const head: LogEntrieType = {
       text: `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
