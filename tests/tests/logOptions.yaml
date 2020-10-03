@@ -86,7 +86,7 @@ runTest:
             logOptions: { logChildren: false }
             runTest:
               - blank:
-                  description: "[-] I am no logOptions visible block and I am NOT🔴 visible"
+                  description: '[-] I am no logOptions visible block and I am NOT🔴 visible'
                   logOptions: { backgroundColor: red }
 
               - blank:
@@ -120,3 +120,40 @@ runTest:
               - blank:
                   description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
                   logOptions: { logThis: false, logChildren: true, backgroundColor: red }
+
+  - case:
+      description: Check logOptions visible into loop with nested blocks
+      runTest:
+        - blank:
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
+            logOptions: { logChildren: false }
+            runTest:
+              - loop:
+                  description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                  repeat: 2
+                  logOptions: { backgroundColor: red }
+                  runTest:
+                    - blank:
+                        description: "I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+                        logOptions: { logThis: true, logChildren: false }
+                        runTest:
+                          - blank:
+                              description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                              logOptions: { backgroundColor: red }
+
+        - blank:
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
+            logOptions: { logChildren: false }
+            runTest:
+              - loop:
+                  description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                  repeat: 2
+                  logOptions: { backgroundColor: red }
+                  runTest:
+                    - blank:
+                        description: "I am '🧑 = ✔️' and I am visible"
+                        logOptions: { logThis: true }
+                        runTest:
+                          - blank:
+                              description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                              logOptions: { backgroundColor: red }

@@ -412,8 +412,7 @@ export class Test {
       this.frame = this.frame || inputs.frame;
 
       const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = inputs.logOptionsParent;
-      const { logThis } = this.logOptions;
-      this.logOptions = merge(
+      const logForChild: LogOptionsType = merge(
         { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
         { output: envsPool.output },
         { logChildren: logChildrenParent },
@@ -427,24 +426,15 @@ export class Test {
         logShowFlag = false;
       }
 
-      if (logThis === true) {
-        logShowFlag = true;
-      }
-
-      if (logThis === false) {
-        logShowFlag = false;
+      if (typeof this.logOptions.logThis === 'boolean') {
+        logShowFlag = this.logOptions.logThis;
       }
 
       if (PPD_LOG_IGNORE_HIDE_LOG) {
-        this.logOptions.logThis = true;
-        this.logOptions.logChildren = true;
+        logForChild.logThis = true;
+        logForChild.logChildren = true;
         logShowFlag = true;
       }
-
-      // console.log('logShowFlag', logShowFlag);
-      // console.log('THIS', logThisParent, logThis, this.logOptions.logThis);
-      // console.log('CHIL', logChildrenParent, logChildren, this.logOptions.logChildren);
-      // console.log('');
 
       try {
         this.envName = envsPool.current.name;
@@ -468,7 +458,7 @@ export class Test {
           this.description = String(runScriptInContext(this.bindDescription, allData));
         }
         if (!this.description) {
-          this.logOptions.backgroundColor = 'red';
+          logForChild.backgroundColor = 'red';
         }
 
         this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
@@ -490,7 +480,7 @@ export class Test {
           repeat: this.repeat,
           stepId: this.stepId,
           debug: this.debug,
-          logOptions: this.logOptions,
+          logOptions: logForChild,
           frame: this.frame,
         };
 
