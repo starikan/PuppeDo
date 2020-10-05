@@ -564,7 +564,7 @@ runTest:
             logOptions: { textColor: white, backgroundColor: red }
             runTest:
               - blank:
-                  description: 'I am like parent Text: white + Background: red'
+                  description: 'I am not colored'
 
               - loop:
                   description: 'Text: green + Background: white'
@@ -572,7 +572,7 @@ runTest:
                   logOptions: { textColor: white, backgroundColor: red }
                   runTest:
                     - blank:
-                        description: 'I am like parent Text: green + Background: white'
+                        description: 'I am not colored'
                         runTest:
                           - blank:
                               description: 'Text: green + Background: white'
