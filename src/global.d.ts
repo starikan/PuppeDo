@@ -100,6 +100,7 @@ type EnvBrowserType = {
     args?: Array<string>;
     env?: { [key: string]: string };
     secondsToStartApp?: number;
+    secondsDelayAfterStartApp?: number;
   };
 };
 

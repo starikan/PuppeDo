@@ -67,6 +67,7 @@ browser:
     args: optional
     env: optional
     secondsToStartApp: optional
+    secondsDelayAfterStartApp: optional
 
 log:
   level: raw
@@ -113,6 +114,7 @@ cwd | todo
 args | todo
 env | todo
 secondsToStartApp | todo
+secondsDelayAfterStartApp | todo
 
 ### Logging Settings
 Parameter  | Description

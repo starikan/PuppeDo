@@ -273,14 +273,18 @@ class EnvsPool implements EnvsPoolType {
   }
 
   async runElectron(browserSettings: EnvBrowserType, envName: string): Promise<EnvStateType> {
-    const runtimeExecutable = browserSettings?.runtimeEnv?.runtimeExecutable;
-    const program = browserSettings?.runtimeEnv?.program || '';
-    const cwd = browserSettings?.runtimeEnv?.cwd || '';
-    const browserArgs = browserSettings?.runtimeEnv?.args || [];
-    const browserEnv = browserSettings?.runtimeEnv?.env || {};
-    const secondsToStartApp = browserSettings?.runtimeEnv?.secondsToStartApp || 30;
-    const runArgs = [program, ...browserArgs];
+    const { runtimeEnv = {} } = browserSettings;
+    const {
+      runtimeExecutable,
+      program = '',
+      cwd = '',
+      args: browserArgs = [],
+      env: browserEnv = {},
+      secondsToStartApp = 30,
+      secondsDelayAfterStartApp = 0,
+    } = runtimeEnv;
 
+    const runArgs = [program, ...browserArgs];
     const { folder, folderLatest } = this.output;
 
     if (runtimeExecutable && folder && folderLatest) {
@@ -303,6 +307,7 @@ class EnvsPool implements EnvsPoolType {
         try {
           const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
           connectionTryes = secondsToStartApp;
+          await sleep(secondsDelayAfterStartApp);
           return { browser, pages, pid: prc.pid };
         } catch (error) {
           await sleep(1000);
