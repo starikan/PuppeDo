@@ -181,13 +181,8 @@ class EnvsPool implements EnvsPoolType {
 
   static async runPuppeteer(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const {
-      headless = true,
-      slowMo = 0,
-      args = [],
-      windowSize = {},
-      browserName: product = 'chrome',
-    } = browserSettings;
+    const { headless = true, slowMo = 0, args = [], windowSize = {}, browserName: product = 'chrome' } =
+      browserSettings || {};
 
     // eslint-disable-next-line no-undef
     const puppeteer = __non_webpack_require__('puppeteer');
@@ -206,7 +201,7 @@ class EnvsPool implements EnvsPoolType {
 
   static async runPlaywright(browserSettings: EnvBrowserType): Promise<EnvStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings;
+    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings || {};
     const { width = 1024, height = 768 } = windowSize;
 
     const options: BrouserLaunchOptions = { headless, slowMo, args };
@@ -227,7 +222,7 @@ class EnvsPool implements EnvsPoolType {
   }
 
   static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
-    const { urlDevtoolsJson, windowSize = {}, slowMo = 0 } = browserSettings;
+    const { urlDevtoolsJson, windowSize = {}, slowMo = 0 } = browserSettings || {};
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
