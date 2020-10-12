@@ -307,7 +307,7 @@ class EnvsPool implements EnvsPoolType {
         try {
           const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
           connectionTryes = secondsToStartApp;
-          await sleep(secondsDelayAfterStartApp);
+          await sleep(secondsDelayAfterStartApp * 1000);
           return { browser, pages, pid: prc.pid };
         } catch (error) {
           await sleep(1000);
