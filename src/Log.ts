@@ -4,7 +4,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 
 import { paintString, colors, pick, omit, getNowDateTime } from './Helpers';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 import Environment from './Environment';
 

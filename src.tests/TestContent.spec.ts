@@ -1,7 +1,7 @@
 import path from 'path';
 
 import TestsContent from '../src/TestContent';
-import Arguments from '../src/Arguments';
+import { Arguments } from '../src/Arguments';
 
 describe('TestContent', () => {
   test('Init', () => {

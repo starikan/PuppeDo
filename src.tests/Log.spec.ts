@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import Log from '../src/Log';
-import Arguments from '../src/Arguments';
+import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 
 const clearFiles = (fileName: string): void => {

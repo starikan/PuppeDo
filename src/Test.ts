@@ -2,7 +2,7 @@ import vm from 'vm';
 
 import { merge, blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import Log from './Log';
 import Environment from './Environment';
 import Env from './Env';

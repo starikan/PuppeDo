@@ -1,6 +1,6 @@
 import TestStructure from './TestStructure';
 import getTest from './getTest';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';

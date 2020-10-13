@@ -8,7 +8,7 @@ import walkSync from 'walk-sync';
 
 import { merge, sleep, blankSocket, getNowDateTime } from './Helpers';
 import TestsContent from './TestContent';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import Env from './Env';
 
 type EnvsInstanceType = {

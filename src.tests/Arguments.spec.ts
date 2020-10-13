@@ -1,26 +1,4 @@
-import Arguments from '../src/Arguments';
-
-const argsDefault = {
-  PPD_DATA: {},
-  PPD_DEBUG_MODE: false,
-  PPD_DISABLE_ENV_CHECK: false,
-  PPD_ENVS: [],
-  PPD_LOG_DISABLED: false,
-  PPD_LOG_EXTEND: false,
-  PPD_OUTPUT: 'output',
-  PPD_ROOT: process.cwd(),
-  PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
-  PPD_SELECTORS: {},
-  PPD_TESTS: [],
-  PPD_LOG_LEVEL_NESTED: 0,
-  PPD_LOG_LEVEL_TYPE: 'raw',
-  PPD_LOG_LEVEL_TYPE_IGNORE: [],
-  PPD_LOG_SCREENSHOT: false,
-  PPD_LOG_FULLPAGE: false,
-  PPD_LOG_TEST_NAME: true,
-  PPD_LOG_IGNORE_HIDE_LOG: false,
-};
+import { Arguments, argsDefault } from '../src/Arguments';
 
 const argsModify = {
   PPD_DATA: { foo: 'bar' },

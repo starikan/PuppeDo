@@ -1,6 +1,6 @@
 import Singleton from './Singleton';
 
-const argsDefault: ArgumentsType = {
+export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
@@ -123,7 +123,7 @@ const parseCLI = (): Partial<ArgumentsType> => {
   return parser(Object.fromEntries(argsRaw));
 };
 
-export default class Arguments extends Singleton {
+export class Arguments extends Singleton {
   args!: ArgumentsType;
   argsJS!: Partial<ArgumentsType>;
   argsEnv!: Partial<ArgumentsType>;

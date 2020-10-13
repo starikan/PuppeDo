@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import { Test } from './Test';
 import Log from './Log';
 import Environment from './Environment';

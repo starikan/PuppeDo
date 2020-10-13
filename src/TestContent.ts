@@ -5,7 +5,7 @@ import walkSync from 'walk-sync';
 import yaml from 'js-yaml';
 
 import Singleton from './Singleton';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 
 type AllDataType = {
   allFiles: Array<string>;

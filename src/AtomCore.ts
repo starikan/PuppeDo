@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import path from 'path';
-import Arguments from './Arguments';
+import { Arguments } from './Arguments';
 import Env from './Env';
 import { ErrorType } from './Error';
 
