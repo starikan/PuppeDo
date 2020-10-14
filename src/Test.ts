@@ -211,17 +211,20 @@ const resolveLogOptions = (
   logOptionsParent: LogOptionsType,
   logOptions: LogOptionsType,
   envsPool: EnvsPoolType,
-): { logShowFlag: boolean; logForChild: LogOptionsType } => {
+): { logShowFlag: boolean; logForChild: LogOptionsType; logOptionsNew: LogOptionsType } => {
   const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
   const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = logOptionsParent;
 
-  const logForChild: LogOptionsType = merge(
-    { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
-    { output: envsPool.output },
-    { logChildren: logChildrenParent },
-    logOptions,
-    { logThis: logThisParent },
-  );
+  const logOptionsNew = {
+    textColor: 'sane' as Colors,
+    backgroundColor: 'sane' as Colors,
+    output: envsPool.output,
+    ...logOptions,
+  };
+
+  const logForChild: LogOptionsType = merge({ logChildren: logChildrenParent }, logOptionsNew, {
+    logThis: logThisParent,
+  });
 
   let logShowFlag = true;
 
@@ -239,7 +242,7 @@ const resolveLogOptions = (
     logShowFlag = true;
   }
 
-  return { logShowFlag, logForChild };
+  return { logShowFlag, logForChild, logOptionsNew };
 };
 
 const fetchData = (
@@ -409,7 +412,11 @@ export class Test {
       const startTime = process.hrtime.bigint();
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
-      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent, this.logOptions, envsPool);
+      const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
+        inputs.logOptionsParent,
+        this.logOptions,
+        envsPool,
+      );
 
       const { PPD_DEBUG_MODE, PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
@@ -447,6 +454,7 @@ export class Test {
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
+      this.logOptions = logOptionsNew;
 
       try {
         this.envName = envsPool.current.name;
@@ -533,9 +541,9 @@ export class Test {
           text: getLogText(this.description, this.name),
           level: 'test',
           levelIndent,
-          textColor: this.logOptions.textColor || 'sane',
-          backgroundColor: this.logOptions.backgroundColor || 'sane',
           logShowFlag,
+          textColor: this.logOptions.textColor,
+          backgroundColor: this.logOptions.backgroundColor,
         });
 
         for (let step = 0; step < this.descriptionExtend.length; step += 1) {
@@ -625,7 +633,7 @@ export class Test {
           await logger.log({
             text: `🕝: ${getTimer(startTime)} s. (${this.name})`,
             level: 'timer',
-            // levelIndent,
+            levelIndent,
             extendInfo: true,
           });
         }

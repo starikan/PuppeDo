@@ -233,13 +233,7 @@ export default class Log {
     textColor = 'sane',
     backgroundColor = 'sane',
   }: LogInputType): Promise<void> {
-    const {
-      PPD_DEBUG_MODE,
-      PPD_LOG_DISABLED,
-      PPD_LOG_LEVEL_NESTED,
-      PPD_LOG_SCREENSHOT,
-      PPD_LOG_FULLPAGE,
-    } = new Arguments().args;
+    const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
 
     const levelText = Log.checkLevel(level);
     if (!levelText) return;
@@ -308,6 +302,7 @@ export default class Log {
       // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
       const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
 
+      const { PPD_DEBUG_MODE } = new Arguments().args;
       const logEntry: LogEntry = {
         text,
         time: getNowDateTime(now),
@@ -329,6 +324,7 @@ export default class Log {
       const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
       this.fileLog(yamlString, 'output.yaml');
     } catch (err) {
+      const { PPD_DEBUG_MODE } = new Arguments().args;
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
