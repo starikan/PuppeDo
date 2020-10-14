@@ -560,20 +560,20 @@ runTest:
       description: Redefine colors in nested blocks
       runTest:
         - blank:
-            description: 'Text: white + Background: red'
-            logOptions: { textColor: white, backgroundColor: red }
+            description: 'Text: white + Background: green'
+            logOptions: { textColor: white, backgroundColor: green }
             runTest:
               - blank:
                   description: 'I am not colored'
 
               - loop:
-                  description: 'Text: green + Background: white'
+                  description: 'Text: red + Background: white'
                   repeat: 2
-                  logOptions: { textColor: white, backgroundColor: red }
+                  logOptions: { textColor: red, backgroundColor: white }
                   runTest:
                     - blank:
                         description: 'I am not colored'
                         runTest:
                           - blank:
-                              description: 'Text: green + Background: white'
+                              description: 'Text: yellow + Background: magenta'
                               logOptions: { textColor: yellow, backgroundColor: magenta }

@@ -207,6 +207,41 @@ export const updateDataWithNeeds = (
   };
 };
 
+const resolveLogOptions = (
+  logOptionsParent: LogOptionsType,
+  logOptions: LogOptionsType,
+  envsPool: EnvsPoolType,
+): { logShowFlag: boolean; logForChild: LogOptionsType } => {
+  const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
+  const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = logOptionsParent;
+
+  const logForChild: LogOptionsType = merge(
+    { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
+    { output: envsPool.output },
+    { logChildren: logChildrenParent },
+    logOptions,
+    { logThis: logThisParent },
+  );
+
+  let logShowFlag = true;
+
+  if (logChildrenParent === false) {
+    logShowFlag = false;
+  }
+
+  if (typeof logOptions.logThis === 'boolean') {
+    logShowFlag = logOptions.logThis;
+  }
+
+  if (PPD_LOG_IGNORE_HIDE_LOG) {
+    logForChild.logThis = true;
+    logForChild.logChildren = true;
+    logShowFlag = true;
+  }
+
+  return { logShowFlag, logForChild };
+};
+
 export class Test {
   name: string;
   type: string;
@@ -371,14 +406,9 @@ export class Test {
       const startTime = process.hrtime.bigint();
       const { envsPool } = Environment(envsId);
       const logger = new Log(envsId);
+      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent, this.logOptions, envsPool);
 
-      const {
-        PPD_DEBUG_MODE,
-        PPD_DISABLE_ENV_CHECK,
-        PPD_LOG_EXTEND,
-        PPD_LOG_TEST_NAME,
-        PPD_LOG_IGNORE_HIDE_LOG,
-      } = new Arguments().args;
+      const { PPD_DEBUG_MODE, PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug) {
@@ -414,31 +444,6 @@ export class Test {
       this.errorIf = inputs.errorIf || this.errorIf;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
-
-      const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = inputs.logOptionsParent;
-      const logForChild: LogOptionsType = merge(
-        { textColor: 'sane' as Colors, backgroundColor: 'sane' as Colors },
-        { output: envsPool.output },
-        { logChildren: logChildrenParent },
-        this.logOptions,
-        { logThis: logThisParent },
-      );
-
-      let logShowFlag = true;
-
-      if (logChildrenParent === false) {
-        logShowFlag = false;
-      }
-
-      if (typeof this.logOptions.logThis === 'boolean') {
-        logShowFlag = this.logOptions.logThis;
-      }
-
-      if (PPD_LOG_IGNORE_HIDE_LOG) {
-        logForChild.logThis = true;
-        logForChild.logChildren = true;
-        logShowFlag = true;
-      }
 
       try {
         this.envName = envsPool.current.name;
