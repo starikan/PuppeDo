@@ -78,7 +78,7 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
-export const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
+const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
   let result: boolean | object | string | number | null;
 
   if (source === '{}') {
@@ -96,7 +96,7 @@ export const runScriptInContext = (source: string, context: object): boolean | o
   return result;
 };
 
-export const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
+const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -110,7 +110,7 @@ export const checkNeeds = (needs: Array<string>, data: Object, testName: string)
   return true;
 };
 
-export const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
+const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
     const evalData = runScriptInContext(data, allData);
@@ -120,7 +120,7 @@ export const resolveDataFunctions = (funcParams: { [key: string]: string }, allD
   return funcEval;
 };
 
-export const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
+const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
   try {
     const values = [valueName, ...(ALIASES[valueName] || [])];
     const result = values.reduce((collector: Object, name: string) => ({ ...collector, ...(inputs[name] || {}) }), {});
@@ -131,7 +131,7 @@ export const resolveAliases = (valueName: string, inputs: Object = {}): Object =
   }
 };
 
-export const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
+const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
   const needEnvs = typeof needEnv === 'string' ? [needEnv] : needEnv;
   if (Array.isArray(needEnvs)) {
     if (needEnvs.length && !needEnvs.includes(envName)) {
@@ -176,7 +176,7 @@ export const checkIf = async (
   return false;
 };
 
-export const updateDataWithNeeds = (
+const updateDataWithNeeds = (
   needData: string[],
   needSelectors: string[],
   dataLocal: object,
@@ -242,6 +242,56 @@ const resolveLogOptions = (
   return { logShowFlag, logForChild };
 };
 
+const fetchData = (
+  dataExt: Array<string>,
+  selectorsExt: Array<string>,
+  resultsFromParent: Object,
+  dataParent: Object,
+  data: Object,
+  bindData: { [key: string]: string },
+  selectorsParent: Object,
+  selectors: Object,
+  bindSelectors: { [key: string]: string },
+  env: Env,
+): { dataLocal: Object; selectorsLocal: Object } => {
+  const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
+  const { data: allData, selectors: allSelectors } = new TestsContent().allData;
+
+  const dataExtResolved = dataExt.reduce((collect, v) => {
+    const extData = allData.find((d) => v === d.name);
+    return { ...collect, ...extData };
+  }, {});
+  const selectorsExtResolved = selectorsExt.reduce((collect, v) => {
+    const extData = allSelectors.find((d) => v === d.name);
+    return { ...collect, ...extData };
+  }, {});
+
+  const dataFlow = [PPD_DATA, env?.env?.data || {}, dataExtResolved, dataParent, resultsFromParent, data];
+  let dataLocal = merge(...dataFlow);
+
+  const selectorsFlow = [
+    PPD_SELECTORS,
+    env?.env?.selectors || {},
+    selectorsExtResolved,
+    selectorsParent,
+    resultsFromParent,
+    selectors,
+  ];
+  let selectorsLocal = merge(...selectorsFlow);
+
+  Object.entries(bindData).forEach((v: [string, string]) => {
+    const [key, val] = v;
+    dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
+  });
+
+  Object.entries(bindSelectors).forEach((v: [string, string]) => {
+    const [key, val] = v;
+    selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, selectorsLocal) };
+  });
+
+  return { dataLocal, selectorsLocal };
+};
+
 export class Test {
   name: string;
   type: string;
@@ -289,7 +339,6 @@ export class Test {
   envPageName: string;
   env: Env;
 
-  fetchData: Function;
   runLogic: Function;
   run: Function;
 
@@ -356,52 +405,6 @@ export class Test {
     this.logOptions = logOptions;
     this.frame = frame;
 
-    this.fetchData = (): Object => {
-      const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
-      const { data: allData, selectors: allSelectors } = new TestsContent().allData;
-
-      const dataExtResolved = this.dataExt.reduce((collect, v) => {
-        const extData = allData.find((d) => v === d.name);
-        return { ...collect, ...extData };
-      }, {});
-      const selectorsExtResolved = this.selectorsExt.reduce((collect, v) => {
-        const extData = allSelectors.find((d) => v === d.name);
-        return { ...collect, ...extData };
-      }, {});
-
-      const dataFlow = [
-        PPD_DATA,
-        this.env?.env?.data || {},
-        dataExtResolved,
-        this.dataParent,
-        this.resultsFromParent,
-        this.data,
-      ];
-      let dataLocal = merge(...dataFlow);
-
-      const selectorsFlow = [
-        PPD_SELECTORS,
-        this.env?.env?.selectors || {},
-        selectorsExtResolved,
-        this.selectorsParent,
-        this.resultsFromParent,
-        this.selectors,
-      ];
-      let selectorsLocal = merge(...selectorsFlow);
-
-      Object.entries(this.bindData).forEach((v: [string, string]) => {
-        const [key, val] = v;
-        dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
-      });
-
-      Object.entries(this.bindSelectors).forEach((v: [string, string]) => {
-        const [key, val] = v;
-        selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, selectorsLocal) };
-      });
-
-      return { dataLocal, selectorsLocal };
-    };
-
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
       const startTime = process.hrtime.bigint();
       const { envsPool } = Environment(envsId);
@@ -454,7 +457,18 @@ export class Test {
           checkNeedEnv(this.needEnv, this.envName);
         }
 
-        let { dataLocal, selectorsLocal } = this.fetchData();
+        let { dataLocal, selectorsLocal } = fetchData(
+          this.dataExt,
+          this.selectorsExt,
+          this.resultsFromParent,
+          this.dataParent,
+          this.data,
+          this.bindData,
+          this.selectorsParent,
+          this.selectors,
+          this.bindSelectors,
+          this.env,
+        );
 
         checkNeeds(needData, dataLocal, this.name);
         checkNeeds(needSelectors, selectorsLocal, this.name);
