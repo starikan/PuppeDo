@@ -3,7 +3,7 @@ import { errorHandler } from './Error';
 import TestStructure from './TestStructure';
 import getTest from './getTest';
 import TestsContent from './TestContent';
-import { Arguments } from './Arguments';
+import { Arguments, argsDefault } from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
@@ -25,4 +25,5 @@ export {
   merge,
   paintString,
   blankSocket,
+  argsDefault,
 };

@@ -49,12 +49,11 @@ const run = async (argsInput = {}, closeProcess: boolean = true): Promise<void> 
       });
 
       await envs.init(false);
-      const { fullJSON, textDescription } = new TestStructure(envsId);
+      const { fullJSON } = new TestStructure(envsId);
       const test = getTest(fullJSON, envsId, socket);
       await envs.runBrowsers();
       blocker.reset();
 
-      await log({ level: 'env', text: `\n${textDescription}`, testStruct: fullJSON });
       await log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.` });
 
       await test();

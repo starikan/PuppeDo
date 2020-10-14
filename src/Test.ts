@@ -240,6 +240,7 @@ export class Test {
   bindSelectors: { [key: string]: string };
   bindResults: { [key: string]: string };
   description: string;
+  descriptionExtend: string[];
   descriptionError: string;
   bindDescription: string;
   while: string;
@@ -271,6 +272,7 @@ export class Test {
     dataExt = [],
     selectorsExt = [],
     description = '',
+    descriptionExtend = [],
     descriptionError = '',
     bindDescription = '',
     beforeTest = (): void => {},
@@ -300,6 +302,7 @@ export class Test {
     this.selectorsExt = selectorsExt;
     this.allowResults = allowResults;
     this.description = description;
+    this.descriptionExtend = descriptionExtend;
     this.descriptionError = descriptionError;
     this.bindDescription = bindDescription;
     this.beforeTest = beforeTest;
@@ -403,6 +406,7 @@ export class Test {
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
       this.description = inputs.description || this.description;
+      this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend;
       this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -498,20 +502,31 @@ export class Test {
         }
 
         // LOG TEST
-        const logText = [
-          PPD_LOG_TEST_NAME || !this.description ? `(${this.name}) ` : '',
-          this.description ? this.description : 'TODO: Fill description',
-        ].join('');
+        const getLogText = (text: string, nameTest: string = ''): string => {
+          const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
+          const descriptionTest = text || 'TODO: Fill description';
+          return `${nameTestResolved}${descriptionTest}`;
+        };
 
         logger.bindData({ testSource: source, bindedData: args });
+
         await logger.log({
-          text: logText,
+          text: getLogText(this.description, this.name),
           level: 'test',
           levelIndent,
           textColor: this.logOptions.textColor || 'sane',
           backgroundColor: this.logOptions.backgroundColor || 'sane',
           logShowFlag,
         });
+
+        for (let step = 0; step < this.descriptionExtend.length; step += 1) {
+          await logger.log({
+            text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
+            level: 'env',
+            levelIndent,
+            logShowFlag,
+          });
+        }
 
         // Extend with data passed to functions
         const argsExt = {
@@ -591,7 +606,7 @@ export class Test {
           await logger.log({
             text: `🕝: ${getTimer(startTime)} s. (${this.name})`,
             level: 'timer',
-            levelIndent,
+            // levelIndent,
             extendInfo: true,
           });
         }
