@@ -26,7 +26,6 @@ const checkArgs = (args: ArgumentsType): void => {
 
 export default async function run(argsInput = {}, closeProcess: boolean = true): Promise<void> {
   const { envsId, envsPool, socket, logger } = Environment();
-  const blocker = new Blocker();
   const args = { ...new Arguments(argsInput, true).args };
   checkArgs(args);
 
@@ -34,21 +33,18 @@ export default async function run(argsInput = {}, closeProcess: boolean = true):
     const startTime = getTimer().now;
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
-      const testName = args.PPD_TESTS[i];
       const startTimeTest = getTimer().now;
+      const testName = args.PPD_TESTS[i];
 
-      envsPool.setCurrentTest(testName);
-
-      if (i === 0) {
-        await logger.log({ level: 'timer', text: `Init time 🕝: ${getTimer(startTime).delta} sec.` });
-      }
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
+      envsPool.setCurrentTest(testName);
       await envsPool.init(false);
-      const { fullJSON, textDescription } = new TestStructure(envsId);
-      const test = getTest(fullJSON, envsId, socket);
+
+      const { fullJSON, textDescription } = new TestStructure(envsId, testName);
+      new Blocker().reset();
+      const { test } = getTest(fullJSON, envsId, socket);
       await envsPool.runBrowsers();
-      blocker.reset();
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });

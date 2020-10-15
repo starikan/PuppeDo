@@ -23,9 +23,10 @@ export default class TestStructure implements TestStructureType {
   fullJSON: FullJsonType;
   textDescription: string;
 
-  constructor(envsId: string) {
-    const testNameStart = Environment(envsId)?.envsPool?.current?.test || '';
-    const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testNameStart);
+  constructor(envsId: string, testName: string) {
+    // TODO: 2020-10-16 S.Starodubov непонятно почему валится запуск если убрать
+    Environment(envsId);
+    const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
     this.fullJSON = fullJSON;
     this.textDescription = textDescription;
   }

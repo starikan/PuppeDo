@@ -42,7 +42,12 @@ const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Objec
   return result;
 };
 
-const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parentTest: any = {}): Function => {
+const getTest = (
+  testJsonIncome: any,
+  envsId: string,
+  socket: SocketType,
+  parentTest: any = {},
+): { test: Function; blocker: Blocker } => {
   let testJson: any = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
@@ -68,7 +73,7 @@ const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parent
         testJson[funcKey] = [];
         funcVal.forEach((test) => {
           if (['test', 'atom'].includes(test.type)) {
-            testJson[funcKey].push(getTest(test, envsId, socket, testJson));
+            testJson[funcKey].push(getTest(test, envsId, socket, testJson).test);
           }
         });
       } else {
@@ -79,19 +84,22 @@ const getTest = (testJsonIncome: any, envsId: string, socket: SocketType, parent
 
   const test = new Test(testJson);
 
-  return async (args = {}): Promise<Test> => {
-    let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
-      'options',
-      'data',
-      'selectors',
-      'logOptions',
-    ]);
-    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
-    updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
-    const result = await test.run(envsId, updatetTestJson);
-    // eslint-disable-next-line no-param-reassign
-    parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
-    return result;
+  return {
+    test: async (args = {}): Promise<Test> => {
+      let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
+        'options',
+        'data',
+        'selectors',
+        'logOptions',
+      ]);
+      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
+      updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
+      const result = await test.run(envsId, updatetTestJson);
+      // eslint-disable-next-line no-param-reassign
+      parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
+      return result;
+    },
+    blocker,
   };
 };
 

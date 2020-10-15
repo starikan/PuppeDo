@@ -408,7 +408,7 @@ export class Test {
     this.frame = frame;
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
-      const startTime = process.hrtime.bigint();
+      const startTime = getTimer().now;
       const { envsPool, logger } = Environment(envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent,

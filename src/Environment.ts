@@ -85,7 +85,7 @@ export class EnvsPool implements EnvsPoolType {
     return outputSource;
   }
 
-  initOutput(testName = 'test'): void {
+  initOutput(envsId: string): void {
     const { PPD_OUTPUT: output } = new Arguments().args;
 
     if (!fs.existsSync(output)) {
@@ -93,17 +93,18 @@ export class EnvsPool implements EnvsPoolType {
     }
     const now = getNowDateTime();
 
-    const folder = path.join(output, `${now}_${testName}`);
+    const folder = path.join(output, `${now}_${envsId}`);
     fs.mkdirSync(folder);
 
     fs.copyFileSync(EnvsPool.resolveOutputFile(), path.join(folder, 'output.html'));
 
     this.output.output = output;
-    this.output.name = testName;
+    this.output.name = envsId;
     this.output.folder = folder;
     this.output.folderFull = path.resolve(folder);
 
     this.initOutputLatest();
+    this.initOutput = (): void => {};
   }
 
   initOutputLatest(): void {
@@ -422,14 +423,13 @@ export class EnvsPool implements EnvsPoolType {
   setCurrentTest(testName: string = ''): void {
     if (testName) {
       this.current.test = testName;
-      this.initOutput(testName);
     }
   }
 }
 
 const instances: { [key: string]: EnvsInstanceType } = {};
 
-export default (envsId: string = '', testName: string = '', socket: SocketType = blankSocket): EnvsInstanceType => {
+export default (envsId: string = '', socket: SocketType = blankSocket): EnvsInstanceType => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!instances[envsIdLocal]) {
@@ -442,7 +442,7 @@ export default (envsId: string = '', testName: string = '', socket: SocketType =
     instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal, logger };
   }
 
-  instances[envsIdLocal].envsPool.setCurrentTest(testName);
+  instances[envsIdLocal].envsPool.initOutput(envsIdLocal);
 
   return instances[envsIdLocal];
 };
