@@ -68,14 +68,6 @@ export class EnvsPool implements EnvsPoolType {
     return activeEnv.state.pages[pageName || ''];
   }
 
-  getOutputsFolders(): { folder: string; folderLatest: string } {
-    const { folder, folderLatest } = this.output;
-    if (!folder || !folderLatest) {
-      throw new Error('There is no output folder');
-    }
-    return { folder, folderLatest };
-  }
-
   static resolveOutputFile(): string {
     const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
     const outputSourceModule = path.resolve(

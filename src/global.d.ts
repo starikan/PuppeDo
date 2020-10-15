@@ -147,7 +147,6 @@ interface EnvsPoolType {
     folderFull?: string;
   };
   log: Array<LogEntry>;
-  getOutputsFolders: Function;
   closeBrowsers: Function;
   closeProcesses: Function;
   getActivePage: Function;

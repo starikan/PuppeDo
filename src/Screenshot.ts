@@ -27,14 +27,14 @@ export default class Screenshot {
   }
 
   copyScreenshotToLatest(name: string): void {
-    const { folder, folderLatest } = this.envs.getOutputsFolders();
+    const { folder, folderLatest } = this.envs.output;
     const pathScreenshot = path.join(folder, name);
     const pathScreenshotLatest = path.join(folderLatest, name);
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
   async saveScreenshot(element: ElementType = null, fullPage: boolean = false): Promise<string> {
-    const { folder } = this.envs.getOutputsFolders();
+    const { folder } = this.envs.output;
     try {
       const name = `${getNowDateTime()}.png`;
       const pathScreenshot = path.resolve(path.join(folder, name));

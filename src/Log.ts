@@ -195,7 +195,7 @@ export default class Log {
   }
 
   fileLog(texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void {
-    const { folder, folderLatest } = this.envs.getOutputsFolders();
+    const { folder, folderLatest } = this.envs.output;
 
     let textsJoin = '';
     if (Array.isArray(texts)) {
