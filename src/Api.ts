@@ -31,17 +31,16 @@ export default async function run(argsInput = {}, closeProcess: boolean = true):
   checkArgs(args);
 
   try {
-    const startTime = process.hrtime.bigint();
-    const initArgsTime = getTimer(startTime);
+    const startTime = getTimer().now;
 
     for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
       const testName = args.PPD_TESTS[i];
-      const startTimeTest = process.hrtime.bigint();
+      const startTimeTest = getTimer().now;
 
       envsPool.setCurrentTest(testName);
 
       if (i === 0) {
-        await logger.log({ level: 'timer', text: `Init time 🕝: ${initArgsTime} sec.` });
+        await logger.log({ level: 'timer', text: `Init time 🕝: ${getTimer(startTime).delta} sec.` });
       }
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
@@ -52,15 +51,15 @@ export default async function run(argsInput = {}, closeProcess: boolean = true):
       blocker.reset();
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
-      await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest)} sec.` });
+      await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });
       await test();
-      await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest)} sec.` });
+      await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta} sec.` });
     }
 
     await envsPool.closeBrowsers();
     await envsPool.closeProcesses();
 
-    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime)} sec.` });
+    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta} sec.` });
 
     // if (!module.parent) {
     if (closeProcess) {

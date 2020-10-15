@@ -629,7 +629,7 @@ export class Test {
         // TIMER IN CONSOLE
         if (PPD_LOG_EXTEND) {
           await logger.log({
-            text: `🕝: ${getTimer(startTime)} s. (${this.name})`,
+            text: `🕝: ${getTimer(startTime).delta} s. (${this.name})`,
             level: 'timer',
             levelIndent,
             extendInfo: true,
