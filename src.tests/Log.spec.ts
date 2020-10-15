@@ -5,6 +5,7 @@ import path from 'path';
 import Log from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
+import Environment from '../src/Environment';
 
 const clearFiles = (fileName: string): void => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
@@ -17,11 +18,7 @@ const clearFiles = (fileName: string): void => {
 };
 
 describe('Log', () => {
-  let logger: Log;
-
-  beforeEach(() => {
-    logger = new Log('');
-  });
+  const { logger } = Environment();
 
   test('Constructor', () => {
     expect(logger.envs).toBeDefined();

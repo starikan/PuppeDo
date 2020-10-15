@@ -10,14 +10,16 @@ import { merge, sleep, blankSocket, getNowDateTime } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
 import Env from './Env';
+import Log from './Log';
 
 type EnvsInstanceType = {
   envsPool: EnvsPool;
   socket: SocketType;
   envsId: string;
+  logger: Log;
 };
 
-class EnvsPool implements EnvsPoolType {
+export class EnvsPool implements EnvsPoolType {
   envs: {
     [key: string]: {
       env: EnvType;
@@ -436,7 +438,8 @@ export default (envsId: string = '', testName: string = '', socket: SocketType =
   } else {
     envsIdLocal = crypto.randomBytes(16).toString('hex');
     const newEnvs = new EnvsPool();
-    instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal };
+    const logger = new Log(envsIdLocal, newEnvs, socket);
+    instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal, logger };
   }
 
   instances[envsIdLocal].envsPool.setCurrentTest(testName);

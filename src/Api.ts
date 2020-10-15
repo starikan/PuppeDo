@@ -3,7 +3,6 @@ import getTest from './getTest';
 import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
-import Log from './Log';
 import { getTimer, getNowDateTime } from './Helpers';
 
 // eslint-disable-next-line no-undef
@@ -26,8 +25,7 @@ const checkArgs = (args: ArgumentsType): void => {
 };
 
 export default async function run(argsInput = {}, closeProcess: boolean = true): Promise<void> {
-  const { envsId, envsPool, socket } = Environment();
-  const logger = new Log(envsId);
+  const { envsId, envsPool, socket, logger } = Environment();
   const blocker = new Blocker();
   const args = { ...new Arguments(argsInput, true).args };
   checkArgs(args);

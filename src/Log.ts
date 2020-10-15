@@ -6,7 +6,6 @@ import yaml from 'js-yaml';
 import { paintString, colors, pick, omit, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
-import Environment from './Environment';
 
 export default class Log {
   envsId: string;
@@ -23,13 +22,12 @@ export default class Log {
   };
   screenshot: Screenshot;
 
-  constructor(envsId: string) {
-    const { socket, envsPool: envs, envsId: envsIdNew } = Environment(envsId);
-    this.envsId = envsIdNew;
-    this.envs = envs;
+  constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType) {
+    this.envsId = envsId;
+    this.envs = envsPool;
     this.socket = socket;
     this.binded = {};
-    this.screenshot = new Screenshot(envsId);
+    this.screenshot = new Screenshot(envsPool, socket);
   }
 
   bindData(data: { [key: string]: string | Object } = {}): void {

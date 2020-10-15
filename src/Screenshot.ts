@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 
 import { getNowDateTime, sleep } from './Helpers';
-import Environment from './Environment';
 
 type ElementType = {
   screenshot: Function;
@@ -12,9 +11,8 @@ export default class Screenshot {
   envs: EnvsPoolType;
   socket: SocketType;
 
-  constructor(envsId: string) {
-    const { socket, envsPool: envs } = Environment(envsId);
-    this.envs = envs;
+  constructor(envsPool: EnvsPoolType, socket: SocketType) {
+    this.envs = envsPool;
     this.socket = socket;
   }
 

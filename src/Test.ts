@@ -3,7 +3,6 @@ import vm from 'vm';
 import { merge, blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
-import Log from './Log';
 import Environment from './Environment';
 import Env from './Env';
 import TestsContent from './TestContent';
@@ -410,8 +409,7 @@ export class Test {
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
       const startTime = process.hrtime.bigint();
-      const { envsPool } = Environment(envsId);
-      const logger = new Log(envsId);
+      const { envsPool, logger } = Environment(envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent,
         this.logOptions,
