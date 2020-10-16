@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
 
-import { merge, sleep, blankSocket, getNowDateTime } from './Helpers';
+import { sleep, blankSocket, getNowDateTime } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
 import Env from './Env';
@@ -47,19 +47,6 @@ export class EnvsPool implements EnvsPoolType {
     this.current = {};
     this.output = {};
     this.log = [];
-  }
-
-  setEnv(name: string, page: string = ''): void {
-    if (name && this.envs[name]) {
-      this.current.name = name;
-      if (page && this.envs[name]?.state?.pages[page]) {
-        this.current.page = page;
-      } else if (this.envs[name]?.state?.pages?.main) {
-        this.current.page = 'main';
-      } else {
-        this.current.page = null;
-      }
-    }
   }
 
   getActivePage(): BrowserPageType {
@@ -127,51 +114,75 @@ export class EnvsPool implements EnvsPoolType {
     this.initOutputLatest = (): void => {};
   }
 
-  async runBrowsers(): Promise<void> {
-    const envsNames = Object.keys(this.envs);
-    for (let i = 0; i < envsNames.length; i += 1) {
-      const envPool = this.envs[envsNames[i]];
-      const browserSettings = envPool.env.browser;
-      const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
+  async setEnv(name: string, page: string = ''): Promise<void> {
+    if (!name) {
+      throw new Error('You must pass name of Environment to switch');
+    }
 
-      if (
-        !['api', 'browser', 'electron'].includes(type) ||
-        !['puppeteer', 'playwright'].includes(engine) ||
-        !['run', 'connect'].includes(runtime)
-      ) {
-        throw new Error(`Error in environment browser parametr: '${JSON.stringify(browserSettings)}'`);
+    if (!this.envs[name]) {
+      const { envs } = new TestsContent().allData;
+      const env = envs.find((v) => v.name === name);
+      if (env) {
+        const envLocal = JSON.parse(JSON.stringify(env));
+        const newEnv = new Env(envLocal);
+        this.envs[name] = newEnv;
+
+        await this.runBrowsers(name);
+      } else {
+        throw new Error(`Can't init environment ${name}. Check 'envs' parameter`);
       }
+    }
 
-      if (type === 'api') {
-        // TODO: 2020-01-13 S.Starodubov
-      }
+    this.current.name = name;
+    if (page && this.envs[name]?.state?.pages[page]) {
+      this.current.page = page;
+    } else if (this.envs[name]?.state?.pages?.main) {
+      this.current.page = 'main';
+    } else {
+      this.current.page = null;
+    }
+  }
 
-      if (type === 'browser') {
-        if (runtime === 'run') {
-          if (engine === 'puppeteer') {
-            const { browser, pages } = await EnvsPool.runPuppeteer(browserSettings);
-            envPool.state = { ...envPool.state, ...{ browser, pages } };
-          }
-          if (engine === 'playwright') {
-            const { browser, pages } = await EnvsPool.runPlaywright(browserSettings);
-            envPool.state = { ...envPool.state, ...{ browser, pages } };
-          }
-        }
-      }
+  async runBrowsers(name: string): Promise<void> {
+    const envPool = this.envs[name];
+    const browserSettings = envPool.env.browser;
+    const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
 
-      if (type === 'electron') {
-        if (runtime === 'connect') {
-          const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+    if (
+      !['api', 'browser', 'electron'].includes(type) ||
+      !['puppeteer', 'playwright'].includes(engine) ||
+      !['run', 'connect'].includes(runtime)
+    ) {
+      throw new Error(`Error in environment browser parametr: '${JSON.stringify(browserSettings)}'`);
+    }
+
+    if (type === 'api') {
+      // TODO: 2020-01-13 S.Starodubov
+    }
+
+    if (type === 'browser') {
+      if (runtime === 'run') {
+        if (engine === 'puppeteer') {
+          const { browser, pages } = await EnvsPool.runPuppeteer(browserSettings);
           envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
-        if (runtime === 'run') {
-          const { browser, pages, pid } = await this.runElectron(browserSettings, envPool.name);
-          envPool.state = { ...envPool.state, ...{ browser, pages, pid } };
+        if (engine === 'playwright') {
+          const { browser, pages } = await EnvsPool.runPlaywright(browserSettings);
+          envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
       }
     }
 
-    this.runBrowsers = async (): Promise<void> => {};
+    if (type === 'electron') {
+      if (runtime === 'connect') {
+        const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+        envPool.state = { ...envPool.state, ...{ browser, pages } };
+      }
+      if (runtime === 'run') {
+        const { browser, pages, pid } = await this.runElectron(browserSettings, envPool.name);
+        envPool.state = { ...envPool.state, ...{ browser, pages, pid } };
+      }
+    }
   }
 
   static async runPuppeteer(browserSettings: EnvBrowserType): Promise<EnvStateType> {
@@ -337,27 +348,6 @@ export class EnvsPool implements EnvsPoolType {
     }
   }
 
-  async init(runBrowsers: boolean = true): Promise<void> {
-    const { envs } = new TestsContent().allData;
-
-    envs.forEach((env: EnvType) => {
-      const envLocal = JSON.parse(JSON.stringify(env));
-      const newEnv = new Env(envLocal);
-      this.envs[newEnv.name] = newEnv;
-    });
-
-    if (!this.envs || (this.envs && !Object.keys(this.envs).length)) {
-      throw new Error("Can't init any environment. Check 'envs' parameter, should be array");
-    }
-
-    if (runBrowsers) {
-      await this.runBrowsers();
-    }
-
-    // If already init do nothing
-    this.init = async (): Promise<void> => {};
-  }
-
   setCurrentTest(testName: string = ''): void {
     if (testName) {
       this.current.test = testName;
@@ -374,7 +364,7 @@ export default (envsId: string = '', socket: SocketType = blankSocket): EnvsInst
       throw new Error(`Unknown ENV ID ${envsIdLocal}`);
     }
   } else {
-    envsIdLocal = crypto.randomBytes(16).toString('hex');
+    envsIdLocal = crypto.randomBytes(6).toString('hex');
     const newEnvs = new EnvsPool();
     const logger = new Log(envsIdLocal, newEnvs, socket);
     instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal, logger };

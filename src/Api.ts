@@ -39,12 +39,10 @@ export default async function run(argsInput = {}, closeProcess: boolean = true):
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
       envsPool.setCurrentTest(testName);
-      await envsPool.init(false);
 
       const { fullJSON, textDescription } = new TestStructure(envsId, testName);
       new Blocker().reset();
       const { test } = getTest(fullJSON, envsId, socket);
-      await envsPool.runBrowsers();
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });
