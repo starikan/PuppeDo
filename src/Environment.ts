@@ -129,7 +129,7 @@ export class EnvsPool implements EnvsPoolType {
 
         await this.runBrowsers(name);
       } else {
-        throw new Error(`Can't init environment ${name}. Check 'envs' parameter`);
+        throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
       }
     }
 
