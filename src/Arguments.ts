@@ -1,5 +1,7 @@
 import Singleton from './Singleton';
 
+import { ArgumentsKeysType, ArgumentsType } from './global.d';
+
 export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],

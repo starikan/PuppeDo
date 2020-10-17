@@ -5,7 +5,7 @@ module.exports = {
   entry: {
     main: './src/index.ts',
   },
-  devtool: '#source-map',
+  devtool: 'source-map',
   mode: 'production',
   target: 'node',
   node: {
@@ -26,12 +26,6 @@ module.exports = {
   },
   optimization: {
     minimize: false,
-    namedModules: true,
-    namedChunks: true,
-    // usedExports: true,
-    // splitChunks: {
-    //   chunks: 'all',
-    // },
   },
   output: {
     filename: 'index.js',

@@ -5,6 +5,8 @@ import { merge, pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
+import { InputsTestType, SocketType } from './global.d';
+
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
 const resolveJS = (testJson: any, funcFile: string): any => {

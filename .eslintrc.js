@@ -5,6 +5,7 @@ module.exports = {
     es6: true,
   },
   extends: ['eslint:recommended', 'airbnb-base'],
+  // extends: ['eslint:recommended', 'airbnb-base', 'plugin:@typescript-eslint/recommended'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -25,7 +26,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 2019 },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
   rules: {
     'operator-linebreak': [0, 'after'],
     'space-before-function-paren': [0],
@@ -40,5 +41,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/explicit-function-return-type': 'warn',
     'no-await-in-loop': 0,
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
   },
 };

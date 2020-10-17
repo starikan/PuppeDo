@@ -2,6 +2,8 @@
 import deepmerge from 'deepmerge';
 import dayjs from 'dayjs';
 
+import { SocketType } from './global.d';
+
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

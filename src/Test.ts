@@ -8,6 +8,8 @@ import Env from './Env';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 
+import { LogOptionsType, EnvsPoolType, ColorsType, SocketType, InputsTestType } from './global.d';
+
 const ALIASES = {
   data: ['d', '📋'],
   bindData: [
@@ -215,8 +217,8 @@ const resolveLogOptions = (
   const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = logOptionsParent;
 
   const logOptionsNew = {
-    textColor: 'sane' as Colors,
-    backgroundColor: 'sane' as Colors,
+    textColor: 'sane' as ColorsType,
+    backgroundColor: 'sane' as ColorsType,
     output: envsPool.output,
     ...logOptions,
   };

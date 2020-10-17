@@ -1,3 +1,5 @@
+import { EnvStateType, EnvType } from './global.d';
+
 export default class Env {
   name: string;
   state: EnvStateType; // Browser, pages, cookies, etc.

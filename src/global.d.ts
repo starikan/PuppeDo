@@ -1,4 +1,37 @@
-type Colors =
+import {
+  Page as PagePuppeteer,
+  Browser as BrowserPuppeteer,
+  ElementHandle as ElementHandlePuppeteer,
+  Frame as FramePuppeteer,
+} from 'puppeteer';
+import {
+  Page as PagePlaywright,
+  Browser as BrowserPlaywright,
+  ElementHandle as ElementHandlePlaywright,
+  Frame as FramePlaywright,
+} from 'playwright';
+
+// ================ BROWSERS ====================
+
+export type BrowserType = BrowserPlaywright | BrowserPuppeteer;
+export type BrowserPageType = PagePlaywright | PagePuppeteer | FramePuppeteer | FramePlaywright;
+
+export type BrouserLaunchOptions = {
+  headless: boolean;
+  slowMo: number;
+  args: Array<string>;
+  devtools?: boolean;
+};
+
+export type PagesType = {
+  [key: string]: BrowserPageType;
+};
+
+export type Element = ElementHandlePuppeteer | ElementHandlePlaywright;
+
+// ================ HELPERS ====================
+
+export type ColorsType =
   | 'sane'
   | 'black'
   | 'red'
@@ -26,7 +59,7 @@ type Colors =
   | 'trace'
   | 'env';
 
-type ArgumentsType = {
+export type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
   PPD_ROOT_IGNORE: string[];
@@ -40,45 +73,85 @@ type ArgumentsType = {
   PPD_LOG_EXTEND: boolean;
   PPD_DISABLE_ENV_CHECK: boolean;
   PPD_LOG_LEVEL_NESTED: number;
-  PPD_LOG_LEVEL_TYPE: Colors;
-  PPD_LOG_LEVEL_TYPE_IGNORE: Colors[];
+  PPD_LOG_LEVEL_TYPE: ColorsType;
+  PPD_LOG_LEVEL_TYPE_IGNORE: ColorsType[];
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;
   PPD_LOG_TEST_NAME: boolean;
   PPD_LOG_IGNORE_HIDE_LOG: boolean;
 };
 
-type ArgumentsKeysType = keyof ArgumentsType;
+export type ArgumentsKeysType = keyof ArgumentsType;
 
-type SocketType = {
+export type SocketType = {
   send: Function;
   sendYAML: Function;
 };
 
+// ================ LOGGER ====================
+
+export type LogEntry = {
+  text: string;
+  time: string;
+  dataEnvs: Object;
+  dataEnvsGlobal: Object;
+  testStruct: Object;
+  bindedData: Object;
+  screenshots: Array<string>;
+  type: string;
+  level: string;
+  levelIndent: number;
+  stepId: string;
+};
+
+export type LogOptionsType = {
+  logThis?: boolean;
+  logChildren?: boolean;
+  screenshot?: boolean;
+  fullpage?: boolean;
+  levelIndent?: number;
+  level?: string | number;
+  textColor?: ColorsType;
+  backgroundColor?: ColorsType;
+};
+
+export type LogEntrieType = {
+  text: string;
+  textColor: ColorsType;
+  backgroundColor?: ColorsType;
+};
+
+export type LogInputType = {
+  text: string;
+  funcFile?: string;
+  testFile?: string;
+  screenshot?: boolean;
+  fullpage?: boolean;
+  level?: ColorsType;
+  element?: Element;
+  testStruct?: string;
+  levelIndent?: number;
+  error?: any;
+  testSource?: any;
+  bindedData?: any;
+  extendInfo?: boolean;
+  stdOut?: boolean;
+  stepId?: string;
+  textColor?: ColorsType;
+  backgroundColor?: ColorsType;
+  logShowFlag?: boolean;
+};
+
 // ================ ENVS ====================
 
-type BrowserType = import('playwright').Browser | import('puppeteer').Browser;
-type BrowserPageType = import('playwright').Page | import('puppeteer').Page;
-
-type BrouserLaunchOptions = {
-  headless: boolean;
-  slowMo: number;
-  args: Array<string>;
-  devtools?: boolean;
-};
-
-type PagesType = {
-  [key: string]: BrowserPageType;
-};
-
-type EnvStateType = {
+export type EnvStateType = {
   browser: BrowserType;
   pages: PagesType;
   contexts?: Object;
   pid?: number;
 };
 
-type EnvBrowserType = {
+export type EnvBrowserType = {
   type?: 'browser' | 'electron' | 'api';
   runtime?: 'run' | 'connect';
   engine?: 'puppeteer' | 'playwright';
@@ -104,7 +177,7 @@ type EnvBrowserType = {
   };
 };
 
-type EnvYamlType = {
+export type EnvYamlType = {
   name: string;
   type: 'env';
   description?: string;
@@ -121,11 +194,11 @@ type EnvYamlType = {
   };
 };
 
-interface EnvType extends EnvYamlType {
+export interface EnvType extends EnvYamlType {
   testFile: string;
 }
 
-interface EnvsPoolType {
+export interface EnvsPoolType {
   envs: {
     [key: string]: {
       env: EnvType;
@@ -150,23 +223,25 @@ interface EnvsPoolType {
   closeBrowsers: Function;
   closeProcesses: Function;
   getActivePage: Function;
+  initOutput: (string) => void;
+  setCurrentTest: (string) => void;
 }
 
 // ================ DATA / SELECTORS ====================
 
-type DataYamlType = {
+export type DataYamlType = {
   name: string;
   type: 'data' | 'selectors';
   data: Object;
 };
 
-interface DataType extends DataYamlType {
+export interface DataType extends DataYamlType {
   testFile: string;
 }
 
 // ================ TESTS / ATOMS ====================
 
-type TestJsonExtendType = {
+export type TestJsonExtendType = {
   source: any;
   socket: SocketType;
   stepId: string;
@@ -177,16 +252,16 @@ type TestJsonExtendType = {
   resultsFromChildren?: Object;
 };
 
-type TestYamlType = {
+export type TestYamlType = {
   name: string;
   type?: 'atom' | 'test';
 };
 
-interface TestType extends TestYamlType {
+export interface TestType extends TestYamlType {
   testFile: string;
 }
 
-type InputsTestType = {
+export type InputsTestType = {
   options?: { [key: string]: string };
   description?: string;
   descriptionExtend?: string[];
@@ -207,58 +282,4 @@ type InputsTestType = {
   resultsFromParent?: Object;
   logOptionsParent?: LogOptionsType;
   frame?: string;
-};
-
-// ================ LOGGER ====================
-
-type LogEntry = {
-  text: string;
-  time: string;
-  dataEnvs: Object;
-  dataEnvsGlobal: Object;
-  testStruct: Object;
-  bindedData: Object;
-  screenshots: Array<string>;
-  type: string;
-  level: string;
-  levelIndent: number;
-  stepId: string;
-};
-
-type LogOptionsType = {
-  logThis?: boolean;
-  logChildren?: boolean;
-  screenshot?: boolean;
-  fullpage?: boolean;
-  levelIndent?: number;
-  level?: string | number;
-  textColor?: Colors;
-  backgroundColor?: Colors;
-};
-
-type LogEntrieType = {
-  text: string;
-  textColor: Colors;
-  backgroundColor?: Colors;
-};
-
-type LogInputType = {
-  text: string;
-  funcFile?: string;
-  testFile?: string;
-  screenshot?: boolean;
-  fullpage?: boolean;
-  level?: Colors;
-  element?: any;
-  testStruct?: string;
-  levelIndent?: number;
-  error?: any;
-  testSource?: any;
-  bindedData?: any;
-  extendInfo?: boolean;
-  stdOut?: boolean;
-  stepId?: string;
-  textColor?: Colors;
-  backgroundColor?: Colors;
-  logShowFlag?: boolean;
 };

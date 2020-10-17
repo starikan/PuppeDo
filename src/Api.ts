@@ -5,6 +5,8 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 
+import { ArgumentsType } from './global.d';
+
 // eslint-disable-next-line no-undef
 __non_webpack_require__('source-map-support').install();
 

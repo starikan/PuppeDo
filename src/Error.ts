@@ -5,6 +5,8 @@ import Log from './Log';
 import Environment from './Environment';
 import Env from './Env';
 
+import { SocketType } from './global.d';
+
 export interface ErrorType extends Error {
   envsId: string;
   envs: Env;

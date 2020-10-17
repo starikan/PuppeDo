@@ -1,8 +1,12 @@
 /* eslint-disable max-classes-per-file */
+import { Page as PagePuppeteer } from 'puppeteer';
+
 import path from 'path';
 import { Arguments } from './Arguments';
 import Env from './Env';
 import { ErrorType } from './Error';
+
+import { BrowserPageType, EnvsPoolType, LogInputType, LogOptionsType, Element } from './global.d';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
@@ -48,7 +52,7 @@ export default class Atom {
   async getElement(
     selector: string,
     allElements: boolean = false,
-    elementPatent: PagesType = this.page,
+    elementPatent: BrowserPageType = this.page,
   ): Promise<Element[] | boolean> {
     if (selector && typeof selector === 'string') {
       const selectorClean = selector
@@ -62,14 +66,15 @@ export default class Atom {
       let elements = [];
 
       if (this.getEngine('puppeteer')) {
+        const elementParentPuppeteer = elementPatent as PagePuppeteer;
         if (isXPath) {
-          elements = await elementPatent.$x(selectorClean);
+          elements = await elementParentPuppeteer.$x(selectorClean);
         }
         if (isText) {
-          elements = await elementPatent.$x(`//*[text()[contains(.,"${selectorClean}")]]`);
+          elements = await elementParentPuppeteer.$x(`//*[text()[contains(.,"${selectorClean}")]]`);
         }
         if (isCSS) {
-          elements = await elementPatent.$$(selectorClean);
+          elements = await elementParentPuppeteer.$$(selectorClean);
         }
       }
 

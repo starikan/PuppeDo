@@ -3,9 +3,7 @@ import fs from 'fs';
 
 import { getNowDateTime, sleep } from './Helpers';
 
-type ElementType = {
-  screenshot: Function;
-} | null;
+import { EnvsPoolType, SocketType, Element } from './global.d';
 
 export default class Screenshot {
   envs: EnvsPoolType;
@@ -16,7 +14,7 @@ export default class Screenshot {
     this.socket = socket;
   }
 
-  async getScreenshots(element: ElementType | null, fullPage = false, extendInfo = false): Promise<Array<string>> {
+  async getScreenshots(element: Element | null, fullPage = false, extendInfo = false): Promise<Array<string>> {
     if (extendInfo || !element) {
       return [];
     }
@@ -33,7 +31,7 @@ export default class Screenshot {
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot(element: ElementType = null, fullPage: boolean = false): Promise<string> {
+  async saveScreenshot(element: Element = null, fullPage: boolean = false): Promise<string> {
     const { folder } = this.envs.output;
     try {
       const name = `${getNowDateTime()}.png`;

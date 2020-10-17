@@ -8,6 +8,8 @@ import Singleton from './Singleton';
 import { Arguments } from './Arguments';
 import { merge } from './Helpers';
 
+import { TestType, EnvType, DataType } from './global.d';
+
 type AllDataType = {
   allFiles: Array<string>;
   allContent: Array<TestType | EnvType | DataType>;

@@ -3,6 +3,8 @@ import path from 'path';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 
+import { TestType, DataType } from '../src/global.d';
+
 describe('TestContent', () => {
   test('Init', () => {
     const spy = jest.spyOn(console, 'log').mockImplementation();

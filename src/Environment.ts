@@ -12,8 +12,19 @@ import { Arguments } from './Arguments';
 import Env from './Env';
 import Log from './Log';
 
+import {
+  BrouserLaunchOptions,
+  BrowserPageType,
+  EnvBrowserType,
+  EnvsPoolType,
+  EnvStateType,
+  EnvType,
+  LogEntry,
+  SocketType,
+} from './global.d';
+
 type EnvsInstanceType = {
-  envsPool: EnvsPool;
+  envsPool: EnvsPoolType;
   socket: SocketType;
   envsId: string;
   logger: Log;

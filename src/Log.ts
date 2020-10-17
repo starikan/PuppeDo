@@ -7,6 +7,8 @@ import { paintString, colors, pick, omit, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
+import { ColorsType, EnvsPoolType, LogEntrieType, LogEntry, LogInputType, SocketType } from './global.d';
+
 export default class Log {
   envsId: string;
   envs: EnvsPoolType;
@@ -34,7 +36,7 @@ export default class Log {
     this.binded = { ...this.binded, ...data };
   }
 
-  static checkLevel(level: number | string): Colors | null {
+  static checkLevel(level: number | string): ColorsType | null {
     enum levels {
       raw,
       timer,
@@ -50,7 +52,7 @@ export default class Log {
 
     const inputLevel = typeof level === 'number' ? level : levels[level] || 0;
     const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
-    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v: Colors) => levels[v]);
+    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v: ColorsType) => levels[v]);
 
     if (ignoreLevels.includes(inputLevel)) {
       return null;
@@ -58,13 +60,13 @@ export default class Log {
 
     // If input level higher or equal then logging
     if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
-      return levels[inputLevel] as Colors;
+      return levels[inputLevel] as ColorsType;
     }
     return null;
   }
 
   makeLog(
-    level: Colors = 'sane',
+    level: ColorsType = 'sane',
     levelIndent: number = 0,
     text: string = '',
     now = new Date(),
@@ -73,8 +75,8 @@ export default class Log {
     extendInfo: boolean = false,
     screenshots = [],
     error: { message?: string; stack?: string } = {},
-    textColor: Colors = 'sane',
-    backgroundColor: Colors = 'sane',
+    textColor: ColorsType = 'sane',
+    backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
     const errorTyped = error;
     const { PPD_LOG_EXTEND } = new Arguments().args;
@@ -82,12 +84,12 @@ export default class Log {
     const nowWithPad = `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
     const breadcrumbs = this.binded?.testSource?.breadcrumbs || [];
 
-    const headColor: Colors = level === 'error' ? 'error' : 'sane';
-    const tailColor: Colors = level === 'error' ? 'error' : 'info';
+    const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
+    const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
 
     let backColor =
       backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
-        ? (colors[colors[backgroundColor] + 10] as Colors)
+        ? (colors[colors[backgroundColor] + 10] as ColorsType)
         : backgroundColor;
 
     if (!Object.keys(colors).includes(backColor)) {
