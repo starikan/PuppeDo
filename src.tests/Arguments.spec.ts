@@ -67,7 +67,7 @@ test('Arguments is Singleton and Default args', () => {
 
 test('Arguments check', () => {
   let argData: string;
-  let argResult: string | Object;
+  let argResult: string | Record<string, string>;
 
   // Object
   [, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');

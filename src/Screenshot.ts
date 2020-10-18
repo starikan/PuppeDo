@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { getNowDateTime, sleep } from './Helpers';
 
-import { EnvsPoolType, SocketType, Element } from './global.d';
+import { EnvsPoolType, SocketType, Element, BrowserPageType } from './global.d';
 
 export default class Screenshot {
   envs: EnvsPoolType;
@@ -31,14 +31,14 @@ export default class Screenshot {
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot(element: Element = null, fullPage: boolean = false): Promise<string> {
+  async saveScreenshot(element: Element = null, fullPage = false): Promise<string> {
     const { folder } = this.envs.output;
     try {
       const name = `${getNowDateTime()}.png`;
       const pathScreenshot = path.resolve(path.join(folder, name));
 
       if (fullPage) {
-        const page = this.envs.getActivePage();
+        const page = this.envs.getActivePage() as BrowserPageType;
         await page.screenshot({ path: pathScreenshot, fullPage });
       }
 

@@ -10,7 +10,7 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-export const merge = (...objects: Array<Object>): Record<string, unknown> =>
+export const merge = (...objects: Array<unknown>): Record<string, unknown> =>
   JSON.parse(JSON.stringify(deepmerge.all(objects, { arrayMerge: (_, source) => source })));
 
 /*
@@ -70,8 +70,12 @@ export const paintString = (str: string, color: keyof typeof colors = 'sane'): s
   `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
 
 export const blankSocket: SocketType = {
-  send: () => {},
-  sendYAML: () => {},
+  send: () => {
+    // Do nothing
+  },
+  sendYAML: () => {
+    // Do nothing
+  },
 };
 
 export const getTimer = (timeStart: bigint = process.hrtime.bigint()): { now: bigint; delta: string } => ({
@@ -85,5 +89,5 @@ export const pick = (obj: Record<string, unknown>, fields: string[]): Record<str
 export const omit = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
 
-export const getNowDateTime = (now: Date = new Date(), format: string = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
+export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
   dayjs(now).format(format);

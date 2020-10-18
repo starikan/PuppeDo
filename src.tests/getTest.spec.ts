@@ -1,3 +1,5 @@
 describe('getTest', () => {
-  test('getTest', () => {});
+  test('getTest', () => {
+    // Do nothing
+  });
 });

@@ -15,6 +15,7 @@ import {
   LogFunctionType,
   LogInputType,
   ColorsType,
+  BrowserFrame,
 } from './global.d';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
@@ -31,7 +32,7 @@ class AtomError extends Error {
 export default class Atom {
   env: Env;
   envs: EnvsPoolType;
-  page: BrowserPageType;
+  page: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
 
   levelIndent: number;
@@ -59,7 +60,7 @@ export default class Atom {
   async getElement(
     selector: string,
     allElements = false,
-    elementPatent: BrowserPageType = this.page,
+    elementPatent: BrowserPageType | BrowserFrame = this.page,
   ): Promise<Element[] | boolean> {
     if (selector && typeof selector === 'string') {
       const selectorClean = selector

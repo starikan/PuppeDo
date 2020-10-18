@@ -11,10 +11,13 @@ import {
   Frame as FramePlaywright,
 } from 'playwright';
 
+import { ErrorType } from './Error';
+
 // ================ BROWSERS ====================
 
 export type BrowserType = BrowserPlaywright | BrowserPuppeteer;
-export type BrowserPageType = PagePlaywright | PagePuppeteer | FramePuppeteer | FramePlaywright;
+export type BrowserPageType = PagePlaywright | PagePuppeteer;
+export type BrowserFrame = FramePuppeteer | FramePlaywright;
 
 export type BrouserLaunchOptions = {
   headless: boolean;
@@ -24,7 +27,7 @@ export type BrouserLaunchOptions = {
 };
 
 export type PagesType = {
-  [key: string]: BrowserPageType;
+  [key: string]: BrowserPageType | BrowserFrame;
 };
 
 export type Element = ElementHandlePuppeteer | ElementHandlePlaywright;
@@ -83,18 +86,13 @@ export type ArgumentsType = {
 
 export type ArgumentsKeysType = keyof ArgumentsType;
 
-export type SocketType = {
-  send: Function;
-  sendYAML: Function;
-};
-
 // ================ LOGGER ====================
 
 export type LogEntry = {
   text: string;
   time: string;
-  dataEnvs: Record<string, unknown>;
-  dataEnvsGlobal: Record<string, unknown>;
+  dataEnvs?: Record<string, unknown>;
+  dataEnvsGlobal?: Record<string, unknown>;
   testStruct: Record<string, unknown>;
   bindedData: Record<string, unknown>;
   screenshots: Array<string>;
@@ -131,7 +129,7 @@ export type LogInputType = {
   element?: Element;
   testStruct?: string;
   levelIndent?: number;
-  error?: any;
+  error?: ErrorType | null;
   testSource?: any;
   bindedData?: any;
   extendInfo?: boolean;
@@ -143,6 +141,13 @@ export type LogInputType = {
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;
+
+// ================ SOCKET ====================
+
+export type SocketType = {
+  send: () => void;
+  sendYAML: (data: { type: string; data: LogEntry; envsId: string }) => void;
+};
 
 // ================ ENVS ====================
 
@@ -222,11 +227,11 @@ export interface EnvsPoolType {
     folderFull?: string;
   };
   log: Array<LogEntry>;
-  closeBrowsers: Function;
-  closeProcesses: Function;
-  getActivePage: Function;
-  initOutput: (string) => void;
-  setCurrentTest: (string) => void;
+  closeBrowsers: () => Promise<void>;
+  closeProcesses: () => Promise<void>;
+  getActivePage: () => BrowserPageType | BrowserFrame;
+  initOutput: (envsId: string) => void;
+  setCurrentTest: (testName: string) => void;
 }
 
 // ================ DATA / SELECTORS ====================
@@ -314,7 +319,7 @@ export type TestArgsExtType = {
   };
   envs: EnvsPoolType;
   browser: BrowserType;
-  page: BrowserPageType;
+  page: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
   name: string;
   description: string;

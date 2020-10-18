@@ -5,7 +5,7 @@ import { merge, pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { InputsTestType, SocketType } from './global.d';
+import { InputsTestType, SocketType, TestArgsExtType } from './global.d';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
@@ -23,7 +23,11 @@ const resolveJS = (testJson: any, funcFile: string): any => {
   } catch (err) {
     // If there is no JS file it`s fine.
     testJsonNew.funcFile = 'No file';
-    testJsonNew.runTest = [(): void => {}];
+    testJsonNew.runTest = [
+      (): void => {
+        // Do nothig
+      },
+    ];
   }
   return testJsonNew;
 };
@@ -87,7 +91,7 @@ const getTest = (
   const test = new Test(testJson);
 
   return {
-    test: async (args = {}): Promise<Test> => {
+    test: async (args: TestArgsExtType): Promise<Record<string, unknown>> => {
       let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
         'options',
         'data',

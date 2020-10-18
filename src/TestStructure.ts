@@ -57,7 +57,7 @@ export default class TestStructure implements TestStructureType {
   }
 
   resolveRunner(
-    runnerValue,
+    runnerValue: Record<string, { name?: string; breadcrumbs?: string[] }>,
     runnerNum: number,
     fullJSONIncome: FullJsonType,
     runnerBlock: string,
@@ -78,7 +78,7 @@ export default class TestStructure implements TestStructureType {
     return { fullJSON: null, textDescription: null };
   }
 
-  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent: number = 0): TestStructureType {
+  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent = 0): TestStructureType {
     const fullJSON = merge(TestStructure.getTestRaw(testName), testBody) as FullJsonType;
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;

@@ -316,6 +316,8 @@ const fetchData = (
   return { dataLocal, selectorsLocal };
 };
 
+type TestLifecycleFunctionType = (TestArgsExtType) => Record<string, unknown> | void;
+
 export class Test {
   name: string;
   type: string;
@@ -328,9 +330,9 @@ export class Test {
   dataExt: Array<string>;
   selectorsExt: Array<string>;
   allowResults: Array<string>;
-  beforeTest: Function | Function[];
-  runTest: Function | Function[];
-  afterTest: Function | Function[];
+  beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   levelIndent: number;
   repeat: number;
   source: Record<string, unknown>;

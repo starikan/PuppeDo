@@ -14,6 +14,7 @@ import Log from './Log';
 
 import {
   BrouserLaunchOptions,
+  BrowserFrame,
   BrowserPageType,
   EnvBrowserType,
   EnvsPoolType,
@@ -60,7 +61,7 @@ export class EnvsPool implements EnvsPoolType {
     this.log = [];
   }
 
-  getActivePage(): BrowserPageType {
+  getActivePage(): BrowserPageType | BrowserFrame {
     const activeEnv = this.envs[this.current?.name || ''];
     const pageName = this.current?.page;
     return activeEnv.state.pages[pageName || ''];

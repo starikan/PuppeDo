@@ -3,11 +3,12 @@ import fs from 'fs';
 
 import yaml from 'js-yaml';
 
-import { paintString, colors, pick, omit, getNowDateTime } from './Helpers';
+import { paintString, colors, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
 import { ColorsType, EnvsPoolType, LogEntrieType, LogEntry, LogInputType, SocketType } from './global.d';
+import { ErrorType } from './Error';
 
 export default class Log {
   envsId: string;
@@ -32,7 +33,7 @@ export default class Log {
     this.screenshot = new Screenshot(envsPool, socket);
   }
 
-  bindData(data: { [key: string]: string | Object } = {}): void {
+  bindData(data: Record<string, unknown> = {}): void {
     this.binded = { ...this.binded, ...data };
   }
 
@@ -67,14 +68,14 @@ export default class Log {
 
   makeLog(
     level: ColorsType = 'sane',
-    levelIndent: number = 0,
-    text: string = '',
+    levelIndent = 0,
+    text = '',
     now = new Date(),
     funcFile = '',
     testFile = '',
-    extendInfo: boolean = false,
+    extendInfo = false,
     screenshots = [],
-    error: { message?: string; stack?: string } = {},
+    error: ErrorType | null = null,
     textColor: ColorsType = 'sane',
     backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
@@ -166,8 +167,8 @@ export default class Log {
     }
 
     if (level === 'error' && !extendInfo && levelIndent === 0) {
-      const message = (errorTyped.message || '').split(' || ');
-      const stack = (errorTyped.stack || '').split('\n    ');
+      const message = (errorTyped?.message || '').split(' || ');
+      const stack = (errorTyped?.stack || '').split('\n    ');
 
       [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
         stringsLog.push([
@@ -223,7 +224,7 @@ export default class Log {
     element = null,
     testStruct = null,
     levelIndent = 0,
-    error = {},
+    error = null,
     testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
     extendInfo = false,
@@ -288,10 +289,10 @@ export default class Log {
       this.fileLog(logTexts, 'output.log');
 
       // ENVS TO LOG
-      let dataEnvs = null;
-      if (level === 'env') {
-        dataEnvs = Object.values(this.envs?.envs || {}).map((val) => omit(val, ['state']));
-      }
+      // let dataEnvs = null;
+      // if (level === 'env') {
+      //   dataEnvs = Object.values(this.envs?.envs || {}).map((val) => omit(val, ['state']));
+      // }
 
       // TODO: 2020-04-28 S.Starodubov todo
       // _.mapValues(testSource, (v) => {
@@ -303,12 +304,13 @@ export default class Log {
       const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
+
+      // TODO: 2020-02-02 S.Starodubov this two fields need for html
+      // dataEnvs,
+      // dataEnvsGlobal: level === 'env' ? pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
       const logEntry: LogEntry = {
         text,
         time: getNowDateTime(now),
-        // TODO: 2020-02-02 S.Starodubov this two fields need for html
-        dataEnvs,
-        dataEnvsGlobal: level === 'env' ? pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
         testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
         bindedData: PPD_DEBUG_MODE ? bindedData : null,
         screenshots,
