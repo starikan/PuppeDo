@@ -28,7 +28,7 @@ const resolveJS = (testJson: any, funcFile: string): any => {
   return testJsonNew;
 };
 
-const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Object => {
+const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Record<string, unknown> => {
   const result = { ...source };
   list.forEach((v: string) => {
     result[`${v}Parent`] = merge(result[v] || {}, args[v] || {});
@@ -36,7 +36,7 @@ const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Obje
   return result;
 };
 
-const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Object => {
+const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Record<string, unknown> => {
   const result = { ...source };
   list.forEach((v) => {
     result[v] = result[v] || args[v];

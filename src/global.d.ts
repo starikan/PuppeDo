@@ -66,8 +66,8 @@ export type ArgumentsType = {
   PPD_ENVS: string[];
   PPD_TESTS: string[];
   PPD_OUTPUT: string;
-  PPD_DATA: Object;
-  PPD_SELECTORS: Object;
+  PPD_DATA: Record<string, unknown>;
+  PPD_SELECTORS: Record<string, unknown>;
   PPD_DEBUG_MODE: boolean;
   PPD_LOG_DISABLED: boolean;
   PPD_LOG_EXTEND: boolean;
@@ -93,10 +93,10 @@ export type SocketType = {
 export type LogEntry = {
   text: string;
   time: string;
-  dataEnvs: Object;
-  dataEnvsGlobal: Object;
-  testStruct: Object;
-  bindedData: Object;
+  dataEnvs: Record<string, unknown>;
+  dataEnvsGlobal: Record<string, unknown>;
+  testStruct: Record<string, unknown>;
+  bindedData: Record<string, unknown>;
   screenshots: Array<string>;
   type: string;
   level: string;
@@ -110,7 +110,7 @@ export type LogOptionsType = {
   screenshot?: boolean;
   fullpage?: boolean;
   levelIndent?: number;
-  level?: string | number;
+  level?: ColorsType;
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
 };
@@ -142,12 +142,14 @@ export type LogInputType = {
   logShowFlag?: boolean;
 };
 
+export type LogFunctionType = (options: LogInputType) => Promise<void>;
+
 // ================ ENVS ====================
 
 export type EnvStateType = {
   browser: BrowserType;
   pages: PagesType;
-  contexts?: Object;
+  contexts?: Record<string, unknown>;
   pid?: number;
 };
 
@@ -171,7 +173,7 @@ export type EnvBrowserType = {
     program?: string;
     cwd?: string;
     args?: Array<string>;
-    env?: { [key: string]: string };
+    env?: Record<string, string>;
     secondsToStartApp?: number;
     secondsDelayAfterStartApp?: number;
   };
@@ -181,8 +183,8 @@ export type EnvYamlType = {
   name: string;
   type: 'env';
   description?: string;
-  data?: Object;
-  selectors?: Object;
+  data?: Record<string, unknown>;
+  selectors?: Record<string, unknown>;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
   envsExt?: Array<string>;
@@ -232,7 +234,7 @@ export interface EnvsPoolType {
 export type DataYamlType = {
   name: string;
   type: 'data' | 'selectors';
-  data: Object;
+  data: Record<string, unknown>;
 };
 
 export interface DataType extends DataYamlType {
@@ -248,8 +250,8 @@ export type TestJsonExtendType = {
   breadcrumbs: string[];
   testFile: string;
   type: 'atom' | 'test';
-  resultsFromParent?: Object;
-  resultsFromChildren?: Object;
+  resultsFromParent?: Record<string, unknown>;
+  resultsFromChildren?: Record<string, unknown>;
 };
 
 export type TestYamlType = {
@@ -262,7 +264,7 @@ export interface TestType extends TestYamlType {
 }
 
 export type InputsTestType = {
-  options?: { [key: string]: string };
+  options?: Record<string, string>;
   description?: string;
   descriptionExtend?: string[];
   bindDescription?: string;
@@ -274,12 +276,47 @@ export type InputsTestType = {
   debug?: boolean;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
-  data?: Object;
-  selectors?: Object;
-  dataParent?: Object;
-  selectorsParent?: Object;
-  optionsParent?: Object;
-  resultsFromParent?: Object;
+  data?: Record<string, unknown>;
+  selectors?: Record<string, unknown>;
+  dataParent?: Record<string, unknown>;
+  selectorsParent?: Record<string, unknown>;
+  optionsParent?: Record<string, unknown>;
+  resultsFromParent?: Record<string, unknown>;
   logOptionsParent?: LogOptionsType;
   frame?: string;
 };
+
+export type TestArgsType = {
+  envsId: string;
+  data: Record<string, unknown>;
+  selectors: Record<string, unknown>;
+  envName: string;
+  envPageName: string;
+  options: Record<string, unknown>;
+  allowResults: Array<string>;
+  bindResults: Record<string, string>;
+  bindSelectors: Record<string, string>;
+  bindData: Record<string, string>;
+  bindDescription: string;
+  levelIndent: number;
+  repeat: number;
+  stepId: string;
+  debug: boolean;
+  logOptions: LogOptionsType;
+  frame: string;
+};
+
+export type TestArgsExtType = {
+  env: {
+    name: string;
+    state: EnvStateType; // Browser, pages, cookies, etc.
+    env: EnvType;
+  };
+  envs: EnvsPoolType;
+  browser: BrowserType;
+  page: BrowserPageType;
+  log: LogFunctionType;
+  name: string;
+  description: string;
+  socket: SocketType;
+} & TestArgsType;

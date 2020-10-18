@@ -53,7 +53,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   return newVal;
 };
 
-const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
+const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknown> | T => {
   if (
     typeof argsDefault[key] !== 'object' ||
     Array.isArray(argsDefault[key]) ||
@@ -61,7 +61,7 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Object | T => {
   ) {
     return val;
   }
-  let newVal: Object | null = null;
+  let newVal: Record<string, unknown> | null = null;
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
@@ -131,7 +131,7 @@ export class Arguments extends Singleton {
   argsEnv!: Partial<ArgumentsType>;
   argsCLI!: Partial<ArgumentsType>;
 
-  constructor(args: Partial<ArgumentsType> = {}, reInit: boolean = false) {
+  constructor(args: Partial<ArgumentsType> = {}, reInit = false) {
     super();
     if (reInit || !this.args) {
       this.argsJS = parser(args);

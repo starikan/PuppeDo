@@ -6,7 +6,16 @@ import { Arguments } from './Arguments';
 import Env from './Env';
 import { ErrorType } from './Error';
 
-import { BrowserPageType, EnvsPoolType, LogInputType, LogOptionsType, Element } from './global.d';
+import {
+  BrowserPageType,
+  EnvsPoolType,
+  LogOptionsType,
+  Element,
+  TestArgsExtType,
+  LogFunctionType,
+  LogInputType,
+  ColorsType,
+} from './global.d';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
@@ -19,8 +28,6 @@ class AtomError extends Error {
   }
 }
 
-type LogFunctionType = (options: LogInputType) => Promise<void>;
-
 export default class Atom {
   env: Env;
   envs: EnvsPoolType;
@@ -29,14 +36,14 @@ export default class Atom {
 
   levelIndent: number;
   logOptions: LogOptionsType;
-  data: Object;
-  selectors: Object;
-  dataTest: Object;
-  selectorsTest: Object;
-  bindData: { [key: string]: string };
-  bindSelectors: { [key: string]: string };
-  bindResults: { [key: string]: string };
-  options: Object;
+  data: Record<string, unknown>;
+  selectors: Record<string, unknown>;
+  dataTest: Record<string, unknown>;
+  selectorsTest: Record<string, unknown>;
+  bindData: Record<string, string>;
+  bindSelectors: Record<string, string>;
+  bindResults: Record<string, string>;
+  options: Record<string, string>;
   frame: string;
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
@@ -51,7 +58,7 @@ export default class Atom {
 
   async getElement(
     selector: string,
-    allElements: boolean = false,
+    allElements = false,
     elementPatent: BrowserPageType = this.page,
   ): Promise<Element[] | boolean> {
     if (selector && typeof selector === 'string') {
@@ -124,7 +131,7 @@ export default class Atom {
     }
   }
 
-  static async logSpliter(logFunction: LogFunctionType, levelIndent: number = 0): Promise<void> {
+  static async logSpliter(logFunction: LogFunctionType, levelIndent = 0): Promise<void> {
     await logFunction({
       text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
       levelIndent: levelIndent + 1,
@@ -135,7 +142,7 @@ export default class Atom {
 
   static async logTimer(
     logFunction: LogFunctionType,
-    levelIndent: number = 0,
+    levelIndent = 0,
     startTime: bigint,
     isError = false,
   ): Promise<void> {
@@ -150,7 +157,7 @@ export default class Atom {
     }
   }
 
-  async logExtend(isError: boolean = false): Promise<void> {
+  async logExtend(isError = false): Promise<void> {
     const { PPD_LOG_EXTEND } = new Arguments().args;
     if (PPD_LOG_EXTEND || isError) {
       const dataSources = [
@@ -249,7 +256,7 @@ export default class Atom {
     }
   }
 
-  async runTest(args): Promise<void> {
+  async runTest(args: TestArgsExtType): Promise<void> {
     const startTime = process.hrtime.bigint();
 
     const entries = Object.entries(args);
@@ -263,16 +270,13 @@ export default class Atom {
     const logOptionsDefault = {
       screenshot: false,
       fullpage: false,
-      level: 'raw',
+      level: 'raw' as ColorsType,
       levelIndent: this.levelIndent + 1,
     };
     const logOptions = { ...logOptionsDefault, ...(this.options || {}), ...(this.logOptions || {}) };
 
-    this.log = async (customLog): Promise<void> => {
-      await args.log({
-        ...logOptions,
-        ...customLog,
-      });
+    this.log = async (customLog: LogInputType): Promise<void> => {
+      await args.log({ ...logOptions, ...customLog });
     };
 
     try {

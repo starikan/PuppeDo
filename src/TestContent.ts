@@ -67,7 +67,7 @@ export default class TestsContent extends Singleton {
     return tests;
   }
 
-  getAllData(force: boolean = false): AllDataType {
+  getAllData(force = false): AllDataType {
     if (force || !this.allData) {
       const allContent: Array<TestType | EnvType | DataType> = [];
       const extensions = ['.yaml', '.yml', '.ppd'];

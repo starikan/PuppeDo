@@ -26,7 +26,7 @@ const checkArgs = (args: ArgumentsType): void => {
   });
 };
 
-export default async function run(argsInput = {}, closeProcess: boolean = true): Promise<void> {
+export default async function run(argsInput = {}, closeProcess = true): Promise<void> {
   const { envsId, envsPool, socket, logger } = Environment();
   const args = { ...new Arguments(argsInput, true).args };
   checkArgs(args);

@@ -94,7 +94,9 @@ export class EnvsPool implements EnvsPoolType {
     this.output.folderFull = path.resolve(folder);
 
     this.initOutputLatest();
-    this.initOutput = (): void => {};
+    this.initOutput = (): void => {
+      // Do nothing
+    };
   }
 
   initOutputLatest(): void {
@@ -122,10 +124,12 @@ export class EnvsPool implements EnvsPoolType {
     this.output.folderLatestFull = path.resolve(folderLatest);
 
     // Drop this function after first use
-    this.initOutputLatest = (): void => {};
+    this.initOutputLatest = (): void => {
+      // Do nothing
+    };
   }
 
-  async setEnv(name: string, page: string = ''): Promise<void> {
+  async setEnv(name: string, page = ''): Promise<void> {
     if (!name) {
       throw new Error('You must pass name of Environment to switch');
     }
@@ -359,7 +363,7 @@ export class EnvsPool implements EnvsPoolType {
     }
   }
 
-  setCurrentTest(testName: string = ''): void {
+  setCurrentTest(testName = ''): void {
     if (testName) {
       this.current.test = testName;
     }
@@ -368,7 +372,7 @@ export class EnvsPool implements EnvsPoolType {
 
 const instances: { [key: string]: EnvsInstanceType } = {};
 
-export default (envsId: string = '', socket: SocketType = blankSocket): EnvsInstanceType => {
+export default (envsId = '', socket: SocketType = blankSocket): EnvsInstanceType => {
   let envsIdLocal = envsId;
   if (envsIdLocal) {
     if (!instances[envsIdLocal]) {

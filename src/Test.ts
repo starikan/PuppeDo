@@ -4,11 +4,21 @@ import { merge, blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import Environment from './Environment';
-import Env from './Env';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 
-import { LogOptionsType, EnvsPoolType, ColorsType, SocketType, InputsTestType } from './global.d';
+import {
+  LogOptionsType,
+  EnvsPoolType,
+  ColorsType,
+  SocketType,
+  InputsTestType,
+  TestArgsType,
+  TestArgsExtType,
+  EnvType,
+  EnvStateType,
+  LogFunctionType,
+} from './global.d';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -79,8 +89,8 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
-const runScriptInContext = (source: string, context: object): boolean | object | string | number | null => {
-  let result: boolean | object | string | number | null;
+const runScriptInContext = (source: string, context: Record<string, unknown>): unknown => {
+  let result: unknown;
 
   if (source === '{}') {
     return {};
@@ -97,7 +107,7 @@ const runScriptInContext = (source: string, context: object): boolean | object |
   return result;
 };
 
-const checkNeeds = (needs: Array<string>, data: Object, testName: string): boolean => {
+const checkNeeds = (needs: Array<string>, data: Record<string, unknown>, testName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -111,7 +121,10 @@ const checkNeeds = (needs: Array<string>, data: Object, testName: string): boole
   return true;
 };
 
-const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Object): Object => {
+const resolveDataFunctions = (
+  funcParams: Record<string, string>,
+  allData: Record<string, unknown>,
+): Record<string, unknown> => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
     const evalData = runScriptInContext(data, allData);
@@ -121,10 +134,13 @@ const resolveDataFunctions = (funcParams: { [key: string]: string }, allData: Ob
   return funcEval;
 };
 
-const resolveAliases = (valueName: string, inputs: Object = {}): Object => {
+const resolveAliases = (valueName: string, inputs = {}): Record<string, unknown> => {
   try {
     const values = [valueName, ...(ALIASES[valueName] || [])];
-    const result = values.reduce((collector: Object, name: string) => ({ ...collector, ...(inputs[name] || {}) }), {});
+    const result = values.reduce(
+      (collector: Record<string, unknown>, name: string) => ({ ...collector, ...(inputs[name] || {}) }),
+      {},
+    );
     return result;
   } catch (error) {
     error.message += ` || function resolveAliases(${valueName})`;
@@ -146,9 +162,9 @@ const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
 export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
-  log: Function,
-  levelIndent: number = 0,
-  allData: Object = {},
+  log: LogFunctionType,
+  levelIndent = 0,
+  allData: Record<string, unknown> = {},
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
@@ -180,9 +196,9 @@ export const checkIf = async (
 const updateDataWithNeeds = (
   needData: string[],
   needSelectors: string[],
-  dataLocal: object,
-  selectorsLocal: object,
-): { dataLocal: object; selectorsLocal: object } => {
+  dataLocal: Record<string, unknown>,
+  selectorsLocal: Record<string, unknown>,
+): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const allData = merge(selectorsLocal, dataLocal);
 
   const dataLocalCopy = JSON.parse(JSON.stringify(dataLocal));
@@ -249,15 +265,19 @@ const resolveLogOptions = (
 const fetchData = (
   dataExt: Array<string>,
   selectorsExt: Array<string>,
-  resultsFromParent: Object,
-  dataParent: Object,
-  data: Object,
-  bindData: { [key: string]: string },
-  selectorsParent: Object,
-  selectors: Object,
-  bindSelectors: { [key: string]: string },
-  env: Env,
-): { dataLocal: Object; selectorsLocal: Object } => {
+  resultsFromParent: Record<string, unknown>,
+  dataParent: Record<string, unknown>,
+  data: Record<string, unknown>,
+  bindData: Record<string, string>,
+  selectorsParent: Record<string, unknown>,
+  selectors: Record<string, unknown>,
+  bindSelectors: Record<string, string>,
+  env: {
+    name: string;
+    state: EnvStateType; // Browser, pages, cookies, etc.
+    env: EnvType;
+  },
+): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
   const { data: allData, selectors: allSelectors } = new TestsContent().allData;
 
@@ -302,9 +322,9 @@ export class Test {
   needEnv: Array<string>;
   needData: Array<string>;
   needSelectors: Array<string>;
-  dataParent: Object;
-  selectorsParent: Object;
-  options: Object;
+  dataParent: Record<string, unknown>;
+  selectorsParent: Record<string, unknown>;
+  options: Record<string, unknown>;
   dataExt: Array<string>;
   selectorsExt: Array<string>;
   allowResults: Array<string>;
@@ -313,7 +333,7 @@ export class Test {
   afterTest: Function | Function[];
   levelIndent: number;
   repeat: number;
-  source: Object;
+  source: Record<string, unknown>;
   socket: SocketType;
   stepId: string;
   breadcrumbs: Array<string>;
@@ -323,11 +343,11 @@ export class Test {
   disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
-  data: Object;
-  bindData: { [key: string]: string };
-  selectors: Object;
-  bindSelectors: { [key: string]: string };
-  bindResults: { [key: string]: string };
+  data: Record<string, unknown>;
+  bindData: Record<string, string>;
+  selectors: Record<string, unknown>;
+  bindSelectors: Record<string, string>;
+  bindResults: Record<string, string>;
   description: string;
   descriptionExtend: string[];
   descriptionError: string;
@@ -336,15 +356,19 @@ export class Test {
   if: string;
   errorIf: string;
   errorIfResult: string;
-  resultsFromChildren: Object;
-  resultsFromParent: Object;
+  resultsFromChildren: Record<string, unknown>;
+  resultsFromParent: Record<string, unknown>;
 
   envName: string;
   envPageName: string;
-  env: Env;
+  env: {
+    name: string;
+    state: EnvStateType; // Browser, pages, cookies, etc.
+    env: EnvType;
+  };
 
-  runLogic: Function;
-  run: Function;
+  runLogic: (envsId: string, inputs: InputsTestType) => Promise<Record<string, unknown>>;
+  run: (envsId: string, inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
 
   constructor({
     name = null,
@@ -363,10 +387,16 @@ export class Test {
     descriptionExtend = [],
     descriptionError = '',
     bindDescription = '',
-    beforeTest = (): void => {},
-    runTest = (): void => {},
-    afterTest = (): void => {},
-    source = '',
+    beforeTest = (): void => {
+      // Do nothing
+    },
+    runTest = (): void => {
+      // Do nothing
+    },
+    afterTest = (): void => {
+      // Do nothing
+    },
+    source = {},
     repeat = 1,
     socket = blankSocket,
     stepId = null,
@@ -409,7 +439,7 @@ export class Test {
     this.logOptions = logOptions;
     this.frame = frame;
 
-    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Object> => {
+    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -433,15 +463,15 @@ export class Test {
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
       this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
-      this.bindData = resolveAliases('bindData', inputs) as { [key: string]: string };
+      this.bindData = resolveAliases('bindData', inputs) as Record<string, string>;
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases('selectors', inputs);
       this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
-      this.bindSelectors = resolveAliases('bindSelectors', inputs) as { [key: string]: string };
+      this.bindSelectors = resolveAliases('bindSelectors', inputs) as Record<string, string>;
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
-      this.bindResults = resolveAliases('bindResults', inputs) as { [key: string]: string };
+      this.bindResults = resolveAliases('bindResults', inputs) as Record<string, string>;
       this.resultsFromParent = inputs.resultsFromParent;
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
@@ -495,7 +525,7 @@ export class Test {
         this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
 
         // All data passed to log
-        const args = {
+        const args: TestArgsType = {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
@@ -529,7 +559,7 @@ export class Test {
         }
 
         // LOG TEST
-        const getLogText = (text: string, nameTest: string = ''): string => {
+        const getLogText = (text: string, nameTest = ''): string => {
           const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
           const descriptionTest = text || 'TODO: Fill description';
           return `${nameTestResolved}${descriptionTest}`;
@@ -556,7 +586,7 @@ export class Test {
         }
 
         // Extend with data passed to functions
-        const argsExt = {
+        const argsExt: TestArgsExtType = {
           ...args,
           env: this.env,
           envs: envsPool,
@@ -647,7 +677,7 @@ export class Test {
       }
     };
 
-    this.run = async (envsId: string, inputArgs = {}): Promise<Function> => {
+    this.run = async (envsId: string, inputArgs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;

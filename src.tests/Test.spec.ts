@@ -2,7 +2,9 @@ import { checkIf } from '../src/Test';
 
 describe('Test', () => {
   test('checkIf', async () => {
-    const log = (): void => {};
+    const log = async (): Promise<void> => {
+      // Do nothyng
+    };
 
     await expect(checkIf('1 == a', 'if', log)).rejects.toThrow(new Error("Can't evaluate 1 == a = 'a is not defined'"));
 

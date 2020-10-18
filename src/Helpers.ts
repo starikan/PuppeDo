@@ -10,7 +10,7 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-export const merge = (...objects: Array<Object>): Object =>
+export const merge = (...objects: Array<Object>): Record<string, unknown> =>
   JSON.parse(JSON.stringify(deepmerge.all(objects, { arrayMerge: (_, source) => source })));
 
 /*
@@ -79,10 +79,10 @@ export const getTimer = (timeStart: bigint = process.hrtime.bigint()): { now: bi
   delta: (Number(process.hrtime.bigint() - timeStart) / 1e9).toFixed(3),
 });
 
-export const pick = (obj: object, fields: string[]): object =>
+export const pick = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key)));
 
-export const omit = (obj: object, fields: string[]): object =>
+export const omit = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
 
 export const getNowDateTime = (now: Date = new Date(), format: string = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
