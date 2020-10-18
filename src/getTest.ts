@@ -5,7 +5,7 @@ import { merge, pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { InputsTestType, SocketType, TestArgsExtType } from './global.d';
+import { InputsTestType, SocketType, TestArgsExtType, TestLifecycleFunctionType } from './global.d';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
 
@@ -53,8 +53,8 @@ const getTest = (
   envsId: string,
   socket: SocketType,
   parentTest: any = {},
-): { test: Function; blocker: Blocker } => {
-  let testJson: any = { ...testJsonIncome };
+): { test: TestLifecycleFunctionType; blocker: Blocker } => {
+  let testJson = { ...testJsonIncome };
   const functions = pick(testJson, RUNNER_BLOCK_NAMES);
 
   // Pass source code of test into test for logging

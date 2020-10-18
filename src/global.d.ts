@@ -325,3 +325,5 @@ export type TestArgsExtType = {
   description: string;
   socket: SocketType;
 } & TestArgsType;
+
+export type TestLifecycleFunctionType = (args: TestArgsExtType) => Promise<Record<string, unknown> | void>;

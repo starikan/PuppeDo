@@ -18,6 +18,7 @@ import {
   EnvType,
   EnvStateType,
   LogFunctionType,
+  TestLifecycleFunctionType,
 } from './global.d';
 
 const ALIASES = {
@@ -316,8 +317,6 @@ const fetchData = (
   return { dataLocal, selectorsLocal };
 };
 
-type TestLifecycleFunctionType = (TestArgsExtType) => Record<string, unknown> | void;
-
 export class Test {
   name: string;
   type: string;
@@ -389,13 +388,13 @@ export class Test {
     descriptionExtend = [],
     descriptionError = '',
     bindDescription = '',
-    beforeTest = (): void => {
+    beforeTest = async (): Promise<void> => {
       // Do nothing
     },
-    runTest = (): void => {
+    runTest = async (): Promise<void> => {
       // Do nothing
     },
-    afterTest = (): void => {
+    afterTest = async (): Promise<void> => {
       // Do nothing
     },
     source = {},
