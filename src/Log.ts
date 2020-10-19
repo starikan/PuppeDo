@@ -75,7 +75,7 @@ export default class Log {
     testFile = '',
     extendInfo = false,
     screenshots = [],
-    error: ErrorType | null = null,
+    error: Error | ErrorType | null = null,
     textColor: ColorsType = 'sane',
     backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
