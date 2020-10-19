@@ -554,7 +554,7 @@ export class Test {
         const allData = merge(selectorsLocal, dataLocal);
 
         if (this.bindDescription) {
-          this.description = String(runScriptInContext(this.bindDescription, allData));
+          this.description = this.description || String(runScriptInContext(this.bindDescription, allData));
         }
         if (!this.description) {
           this.logOptions.backgroundColor = 'red';

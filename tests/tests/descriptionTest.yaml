@@ -1,0 +1,22 @@
+name: descriptionTest
+description: Test values description and bindDescription
+
+runTest:
+  - blank:
+      description: I am description
+
+  - blank:
+      bindDescription: "`I am bindDescription with binded value data: ${data} and selector: ${selector}`"
+      data: { data: 'data' }
+      selector: { selector: 'selector' }
+
+  - blank:
+      description: I am description and I rewrite bindDescription
+      bindDescription: "`I am bindDescription`"
+
+  - blank:
+      description: I am descriptionExtend
+      descriptionExtend:
+        - descriptionExtend1
+        - descriptionExtend2
+        - descriptionExtend3
