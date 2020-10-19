@@ -130,6 +130,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Tags Test",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "tagsTest",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
+        "PPD_DEBUG_MODE": "true",
+        "PPD_TAGS_TO_RUN": "testTag"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "logOptions Test",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],

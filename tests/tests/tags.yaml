@@ -1,0 +1,19 @@
+---
+name: tagsTest
+description: Tags testing
+
+runTest:
+  - blank:
+      description: No tags block
+
+  - blank:
+      description: Tag in list
+      tags: ['testTag']
+
+  - blank:
+      description: Tag not in list. Skipped.
+      tags: ['testTagNotShow']
+
+  - blank:
+      description: Disable = true. Skipped.
+      disable: true

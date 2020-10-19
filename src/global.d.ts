@@ -82,6 +82,7 @@ export type ArgumentsType = {
   PPD_LOG_FULLPAGE: boolean;
   PPD_LOG_TEST_NAME: boolean;
   PPD_LOG_IGNORE_HIDE_LOG: boolean;
+  PPD_TAGS_TO_RUN: string[];
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
@@ -309,6 +310,7 @@ export type TestArgsType = {
   debug: boolean;
   logOptions: LogOptionsType;
   frame: string;
+  tags: string[];
 };
 
 export type TestArgsExtType = {

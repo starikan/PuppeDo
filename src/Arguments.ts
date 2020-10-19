@@ -22,6 +22,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_FULLPAGE: false,
   PPD_LOG_TEST_NAME: true,
   PPD_LOG_IGNORE_HIDE_LOG: false,
+  PPD_TAGS_TO_RUN: [],
 };
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {

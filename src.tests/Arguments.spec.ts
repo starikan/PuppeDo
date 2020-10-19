@@ -20,6 +20,7 @@ const argsModify = {
   PPD_LOG_FULLPAGE: true,
   PPD_LOG_TEST_NAME: false,
   PPD_LOG_IGNORE_HIDE_LOG: true,
+  PPD_TAGS_TO_RUN: ['tag'],
 };
 
 const argsENV = {
@@ -42,6 +43,7 @@ const argsENV = {
   PPD_LOG_FULLPAGE: 'true',
   PPD_LOG_TEST_NAME: 'false',
   PPD_LOG_IGNORE_HIDE_LOG: 'true',
+  PPD_TAGS_TO_RUN: 'tag',
 };
 
 // Reset Arguments

@@ -317,6 +317,12 @@ const fetchData = (
   return { dataLocal, selectorsLocal };
 };
 
+const getLogText = (text: string, nameTest = '', PPD_LOG_TEST_NAME = false): string => {
+  const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
+  const descriptionTest = text || 'TODO: Fill description';
+  return `${nameTestResolved}${descriptionTest}`;
+};
+
 export class Test {
   name: string;
   type: string;
@@ -359,6 +365,7 @@ export class Test {
   errorIfResult: string;
   resultsFromChildren: Record<string, unknown>;
   resultsFromParent: Record<string, unknown>;
+  tags: string[];
 
   envName: string;
   envPageName: string;
@@ -408,6 +415,7 @@ export class Test {
     disable = false,
     logOptions = {},
     frame = '',
+    tags = [],
   } = {}) {
     this.name = name;
     this.type = type;
@@ -439,6 +447,7 @@ export class Test {
     this.disable = disable;
     this.logOptions = logOptions;
     this.frame = frame;
+    this.tags = tags;
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -449,7 +458,13 @@ export class Test {
         envsPool,
       );
 
-      const { PPD_DEBUG_MODE, PPD_DISABLE_ENV_CHECK, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME } = new Arguments().args;
+      const {
+        PPD_DEBUG_MODE,
+        PPD_DISABLE_ENV_CHECK,
+        PPD_LOG_EXTEND,
+        PPD_LOG_TEST_NAME,
+        PPD_TAGS_TO_RUN,
+      } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug) {
@@ -458,6 +473,28 @@ export class Test {
       }
 
       if (this.disable) {
+        await logger.log({
+          text: `Skip with disable => ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
+          level: 'raw',
+          levelIndent,
+          logShowFlag,
+          textColor: 'blue',
+        });
+        return {};
+      }
+
+      if (this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
+        await logger.log({
+          text: `Skip with tags: ${JSON.stringify(this.tags)} => ${getLogText(
+            this.description,
+            this.name,
+            PPD_LOG_TEST_NAME,
+          )}`,
+          level: 'raw',
+          levelIndent,
+          logShowFlag,
+          textColor: 'blue',
+        });
         return {};
       }
 
@@ -544,6 +581,7 @@ export class Test {
           debug: this.debug,
           logOptions: logForChild,
           frame: this.frame,
+          tags: this.tags,
         };
 
         // IF
@@ -560,16 +598,10 @@ export class Test {
         }
 
         // LOG TEST
-        const getLogText = (text: string, nameTest = ''): string => {
-          const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
-          const descriptionTest = text || 'TODO: Fill description';
-          return `${nameTestResolved}${descriptionTest}`;
-        };
-
         logger.bindData({ testSource: source, bindedData: args });
 
         await logger.log({
-          text: getLogText(this.description, this.name),
+          text: getLogText(this.description, this.name, PPD_LOG_TEST_NAME),
           level: 'test',
           levelIndent,
           logShowFlag,
