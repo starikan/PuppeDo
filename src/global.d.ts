@@ -296,6 +296,8 @@ export type TestArgsType = {
   envsId: string;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
+  dataTest: Record<string, unknown>;
+  selectorsTest: Record<string, unknown>;
   envName: string;
   envPageName: string;
   options: Record<string, unknown>;

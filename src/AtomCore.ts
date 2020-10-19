@@ -22,6 +22,148 @@ const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
+const logStack = async (error: ErrorType, logFunction: LogFunctionType, levelIndent: number): Promise<void> => {
+  const newError = { ...error };
+  newError.stack = error.stack || '';
+  const errorStrings = [newError.message, ...newError.stack.split('\n')];
+  await logFunction({
+    text: 'Error stack:',
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+  });
+  for (let i = 0; i < errorStrings.length; i += 1) {
+    await logFunction({
+      text: errorStrings[i],
+      levelIndent: levelIndent + 2,
+      level: 'error',
+      extendInfo: true,
+    });
+  }
+};
+
+const logSpliter = async (logFunction: LogFunctionType, levelIndent = 0): Promise<void> => {
+  await logFunction({
+    text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+  });
+};
+
+const logTimer = async (
+  logFunction: LogFunctionType,
+  levelIndent = 0,
+  startTime: bigint,
+  isError = false,
+): Promise<void> => {
+  const { PPD_LOG_EXTEND } = new Arguments().args;
+  if (PPD_LOG_EXTEND || isError) {
+    await logFunction({
+      text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
+      level: isError ? 'error' : 'timer',
+      levelIndent: levelIndent + 1,
+      extendInfo: true,
+    });
+  }
+};
+
+const logExtend = async (
+  logFunction: LogFunctionType,
+  levelIndent: number,
+  args: TestArgsExtType,
+  isError = false,
+): Promise<void> => {
+  const { PPD_LOG_EXTEND } = new Arguments().args;
+  if (PPD_LOG_EXTEND || isError) {
+    const dataSources = [
+      ['📌📋 (bD):', args.bindData],
+      ['📋 (data):', args.dataTest],
+      ['☸️ (selectors):', args.selectorsTest],
+      ['📌☸️ (bS):', args.bindSelectors],
+      ['↩️ (results):', args.bindResults],
+      ['⚙️ (options):', args.options],
+    ].filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length);
+
+    for (let i = 0; i < dataSources.length; i += 1) {
+      const [text, object] = dataSources[i];
+      await logFunction({
+        text: `${text} ${JSON.stringify(object)}`,
+        levelIndent: levelIndent + 1,
+        level: isError ? 'error' : 'info',
+        extendInfo: true,
+      });
+    }
+  }
+};
+
+const logArgs = async (logFunction: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
+  const args = Object.entries(new Arguments().args);
+  await logFunction({
+    text: 'Arguments:',
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+    stdOut,
+  });
+  for (let i = 0; i < args.length; i += 1) {
+    const [key, val] = args[i];
+    await logFunction({
+      text: `${key}: ${JSON.stringify(val)}`,
+      levelIndent: levelIndent + 2,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+  }
+};
+
+const logDebug = async (
+  logFunction: LogFunctionType,
+  levelIndent: number,
+  args: TestArgsExtType,
+  stdOut = false,
+): Promise<void> => {
+  if (args.data && Object.keys(args.data).length) {
+    const dataDebug = JSON.stringify(args.data, null, 2).split('\n');
+    await logFunction({
+      text: '📋 (All Data):',
+      levelIndent: levelIndent + 1,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+    for (let i = 0; i < dataDebug.length; i += 1) {
+      await logFunction({
+        text: dataDebug[i],
+        levelIndent: levelIndent + 2,
+        level: 'error',
+        extendInfo: true,
+        stdOut,
+      });
+    }
+  }
+  if (args.selectors && Object.keys(args.selectors).length) {
+    const selectorsDebug = JSON.stringify(args.selectors, null, 2).split('\n');
+    await logFunction({
+      text: '☸️ (All Selectors):',
+      levelIndent: levelIndent + 1,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+    for (let i = 0; i < selectorsDebug.length; i += 1) {
+      await logFunction({
+        text: selectorsDebug[i],
+        levelIndent: levelIndent + 2,
+        level: 'error',
+        extendInfo: true,
+        stdOut,
+      });
+    }
+  }
+};
+
 class AtomError extends Error {
   constructor(message: string) {
     super(message);
@@ -39,11 +181,11 @@ export default class Atom {
   logOptions: LogOptionsType;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
-  dataTest: Record<string, unknown>;
-  selectorsTest: Record<string, unknown>;
-  bindData: Record<string, string>;
-  bindSelectors: Record<string, string>;
-  bindResults: Record<string, string>;
+  // dataTest: Record<string, unknown>;
+  // selectorsTest: Record<string, unknown>;
+  // bindData: Record<string, string>;
+  // bindSelectors: Record<string, string>;
+  // bindResults: Record<string, string>;
   options: Record<string, string>;
   frame: string;
 
@@ -112,138 +254,6 @@ export default class Atom {
     throw new AtomError('Empty Atom Run');
   }
 
-  async logStack(error: ErrorType): Promise<void> {
-    const newError = { ...error };
-    newError.stack = error.stack || '';
-    const errorStrings = [newError.message, ...newError.stack.split('\n')];
-    await this.log({
-      text: 'Error in Atom:',
-      levelIndent: this.levelIndent + 1,
-      level: 'error',
-      extendInfo: true,
-    });
-    for (let i = 0; i < errorStrings.length; i += 1) {
-      await this.log({
-        text: errorStrings[i],
-        levelIndent: this.levelIndent + 2,
-        level: 'error',
-        extendInfo: true,
-      });
-    }
-  }
-
-  static async logSpliter(logFunction: LogFunctionType, levelIndent = 0): Promise<void> {
-    await logFunction({
-      text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
-      levelIndent: levelIndent + 1,
-      level: 'error',
-      extendInfo: true,
-    });
-  }
-
-  static async logTimer(
-    logFunction: LogFunctionType,
-    levelIndent = 0,
-    startTime: bigint,
-    isError = false,
-  ): Promise<void> {
-    const { PPD_LOG_EXTEND } = new Arguments().args;
-    if (PPD_LOG_EXTEND || isError) {
-      await logFunction({
-        text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
-        level: isError ? 'error' : 'timer',
-        levelIndent: levelIndent + 1,
-        extendInfo: true,
-      });
-    }
-  }
-
-  async logExtend(isError = false): Promise<void> {
-    const { PPD_LOG_EXTEND } = new Arguments().args;
-    if (PPD_LOG_EXTEND || isError) {
-      const dataSources = [
-        ['📌📋 (bD):', this.bindData],
-        ['📋 (data):', this.dataTest],
-        ['☸️ (selectors):', this.selectorsTest],
-        ['📌☸️ (bS):', this.bindSelectors],
-        ['↩️ (bR):', this.bindResults],
-        ['⚙️ (options):', this.options],
-      ].filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length);
-
-      for (let i = 0; i < dataSources.length; i += 1) {
-        const [text, object] = dataSources[i];
-        await this.log({
-          text: `${text} ${JSON.stringify(object)}`,
-          levelIndent: this.levelIndent + 1,
-          level: isError ? 'error' : 'info',
-          extendInfo: true,
-        });
-      }
-    }
-  }
-
-  async logDebug(): Promise<void> {
-    if (this.data && Object.keys(this.data).length) {
-      const dataDebug = JSON.stringify(this.data, null, 2).split('\n');
-      await this.log({
-        text: '📋 (All Data):',
-        levelIndent: this.levelIndent + 1,
-        level: 'error',
-        extendInfo: true,
-        stdOut: false,
-      });
-      for (let i = 0; i < dataDebug.length; i += 1) {
-        await this.log({
-          text: dataDebug[i],
-          levelIndent: this.levelIndent + 2,
-          level: 'error',
-          extendInfo: true,
-          stdOut: false,
-        });
-      }
-    }
-    if (this.selectors && Object.keys(this.selectors).length) {
-      const selectorsDebug = JSON.stringify(this.selectors, null, 2).split('\n');
-      await this.log({
-        text: '☸️ (All Selectors):',
-        levelIndent: this.levelIndent + 1,
-        level: 'error',
-        extendInfo: true,
-        stdOut: false,
-      });
-      for (let i = 0; i < selectorsDebug.length; i += 1) {
-        await this.log({
-          text: selectorsDebug[i],
-          levelIndent: this.levelIndent + 2,
-          level: 'error',
-          extendInfo: true,
-          stdOut: false,
-        });
-      }
-    }
-  }
-
-  async logArgs(): Promise<void> {
-    const args = Object.entries(new Arguments().args);
-    await this.log({
-      text: 'Arguments:',
-      levelIndent: this.levelIndent + 1,
-      level: 'error',
-      extendInfo: true,
-      stdOut: false,
-    });
-    for (let i = 0; i < args.length; i += 1) {
-      const [key, val] = args[i];
-      await this.log({
-        text: `${key}: ${JSON.stringify(val)}`,
-        levelIndent: this.levelIndent + 2,
-        level: 'error',
-        extendInfo: true,
-        stdOut: false,
-      });
-    }
-  }
-
   async updateFrame(): Promise<void> {
     if (!this.frame) {
       return;
@@ -283,8 +293,8 @@ export default class Atom {
     try {
       await this.updateFrame();
       const result = await this.atomRun();
-      await Atom.logTimer(this.log, this.levelIndent, startTime);
-      await this.logExtend();
+      await logTimer(this.log, this.levelIndent, startTime);
+      await logExtend(this.log, this.levelIndent, args);
       return result;
     } catch (error) {
       const outputFile = path.join(this.envs.output.folderFull, 'output.log');
@@ -300,13 +310,13 @@ export default class Atom {
         level: 'error',
       });
 
-      await Atom.logSpliter(this.log, this.levelIndent);
-      await Atom.logTimer(this.log, this.levelIndent, startTime, true);
-      await this.logExtend(true);
-      await this.logDebug();
-      await this.logArgs();
-      await this.logStack(error);
-      await Atom.logSpliter(this.log, this.levelIndent);
+      await logSpliter(this.log, this.levelIndent);
+      await logTimer(this.log, this.levelIndent, startTime, true);
+      await logExtend(this.log, this.levelIndent, args, true);
+      await logDebug(this.log, this.levelIndent, args);
+      await logArgs(this.log, this.levelIndent);
+      await logStack(error, this.log, this.levelIndent);
+      await logSpliter(this.log, this.levelIndent);
 
       throw new AtomError('Error in Atom');
     }

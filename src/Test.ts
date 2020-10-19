@@ -567,6 +567,8 @@ export class Test {
           envsId,
           data: dataLocal,
           selectors: selectorsLocal,
+          dataTest: this.data,
+          selectorsTest: this.selectors,
           envName: this.envName,
           envPageName: this.envPageName,
           options: this.options,
