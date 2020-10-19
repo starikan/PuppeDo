@@ -91,14 +91,14 @@ const getTest = (
   const test = new Test(testJson);
 
   return {
-    test: async (args: TestArgsExtType): Promise<Record<string, unknown>> => {
-      let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args, [
+    test: async (args: TestArgsExtType | null): Promise<Record<string, unknown>> => {
+      let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args || {}, [
         'options',
         'data',
         'selectors',
         'logOptions',
       ]);
-      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
+      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args || {}, ['debug', 'frame']);
       updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
       const result = await test.run(envsId, updatetTestJson);
       // eslint-disable-next-line no-param-reassign

@@ -50,5 +50,5 @@ test('Helpers -> blankSocket', () => {
   expect(typeof blankSocket.send === 'function').toBe(true);
   expect(typeof blankSocket.sendYAML === 'function').toBe(true);
   expect(blankSocket.send()).toBeFalsy();
-  expect(blankSocket.sendYAML()).toBeFalsy();
+  expect(blankSocket.sendYAML({ type: 'string', data: {}, envsId: 'string' })).toBeFalsy();
 });

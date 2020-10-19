@@ -48,7 +48,7 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });
-      await test();
+      await test(null);
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta} sec.` });
     }
 

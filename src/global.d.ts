@@ -90,17 +90,17 @@ export type ArgumentsKeysType = keyof ArgumentsType;
 // ================ LOGGER ====================
 
 export type LogEntry = {
-  text: string;
-  time: string;
+  text?: string;
+  time?: string;
   dataEnvs?: Record<string, unknown>;
   dataEnvsGlobal?: Record<string, unknown>;
-  testStruct: Record<string, unknown>;
-  bindedData: Record<string, unknown>;
-  screenshots: Array<string>;
-  type: string;
-  level: string;
-  levelIndent: number;
-  stepId: string;
+  testStruct?: Record<string, unknown>;
+  bindedData?: Record<string, unknown>;
+  screenshots?: Array<string>;
+  type?: string;
+  level?: string;
+  levelIndent?: number;
+  stepId?: string;
 };
 
 export type LogOptionsType = {
@@ -130,7 +130,7 @@ export type LogInputType = {
   element?: Element;
   testStruct?: string;
   levelIndent?: number;
-  error?: ErrorType | null;
+  error?: Error | ErrorType | null;
   testSource?: any;
   bindedData?: any;
   extendInfo?: boolean;
