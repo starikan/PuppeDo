@@ -514,7 +514,7 @@ export class Test {
 
       this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
       this.description = inputs.description || this.description;
-      this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend;
+      this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
       this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -621,12 +621,13 @@ export class Test {
         }
 
         // Extend with data passed to functions
+        const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
         const argsExt: TestArgsExtType = {
           ...args,
           env: this.env,
           envs: envsPool,
           browser: this.env && this.env.state.browser,
-          page: this.env && this.env.state.pages[this.envPageName], // If there is no page it`s might be API
+          page: pageCurrent || null, // If there is no page it`s might be API
           log: logger.log.bind(logger),
           name: this.name,
           description: this.description,

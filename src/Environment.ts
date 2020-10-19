@@ -147,6 +147,8 @@ export class EnvsPool implements EnvsPoolType {
       } else {
         throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
       }
+    } else if (!this.envs[name]?.state?.browser) {
+      await this.runBrowsers(name);
     }
 
     this.current.name = name;
@@ -333,6 +335,32 @@ export class EnvsPool implements EnvsPoolType {
       }
     }
     throw new Error(`Can't run Electron ${runtimeExecutable}`);
+  }
+
+  async closeEnv(name: string): Promise<void> {
+    const { state, env } = this.envs[name] || {};
+    try {
+      await state.browser.close();
+      delete this.envs[name].state.browser;
+      delete this.envs[name].state.pages;
+      delete this.envs[name].state.contexts;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      // throw error;
+    }
+    try {
+      const killOnEnd = env.browser?.killOnEnd || true;
+      const killProcessName = env.browser?.killProcessName;
+      if (killOnEnd && killProcessName) {
+        spawnSync('taskkill', ['/f', '/im', killProcessName]);
+      }
+      delete this.envs[name].state.pid;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      // throw error;
+    }
   }
 
   async closeBrowsers(): Promise<void> {
