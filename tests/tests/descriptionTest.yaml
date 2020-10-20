@@ -20,3 +20,11 @@ runTest:
         - descriptionExtend1
         - descriptionExtend2
         - descriptionExtend3
+
+  - loop:
+      description: Loop description
+      repeat: 2
+
+  - loop:
+      bindDescription: "`Loop bindDescription ${repeat}`"
+      repeat: 2

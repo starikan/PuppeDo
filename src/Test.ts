@@ -483,7 +483,7 @@ export class Test {
         return {};
       }
 
-      if (this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
+      if (PPD_TAGS_TO_RUN.length && this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
         await logger.log({
           text: `Skip with tags: ${JSON.stringify(this.tags)} => ${getLogText(
             this.description,
@@ -553,14 +553,18 @@ export class Test {
 
         const allData = merge(selectorsLocal, dataLocal);
 
+        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
+        allData.repeat = this.repeat;
+        dataLocal.repeat = this.repeat;
+        selectorsLocal.repeat = this.repeat;
+
+        let descriptionResolved = this.description;
         if (this.bindDescription) {
-          this.description = this.description || String(runScriptInContext(this.bindDescription, allData));
+          descriptionResolved = descriptionResolved || String(runScriptInContext(this.bindDescription, allData));
         }
-        if (!this.description) {
+        if (!descriptionResolved) {
           this.logOptions.backgroundColor = 'red';
         }
-
-        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
 
         // All data passed to log
         const args: TestArgsType = {
@@ -603,7 +607,7 @@ export class Test {
         logger.bindData({ testSource: source, bindedData: args });
 
         await logger.log({
-          text: getLogText(this.description, this.name, PPD_LOG_TEST_NAME),
+          text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
           level: 'test',
           levelIndent,
           logShowFlag,
@@ -630,7 +634,7 @@ export class Test {
           page: pageCurrent || null, // If there is no page it`s might be API
           log: logger.log.bind(logger),
           name: this.name,
-          description: this.description,
+          description: descriptionResolved,
           socket: this.socket,
         };
 

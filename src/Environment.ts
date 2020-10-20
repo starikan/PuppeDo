@@ -346,8 +346,7 @@ export class EnvsPool implements EnvsPoolType {
       delete this.envs[name].state.contexts;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(error);
-      // throw error;
+      // console.log(error);
     }
     try {
       const killOnEnd = env.browser?.killOnEnd || true;
@@ -358,8 +357,7 @@ export class EnvsPool implements EnvsPoolType {
       delete this.envs[name].state.pid;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(error);
-      // throw error;
+      // console.log(error);
     }
   }
 
