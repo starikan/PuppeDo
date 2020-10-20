@@ -24,10 +24,10 @@ runTest:
   - goTo:
       bD: { url: baseUrl }
 
-  - getText:
-      description: Get some fake Text
-      s: { selector: '.mainInputFake' }
-
-  # - clickSelector:
-  #     description: Click some fake Text
+  # - getText:
+  #     description: Get some fake Text
   #     s: { selector: '.mainInputFake' }
+
+  - clickSelector:
+      description: Click some fake Text
+      s: { selector: '.mainInputFake' }

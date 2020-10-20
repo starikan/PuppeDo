@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Page as PagePuppeteer } from 'puppeteer';
 
-import { logExtend, logDebug, logArgs, logStack, logSpliter, logTimer, logExtendFileInfo } from './Log';
+import { logExtend, logDebug, logArgs, logStack, logTimer, logExtendFileInfo, logErrorMessage } from './Log';
 import Env from './Env';
 
 import {
@@ -37,11 +37,6 @@ export default class Atom {
   logOptions: LogOptionsType;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
-  // dataTest: Record<string, unknown>;
-  // selectorsTest: Record<string, unknown>;
-  // bindData: Record<string, string>;
-  // bindSelectors: Record<string, string>;
-  // bindResults: Record<string, string>;
   options: Record<string, string>;
   frame: string;
 
@@ -153,20 +148,13 @@ export default class Atom {
       await logExtend(this.log, this.levelIndent, args);
       return result;
     } catch (error) {
+      await logTimer(this.log, this.levelIndent, startTime);
+      await logErrorMessage(this.log, 0, error);
+      await logStack(this.log, 0, error);
+      await logExtend(this.log, 0, args, true);
+      await logArgs(this.log, 0);
+      await logDebug(this.log, 0, args);
       await logExtendFileInfo(this.log, 0, args.envsId);
-      await this.log({
-        text: error.message,
-        levelIndent: 0,
-        level: 'error',
-      });
-
-      // await logSpliter(this.log, this.levelIndent);
-      await logTimer(this.log, this.levelIndent, startTime, true);
-      await logExtend(this.log, this.levelIndent, args, true);
-      await logDebug(this.log, this.levelIndent, args);
-      await logArgs(this.log, this.levelIndent);
-      await logStack(error, this.log, this.levelIndent);
-      await logSpliter(this.log, this.levelIndent);
 
       throw new AtomError('Error in Atom');
     }

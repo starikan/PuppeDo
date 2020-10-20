@@ -55,7 +55,6 @@
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "mainWithError",
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
       }
@@ -72,7 +71,6 @@
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "testWithNoAtom",
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
       }

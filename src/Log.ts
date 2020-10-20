@@ -20,162 +20,96 @@ import {
 import { ErrorType } from './Error';
 import Environment from './Environment';
 
-export const logExtendFileInfo = async (
-  logFunction: LogFunctionType,
-  levelIndent: number,
-  envsId: string,
-): Promise<void> => {
+export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId: string): Promise<void> => {
   const envs = Environment(envsId);
   const outputFile = path.join(envs.envsPool.output.folderFull, 'output.log');
-  const text = ['=============== EXTEND FILE ===============', `\u001B[42mfile:///${outputFile}\u001B[0m`, ''];
-  await logFunction({
-    text,
-    levelIndent,
-    level: 'error',
-    extendInfo: true,
-  });
+  const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
+  await log({ text, levelIndent, level: 'error', extendInfo: true });
 };
 
-export const logStack = async (error: ErrorType, logFunction: LogFunctionType, levelIndent: number): Promise<void> => {
-  const newError = { ...error };
-  newError.stack = error.stack || '';
-  const errorStrings = [newError.message, ...newError.stack.split('\n')];
-  await logFunction({
-    text: 'Error stack:',
-    levelIndent: levelIndent + 1,
-    level: 'error',
-    extendInfo: true,
-  });
-  for (let i = 0; i < errorStrings.length; i += 1) {
-    await logFunction({
-      text: errorStrings[i],
-      levelIndent: levelIndent + 2,
-      level: 'error',
-      extendInfo: true,
-    });
+export const logErrorMessage = async (log: LogFunctionType, levelIndent: number, error: ErrorType): Promise<void> => {
+  if (error.message) {
+    const text = ['============== ERROR MESSAGE ==============', ...error.message.split('\n'), ''];
+    await log({ text, levelIndent, level: 'error', extendInfo: true });
   }
 };
 
-export const logSpliter = async (logFunction: LogFunctionType, levelIndent = 0): Promise<void> => {
-  await logFunction({
-    text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
-    levelIndent: levelIndent + 1,
-    level: 'error',
-    extendInfo: true,
-  });
+export const logStack = async (
+  log: LogFunctionType,
+  levelIndent: number,
+  error: ErrorType,
+  stdOut = false,
+): Promise<void> => {
+  if (error.stack) {
+    const text = ['============== ERROR STACK ==============', ...error.stack.split('\n'), ''];
+    await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+  }
 };
 
-export const logTimer = async (
-  logFunction: LogFunctionType,
-  levelIndent = 0,
-  startTime: bigint,
-  isError = false,
-): Promise<void> => {
+export const logTimer = async (log: LogFunctionType, levelIndent = 0, startTime: bigint): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
-  if (PPD_LOG_EXTEND || isError) {
-    await logFunction({
-      text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
-      level: isError ? 'error' : 'timer',
-      levelIndent: levelIndent + 1,
-      extendInfo: true,
-    });
+  if (PPD_LOG_EXTEND) {
+    const text = `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`;
+    await log({ text, level: 'timer', levelIndent: levelIndent + 1, extendInfo: true });
   }
 };
 
 export const logExtend = async (
-  logFunction: LogFunctionType,
+  log: LogFunctionType,
   levelIndent: number,
   args: TestArgsExtType,
   isError = false,
 ): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
   if (PPD_LOG_EXTEND || isError) {
-    const dataSources = [
-      ['📌📋 (bD):', args.bindData],
+    let text = [
       ['📋 (data):', args.dataTest],
+      ['📌📋 (bD):', args.bindData],
       ['☸️ (selectors):', args.selectorsTest],
       ['📌☸️ (bS):', args.bindSelectors],
       ['↩️ (results):', args.bindResults],
       ['⚙️ (options):', args.options],
-    ].filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length);
+    ]
+      .filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length)
+      .map((v) => `${v[0]} ${JSON.stringify(v[1])}`);
 
-    for (let i = 0; i < dataSources.length; i += 1) {
-      const [text, object] = dataSources[i];
-      await logFunction({
-        text: `${text} ${JSON.stringify(object)}`,
-        levelIndent: levelIndent + 1,
-        level: isError ? 'error' : 'info',
-        extendInfo: true,
-      });
+    if (isError && text.length) {
+      text = ['============== ALL DATA ==============', ...text, ''];
     }
-  }
-};
 
-export const logArgs = async (logFunction: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
-  const args = Object.entries(new Arguments().args);
-  await logFunction({
-    text: 'Arguments:',
-    levelIndent: levelIndent + 1,
-    level: 'error',
-    extendInfo: true,
-    stdOut,
-  });
-  for (let i = 0; i < args.length; i += 1) {
-    const [key, val] = args[i];
-    await logFunction({
-      text: `${key}: ${JSON.stringify(val)}`,
-      levelIndent: levelIndent + 2,
-      level: 'error',
+    await log({
+      text,
+      levelIndent: isError ? levelIndent : levelIndent + 1,
+      level: isError ? 'error' : 'info',
       extendInfo: true,
-      stdOut,
     });
   }
 };
 
+export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
+  const args = Object.entries(new Arguments().args).map((v) => `${v[0]}: ${JSON.stringify(v[1])}`);
+  const text = ['============== ARGUMENTS ==============', ...args, ''];
+  await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+};
+
 export const logDebug = async (
-  logFunction: LogFunctionType,
+  log: LogFunctionType,
   levelIndent: number,
   args: TestArgsExtType,
   stdOut = false,
 ): Promise<void> => {
+  let text = [];
+
   if (args.data && Object.keys(args.data).length) {
     const dataDebug = JSON.stringify(args.data, null, 2).split('\n');
-    await logFunction({
-      text: '📋 (All Data):',
-      levelIndent: levelIndent + 1,
-      level: 'error',
-      extendInfo: true,
-      stdOut,
-    });
-    for (let i = 0; i < dataDebug.length; i += 1) {
-      await logFunction({
-        text: dataDebug[i],
-        levelIndent: levelIndent + 2,
-        level: 'error',
-        extendInfo: true,
-        stdOut,
-      });
-    }
+    text = [...text, '============== DEBUG DATA ==============', ...dataDebug, ''];
   }
   if (args.selectors && Object.keys(args.selectors).length) {
     const selectorsDebug = JSON.stringify(args.selectors, null, 2).split('\n');
-    await logFunction({
-      text: '☸️ (All Selectors):',
-      levelIndent: levelIndent + 1,
-      level: 'error',
-      extendInfo: true,
-      stdOut,
-    });
-    for (let i = 0; i < selectorsDebug.length; i += 1) {
-      await logFunction({
-        text: selectorsDebug[i],
-        levelIndent: levelIndent + 2,
-        level: 'error',
-        extendInfo: true,
-        stdOut,
-      });
-    }
+    text = [...text, '============== DEBUG SELECTORS ==============', ...selectorsDebug, ''];
   }
+
+  await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
 };
 
 export default class Log {
