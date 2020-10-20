@@ -708,9 +708,9 @@ export class Test {
           });
         }
 
-        // eslint-disable-next-line consistent-return
         return localResults;
       } catch (error) {
+        // debugger;
         const newError = new TestError({ logger, parentError: error, test: this, envsId });
         await newError.log();
         throw newError;

@@ -22,7 +22,6 @@ const resolveJS = (testJson: any, funcFile: string): any => {
     }
   } catch (err) {
     // If there is no JS file it`s fine.
-    testJsonNew.funcFile = 'No file';
     testJsonNew.runTest = [
       (): void => {
         // Do nothig

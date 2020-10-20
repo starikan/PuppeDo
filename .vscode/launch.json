@@ -171,6 +171,20 @@
         "PPD_TESTS": "logOptions",
         "PPD_DEBUG_MODE": "true"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "errorIf Test",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_ENVS": "mainEnv",
+        "PPD_TESTS": "errorIf",
+        "PPD_DEBUG_MODE": "true"
+      }
     }
   ]
 }

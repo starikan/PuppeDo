@@ -121,7 +121,7 @@ export type LogEntrieType = {
 };
 
 export type LogInputType = {
-  text: string;
+  text: string | string[];
   funcFile?: string;
   testFile?: string;
   screenshot?: boolean;

@@ -7,8 +7,176 @@ import { paintString, colors, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import { ColorsType, EnvsPoolType, LogEntrieType, LogEntry, LogInputType, SocketType } from './global.d';
+import {
+  ColorsType,
+  EnvsPoolType,
+  LogEntrieType,
+  LogEntry,
+  LogFunctionType,
+  LogInputType,
+  SocketType,
+  TestArgsExtType,
+} from './global.d';
 import { ErrorType } from './Error';
+import Environment from './Environment';
+
+export const logExtendFileInfo = async (
+  logFunction: LogFunctionType,
+  levelIndent: number,
+  envsId: string,
+): Promise<void> => {
+  const envs = Environment(envsId);
+  const outputFile = path.join(envs.envsPool.output.folderFull, 'output.log');
+  const text = ['=============== EXTEND FILE ===============', `\u001B[42mfile:///${outputFile}\u001B[0m`, ''];
+  await logFunction({
+    text,
+    levelIndent,
+    level: 'error',
+    extendInfo: true,
+  });
+};
+
+export const logStack = async (error: ErrorType, logFunction: LogFunctionType, levelIndent: number): Promise<void> => {
+  const newError = { ...error };
+  newError.stack = error.stack || '';
+  const errorStrings = [newError.message, ...newError.stack.split('\n')];
+  await logFunction({
+    text: 'Error stack:',
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+  });
+  for (let i = 0; i < errorStrings.length; i += 1) {
+    await logFunction({
+      text: errorStrings[i],
+      levelIndent: levelIndent + 2,
+      level: 'error',
+      extendInfo: true,
+    });
+  }
+};
+
+export const logSpliter = async (logFunction: LogFunctionType, levelIndent = 0): Promise<void> => {
+  await logFunction({
+    text: '='.repeat(120 - (levelIndent + 1) * 3 - 21),
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+  });
+};
+
+export const logTimer = async (
+  logFunction: LogFunctionType,
+  levelIndent = 0,
+  startTime: bigint,
+  isError = false,
+): Promise<void> => {
+  const { PPD_LOG_EXTEND } = new Arguments().args;
+  if (PPD_LOG_EXTEND || isError) {
+    await logFunction({
+      text: `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`,
+      level: isError ? 'error' : 'timer',
+      levelIndent: levelIndent + 1,
+      extendInfo: true,
+    });
+  }
+};
+
+export const logExtend = async (
+  logFunction: LogFunctionType,
+  levelIndent: number,
+  args: TestArgsExtType,
+  isError = false,
+): Promise<void> => {
+  const { PPD_LOG_EXTEND } = new Arguments().args;
+  if (PPD_LOG_EXTEND || isError) {
+    const dataSources = [
+      ['📌📋 (bD):', args.bindData],
+      ['📋 (data):', args.dataTest],
+      ['☸️ (selectors):', args.selectorsTest],
+      ['📌☸️ (bS):', args.bindSelectors],
+      ['↩️ (results):', args.bindResults],
+      ['⚙️ (options):', args.options],
+    ].filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length);
+
+    for (let i = 0; i < dataSources.length; i += 1) {
+      const [text, object] = dataSources[i];
+      await logFunction({
+        text: `${text} ${JSON.stringify(object)}`,
+        levelIndent: levelIndent + 1,
+        level: isError ? 'error' : 'info',
+        extendInfo: true,
+      });
+    }
+  }
+};
+
+export const logArgs = async (logFunction: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
+  const args = Object.entries(new Arguments().args);
+  await logFunction({
+    text: 'Arguments:',
+    levelIndent: levelIndent + 1,
+    level: 'error',
+    extendInfo: true,
+    stdOut,
+  });
+  for (let i = 0; i < args.length; i += 1) {
+    const [key, val] = args[i];
+    await logFunction({
+      text: `${key}: ${JSON.stringify(val)}`,
+      levelIndent: levelIndent + 2,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+  }
+};
+
+export const logDebug = async (
+  logFunction: LogFunctionType,
+  levelIndent: number,
+  args: TestArgsExtType,
+  stdOut = false,
+): Promise<void> => {
+  if (args.data && Object.keys(args.data).length) {
+    const dataDebug = JSON.stringify(args.data, null, 2).split('\n');
+    await logFunction({
+      text: '📋 (All Data):',
+      levelIndent: levelIndent + 1,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+    for (let i = 0; i < dataDebug.length; i += 1) {
+      await logFunction({
+        text: dataDebug[i],
+        levelIndent: levelIndent + 2,
+        level: 'error',
+        extendInfo: true,
+        stdOut,
+      });
+    }
+  }
+  if (args.selectors && Object.keys(args.selectors).length) {
+    const selectorsDebug = JSON.stringify(args.selectors, null, 2).split('\n');
+    await logFunction({
+      text: '☸️ (All Selectors):',
+      levelIndent: levelIndent + 1,
+      level: 'error',
+      extendInfo: true,
+      stdOut,
+    });
+    for (let i = 0; i < selectorsDebug.length; i += 1) {
+      await logFunction({
+        text: selectorsDebug[i],
+        levelIndent: levelIndent + 2,
+        level: 'error',
+        extendInfo: true,
+        stdOut,
+      });
+    }
+  }
+};
 
 export default class Log {
   envsId: string;
@@ -236,12 +404,15 @@ export default class Log {
   }: LogInputType): Promise<void> {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
 
+    const texts = typeof text === 'string' ? [text] : text;
+
     const levelText = Log.checkLevel(level);
     if (!levelText) return;
 
     if (levelText !== 'error' && !logShowFlag) return;
 
     if (levelText === 'error') {
+      // debugger;
       // eslint-disable-next-line no-param-reassign
       backgroundColor = 'sane';
     }
@@ -268,63 +439,65 @@ export default class Log {
       const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
 
       const now = new Date();
-      const logTexts = this.makeLog(
-        levelText,
-        levelIndent,
-        text,
-        now,
-        funcFile,
-        testFile,
-        extendInfo,
-        screenshots,
-        error,
-        textColor,
-        backgroundColor,
-      );
+      texts.forEach((textString) => {
+        const logTexts = this.makeLog(
+          levelText,
+          levelIndent,
+          textString,
+          now,
+          funcFile,
+          testFile,
+          extendInfo,
+          screenshots,
+          error,
+          textColor,
+          backgroundColor,
+        );
 
-      // STDOUT
-      if (stdOut) Log.consoleLog(logTexts);
+        // STDOUT
+        if (stdOut) Log.consoleLog(logTexts);
 
-      // EXPORT TEXT LOG
-      this.fileLog(logTexts, 'output.log');
+        // EXPORT TEXT LOG
+        this.fileLog(logTexts, 'output.log');
+        // ENVS TO LOG
+        // let dataEnvs = null;
+        // if (level === 'env') {
+        //   dataEnvs = Object.values(this.envs?.envs || {}).map((val) => omit(val, ['state']));
+        // }
 
-      // ENVS TO LOG
-      // let dataEnvs = null;
-      // if (level === 'env') {
-      //   dataEnvs = Object.values(this.envs?.envs || {}).map((val) => omit(val, ['state']));
-      // }
+        // TODO: 2020-04-28 S.Starodubov todo
+        // _.mapValues(testSource, (v) => {
+        //   if (!_.isEmpty(v)) {
+        //     return v;
+        //   }
+        // })
+        // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
+        const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
 
-      // TODO: 2020-04-28 S.Starodubov todo
-      // _.mapValues(testSource, (v) => {
-      //   if (!_.isEmpty(v)) {
-      //     return v;
-      //   }
-      // })
-      // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
-      const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
+        const { PPD_DEBUG_MODE } = new Arguments().args;
 
-      const { PPD_DEBUG_MODE } = new Arguments().args;
+        // TODO: 2020-02-02 S.Starodubov this two fields need for html
+        // dataEnvs,
+        // dataEnvsGlobal: level === 'env' ?
+        // pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
+        const logEntry: LogEntry = {
+          text: textString,
+          time: getNowDateTime(now),
+          testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
+          bindedData: PPD_DEBUG_MODE ? bindedData : null,
+          screenshots,
+          type: level === 'env' ? 'env' : 'log',
+          level,
+          levelIndent,
+          stepId: bindedData?.stepId || stepId,
+        };
+        this.envs.log = [...this.envs.log, logEntry];
+        this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
-      // TODO: 2020-02-02 S.Starodubov this two fields need for html
-      // dataEnvs,
-      // dataEnvsGlobal: level === 'env' ? pick(this.envs, ['args', 'current', 'data', 'results', 'selectors']) : null,
-      const logEntry: LogEntry = {
-        text,
-        time: getNowDateTime(now),
-        testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
-        bindedData: PPD_DEBUG_MODE ? bindedData : null,
-        screenshots,
-        type: level === 'env' ? 'env' : 'log',
-        level,
-        levelIndent,
-        stepId: bindedData?.stepId || stepId,
-      };
-      this.envs.log = [...this.envs.log, logEntry];
-      this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
-
-      // Export YAML log every step
-      const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
-      this.fileLog(yamlString, 'output.yaml');
+        // Export YAML log every step
+        const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
+        this.fileLog(yamlString, 'output.yaml');
+      });
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
       err.message += ' || error in log';

@@ -1,0 +1,33 @@
+name: errorIf
+description: Error with IF
+
+runTest:
+  - clickSelector:
+  - blank:
+      errorIf: 1 === 1
+
+---
+name: mainWithError
+type: test
+
+data:
+  mainTestData: foo
+
+dataExt:
+  - dataExtMain
+
+beforeTest:
+  - envSwitch:
+      data: { envName: 'mainEnv' }
+
+runTest:
+  - goTo:
+      bD: { url: baseUrl }
+
+  - getText:
+      description: Get some fake Text
+      s: { selector: '.mainInputFake' }
+
+  # - clickSelector:
+  #     description: Click some fake Text
+  #     s: { selector: '.mainInputFake' }
