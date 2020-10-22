@@ -9,6 +9,7 @@ import Environment from './Environment';
 import Log from './Log';
 import Singleton from './Singleton';
 import { sleep, merge, paintString, blankSocket } from './Helpers';
+import { runScriptInContext } from './Test';
 
 export {
   run,
@@ -26,4 +27,5 @@ export {
   paintString,
   blankSocket,
   argsDefault,
+  runScriptInContext,
 };

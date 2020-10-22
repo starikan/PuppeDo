@@ -6,6 +6,7 @@ import { Arguments } from './Arguments';
 import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
+import { logDebug } from './Log';
 
 import {
   LogOptionsType,
@@ -90,7 +91,7 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
-const runScriptInContext = (source: string, context: Record<string, unknown>): unknown => {
+export const runScriptInContext = (source: string, context: Record<string, unknown>): unknown => {
   let result: unknown;
 
   if (source === '{}') {
@@ -347,6 +348,7 @@ export class Test {
   funcFile: string;
   testFile: string;
   debug: boolean;
+  debugInfo: 'data' | 'selectors' | boolean;
   disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
@@ -412,6 +414,7 @@ export class Test {
     funcFile = null,
     testFile = null,
     debug = false,
+    debugInfo = null,
     disable = false,
     logOptions = {},
     frame = '',
@@ -444,6 +447,7 @@ export class Test {
     this.funcFile = funcFile;
     this.testFile = testFile;
     this.debug = debug;
+    this.debugInfo = debugInfo;
     this.disable = disable;
     this.logOptions = logOptions;
     this.frame = frame;
@@ -468,6 +472,8 @@ export class Test {
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug) {
+        // eslint-disable-next-line no-console
+        console.log(this);
         // eslint-disable-next-line no-debugger
         debugger;
       }
@@ -588,6 +594,9 @@ export class Test {
           logOptions: logForChild,
           frame: this.frame,
           tags: this.tags,
+          ppd: {
+            runScriptInContext,
+          },
         };
 
         // IF
@@ -637,6 +646,16 @@ export class Test {
           description: descriptionResolved,
           socket: this.socket,
         };
+
+        if (this.debugInfo) {
+          logDebug(logger.log.bind(logger), 0, argsExt, true, this.debugInfo);
+          // eslint-disable-next-line no-console
+          console.log(argsExt);
+          // eslint-disable-next-line no-console
+          console.log(this);
+          // eslint-disable-next-line no-debugger
+          debugger;
+        }
 
         // RUN FUNCTIONS
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];

@@ -313,6 +313,9 @@ export type TestArgsType = {
   logOptions: LogOptionsType;
   frame: string;
   tags: string[];
+  ppd: {
+    runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
+  };
 };
 
 export type TestArgsExtType = {

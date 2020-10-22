@@ -97,14 +97,15 @@ export const logDebug = async (
   levelIndent: number,
   args: TestArgsExtType,
   stdOut = false,
+  type: 'data' | 'selectors' | boolean = true,
 ): Promise<void> => {
   let text = [];
 
-  if (args.data && Object.keys(args.data).length) {
+  if (args.data && Object.keys(args.data).length && (type === true || type === 'data')) {
     const dataDebug = JSON.stringify(args.data, null, 2).split('\n');
     text = [...text, '============== DEBUG DATA ==============', ...dataDebug, ''];
   }
-  if (args.selectors && Object.keys(args.selectors).length) {
+  if (args.selectors && Object.keys(args.selectors).length && (type === true || type === 'selectors')) {
     const selectorsDebug = JSON.stringify(args.selectors, null, 2).split('\n');
     text = [...text, '============== DEBUG SELECTORS ==============', ...selectorsDebug, ''];
   }
