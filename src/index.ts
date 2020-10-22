@@ -11,7 +11,7 @@ import Singleton from './Singleton';
 import { sleep, merge, paintString, blankSocket } from './Helpers';
 import { runScriptInContext } from './Test';
 
-export {
+export default {
   run,
   errorHandler,
   TestStructure,

@@ -5,13 +5,14 @@ import crypto from 'crypto';
 
 import fetch from 'node-fetch';
 import walkSync from 'walk-sync';
+import { Browser as BrowserPuppeteer } from 'puppeteer';
+import { Browser as BrowserPlaywright } from 'playwright';
 
 import { sleep, blankSocket, getNowDateTime } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
 import Env from './Env';
 import Log from './Log';
-
 import {
   BrouserLaunchOptions,
   BrowserFrame,
@@ -208,7 +209,6 @@ export class EnvsPool implements EnvsPoolType {
     const { headless = true, slowMo = 0, args = [], windowSize = {}, browserName: product = 'chrome' } =
       browserSettings || {};
 
-    // eslint-disable-next-line no-undef
     const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE, product });
 
@@ -233,7 +233,6 @@ export class EnvsPool implements EnvsPoolType {
       options.devtools = PPD_DEBUG_MODE;
     }
 
-    // eslint-disable-next-line no-undef
     const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
     const context = await browser.newContext();
@@ -245,8 +244,56 @@ export class EnvsPool implements EnvsPoolType {
     return { browser, contexts, pages };
   }
 
+  static async connectPuppeteer(
+    webSocketDebuggerUrl: string,
+    slowMo: number,
+    windowSize: { width?: number; height?: number },
+  ): Promise<{ browser: BrowserPuppeteer; pages: Record<string, BrowserPageType> }> {
+    const puppeteer = __non_webpack_require__('puppeteer');
+    const browser = await puppeteer.connect({
+      browserWSEndpoint: webSocketDebuggerUrl,
+      ignoreHTTPSErrors: true,
+      slowMo,
+    });
+
+    const pagesRaw = await browser.pages();
+
+    if (!pagesRaw.length) {
+      throw new Error('Can`t find any pages in connection');
+    }
+    const pages = { main: pagesRaw[0] };
+
+    const { width, height } = windowSize;
+    if (width && height) {
+      await pages.main.setViewport({ width, height });
+    }
+    return { browser, pages };
+  }
+
+  static async connectPlaywright(
+    webSocketDebuggerUrl: string,
+    slowMo: number,
+    windowSize: { width?: number; height?: number },
+  ): Promise<{ browser: BrowserPlaywright; pages: Record<string, BrowserPageType> }> {
+    const playwright = __non_webpack_require__('playwright');
+    const browser = await playwright.connect({ wsEndpoint: webSocketDebuggerUrl, slowMo });
+    const contexts = await browser.contexts();
+    const pagesRaw = await contexts.pages();
+
+    if (!pagesRaw.length) {
+      throw new Error('Can`t find any pages in connection');
+    }
+    const pages = { main: pagesRaw[0] };
+
+    const { width, height } = windowSize;
+    if (width && height) {
+      await pages.main.setViewportSize({ width, height });
+    }
+    return { browser, pages };
+  }
+
   static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
-    const { urlDevtoolsJson, windowSize = {}, slowMo = 0 } = browserSettings || {};
+    const { urlDevtoolsJson, windowSize = {}, slowMo = 0, engine = 'puppeteer' } = browserSettings || {};
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
@@ -264,28 +311,15 @@ export class EnvsPool implements EnvsPoolType {
         throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
       }
 
-      // eslint-disable-next-line no-undef
-      const puppeteer = __non_webpack_require__('puppeteer');
-      const browser = await puppeteer.connect({
-        browserWSEndpoint: webSocketDebuggerUrl,
-        ignoreHTTPSErrors: true,
-        slowMo,
-      });
-
-      const pagesRaw = await browser.pages();
-      let pages: typeof pagesRaw = {};
-      if (pagesRaw.length) {
-        pages = { main: pagesRaw[0] };
-      } else {
-        throw new Error('Can`t find any pages in connection');
+      if (engine === 'puppeteer') {
+        const { browser, pages } = await this.connectPuppeteer(webSocketDebuggerUrl, slowMo, windowSize);
+        return { browser, pages };
       }
-
-      const { width, height } = windowSize;
-      if (width && height) {
-        await pages.main.setViewport({ width, height });
+      if (engine === 'playwright') {
+        const { browser, pages } = await this.connectPlaywright(webSocketDebuggerUrl, slowMo, windowSize);
+        return { browser, pages };
       }
-
-      return { browser, pages };
+      throw new Error('Can`t find any supported browser engine in environment');
     }
 
     throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
@@ -369,7 +403,7 @@ export class EnvsPool implements EnvsPoolType {
         await state.browser.close();
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.log(error);
+        // console.log(error);
       }
     }
   }
@@ -385,7 +419,7 @@ export class EnvsPool implements EnvsPoolType {
         }
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.log(error);
+        // console.log(error);
       }
     }
   }

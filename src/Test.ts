@@ -7,6 +7,7 @@ import Environment from './Environment';
 import TestsContent from './TestContent';
 import { TestError } from './Error';
 import { logDebug } from './Log';
+import globalExportPPD from './index';
 
 import {
   LogOptionsType,
@@ -584,9 +585,7 @@ export class Test {
           logOptions: logForChild,
           frame: this.frame,
           tags: this.tags,
-          ppd: {
-            runScriptInContext,
-          },
+          ppd: globalExportPPD,
         };
 
         // IF

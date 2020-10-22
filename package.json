@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.60",
+  "version": "2.0.0-beta.61",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
   "typings": "./src/global.d.ts",
@@ -38,7 +38,6 @@
     "automatization"
   ],
   "dependencies": {
-    "@types/puppeteer": "^3.0.2",
     "dayjs": "1.9.3",
     "deepmerge": "4.2.2",
     "js-yaml": "3.14.0",
@@ -56,6 +55,7 @@
     "@types/jest": "26.0.14",
     "@types/js-yaml": "3.12.5",
     "@types/node-fetch": "2.5.7",
+    "@types/puppeteer": "3.0.2",
     "@types/webpack-env": "1.15.3",
     "@typescript-eslint/eslint-plugin": "4.4.1",
     "@typescript-eslint/parser": "4.4.1",

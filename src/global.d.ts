@@ -183,6 +183,7 @@ export type EnvBrowserType = {
     secondsToStartApp?: number;
     secondsDelayAfterStartApp?: number;
   };
+  timeout?: number;
 };
 
 export type EnvYamlType = {

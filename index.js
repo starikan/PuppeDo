@@ -1,3 +1,5 @@
+require('source-map-support').install();
+
 const {
   run,
   errorHandler,
@@ -13,7 +15,9 @@ const {
   merge,
   paintString,
   blankSocket,
-} = require('./dist/index');
+  argsDefault,
+  runScriptInContext,
+} = require('./dist/index').default;
 
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
@@ -23,6 +27,7 @@ if (!module.parent) {
 } else {
   module.exports = {
     run,
+    errorHandler,
     TestStructure,
     getTest,
     TestsContent,
@@ -35,5 +40,7 @@ if (!module.parent) {
     merge,
     paintString,
     blankSocket,
+    argsDefault,
+    runScriptInContext,
   };
 }

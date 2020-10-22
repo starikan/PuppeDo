@@ -325,10 +325,10 @@ export default class Log {
     fullpage = false,
     level = 'info',
     element = null,
-    testStruct = null,
+    // testStruct = null,
     levelIndent = 0,
     error = null,
-    testSource = this.binded.testSource,
+    // testSource = this.binded.testSource,
     bindedData = this.binded.bindedData,
     extendInfo = false,
     stdOut = true,
@@ -394,6 +394,7 @@ export default class Log {
 
         // EXPORT TEXT LOG
         this.fileLog(logTexts, 'output.log');
+
         // ENVS TO LOG
         // let dataEnvs = null;
         // if (level === 'env') {
@@ -407,9 +408,9 @@ export default class Log {
         //   }
         // })
         // _.isEmpty(testStruct) ? testSource.filter((v) => !_.isEmpty(v)) : testStruct;
-        const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
+        // const testStructNormaize = testStruct && !Object.keys(testStruct).length ? testSource : testStruct;
 
-        const { PPD_DEBUG_MODE } = new Arguments().args;
+        // const { PPD_DEBUG_MODE } = new Arguments().args;
 
         // TODO: 2020-02-02 S.Starodubov this two fields need for html
         // dataEnvs,
@@ -418,8 +419,8 @@ export default class Log {
         const logEntry: LogEntry = {
           text: textString,
           time: getNowDateTime(now),
-          testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
-          bindedData: PPD_DEBUG_MODE ? bindedData : null,
+          // testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
+          // bindedData: PPD_DEBUG_MODE ? bindedData : null,
           screenshots,
           type: level === 'env' ? 'env' : 'log',
           level,

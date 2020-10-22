@@ -13,7 +13,6 @@ const resolveJS = (testJson: any, funcFile: string): any => {
   const testJsonNew = { ...testJson };
   try {
     const instance = new Atom();
-    // eslint-disable-next-line no-undef
     const atomRun = __non_webpack_require__(funcFile);
     instance.atomRun = atomRun;
     if (typeof atomRun === 'function') {

@@ -7,9 +7,6 @@ import { getTimer, getNowDateTime } from './Helpers';
 
 import { ArgumentsType } from './global.d';
 
-// eslint-disable-next-line no-undef
-__non_webpack_require__('source-map-support').install();
-
 const checkArgs = (args: ArgumentsType): void => {
   if (!args.PPD_TESTS.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
