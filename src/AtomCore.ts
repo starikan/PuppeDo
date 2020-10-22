@@ -6,7 +6,6 @@ import Env from './Env';
 
 import {
   BrowserPageType,
-  EnvsPoolType,
   LogOptionsType,
   Element,
   TestArgsExtType,
@@ -29,14 +28,11 @@ class AtomError extends Error {
 
 export default class Atom {
   env: Env;
-  envs: EnvsPoolType;
   page: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
 
   levelIndent: number;
   logOptions: LogOptionsType;
-  data: Record<string, unknown>;
-  selectors: Record<string, unknown>;
   options: Record<string, string>;
   frame: string;
 

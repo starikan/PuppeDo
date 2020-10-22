@@ -206,24 +206,14 @@ const updateDataWithNeeds = (
   const dataLocalCopy = JSON.parse(JSON.stringify(dataLocal));
   const selectorsLocalCopy = JSON.parse(JSON.stringify(selectorsLocal));
 
-  needData
+  [...needData, ...needSelectors]
     .map((v: string) => v.replace('?', ''))
     .forEach((v: string) => {
       dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
       selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
     });
 
-  needSelectors
-    .map((v: string) => v.replace('?', ''))
-    .forEach((v: string) => {
-      dataLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
-      selectorsLocalCopy[v] = typeof allData[v] !== 'undefined' ? allData[v] : null;
-    });
-
-  return {
-    dataLocal: dataLocalCopy,
-    selectorsLocal: selectorsLocalCopy,
-  };
+  return { dataLocal: dataLocalCopy, selectorsLocal: selectorsLocalCopy };
 };
 
 const resolveLogOptions = (
