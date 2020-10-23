@@ -212,7 +212,7 @@ export class EnvsPool implements EnvsPoolType {
     const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE, product });
 
-    const page = await browser.newPage();
+    const page = await browser.newPage({ ignoreHTTPSErrors: true });
     const pages = { main: page };
 
     const { width, height } = windowSize;
@@ -276,8 +276,11 @@ export class EnvsPool implements EnvsPoolType {
     windowSize: { width?: number; height?: number },
   ): Promise<{ browser: BrowserPlaywright; pages: Record<string, BrowserPageType> }> {
     const playwright = __non_webpack_require__('playwright');
-    const browser = await playwright.connect({ wsEndpoint: webSocketDebuggerUrl, slowMo });
-    const contexts = await browser.contexts();
+    const browser = await playwright.connect({
+      wsEndpoint: webSocketDebuggerUrl,
+      slowMo,
+    });
+    const contexts = await browser.contexts({ ignoreHTTPSErrors: true });
     const pagesRaw = await contexts.pages();
 
     if (!pagesRaw.length) {

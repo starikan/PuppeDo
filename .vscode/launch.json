@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "PuppeDo_JS",
-      "program": "${workspaceFolder}\\tests\\index.js",
+      "program": "${workspaceFolder}\\tests\\index.js"
     },
     {
       "type": "node",
@@ -24,7 +24,7 @@
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1,
-        "PPD_LOG_IGNORE_HIDE_LOG": "true",
+        "PPD_LOG_IGNORE_HIDE_LOG": "true"
       }
     },
     {
@@ -91,7 +91,7 @@
         "PPD_DEBUG_MODE=true",
         "PPD_LOG_EXTEND=true",
         "PPD_LOG_SCREENSHOT=true",
-        "PPD_LOG_FULLPAGE=true",
+        "PPD_LOG_FULLPAGE=true"
       ]
     },
     {
@@ -101,14 +101,14 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}\\tests\\index.js",
       "args": [
-        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
+        "PPD_ROOT=tests PPD_ENVS=mainEnv PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
       ]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Data_check",
-      "program": "${workspaceFolder}\\tests\\indexData.js",
+      "program": "${workspaceFolder}\\tests\\indexData.js"
     },
     {
       "type": "node",
@@ -153,7 +153,7 @@
         "PPD_ENVS": "mainEnv",
         "PPD_TESTS": "descriptionTest",
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
+        "PPD_DEBUG_MODE": "true"
       }
     },
     {
@@ -183,6 +183,13 @@
         "PPD_TESTS": "errorIf",
         "PPD_DEBUG_MODE": "true"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Screencast",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}\\tests\\screencast.js"
     }
   ]
 }

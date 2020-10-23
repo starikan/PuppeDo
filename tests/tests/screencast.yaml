@@ -1,0 +1,32 @@
+name: screencast
+description: Screencast Demo
+screencast:
+  external: externalName # get from external file
+  injects:
+    html: ''
+    css: ''
+    js: ''
+  disable: false
+  actionToGo: click
+  steps:
+    - stepId: id
+      text: 'Text to show'
+      target: '#id-element'
+      beforeTime: 1000
+      showTime: 1000
+      afterTime: 1000
+      # https://github.com/puppeteer/puppeteer/issues/4584
+      slowMo: 5
+      pauseBefore: true
+      pauseAfter: true
+      actionToGo:
+        type: keypress
+        input: Space
+
+runTest:
+  - blank:
+
+  - blank:
+
+  - blank:
+      stepId: id
