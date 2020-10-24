@@ -1,4 +1,6 @@
 import vm from 'vm';
+import { parse, stringify } from 'flatted';
+import crypto from 'crypto';
 
 import { merge, blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
@@ -443,8 +445,12 @@ export class Test {
     this.logOptions = logOptions;
     this.frame = frame;
     this.tags = tags;
+    this._id = crypto.randomBytes(6).toString('hex');
+
+    // console.log(this._id);
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
+      // console.log(`ID => ${this._id}`);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -521,6 +527,8 @@ export class Test {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
 
+      this.repeatsInParent = this.repeat > 1 || this.dataParent.repeat > 1 || inputs.repeatsInParent || this.while;
+
       try {
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
@@ -585,6 +593,7 @@ export class Test {
           logOptions: logForChild,
           frame: this.frame,
           tags: this.tags,
+          repeatsInParent: this.repeatsInParent,
           ppd: globalExportPPD,
         };
 
@@ -621,6 +630,8 @@ export class Test {
             logShowFlag,
           });
         }
+
+        // debugger;
 
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
@@ -702,6 +713,7 @@ export class Test {
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
+          repeatArgs.repeatsInParent = this.repeatsInParent;
           const repeatResult = await this.run(envsId, repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
@@ -716,7 +728,59 @@ export class Test {
           });
         }
 
-        return localResults;
+        // this.repeat -= 1;
+        if (this.repeat === 1) {
+          // delete this.runLogic;
+          // delete this.run;
+          // delete this.name;
+          // delete this.type;
+          // delete this.needEnv;
+          // delete this.needData;
+          // delete this.needSelectors;
+          // delete this.dataParent;
+          // delete this.selectorsParent;
+          // delete this.options;
+          // delete this.dataExt;
+          // delete this.selectorsExt;
+          // delete this.allowResults;
+          // delete this.beforeTest;
+          // delete this.runTest;
+          // delete this.afterTest;
+          // delete this.levelIndent;
+          // delete this.repeat;
+          // delete this.source;
+          // delete this.socket;
+          // delete this.stepId;
+          // delete this.breadcrumbs;
+          // delete this.funcFile;
+          // delete this.testFile;
+          // delete this.debug;
+          // delete this.debugInfo;
+          // delete this.disable;
+          // delete this.logOptions;
+          // delete this.frame;
+          // delete this.data;
+          // delete this.bindData;
+          // delete this.selectors;
+          // delete this.bindSelectors;
+          // delete this.bindResults;
+          // delete this.description;
+          // delete this.descriptionExtend;
+          // delete this.descriptionError;
+          // delete this.bindDescription;
+          // delete this.while;
+          // delete this.if;
+          // delete this.errorIf;
+          // delete this.errorIfResult;
+          // delete this.resultsFromChildren;
+          // delete this.resultsFromParent;
+          // delete this.tags;
+          // delete this.envName;
+          // delete this.envPageName;
+          // delete this.env;
+        }
+
+        return parse(stringify(localResults));
       } catch (error) {
         // debugger;
         const newError = new TestError({ logger, parentError: error, test: this, envsId });

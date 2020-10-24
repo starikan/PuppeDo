@@ -1,4 +1,5 @@
 import path from 'path';
+import { parse, stringify } from 'flatted';
 
 import Blocker from './Blocker';
 import { merge, pick } from './Helpers';
@@ -86,7 +87,7 @@ const getTest = (
     });
   }
 
-  const test = new Test(testJson);
+  let test = new Test(testJson);
 
   return {
     test: async (args: TestArgsExtType | null): Promise<Record<string, unknown>> => {
@@ -96,9 +97,68 @@ const getTest = (
         'selectors',
         'logOptions',
       ]);
-      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args || {}, ['debug', 'frame']);
+      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args || {}, [
+        'debug',
+        'frame',
+        'repeatsInParent',
+      ]);
       updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
-      const result = await test.run(envsId, updatetTestJson);
+      // debugger;
+      const result = parse(stringify(await test.run(envsId, updatetTestJson)));
+      // console.log('                  DELETE => ', test._id, test.repeat);
+      // debugger;
+      if (!test.repeatsInParent) {
+        console.log('DELETED');
+        delete test.runLogic;
+        delete test.run;
+        delete test.name;
+        delete test.type;
+        delete test.needEnv;
+        delete test.needData;
+        delete test.needSelectors;
+        delete test.dataParent;
+        delete test.selectorsParent;
+        delete test.options;
+        delete test.dataExt;
+        delete test.selectorsExt;
+        delete test.allowResults;
+        delete test.beforeTest;
+        delete test.runTest;
+        delete test.afterTest;
+        delete test.levelIndent;
+        delete test.repeat;
+        delete test.source;
+        delete test.socket;
+        delete test.stepId;
+        delete test.breadcrumbs;
+        delete test.funcFile;
+        delete test.testFile;
+        delete test.debug;
+        delete test.debugInfo;
+        delete test.disable;
+        delete test.logOptions;
+        delete test.frame;
+        delete test.data;
+        delete test.bindData;
+        delete test.selectors;
+        delete test.bindSelectors;
+        delete test.bindResults;
+        delete test.description;
+        delete test.descriptionExtend;
+        delete test.descriptionError;
+        delete test.bindDescription;
+        delete test.while;
+        delete test.if;
+        delete test.errorIf;
+        delete test.errorIfResult;
+        delete test.resultsFromChildren;
+        delete test.resultsFromParent;
+        delete test.tags;
+        delete test.envName;
+        delete test.envPageName;
+        delete test.env;
+        test = 0;
+      }
       // eslint-disable-next-line no-param-reassign
       parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
       return result;

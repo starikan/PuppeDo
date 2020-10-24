@@ -7,6 +7,22 @@ data:
 
 runTest:
   - blank:
+      description: top
+      repeat: 2
+      runTest:
+        - blank:
+            description: repeate_top
+            runTest:
+                - blank:
+                    description: right_1
+                - blank:
+                    description: right_2
+        - blank:
+            description: bottom
+  - blank:
+      description: out
+
+  - blank:
       description: Data parent test
       errorIf: "CHECK_DATA !== 'TEST_DATA'"
 
