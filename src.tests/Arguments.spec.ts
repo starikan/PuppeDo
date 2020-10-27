@@ -119,7 +119,7 @@ test('Arguments check', () => {
   [, argResult] = setArg('PPD_ROOT_ADDITIONAL', 'boo');
   expect(argResult).toEqual(['boo']);
   [, argResult] = setArg('PPD_ROOT_ADDITIONAL', '');
-  expect(argResult).toEqual(['']);
+  expect(argResult).toEqual([]);
 
   expect(() => setArg('PPD_ROOT_ADDITIONAL', false)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
   expect(() => setArg('PPD_ROOT_ADDITIONAL', true)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));

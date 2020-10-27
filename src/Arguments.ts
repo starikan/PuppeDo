@@ -51,7 +51,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   if (!Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'array' required.`);
   }
-  return newVal;
+  return newVal.filter((v) => v);
 };
 
 const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknown> | T => {
