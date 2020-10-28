@@ -8,12 +8,16 @@ import Atom from './AtomCore';
 import { InputsTestType, SocketType, TestArgsExtType, TestLifecycleFunctionType } from './global.d';
 
 const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
+const atoms = {};
 
 const resolveJS = (testJson: any, funcFile: string): any => {
   const testJsonNew = { ...testJson };
   try {
     const instance = new Atom();
-    const atomRun = __non_webpack_require__(funcFile);
+    const atomRun = atoms[funcFile] || __non_webpack_require__(funcFile);
+    if (!atoms[funcFile]) {
+      atoms[funcFile] = atomRun;
+    }
     instance.atomRun = atomRun;
     if (typeof atomRun === 'function') {
       testJsonNew.funcFile = path.resolve(funcFile);
