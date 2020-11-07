@@ -5,7 +5,6 @@ const run = async () => {
   // Test with direct run from JS
   await ppd.run({
     PPD_ROOT: 'tests',
-    PPD_ENVS: ['envData'],
     PPD_TESTS: ['testDataCheck'],
     PPD_DATA: {
       CHECK_DATA: 'ARG_DATA',

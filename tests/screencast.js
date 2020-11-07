@@ -6,7 +6,6 @@ const ppd = require('../index');
 const run = async () => {
   await ppd.run({
     PPD_ROOT: 'tests',
-    PPD_ENVS: 'mainEnv',
     PPD_TESTS: 'screencast',
     PPD_DEBUG_MODE: true,
   });

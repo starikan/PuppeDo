@@ -5,35 +5,21 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 
-import { ArgumentsType } from './global.d';
-
-const checkArgs = (args: ArgumentsType): void => {
-  if (!args.PPD_TESTS.length) {
-    throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
-  }
-
-  if (!args.PPD_ENVS.length) {
-    throw new Error('There is no environments to run. Pass any test in PPD_ENVS argument');
-  }
-
-  args.PPD_TESTS.forEach((testName) => {
-    if (!testName) {
-      throw new Error('There is blank test name. Pass any test in PPD_TESTS argument');
-    }
-  });
-};
-
 export default async function run(argsInput = {}, closeProcess = true): Promise<void> {
   const { envsId, envsPool, socket, logger } = Environment();
   const args = { ...new Arguments(argsInput, true).args };
-  checkArgs(args);
+  const argsTests = args.PPD_TESTS.filter((v) => !!v);
+
+  if (!argsTests.length) {
+    throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
+  }
 
   try {
     const startTime = getTimer().now;
 
-    for (let i = 0; i < args.PPD_TESTS.length; i += 1) {
+    for (let i = 0; i < argsTests.length; i += 1) {
       const startTimeTest = getTimer().now;
-      const testName = args.PPD_TESTS[i];
+      const testName = argsTests[i];
 
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 

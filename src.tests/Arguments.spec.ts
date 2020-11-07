@@ -4,7 +4,6 @@ const argsModify = {
   PPD_DATA: { foo: 'bar' },
   PPD_DEBUG_MODE: true,
   PPD_DISABLE_ENV_CHECK: true,
-  PPD_ENVS: ['hyy'],
   PPD_LOG_DISABLED: true,
   PPD_LOG_EXTEND: true,
   PPD_OUTPUT: 'zee',
@@ -27,7 +26,6 @@ const argsENV = {
   PPD_DATA: '{"foo":"bar"}',
   PPD_DEBUG_MODE: 'true',
   PPD_DISABLE_ENV_CHECK: 'true',
-  PPD_ENVS: 'hyy',
   PPD_LOG_DISABLED: 'true',
   PPD_LOG_EXTEND: 'true',
   PPD_OUTPUT: 'zee',
@@ -185,9 +183,6 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_LEVEL_TYPE_IGNORE', ['raw']);
-  expect(argData).toEqual(argResult);
-
-  [argData, argResult] = setArg('PPD_ENVS', ['test']);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_TESTS', ['kii', 'loo']);

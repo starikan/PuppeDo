@@ -6,7 +6,6 @@ export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
-  PPD_ENVS: [],
   PPD_TESTS: [],
   PPD_OUTPUT: 'output',
   PPD_DATA: {},

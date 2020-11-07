@@ -113,7 +113,7 @@ export default class TestsContent extends Singleton {
       const envs: Array<EnvType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is EnvType => v.type === 'env'),
       );
-      const envsResolved = TestsContent.resolveEnvsLinks(envs, data, selectors);
+      const envsResolved = TestsContent.resolveEnvs(envs, data, selectors);
 
       this.allData = { allFiles: paths, allContent, atoms, tests, envs: envsResolved, data, selectors };
     }
@@ -121,64 +121,45 @@ export default class TestsContent extends Singleton {
     return this.allData;
   }
 
-  static resolveEnvsLinks(
-    envsAll: Array<EnvType>,
-    dataAll: Array<DataType>,
-    selectorsAll: Array<DataType>,
-  ): Array<EnvType> {
-    const { PPD_ENVS } = new Arguments().args;
+  static resolveEnvs(envsAll: Array<EnvType>, dataAll: Array<DataType>, selectorsAll: Array<DataType>): Array<EnvType> {
+    return envsAll.map((env: EnvType) => {
+      const envUpdated = env;
+      const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
 
-    // ENVS RESOLVING
-    const envsResult: Array<EnvType> = PPD_ENVS.map((v: string) => {
-      const envByName = envsAll.find((g: EnvType) => g.name === v);
-      if (!envByName) {
-        throw new Error(`Can't find Environment with name: ${v}`);
-      }
+      envsExt.forEach((envsExtName: string) => {
+        const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
+        if (envsResolved) {
+          envUpdated.browser = merge(env.browser || {}, envsResolved.browser || {});
+          envUpdated.log = merge(env.log || {}, envsResolved.log || {});
+          envUpdated.data = merge(env.data || {}, envsResolved.data || {});
+          envUpdated.selectors = merge(env.selectors || {}, envsResolved.selectors || {});
+          envUpdated.description = `${env.description || ''} -> ${envsResolved.description || ''}`;
+        } else {
+          throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
+        }
+      });
 
-      const env = JSON.parse(JSON.stringify(envByName));
-      if (env) {
-        const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
+      dataExt.forEach((dataExtName: string) => {
+        const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
+        if (dataResolved) {
+          envUpdated.data = merge(env.data || {}, dataResolved.data || {}, dataEnv);
+        } else {
+          throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in environment '${env.name}'`);
+        }
+      });
 
-        envsExt.forEach((envsExtName: string) => {
-          const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
-          if (envsResolved) {
-            env.browser = merge(env.browser || {}, envsResolved.browser || {});
-            env.log = merge(env.log || {}, envsResolved.log || {});
-            env.data = merge(env.data || {}, envsResolved.data || {});
-            env.selectors = merge(env.selectors || {}, envsResolved.selectors || {});
-            env.description = `${env.description || ''} -> ${envsResolved.description || ''}`;
-          } else {
-            throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
-          }
-        });
-
-        dataExt.forEach((dataExtName: string) => {
-          const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
-          if (dataResolved) {
-            env.data = merge(env.data || {}, dataResolved.data || {}, dataEnv);
-          } else {
-            throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in environment '${env.name}'`);
-          }
-        });
-
-        selectorsExt.forEach((selectorsExtName: string) => {
-          const selectorsResolved: DataType | undefined = selectorsAll.find(
-            (g: DataType) => g.name === selectorsExtName,
+      selectorsExt.forEach((selectorsExtName: string) => {
+        const selectorsResolved: DataType | undefined = selectorsAll.find((g: DataType) => g.name === selectorsExtName);
+        if (selectorsResolved) {
+          envUpdated.selectors = merge(env.selectors || {}, selectorsResolved.data || {}, selectorsEnv);
+        } else {
+          throw new Error(
+            `PuppeDo can't resolve extended selectors '${selectorsExtName}' in environment '${env.name}'`,
           );
-          if (selectorsResolved) {
-            env.selectors = merge(env.selectors || {}, selectorsResolved.data || {}, selectorsEnv);
-          } else {
-            throw new Error(
-              `PuppeDo can't resolve extended selectors '${selectorsExtName}' in environment '${env.name}'`,
-            );
-          }
-        });
+        }
+      });
 
-        return env;
-      }
-      throw new Error(`PuppeDo found unknown environment in yours args. It's name '${v}'.`);
+      return envUpdated;
     });
-
-    return envsResult;
   }
 }

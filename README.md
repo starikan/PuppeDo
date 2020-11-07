@@ -150,7 +150,6 @@ Parameter | Description | Default Value | Type
 PPD_ROOT | Root folder of tests | `process.cwd()` | `String`
 PPD_ROOT_ADDITIONAL | Append folders of tests and stuff | `[]` | `String[]`
 PPD_ROOT_IGNORE | Ignore folders of tests starts with | `['.git', 'node_modules', '.history']` | `String[]`
-PPD_ENVS | Links of environments to run. | `[]` | `String[]`
 PPD_TESTS | Name of tests to run one by one | `[]` | `String[]`
 PPD_DATA | Object with data | `{}` | `Object`
 PPD_SELECTORS | Object with selectors | `{}` | `Object`
@@ -298,7 +297,6 @@ afterTest:
       ],
       "env": {
         "PPD_TEST": "testGlob",
-        "PPD_ENVS": "[\"settings/envCloud.yaml\"]",
         "PPD_DATA_EXT": "[\"privateData/auth.yaml\"]"
       }
     }

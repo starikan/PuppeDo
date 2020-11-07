@@ -66,7 +66,6 @@ export type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
   PPD_ROOT_IGNORE: string[];
-  PPD_ENVS: string[];
   PPD_TESTS: string[];
   PPD_OUTPUT: string;
   PPD_DATA: Record<string, unknown>;
@@ -173,7 +172,7 @@ export type EnvBrowserType = {
     height?: number;
   };
   killOnEnd?: boolean;
-  killProcessName: string;
+  killProcessName?: string;
   runtimeEnv?: {
     runtimeExecutable?: string;
     program?: string;
