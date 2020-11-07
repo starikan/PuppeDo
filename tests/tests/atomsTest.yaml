@@ -1,11 +1,14 @@
 name: atomsTest
 description: Test all Atoms
-
+data: { envs: ['mainEnv', 'mainEnv_puppeteer'] }
+repeat: envs.length
 runTest:
+  - initData:
+      const: { currEnv: 'envs[repeat - 1]' }
 
   - envSwitch:
       description: '[ENV_SWITCH] First of all you need chose environment.'
-      data: { envName: mainEnv }
+      bindData: { envName: currEnv }
 
   - case:
       description: Blank Atoms
@@ -40,6 +43,8 @@ runTest:
 
         - case:
             description: '[CLICK_SELECTOR]'
+            todo: Puppeteer click NB!
+            if: "currEnv !== 'mainEnv_puppeteer'"
             runTest:
               - clickSelector:
                   description: Simple Click on link
@@ -48,6 +53,15 @@ runTest:
               - clickSelector:
                   description: Link Click after wait it (auto waitForSelector include)
                   bindSelectors: { selector: mainLinkChild }
+
+        - case:
+            description: '[GET_ATTRIBUTES]'
+            runTest:
+              - getAttribute:
+                  description: Simple geting atribute from selector
+                  data: { attribute: 'data-test' }
+                  selectors: { selector: '#span-with-attr' }
+                  errorIfResult: attributeValue !== 'attribute'
 
   - todo:
       description: CDP Atoms
@@ -66,3 +80,7 @@ runTest:
 
   - todo:
       description: Selectors Atoms
+
+  - envClose:
+      description: '[ENV_CLOSE] Close environment'
+      bindData: { envName: currEnv }
