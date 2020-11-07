@@ -158,11 +158,15 @@ export type EnvStateType = {
   pid?: number;
 };
 
+export type BrowserTypeType = 'browser' | 'electron' | 'api';
+export type BrowserEngineType = 'puppeteer' | 'playwright';
+export type BrowserNameType = 'chrome' | 'chromium' | 'firefox' | 'webkit';
+
 export type EnvBrowserType = {
-  type?: 'browser' | 'electron' | 'api';
+  type?: BrowserTypeType;
+  engine?: BrowserEngineType;
+  browserName?: BrowserNameType;
   runtime?: 'run' | 'connect';
-  engine?: 'puppeteer' | 'playwright';
-  browserName?: 'chrome' | 'chromium' | 'firefox' | 'webkit';
   args?: Array<string>;
   headless?: boolean;
   slowMo?: number;

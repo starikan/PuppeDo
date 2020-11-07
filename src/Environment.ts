@@ -165,15 +165,7 @@ export class EnvsPool implements EnvsPoolType {
   async runBrowsers(name: string): Promise<void> {
     const envPool = this.envs[name];
     const browserSettings = envPool.env.browser;
-    const { type = 'browser', engine = 'playwright', runtime = 'run' } = browserSettings;
-
-    if (
-      !['api', 'browser', 'electron'].includes(type) ||
-      !['puppeteer', 'playwright'].includes(engine) ||
-      !['run', 'connect'].includes(runtime)
-    ) {
-      throw new Error(`Error in environment browser parametr: '${JSON.stringify(browserSettings)}'`);
-    }
+    const { type, engine, runtime } = browserSettings;
 
     if (type === 'api') {
       // TODO: 2020-01-13 S.Starodubov
@@ -189,6 +181,9 @@ export class EnvsPool implements EnvsPoolType {
           const { browser, pages } = await EnvsPool.runPlaywright(browserSettings);
           envPool.state = { ...envPool.state, ...{ browser, pages } };
         }
+      }
+      if (runtime === 'connect') {
+        // TODO: 2020-11-07 S.Starodubov todo
       }
     }
 
