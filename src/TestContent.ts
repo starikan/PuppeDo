@@ -130,7 +130,12 @@ export default class TestsContent extends Singleton {
 
     // ENVS RESOLVING
     const envsResult: Array<EnvType> = PPD_ENVS.map((v: string) => {
-      const env = JSON.parse(JSON.stringify(envsAll.find((g: EnvType) => g.name === v)));
+      const envByName = envsAll.find((g: EnvType) => g.name === v);
+      if (!envByName) {
+        throw new Error(`Can't find Environment with name: ${v}`);
+      }
+
+      const env = JSON.parse(JSON.stringify(envByName));
       if (env) {
         const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
 
