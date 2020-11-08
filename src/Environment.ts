@@ -16,6 +16,7 @@ import Log from './Log';
 import {
   BrouserLaunchOptions,
   BrowserFrame,
+  BrowserNameType,
   BrowserPageType,
   EnvBrowserType,
   EnvsPoolType,
@@ -269,9 +270,10 @@ export class EnvsPool implements EnvsPoolType {
     webSocketDebuggerUrl: string,
     slowMo: number,
     windowSize: { width?: number; height?: number },
+    browserName: BrowserNameType,
   ): Promise<{ browser: BrowserPlaywright; pages: Record<string, BrowserPageType> }> {
     const playwright = __non_webpack_require__('playwright');
-    const browser = await playwright.connect({
+    const browser = await playwright[browserName].connect({
       wsEndpoint: webSocketDebuggerUrl,
       slowMo,
     });
@@ -291,7 +293,7 @@ export class EnvsPool implements EnvsPoolType {
   }
 
   static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
-    const { urlDevtoolsJson, windowSize = {}, slowMo = 0, engine = 'puppeteer' } = browserSettings || {};
+    const { urlDevtoolsJson, windowSize = {}, slowMo = 0, engine = 'puppeteer', browserName } = browserSettings || {};
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
@@ -314,7 +316,7 @@ export class EnvsPool implements EnvsPoolType {
         return { browser, pages };
       }
       if (engine === 'playwright') {
-        const { browser, pages } = await this.connectPlaywright(webSocketDebuggerUrl, slowMo, windowSize);
+        const { browser, pages } = await this.connectPlaywright(webSocketDebuggerUrl, slowMo, windowSize, browserName);
         return { browser, pages };
       }
       throw new Error('Can`t find any supported browser engine in environment');

@@ -51,7 +51,7 @@
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.12.1",
     "@babel/preset-typescript": "7.12.1",
-    "@puppedo/atoms": "5.1.0",
+    "@puppedo/atoms": "5.2.0",
     "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
     "@types/node-fetch": "2.5.7",

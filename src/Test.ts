@@ -65,6 +65,7 @@ const ALIASES = {
     'bR',
     'br',
     'result',
+    'results',
     'r',
     '↩️',
     'R',
