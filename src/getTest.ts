@@ -23,7 +23,10 @@ const resolveJS = (testJson: any, funcFile: string): any => {
       testJsonNew.funcFile = path.resolve(funcFile);
       testJsonNew.runTest = [instance.runTest.bind(instance)];
     }
-  } catch (err) {
+  } catch (error) {
+    if (error.name === 'SyntaxError') {
+      throw error;
+    }
     // If there is no JS file it`s fine.
     testJsonNew.runTest = [
       (): void => {
