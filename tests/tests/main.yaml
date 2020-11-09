@@ -11,6 +11,11 @@ beforeTest:
       bindData: { envName: myEnv }
 
 runTest:
+  - initData:
+      const:
+        directValue: direct
+        bindedValue: myEnv
+
   - case:
       description: Colored Case atom
       runTest:

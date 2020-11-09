@@ -131,7 +131,12 @@ const resolveDataFunctions = (
 ): Record<string, unknown> => {
   const funcEval = Object.entries(funcParams).reduce((s, v) => {
     const [key, data] = v;
-    const evalData = runScriptInContext(data, allData);
+    let evalData: unknown = data;
+    try {
+      evalData = runScriptInContext(data, allData);
+    } catch (error) {
+      // Nothing to do
+    }
     const collector = { ...s, ...{ [key]: evalData } };
     return collector;
   }, {});
