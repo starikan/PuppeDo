@@ -21,6 +21,7 @@ import {
   EnvStateType,
   LogFunctionType,
   TestLifecycleFunctionType,
+  BrowserEngineType,
 } from './global.d';
 
 const ALIASES = {
@@ -365,6 +366,7 @@ export class Test {
   resultsFromChildren: Record<string, unknown>;
   resultsFromParent: Record<string, unknown>;
   tags: string[];
+  engineSupports: BrowserEngineType[] | null;
 
   envName: string;
   envPageName: string;
@@ -416,6 +418,7 @@ export class Test {
     logOptions = {},
     frame = '',
     tags = [],
+    engineSupports = null,
   } = {}) {
     this.name = name;
     this.type = type;
@@ -449,6 +452,7 @@ export class Test {
     this.logOptions = logOptions;
     this.frame = frame;
     this.tags = tags;
+    this.engineSupports = engineSupports;
 
     this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -531,6 +535,13 @@ export class Test {
         this.envName = envsPool.current.name;
         this.envPageName = envsPool.current.page;
         this.env = envsPool.envs[this.envName];
+
+        if (this.engineSupports) {
+          const { engine } = this.env?.env?.browser;
+          if (engine && !this.engineSupports.includes(engine)) {
+            throw new Error(`Current engine: '${engine}' not supported in this test`);
+          }
+        }
 
         if (!PPD_DISABLE_ENV_CHECK) {
           checkNeedEnv(this.needEnv, this.envName);
