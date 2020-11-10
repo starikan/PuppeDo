@@ -347,7 +347,6 @@ export default class Log {
     if (levelText !== 'error' && !logShowFlag) return;
 
     if (levelText === 'error') {
-      // debugger;
       // eslint-disable-next-line no-param-reassign
       backgroundColor = 'sane';
     }

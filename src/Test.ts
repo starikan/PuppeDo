@@ -472,7 +472,7 @@ export class Test {
       } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
-      if (this.debug) {
+      if (this.debug && !this.debugInfo) {
         // eslint-disable-next-line no-console
         console.log(this);
         // eslint-disable-next-line no-debugger
@@ -571,6 +571,9 @@ export class Test {
         allData.repeat = this.repeat;
         dataLocal.repeat = this.repeat;
         selectorsLocal.repeat = this.repeat;
+        allData.$loop = inputs.dataParent.repeat || this.repeat;
+        dataLocal.$loop = inputs.dataParent.repeat || this.repeat;
+        selectorsLocal.$loop = inputs.dataParent.repeat || this.repeat;
 
         let descriptionResolved = this.description;
         if (this.bindDescription) {
@@ -659,8 +662,10 @@ export class Test {
           console.log(argsExt);
           // eslint-disable-next-line no-console
           console.log(this);
-          // eslint-disable-next-line no-debugger
-          debugger;
+          if (this.debug) {
+            // eslint-disable-next-line no-debugger
+            debugger;
+          }
         }
 
         // RUN FUNCTIONS
