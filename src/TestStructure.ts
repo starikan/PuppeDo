@@ -88,7 +88,7 @@ export default class TestStructure implements TestStructureType {
 
     const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
-      const runnerBlockValue = fullJSON[runnerBlock];
+      const runnerBlockValue = fullJSON[runnerBlock] || [];
       if (Array.isArray(runnerBlockValue)) {
         runnerBlockValue.forEach((runnerValue, runnerNum) => {
           const { fullJSON: fullJSONResponce, textDescription: textDescriptionResponse } = this.resolveRunner(
@@ -106,10 +106,9 @@ export default class TestStructure implements TestStructureType {
         !Array.isArray(runnerBlockValue) &&
         runnerBlockValue !== undefined
       ) {
-        throw new Error(
-          `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}' \
-          must be array of tests`,
-        );
+        const errorString = `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
+        must be array of tests`;
+        throw new Error(errorString);
       }
     });
 

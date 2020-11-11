@@ -78,7 +78,12 @@ const getTest = (
     testJson = resolveJS(testJson, funcFile);
   } else {
     Object.entries(functions).forEach((v) => {
-      const [funcKey, funcVal] = v;
+      const funcKey = v[0];
+      let funcVal = v[1];
+      if (!funcVal) {
+        funcVal = [];
+      }
+
       // Resolve nested
       if (Array.isArray(funcVal)) {
         testJson[funcKey] = [];
