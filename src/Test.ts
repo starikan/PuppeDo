@@ -759,8 +759,7 @@ export class Test {
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              await this.runLogic(envsId, inputArgs);
-              resolve();
+              resolve(await this.runLogic(envsId, inputArgs));
             }
           });
         });
