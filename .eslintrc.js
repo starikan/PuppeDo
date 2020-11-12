@@ -5,16 +5,6 @@ module.exports = {
     es6: true,
   },
   extends: ['eslint:recommended', 'airbnb-base', 'plugin:@typescript-eslint/recommended'],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-    describe: true,
-    test: true,
-    expect: true,
-    jest: true,
-    beforeAll: true,
-    beforeEach: true,
-  },
   settings: {
     'import/resolver': {
       node: {
