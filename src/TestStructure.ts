@@ -4,6 +4,8 @@ import TestsContent from './TestContent';
 import Environment from './Environment';
 import { merge } from './Helpers';
 
+import { TestType } from './global.d';
+
 type FullJsonType = {
   description?: string;
   name: string;
@@ -45,7 +47,7 @@ export default class TestStructure implements TestStructureType {
     return descriptionString;
   }
 
-  static getTestRaw(name: string): any {
+  static getTestRaw(name: string): TestType {
     const allTests = new TestsContent().allData;
 
     const testSource = allTests.allContent.find((v) => v.name === name && ['atom', 'test'].includes(v.type));

@@ -45,7 +45,7 @@ const argsENV = {
 };
 
 // Reset Arguments
-function setArg<T>(argName: string, argData: T): any {
+function setArg<T>(argName: string, argData: T): [T, string | Record<string, string>] {
   // eslint-disable-next-line no-new
   new Arguments({}, true);
 
@@ -66,7 +66,7 @@ test('Arguments is Singleton and Default args', () => {
 });
 
 test('Arguments check', () => {
-  let argData: string;
+  let argData: string | boolean | Record<string, string> | string[] | number;
   let argResult: string | Record<string, string>;
 
   // Object
