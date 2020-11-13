@@ -41,11 +41,13 @@ export class EnvsPool implements EnvsPoolType {
       state: EnvStateType;
     };
   };
+
   current: {
     name?: string;
     page?: string;
     test?: string;
   };
+
   output: {
     folder?: string;
     folderLatest?: string;
@@ -54,6 +56,7 @@ export class EnvsPool implements EnvsPoolType {
     name?: string;
     folderFull?: string;
   };
+
   log: Array<LogEntry>;
 
   constructor() {

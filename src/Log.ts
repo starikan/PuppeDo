@@ -117,6 +117,7 @@ export default class Log {
   envsId: string;
   envs: EnvsPoolType;
   socket: SocketType;
+  screenshot: Screenshot;
   binded: {
     testSource?: {
       breadcrumbs: Array<string>;
@@ -126,7 +127,6 @@ export default class Log {
       stepId: string;
     };
   };
-  screenshot: Screenshot;
 
   constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType) {
     this.envsId = envsId;

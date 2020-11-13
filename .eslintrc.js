@@ -17,20 +17,24 @@ module.exports = {
   parserOptions: { ecmaVersion: 2019 },
   plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
   rules: {
-    'operator-linebreak': [0, 'after'],
-    'space-before-function-paren': [0],
-    'object-curly-newline': ['error', { consistent: true }],
-    'max-len': ['error', { code: 120 }],
-    'import/extensions': 0,
-    'lines-between-class-members': 0,
-    'no-unused-vars': 0,
-    'no-await-in-loop': 0,
-    'no-shadow': 'off',
-    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-    'prettier/prettier': 'warn',
-    '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/explicit-function-return-type': 'warn',
-    '@typescript-eslint/no-shadow': ['error'],
+    'no-await-in-loop': 'off',
+    'operator-linebreak': ['off', 'after'], // prettier conflict
+
+    'prettier/prettier': 'error',
+    'max-len': ['error', { code: 120 }],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
+    'object-curly-newline': ['error', { consistent: true }],
+    '@typescript-eslint/explicit-function-return-type': 'error',
+
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'error',
+
+    'lines-between-class-members': 'off',
+    '@typescript-eslint/lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
+
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
   },
 };
