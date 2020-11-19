@@ -25,7 +25,7 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
       envsPool.setCurrentTest(testName);
 
-      const { fullJSON, textDescription } = new TestStructure(envsId, testName);
+      const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();
       const { test } = getTest(fullJSON, envsId, socket);
 

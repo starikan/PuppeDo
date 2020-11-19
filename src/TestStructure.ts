@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 
 import TestsContent from './TestContent';
-import Environment from './Environment';
 import { merge } from './Helpers';
 
 import { TestType } from './global.d';
@@ -25,9 +24,7 @@ export default class TestStructure implements TestStructureType {
   fullJSON: FullJsonType;
   textDescription: string;
 
-  constructor(envsId: string, testName: string) {
-    // TODO: 2020-10-16 S.Starodubov непонятно почему валится запуск если убрать
-    Environment(envsId);
+  constructor(testName: string) {
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
     this.fullJSON = fullJSON;
     this.textDescription = textDescription;
