@@ -3,7 +3,6 @@ import { Arguments, argsDefault } from '../src/Arguments';
 const argsModify = {
   PPD_DATA: { foo: 'bar' },
   PPD_DEBUG_MODE: true,
-  PPD_DISABLE_ENV_CHECK: true,
   PPD_LOG_DISABLED: true,
   PPD_LOG_EXTEND: true,
   PPD_OUTPUT: 'zee',
@@ -25,7 +24,6 @@ const argsModify = {
 const argsENV = {
   PPD_DATA: '{"foo":"bar"}',
   PPD_DEBUG_MODE: 'true',
-  PPD_DISABLE_ENV_CHECK: 'true',
   PPD_LOG_DISABLED: 'true',
   PPD_LOG_EXTEND: 'true',
   PPD_OUTPUT: 'zee',
@@ -157,9 +155,6 @@ test('Arguments check', () => {
   expect(() => setArg('PPD_LOG_LEVEL_NESTED', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
   expect(() => setArg('PPD_LOG_LEVEL_NESTED', 'foo')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
   expect(() => setArg('PPD_LOG_LEVEL_NESTED', '')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-
-  [argData, argResult] = setArg('PPD_DISABLE_ENV_CHECK', false);
-  expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_DISABLED', false);
   expect(argData).toEqual(argResult);

@@ -2,7 +2,6 @@
 type: data
 name: dataExt
 description: Secret Data
-needEnv: mainEnv
 data:
   auth:
     login: login

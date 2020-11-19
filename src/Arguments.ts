@@ -11,7 +11,6 @@ export const argsDefault: ArgumentsType = {
   PPD_DATA: {},
   PPD_SELECTORS: {},
   PPD_DEBUG_MODE: false,
-  PPD_DISABLE_ENV_CHECK: false,
   PPD_LOG_DISABLED: false,
   PPD_LOG_EXTEND: false,
   PPD_LOG_LEVEL_NESTED: 0,

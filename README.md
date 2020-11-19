@@ -127,7 +127,6 @@ fullpage | todo
 ```yaml
 type: data
 description: Simple Data
-needEnv: mainEnv
 data:
   value: test
 ```
@@ -160,7 +159,6 @@ PPD_LOG_EXTEND | Log every atoms time for tuning and breadcrumbs for test | `fal
 PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
 PPD_LOG_LEVEL_TYPE | Log only type of log bellow this. `raw` - log all. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `raw` | `String`
 PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. | `[]` | `String[]`
-PPD_DISABLE_ENV_CHECK | If true then needEnv directive ignore | `false` | `Boolean`
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
@@ -192,7 +190,7 @@ Arguments applying order. From minor to major:
 
 1. rename bindSelectors -> selectorsBind
 
-1. Puppeter out from core
+1. Puppeteer out from core
 
 1. Add playwright engine
 <!-- # Editors Environment
@@ -228,8 +226,6 @@ Arguments applying order. From minor to major:
 ---
 name: login
 type: test
-needEnv:
-- cloud
 needData:
 - baseUrl
 - auth.login

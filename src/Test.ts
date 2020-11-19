@@ -158,17 +158,6 @@ const resolveAliases = (valueName: string, inputs = {}): Record<string, unknown>
   }
 };
 
-const checkNeedEnv = (needEnv: string | string[], envName: string): void => {
-  const needEnvs = typeof needEnv === 'string' ? [needEnv] : needEnv;
-  if (Array.isArray(needEnvs)) {
-    if (needEnvs.length && !needEnvs.includes(envName)) {
-      throw new Error(`Wrong Environment, local current env = ${envName}, but test pass needEnvs = ${needEnvs}`);
-    }
-  } else {
-    throw new Error('needEnv wrong format, should be array or string');
-  }
-};
-
 export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
@@ -325,7 +314,6 @@ const getLogText = (text: string, nameTest = '', PPD_LOG_TEST_NAME = false): str
 export class Test {
   name: string;
   type: string;
-  needEnv: Array<string>;
   needData: Array<string>;
   needSelectors: Array<string>;
   dataParent: Record<string, unknown>;
@@ -383,7 +371,6 @@ export class Test {
     name = null,
     type = 'test',
     levelIndent = 0,
-    needEnv = [],
     needData = [],
     needSelectors = [],
     allowResults = [],
@@ -422,7 +409,6 @@ export class Test {
   } = {}) {
     this.name = name;
     this.type = type;
-    this.needEnv = needEnv;
     this.needData = needData;
     this.needSelectors = needSelectors;
     this.data = data;
@@ -463,13 +449,7 @@ export class Test {
         envsPool,
       );
 
-      const {
-        PPD_DEBUG_MODE,
-        PPD_DISABLE_ENV_CHECK,
-        PPD_LOG_EXTEND,
-        PPD_LOG_TEST_NAME,
-        PPD_TAGS_TO_RUN,
-      } = new Arguments().args;
+      const { PPD_DEBUG_MODE, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME, PPD_TAGS_TO_RUN } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug && !this.debugInfo) {
@@ -541,10 +521,6 @@ export class Test {
           if (engine && !this.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }
-        }
-
-        if (!PPD_DISABLE_ENV_CHECK) {
-          checkNeedEnv(this.needEnv, this.envName);
         }
 
         let { dataLocal, selectorsLocal } = fetchData(
