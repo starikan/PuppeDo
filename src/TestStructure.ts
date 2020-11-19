@@ -26,8 +26,8 @@ export default class TestStructure implements TestStructureType {
 
   constructor(testName: string) {
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
-    this.fullJSON = fullJSON;
-    this.textDescription = textDescription;
+    this.fullJSON = JSON.parse(JSON.stringify(fullJSON));
+    this.textDescription = JSON.parse(JSON.stringify(textDescription));
   }
 
   static generateDescriptionStep(fullJSON: FullJsonType): string {
@@ -45,14 +45,14 @@ export default class TestStructure implements TestStructureType {
   }
 
   static getTestRaw(name: string): TestType {
-    const allTests = new TestsContent().allData;
+    const { tests, atoms } = new TestsContent().allData;
+    const testSource = [...tests, ...atoms].find((v) => v.name === name);
 
-    const testSource = allTests.allContent.find((v) => v.name === name && ['atom', 'test'].includes(v.type));
     if (!testSource) {
       throw new Error(`Test with name '${name}' not found in root folder and additional folders`);
     }
-    const testJSON = JSON.parse(JSON.stringify(testSource));
-    return testJSON;
+
+    return JSON.parse(JSON.stringify(testSource));
   }
 
   resolveRunner(
