@@ -4,7 +4,6 @@ import { spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
 import fetch from 'node-fetch';
-import walkSync from 'walk-sync';
 import { Browser as BrowserPuppeteer } from 'puppeteer';
 import { Browser as BrowserPlaywright } from 'playwright';
 
@@ -118,7 +117,7 @@ export class EnvsPool implements EnvsPoolType {
     if (!fs.existsSync(folderLatest)) {
       fs.mkdirSync(folderLatest);
     } else {
-      const filesExists = walkSync(folderLatest);
+      const filesExists = fs.readdirSync(folderLatest);
       for (let i = 0; i < filesExists.length; i += 1) {
         fs.unlinkSync(path.join(folderLatest, filesExists[i]));
       }

@@ -5,7 +5,7 @@ import { ArgumentsKeysType, ArgumentsType } from './global.d';
 export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output'],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github'],
   PPD_TESTS: [],
   PPD_OUTPUT: 'output',
   PPD_DATA: {},

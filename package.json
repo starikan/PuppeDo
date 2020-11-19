@@ -42,8 +42,7 @@
     "deepmerge": "4.2.2",
     "js-yaml": "3.14.0",
     "node-fetch": "2.6.1",
-    "source-map-support": "0.5.19",
-    "walk-sync": "2.2.0"
+    "source-map-support": "0.5.19"
   },
   "devDependencies": {
     "@babel/cli": "7.12.1",

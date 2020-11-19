@@ -1,4 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
+import fs from 'fs';
+import path from 'path';
+
 import deepmerge from 'deepmerge';
 import dayjs from 'dayjs';
 
@@ -91,3 +94,21 @@ export const omit = (obj: Record<string, unknown>, fields: string[]): Record<str
 
 export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
   dayjs(now).format(format);
+
+export const walkSync = (
+  dir: string,
+  options: { ignoreFolders: string[]; extensions?: string[] } = { ignoreFolders: [] },
+): string[] => {
+  if (!fs.existsSync(dir) || options.ignoreFolders.includes(dir)) {
+    return [];
+  }
+  if (!fs.statSync(dir).isDirectory()) {
+    return [dir];
+  }
+  const dirs = fs
+    .readdirSync(dir)
+    .map((f) => walkSync(path.join(dir, f), options))
+    .flat()
+    .filter((v) => (options.extensions ? options.extensions.includes(path.parse(v).ext) : true));
+  return dirs;
+};

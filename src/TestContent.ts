@@ -1,12 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 
-import walkSync from 'walk-sync';
 import yaml from 'js-yaml';
 
 import Singleton from './Singleton';
 import { Arguments } from './Arguments';
-import { merge } from './Helpers';
+import { merge, walkSync } from './Helpers';
 
 import {
   TestType,
@@ -121,9 +120,7 @@ export default class TestsContent extends Singleton {
       const paths = folders
         .map((folder) => {
           if (fs.existsSync(folder)) {
-            return walkSync(folder, { ignore: this.ignorePaths, directories: false })
-              .filter((v) => extensions.includes(path.parse(v).ext))
-              .map((v) => path.join(folder, v));
+            return walkSync(folder, { ignoreFolders: this.ignorePaths, extensions });
           }
           return [];
         })
