@@ -16,6 +16,7 @@ import {
   BrowserTypeType,
   BrowserEngineType,
   BrowserNameType,
+  TestTypeYaml,
 } from './global.d';
 
 type AllDataType = {
@@ -27,6 +28,42 @@ type AllDataType = {
   data: Array<DataType>;
   selectors: Array<DataType>;
 };
+
+const BLANK_TEST: TestType = {
+  name: '',
+  type: 'test',
+  needData: [],
+  needSelectors: [],
+  options: {},
+  dataExt: [],
+  selectorsExt: [],
+  allowResults: [],
+  allowOptions: [],
+  debug: false,
+  debugInfo: false,
+  disable: false,
+  logOptions: {},
+  frame: '',
+  data: {},
+  bindData: {},
+  selectors: {},
+  bindSelectors: {},
+  bindResults: {},
+  description: '',
+  descriptionExtend: [],
+  descriptionError: '',
+  bindDescription: '',
+  repeat: 1,
+  while: '',
+  if: '',
+  errorIf: '',
+  errorIfResult: '',
+  tags: [],
+  engineSupports: null,
+  testFile: '',
+};
+
+const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
 
 export default class TestsContent extends Singleton {
   allData!: AllDataType;
@@ -97,7 +134,11 @@ export default class TestsContent extends Singleton {
           const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           testsYaml.forEach((v) => {
             const collect = { ...{ type: 'test' }, ...v, ...{ testFile: filePath } };
-            allContent.push(collect);
+            if (['test', 'atom'].includes(collect.type)) {
+              allContent.push(resolveTest(collect));
+            } else {
+              allContent.push(collect);
+            }
           });
         } catch (e) {
           // eslint-disable-next-line no-console

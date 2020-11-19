@@ -73,7 +73,6 @@ export type ArgumentsType = {
   PPD_DEBUG_MODE: boolean;
   PPD_LOG_DISABLED: boolean;
   PPD_LOG_EXTEND: boolean;
-  PPD_DISABLE_ENV_CHECK: boolean;
   PPD_LOG_LEVEL_NESTED: number;
   PPD_LOG_LEVEL_TYPE: ColorsType;
   PPD_LOG_LEVEL_TYPE_IGNORE: ColorsType[];
@@ -264,14 +263,54 @@ export type TestJsonExtendType = {
   resultsFromChildren?: Record<string, unknown>;
 };
 
-export type TestYamlType = {
+export interface TestTypeYaml {
   name: string;
   type?: 'atom' | 'test';
-};
-
-export interface TestType extends TestYamlType {
+  needData?: Array<string>;
+  needSelectors?: Array<string>;
+  // dataParent: Record<string, unknown>;
+  // selectorsParent: Record<string, unknown>;
+  options?: Record<string, string | number>;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
+  allowResults?: Array<string>;
+  allowOptions?: Array<string>;
+  // beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  // runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  // afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  // levelIndent: number;
+  // source: Record<string, unknown>;
+  // socket: SocketType;
+  // stepId: string;
+  // breadcrumbs: Array<string>;
+  // funcFile: string;
+  debug?: boolean;
+  debugInfo?: 'data' | 'selectors' | boolean;
+  disable?: boolean;
+  logOptions?: LogOptionsType;
+  frame?: string;
+  data?: Record<string, unknown>;
+  bindData?: Record<string, string>;
+  selectors?: Record<string, unknown>;
+  bindSelectors?: Record<string, string>;
+  bindResults?: Record<string, string>;
+  description?: string;
+  descriptionExtend?: Array<string>;
+  descriptionError?: string;
+  bindDescription?: string;
+  repeat?: number;
+  while?: string;
+  if?: string;
+  errorIf?: string;
+  errorIfResult?: string;
+  // resultsFromChildren: Record<string, unknown>;
+  // resultsFromParent: Record<string, unknown>;
+  tags?: Array<string>;
+  engineSupports?: BrowserEngineType[] | null;
   testFile: string;
 }
+
+export type TestType = Required<TestTypeYaml>;
 
 export type InputsTestType = {
   options?: Record<string, string>;
