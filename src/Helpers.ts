@@ -99,7 +99,8 @@ export const walkSync = (
   dir: string,
   options: { ignoreFolders: string[]; extensions?: string[] } = { ignoreFolders: [] },
 ): string[] => {
-  if (!fs.existsSync(dir) || options.ignoreFolders.includes(dir)) {
+  const baseDir = path.basename(dir);
+  if (!fs.existsSync(dir) || options.ignoreFolders.includes(baseDir)) {
     return [];
   }
   if (!fs.statSync(dir).isDirectory()) {
@@ -112,3 +113,5 @@ export const walkSync = (
     .filter((v) => (options.extensions ? options.extensions.includes(path.parse(v).ext) : true));
   return dirs;
 };
+
+export const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];

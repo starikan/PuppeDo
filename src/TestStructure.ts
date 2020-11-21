@@ -1,27 +1,18 @@
 import crypto from 'crypto';
 
 import TestsContent from './TestContent';
-import { merge } from './Helpers';
 
 import { TestType } from './global.d';
+import { RUNNER_BLOCK_NAMES } from './Helpers';
 
-type FullJsonType = {
-  description?: string;
-  name: string;
-  todo?: string;
+type TestExtendType = TestType & {
   levelIndent?: number;
   breadcrumbs?: string[];
-  stepId: string;
-  testFile: string;
+  stepId?: string;
 };
 
-interface TestStructureType {
-  fullJSON: FullJsonType;
-  textDescription: string;
-}
-
-export default class TestStructure implements TestStructureType {
-  fullJSON: FullJsonType;
+export default class TestStructure {
+  fullJSON: TestExtendType;
   textDescription: string;
 
   constructor(testName: string) {
@@ -30,7 +21,7 @@ export default class TestStructure implements TestStructureType {
     this.textDescription = JSON.parse(JSON.stringify(textDescription));
   }
 
-  static generateDescriptionStep(fullJSON: FullJsonType): string {
+  static generateDescriptionStep(fullJSON: TestExtendType): string {
     const { description, name, todo, levelIndent = 0 } = fullJSON;
 
     const descriptionString = [
@@ -58,10 +49,13 @@ export default class TestStructure implements TestStructureType {
   resolveRunner(
     runnerValue: Record<string, { name?: string; breadcrumbs?: string[] }>,
     runnerNum: number,
-    fullJSONIncome: FullJsonType,
+    fullJSONIncome: TestExtendType,
     runnerBlock: string,
     levelIndent: number,
-  ): TestStructureType {
+  ): {
+    fullJSON: TestExtendType;
+    textDescription: string;
+  } {
     const runner: [string, { name?: string; breadcrumbs?: string[] }][] = Object.entries(runnerValue);
     let [name, newRunner] = runner.length ? runner[0] : [null, {}];
     // It`s important. Subtest may named but no body.
@@ -77,15 +71,22 @@ export default class TestStructure implements TestStructureType {
     return { fullJSON: null, textDescription: null };
   }
 
-  getFullDepthJSONRecurce(testName: string, testBody = {}, levelIndent = 0): TestStructureType {
-    const fullJSON = merge(TestStructure.getTestRaw(testName), testBody) as FullJsonType;
+  getFullDepthJSONRecurce(
+    testName: string,
+    testBody = {},
+    levelIndent = 0,
+  ): {
+    fullJSON: TestExtendType;
+    textDescription: string;
+  } {
+    const fullJSON: TestExtendType = { ...TestStructure.getTestRaw(testName), ...testBody };
+
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');
 
     let textDescription = TestStructure.generateDescriptionStep(fullJSON);
 
-    const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
       const runnerBlockValue = fullJSON[runnerBlock] || [];
       if (Array.isArray(runnerBlockValue)) {
@@ -97,21 +98,16 @@ export default class TestStructure implements TestStructureType {
             runnerBlock,
             levelIndent,
           );
-          if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = fullJSONResponce;
+          if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = JSON.parse(JSON.stringify(fullJSONResponce));
+          // TODO: 2020-11-20 S.Starodubov сделать генерацию ескрипшена из полной JSON а не во время
           if (textDescriptionResponse) textDescription += textDescriptionResponse;
         });
-      } else if (
-        typeof runnerBlockValue !== 'string' &&
-        !Array.isArray(runnerBlockValue) &&
-        runnerBlockValue !== undefined
-      ) {
+      } else {
         const errorString = `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
         must be array of tests`;
         throw new Error(errorString);
       }
     });
-
-    fullJSON.name = fullJSON.name || testName;
 
     return { fullJSON, textDescription };
   }

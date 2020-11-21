@@ -275,6 +275,7 @@ export interface TestTypeYaml {
   selectorsExt?: Array<string>;
   allowResults?: Array<string>;
   allowOptions?: Array<string>;
+  todo?: string;
   // beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   // runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   // afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];

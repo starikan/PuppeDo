@@ -60,6 +60,7 @@ const BLANK_TEST: TestType = {
   tags: [],
   engineSupports: null,
   testFile: '',
+  todo: '',
 };
 
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
@@ -131,7 +132,7 @@ export default class TestsContent extends Singleton {
           const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
           testsYaml.forEach((v) => {
             const collect = { ...{ type: 'test' }, ...v, ...{ testFile: filePath } };
-            if (['test', 'atom'].includes(collect.type)) {
+            if (collect.type === 'test') {
               allContent.push(resolveTest(collect));
             } else {
               allContent.push(collect);
