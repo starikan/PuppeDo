@@ -22,6 +22,7 @@ import {
   LogFunctionType,
   TestLifecycleFunctionType,
   BrowserEngineType,
+  TestExtendType,
 } from './global.d';
 
 const ALIASES = {
@@ -254,7 +255,7 @@ const resolveLogOptions = (
 const fetchData = (
   dataExt: Array<string>,
   selectorsExt: Array<string>,
-  resultsFromParent: Record<string, unknown>,
+  resultsFromParent: Record<string, unknown> = {},
   dataParent: Record<string, unknown>,
   data: Record<string, unknown>,
   bindData: Record<string, string>,
@@ -311,14 +312,15 @@ const getLogText = (text: string, nameTest = '', PPD_LOG_TEST_NAME = false): str
   return `${nameTestResolved}${descriptionTest}`;
 };
 
-export class Test {
+export class Test implements TestExtendType {
   name: string;
-  type: string;
+  envsId: string;
+  type: 'atom' | 'test';
   needData: Array<string>;
   needSelectors: Array<string>;
   dataParent: Record<string, unknown>;
   selectorsParent: Record<string, unknown>;
-  options: Record<string, unknown>;
+  options: Record<string, string | number>;
   dataExt: Array<string>;
   selectorsExt: Array<string>;
   allowResults: Array<string>;
@@ -327,7 +329,7 @@ export class Test {
   afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   levelIndent: number;
   repeat: number;
-  source: Record<string, unknown>;
+  source: string;
   socket: SocketType;
   stepId: string;
   breadcrumbs: Array<string>;
@@ -355,6 +357,8 @@ export class Test {
   resultsFromParent: Record<string, unknown>;
   tags: string[];
   engineSupports: BrowserEngineType[] | null;
+  allowOptions: Array<string>;
+  todo: string;
 
   envName: string;
   envPageName: string;
@@ -364,12 +368,13 @@ export class Test {
     env: EnvType;
   };
 
-  runLogic: (envsId: string, inputs: InputsTestType) => Promise<Record<string, unknown>>;
-  run: (envsId: string, inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
+  runLogic: (inputs: InputsTestType) => Promise<Record<string, unknown>>;
+  run: (inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
 
   constructor({
     name = null,
-    type = 'test',
+    envsId = null,
+    type = 'test' as 'atom' | 'test',
     levelIndent = 0,
     needData = [],
     needSelectors = [],
@@ -392,7 +397,7 @@ export class Test {
     afterTest = async (): Promise<void> => {
       // Do nothing
     },
-    source = {},
+    source = '',
     repeat = 1,
     socket = blankSocket,
     stepId = null,
@@ -408,6 +413,7 @@ export class Test {
     engineSupports = null,
   } = {}) {
     this.name = name;
+    this.envsId = envsId;
     this.type = type;
     this.needData = needData;
     this.needSelectors = needSelectors;
@@ -440,9 +446,9 @@ export class Test {
     this.tags = tags;
     this.engineSupports = engineSupports;
 
-    this.runLogic = async (envsId: string, inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
+    this.runLogic = async (inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
-      const { envsPool, logger } = Environment(envsId);
+      const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent,
         this.logOptions,
@@ -499,7 +505,11 @@ export class Test {
       this.bindResults = resolveAliases('bindResults', inputs) as Record<string, string>;
       this.resultsFromParent = inputs.resultsFromParent;
 
-      this.options = merge(this.options, resolveAliases('options', inputs), inputs.optionsParent);
+      this.options = {
+        ...this.options,
+        ...resolveAliases('options', inputs),
+        ...inputs.optionsParent,
+      } as Record<string, string | number>;
       this.description = inputs.description || this.description;
       this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
       this.bindDescription = inputs.bindDescription || this.bindDescription;
@@ -598,7 +608,7 @@ export class Test {
         }
 
         // LOG TEST
-        logger.bindData({ testSource: source, bindedData: args });
+        logger.bindData({ breadcrumbs, testArgs: args });
 
         await logger.log({
           text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
@@ -700,7 +710,7 @@ export class Test {
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
-          const repeatResult = await this.run(envsId, repeatArgs);
+          const repeatResult = await this.run(repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
 
@@ -723,7 +733,7 @@ export class Test {
       }
     };
 
-    this.run = async (envsId: string, inputArgs: InputsTestType = {}): Promise<Record<string, unknown>> => {
+    this.run = async (inputArgs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
@@ -735,12 +745,12 @@ export class Test {
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
             if (newBlock.stepId === this.stepId && !newBlock.block) {
-              resolve(await this.runLogic(envsId, inputArgs));
+              resolve(await this.runLogic(inputArgs));
             }
           });
         });
       }
-      return this.runLogic(envsId, inputArgs);
+      return this.runLogic(inputArgs);
     };
   }
 }

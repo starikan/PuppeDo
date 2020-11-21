@@ -274,7 +274,7 @@ describe('Log', () => {
 
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: [] } });
+    logger.bindData({ breadcrumbs: [] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - info   |  `, textColor: 'sane' },
@@ -283,7 +283,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - info   |  `, textColor: 'sane' },
@@ -296,7 +296,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
         { text: '                      |  ', textColor: 'sane' },
@@ -305,7 +305,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('raw', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - raw    |  `, textColor: 'sane' },
@@ -314,7 +314,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('error', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - error  |  `, textColor: 'error' },
@@ -332,7 +332,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: false }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - info   |  `, textColor: 'sane' },
@@ -341,7 +341,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true }, true);
-    logger.bindData({ testSource: { breadcrumbs: ['foo.runTest[0]', 'hee'] } });
+    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');
     expect(logger.makeLog('error', 1, 'text', now, 'funcFile', 'testFile')).toEqual([
@@ -363,7 +363,7 @@ describe('Log', () => {
     ]);
 
     describe('Repeat in makeLog', () => {
-      logger.bindData({ bindedData: { repeat: 2 } });
+      logger.bindData({ testArgs: { repeat: 2 } });
       expect(logger.makeLog('info', 1, 'text', now)).toEqual([
         [
           { text: `${nowFormated} - info   |  `, textColor: 'sane' },

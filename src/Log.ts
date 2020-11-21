@@ -16,6 +16,7 @@ import {
   LogInputType,
   SocketType,
   TestArgsExtType,
+  TestArgsType,
 } from './global.d';
 import { ErrorType } from './Error';
 import Environment from './Environment';
@@ -119,13 +120,8 @@ export default class Log {
   socket: SocketType;
   screenshot: Screenshot;
   binded: {
-    testSource?: {
-      breadcrumbs: Array<string>;
-    };
-    bindedData?: {
-      repeat: number;
-      stepId: string;
-    };
+    breadcrumbs?: Array<string>;
+    testArgs?: TestArgsType;
   };
 
   constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType) {
@@ -186,7 +182,7 @@ export default class Log {
     const { PPD_LOG_EXTEND } = new Arguments().args;
 
     const nowWithPad = `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
-    const breadcrumbs = this.binded?.testSource?.breadcrumbs || [];
+    const breadcrumbs = this.binded?.breadcrumbs || [];
 
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
     const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
@@ -222,7 +218,7 @@ export default class Log {
         { text: tailText, textColor: tailColor },
       ]);
 
-      const repeat = this.binded?.bindedData?.repeat || 1;
+      const repeat = this.binded?.testArgs?.repeat || 1;
       if (repeat > 1) {
         stringsLog.push([
           { text: headText, textColor: headColor },
@@ -325,11 +321,9 @@ export default class Log {
     fullpage = false,
     level = 'info',
     element = null,
-    // testStruct = null,
     levelIndent = 0,
     error = null,
-    // testSource = this.binded.testSource,
-    bindedData = this.binded.bindedData,
+    testArgs = this.binded.testArgs,
     extendInfo = false,
     stdOut = true,
     stepId = '',
@@ -419,12 +413,12 @@ export default class Log {
           text: textString,
           time: getNowDateTime(now),
           // testStruct: PPD_DEBUG_MODE || level === 'env' ? testStructNormaize : null,
-          // bindedData: PPD_DEBUG_MODE ? bindedData : null,
+          // testArgs: PPD_DEBUG_MODE ? testArgs : null,
           screenshots,
           type: level === 'env' ? 'env' : 'log',
           level,
           levelIndent,
-          stepId: bindedData?.stepId || stepId,
+          stepId: testArgs?.stepId || stepId,
         };
         this.envs.log = [...this.envs.log, logEntry];
         this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -438,7 +432,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = bindedData?.stepId;
+      err.stepId = testArgs?.stepId;
       throw err;
     }
   }

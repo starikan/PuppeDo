@@ -7,8 +7,8 @@ import { getTimer, getNowDateTime } from './Helpers';
 
 export default async function run(argsInput = {}, closeProcess = true): Promise<void> {
   const { envsId, envsPool, socket, logger } = Environment();
-  const args = { ...new Arguments(argsInput, true).args };
-  const argsTests = args.PPD_TESTS.filter((v) => !!v);
+  const { PPD_TESTS } = new Arguments(argsInput, true).args;
+  const argsTests = PPD_TESTS.filter((v) => !!v);
 
   if (!argsTests.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -27,7 +27,7 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
       const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();
-      const { test } = getTest(fullJSON, envsId, socket);
+      const { test } = getTest({ testJsonIncome: fullJSON, envsId, socket });
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });

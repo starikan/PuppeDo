@@ -92,8 +92,8 @@ export type LogEntry = {
   time?: string;
   dataEnvs?: Record<string, unknown>;
   dataEnvsGlobal?: Record<string, unknown>;
-  testStruct?: Record<string, unknown>;
-  bindedData?: Record<string, unknown>;
+  // eslint-disable-next-line no-use-before-define
+  testArgs?: TestArgsType;
   screenshots?: Array<string>;
   type?: string;
   level?: string;
@@ -126,11 +126,10 @@ export type LogInputType = {
   fullpage?: boolean;
   level?: ColorsType;
   element?: Element;
-  testStruct?: string;
   levelIndent?: number;
   error?: Error | ErrorType | null;
-  testSource?: any;
-  bindedData?: any;
+  // eslint-disable-next-line no-use-before-define
+  testArgs?: TestArgsType;
   extendInfo?: boolean;
   stdOut?: boolean;
   stepId?: string;
@@ -251,25 +250,11 @@ export interface DataType extends DataYamlType {
 }
 
 // ================ TESTS / ATOMS ====================
-
-export type TestJsonExtendType = {
-  source: any;
-  socket: SocketType;
-  stepId: string;
-  breadcrumbs: string[];
-  testFile: string;
-  type: 'atom' | 'test';
-  resultsFromParent?: Record<string, unknown>;
-  resultsFromChildren?: Record<string, unknown>;
-};
-
 export interface TestTypeYaml {
   name: string;
   type?: 'atom' | 'test';
   needData?: Array<string>;
   needSelectors?: Array<string>;
-  // dataParent: Record<string, unknown>;
-  // selectorsParent: Record<string, unknown>;
   options?: Record<string, string | number>;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
@@ -279,12 +264,6 @@ export interface TestTypeYaml {
   // beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   // runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
   // afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  // levelIndent: number;
-  // source: Record<string, unknown>;
-  // socket: SocketType;
-  // stepId: string;
-  // breadcrumbs: Array<string>;
-  // funcFile: string;
   debug?: boolean;
   debugInfo?: 'data' | 'selectors' | boolean;
   disable?: boolean;
@@ -304,8 +283,6 @@ export interface TestTypeYaml {
   if?: string;
   errorIf?: string;
   errorIfResult?: string;
-  // resultsFromChildren: Record<string, unknown>;
-  // resultsFromParent: Record<string, unknown>;
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[] | null;
   testFile: string;
@@ -313,8 +290,20 @@ export interface TestTypeYaml {
 
 export type TestType = Required<TestTypeYaml>;
 
+export type TestExtendType = TestType & {
+  levelIndent?: number;
+  breadcrumbs?: string[];
+  stepId?: string;
+  source?: string;
+  socket?: SocketType;
+  envsId?: string;
+  resultsFromChildren?: Record<string, unknown>;
+  resultsFromParent?: Record<string, unknown>;
+  funcFile?: string;
+};
+
 export type InputsTestType = {
-  options?: Record<string, string>;
+  options?: Record<string, string | number>;
   description?: string;
   descriptionExtend?: string[];
   bindDescription?: string;
@@ -330,7 +319,7 @@ export type InputsTestType = {
   selectors?: Record<string, unknown>;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
-  optionsParent?: Record<string, unknown>;
+  optionsParent?: Record<string, string | number>;
   resultsFromParent?: Record<string, unknown>;
   logOptionsParent?: LogOptionsType;
   frame?: string;
@@ -344,7 +333,7 @@ export type TestArgsType = {
   selectorsTest: Record<string, unknown>;
   envName: string;
   envPageName: string;
-  options: Record<string, unknown>;
+  options: Record<string, string | number>;
   allowResults: Array<string>;
   bindResults: Record<string, string>;
   bindSelectors: Record<string, string>;

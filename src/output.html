@@ -68,8 +68,8 @@
             >
             </tree-view>
             <tree-view
-              v-if="data.bindedData && Object.keys(data.bindedData).length !== 0"
-              :data="data.bindedData"
+              v-if="data.testArgs && Object.keys(data.testArgs).length !== 0"
+              :data="data.testArgs"
               :options="{ maxDepth: 0, rootObjectKey: 'Binded data' }"
             >
             </tree-view>

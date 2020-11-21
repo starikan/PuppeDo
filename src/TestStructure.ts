@@ -2,14 +2,8 @@ import crypto from 'crypto';
 
 import TestsContent from './TestContent';
 
-import { TestType } from './global.d';
+import { TestExtendType, TestType } from './global.d';
 import { RUNNER_BLOCK_NAMES } from './Helpers';
-
-type TestExtendType = TestType & {
-  levelIndent?: number;
-  breadcrumbs?: string[];
-  stepId?: string;
-};
 
 export default class TestStructure {
   fullJSON: TestExtendType;
@@ -84,6 +78,7 @@ export default class TestStructure {
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');
+    fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
     let textDescription = TestStructure.generateDescriptionStep(fullJSON);
 
@@ -99,7 +94,7 @@ export default class TestStructure {
             levelIndent,
           );
           if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = JSON.parse(JSON.stringify(fullJSONResponce));
-          // TODO: 2020-11-20 S.Starodubov сделать генерацию ескрипшена из полной JSON а не во время
+          // TODO: 2020-11-20 S.Starodubov сделать генерацию дескрипшена из полной JSON а не во время
           if (textDescriptionResponse) textDescription += textDescriptionResponse;
         });
       } else {
