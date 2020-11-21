@@ -20,6 +20,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     'no-await-in-loop': 'off',
     'operator-linebreak': ['off', 'after'], // prettier conflict
+    'no-console': 'off',
 
     'prettier/prettier': 'error',
     'max-len': ['error', { code: 120 }],

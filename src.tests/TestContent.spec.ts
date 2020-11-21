@@ -9,7 +9,6 @@ describe('TestContent', () => {
   test('Init', () => {
     const spy = jest.spyOn(console, 'log').mockImplementation();
     const { ignorePaths, rootFolder, additionalFolders } = new TestsContent();
-    // eslint-disable-next-line no-console
     expect(console.log).toHaveBeenCalled();
     spy.mockRestore();
     expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github']);

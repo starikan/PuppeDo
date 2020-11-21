@@ -47,7 +47,7 @@ export default class Screenshot {
           await element.screenshot({ path: pathScreenshot });
         }
       } catch (error) {
-        // eslint-disable-next-line no-empty
+        // Nothing to do
       }
 
       if (fs.existsSync(pathScreenshot)) {
@@ -57,7 +57,6 @@ export default class Screenshot {
       }
       return '';
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.log('Can not create a screenshot');
       return '';
     }

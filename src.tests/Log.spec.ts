@@ -29,7 +29,6 @@ describe('Log', () => {
 
   describe('Write into console', () => {
     beforeEach(() => {
-      // eslint-disable-next-line no-console
       console.log = jest.fn();
     });
 
@@ -40,7 +39,6 @@ describe('Log', () => {
           { text: 'text', textColor: 'info' },
         ],
       ]);
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
     });
 
@@ -51,7 +49,6 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane' },
         ],
       ]);
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
@@ -62,7 +59,6 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
     });
 
@@ -73,7 +69,6 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'redBackground' },
         ],
       ]);
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith(
         '\u001b[41m\u001b[0minfo \u001b[0m\u001b[0m\u001b[41m\u001b[0mtext\u001b[0m\u001b[0m',
       );
@@ -90,9 +85,7 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane' },
         ],
       ]);
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
-      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo\u001b[0m\u001b[0mtext\u001b[0m');
     });
   });

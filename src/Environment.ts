@@ -381,7 +381,6 @@ export class EnvsPool implements EnvsPoolType {
       delete this.envs[name].state.pages;
       delete this.envs[name].state.contexts;
     } catch (error) {
-      // eslint-disable-next-line no-console
       // console.log(error);
     }
     try {
@@ -392,7 +391,6 @@ export class EnvsPool implements EnvsPoolType {
       }
       delete this.envs[name].state.pid;
     } catch (error) {
-      // eslint-disable-next-line no-console
       // console.log(error);
     }
   }
@@ -404,7 +402,6 @@ export class EnvsPool implements EnvsPoolType {
       try {
         await state.browser.close();
       } catch (error) {
-        // eslint-disable-next-line no-console
         // console.log(error);
       }
     }
@@ -420,7 +417,6 @@ export class EnvsPool implements EnvsPoolType {
           spawnSync('taskkill', ['/f', '/im', killProcessName]);
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
         // console.log(error);
       }
     }

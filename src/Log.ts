@@ -291,7 +291,6 @@ export default class Log {
           return text;
         })
         .join('');
-      // eslint-disable-next-line no-console
       console.log(line);
     });
   }

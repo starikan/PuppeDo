@@ -79,7 +79,6 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
   if (!(errorIncome instanceof TestError)) {
-    // eslint-disable-next-line no-console
     console.log(errorIncome);
   }
   if (PPD_DEBUG_MODE) {
