@@ -3,7 +3,7 @@ import path from 'path';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 
-import { TestType, DataType, TestTypeYaml } from '../src/global.d';
+import { TestType, DataType } from '../src/global.d';
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -109,6 +109,9 @@ describe('TestContent', () => {
         tags: [],
         engineSupports: null,
         todo: '',
+        beforeTest: [],
+        runTest: [],
+        afterTest: [],
       },
       {
         type: 'atom',
@@ -143,6 +146,9 @@ describe('TestContent', () => {
         tags: [],
         engineSupports: null,
         todo: '',
+        beforeTest: [],
+        runTest: [],
+        afterTest: [],
       },
       {
         type: 'atom',
@@ -177,6 +183,9 @@ describe('TestContent', () => {
         tags: [],
         engineSupports: null,
         todo: '',
+        beforeTest: [],
+        runTest: [],
+        afterTest: [],
       },
       {
         type: 'atom',
@@ -211,6 +220,9 @@ describe('TestContent', () => {
         tags: [],
         engineSupports: null,
         todo: '',
+        beforeTest: [],
+        runTest: [],
+        afterTest: [],
       },
     ];
 

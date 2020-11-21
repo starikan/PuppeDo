@@ -61,6 +61,9 @@ const BLANK_TEST: TestType = {
   engineSupports: null,
   testFile: '',
   todo: '',
+  beforeTest: [],
+  runTest: [],
+  afterTest: [],
 };
 
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });

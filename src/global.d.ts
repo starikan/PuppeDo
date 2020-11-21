@@ -250,80 +250,6 @@ export interface DataType extends DataYamlType {
 }
 
 // ================ TESTS / ATOMS ====================
-export interface TestTypeYaml {
-  name: string;
-  type?: 'atom' | 'test';
-  needData?: Array<string>;
-  needSelectors?: Array<string>;
-  options?: Record<string, string | number>;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  allowResults?: Array<string>;
-  allowOptions?: Array<string>;
-  todo?: string;
-  // beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  // runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  // afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  debug?: boolean;
-  debugInfo?: 'data' | 'selectors' | boolean;
-  disable?: boolean;
-  logOptions?: LogOptionsType;
-  frame?: string;
-  data?: Record<string, unknown>;
-  bindData?: Record<string, string>;
-  selectors?: Record<string, unknown>;
-  bindSelectors?: Record<string, string>;
-  bindResults?: Record<string, string>;
-  description?: string;
-  descriptionExtend?: Array<string>;
-  descriptionError?: string;
-  bindDescription?: string;
-  repeat?: number;
-  while?: string;
-  if?: string;
-  errorIf?: string;
-  errorIfResult?: string;
-  tags?: Array<string>;
-  engineSupports?: BrowserEngineType[] | null;
-  testFile: string;
-}
-
-export type TestType = Required<TestTypeYaml>;
-
-export type TestExtendType = TestType & {
-  levelIndent?: number;
-  breadcrumbs?: string[];
-  stepId?: string;
-  source?: string;
-  socket?: SocketType;
-  envsId?: string;
-  resultsFromChildren?: Record<string, unknown>;
-  resultsFromParent?: Record<string, unknown>;
-  funcFile?: string;
-};
-
-export type InputsTestType = {
-  options?: Record<string, string | number>;
-  description?: string;
-  descriptionExtend?: string[];
-  bindDescription?: string;
-  repeat?: number;
-  while?: string;
-  if?: string;
-  errorIf?: string;
-  errorIfResult?: string;
-  debug?: boolean;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  data?: Record<string, unknown>;
-  selectors?: Record<string, unknown>;
-  dataParent?: Record<string, unknown>;
-  selectorsParent?: Record<string, unknown>;
-  optionsParent?: Record<string, string | number>;
-  resultsFromParent?: Record<string, unknown>;
-  logOptionsParent?: LogOptionsType;
-  frame?: string;
-};
 
 export type TestArgsType = {
   envsId: string;
@@ -367,3 +293,81 @@ export type TestArgsExtType = {
 } & TestArgsType;
 
 export type TestLifecycleFunctionType = (args: TestArgsExtType) => Promise<Record<string, unknown> | void>;
+
+export interface TestTypeYaml {
+  name: string;
+  type?: 'atom' | 'test';
+  needData?: Array<string>;
+  needSelectors?: Array<string>;
+  options?: Record<string, string | number>;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
+  allowResults?: Array<string>;
+  allowOptions?: Array<string>;
+  todo?: string;
+  debug?: boolean;
+  debugInfo?: 'data' | 'selectors' | boolean;
+  disable?: boolean;
+  logOptions?: LogOptionsType;
+  frame?: string;
+  data?: Record<string, unknown>;
+  bindData?: Record<string, string>;
+  selectors?: Record<string, unknown>;
+  bindSelectors?: Record<string, string>;
+  bindResults?: Record<string, string>;
+  description?: string;
+  descriptionExtend?: Array<string>;
+  descriptionError?: string;
+  bindDescription?: string;
+  repeat?: number;
+  while?: string;
+  if?: string;
+  errorIf?: string;
+  errorIfResult?: string;
+  tags?: Array<string>;
+  engineSupports?: BrowserEngineType[] | null;
+  testFile: string;
+  beforeTest?: Record<string, unknown>[];
+  runTest?: Record<string, unknown>[];
+  afterTest?: Record<string, unknown>[];
+}
+
+export type TestType = Required<TestTypeYaml>;
+
+export type TestExtendType = TestType & {
+  levelIndent?: number;
+  breadcrumbs?: string[];
+  stepId?: string;
+  source?: string;
+  socket?: SocketType;
+  envsId?: string;
+  resultsFromChildren?: Record<string, unknown>;
+  resultsFromParent?: Record<string, unknown>;
+  funcFile?: string;
+  beforeTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  runTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  afterTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+};
+
+export type InputsTestType = {
+  options?: Record<string, string | number>;
+  description?: string;
+  descriptionExtend?: string[];
+  bindDescription?: string;
+  repeat?: number;
+  while?: string;
+  if?: string;
+  errorIf?: string;
+  errorIfResult?: string;
+  debug?: boolean;
+  dataExt?: Array<string>;
+  selectorsExt?: Array<string>;
+  data?: Record<string, unknown>;
+  selectors?: Record<string, unknown>;
+  dataParent?: Record<string, unknown>;
+  selectorsParent?: Record<string, unknown>;
+  optionsParent?: Record<string, string | number>;
+  resultsFromParent?: Record<string, unknown>;
+  logOptionsParent?: LogOptionsType;
+  frame?: string;
+};
