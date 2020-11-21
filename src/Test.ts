@@ -255,7 +255,7 @@ const resolveLogOptions = (
 const fetchData = (
   dataExt: Array<string>,
   selectorsExt: Array<string>,
-  resultsFromParent: Record<string, unknown> = {},
+  resultsFromParent: Record<string, unknown>,
   dataParent: Record<string, unknown>,
   data: Record<string, unknown>,
   bindData: Record<string, string>,
@@ -280,7 +280,7 @@ const fetchData = (
     return { ...collect, ...extData };
   }, {});
 
-  const dataFlow = [PPD_DATA, env?.env?.data || {}, dataExtResolved, dataParent, resultsFromParent, data];
+  const dataFlow = [PPD_DATA, env?.env?.data || {}, dataExtResolved, dataParent, resultsFromParent || {}, data];
   let dataLocal = merge(...dataFlow);
 
   const selectorsFlow = [
@@ -288,7 +288,7 @@ const fetchData = (
     env?.env?.selectors || {},
     selectorsExtResolved,
     selectorsParent,
-    resultsFromParent,
+    resultsFromParent || {},
     selectors,
   ];
   let selectorsLocal = merge(...selectorsFlow);

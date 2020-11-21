@@ -327,9 +327,9 @@ export interface TestTypeYaml {
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[] | null;
   testFile: string;
-  beforeTest?: Record<string, unknown>[];
-  runTest?: Record<string, unknown>[];
-  afterTest?: Record<string, unknown>[];
+  beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
 }
 
 export type TestType = Required<TestTypeYaml>;
@@ -344,9 +344,6 @@ export type TestExtendType = TestType & {
   resultsFromChildren?: Record<string, unknown>;
   resultsFromParent?: Record<string, unknown>;
   funcFile?: string;
-  beforeTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  runTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  afterTest?: TestLifecycleFunctionType | TestLifecycleFunctionType[];
 };
 
 export type InputsTestType = {
