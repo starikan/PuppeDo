@@ -5,12 +5,29 @@ import { merge, pick, RUNNER_BLOCK_NAMES } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { InputsTestType, SocketType, TestArgsExtType, TestExtendType, TestLifecycleFunctionType } from './global.d';
+import {
+  InputsTestType,
+  SocketType,
+  TestArgsExtType,
+  TestExtendType,
+  TestLifecycleFunctionType,
+  TestType,
+} from './global.d';
 
 const atoms = {};
 
-const resolveJS = (testJson: TestExtendType, funcFile: string): TestExtendType => {
-  const testJsonNew = JSON.parse(JSON.stringify(testJson));
+const resolveJS = (testJson: TestExtendType): TestExtendType => {
+  const testJsonNew = { ...testJson };
+
+  const functions = pick(testJsonNew, RUNNER_BLOCK_NAMES);
+  if (Object.keys(functions).length || testJsonNew.type !== 'atom') {
+    return testJsonNew;
+  }
+
+  // If there is no any function in test we decide that it have runTest in js file with the same name
+
+  const testFileExt = path.parse(testJson.testFile).ext;
+  const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
   try {
     const atomRun = atoms[funcFile] || __non_webpack_require__(funcFile);
     atoms[funcFile] = atoms[funcFile] || atomRun;
@@ -61,7 +78,19 @@ const getTest = ({
   parentTest?: TestExtendType;
 }): { test: TestLifecycleFunctionType } => {
   let testJson = JSON.parse(JSON.stringify(testJsonIncome));
-  const functions = pick(testJson, RUNNER_BLOCK_NAMES);
+
+  const functions = {
+    beforeTest: testJson.beforeTest,
+    runTest: testJson.runTest,
+    afterTest: testJson.afterTest,
+  };
+  Object.keys(functions).forEach((funcBlock) => {
+    if (functions[funcBlock] && !Array.isArray(functions[funcBlock])) {
+      throw new Error(`Block ${funcBlock} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'`);
+    }
+  });
+
+  testJson = resolveJS(testJson);
 
   testJson.envsId = envsId;
   testJson.socket = socket;
@@ -71,32 +100,17 @@ const getTest = ({
   // Test
   // blocker.push({ stepId: testJson.stepId, block: true, breadcrumbs: testJson.breadcrumbs });
 
-  // If there is no any function in test we decide that it have runTest in js file with the same name
-  if (!Object.keys(functions).length && ['atom'].includes(testJson.type)) {
-    const testFileExt = path.parse(testJson.testFile).ext;
-    const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
-    testJson = resolveJS(testJson, funcFile);
-  } else {
-    Object.entries(functions).forEach((v) => {
-      const funcKey = v[0];
-      let funcVal = v[1];
-      if (!funcVal) {
-        funcVal = [];
-      }
-
-      // Resolve nested
-      if (Array.isArray(funcVal)) {
-        testJson[funcKey] = [];
-        funcVal.forEach((testItem) => {
-          if (['test', 'atom'].includes(testItem.type)) {
-            testJson[funcKey].push(getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson }).test);
-          }
-        });
-      } else {
-        throw new Error(`Block ${funcKey} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'`);
-      }
-    });
-  }
+  Object.keys(functions).forEach((funcKey) => {
+    const funcVal = functions[funcKey];
+    if (funcVal) {
+      testJson[funcKey] = [];
+      funcVal.forEach((testItem: TestType) => {
+        if (['test', 'atom'].includes(testItem.type)) {
+          testJson[funcKey].push(getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson }).test);
+        }
+      });
+    }
+  });
 
   const test = new Test(testJson);
 
