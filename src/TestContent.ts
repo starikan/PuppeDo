@@ -142,7 +142,6 @@ export default class TestsContent extends Singleton {
             }
           });
         } catch (e) {
-          // eslint-disable-next-line no-console
           console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/`);
         }
       });
@@ -243,9 +242,11 @@ export default class TestsContent extends Singleton {
         const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
         if (envsResolved) {
           envUpdated.browser = TestsContent.resolveBrowser(merge(envUpdated.browser, envsResolved.browser || {}));
-          envUpdated.log = merge(envUpdated.log || {}, envsResolved.log || {});
-          envUpdated.data = merge(envUpdated.data || {}, envsResolved.data || {});
-          envUpdated.selectors = merge(envUpdated.selectors || {}, envsResolved.selectors || {});
+          // envUpdated.browser = TestsContent.resolveBrowser({ ...envUpdated.browser, ...(envsResolved.browser || {}) });
+          envUpdated.log = { ...(envUpdated.log || {}), ...(envsResolved.log || {}) };
+          envUpdated.data = { ...(envUpdated.data || {}), ...(envsResolved.data || {}) };
+          envUpdated.selectors = { ...(envUpdated.selectors || {}), ...(envsResolved.selectors || {}) };
+
           envUpdated.description = `${envUpdated.description || ''} -> ${envsResolved.description || ''}`;
         } else {
           throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
@@ -255,7 +256,7 @@ export default class TestsContent extends Singleton {
       dataExt.forEach((dataExtName: string) => {
         const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
         if (dataResolved) {
-          envUpdated.data = merge(envUpdated.data || {}, dataResolved.data || {}, dataEnv);
+          envUpdated.data = { ...(envUpdated.data || {}), ...(dataResolved.data || {}), ...dataEnv };
         } else {
           throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in environment '${env.name}'`);
         }
@@ -264,7 +265,11 @@ export default class TestsContent extends Singleton {
       selectorsExt.forEach((selectorsExtName: string) => {
         const selectorsResolved: DataType | undefined = selectorsAll.find((g: DataType) => g.name === selectorsExtName);
         if (selectorsResolved) {
-          envUpdated.selectors = merge(envUpdated.selectors || {}, selectorsResolved.data || {}, selectorsEnv);
+          envUpdated.selectors = {
+            ...(envUpdated.selectors || {}),
+            ...(selectorsResolved.data || {}),
+            ...selectorsEnv,
+          };
         } else {
           throw new Error(
             `PuppeDo can't resolve extended selectors '${selectorsExtName}' in environment '${env.name}'`,

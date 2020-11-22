@@ -1,7 +1,7 @@
 import path from 'path';
 
 import Blocker from './Blocker';
-import { merge, pick, RUNNER_BLOCK_NAMES } from './Helpers';
+import { pick, RUNNER_BLOCK_NAMES } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
@@ -53,7 +53,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
 const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Record<string, unknown> => {
   const result = { ...source };
   list.forEach((v: string) => {
-    result[`${v}Parent`] = merge(result[v] || {}, args[v] || {});
+    result[`${v}Parent`] = { ...(result[v] || {}), ...(args[v] || {}) };
   });
   return result;
 };

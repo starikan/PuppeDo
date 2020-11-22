@@ -199,10 +199,9 @@ const updateDataWithNeeds = (
   dataLocal: Record<string, unknown>,
   selectorsLocal: Record<string, unknown>,
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
-  const allData = merge(selectorsLocal, dataLocal);
-
-  const dataLocalCopy = JSON.parse(JSON.stringify(dataLocal));
-  const selectorsLocalCopy = JSON.parse(JSON.stringify(selectorsLocal));
+  const allData = { ...selectorsLocal, ...dataLocal };
+  const dataLocalCopy = { ...dataLocal };
+  const selectorsLocalCopy = { ...selectorsLocal };
 
   [...needData, ...needSelectors]
     .map((v: string) => v.replace('?', ''))
@@ -229,9 +228,11 @@ const resolveLogOptions = (
     ...logOptions,
   };
 
-  const logForChild: LogOptionsType = merge({ logChildren: logChildrenParent }, logOptionsNew, {
-    logThis: logThisParent,
-  });
+  const logForChild: LogOptionsType = {
+    ...{ logChildren: logChildrenParent },
+    ...logOptionsNew,
+    ...{ logThis: logThisParent },
+  };
 
   let logShowFlag = true;
 
@@ -459,7 +460,6 @@ export class Test implements TestExtendType {
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug && !this.debugInfo) {
-        // eslint-disable-next-line no-console
         console.log(this);
         // eslint-disable-next-line no-debugger
         debugger;
@@ -644,9 +644,7 @@ export class Test implements TestExtendType {
 
         if (this.debugInfo) {
           logDebug(logger.log.bind(logger), 0, argsExt, true, this.debugInfo);
-          // eslint-disable-next-line no-console
           console.log(argsExt);
-          // eslint-disable-next-line no-console
           console.log(this);
           if (this.debug) {
             // eslint-disable-next-line no-debugger
@@ -706,7 +704,7 @@ export class Test implements TestExtendType {
 
         // REPEAT
         if (this.repeat > 1) {
-          const repeatArgs = JSON.parse(JSON.stringify(inputs));
+          const repeatArgs = { ...inputs };
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
