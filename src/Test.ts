@@ -556,6 +556,15 @@ export class Test implements TestExtendType {
 
         ({ dataLocal, selectorsLocal } = updateDataWithNeeds(needData, needSelectors, dataLocal, selectorsLocal));
 
+        const intersectionKeys = Object.keys(dataLocal).filter((v) => Object.keys(selectorsLocal).includes(v));
+        if (intersectionKeys.length) {
+          intersectionKeys.forEach((v) => {
+            if (dataLocal[v] !== selectorsLocal[v]) {
+              throw new Error(`Some keys in data and selectors intersect. It can corrupt data: '${v}'`);
+            }
+          });
+        }
+
         const allData = { ...selectorsLocal, ...dataLocal };
 
         this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
