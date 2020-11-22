@@ -242,8 +242,7 @@ export default class TestsContent extends Singleton {
         const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
         if (envsResolved) {
           envUpdated.browser = TestsContent.resolveBrowser(merge(envUpdated.browser, envsResolved.browser || {}));
-          // envUpdated.browser = TestsContent.resolveBrowser({ ...envUpdated.browser, ...(envsResolved.browser || {}) });
-          envUpdated.log = { ...(envUpdated.log || {}), ...(envsResolved.log || {}) };
+          envUpdated.log = merge(envUpdated.log || {}, envsResolved.log || {});
           envUpdated.data = { ...(envUpdated.data || {}), ...(envsResolved.data || {}) };
           envUpdated.selectors = { ...(envUpdated.selectors || {}), ...(envsResolved.selectors || {}) };
 
