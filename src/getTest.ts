@@ -1,5 +1,7 @@
 import path from 'path';
 
+import requireFromString from 'require-from-string';
+
 import Blocker from './Blocker';
 import { pick, RUNNER_BLOCK_NAMES } from './Helpers';
 import { Test } from './Test';
@@ -24,19 +26,26 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     return testJsonNew;
   }
 
-  // If there is no any function in test we decide that it have runTest in js file with the same name
+  const testFileExt = path.parse(testJsonNew.testFile).ext;
+  const funcFile = path.resolve(testJsonNew.testFile.replace(testFileExt, '.js'));
 
-  const testFileExt = path.parse(testJson.testFile).ext;
-  const funcFile = path.resolve(testJson.testFile.replace(testFileExt, '.js'));
   try {
-    const atomRun = atoms[funcFile] || __non_webpack_require__(funcFile);
-    atoms[funcFile] = atoms[funcFile] || atomRun;
+    if (testJsonNew.inlineJS && typeof testJsonNew.inlineJS === 'string') {
+      try {
+        atoms[funcFile] = requireFromString(`module.exports = async function atomRun() {\n${testJsonNew.inlineJS}};`);
+      } catch (error) {
+        error.message = `Some errors in inlineJS: ${testJsonNew.inlineJS}`;
+        throw error;
+      }
+    } else {
+      atoms[funcFile] = atoms[funcFile] || __non_webpack_require__(funcFile);
+      testJsonNew.funcFile = path.resolve(funcFile);
+    }
 
     const instance = new Atom();
-    instance.atomRun = atomRun;
+    instance.atomRun = atoms[funcFile];
 
-    if (typeof atomRun === 'function') {
-      testJsonNew.funcFile = path.resolve(funcFile);
+    if (typeof atoms[funcFile] === 'function') {
       testJsonNew.runTest = [instance.runTest.bind(instance)];
     }
   } catch (error) {

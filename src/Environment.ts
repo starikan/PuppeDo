@@ -381,7 +381,7 @@ export class EnvsPool implements EnvsPoolType {
       delete this.envs[name].state.pages;
       delete this.envs[name].state.contexts;
     } catch (error) {
-      // console.log(error);
+      // Nothing to do.
     }
     try {
       const killOnEnd = env.browser?.killOnEnd || true;
@@ -391,7 +391,7 @@ export class EnvsPool implements EnvsPoolType {
       }
       delete this.envs[name].state.pid;
     } catch (error) {
-      // console.log(error);
+      // Nothing to do.
     }
   }
 
@@ -402,7 +402,7 @@ export class EnvsPool implements EnvsPoolType {
       try {
         await state.browser.close();
       } catch (error) {
-        // console.log(error);
+        // Nothing to do.
       }
     }
   }
@@ -417,7 +417,7 @@ export class EnvsPool implements EnvsPoolType {
           spawnSync('taskkill', ['/f', '/im', killProcessName]);
         }
       } catch (error) {
-        // console.log(error);
+        // Nothing to do.
       }
     }
   }

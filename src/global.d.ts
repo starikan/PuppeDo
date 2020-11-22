@@ -330,6 +330,7 @@ export interface TestTypeYaml {
   beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
   runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
   afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  inlineJS?: string;
 }
 
 export type TestType = Required<TestTypeYaml>;

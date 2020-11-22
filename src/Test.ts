@@ -365,6 +365,7 @@ export class Test implements TestExtendType {
   engineSupports: BrowserEngineType[] | null;
   allowOptions: Array<string>;
   todo: string;
+  inlineJS: string;
 
   envName: string;
   envPageName: string;

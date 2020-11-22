@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.68",
+  "version": "2.0.0-beta.69",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
   "typings": "./src/global.d.ts",
@@ -42,6 +42,7 @@
     "deepmerge": "4.2.2",
     "js-yaml": "3.14.0",
     "node-fetch": "2.6.1",
+    "require-from-string": "2.0.2",
     "source-map-support": "0.5.19"
   },
   "devDependencies": {

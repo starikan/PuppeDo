@@ -78,9 +78,12 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
   if (error.socket && error.socket.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
+
   if (!(errorIncome instanceof TestError)) {
+    console.log(errorIncome.message);
     console.log(errorIncome);
   }
+
   if (PPD_DEBUG_MODE) {
     // eslint-disable-next-line no-debugger
     debugger;

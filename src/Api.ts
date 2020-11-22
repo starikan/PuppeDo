@@ -49,7 +49,6 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;
       error.type = 'SyntaxError';
-      console.log(error);
     }
     throw error;
   }
