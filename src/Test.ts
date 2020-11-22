@@ -1,6 +1,6 @@
 import vm from 'vm';
 
-import { merge, blankSocket, getTimer, pick } from './Helpers';
+import { blankSocket, getTimer, pick } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import Environment from './Environment';
@@ -281,18 +281,23 @@ const fetchData = (
     return { ...collect, ...extData };
   }, {});
 
-  const dataFlow = [PPD_DATA, env?.env?.data || {}, dataExtResolved, dataParent, resultsFromParent || {}, data];
-  let dataLocal = merge(...dataFlow);
+  let dataLocal = {
+    ...PPD_DATA,
+    ...(env?.env?.data || {}),
+    ...dataExtResolved,
+    ...dataParent,
+    ...(resultsFromParent || {}),
+    ...data,
+  };
 
-  const selectorsFlow = [
-    PPD_SELECTORS,
-    env?.env?.selectors || {},
-    selectorsExtResolved,
-    selectorsParent,
-    resultsFromParent || {},
-    selectors,
-  ];
-  let selectorsLocal = merge(...selectorsFlow);
+  let selectorsLocal = {
+    ...PPD_SELECTORS,
+    ...(env?.env?.selectors || {}),
+    ...selectorsExtResolved,
+    ...selectorsParent,
+    ...(resultsFromParent || {}),
+    ...selectors,
+  };
 
   Object.entries(bindData).forEach((v: [string, string]) => {
     const [key, val] = v;
@@ -493,12 +498,12 @@ export class Test implements TestExtendType {
 
       // Get Data from parent test and merge it with current test
       this.data = resolveAliases('data', inputs);
-      this.dataParent = merge(this.dataParent || {}, inputs.dataParent);
+      this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
       this.bindData = resolveAliases('bindData', inputs) as Record<string, string>;
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases('selectors', inputs);
-      this.selectorsParent = merge(this.selectorsParent || {}, inputs.selectorsParent);
+      this.selectorsParent = { ...(this.selectorsParent || {}), ...inputs.selectorsParent };
       this.bindSelectors = resolveAliases('bindSelectors', inputs) as Record<string, string>;
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
@@ -551,7 +556,7 @@ export class Test implements TestExtendType {
 
         ({ dataLocal, selectorsLocal } = updateDataWithNeeds(needData, needSelectors, dataLocal, selectorsLocal));
 
-        const allData = merge(selectorsLocal, dataLocal);
+        const allData = { ...selectorsLocal, ...dataLocal };
 
         this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
         allData.repeat = this.repeat;
@@ -666,7 +671,7 @@ export class Test implements TestExtendType {
             for (let f = 0; f < funcs.length; f += 1) {
               const fun = funcs[f];
               const funResult = (await fun(argsExt)) || {};
-              resultFromTest = merge(resultFromTest, funResult);
+              resultFromTest = { ...resultFromTest, ...funResult };
             }
           }
         }
@@ -683,7 +688,7 @@ export class Test implements TestExtendType {
         const allowResultsObject = this.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
         let localResults = resolveDataFunctions(
           { ...this.bindResults, ...allowResultsObject },
-          merge(selectorsLocal, dataLocal, results),
+          { ...selectorsLocal, ...dataLocal, ...results },
         );
 
         // ERROR
