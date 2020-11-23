@@ -114,5 +114,10 @@ runTest:
       description: Make awesome test
 
   - subTest:
+      allowResults: ['x']
+      inlineJS: >
+        const x = 1 + 1;
+        return { x };
+      errorIfResult: x !== 2
 
   - blank:
