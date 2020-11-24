@@ -181,7 +181,7 @@ export default class Log {
     const errorTyped = error;
     const { PPD_LOG_EXTEND, PPD_LOG_TIMER_SHOW } = new Arguments().args;
 
-    const nowWithPad = PPD_LOG_TIMER_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}` : '';
+    const nowWithPad = PPD_LOG_TIMER_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
     const breadcrumbs = this.binded?.breadcrumbs || [];
 
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
@@ -197,7 +197,7 @@ export default class Log {
     }
 
     const head: LogEntrieType = {
-      text: `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad} ${' | '.repeat(levelIndent)} `,
+      text: `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad}${'| '.repeat(levelIndent)}`,
       textColor: headColor,
     };
     const tail: LogEntrieType = {
@@ -230,13 +230,13 @@ export default class Log {
     if (level === 'error' && !extendInfo) {
       breadcrumbs.forEach((v, i) => {
         stringsLog.push([
-          { text: `${nowWithPad} ${' | '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, textColor: 'error' },
+          { text: `${nowWithPad}${'| '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, textColor: 'error' },
         ]);
       });
       if (testFile) {
         stringsLog.push([
           {
-            text: `${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`,
+            text: `${nowWithPad}${'| '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`,
             textColor: 'error',
           },
         ]);
@@ -244,7 +244,7 @@ export default class Log {
       if (funcFile) {
         stringsLog.push([
           {
-            text: `${nowWithPad} ${' | '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`,
+            text: `${nowWithPad}${'| '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`,
             textColor: 'error',
           },
         ]);
@@ -253,14 +253,14 @@ export default class Log {
 
     screenshots.forEach((v) => {
       stringsLog.push([
-        { text: `${nowWithPad} ${' | '.repeat(levelIndent)} `, textColor: headColor },
+        { text: `${nowWithPad}${'| '.repeat(levelIndent)} `, textColor: headColor },
         { text: `🖼 screenshot: [${v}]`, textColor: tailColor },
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        { text: `${nowWithPad} ${' | '.repeat(levelIndent)} `, textColor: headColor },
+        { text: `${nowWithPad}${'| '.repeat(levelIndent)} `, textColor: headColor },
         { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor },
       ]);
     }

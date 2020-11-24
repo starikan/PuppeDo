@@ -334,6 +334,7 @@ export interface TestTypeYaml {
   runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
   afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
   inlineJS?: string;
+  argsRedefine: Partial<ArgumentsType>;
 }
 
 export type TestType = Required<TestTypeYaml>;

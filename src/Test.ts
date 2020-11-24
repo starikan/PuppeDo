@@ -23,6 +23,7 @@ import {
   TestLifecycleFunctionType,
   BrowserEngineType,
   TestExtendType,
+  ArgumentsType,
 } from './global.d';
 
 const ALIASES = {
@@ -369,6 +370,7 @@ export class Test implements TestExtendType {
   allowOptions: Array<string>;
   todo: string;
   inlineJS: string;
+  argsRedefine: Partial<ArgumentsType>;
 
   envName: string;
   envPageName: string;
@@ -421,6 +423,7 @@ export class Test implements TestExtendType {
     frame = '',
     tags = [],
     engineSupports = null,
+    argsRedefine = {},
   } = {}) {
     this.name = name;
     this.envsId = envsId;
@@ -455,6 +458,7 @@ export class Test implements TestExtendType {
     this.frame = frame;
     this.tags = tags;
     this.engineSupports = engineSupports;
+    this.argsRedefine = argsRedefine;
 
     this.runLogic = async (inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -472,7 +476,7 @@ export class Test implements TestExtendType {
         PPD_TAGS_TO_RUN,
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
-      } = new Arguments().args;
+      } = { ...new Arguments().args, ...argsRedefine };
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug && !this.debugInfo) {
@@ -658,7 +662,7 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 textColor: 'cyan' as ColorsType,
-                levelIndent,
+                levelIndent: levelIndent + 1,
                 logShowFlag,
               });
             }

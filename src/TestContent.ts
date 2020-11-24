@@ -64,6 +64,8 @@ const BLANK_TEST: TestType = {
   beforeTest: [],
   runTest: [],
   afterTest: [],
+  inlineJS: '',
+  argsRedefine: {},
 };
 
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
