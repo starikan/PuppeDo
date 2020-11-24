@@ -179,9 +179,9 @@ export default class Log {
     backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
     const errorTyped = error;
-    const { PPD_LOG_EXTEND } = new Arguments().args;
+    const { PPD_LOG_EXTEND, PPD_LOG_TIMER_SHOW } = new Arguments().args;
 
-    const nowWithPad = `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}`;
+    const nowWithPad = PPD_LOG_TIMER_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}` : '';
     const breadcrumbs = this.binded?.breadcrumbs || [];
 
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';

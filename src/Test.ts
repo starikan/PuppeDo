@@ -465,7 +465,14 @@ export class Test implements TestExtendType {
         envsPool,
       );
 
-      const { PPD_DEBUG_MODE, PPD_LOG_EXTEND, PPD_LOG_TEST_NAME, PPD_TAGS_TO_RUN } = new Arguments().args;
+      const {
+        PPD_DEBUG_MODE,
+        PPD_LOG_EXTEND,
+        PPD_LOG_TEST_NAME,
+        PPD_TAGS_TO_RUN,
+        PPD_LOG_DOCUMENTATION_MODE,
+        PPD_LOG_NAMES_ONLY,
+      } = new Arguments().args;
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug && !this.debugInfo) {
@@ -635,22 +642,27 @@ export class Test implements TestExtendType {
         // LOG TEST
         logger.bindData({ breadcrumbs, testArgs: args });
 
-        await logger.log({
-          text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
-          level: 'test',
-          levelIndent,
-          logShowFlag,
-          textColor: this.logOptions.textColor,
-          backgroundColor: this.logOptions.backgroundColor,
-        });
-
-        for (let step = 0; step < this.descriptionExtend.length; step += 1) {
+        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           await logger.log({
-            text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
-            level: 'env',
+            text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
+            level: 'test',
             levelIndent,
             logShowFlag,
+            textColor: this.logOptions.textColor,
+            backgroundColor: this.logOptions.backgroundColor,
           });
+
+          if (PPD_LOG_DOCUMENTATION_MODE) {
+            for (let step = 0; step < this.descriptionExtend.length; step += 1) {
+              await logger.log({
+                text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
+                level: 'test',
+                textColor: 'cyan' as ColorsType,
+                levelIndent,
+                logShowFlag,
+              });
+            }
+          }
         }
 
         // Extend with data passed to functions

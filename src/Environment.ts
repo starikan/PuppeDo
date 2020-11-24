@@ -361,6 +361,7 @@ export class EnvsPool implements EnvsPoolType {
       while (connectionTryes < secondsToStartApp) {
         try {
           const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+          // TODO: 2020-11-24 S.Starodubov try break
           connectionTryes = secondsToStartApp;
           await sleep(secondsDelayAfterStartApp * 1000);
           return { browser, pages, pid: prc.pid };

@@ -19,6 +19,9 @@ const argsModify = {
   PPD_LOG_TEST_NAME: false,
   PPD_LOG_IGNORE_HIDE_LOG: true,
   PPD_TAGS_TO_RUN: ['tag'],
+  PPD_LOG_DOCUMENTATION_MODE: false,
+  PPD_LOG_NAMES_ONLY: ['iii', 'ooo'],
+  PPD_LOG_TIMER_SHOW: true,
 };
 
 const argsENV = {
@@ -40,6 +43,9 @@ const argsENV = {
   PPD_LOG_TEST_NAME: 'false',
   PPD_LOG_IGNORE_HIDE_LOG: 'true',
   PPD_TAGS_TO_RUN: 'tag',
+  PPD_LOG_DOCUMENTATION_MODE: 'false',
+  PPD_LOG_NAMES_ONLY: 'iii, ooo',
+  PPD_LOG_TIMER_SHOW: 'true',
 };
 
 // Reset Arguments
@@ -87,11 +93,11 @@ test('Arguments check', () => {
   // Boolean
   [argData, argResult] = setArg('PPD_DEBUG_MODE', false);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_DEBUG_MODE', 'false');
+  [, argResult] = setArg('PPD_DEBUG_MODE', 'false');
   expect(argResult).toEqual(false);
   [argData, argResult] = setArg('PPD_DEBUG_MODE', true);
   expect(argData).toEqual(argResult);
-  [argData, argResult] = setArg('PPD_DEBUG_MODE', 'true');
+  [, argResult] = setArg('PPD_DEBUG_MODE', 'true');
   expect(argResult).toEqual(true);
 
   expect(() => setArg('PPD_DEBUG_MODE', {})).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
@@ -207,5 +213,5 @@ test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsENV };
   const { args } = new Arguments({}, true);
   expect(argsModify).toEqual(args);
-  Object.keys(argsModify).map((v) => delete process.env[v]);
+  Object.keys(argsModify).forEach((v) => delete process.env[v]);
 });

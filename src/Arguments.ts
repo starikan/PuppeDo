@@ -21,6 +21,9 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_TEST_NAME: true,
   PPD_LOG_IGNORE_HIDE_LOG: false,
   PPD_TAGS_TO_RUN: [],
+  PPD_LOG_DOCUMENTATION_MODE: false,
+  PPD_LOG_NAMES_ONLY: [],
+  PPD_LOG_TIMER_SHOW: true,
 };
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {

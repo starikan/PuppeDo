@@ -163,6 +163,9 @@ PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
 PPD_LOG_IGNORE_HIDE_LOG | Show all log even if it ignore inline | `false` | `Boolean`
+PPD_LOG_DOCUMENTATION_MODE | Show documentation in descriptionExtend | `false` | `Boolean`
+PPD_LOG_NAMES_ONLY | Show only names in list/ All by default | `[]` | `String[]`
+PPD_LOG_TIMER_SHOW | Show timer in log | `true` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults

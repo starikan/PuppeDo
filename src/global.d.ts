@@ -81,6 +81,9 @@ export type ArgumentsType = {
   PPD_LOG_TEST_NAME: boolean;
   PPD_LOG_IGNORE_HIDE_LOG: boolean;
   PPD_TAGS_TO_RUN: string[];
+  PPD_LOG_DOCUMENTATION_MODE: boolean;
+  PPD_LOG_NAMES_ONLY: string[];
+  PPD_LOG_TIMER_SHOW: boolean;
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
