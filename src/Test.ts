@@ -165,17 +165,20 @@ export const checkIf = async (
   log: LogFunctionType,
   levelIndent = 0,
   allData: Record<string, unknown> = {},
+  logShowFlag = true,
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
-    await log({
-      level: 'info',
-      screenshot: false,
-      fullpage: false,
-      levelIndent,
-      text: `Skipping with expr '${expr}'`,
-    });
+    if (logShowFlag) {
+      await log({
+        level: 'info',
+        screenshot: false,
+        fullpage: false,
+        levelIndent,
+        text: `Skipping with expr '${expr}'`,
+      });
+    }
     return true;
   }
 
@@ -611,7 +614,14 @@ export class Test implements TestExtendType {
 
         // IF
         if (this.if) {
-          const skipIf = await checkIf(this.if, 'if', logger.log.bind(logger), this.levelIndent + 1, allData);
+          const skipIf = await checkIf(
+            this.if,
+            'if',
+            logger.log.bind(logger),
+            this.levelIndent + 1,
+            allData,
+            logShowFlag,
+          );
           if (skipIf) {
             return {};
           }
