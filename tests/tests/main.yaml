@@ -30,6 +30,59 @@ runTest:
               screenshot: true
 
   - blank:
+      description: Input some text in field INPUT
+      bS: { selector: mainInput }
+      data: { text: myDataBinded }
+      needSelector: ['selector']
+      needData: ['text']
+      allowOptions: ['noClearInput']
+      inlineJS: >
+        const { selector } = this.selectors;
+        const { text } = this.data;
+        const { noClearInput } = this.options;
+
+        const element = await this.getElement(selector);
+
+        const logEntry = `Type in selector: '${selector}', text: '${text}'`;
+
+        if (!element) {
+          await this.log({ text: logEntry, element, level: 'error' });
+          throw { message: logEntry };
+        }
+
+        if (this.getEngine('playwright')) {
+          await this.page.evaluate(
+            ({ element, text, noClearInput }) => {
+                if (noClearInput) {
+                  element.value = element.value + String(text);
+                }
+                else {
+                  element.value = String(text);
+                }
+            },
+            { element, text, noClearInput },
+          );
+        } else if (this.getEngine('puppeteer')) {
+          await this.page.evaluate(
+            (element, text, noClearInput) => {
+                if (noClearInput) {
+                  element.value = element.value + String(text);
+                }
+                else {
+                  element.value = String(text);
+                }
+            },
+            element, text, noClearInput
+          );
+        } else {
+          throw new Error(`There is unknown engine ${this.getEngine()}`);
+        }
+
+        await this.log({ text: logEntry, element });
+
+        await element.dispose();
+
+  - blank:
       bindDescription: "'Nested click ' + nested.mainInput"
       logOptions:
         textColor: black
@@ -49,6 +102,10 @@ runTest:
         textColor: colorUnknown
         backgroundColor: colorUnknown
       result: { $i: 0 }
+
+  - typeInput:
+      bS: { selector: mainInput }
+      data: { text: '' }
 
   - typeInput:
       bS: { selector: mainInput }
