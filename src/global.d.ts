@@ -328,7 +328,7 @@ export interface TestTypeYaml {
   errorIf?: string;
   errorIfResult?: string;
   tags?: Array<string>;
-  engineSupports?: BrowserEngineType[] | null;
+  engineSupports?: BrowserEngineType[];
   testFile: string;
   beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
   runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];

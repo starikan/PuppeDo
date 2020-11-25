@@ -58,7 +58,7 @@ const BLANK_TEST: TestType = {
   errorIf: '',
   errorIfResult: '',
   tags: [],
-  engineSupports: null,
+  engineSupports: [],
   testFile: '',
   todo: '',
   beforeTest: [],

@@ -146,7 +146,7 @@ const resolveDataFunctions = (
   return funcEval;
 };
 
-const resolveAliases = (valueName: string, inputs = {}): Record<string, unknown> => {
+const resolveAliases = (valueName: keyof typeof ALIASES, inputs = {}): Record<string, unknown> => {
   try {
     const values = [valueName, ...(ALIASES[valueName] || [])];
     const result = values.reduce(
@@ -328,8 +328,8 @@ export class Test implements TestExtendType {
   type: 'atom' | 'test';
   needData: Array<string>;
   needSelectors: Array<string>;
-  dataParent: Record<string, unknown>;
-  selectorsParent: Record<string, unknown>;
+  dataParent!: Record<string, unknown>;
+  selectorsParent!: Record<string, unknown>;
   options: Record<string, string | number>;
   dataExt: Array<string>;
   selectorsExt: Array<string>;
@@ -351,30 +351,30 @@ export class Test implements TestExtendType {
   logOptions: LogOptionsType;
   frame: string;
   data: Record<string, unknown>;
-  bindData: Record<string, string>;
+  bindData!: Record<string, string>;
   selectors: Record<string, unknown>;
-  bindSelectors: Record<string, string>;
-  bindResults: Record<string, string>;
+  bindSelectors!: Record<string, string>;
+  bindResults!: Record<string, string>;
   description: string;
   descriptionExtend: string[];
   descriptionError: string;
   bindDescription: string;
-  while: string;
-  if: string;
-  errorIf: string;
-  errorIfResult: string;
-  resultsFromChildren: Record<string, unknown>;
-  resultsFromParent: Record<string, unknown>;
+  while!: string;
+  if!: string;
+  errorIf!: string;
+  errorIfResult!: string;
+  resultsFromChildren!: Record<string, unknown>;
+  resultsFromParent!: Record<string, unknown>;
   tags: string[];
-  engineSupports: BrowserEngineType[] | null;
-  allowOptions: Array<string>;
-  todo: string;
-  inlineJS: string;
+  engineSupports: BrowserEngineType[];
+  allowOptions!: Array<string>;
+  todo!: string;
+  inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
 
-  envName: string;
-  envPageName: string;
-  env: {
+  envName!: string;
+  envPageName!: string;
+  env!: {
     name: string;
     state: EnvStateType; // Browser, pages, cookies, etc.
     env: EnvType;
@@ -384,8 +384,8 @@ export class Test implements TestExtendType {
   run: (inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
 
   constructor({
-    name = null,
-    envsId = null,
+    name = '',
+    envsId = '',
     type = 'test' as 'atom' | 'test',
     levelIndent = 0,
     needData = [],
@@ -412,17 +412,17 @@ export class Test implements TestExtendType {
     source = '',
     repeat = 1,
     socket = blankSocket,
-    stepId = null,
+    stepId = '',
     breadcrumbs = [],
-    funcFile = null,
-    testFile = null,
+    funcFile = '',
+    testFile = '',
     debug = false,
-    debugInfo = null,
+    debugInfo = false,
     disable = false,
     logOptions = {},
     frame = '',
     tags = [],
-    engineSupports = null,
+    engineSupports = [],
     argsRedefine = {},
   } = {}) {
     this.name = name;
@@ -546,8 +546,8 @@ export class Test implements TestExtendType {
         this.envPageName = envsPool.current.page;
         this.env = envsPool.envs[this.envName];
 
-        if (this.engineSupports) {
-          const { engine } = this.env?.env?.browser;
+        if (this.engineSupports.length) {
+          const { engine } = this.env?.env?.browser || {};
           if (engine && !this.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }
