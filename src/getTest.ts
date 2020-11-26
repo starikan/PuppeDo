@@ -26,11 +26,10 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     return testJson;
   }
 
-  let reloadedAtomFromInlineJS;
   try {
     if (testJsonNew.inlineJS && typeof testJsonNew.inlineJS === 'string') {
       try {
-        reloadedAtomFromInlineJS = requireFromString(
+        atoms[testJsonNew.inlineJS] = requireFromString(
           `module.exports = async function atomRun() {\n${testJsonNew.inlineJS}};`,
         );
       } catch (error) {
@@ -45,7 +44,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     }
 
     const instance = new Atom();
-    instance.atomRun = reloadedAtomFromInlineJS || atoms[testJsonNew.name];
+    instance.atomRun = atoms[testJsonNew.inlineJS] || atoms[testJsonNew.name];
 
     if (typeof instance.atomRun === 'function') {
       testJsonNew.runTest = [instance.runTest.bind(instance)];
