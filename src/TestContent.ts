@@ -172,7 +172,7 @@ export default class TestsContent extends Singleton {
     return this.allData;
   }
 
-  static resolveBrowser(browserInput: EnvBrowserType = {}): EnvBrowserType {
+  static resolveBrowser(browserInput: EnvBrowserType): EnvBrowserType {
     const DEFAULT_BROWSER: EnvBrowserType = {
       type: 'browser',
       engine: 'playwright',
@@ -238,7 +238,7 @@ export default class TestsContent extends Singleton {
     return envsAll.map((env: EnvType) => {
       const envUpdated = env;
       const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
-      envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser);
+      envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser || {});
 
       envsExt.forEach((envsExtName: string) => {
         const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);

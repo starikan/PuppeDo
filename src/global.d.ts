@@ -164,13 +164,13 @@ export type BrowserEngineType = 'puppeteer' | 'playwright';
 export type BrowserNameType = 'chrome' | 'chromium' | 'firefox' | 'webkit';
 
 export type EnvBrowserType = {
-  type?: BrowserTypeType;
-  engine?: BrowserEngineType;
-  browserName?: BrowserNameType;
-  runtime?: 'run' | 'connect';
+  type: BrowserTypeType;
+  engine: BrowserEngineType;
+  browserName: BrowserNameType;
+  runtime: 'run' | 'connect';
+  headless: boolean;
+  slowMo: number;
   args?: Array<string>;
-  headless?: boolean;
-  slowMo?: number;
   urlDevtoolsJson?: string;
   windowSize?: {
     width?: number;
@@ -193,13 +193,13 @@ export type EnvBrowserType = {
 export type EnvYamlType = {
   name: string;
   type: 'env';
+  browser: EnvBrowserType;
   description?: string;
   data?: Record<string, unknown>;
   selectors?: Record<string, unknown>;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
   envsExt?: Array<string>;
-  browser?: EnvBrowserType;
   log?: {
     level?: string;
     screenshot?: boolean;
