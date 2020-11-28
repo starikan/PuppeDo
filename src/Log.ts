@@ -112,6 +112,8 @@ export const logDebug = async (
   }
 
   await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+
+  console.log(args);
 };
 
 export default class Log {
@@ -332,7 +334,7 @@ export default class Log {
   }: LogInputType): Promise<void> {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
 
-    const texts = typeof text === 'string' ? [text] : text;
+    const texts = [text].flat();
 
     const levelText = Log.checkLevel(level);
     if (!levelText) return;

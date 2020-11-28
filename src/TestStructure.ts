@@ -11,8 +11,8 @@ export default class TestStructure {
 
   constructor(testName: string) {
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
-    this.fullJSON = JSON.parse(JSON.stringify(fullJSON));
-    this.textDescription = JSON.parse(JSON.stringify(textDescription));
+    this.fullJSON = fullJSON;
+    this.textDescription = textDescription;
   }
 
   static generateDescriptionStep(fullJSON: TestExtendType): string {
@@ -93,7 +93,7 @@ export default class TestStructure {
             runnerBlock,
             levelIndent,
           );
-          if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = JSON.parse(JSON.stringify(fullJSONResponce));
+          if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = fullJSONResponce;
           // TODO: 2020-11-20 S.Starodubov сделать генерацию дескрипшена из полной JSON а не во время
           if (textDescriptionResponse) textDescription += textDescriptionResponse;
         });

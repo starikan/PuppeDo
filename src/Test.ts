@@ -680,14 +680,14 @@ export class Test implements TestExtendType {
           log: logger.log.bind(logger),
           name: this.name,
           description: descriptionResolved,
+          descriptionExtend: this.descriptionExtend,
           socket: this.socket,
         };
 
         if (this.debugInfo) {
           logDebug(logger.log.bind(logger), 0, argsExt, true, this.debugInfo);
-          console.log(argsExt);
-          console.log(this);
           if (this.debug) {
+            console.log(this);
             // eslint-disable-next-line no-debugger
             debugger;
           }
@@ -759,6 +759,7 @@ export class Test implements TestExtendType {
             text: `🕝: ${getTimer(startTime).delta} s. (${this.name})`,
             level: 'timer',
             levelIndent,
+            logShowFlag,
             extendInfo: true,
           });
         }

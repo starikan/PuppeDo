@@ -95,7 +95,7 @@ const getTest = ({
   socket: SocketType;
   parentTest?: TestExtendType;
 }): { test: TestLifecycleFunctionType } => {
-  let testJson = JSON.parse(JSON.stringify(testJsonIncome));
+  let testJson = { ...testJsonIncome };
 
   RUNNER_BLOCK_NAMES.forEach((funcBlock) => {
     if (testJson[funcBlock] && !Array.isArray(testJson[funcBlock])) {
