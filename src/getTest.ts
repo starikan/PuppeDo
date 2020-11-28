@@ -16,7 +16,7 @@ import {
   TestType,
 } from './global.d';
 
-const atoms = {};
+const atoms: Record<string, () => Promise<void>> = {};
 
 const resolveJS = (testJson: TestExtendType): TestExtendType => {
   const testJsonNew = { ...testJson };
@@ -60,16 +60,24 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
   return testJsonNew;
 };
 
-const propagateArgumentsObjectsOnAir = (source = {}, args = {}, list = []): Record<string, unknown> => {
-  const result = { ...source };
+const propagateArgumentsObjectsOnAir = (
+  source: Record<string, unknown> = {},
+  args: Record<string, unknown> = {},
+  list: string[] = [],
+): Record<string, unknown> => {
+  const result: Record<string, unknown> = { ...source };
   list.forEach((v: string) => {
     result[`${v}Parent`] = { ...(result[v] || {}), ...(args[v] || {}) };
   });
   return result;
 };
 
-const propagateArgumentsSimpleOnAir = (source = {}, args = {}, list = []): Record<string, unknown> => {
-  const result = { ...source };
+const propagateArgumentsSimpleOnAir = (
+  source: Record<string, unknown> = {},
+  args: Record<string, unknown> = {},
+  list: string[] = [],
+): Record<string, unknown> => {
+  const result: Record<string, unknown> = { ...source };
   list.forEach((v) => {
     result[v] = result[v] || args[v];
   });
