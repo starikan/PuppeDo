@@ -97,7 +97,7 @@ export default class Atom {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async atomRun(): Promise<void> {
+  async atomRun(): Promise<unknown> {
     throw new AtomError('Empty Atom Run');
   }
 
@@ -114,7 +114,7 @@ export default class Atom {
     }
   }
 
-  async runTest(args: TestArgsExtType): Promise<void> {
+  async runTest(args: TestArgsExtType): Promise<unknown> {
     const startTime = process.hrtime.bigint();
 
     const entries = Object.entries(args);

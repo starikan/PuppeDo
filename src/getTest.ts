@@ -16,7 +16,7 @@ import {
   TestType,
 } from './global.d';
 
-const atoms: Record<string, () => Promise<void>> = {};
+const atoms: Record<string, TestLifecycleFunctionType> = {};
 
 const resolveJS = (testJson: TestExtendType): TestExtendType => {
   const testJsonNew = { ...testJson };

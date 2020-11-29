@@ -400,15 +400,9 @@ export class Test implements TestExtendType {
     descriptionExtend = [],
     descriptionError = '',
     bindDescription = '',
-    beforeTest = async (): Promise<void> => {
-      // Do nothing
-    },
-    runTest = async (): Promise<void> => {
-      // Do nothing
-    },
-    afterTest = async (): Promise<void> => {
-      // Do nothing
-    },
+    beforeTest = null,
+    runTest = null,
+    afterTest = null,
     source = '',
     repeat = 1,
     socket = blankSocket,

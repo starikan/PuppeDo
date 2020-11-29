@@ -297,7 +297,7 @@ export type TestArgsExtType = {
   descriptionExtend: string[];
 } & TestArgsType;
 
-export type TestLifecycleFunctionType = (args: TestArgsExtType) => Promise<Record<string, unknown> | void>;
+export type TestLifecycleFunctionType = (args?: TestArgsExtType) => Promise<Record<string, unknown> | void>;
 
 export interface TestTypeYaml {
   name: string;
@@ -332,9 +332,9 @@ export interface TestTypeYaml {
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
   testFile: string;
-  beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
+  runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
+  afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
   inlineJS?: string;
   argsRedefine: Partial<ArgumentsType>;
 }
