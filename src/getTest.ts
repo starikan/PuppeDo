@@ -19,7 +19,7 @@ import {
 const atoms: Record<string, TestLifecycleFunctionType> = {};
 
 const resolveJS = (testJson: TestExtendType): TestExtendType => {
-  const testJsonNew = { ...testJson };
+  const testJsonNew = testJson;
 
   const functions = pick(testJsonNew, RUNNER_BLOCK_NAMES);
   if (Object.keys(functions).length && !testJsonNew.inlineJS) {
@@ -95,7 +95,7 @@ const getTest = ({
   socket: SocketType;
   parentTest?: TestExtendType;
 }): { test: TestLifecycleFunctionType } => {
-  let testJson = { ...testJsonIncome };
+  let testJson = testJsonIncome;
 
   RUNNER_BLOCK_NAMES.forEach((funcBlock) => {
     if (testJson[funcBlock] && !Array.isArray(testJson[funcBlock])) {

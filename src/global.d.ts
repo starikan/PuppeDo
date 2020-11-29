@@ -311,7 +311,7 @@ export interface TestTypeYaml {
   allowOptions?: Array<string>;
   todo?: string;
   debug?: boolean;
-  debugInfo?: 'data' | 'selectors' | boolean;
+  debugInfo?: boolean | 'data' | 'selectors';
   disable?: boolean;
   logOptions?: LogOptionsType;
   frame?: string;
@@ -332,9 +332,9 @@ export interface TestTypeYaml {
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
   testFile: string;
-  beforeTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
-  runTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
-  afterTest?: Record<string, unknown>[] | TestLifecycleFunctionType | TestLifecycleFunctionType[] | null;
+  beforeTest?: TestLifecycleFunctionType[];
+  runTest?: TestLifecycleFunctionType[];
+  afterTest?: TestLifecycleFunctionType[];
   inlineJS?: string;
   argsRedefine: Partial<ArgumentsType>;
 }

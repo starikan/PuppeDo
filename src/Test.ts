@@ -334,9 +334,9 @@ export class Test implements TestExtendType {
   dataExt: Array<string>;
   selectorsExt: Array<string>;
   allowResults: Array<string>;
-  beforeTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  runTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
-  afterTest: TestLifecycleFunctionType | TestLifecycleFunctionType[];
+  beforeTest: TestLifecycleFunctionType[];
+  runTest: TestLifecycleFunctionType[];
+  afterTest: TestLifecycleFunctionType[];
   levelIndent: number;
   repeat: number;
   source: string;
@@ -346,7 +346,7 @@ export class Test implements TestExtendType {
   funcFile: string;
   testFile: string;
   debug: boolean;
-  debugInfo: 'data' | 'selectors' | boolean;
+  debugInfo: boolean | 'data' | 'selectors';
   disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
@@ -383,76 +383,41 @@ export class Test implements TestExtendType {
   runLogic: (inputs: InputsTestType) => Promise<Record<string, unknown>>;
   run: (inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
 
-  constructor({
-    name = '',
-    envsId = '',
-    type = 'test' as 'atom' | 'test',
-    levelIndent = 0,
-    needData = [],
-    needSelectors = [],
-    allowResults = [],
-    data = {},
-    selectors = {},
-    options = {},
-    dataExt = [],
-    selectorsExt = [],
-    description = '',
-    descriptionExtend = [],
-    descriptionError = '',
-    bindDescription = '',
-    beforeTest = null,
-    runTest = null,
-    afterTest = null,
-    source = '',
-    repeat = 1,
-    socket = blankSocket,
-    stepId = '',
-    breadcrumbs = [],
-    funcFile = '',
-    testFile = '',
-    debug = false,
-    debugInfo = false,
-    disable = false,
-    logOptions = {},
-    frame = '',
-    tags = [],
-    engineSupports = [],
-    argsRedefine = {},
-  } = {}) {
-    this.name = name;
-    this.envsId = envsId;
-    this.type = type;
-    this.needData = needData;
-    this.needSelectors = needSelectors;
-    this.data = data;
-    this.selectors = selectors;
-    this.options = options;
-    this.dataExt = dataExt;
-    this.selectorsExt = selectorsExt;
-    this.allowResults = allowResults;
-    this.description = description;
-    this.descriptionExtend = descriptionExtend;
-    this.descriptionError = descriptionError;
-    this.bindDescription = bindDescription;
-    this.beforeTest = beforeTest;
-    this.runTest = runTest;
-    this.afterTest = afterTest;
-    this.levelIndent = levelIndent;
-    this.repeat = repeat;
-    this.source = source;
-    this.socket = socket;
-    this.stepId = stepId;
-    this.breadcrumbs = breadcrumbs;
-    this.funcFile = funcFile;
-    this.testFile = testFile;
-    this.debug = debug;
-    this.debugInfo = debugInfo;
-    this.disable = disable;
-    this.logOptions = logOptions;
-    this.frame = frame;
-    this.tags = tags;
-    this.engineSupports = engineSupports;
-    this.argsRedefine = argsRedefine;
+  constructor(initValues: TestExtendType) {
+    this.name = initValues.name || '';
+    this.envsId = initValues.envsId || '';
+    this.type = initValues.type || ('type' as 'atom' | 'test');
+    this.needData = initValues.needData || [];
+    this.needSelectors = initValues.needSelectors || [];
+    this.data = initValues.data || {};
+    this.selectors = initValues.selectors || {};
+    this.options = initValues.options || {};
+    this.dataExt = initValues.dataExt || [];
+    this.selectorsExt = initValues.selectorsExt || [];
+    this.allowResults = initValues.allowResults || [];
+    this.description = initValues.description || '';
+    this.descriptionExtend = initValues.descriptionExtend || [];
+    this.descriptionError = initValues.descriptionError || '';
+    this.bindDescription = initValues.bindDescription || '';
+    this.beforeTest = initValues.beforeTest || [];
+    this.runTest = initValues.runTest || [];
+    this.afterTest = initValues.afterTest || [];
+    this.levelIndent = initValues.levelIndent;
+    this.repeat = initValues.repeat || 1;
+    this.source = initValues.source || '';
+    this.socket = initValues.socket || blankSocket;
+    this.stepId = initValues.stepId || '';
+    this.breadcrumbs = initValues.breadcrumbs || [];
+    this.funcFile = initValues.funcFile || '';
+    this.testFile = initValues.testFile || '';
+    this.debug = initValues.debug || false;
+    this.debugInfo = initValues.debugInfo || false;
+    this.disable = initValues.disable || false;
+    this.logOptions = initValues.logOptions || {};
+    this.frame = initValues.frame || '';
+    this.tags = initValues.tags || [];
+    this.engineSupports = initValues.engineSupports || [];
+    this.argsRedefine = initValues.argsRedefine || {};
 
     this.runLogic = async (inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -470,7 +435,7 @@ export class Test implements TestExtendType {
         PPD_TAGS_TO_RUN,
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
-      } = { ...new Arguments().args, ...argsRedefine };
+      } = { ...new Arguments().args, ...this.argsRedefine };
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
       if (this.debug && !this.debugInfo) {
@@ -483,7 +448,7 @@ export class Test implements TestExtendType {
         await logger.log({
           text: `Skip with disable => ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
-          levelIndent,
+          levelIndent: this.levelIndent,
           logShowFlag,
           textColor: 'blue',
         });
@@ -498,7 +463,7 @@ export class Test implements TestExtendType {
             PPD_LOG_TEST_NAME,
           )}`,
           level: 'raw',
-          levelIndent,
+          levelIndent: this.levelIndent,
           logShowFlag,
           textColor: 'blue',
         });
@@ -560,10 +525,15 @@ export class Test implements TestExtendType {
           this.env,
         );
 
-        checkNeeds(needData, dataLocal, this.name);
-        checkNeeds(needSelectors, selectorsLocal, this.name);
+        checkNeeds(this.needData, dataLocal, this.name);
+        checkNeeds(this.needSelectors, selectorsLocal, this.name);
 
-        ({ dataLocal, selectorsLocal } = updateDataWithNeeds(needData, needSelectors, dataLocal, selectorsLocal));
+        ({ dataLocal, selectorsLocal } = updateDataWithNeeds(
+          this.needData,
+          this.needSelectors,
+          dataLocal,
+          selectorsLocal,
+        ));
 
         const intersectionKeys = Object.keys(dataLocal).filter((v) => Object.keys(selectorsLocal).includes(v));
         if (intersectionKeys.length) {
@@ -594,7 +564,7 @@ export class Test implements TestExtendType {
 
         // All data passed to log
         const args: TestArgsType = {
-          envsId,
+          envsId: this.envsId,
           data: dataLocal,
           selectors: selectorsLocal,
           dataTest: this.data,
@@ -638,13 +608,13 @@ export class Test implements TestExtendType {
         }
 
         // LOG TEST
-        logger.bindData({ breadcrumbs, testArgs: args });
+        logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
 
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           await logger.log({
             text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
             level: 'test',
-            levelIndent,
+            levelIndent: this.levelIndent,
             logShowFlag,
             textColor: this.logOptions.textColor,
             backgroundColor: this.logOptions.backgroundColor,
@@ -656,7 +626,7 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 textColor: 'cyan' as ColorsType,
-                levelIndent: levelIndent + 1,
+                levelIndent: this.levelIndent + 1,
                 logShowFlag,
               });
             }
@@ -752,7 +722,7 @@ export class Test implements TestExtendType {
           await logger.log({
             text: `🕝: ${getTimer(startTime).delta} s. (${this.name})`,
             level: 'timer',
-            levelIndent,
+            levelIndent: this.levelIndent,
             logShowFlag,
             extendInfo: true,
           });
@@ -761,7 +731,7 @@ export class Test implements TestExtendType {
         return localResults;
       } catch (error) {
         // debugger;
-        const newError = new TestError({ logger, parentError: error, test: this, envsId });
+        const newError = new TestError({ logger, parentError: error, test: this, envsId: this.envsId });
         await newError.log();
         throw newError;
       }
