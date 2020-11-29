@@ -145,7 +145,7 @@ const resolveDataFunctions = (
   return funcEval;
 };
 
-const resolveAliases = (valueName: keyof typeof ALIASES, inputs = {}): Record<string, unknown> => {
+const resolveAliases = (valueName: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
   try {
     const values = [valueName, ...(ALIASES[valueName] || [])];
     const result = values.reduce(
@@ -401,7 +401,7 @@ export class Test implements TestExtendType {
     this.beforeTest = initValues.beforeTest || [];
     this.runTest = initValues.runTest || [];
     this.afterTest = initValues.afterTest || [];
-    this.levelIndent = initValues.levelIndent;
+    this.levelIndent = initValues.levelIndent || 0;
     this.repeat = initValues.repeat || 1;
     this.source = initValues.source || '';
     this.socket = initValues.socket || blankSocket;
@@ -422,7 +422,7 @@ export class Test implements TestExtendType {
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
-        inputs.logOptionsParent,
+        inputs.logOptionsParent || {},
         this.logOptions,
         envsPool,
       );
@@ -481,7 +481,7 @@ export class Test implements TestExtendType {
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs) as Record<string, string>;
-      this.resultsFromParent = inputs.resultsFromParent;
+      this.resultsFromParent = inputs.resultsFromParent || {};
 
       this.options = {
         ...this.options,
@@ -500,8 +500,8 @@ export class Test implements TestExtendType {
       this.logOptions = logOptionsNew;
 
       try {
-        this.envName = envsPool.current.name;
-        this.envPageName = envsPool.current.page;
+        this.envName = envsPool.current.name || '';
+        this.envPageName = envsPool.current.page || '';
         this.env = envsPool.envs[this.envName];
 
         if (this.engineSupports.length) {
@@ -549,9 +549,9 @@ export class Test implements TestExtendType {
         allData.repeat = this.repeat;
         dataLocal.repeat = this.repeat;
         selectorsLocal.repeat = this.repeat;
-        allData.$loop = inputs.dataParent.repeat || this.repeat;
-        dataLocal.$loop = inputs.dataParent.repeat || this.repeat;
-        selectorsLocal.$loop = inputs.dataParent.repeat || this.repeat;
+        allData.$loop = (inputs.dataParent || {}).repeat || this.repeat;
+        dataLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
+        selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
 
         let descriptionResolved = this.description;
         if (this.bindDescription) {
