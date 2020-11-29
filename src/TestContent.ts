@@ -185,7 +185,7 @@ export default class TestsContent extends Singleton {
     const ALLOW_BROWSER_EGINES: BrowserEngineType[] = ['puppeteer', 'playwright'];
     const ALLOW_BROWSER_MANES: BrowserNameType[] = ['chrome', 'chromium', 'firefox', 'webkit'];
 
-    const browser = { ...DEFAULT_BROWSER, ...browserInput };
+    const browser = { ...DEFAULT_BROWSER, ...(browserInput || {}) };
 
     if (!ALLOW_BROWSER_TYPES.includes(browser.type)) {
       throw new Error(
@@ -238,16 +238,15 @@ export default class TestsContent extends Singleton {
     return envsAll.map((env: EnvType) => {
       const envUpdated = env;
       const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
-      envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser || {});
+      envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser);
 
       envsExt.forEach((envsExtName: string) => {
         const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
         if (envsResolved) {
           envUpdated.browser = TestsContent.resolveBrowser(merge(envUpdated.browser, envsResolved.browser || {}));
-          envUpdated.log = merge(envUpdated.log || {}, envsResolved.log || {});
+          envUpdated.log = { ...(envUpdated.log || {}), ...(envsResolved.log || {}) };
           envUpdated.data = { ...(envUpdated.data || {}), ...(envsResolved.data || {}) };
           envUpdated.selectors = { ...(envUpdated.selectors || {}), ...(envsResolved.selectors || {}) };
-
           envUpdated.description = `${envUpdated.description || ''} -> ${envsResolved.description || ''}`;
         } else {
           throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
