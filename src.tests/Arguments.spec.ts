@@ -22,6 +22,7 @@ const argsModify = {
   PPD_LOG_DOCUMENTATION_MODE: false,
   PPD_LOG_NAMES_ONLY: ['iii', 'ooo'],
   PPD_LOG_TIMER_SHOW: true,
+  PPD_LOG_INDENT_LENGTH: 4,
 };
 
 const argsENV = {
@@ -46,6 +47,7 @@ const argsENV = {
   PPD_LOG_DOCUMENTATION_MODE: 'false',
   PPD_LOG_NAMES_ONLY: 'iii, ooo',
   PPD_LOG_TIMER_SHOW: 'true',
+  PPD_LOG_INDENT_LENGTH: '4',
 };
 
 // Reset Arguments

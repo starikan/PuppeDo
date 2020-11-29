@@ -84,6 +84,7 @@ export type ArgumentsType = {
   PPD_LOG_DOCUMENTATION_MODE: boolean;
   PPD_LOG_NAMES_ONLY: string[];
   PPD_LOG_TIMER_SHOW: boolean;
+  PPD_LOG_INDENT_LENGTH: number;
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;

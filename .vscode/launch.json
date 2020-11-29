@@ -8,7 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "PuppeDo_JS",
-      "program": "${workspaceFolder}\\tests\\index.js"
+      "program": "${workspaceFolder}\\tests\\index.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -24,7 +25,8 @@
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1,
         "PPD_LOG_IGNORE_HIDE_LOG": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -39,7 +41,8 @@
         "PPD_DATA": "{ \"myEnv\": \"mainEnv_puppeteer\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -54,7 +57,8 @@
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -69,7 +73,8 @@
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_LOG_EXTEND": "true",
         "PPD_LOG_LEVEL_NESTED": 0
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -87,7 +92,8 @@
         "PPD_LOG_EXTEND=true",
         "PPD_LOG_SCREENSHOT=true",
         "PPD_LOG_FULLPAGE=true"
-      ]
+      ],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -97,13 +103,15 @@
       "program": "${workspaceFolder}\\tests\\index.js",
       "args": [
         "PPD_ROOT=tests PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
-      ]
+      ],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Data_check",
-      "program": "${workspaceFolder}\\tests\\indexData.js"
+      "program": "${workspaceFolder}\\tests\\indexData.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -117,7 +125,8 @@
         "PPD_TESTS": "atomsTest",
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -132,7 +141,8 @@
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true",
         "PPD_TAGS_TO_RUN": "testTag"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -146,7 +156,8 @@
         "PPD_TESTS": "descriptionTest",
         "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
         "PPD_DEBUG_MODE": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -159,7 +170,8 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_TESTS": "logOptions",
         "PPD_DEBUG_MODE": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -172,7 +184,8 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_TESTS": "errorIf",
         "PPD_DEBUG_MODE": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
@@ -185,14 +198,16 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_TESTS": "recursion",
         "PPD_DEBUG_MODE": "true"
-      }
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Screencast",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\tests\\screencast.js"
+      "program": "${workspaceFolder}\\tests\\screencast.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]
 }

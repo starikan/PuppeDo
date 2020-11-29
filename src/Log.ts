@@ -181,11 +181,12 @@ export default class Log {
     backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
     const errorTyped = error;
-    const { PPD_LOG_EXTEND, PPD_LOG_TIMER_SHOW } = new Arguments().args;
+    const { PPD_LOG_EXTEND, PPD_LOG_TIMER_SHOW, PPD_LOG_INDENT_LENGTH } = new Arguments().args;
 
+    const indentString = `|${' '.repeat(PPD_LOG_INDENT_LENGTH - 1)}`.repeat(levelIndent);
     const nowWithPad = PPD_LOG_TIMER_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
+    const spacesPreffix = nowWithPad ? ' '.repeat(nowWithPad.length) : '';
     const breadcrumbs = this.binded?.breadcrumbs || [];
-
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
     const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
 
@@ -199,7 +200,7 @@ export default class Log {
     }
 
     const head: LogEntrieType = {
-      text: `${extendInfo && level !== 'error' ? ' '.repeat(20) : nowWithPad}${'| '.repeat(levelIndent)}`,
+      text: `${extendInfo && level !== 'error' ? spacesPreffix : nowWithPad}${indentString}`,
       textColor: headColor,
     };
     const tail: LogEntrieType = {
@@ -213,7 +214,7 @@ export default class Log {
     const stringsLog: LogEntrieType[][] = [[head, tail]];
 
     if (breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error' && !extendInfo) {
-      const headText = `${' '.repeat(20)} ${' | '.repeat(levelIndent)} `;
+      const headText = `${spacesPreffix}${indentString} `;
       const tailText = `👣[${breadcrumbs.join(' -> ')}]`;
       stringsLog.push([
         { text: headText, textColor: headColor },
@@ -231,14 +232,12 @@ export default class Log {
 
     if (level === 'error' && !extendInfo) {
       breadcrumbs.forEach((v, i) => {
-        stringsLog.push([
-          { text: `${nowWithPad}${'| '.repeat(levelIndent)}${'   '.repeat(i)} ${v}`, textColor: 'error' },
-        ]);
+        stringsLog.push([{ text: `${nowWithPad}${indentString}${'   '.repeat(i)} ${v}`, textColor: 'error' }]);
       });
       if (testFile) {
         stringsLog.push([
           {
-            text: `${nowWithPad}${'| '.repeat(levelIndent)} (file:///${path.resolve(testFile)})`,
+            text: `${nowWithPad}${indentString} (file:///${path.resolve(testFile)})`,
             textColor: 'error',
           },
         ]);
@@ -246,7 +245,7 @@ export default class Log {
       if (funcFile) {
         stringsLog.push([
           {
-            text: `${nowWithPad}${'| '.repeat(levelIndent)} (file:///${path.resolve(funcFile)})`,
+            text: `${nowWithPad}${indentString} (file:///${path.resolve(funcFile)})`,
             textColor: 'error',
           },
         ]);
@@ -255,14 +254,14 @@ export default class Log {
 
     screenshots.forEach((v) => {
       stringsLog.push([
-        { text: `${nowWithPad}${'| '.repeat(levelIndent)} `, textColor: headColor },
+        { text: `${nowWithPad}${indentString} `, textColor: headColor },
         { text: `🖼 screenshot: [${v}]`, textColor: tailColor },
       ]);
     });
 
     if (level === 'error' && !extendInfo) {
       stringsLog.push([
-        { text: `${nowWithPad}${'| '.repeat(levelIndent)} `, textColor: headColor },
+        { text: `${nowWithPad}${indentString} `, textColor: headColor },
         { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor },
       ]);
     }

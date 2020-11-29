@@ -166,6 +166,7 @@ PPD_LOG_IGNORE_HIDE_LOG | Show all log even if it ignore inline | `false` | `Boo
 PPD_LOG_DOCUMENTATION_MODE | Show documentation in descriptionExtend | `false` | `Boolean`
 PPD_LOG_NAMES_ONLY | Show only names in list/ All by default | `[]` | `String[]`
 PPD_LOG_TIMER_SHOW | Show timer in log | `true` | `Boolean`
+PPD_LOG_INDENT_LENGTH | Indents in log | `4` | `Number`
 
 Arguments applying order. From minor to major:
 1. Defaults
