@@ -27,14 +27,14 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env: Env;
-  page: BrowserPageType | BrowserFrame;
-  log: LogFunctionType;
+  env!: Env;
+  page!: BrowserPageType | BrowserFrame;
+  log!: LogFunctionType;
 
-  levelIndent: number;
-  logOptions: LogOptionsType;
-  options: Record<string, string>;
-  frame: string;
+  levelIndent!: number;
+  logOptions!: LogOptionsType;
+  options!: Record<string, string>;
+  frame!: string;
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
     const atomEngine = this.env.env.browser.engine;
@@ -97,7 +97,7 @@ export default class Atom {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async atomRun(): Promise<unknown> {
+  async atomRun(): Promise<Record<string, unknown>> {
     throw new AtomError('Empty Atom Run');
   }
 
@@ -114,7 +114,7 @@ export default class Atom {
     }
   }
 
-  async runTest(args: TestArgsExtType): Promise<unknown> {
+  async runTest(args?: TestArgsExtType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
     const entries = Object.entries(args);

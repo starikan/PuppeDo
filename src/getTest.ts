@@ -63,7 +63,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
 
 const propagateArgumentsObjectsOnAir = (
   source: TestExtendType,
-  args: TestArgsExtType,
+  args: TestArgsExtType | undefined,
   list: TestExtendTypeKeys[] = [],
 ): TestExtendType => {
   const sourceValues = pick(source || {}, list);
@@ -76,7 +76,7 @@ const propagateArgumentsObjectsOnAir = (
 
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
-  args: TestArgsExtType,
+  args: TestArgsExtType | undefined,
   list: TestExtendTypeKeys[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
@@ -131,7 +131,7 @@ const getTest = ({
 
   const test = new Test(testJson);
 
-  const testResolver: TestLifecycleFunctionType = async (args: TestArgsExtType): Promise<Record<string, unknown>> => {
+  const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
     let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
       'options',
       'data',
