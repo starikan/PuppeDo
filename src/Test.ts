@@ -14,7 +14,6 @@ import {
   EnvsPoolType,
   ColorsType,
   SocketType,
-  InputsTestType,
   TestArgsType,
   TestArgsExtType,
   EnvType,
@@ -380,8 +379,8 @@ export class Test implements TestExtendType {
     env: EnvType;
   };
 
-  runLogic: (inputs: InputsTestType) => Promise<Record<string, unknown>>;
-  run: (inputArgs: InputsTestType) => Promise<Record<string, unknown>>;
+  runLogic: (inputs: TestExtendType) => Promise<Record<string, unknown>>;
+  run: (inputArgs: TestExtendType) => Promise<Record<string, unknown>>;
 
   constructor(initValues: TestExtendType) {
     this.name = initValues.name || '';
@@ -419,7 +418,7 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
 
-    this.runLogic = async (inputs: InputsTestType = {}): Promise<Record<string, unknown>> => {
+    this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -737,7 +736,7 @@ export class Test implements TestExtendType {
       }
     };
 
-    this.run = async (inputArgs: InputsTestType = {}): Promise<Record<string, unknown>> => {
+    this.run = async (inputArgs: TestExtendType): Promise<Record<string, unknown>> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;

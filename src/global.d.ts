@@ -351,27 +351,8 @@ export type TestExtendType = TestType & {
   resultsFromChildren?: Record<string, unknown>;
   resultsFromParent?: Record<string, unknown>;
   funcFile?: string;
-};
-
-export type InputsTestType = {
-  options?: Record<string, string | number>;
-  description?: string;
-  descriptionExtend?: string[];
-  bindDescription?: string;
-  repeat?: number;
-  while?: string;
-  if?: string;
-  errorIf?: string;
-  errorIfResult?: string;
-  debug?: boolean;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  data?: Record<string, unknown>;
-  selectors?: Record<string, unknown>;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
   optionsParent?: Record<string, string | number>;
-  resultsFromParent?: Record<string, unknown>;
   logOptionsParent?: LogOptionsType;
-  frame?: string;
 };

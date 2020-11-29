@@ -7,14 +7,7 @@ import { pick, RUNNER_BLOCK_NAMES } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import {
-  InputsTestType,
-  SocketType,
-  TestArgsExtType,
-  TestExtendType,
-  TestLifecycleFunctionType,
-  TestType,
-} from './global.d';
+import { SocketType, TestArgsExtType, TestExtendType, TestLifecycleFunctionType, TestType } from './global.d';
 
 const atoms: Record<string, TestLifecycleFunctionType> = {};
 
@@ -61,25 +54,25 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
 };
 
 const propagateArgumentsObjectsOnAir = (
-  source: Record<string, unknown> = {},
-  args: Record<string, unknown> = {},
+  source: TestExtendType,
+  args: TestArgsExtType,
   list: string[] = [],
-): Record<string, unknown> => {
-  const result: Record<string, unknown> = { ...source };
+): TestExtendType => {
+  const result: TestExtendType = source;
   list.forEach((v: string) => {
-    result[`${v}Parent`] = { ...(result[v] || {}), ...(args[v] || {}) };
+    result[`${v}Parent`] = { ...((result || {})[v] || {}), ...((args || {})[v] || {}) };
   });
   return result;
 };
 
 const propagateArgumentsSimpleOnAir = (
-  source: Record<string, unknown> = {},
-  args: Record<string, unknown> = {},
+  source: TestExtendType,
+  args: TestArgsExtType,
   list: string[] = [],
-): Record<string, unknown> => {
-  const result: Record<string, unknown> = { ...source };
+): TestExtendType => {
+  const result: TestExtendType = source;
   list.forEach((v) => {
-    result[v] = result[v] || args[v];
+    result[v] = (result || {})[v] || (args || {})[v];
   });
   return result;
 };
@@ -134,13 +127,13 @@ const getTest = ({
 
   return {
     test: async (args: TestArgsExtType | null): Promise<Record<string, unknown>> => {
-      let updatetTestJson: InputsTestType = propagateArgumentsObjectsOnAir(testJson, args || {}, [
+      let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
         'options',
         'data',
         'selectors',
         'logOptions',
       ]);
-      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args || {}, ['debug', 'frame']);
+      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
       updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
       const result = await test.run(updatetTestJson);
       if (parentTest) {
