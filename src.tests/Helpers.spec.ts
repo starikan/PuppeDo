@@ -1,9 +1,9 @@
 import { merge, sleep, paintString, blankSocket } from '../src/Helpers';
 
 test('Helpers -> merge', () => {
-  const foobar = { foo: { bar: 3 } };
-  const foobaz = { foo: { baz: 4 } };
-  const bar = { bar: 'yay!' };
+  const foobar: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { foo: { bar: 3 } };
+  const foobaz: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { foo: { baz: 4 } };
+  const bar: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { bar: 'yay!' };
   expect(merge(foobar, foobaz, bar)).toEqual({ foo: { bar: 3, baz: 4 }, bar: 'yay!' });
   // expect(merge([1, 2, 3], [3, 2, 1])).toEqual([3, 2, 1]);
 });

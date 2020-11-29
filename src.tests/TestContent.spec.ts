@@ -3,7 +3,7 @@ import path from 'path';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 
-import { TestType, DataType } from '../src/global.d';
+import { TestType, DataType, EnvBrowserType } from '../src/global.d';
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -235,7 +235,15 @@ describe('TestContent', () => {
 
     expect(CD(data)).toEqual(data);
 
-    expect(() => CD([{ name: '', testFile: 'bar', type: 'env' }])).toThrow(
+    const DEFAULT_BROWSER: EnvBrowserType = {
+      type: 'browser',
+      engine: 'playwright',
+      browserName: 'chromium',
+      runtime: 'run',
+      headless: false,
+      slowMo: 1,
+    };
+    expect(() => CD([{ name: '', testFile: 'bar', type: 'env', browser: DEFAULT_BROWSER }])).toThrow(
       new Error("There is blank 'name' value in files:\nbar"),
     );
 
