@@ -66,11 +66,12 @@ const propagateArgumentsObjectsOnAir = (
   args: TestArgsExtType,
   list: TestExtendTypeKeys[] = [],
 ): TestExtendType => {
-  const result: TestExtendType = source;
-  list.forEach((v: string) => {
-    result[`${v}Parent`] = { ...((result || {})[v] || {}), ...((args || {})[v] || {}) };
-  });
-  return result;
+  const sourceValues = pick(source || {}, list);
+  const argsValues = pick(args || {}, list);
+  const renamedKeys = Object.fromEntries(
+    Object.entries({ ...sourceValues, ...argsValues }).map((v) => [`${v[0]}Parent`, v[1]]),
+  );
+  return { ...source, ...renamedKeys };
 };
 
 const propagateArgumentsSimpleOnAir = (
