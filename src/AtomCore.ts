@@ -50,7 +50,7 @@ export default class Atom {
     selector: string,
     allElements = false,
     elementPatent: BrowserPageType | BrowserFrame = this.page,
-  ): Promise<Element[] | boolean> {
+  ): Promise<Element[] | Element | boolean> {
     if (selector && typeof selector === 'string') {
       const selectorClean = selector
         .replace(/^css[:=]/, '')
@@ -60,7 +60,7 @@ export default class Atom {
       const isText = selector.match(/^text[:=]/);
       const isCSS = (!isXPath && !isText) || selector.match(/^css[:=]/);
 
-      let elements = [];
+      let elements: Array<Element> = [];
 
       if (this.getEngine('puppeteer')) {
         const elementParentPuppeteer = elementPatent as PagePuppeteer;
@@ -107,7 +107,7 @@ export default class Atom {
     }
 
     const elementHandle = await this.page.$(`iframe[name="${this.frame}"]`);
-    const frame = await elementHandle.contentFrame();
+    const frame = elementHandle && (await elementHandle.contentFrame());
 
     if (frame) {
       this.page = frame;
@@ -117,7 +117,7 @@ export default class Atom {
   async runTest(args?: TestArgsExtType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
-    const entries = Object.entries(args);
+    const entries = Object.entries(args || {});
     entries.forEach((entry) => {
       const [key, value] = entry;
       if (Object.prototype.hasOwnProperty.call(args, key)) {
@@ -134,7 +134,9 @@ export default class Atom {
     const logOptions = { ...logOptionsDefault, ...(this.options || {}), ...(this.logOptions || {}) };
 
     this.log = async (customLog: LogInputType): Promise<void> => {
-      await args.log({ ...logOptions, ...customLog });
+      if (args) {
+        await args.log({ ...logOptions, ...customLog });
+      }
     };
 
     try {
@@ -150,7 +152,7 @@ export default class Atom {
       await logExtend(this.log, 0, args, true);
       await logArgs(this.log, 0);
       await logDebug(this.log, 0, args);
-      await logExtendFileInfo(this.log, 0, args.envsId);
+      await logExtendFileInfo(this.log, 0, (args || {}).envsId);
 
       throw new AtomError('Error in Atom');
     }

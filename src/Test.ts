@@ -398,9 +398,9 @@ export class Test implements TestExtendType {
     this.descriptionExtend = initValues.descriptionExtend || [];
     this.descriptionError = initValues.descriptionError || '';
     this.bindDescription = initValues.bindDescription || '';
-    this.beforeTest = initValues.beforeTest || [];
-    this.runTest = initValues.runTest || [];
-    this.afterTest = initValues.afterTest || [];
+    this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
+    this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
+    this.afterTest = (initValues.afterTest || []) as TestLifecycleFunctionType[];
     this.levelIndent = initValues.levelIndent || 0;
     this.repeat = initValues.repeat || 1;
     this.source = initValues.source || '';

@@ -21,11 +21,14 @@ import {
 import { ErrorType } from './Error';
 import Environment from './Environment';
 
-export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId: string): Promise<void> => {
-  const envs = Environment(envsId);
-  const outputFile = path.join(envs.envsPool.output.folderFull, 'output.log');
-  const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
-  await log({ text, levelIndent, level: 'error', extendInfo: true });
+export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId = ''): Promise<void> => {
+  if (envsId) {
+    const envs = Environment(envsId);
+    const outputFolder = envs.envsPool.output.folderFull || '.';
+    const outputFile = path.join(outputFolder, 'output.log');
+    const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
+    await log({ text, levelIndent, level: 'error', extendInfo: true });
+  }
 };
 
 export const logErrorMessage = async (log: LogFunctionType, levelIndent: number, error: ErrorType): Promise<void> => {
@@ -58,18 +61,19 @@ export const logTimer = async (log: LogFunctionType, levelIndent = 0, startTime:
 export const logExtend = async (
   log: LogFunctionType,
   levelIndent: number,
-  args: TestArgsExtType,
+  args: TestArgsExtType | undefined,
   isError = false,
 ): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
+  const { dataTest, bindData, selectorsTest, bindSelectors, bindResults, options } = args || {};
   if (PPD_LOG_EXTEND || isError) {
     let text = [
-      ['📋 (data):', args.dataTest],
-      ['📌📋 (bD):', args.bindData],
-      ['☸️ (selectors):', args.selectorsTest],
-      ['📌☸️ (bS):', args.bindSelectors],
-      ['↩️ (results):', args.bindResults],
-      ['⚙️ (options):', args.options],
+      ['📋 (data):', dataTest],
+      ['📌📋 (bD):', bindData],
+      ['☸️ (selectors):', selectorsTest],
+      ['📌☸️ (bS):', bindSelectors],
+      ['↩️ (results):', bindResults],
+      ['⚙️ (options):', options],
     ]
       .filter((v) => typeof v[1] === 'object' && Object.keys(v[1]).length)
       .map((v) => `${v[0]} ${JSON.stringify(v[1])}`);
@@ -96,18 +100,18 @@ export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut 
 export const logDebug = async (
   log: LogFunctionType,
   levelIndent: number,
-  args: TestArgsExtType,
+  args: TestArgsExtType | undefined,
   stdOut = false,
   type: 'data' | 'selectors' | boolean = true,
 ): Promise<void> => {
-  let text = [];
-
-  if (args.data && Object.keys(args.data).length && (type === true || type === 'data')) {
-    const dataDebug = JSON.stringify(args.data, null, 2).split('\n');
+  let text: string[] = [];
+  const { data, selectors } = args || {};
+  if (data && Object.keys(data).length && (type === true || type === 'data')) {
+    const dataDebug = JSON.stringify(data, null, 2).split('\n');
     text = [...text, '============== DEBUG DATA ==============', ...dataDebug, ''];
   }
-  if (args.selectors && Object.keys(args.selectors).length && (type === true || type === 'selectors')) {
-    const selectorsDebug = JSON.stringify(args.selectors, null, 2).split('\n');
+  if (selectors && Object.keys(selectors).length && (type === true || type === 'selectors')) {
+    const selectorsDebug = JSON.stringify(selectors, null, 2).split('\n');
     text = [...text, '============== DEBUG SELECTORS ==============', ...selectorsDebug, ''];
   }
 
