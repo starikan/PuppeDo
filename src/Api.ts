@@ -27,11 +27,11 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
       const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();
-      const { test } = getTest({ testJsonIncome: fullJSON, envsId, socket });
+      const test = getTest({ testJsonIncome: fullJSON, envsId, socket });
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });
-      await test(null);
+      await test();
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta} sec.` });
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import {
   Page as PagePuppeteer,
   Browser as BrowserPuppeteer,
@@ -297,7 +298,7 @@ export type TestArgsExtType = {
   descriptionExtend: string[];
 } & TestArgsType;
 
-export type TestLifecycleFunctionType = (args?: TestArgsExtType) => Promise<Record<string, unknown> | void>;
+export type TestLifecycleFunctionType = (args?: TestArgsExtType) => Promise<Record<string, unknown>>;
 
 export interface TestTypeYaml {
   name: string;
@@ -332,9 +333,9 @@ export interface TestTypeYaml {
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
   testFile: string;
-  beforeTest?: TestLifecycleFunctionType[];
-  runTest?: TestLifecycleFunctionType[];
-  afterTest?: TestLifecycleFunctionType[];
+  beforeTest?: TestLifecycleFunctionType[] | TestExtendType[];
+  runTest?: TestLifecycleFunctionType[] | TestExtendType[];
+  afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
   argsRedefine: Partial<ArgumentsType>;
 }
@@ -356,3 +357,7 @@ export type TestExtendType = TestType & {
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
 };
+
+export type TestExtendTypeKeys = keyof TestExtendType;
+
+export type TestFunctionsBlockNames = 'beforeTest' | 'runTest' | 'afterTest';

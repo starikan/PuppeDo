@@ -5,7 +5,7 @@ import path from 'path';
 import deepmerge from 'deepmerge';
 import dayjs from 'dayjs';
 
-import { SocketType } from './global.d';
+import { SocketType, TestFunctionsBlockNames } from './global.d';
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -115,7 +115,7 @@ export const walkSync = (
   return dirs;
 };
 
-export const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
+export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
 
 // export function deepMerge<T>(...objects: T[]): T {
 //   function isObject<TObj>(obj: TObj): boolean {

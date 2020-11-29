@@ -7,7 +7,15 @@ import { pick, RUNNER_BLOCK_NAMES } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { SocketType, TestArgsExtType, TestExtendType, TestLifecycleFunctionType, TestType } from './global.d';
+import {
+  SocketType,
+  TestArgsExtType,
+  TestExtendType,
+  TestExtendTypeKeys,
+  TestFunctionsBlockNames,
+  TestLifecycleFunctionType,
+  TestType,
+} from './global.d';
 
 const atoms: Record<string, TestLifecycleFunctionType> = {};
 
@@ -56,7 +64,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
 const propagateArgumentsObjectsOnAir = (
   source: TestExtendType,
   args: TestArgsExtType,
-  list: string[] = [],
+  list: TestExtendTypeKeys[] = [],
 ): TestExtendType => {
   const result: TestExtendType = source;
   list.forEach((v: string) => {
@@ -68,14 +76,8 @@ const propagateArgumentsObjectsOnAir = (
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
   args: TestArgsExtType,
-  list: string[] = [],
-): TestExtendType => {
-  const result: TestExtendType = source;
-  list.forEach((v) => {
-    result[v] = (result || {})[v] || (args || {})[v];
-  });
-  return result;
-};
+  list: TestExtendTypeKeys[] = [],
+): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
 const getTest = ({
   testJsonIncome,
@@ -87,62 +89,65 @@ const getTest = ({
   envsId: string;
   socket: SocketType;
   parentTest?: TestExtendType;
-}): { test: TestLifecycleFunctionType } => {
+}): TestLifecycleFunctionType => {
   let testJson = testJsonIncome;
 
   RUNNER_BLOCK_NAMES.forEach((funcBlock) => {
     if (testJson[funcBlock] && !Array.isArray(testJson[funcBlock])) {
-      throw new Error(`Block ${funcBlock} must be array. Path: '${testJson.breadcrumbs.join(' -> ')}'`);
+      throw new Error(`Block ${funcBlock} must be array. Path: '${(testJson.breadcrumbs || []).join(' -> ')}'`);
     }
   });
 
-  const functionsBeforeResolve = {
-    beforeTest: testJson.beforeTest,
-    runTest: testJson.runTest,
-    afterTest: testJson.afterTest,
-  };
+  const functionsBeforeResolve: [TestFunctionsBlockNames, TestExtendType[]][] = RUNNER_BLOCK_NAMES.map((v) => [
+    v,
+    testJson[v] as TestExtendType[],
+  ]);
 
   testJson = resolveJS(testJson);
   testJson.envsId = envsId;
   testJson.socket = socket;
 
   const blocker = new Blocker();
-  blocker.push({ stepId: testJson.stepId, block: false, breadcrumbs: testJson.breadcrumbs });
+  if (testJson.stepId) {
+    blocker.push({ stepId: testJson.stepId, block: false, breadcrumbs: testJson.breadcrumbs });
+  }
   // Test
   // blocker.push({ stepId: testJson.stepId, block: true, breadcrumbs: testJson.breadcrumbs });
 
-  RUNNER_BLOCK_NAMES.forEach((funcKey) => {
-    const funcVal = functionsBeforeResolve[funcKey];
+  functionsBeforeResolve.forEach((value) => {
+    const [funcKey, funcVal] = value;
     if (funcVal && !testJson.inlineJS) {
-      testJson[funcKey] = [];
+      const newFunctions = [] as TestLifecycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
         if (['test', 'atom'].includes(testItem.type)) {
-          testJson[funcKey].push(getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson }).test);
+          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson });
+          newFunctions.push(newFunction);
         }
       });
+      testJson[funcKey] = newFunctions;
     }
   });
 
   const test = new Test(testJson);
 
-  return {
-    test: async (args: TestArgsExtType | null): Promise<Record<string, unknown>> => {
-      let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
-        'options',
-        'data',
-        'selectors',
-        'logOptions',
-      ]);
-      updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
-      updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
-      const result = await test.run(updatetTestJson);
-      if (parentTest) {
-        // eslint-disable-next-line no-param-reassign
-        parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
-      }
-      return result;
-    },
+  const testResolver: TestLifecycleFunctionType = async (args: TestArgsExtType): Promise<Record<string, unknown>> => {
+    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
+      'options',
+      'data',
+      'selectors',
+      'logOptions',
+    ]);
+    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
+    updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
+    const result = await test.run(updatetTestJson);
+    if (parentTest) {
+      // eslint-disable-next-line no-param-reassign
+      parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
+    }
+    return result;
   };
+
+  return testResolver;
 };
 
 export default getTest;
