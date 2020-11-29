@@ -199,6 +199,7 @@ describe('Log', () => {
   test('makeLog', () => {
     const now = new Date();
     const nowFormated = getNowDateTime(now, 'HH:mm:ss.SSS');
+    new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, true);
 
     expect(logger.makeLog('info', 0, 'text', now)).toEqual([
       [
@@ -223,7 +224,7 @@ describe('Log', () => {
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
-        { text: '                    | ', textColor: 'sane' },
+        { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
@@ -237,14 +238,14 @@ describe('Log', () => {
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true, [])).toEqual([
       [
-        { text: '                    | ', textColor: 'sane' },
+        { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
     expect(logger.makeLog('info', 1, 'text', now, null, null, true, ['foo', 'bar'])).toEqual([
       [
-        { text: '                    | ', textColor: 'sane' },
+        { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
       [
@@ -257,7 +258,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
@@ -266,7 +267,7 @@ describe('Log', () => {
     ]);
 
     // Breadcrumbs
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: [] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
@@ -275,7 +276,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
@@ -288,16 +289,16 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
       [
-        { text: '                    | ', textColor: 'sane' },
+        { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('raw', 1, 'text', now)).toEqual([
       [
@@ -306,7 +307,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('error', 1, 'text', now)).toEqual([
       [
@@ -324,7 +325,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: false }, true);
+    new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     expect(logger.makeLog('info', 1, 'text', now)).toEqual([
       [
@@ -333,7 +334,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');

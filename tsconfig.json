@@ -3,7 +3,7 @@
     // "strict": true,
     "target": "ESNext",
     "types": ["node", "webpack-env", "jest"],
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,

@@ -13,8 +13,9 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-export const merge = (...objects: Record<string, unknown>[]): Record<string, unknown> =>
-  deepmerge.all(objects, { arrayMerge: (_, source) => source }) as Record<string, unknown>;
+export function merge<T>(...objects: T[]): T {
+  return deepmerge.all(objects, { arrayMerge: (_, source) => source });
+}
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -115,3 +116,43 @@ export const walkSync = (
 };
 
 export const RUNNER_BLOCK_NAMES = ['beforeTest', 'runTest', 'afterTest'];
+
+// export function deepMerge<T>(...objects: T[]): T {
+//   function isObject<TObj>(obj: TObj): boolean {
+//     return obj && typeof obj === 'object';
+//   }
+
+//   function deepMergeInner<T>(target: T, source: T) {
+//     Object.keys(source).forEach((key: string) => {
+//       const targetValue = target[key];
+//       const sourceValue = source[key];
+
+//       if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+//         target[key] = targetValue.concat(sourceValue);
+//       } else if (isObject(targetValue) && isObject(sourceValue)) {
+//         target[key] = deepMergeInner({ ...targetValue }, sourceValue);
+//       } else {
+//         target[key] = sourceValue;
+//       }
+//     });
+
+//     return target;
+//   }
+
+//   if (objects.length < 2) {
+//     throw new Error('deepMerge: this function expects at least 2 objects to be provided');
+//   }
+
+//   if (objects.some((object) => !isObject(object))) {
+//     throw new Error('deepMerge: all values should be of type "object"');
+//   }
+
+//   const target = objects.shift();
+//   let source: object;
+
+//   while ((source = objects.shift())) {
+//     deepMergeInner(target, source);
+//   }
+
+//   return target;
+// }
