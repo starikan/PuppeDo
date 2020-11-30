@@ -14,25 +14,25 @@ export default class Screenshot {
     this.socket = socket;
   }
 
-  async getScreenshots(element: Element | null, fullPage = false, extendInfo = false): Promise<Array<string>> {
+  async getScreenshots(element: Element | null = null, fullPage = false, extendInfo = false): Promise<Array<string>> {
     if (extendInfo || !element) {
       return [];
     }
     const elementScreenshot = await this.saveScreenshot(element, false);
     const fullPageScreenshot = await this.saveScreenshot(null, fullPage);
     const screenshotsExists = [elementScreenshot, fullPageScreenshot].filter((v) => !!v);
-    return screenshotsExists;
+    return screenshotsExists || [];
   }
 
   copyScreenshotToLatest(name: string): void {
-    const { folder, folderLatest } = this.envs.output;
+    const { folder = '.', folderLatest = '.' } = this.envs.output;
     const pathScreenshot = path.join(folder, name);
     const pathScreenshotLatest = path.join(folderLatest, name);
     fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
   }
 
-  async saveScreenshot(element: Element = null, fullPage = false): Promise<string> {
-    const { folder } = this.envs.output;
+  async saveScreenshot(element: Element | null = null, fullPage = false): Promise<string> {
+    const { folder = '.' } = this.envs.output;
     try {
       const name = `${getNowDateTime()}.png`;
       const pathScreenshot = path.resolve(path.join(folder, name));

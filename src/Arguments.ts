@@ -99,7 +99,7 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
 const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   const params: ArgumentsKeysType[] = Object.keys(argsDefault) as ArgumentsKeysType[];
   const result = params.reduce<Partial<ArgumentsType>>(
-    (acc: Partial<ArgumentsType> = {}, key: ArgumentsKeysType): Partial<ArgumentsType> => {
+    (acc: Partial<ArgumentsType>, key: ArgumentsKeysType): Partial<ArgumentsType> => {
       let newVal = args[key];
       if (newVal === undefined) {
         return acc;

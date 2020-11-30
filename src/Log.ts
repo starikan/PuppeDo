@@ -179,7 +179,7 @@ export default class Log {
     funcFile = '',
     testFile = '',
     extendInfo = false,
-    screenshots = [],
+    screenshots: string[] = [],
     error: Error | ErrorType | null = null,
     textColor: ColorsType = 'sane',
     backgroundColor: ColorsType = 'sane',
@@ -301,7 +301,7 @@ export default class Log {
   }
 
   fileLog(texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void {
-    const { folder, folderLatest } = this.envs.output;
+    const { folder = '.', folderLatest = '.' } = this.envs.output;
 
     let textsJoin = '';
     if (Array.isArray(texts)) {
@@ -324,7 +324,7 @@ export default class Log {
     screenshot = false,
     fullpage = false,
     level = 'info',
-    element = null,
+    element,
     levelIndent = 0,
     error = null,
     testArgs = this.binded.testArgs,
