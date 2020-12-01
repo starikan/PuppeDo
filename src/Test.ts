@@ -1,6 +1,6 @@
 import vm from 'vm';
 
-import { blankSocket, getTimer, pick } from './Helpers';
+import { blankSocket, getTimer, merge, pick } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import Environment from './Environment';
@@ -145,18 +145,11 @@ const resolveDataFunctions = (
   return funcEval;
 };
 
-const resolveAliases = (valueName: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
-  try {
-    const values = [valueName, ...(ALIASES[valueName] || [])];
-    const result = values.reduce(
-      (collector: Record<string, unknown>, name: string) => ({ ...collector, ...(inputs[name] || {}) }),
-      {},
-    );
-    return result;
-  } catch (error) {
-    error.message += ` || function resolveAliases(${valueName})`;
-    throw error;
-  }
+const resolveAliases = (alias: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
+  const variants = [...(ALIASES[alias] || []), alias];
+  const values = Object.values(pick(inputs, variants)) as Record<string, unknown>[];
+  const result = merge(...values);
+  return result;
 };
 
 export const checkIf = async (
@@ -640,7 +633,7 @@ export class Test implements TestExtendType {
           env: this.env,
           envs: envsPool,
           browser: this.env && this.env.state.browser,
-          page: pageCurrent || null, // If there is no page it`s might be API
+          page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
           name: this.name,
           description: descriptionResolved,

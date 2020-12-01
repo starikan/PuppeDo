@@ -33,20 +33,9 @@ type EnvsInstanceType = {
 };
 
 export class EnvsPool implements EnvsPoolType {
-  envs: {
-    [key: string]: {
-      env: EnvType;
-      name: string;
-      state: EnvStateType;
-    };
-  };
-
-  current: {
-    name?: string;
-    page?: string;
-    test?: string;
-  };
-
+  envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
+  current: { name?: string; page?: string; test?: string };
+  log: Array<LogEntry>;
   output: {
     folder?: string;
     folderLatest?: string;
@@ -55,8 +44,6 @@ export class EnvsPool implements EnvsPoolType {
     name?: string;
     folderFull?: string;
   };
-
-  log: Array<LogEntry>;
 
   constructor() {
     this.envs = {};
@@ -416,7 +403,7 @@ export class EnvsPool implements EnvsPoolType {
   }
 }
 
-const instances: { [key: string]: EnvsInstanceType } = {};
+const instances: Record<string, EnvsInstanceType> = {};
 
 export default (envsId = '', socket: SocketType = blankSocket): EnvsInstanceType => {
   let envsIdLocal = envsId;

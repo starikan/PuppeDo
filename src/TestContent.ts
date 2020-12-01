@@ -94,7 +94,7 @@ export default class TestsContent extends Singleton {
       throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
     }
 
-    const dubs = tests.reduce((s: { [key: string]: Array<string> }, v: T) => {
+    const dubs = tests.reduce((s: Record<string, string[]>, v: T) => {
       const collector = { ...s };
       collector[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
       return collector;

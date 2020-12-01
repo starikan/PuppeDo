@@ -27,9 +27,7 @@ export type BrouserLaunchOptions = {
   devtools?: boolean;
 };
 
-export type PagesType = {
-  [key: string]: BrowserPageType | BrowserFrame;
-};
+export type PagesType = Record<string, BrowserPageType | BrowserFrame>;
 
 export type Element = ElementHandlePuppeteer | ElementHandlePlaywright;
 
@@ -210,17 +208,11 @@ export type EnvYamlType = {
 };
 
 export interface EnvType extends EnvYamlType {
-  testFile?: string;
+  testFile: string;
 }
 
 export interface EnvsPoolType {
-  envs: {
-    [key: string]: {
-      env: EnvType;
-      name: string;
-      state: EnvStateType;
-    };
-  };
+  envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
   current: {
     name?: string;
     page?: string;
@@ -288,8 +280,8 @@ export type TestArgsExtType = {
     env: EnvType;
   };
   envs: EnvsPoolType;
-  browser: BrowserType;
-  page: BrowserPageType | BrowserFrame;
+  browser?: BrowserType;
+  page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
   name: string;
   description: string;
