@@ -7,10 +7,7 @@ export default class Env {
 
   constructor(env: EnvType) {
     this.name = env.name || 'BlankEnv';
-    this.state = {
-      browser: null,
-      pages: {},
-    };
+    this.state = {};
     this.env = env;
   }
 }

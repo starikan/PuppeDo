@@ -2,7 +2,7 @@ interface PluginType {
   name: string;
 }
 
-const plugins = [];
+const plugins: PluginType[] = [];
 
 export const getAllPlugins = (): { plugins: PluginType[]; names: string[] } => {
   const names = plugins.map((v) => v.name);
