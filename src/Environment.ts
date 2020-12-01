@@ -134,31 +134,37 @@ export class EnvsPool implements EnvsPoolType {
     };
   }
 
-  async setEnv(name: string, page = ''): Promise<void> {
-    if (!name) {
-      throw new Error('You must pass name of Environment to switch');
+  async setEnv({ name, env, page = '' }: { name: string; env: EnvType; page: string }): Promise<void> {
+    if (!name && !env) {
+      throw new Error('You must pass name of Environment or object with parameters to switch');
     }
 
-    if (!this.envs[name]) {
-      const { envs } = new TestsContent().allData;
-      const env = envs.find((v) => v.name === name);
-      if (env) {
-        const envLocal = JSON.parse(JSON.stringify(env));
-        const newEnv = new Env(envLocal);
-        this.envs[name] = newEnv;
+    let localName = name;
 
+    if (env) {
+      localName = env.name;
+      this.envs[localName] = new Env(env);
+      await this.runBrowsers(localName);
+    } else if (name) {
+      if (!this.envs[name]) {
+        const { envs } = new TestsContent().allData;
+        const envResolved = envs.find((v) => v.name === name);
+        if (envResolved) {
+          const envLocal = JSON.parse(JSON.stringify(envResolved));
+          this.envs[name] = new Env(envLocal);
+          await this.runBrowsers(name);
+        } else {
+          throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
+        }
+      } else if (!this.envs[name]?.state?.browser) {
         await this.runBrowsers(name);
-      } else {
-        throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
       }
-    } else if (!this.envs[name]?.state?.browser) {
-      await this.runBrowsers(name);
     }
 
-    this.current.name = name;
-    if (page && this.envs[name]?.state?.pages[page]) {
+    this.current.name = localName;
+    if (page && this.envs[localName]?.state?.pages[page]) {
       this.current.page = page;
-    } else if (this.envs[name]?.state?.pages?.main) {
+    } else if (this.envs[localName]?.state?.pages?.main) {
       this.current.page = 'main';
     } else {
       this.current.page = null;

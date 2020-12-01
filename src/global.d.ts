@@ -211,7 +211,7 @@ export type EnvYamlType = {
 };
 
 export interface EnvType extends EnvYamlType {
-  testFile: string;
+  testFile?: string;
 }
 
 export interface EnvsPoolType {
