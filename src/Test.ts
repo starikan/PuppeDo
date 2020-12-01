@@ -434,6 +434,7 @@ export class Test implements TestExtendType {
         PPD_TAGS_TO_RUN,
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
+        PPD_LOG_TIMER_SHOW,
       } = { ...new Arguments().args, ...this.argsRedefine };
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
@@ -717,7 +718,10 @@ export class Test implements TestExtendType {
         }
 
         // TIMER IN CONSOLE
-        if (PPD_LOG_EXTEND) {
+        if (
+          (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
+          (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name))
+        ) {
           await logger.log({
             text: `🕝: ${getTimer(startTime).delta} s. (${this.name})`,
             level: 'timer',

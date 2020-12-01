@@ -21,7 +21,8 @@ const argsModify = {
   PPD_TAGS_TO_RUN: ['tag'],
   PPD_LOG_DOCUMENTATION_MODE: false,
   PPD_LOG_NAMES_ONLY: ['iii', 'ooo'],
-  PPD_LOG_TIMER_SHOW: true,
+  PPD_LOG_TIMER_SHOW: false,
+  PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
 };
 
@@ -46,7 +47,8 @@ const argsENV = {
   PPD_TAGS_TO_RUN: 'tag',
   PPD_LOG_DOCUMENTATION_MODE: 'false',
   PPD_LOG_NAMES_ONLY: 'iii, ooo',
-  PPD_LOG_TIMER_SHOW: 'true',
+  PPD_LOG_TIMER_SHOW: 'false',
+  PPD_LOG_TIMESTAMP_SHOW: 'true',
   PPD_LOG_INDENT_LENGTH: '4',
 };
 

@@ -185,10 +185,10 @@ export default class Log {
     backgroundColor: ColorsType = 'sane',
   ): LogEntrieType[][] {
     const errorTyped = error;
-    const { PPD_LOG_EXTEND, PPD_LOG_TIMER_SHOW, PPD_LOG_INDENT_LENGTH } = new Arguments().args;
+    const { PPD_LOG_EXTEND, PPD_LOG_TIMESTAMP_SHOW, PPD_LOG_INDENT_LENGTH } = new Arguments().args;
 
     const indentString = `|${' '.repeat(PPD_LOG_INDENT_LENGTH - 1)}`.repeat(levelIndent);
-    const nowWithPad = PPD_LOG_TIMER_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
+    const nowWithPad = PPD_LOG_TIMESTAMP_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
     const spacesPreffix = nowWithPad ? ' '.repeat(nowWithPad.length) : '';
     const breadcrumbs = this.binded?.breadcrumbs || [];
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
