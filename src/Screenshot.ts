@@ -15,7 +15,7 @@ export default class Screenshot {
   }
 
   async getScreenshots(element: Element | null = null, fullPage = false, extendInfo = false): Promise<Array<string>> {
-    if (extendInfo || !element) {
+    if (extendInfo || (!element && !fullPage)) {
       return [];
     }
     const elementScreenshot = await this.saveScreenshot(element, false);
