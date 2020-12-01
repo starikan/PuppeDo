@@ -12,7 +12,6 @@ const argsModify = {
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
   PPD_LOG_LEVEL_NESTED: 10,
-  PPD_LOG_LEVEL_TYPE: 'info',
   PPD_LOG_LEVEL_TYPE_IGNORE: ['joo'],
   PPD_LOG_SCREENSHOT: true,
   PPD_LOG_FULLPAGE: true,
@@ -38,7 +37,6 @@ const argsENV = {
   PPD_SELECTORS: '{"joo": "jii"}',
   PPD_TESTS: 'suu',
   PPD_LOG_LEVEL_NESTED: '10',
-  PPD_LOG_LEVEL_TYPE: 'info',
   PPD_LOG_LEVEL_TYPE_IGNORE: 'joo',
   PPD_LOG_SCREENSHOT: 'true',
   PPD_LOG_FULLPAGE: 'true',
@@ -182,9 +180,6 @@ test('Arguments check', () => {
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
-  expect(argData).toEqual(argResult);
-
-  [argData, argResult] = setArg('PPD_LOG_LEVEL_TYPE', 'raw');
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_LOG_LEVEL_TYPE_IGNORE', ['raw']);

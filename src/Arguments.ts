@@ -14,7 +14,6 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_DISABLED: false,
   PPD_LOG_EXTEND: false,
   PPD_LOG_LEVEL_NESTED: 0,
-  PPD_LOG_LEVEL_TYPE: 'raw',
   PPD_LOG_LEVEL_TYPE_IGNORE: [],
   PPD_LOG_SCREENSHOT: false,
   PPD_LOG_FULLPAGE: false,

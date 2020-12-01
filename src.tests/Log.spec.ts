@@ -164,14 +164,6 @@ describe('Log', () => {
   });
 
   test('checkLevel', () => {
-    expect(Log.checkLevel(0)).toBe('raw');
-    expect(Log.checkLevel(1)).toBe('timer');
-    expect(Log.checkLevel(2)).toBe('debug');
-    expect(Log.checkLevel(3)).toBe('info');
-    expect(Log.checkLevel(4)).toBe('test');
-    expect(Log.checkLevel(5)).toBe('warn');
-    expect(Log.checkLevel(6)).toBe('error');
-    expect(Log.checkLevel(7)).toBe('env');
     expect(Log.checkLevel('raw')).toBe('raw');
     expect(Log.checkLevel('timer')).toBe('timer');
     expect(Log.checkLevel('debug')).toBe('debug');
@@ -180,10 +172,6 @@ describe('Log', () => {
     expect(Log.checkLevel('warn')).toBe('warn');
     expect(Log.checkLevel('error')).toBe('error');
     expect(Log.checkLevel('env')).toBe('env');
-
-    new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
-    expect(Log.checkLevel(2)).toBe(null);
-    expect(Log.checkLevel(3)).toBe('info');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, true);
     expect(Log.checkLevel('raw')).toBe('raw');

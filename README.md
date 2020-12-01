@@ -157,8 +157,7 @@ PPD_DEBUG_MODE | Debug mode | `false` | `Boolean`
 PPD_LOG_DISABLED | Disable logging | `false` | `Boolean`
 PPD_LOG_EXTEND | Log every atoms time for tuning and breadcrumbs for test | `false` | `Boolean`
 PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all | `0` | `Number`
-PPD_LOG_LEVEL_TYPE | Log only type of log bellow this. `raw` - log all. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `raw` | `String`
-PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. | `[]` | `String[]`
+PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `[]` | `String[]`
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
 PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
@@ -181,23 +180,14 @@ Arguments applying order. From minor to major:
 # RoadMap 2.0.0
 
 1. + Arguments.
-  * PPD_LOG_TIMER -> PPD_LOG_EXTEND
   * PPD_LOG_LEVEL_NESTED
-  * PPD_LOG_LEVEL_TYPE
   * PPD_LOG_SCREENSHOT
   * PPD_LOG_FULLPAGE
-
-1. + main() -> run()
-
-1. + Remove from dataFunction array as argument
 
 1. rename bindData -> dataBind
 
 1. rename bindSelectors -> selectorsBind
 
-1. Puppeteer out from core
-
-1. Add playwright engine
 <!-- # Editors Environment
 
 ## VSCode

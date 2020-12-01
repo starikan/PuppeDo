@@ -75,7 +75,6 @@ export type ArgumentsType = {
   PPD_LOG_DISABLED: boolean;
   PPD_LOG_EXTEND: boolean;
   PPD_LOG_LEVEL_NESTED: number;
-  PPD_LOG_LEVEL_TYPE: ColorsType;
   PPD_LOG_LEVEL_TYPE_IGNORE: ColorsType[];
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;

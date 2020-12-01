@@ -142,33 +142,19 @@ export default class Log {
     this.binded = { ...this.binded, ...data };
   }
 
-  static checkLevel(level: number | string): ColorsType | null {
-    enum levels {
-      raw,
-      timer,
-      debug,
-      info,
-      test,
-      warn,
-      error,
-      env,
+  static checkLevel(level: string): ColorsType | null {
+    const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
+    const { PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
+
+    if (level === 'error') {
+      return 'error' as ColorsType;
     }
 
-    const { PPD_LOG_LEVEL_TYPE, PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
-
-    const inputLevel = typeof level === 'number' ? level : levels[level] || 0;
-    const limitLevel = levels[PPD_LOG_LEVEL_TYPE] || 0;
-    const ignoreLevels = PPD_LOG_LEVEL_TYPE_IGNORE.map((v: ColorsType) => levels[v]);
-
-    if (ignoreLevels.includes(inputLevel)) {
+    if (PPD_LOG_LEVEL_TYPE_IGNORE.includes(level as ColorsType) || !LEVELS.includes(level as ColorsType)) {
       return null;
     }
 
-    // If input level higher or equal then logging
-    if (limitLevel <= inputLevel || levels[inputLevel] === 'error') {
-      return levels[inputLevel] as ColorsType;
-    }
-    return null;
+    return level as ColorsType;
   }
 
   makeLog(
@@ -336,26 +322,15 @@ export default class Log {
     backgroundColor = 'sane',
   }: LogInputType): Promise<void> {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
-
     const texts = [text].flat();
-
     const levelText = Log.checkLevel(level);
-    if (!levelText) return;
 
-    if (levelText !== 'error' && !logShowFlag) return;
-
-    if (levelText === 'error') {
-      // eslint-disable-next-line no-param-reassign
-      backgroundColor = 'sane';
-    }
-
-    // SKIP LOG BY LEVEL
-    if (PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED && levelText !== 'error') {
-      return;
-    }
-
-    // NO LOG FILES ONLY STDOUT
-    if (PPD_LOG_DISABLED && levelText !== 'error') {
+    if (
+      !levelText ||
+      (levelText !== 'error' && !logShowFlag) ||
+      (levelText !== 'error' && PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED) || // SKIP LOG BY LEVELS
+      (levelText !== 'error' && PPD_LOG_DISABLED) // NO LOG FILES ONLY STDOUT
+    ) {
       return;
     }
 
@@ -365,7 +340,7 @@ export default class Log {
       let isScreenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
       let isFullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
-      if (level === 'error' && levelIndent === 0) {
+      if (levelText === 'error' && levelIndent === 0) {
         [isScreenshot, isFullpage] = [true, true];
       }
       const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
@@ -383,7 +358,7 @@ export default class Log {
           screenshots,
           error,
           textColor,
-          backgroundColor,
+          levelText === 'error' ? 'sane' : backgroundColor,
         );
 
         // STDOUT
