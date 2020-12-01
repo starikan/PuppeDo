@@ -35,8 +35,7 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta} sec.` });
     }
 
-    await envsPool.closeBrowsers();
-    await envsPool.closeProcesses();
+    await envsPool.closeAllEnvs();
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta} sec.` });
 

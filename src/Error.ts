@@ -91,11 +91,8 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
 
   const { envsPool } = Environment(errorIncome.envsId);
 
-  if (envsPool.closeBrowsers) {
-    await envsPool.closeBrowsers();
-  }
-  if (envsPool.closeProcesses) {
-    await envsPool.closeProcesses();
+  if (envsPool.closeAllEnvs) {
+    await envsPool.closeAllEnvs();
   }
 
   // if (!module.parent) {

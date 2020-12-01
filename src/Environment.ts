@@ -67,8 +67,11 @@ export class EnvsPool implements EnvsPoolType {
 
   getActivePage(): BrowserPageType | BrowserFrame {
     const activeEnv = this.envs[this.current?.name || ''];
-    const pageName = this.current?.page;
-    return activeEnv.state.pages[pageName || ''];
+    const pageName = this.current?.page || '';
+    if (!activeEnv.state.pages) {
+      throw new Error('No active page');
+    }
+    return activeEnv.state.pages[pageName];
   }
 
   static resolveOutputFile(): string {
@@ -162,12 +165,10 @@ export class EnvsPool implements EnvsPoolType {
     }
 
     this.current.name = localName;
-    if (page && this.envs[localName]?.state?.pages[page]) {
+    if (page && this.envs[localName]?.state?.pages?.[page]) {
       this.current.page = page;
     } else if (this.envs[localName]?.state?.pages?.main) {
       this.current.page = 'main';
-    } else {
-      this.current.page = null;
     }
   }
 
@@ -381,10 +382,7 @@ export class EnvsPool implements EnvsPoolType {
   async closeEnv(name: string): Promise<void> {
     const { state, env } = this.envs[name] || {};
     try {
-      await state.browser.close();
-      delete this.envs[name].state.browser;
-      delete this.envs[name].state.pages;
-      delete this.envs[name].state.contexts;
+      await state?.browser?.close();
     } catch (error) {
       // Nothing to do.
     }
@@ -394,36 +392,20 @@ export class EnvsPool implements EnvsPoolType {
       if (killOnEnd && killProcessName) {
         spawnSync('taskkill', ['/f', '/im', killProcessName]);
       }
-      delete this.envs[name].state.pid;
     } catch (error) {
       // Nothing to do.
     }
+
+    delete this.envs[name].state.pid;
+    delete this.envs[name].state.browser;
+    delete this.envs[name].state.pages;
+    delete this.envs[name].state.contexts;
   }
 
-  async closeBrowsers(): Promise<void> {
+  async closeAllEnvs(): Promise<void> {
     for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
-      const key = Object.keys(this.envs)[i];
-      const { state } = this.envs[key];
-      try {
-        await state.browser.close();
-      } catch (error) {
-        // Nothing to do.
-      }
-    }
-  }
-
-  async closeProcesses(): Promise<void> {
-    for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
-      const key = Object.keys(this.envs)[i];
-      const killOnEnd = this.envs[key]?.env?.browser?.killOnEnd || true;
-      const killProcessName = this.envs[key]?.env?.browser?.killProcessName;
-      try {
-        if (killOnEnd && killProcessName) {
-          spawnSync('taskkill', ['/f', '/im', killProcessName]);
-        }
-      } catch (error) {
-        // Nothing to do.
-      }
+      const name = Object.keys(this.envs)[i];
+      await this.closeEnv(name);
     }
   }
 

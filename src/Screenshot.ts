@@ -55,10 +55,9 @@ export default class Screenshot {
         await sleep(25);
         return pathScreenshot;
       }
-      return '';
     } catch (err) {
-      console.log('Can not create a screenshot');
-      return '';
+      throw new Error('Can not create a screenshot');
     }
+    return '';
   }
 }

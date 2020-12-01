@@ -156,8 +156,8 @@ export type SocketType = {
 // ================ ENVS ====================
 
 export type EnvStateType = {
-  browser: BrowserType;
-  pages: PagesType;
+  browser?: BrowserType;
+  pages?: PagesType;
   contexts?: Record<string, unknown>;
   pid?: number;
 };
@@ -236,8 +236,7 @@ export interface EnvsPoolType {
     folderFull?: string;
   };
   log: Array<LogEntry>;
-  closeBrowsers: () => Promise<void>;
-  closeProcesses: () => Promise<void>;
+  closeAllEnvs: () => Promise<void>;
   getActivePage: () => BrowserPageType | BrowserFrame;
   initOutput: (envsId: string) => void;
   setCurrentTest: (testName: string) => void;
