@@ -159,8 +159,8 @@ export class EnvsPool implements EnvsPoolType {
     }
   }
 
-  async runBrowsers(name: string): Promise<void> {
-    const envPool = this.envs[name];
+  async runBrowsers(envName: string): Promise<void> {
+    const envPool = this.envs[envName];
     const browserSettings = envPool.env.browser;
     const { type, engine, runtime } = browserSettings;
 
@@ -168,20 +168,16 @@ export class EnvsPool implements EnvsPoolType {
       // TODO: 2020-01-13 S.Starodubov
     }
 
-    if (type === 'browser') {
-      if (runtime === 'run') {
-        if (engine === 'puppeteer') {
-          const { browser, pages } = await EnvsPool.runPuppeteer(browserSettings);
-          envPool.state = { ...envPool.state, ...{ browser, pages } };
-        }
-        if (engine === 'playwright') {
-          const { browser, pages } = await EnvsPool.runPlaywright(browserSettings);
-          envPool.state = { ...envPool.state, ...{ browser, pages } };
-        }
-      }
-      if (runtime === 'connect') {
-        // TODO: 2020-11-07 S.Starodubov todo
-      }
+    if (type === 'browser' && runtime === 'run' && engine === 'puppeteer') {
+      await this.runPuppeteer(envName);
+    }
+
+    if (type === 'browser' && runtime === 'run' && engine === 'playwright') {
+      await this.runPlaywright(envName);
+    }
+
+    if (type === 'browser' && runtime === 'connect') {
+      // TODO: 2020-11-07 S.Starodubov todo
     }
 
     if (type === 'electron') {
@@ -196,27 +192,68 @@ export class EnvsPool implements EnvsPoolType {
     }
   }
 
-  static async runPuppeteer(browserSettings: EnvBrowserType): Promise<EnvStateType> {
-    const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const { headless = true, slowMo = 0, args = [], windowSize = {}, browserName: product = 'chrome' } =
-      browserSettings || {};
+  async addPage(envName: string, name = 'main', options: { width?: number; height?: number } = {}): Promise<void> {
+    const envPool = this.envs[envName];
+    const { width, height } = options;
+    const { browser } = envPool.state;
+    const browserSettings = envPool.env.browser;
 
-    const puppeteer = __non_webpack_require__('puppeteer');
-    const browser = await puppeteer.launch({ headless, slowMo, args, devtools: PPD_DEBUG_MODE, product });
-
-    const page = await browser.newPage({ ignoreHTTPSErrors: true });
-    const pages = { main: page };
-
-    const { width, height } = windowSize;
-    if (width && height) {
-      await pages.main.setViewport({ width, height });
+    let page: BrowserPageType;
+    if (browserSettings.engine === 'puppeteer') {
+      page = await (browser as BrowserPuppeteer).newPage();
+      if (width && height) {
+        await page.setViewport({ width, height });
+      }
     }
 
-    return { browser, pages };
+    if (browserSettings.engine === 'playwright') {
+      page = await (browser as BrowserPlaywright).newPage({ viewport: { width, height }, ignoreHTTPSErrors: true });
+      // if (width && height) {
+      //   await page.setViewportSize({ width, height });
+      // }
+    }
+
+    if (!page) {
+      throw new Error('Cant add new page');
+    }
+
+    envPool.state.pages = { ...envPool.state.pages, ...{ [name]: page } };
   }
 
-  static async runPlaywright(browserSettings: EnvBrowserType): Promise<EnvStateType> {
+  async runPuppeteer(envName: string): Promise<void> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
+    const envPool = this.envs[envName];
+    const browserSettings = envPool.env.browser;
+    const {
+      headless = true,
+      slowMo = 0,
+      args = [],
+      windowSize = {},
+      browserName: product = 'chrome',
+    } = browserSettings;
+    const { width = 1024, height = 768 } = windowSize;
+
+    const puppeteer = __non_webpack_require__('puppeteer');
+    const browser: BrowserPuppeteer = await puppeteer.launch({
+      headless,
+      slowMo,
+      args,
+      devtools: PPD_DEBUG_MODE,
+      product,
+      ignoreHTTPSErrors: true,
+      defaultViewport: { width, height },
+    });
+
+    const pagesExists = await browser.pages();
+
+    const pages = { main: pagesExists[0] };
+    envPool.state = { ...envPool.state, ...{ browser, pages } };
+  }
+
+  async runPlaywright(envName: string): Promise<void> {
+    const { PPD_DEBUG_MODE = false } = new Arguments().args;
+    const envPool = this.envs[envName];
+    const browserSettings = envPool.env.browser;
     const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings || {};
     const { width = 1024, height = 768 } = windowSize;
 
@@ -227,13 +264,10 @@ export class EnvsPool implements EnvsPoolType {
 
     const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
-    const context = await browser.newContext();
-    const page = await context.newPage({ viewport: { width, height } });
 
-    const pages = { main: page };
-    const contexts = { main: context };
+    envPool.state = { ...envPool.state, ...{ browser } };
 
-    return { browser, contexts, pages };
+    await this.addPage(envName, 'main', { width, height });
   }
 
   static async connectPuppeteer(
@@ -383,10 +417,11 @@ export class EnvsPool implements EnvsPoolType {
       // Nothing to do.
     }
 
-    delete this.envs[name].state.pid;
     delete this.envs[name].state.browser;
+    delete this.envs[name].state.browserSettings;
     delete this.envs[name].state.pages;
     delete this.envs[name].state.contexts;
+    delete this.envs[name].state.pid;
   }
 
   async closeAllEnvs(): Promise<void> {

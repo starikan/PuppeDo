@@ -154,6 +154,7 @@ export type SocketType = {
 
 export type EnvStateType = {
   browser?: BrowserType;
+  browserSettings?: EnvBrowserType;
   pages?: PagesType;
   contexts?: Record<string, unknown>;
   pid?: number;
