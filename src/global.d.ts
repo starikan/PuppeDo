@@ -95,8 +95,6 @@ export type LogEntry = {
   time?: string;
   dataEnvs?: Record<string, unknown>;
   dataEnvsGlobal?: Record<string, unknown>;
-  // eslint-disable-next-line no-use-before-define
-  testArgs?: TestArgsType;
   screenshots?: Array<string>;
   type?: string;
   level?: string;
@@ -131,8 +129,6 @@ export type LogInputType = {
   element?: Element;
   levelIndent?: number;
   error?: Error | ErrorType | null;
-  // eslint-disable-next-line no-use-before-define
-  testArgs?: TestArgsType;
   extendInfo?: boolean;
   stdOut?: boolean;
   stepId?: string;

@@ -134,7 +134,7 @@ export default class TestsContent extends Singleton {
 
       paths.forEach((filePath) => {
         try {
-          const testsYaml = yaml.safeLoadAll(fs.readFileSync(filePath, 'utf8'));
+          const testsYaml = yaml.loadAll(fs.readFileSync(filePath, 'utf8'));
           testsYaml.forEach((v) => {
             const collect = { ...{ type: 'test' }, ...v, ...{ testFile: filePath } };
             if (collect.type === 'test') {

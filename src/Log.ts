@@ -313,7 +313,6 @@ export default class Log {
     element,
     levelIndent = 0,
     error = null,
-    testArgs = this.binded.testArgs,
     extendInfo = false,
     stdOut = true,
     stepId = '',
@@ -397,7 +396,7 @@ export default class Log {
           type: level === 'env' ? 'env' : 'log',
           level,
           levelIndent,
-          stepId: testArgs?.stepId || stepId,
+          stepId: this.binded.testArgs?.stepId || stepId,
         };
         this.envs.log = [...this.envs.log, logEntry];
         this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -411,7 +410,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = testArgs?.stepId;
+      err.stepId = this.binded.testArgs?.stepId;
       throw err;
     }
   }
