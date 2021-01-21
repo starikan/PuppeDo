@@ -1,13 +1,8 @@
-/* eslint-disable no-useless-constructor */
 import Singleton from '../src/Singleton';
 
 describe('Singleton', () => {
   test('Same instance', () => {
-    class Klass extends Singleton {
-      constructor() {
-        super();
-      }
-    }
+    class Klass extends Singleton {}
 
     const singleton = new Klass();
     const singleton2 = new Klass();

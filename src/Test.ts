@@ -95,7 +95,11 @@ const ALIASES = {
   options: ['option', 'opt', 'o', '⚙️'],
 };
 
-export const runScriptInContext = (source: string, context: Record<string, unknown>): unknown => {
+export const runScriptInContext = (
+  source: string,
+  context: Record<string, unknown>,
+  defaultValue: unknown = null,
+): unknown => {
   let result: unknown;
 
   if (source === '{}') {
@@ -107,6 +111,9 @@ export const runScriptInContext = (source: string, context: Record<string, unkno
     vm.createContext(context);
     result = script.runInContext(context);
   } catch (error) {
+    if (defaultValue !== null && defaultValue !== undefined) {
+      return defaultValue;
+    }
     throw new Error(`Can't evaluate ${source} = '${error.message}'`);
   }
 
@@ -539,7 +546,7 @@ export class Test implements TestExtendType {
 
         const allData = { ...selectorsLocal, ...dataLocal };
 
-        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData) as string, 10);
+        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData, '1') as string, 10);
         allData.repeat = this.repeat;
         dataLocal.repeat = this.repeat;
         selectorsLocal.repeat = this.repeat;
