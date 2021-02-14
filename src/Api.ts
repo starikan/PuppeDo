@@ -1,3 +1,5 @@
+import path from 'path';
+
 import TestStructure from './TestStructure';
 import getTest from './getTest';
 import { Arguments } from './Arguments';
@@ -5,9 +7,19 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 
+let configArgs = {};
+
+try {
+  const config = __non_webpack_require__(path.join(process.cwd(), 'puppedo.config.js'));
+  const { args } = config || {};
+  configArgs = args;
+} catch (error) {
+  // Nothin to do
+}
+
 export default async function run(argsInput = {}, closeProcess = true): Promise<void> {
   const { envsId, envsPool, socket, logger } = Environment();
-  const { PPD_TESTS } = new Arguments(argsInput, true).args;
+  const { PPD_TESTS } = new Arguments({ ...configArgs, ...argsInput }, true).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
 
   if (!argsTests.length) {
