@@ -31,6 +31,19 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "PuppeDo_ENV_blank",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_TESTS": "blankEnv",
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "PuppeDo_ENV_puppeteer",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],

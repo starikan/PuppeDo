@@ -23,6 +23,7 @@ import {
   EnvType,
   LogEntry,
   SocketType,
+  EnvYamlType,
 } from './global.d';
 
 type EnvsInstanceType = {
@@ -30,6 +31,15 @@ type EnvsInstanceType = {
   socket: SocketType;
   envsId: string;
   logger: Log;
+};
+
+const BROWSER_DEFAULT: EnvBrowserType = {
+  type: 'browser',
+  engine: 'playwright',
+  runtime: 'run',
+  browserName: 'chromium',
+  headless: false,
+  slowMo: 1,
 };
 
 export class EnvsPool implements EnvsPoolType {
@@ -124,23 +134,25 @@ export class EnvsPool implements EnvsPoolType {
     };
   }
 
-  async setEnv({ name, env, page = '' }: { name: string; env: EnvType; page: string }): Promise<void> {
-    if (!name && !env) {
-      throw new Error('You must pass name of Environment or object with parameters to switch');
-    }
+  async setEnv({
+    name,
+    env = {},
+    page = '',
+  }: {
+    name: string;
+    env: Record<string, unknown>;
+    page: string;
+  }): Promise<void> {
+    const envResolved: EnvYamlType = { ...{ name: '__blank_env__', type: 'env', browser: BROWSER_DEFAULT }, ...env };
 
     let localName = name;
 
-    if (env) {
-      localName = env.name;
-      this.envs[localName] = new Env(env);
-      await this.runBrowsers(localName);
-    } else if (name) {
+    if (name) {
       if (!this.envs[name]) {
         const { envs } = new TestsContent().allData;
-        const envResolved = envs.find((v) => v.name === name);
-        if (envResolved) {
-          const envLocal = JSON.parse(JSON.stringify(envResolved));
+        const envFromFile = envs.find((v) => v.name === name);
+        if (envFromFile) {
+          const envLocal = JSON.parse(JSON.stringify(envFromFile));
           this.envs[name] = new Env(envLocal);
           await this.runBrowsers(name);
         } else {
@@ -149,6 +161,10 @@ export class EnvsPool implements EnvsPoolType {
       } else if (!this.envs[name]?.state?.browser) {
         await this.runBrowsers(name);
       }
+    } else {
+      localName = envResolved.name;
+      this.envs[localName] = new Env(envResolved);
+      await this.runBrowsers(localName);
     }
 
     this.current.name = localName;
@@ -161,7 +177,7 @@ export class EnvsPool implements EnvsPoolType {
 
   async runBrowsers(envName: string): Promise<void> {
     const envPool = this.envs[envName];
-    const browserSettings = envPool.env.browser;
+    const browserSettings = { ...BROWSER_DEFAULT, ...envPool.env.browser };
     const { type, engine, runtime } = browserSettings;
 
     if (type === 'api') {

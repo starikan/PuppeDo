@@ -6,7 +6,7 @@ export default class Env {
   env: EnvType;
 
   constructor(env: EnvType) {
-    this.name = env.name || 'BlankEnv';
+    this.name = env.name;
     this.state = {};
     this.env = env;
   }
