@@ -723,7 +723,7 @@ export class Test implements TestExtendType {
           (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name))
         ) {
           await logger.log({
-            text: `🕝: ${getTimer(startTime).delta} s. (${this.name})`,
+            text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
             level: 'timer',
             levelIndent: this.levelIndent,
             logShowFlag,

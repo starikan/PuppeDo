@@ -30,14 +30,14 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
       const test = getTest({ testJsonIncome: fullJSON, envsId, socket });
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
-      await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta} sec.` });
+      await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` });
       await test();
-      await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta} sec.` });
+      await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });
     }
 
     await envsPool.closeAllEnvs();
 
-    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta} sec.` });
+    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });
 
     // if (!module.parent) {
     if (closeProcess) {

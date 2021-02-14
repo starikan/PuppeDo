@@ -82,10 +82,17 @@ export const blankSocket: SocketType = {
   },
 };
 
-export const getTimer = (timeStart: bigint = process.hrtime.bigint()): { now: bigint; delta: string } => ({
-  now: process.hrtime.bigint(),
-  delta: (Number(process.hrtime.bigint() - timeStart) / 1e9).toFixed(3),
-});
+export const getTimer = (timeStart: bigint = process.hrtime.bigint()): { now: bigint; delta: string } => {
+  const seconds = Number(process.hrtime.bigint() - timeStart) / 1e9;
+  let delta = `${seconds.toFixed(3)} s.`;
+  if (seconds > 60) {
+    delta = `${Math.floor(seconds / 60)} min. ${(seconds % 60).toFixed(3)} s.`;
+  }
+  return {
+    now: process.hrtime.bigint(),
+    delta,
+  };
+};
 
 export const pick = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key)));
