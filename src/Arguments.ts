@@ -1,3 +1,5 @@
+import path from 'path';
+
 import Singleton from './Singleton';
 
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
@@ -137,10 +139,20 @@ export class Arguments extends Singleton {
   constructor(args: Partial<ArgumentsType> = {}, reInit = false) {
     super();
     if (reInit || !this.args) {
+      let configArgs = {};
+
+      try {
+        const config = __non_webpack_require__(path.join(process.cwd(), 'puppedo.config.js'));
+        const { args: argsFromConfig } = config || {};
+        configArgs = argsFromConfig;
+      } catch (error) {
+        // Nothin to do
+      }
+
       this.argsJS = parser(args);
       this.argsEnv = parser(process.env);
       this.argsCLI = parseCLI();
-      this.args = { ...argsDefault, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
+      this.args = { ...argsDefault, ...configArgs, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
     }
   }
 }
