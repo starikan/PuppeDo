@@ -1,18 +1,50 @@
 import crypto from 'crypto';
 
-import TestsContent from './TestContent';
+import TestsContent, { BLANK_TEST } from './TestContent';
 
 import { TestExtendType, TestType } from './global.d';
 import { RUNNER_BLOCK_NAMES } from './Helpers';
 
 export default class TestStructure {
   fullJSON: TestExtendType;
+  fullJSONFiltered: TestExtendType;
   textDescription: string;
 
   constructor(testName: string) {
     const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
+    this.fullJSONFiltered = TestStructure.filterFullJSON(fullJSON);
     this.fullJSON = fullJSON;
     this.textDescription = textDescription;
+  }
+
+  static filterFullJSON(fullJSON: TestExtendType): TestExtendType {
+    const keys = Object.keys(BLANK_TEST);
+    const fullJSONFiltered: Partial<TestExtendType> = {};
+    keys.forEach((v) => {
+      if (
+        ['string', 'boolean', 'number'].includes(typeof fullJSON[v]) &&
+        fullJSON[v] !== null &&
+        fullJSON[v] !== BLANK_TEST[v]
+      ) {
+        fullJSONFiltered[v] = fullJSON[v];
+      }
+      if (
+        ['object'].includes(typeof fullJSON[v]) &&
+        fullJSON[v] !== null &&
+        JSON.stringify(fullJSON[v]) !== JSON.stringify(BLANK_TEST[v])
+      ) {
+        fullJSONFiltered[v] = fullJSON[v];
+      }
+    });
+
+    if (fullJSONFiltered.runTest && fullJSONFiltered.runTest.length) {
+      fullJSONFiltered.runTest = (fullJSONFiltered.runTest as TestExtendType[]).map((v: TestExtendType) => {
+        const result = TestStructure.filterFullJSON(v);
+        return result;
+      });
+    }
+
+    return fullJSONFiltered as TestExtendType;
   }
 
   static generateDescriptionStep(fullJSON: TestExtendType): string {

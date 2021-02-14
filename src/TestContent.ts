@@ -16,6 +16,7 @@ import {
   BrowserEngineType,
   BrowserNameType,
   TestTypeYaml,
+  TestExtendType,
 } from './global.d';
 
 type AllDataType = {
@@ -28,44 +29,43 @@ type AllDataType = {
   selectors: Array<DataType>;
 };
 
-const BLANK_TEST: TestType = {
+export const BLANK_TEST: TestType = {
+  afterTest: [],
+  allowOptions: [],
+  allowResults: [],
+  argsRedefine: {},
+  beforeTest: [],
+  bindData: {},
+  bindDescription: '',
+  bindResults: {},
+  bindSelectors: {},
+  data: {},
+  dataExt: [],
+  debug: false,
+  debugInfo: false,
+  description: '',
+  descriptionError: '',
+  descriptionExtend: [],
+  disable: false,
+  engineSupports: [],
+  errorIf: '',
+  errorIfResult: '',
+  frame: '',
+  if: '',
+  inlineJS: '',
+  logOptions: {},
   name: '',
-  type: 'test',
   needData: [],
   needSelectors: [],
   options: {},
-  dataExt: [],
-  selectorsExt: [],
-  allowResults: [],
-  allowOptions: [],
-  debug: false,
-  debugInfo: false,
-  disable: false,
-  logOptions: {},
-  frame: '',
-  data: {},
-  bindData: {},
-  selectors: {},
-  bindSelectors: {},
-  bindResults: {},
-  description: '',
-  descriptionExtend: [],
-  descriptionError: '',
-  bindDescription: '',
   repeat: 1,
-  while: '',
-  if: '',
-  errorIf: '',
-  errorIfResult: '',
-  tags: [],
-  engineSupports: [],
-  testFile: '',
-  todo: '',
-  beforeTest: [],
   runTest: [],
-  afterTest: [],
-  inlineJS: '',
-  argsRedefine: {},
+  selectors: {},
+  selectorsExt: [],
+  tags: [],
+  todo: '',
+  type: 'test',
+  while: '',
 };
 
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
@@ -88,7 +88,7 @@ export default class TestsContent extends Singleton {
     }
   }
 
-  static checkDuplicates<T extends TestType | EnvType | DataType>(tests: Array<T>): Array<T> {
+  static checkDuplicates<T extends TestExtendType | EnvType | DataType>(tests: Array<T>): Array<T> {
     const blankNames = tests.filter((v) => !v.name);
     if (blankNames.length) {
       throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
@@ -149,10 +149,10 @@ export default class TestsContent extends Singleton {
       });
 
       const atoms: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestType => v.type === 'atom'),
+        allContent.filter((v): v is TestExtendType => v.type === 'atom'),
       );
       const tests: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestType => v.type === 'test'),
+        allContent.filter((v): v is TestExtendType => v.type === 'test'),
       );
       const data: Array<DataType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'data'),

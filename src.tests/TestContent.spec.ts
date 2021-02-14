@@ -3,7 +3,7 @@ import path from 'path';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 
-import { TestType, DataType, EnvBrowserType } from '../src/global.d';
+import { DataType, EnvBrowserType, TestExtendType } from '../src/global.d';
 
 describe('TestContent', () => {
   test('Init', () => {
@@ -74,7 +74,7 @@ describe('TestContent', () => {
   test('checkDuplicates', () => {
     const CD = TestsContent.checkDuplicates;
 
-    const data: Array<TestType> = [
+    const data: Array<TestExtendType> = [
       {
         type: 'atom',
         name: 'bar',

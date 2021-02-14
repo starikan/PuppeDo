@@ -320,7 +320,6 @@ export interface TestTypeYaml {
   errorIfResult?: string;
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
-  testFile: string;
   beforeTest?: TestLifecycleFunctionType[] | TestExtendType[];
   runTest?: TestLifecycleFunctionType[] | TestExtendType[];
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
@@ -344,6 +343,7 @@ export type TestExtendType = TestType & {
   selectorsParent?: Record<string, unknown>;
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
+  testFile?: string;
 };
 
 export type TestExtendTypeKeys = keyof TestExtendType;
