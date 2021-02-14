@@ -5,6 +5,7 @@ data:
   mainTestData: foo
 dataExt:
   - dataExtMain
+returnAllResultData: true
 
 beforeTest:
   - envSwitch:
