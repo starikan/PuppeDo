@@ -8,7 +8,7 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import Log from './Log';
 import Singleton from './Singleton';
-import { sleep, merge, paintString, blankSocket } from './Helpers';
+import { paintString, blankSocket } from './Helpers';
 import { runScriptInContext } from './Test';
 
 export default {
@@ -22,8 +22,6 @@ export default {
   Blocker,
   Log,
   Singleton,
-  sleep,
-  merge,
   paintString,
   blankSocket,
   argsDefault,
