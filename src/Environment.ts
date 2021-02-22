@@ -178,11 +178,8 @@ export class EnvsPool implements EnvsPoolType {
   async runBrowsers(envName: string): Promise<void> {
     const envPool = this.envs[envName];
     const browserSettings = { ...BROWSER_DEFAULT, ...envPool.env.browser };
+    // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
-
-    if (type === 'api') {
-      // TODO: 2020-01-13 S.Starodubov
-    }
 
     if (type === 'browser' && runtime === 'run' && engine === 'puppeteer') {
       await this.runPuppeteer(envName);
@@ -246,6 +243,7 @@ export class EnvsPool implements EnvsPoolType {
       args = [],
       windowSize = {},
       browserName: product = 'chrome',
+      executablePath = '',
     } = browserSettings;
     const { width = 1024, height = 768 } = windowSize;
 
@@ -258,6 +256,7 @@ export class EnvsPool implements EnvsPoolType {
       product,
       ignoreHTTPSErrors: true,
       defaultViewport: { width, height },
+      executablePath,
     });
 
     const pagesExists = await browser.pages();
@@ -270,10 +269,11 @@ export class EnvsPool implements EnvsPoolType {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const envPool = this.envs[envName];
     const browserSettings = envPool.env.browser;
-    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {} } = browserSettings || {};
+    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {}, executablePath = '' } =
+      browserSettings || {};
     const { width = 1024, height = 768 } = windowSize;
 
-    const options: BrouserLaunchOptions = { headless, slowMo, args };
+    const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath };
     if (browserName === 'chromium') {
       options.devtools = PPD_DEBUG_MODE;
     }

@@ -181,7 +181,7 @@ export default class TestsContent extends Singleton {
       headless: false,
       slowMo: 1,
     };
-    const ALLOW_BROWSER_TYPES: BrowserTypeType[] = ['api', 'browser', 'electron'];
+    const ALLOW_BROWSER_TYPES: BrowserTypeType[] = ['browser', 'electron'];
     const ALLOW_BROWSER_EGINES: BrowserEngineType[] = ['puppeteer', 'playwright'];
     const ALLOW_BROWSER_MANES: BrowserNameType[] = ['chrome', 'chromium', 'firefox', 'webkit'];
 
@@ -191,10 +191,6 @@ export default class TestsContent extends Singleton {
       throw new Error(
         `PuppeDo can't find this type of envitonment: "${browser.type}". Allow this types: ${ALLOW_BROWSER_TYPES}`,
       );
-    }
-
-    if (browser.type === 'api') {
-      throw new Error("PuppeDo can't work with API yet.");
     }
 
     if (!ALLOW_BROWSER_EGINES.includes(browser.engine) && (browser.type === 'browser' || browser.type === 'electron')) {

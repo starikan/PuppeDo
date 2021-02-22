@@ -25,6 +25,7 @@ export type BrouserLaunchOptions = {
   slowMo: number;
   args: Array<string>;
   devtools?: boolean;
+  executablePath?: string;
 };
 
 export type PagesType = Record<string, BrowserPageType | BrowserFrame>;
@@ -156,7 +157,7 @@ export type EnvStateType = {
   pid?: number;
 };
 
-export type BrowserTypeType = 'browser' | 'electron' | 'api';
+export type BrowserTypeType = 'browser' | 'electron';
 export type BrowserEngineType = 'puppeteer' | 'playwright';
 export type BrowserNameType = 'chrome' | 'chromium' | 'firefox' | 'webkit';
 
@@ -165,6 +166,7 @@ export type EnvBrowserType = {
   engine: BrowserEngineType;
   browserName: BrowserNameType;
   runtime: 'run' | 'connect';
+  executablePath?: string;
   headless: boolean;
   slowMo: number;
   args?: Array<string>;
