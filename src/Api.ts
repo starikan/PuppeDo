@@ -5,10 +5,12 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 
-export default async function run(argsInput = {}, closeProcess = true): Promise<void> {
+export default async function run(argsInput = {}, closeProcess = true): Promise<Record<string, unknown>> {
   const { envsId, envsPool, socket, logger } = Environment();
   const { PPD_TESTS } = new Arguments({ ...argsInput }, true).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
+
+  const results = {};
 
   if (!argsTests.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -31,7 +33,9 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` });
-      await test();
+      const testResults = await test();
+      results[testName] = testResults;
+
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });
     }
 
@@ -39,11 +43,13 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });
 
-    // if (!module.parent) {
-    if (closeProcess) {
-      process.exit(0);
-    }
-    // }
+    setTimeout(() => {
+      if (closeProcess) {
+        process.exit(0);
+      }
+    }, 0);
+
+    return results;
   } catch (error) {
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;

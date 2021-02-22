@@ -95,7 +95,5 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     await envsPool.closeAllEnvs();
   }
 
-  // if (!module.parent) {
   process.exit(1);
-  // }
 };
