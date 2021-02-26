@@ -370,7 +370,6 @@ export class Test implements TestExtendType {
   todo!: string;
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
-  returnAllResultData: boolean;
 
   envName!: string;
   envPageName!: string;
@@ -418,7 +417,6 @@ export class Test implements TestExtendType {
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
-    this.returnAllResultData = initValues.returnAllResultData || false;
 
     this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -731,10 +729,6 @@ export class Test implements TestExtendType {
             logShowFlag,
             extendInfo: true,
           });
-        }
-
-        if (this.returnAllResultData) {
-          return { ...selectorsLocal, ...dataLocal, ...results };
         }
 
         return localResults;
