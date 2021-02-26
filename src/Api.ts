@@ -5,8 +5,15 @@ import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 
-export default async function run(argsInput = {}, closeProcess = true): Promise<Record<string, unknown>> {
+type RunOptions = {
+  closeProcess?: boolean;
+  stdOut?: boolean;
+};
+
+export default async function run(argsInput = {}, options: RunOptions = {}): Promise<Record<string, unknown>> {
   const { envsId, envsPool, socket, logger } = Environment();
+  const { closeProcess = true, stdOut = true } = options;
+  logger.bindData({ stdOut });
   const { PPD_TESTS } = new Arguments({ ...argsInput }, true).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
 
@@ -49,6 +56,7 @@ export default async function run(argsInput = {}, closeProcess = true): Promise<
       }
     }, 0);
 
+    console.log(JSON.stringify(results, null, 2));
     return results;
   } catch (error) {
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {

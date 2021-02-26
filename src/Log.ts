@@ -128,6 +128,7 @@ export default class Log {
   binded: {
     breadcrumbs?: Array<string>;
     testArgs?: TestArgsType;
+    stdOut?: boolean;
   };
 
   constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType) {
@@ -314,7 +315,7 @@ export default class Log {
     levelIndent = 0,
     error = null,
     extendInfo = false,
-    stdOut = true,
+    stdOut = this.binded.stdOut !== undefined ? this.binded.stdOut : true,
     stepId = '',
     logShowFlag = true,
     textColor = 'sane',
