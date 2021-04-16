@@ -31,9 +31,10 @@ runTest:
       errorIf: "CHECK_DATA !== 'TEST_DATA1'"
 
   - blank:
+      note: Intersection selector and data error
+      disable: true
       description: Data check direct inject after result
       data: { CHECK_DATA: BLOCK_DATA }
-      errorIf: "CHECK_DATA !== 'BLOCK_DATA'"
 
   - blank:
       description: Data check binding after result
