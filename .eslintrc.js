@@ -4,7 +4,12 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
-  extends: ['eslint:recommended', 'airbnb-base', 'plugin:@typescript-eslint/recommended'],
+  extends: [
+    'eslint:recommended',
+    'airbnb-base',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:security/recommended',
+  ],
   settings: {
     'import/resolver': {
       node: {
@@ -15,7 +20,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: { ecmaVersion: 2019 },
-  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'prettier', 'security'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'warn',
     'no-await-in-loop': 'off',
@@ -37,5 +42,8 @@ module.exports = {
 
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+
+    'security/detect-object-injection': 'off',
+    'security/detect-non-literal-fs-filename': 'off',
   },
 };
