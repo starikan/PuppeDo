@@ -269,8 +269,14 @@ export class EnvsPool implements EnvsPoolType {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const envPool = this.envs[envName];
     const browserSettings = envPool.env.browser;
-    const { headless = true, slowMo = 0, args = [], browserName = 'chromium', windowSize = {}, executablePath = '' } =
-      browserSettings || {};
+    const {
+      headless = true,
+      slowMo = 0,
+      args = [],
+      browserName = 'chromium',
+      windowSize = {},
+      executablePath = '',
+    } = browserSettings || {};
     const { width = 1024, height = 768 } = windowSize;
 
     const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath };

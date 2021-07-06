@@ -416,30 +416,25 @@ describe('Log', () => {
 
   describe('saveScreenshot', () => {
     // let fs;
-
-    beforeEach(() => {
-      // fs = jest.genMockFromModule('fs');
-      // logger.envs = {};
-      // logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
-      // logger.envs.getActivePage.screenshot = jest.fn();
-      // logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
-    });
-
+    // beforeEach(() => {
+    // fs = jest.genMockFromModule('fs');
+    // logger.envs = {};
+    // logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
+    // logger.envs.getActivePage.screenshot = jest.fn();
+    // logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
+    // });
     // test('should getOutputsFolders function to be called', async () => {
     //   await logger.screenshot.saveScreenshot();
     //   expect(logger.envs.getOutputsFolders).toHaveBeenCalled();
     // });
-
     // test('should return false with no arguments', async () => {
     //   expect(await logger.screenshot.saveScreenshot()).toBe(false);
     // });
-
     // test('should getActivePage function to be called', async () => {
     //   await logger.screenshot.saveScreenshot({ fullPage: true });
     //   // fs.existsSync = jest.fn(() => true);
     //   expect(logger.envs.getActivePage).toHaveBeenCalled();
     // });
-
     // test('should page.screenshot function to be called', async () => {
     //   await logger.saveScreenshot({fullPage: true});
     //   expect(logger.envs.getActivePage.screenshot).toHaveBeenCalled();

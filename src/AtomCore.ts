@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { Page as PagePuppeteer } from 'puppeteer';
+import { Page as PagePuppeteer, Frame as FramePuppeteer } from 'puppeteer';
+import { Page as PagePlaywright, Frame as FramePlaywright } from 'playwright';
 
 import { logExtend, logDebug, logArgs, logStack, logTimer, logExtendFileInfo, logErrorMessage } from './Log';
 import Env from './Env';
@@ -76,14 +77,15 @@ export default class Atom {
       }
 
       if (this.getEngine('playwright')) {
+        const elementParentPlaywright = elementPatent as PagePlaywright;
         if (isXPath) {
-          elements = await elementPatent.$$(`xpath=${selectorClean}`);
+          elements = await elementParentPlaywright.$$(`xpath=${selectorClean}`);
         }
         if (isText) {
-          elements = await elementPatent.$$(`text=${selectorClean}`);
+          elements = await elementParentPlaywright.$$(`text=${selectorClean}`);
         }
         if (isCSS) {
-          elements = await elementPatent.$$(`css=${selectorClean}`);
+          elements = await elementParentPlaywright.$$(`css=${selectorClean}`);
         }
       }
 
@@ -106,7 +108,18 @@ export default class Atom {
       return;
     }
 
-    const elementHandle = await this.page.$(`iframe[name="${this.frame}"]`);
+    let elementHandle;
+
+    if (this.getEngine('puppeteer')) {
+      const page = this.page as FramePuppeteer;
+      elementHandle = await page.$$(`iframe[name="${this.frame}"]`);
+    }
+
+    if (this.getEngine('playwright')) {
+      const page = this.page as FramePlaywright;
+      elementHandle = await page.$$(`iframe[name="${this.frame}"]`);
+    }
+
     const frame = elementHandle && (await elementHandle.contentFrame());
 
     if (frame) {
