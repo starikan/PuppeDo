@@ -96,6 +96,9 @@ export default class TestsContent extends Singleton {
 
     const dubs = tests.reduce((s: Record<string, string[]>, v: T) => {
       const collector = { ...s };
+      if (!v.testFile) {
+        return collector;
+      }
       collector[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
       return collector;
     }, {});

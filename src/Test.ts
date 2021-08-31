@@ -277,11 +277,11 @@ const fetchData = (
 
   const dataExtResolved = dataExt.reduce((collect, v) => {
     const extData = allData.find((d) => v === d.name);
-    return { ...collect, ...extData.data };
+    return extData ? { ...collect, ...extData.data } : collect;
   }, {});
   const selectorsExtResolved = selectorsExt.reduce((collect, v) => {
     const extData = allSelectors.find((d) => v === d.name);
-    return { ...collect, ...extData.data };
+    return extData ? { ...collect, ...extData.data } : collect;
   }, {});
 
   let dataLocal = {

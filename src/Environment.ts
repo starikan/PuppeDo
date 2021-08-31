@@ -207,11 +207,11 @@ export class EnvsPool implements EnvsPoolType {
 
   async addPage(envName: string, name = 'main', options: { width?: number; height?: number } = {}): Promise<void> {
     const envPool = this.envs[envName];
-    const { width, height } = options;
+    const { width = 1024, height = 768 } = options;
     const { browser } = envPool.state;
     const browserSettings = envPool.env.browser;
 
-    let page: BrowserPageType;
+    let page: BrowserPageType | null = null;
     if (browserSettings.engine === 'puppeteer') {
       page = await (browser as BrowserPuppeteer).newPage();
       if (width && height) {
