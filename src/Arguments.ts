@@ -151,7 +151,7 @@ export class Arguments extends Singleton {
       }
 
       this.argsJS = parser(args);
-      this.argsEnv = parser(process.env);
+      this.argsEnv = parser(process.env as unknown);
       this.argsCLI = parseCLI();
       this.args = { ...argsDefault, ...configArgs, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
     }

@@ -326,7 +326,7 @@ export interface TestTypeYaml {
   runTest?: TestLifecycleFunctionType[] | TestExtendType[];
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
-  argsRedefine: Partial<ArgumentsType>;
+  argsRedefine?: Partial<ArgumentsType>;
 }
 
 export type TestType = Required<TestTypeYaml>;
