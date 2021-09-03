@@ -658,21 +658,14 @@ export class Test implements TestExtendType {
         }
 
         // RUN FUNCTIONS
-        const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         let resultFromTest = {};
 
-        for (let i = 0; i < FUNCTIONS.length; i += 1) {
-          let funcs = FUNCTIONS[i];
-
-          if (typeof funcs === 'function') {
-            funcs = [funcs];
-          }
-          if (Array.isArray(funcs)) {
-            for (let f = 0; f < funcs.length; f += 1) {
-              const fun = funcs[f];
-              const funResult = (await fun(argsExt)) || {};
-              resultFromTest = { ...resultFromTest, ...funResult };
-            }
+        const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
+        for (let funcs of FUNCTIONS) {
+          funcs = [funcs].flat();
+          for (const func of funcs) {
+            const funResult = (await func(argsExt)) || {};
+            resultFromTest = { ...resultFromTest, ...funResult };
           }
         }
 

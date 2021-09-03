@@ -45,5 +45,7 @@ module.exports = {
 
     'security/detect-object-injection': 'off',
     'security/detect-non-literal-fs-filename': 'off',
+
+    'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
   },
 };
