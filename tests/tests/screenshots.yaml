@@ -1,0 +1,79 @@
+name: screenshots
+description: screenshots
+data: { 'myEnv': 'mainEnv' }
+
+beforeTest:
+  - envSwitch:
+      bindData: { envName: myEnv }
+
+  - goTo:
+      bindDescription: "'Going on page ' + url"
+      bD: { url: baseUrl }
+
+runTest:
+  - case:
+      description: No screenshot
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+
+  - case:
+      description: Only one element
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              screenshot: true
+
+  - case:
+      description: Named element screenshot
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              screenshot: true
+              screenshotName: Screenshot name
+
+  - case:
+      description: 3 elements
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              screenshot: true
+
+        - checkSelector:
+            bindSelectors: { selector: mainInput }
+            logOptions:
+              screenshot: true
+
+        - checkSelector:
+            bindSelectors: { selector: mainLink }
+            logOptions:
+              screenshot: true
+
+  - case:
+      description: Fullscreen
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              fullpage: true
+
+  - case:
+      description: Fullscreen named screenshot
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              fullpage: true
+              fullpageName: Full name
+
+  - case:
+      description: Fullscreen + Element
+      runTest:
+        - checkSelector:
+            bindSelectors: { selector: mainButton }
+            logOptions:
+              screenshot: true
+              fullpage: true

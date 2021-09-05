@@ -122,6 +122,8 @@ Parameter  | Description
 level | todo
 screenshot | todo
 fullpage | todo
+screenshotName | todo
+fullpageName | todo
 
 # Data and Selectors files
 ```yaml

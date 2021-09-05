@@ -20,6 +20,11 @@ const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
+type AtomInit = {
+  env?: Env;
+  page?: BrowserPageType | BrowserFrame;
+};
+
 class AtomError extends Error {
   constructor(message: string) {
     super(message);
@@ -36,6 +41,11 @@ export default class Atom {
   logOptions!: LogOptionsType;
   options!: Record<string, string>;
   frame!: string;
+
+  constructor(init: AtomInit = {}) {
+    this.page = init.page || this.page;
+    this.env = init.env || this.env;
+  }
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
     const atomEngine = this.env.env.browser.engine;

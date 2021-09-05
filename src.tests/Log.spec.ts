@@ -440,25 +440,4 @@ describe('Log', () => {
     //   expect(logger.envs.getActivePage.screenshot).toHaveBeenCalled();
     // });
   });
-
-  describe('getScreenshots', () => {
-    test('getScreenshots', async () => {
-      // logger.getOutputsFolders = () => ({
-      //   folder: path.join('.temp', 'folder'),
-      //   folderLatest: path.join('.temp', 'folderLatest'),
-      // });
-      // logger.getActivePage = () => ({
-      //   page: {
-      //     $: () => ({ screenshot: () => {} }),
-      //     screenshot: () => {},
-      //   },
-      // });
-      // const element = {
-      //   screenshot: () => {},
-      // };
-      // debugger
-      // expect(await logger.getScreenshots({}, false, true)).toEqual([]);
-      // expect(await logger.getScreenshots('', {}, true)).toEqual([]);
-    });
-  });
 });

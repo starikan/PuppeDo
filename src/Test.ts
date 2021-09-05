@@ -24,6 +24,7 @@ import {
   TestExtendType,
   ArgumentsType,
 } from './global.d';
+import Atom from './AtomCore';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -228,6 +229,8 @@ const resolveLogOptions = (
     textColor: 'sane' as ColorsType,
     backgroundColor: 'sane' as ColorsType,
     output: envsPool.output,
+    // screenshot: logOptions.screenshot || logOptionsParent.screenshot,
+    // fullpage: logOptions.fullpage || logOptionsParent.fullpage,
     ...logOptions,
   };
 
@@ -438,7 +441,7 @@ export class Test implements TestExtendType {
       } = { ...new Arguments().args, ...this.argsRedefine };
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
 
-      if (this.debug && !this.debugInfo) {
+      if (this.debug) {
         console.log(this);
         // eslint-disable-next-line no-debugger
         debugger;
@@ -607,32 +610,6 @@ export class Test implements TestExtendType {
           await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
         }
 
-        // LOG TEST
-        logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
-
-        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
-          await logger.log({
-            text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
-            level: 'test',
-            levelIndent: this.levelIndent,
-            logShowFlag,
-            textColor: this.logOptions.textColor,
-            backgroundColor: this.logOptions.backgroundColor,
-          });
-
-          if (PPD_LOG_DOCUMENTATION_MODE) {
-            for (let step = 0; step < this.descriptionExtend.length; step += 1) {
-              await logger.log({
-                text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
-                level: 'test',
-                textColor: 'cyan' as ColorsType,
-                levelIndent: this.levelIndent + 1,
-                logShowFlag,
-              });
-            }
-          }
-        }
-
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
         const argsExt: TestArgsExtType = {
@@ -647,6 +624,50 @@ export class Test implements TestExtendType {
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,
         };
+
+        // LOG TEST
+        logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
+
+        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
+          const elements = [];
+          if (this.logOptions.screenshot) {
+            const atom = new Atom({ page: pageCurrent, env: this.env });
+            const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];
+            for (const selector of selectors) {
+              elements.push(await atom.getElement(selector));
+            }
+          }
+
+          if (!elements.length) {
+            elements.push(null);
+          }
+
+          for (const element of elements) {
+            await logger.log({
+              text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
+              level: 'test',
+              levelIndent: this.levelIndent,
+              logShowFlag,
+              textColor: this.logOptions.textColor,
+              backgroundColor: this.logOptions.backgroundColor,
+              screenshot: this.logOptions.screenshot,
+              fullpage: this.logOptions.fullpage,
+              element,
+            });
+          }
+
+          if (PPD_LOG_DOCUMENTATION_MODE) {
+            for (let step = 0; step < this.descriptionExtend.length; step += 1) {
+              await logger.log({
+                text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
+                level: 'test',
+                textColor: 'cyan' as ColorsType,
+                levelIndent: this.levelIndent + 1,
+                logShowFlag,
+              });
+            }
+          }
+        }
 
         if (this.debugInfo) {
           logDebug(logger.log.bind(logger), 0, argsExt, true, this.debugInfo);

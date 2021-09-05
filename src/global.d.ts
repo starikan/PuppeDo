@@ -136,6 +136,7 @@ export type LogInputType = {
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
   logShowFlag?: boolean;
+  page?: PagePuppeteer | PagePlaywright;
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;

@@ -221,6 +221,24 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}\\tests\\screencast.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Screenshot",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "-e",
+        "require('./tests/server')();require('./index').run()",
+        "PPD_ROOT=tests",
+        "PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
+        "PPD_TESTS=screenshots",
+        "PPD_DEBUG_MODE=true",
+        "PPD_LOG_EXTEND=true",
+        "PPD_LOG_SCREENSHOT=true",
+        "PPD_LOG_FULLPAGE=true"
+      ],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
   ]
 }

@@ -343,7 +343,11 @@ export default class Log {
       if (levelText === 'error' && levelIndent === 0) {
         [isScreenshot, isFullpage] = [true, true];
       }
-      const screenshots = isScreenshot ? await this.screenshot.getScreenshots(element, isFullpage, extendInfo) : [];
+
+      const fullPageScreenshot = isFullpage && !extendInfo ? await this.screenshot.saveScreenshotFull() : [];
+      const elementsScreenshots =
+        isScreenshot && !extendInfo ? await this.screenshot.saveScreenshotElement(element) : [];
+      const screenshots = [fullPageScreenshot, elementsScreenshots].flat();
 
       const now = new Date();
       texts.forEach((textString) => {
