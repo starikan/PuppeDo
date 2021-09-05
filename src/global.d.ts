@@ -108,6 +108,8 @@ export type LogOptionsType = {
   logChildren?: boolean;
   screenshot?: boolean;
   fullpage?: boolean;
+  screenshotName?: string;
+  fullpageName?: string;
   levelIndent?: number;
   level?: ColorsType;
   textColor?: ColorsType;
@@ -126,6 +128,8 @@ export type LogInputType = {
   testFile?: string;
   screenshot?: boolean;
   fullpage?: boolean;
+  screenshotName?: string;
+  fullpageName?: string;
   level?: ColorsType;
   element?: Element;
   levelIndent?: number;

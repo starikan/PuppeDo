@@ -310,6 +310,8 @@ export default class Log {
     text = '',
     screenshot = false,
     fullpage = false,
+    screenshotName,
+    fullpageName,
     level = 'info',
     element,
     levelIndent = 0,
@@ -344,9 +346,10 @@ export default class Log {
         [isScreenshot, isFullpage] = [true, true];
       }
 
-      const fullPageScreenshot = isFullpage && !extendInfo ? await this.screenshot.saveScreenshotFull() : [];
+      const fullPageScreenshot =
+        isFullpage && !extendInfo ? await this.screenshot.saveScreenshotFull(fullpageName) : [];
       const elementsScreenshots =
-        isScreenshot && !extendInfo ? await this.screenshot.saveScreenshotElement(element) : [];
+        isScreenshot && !extendInfo ? await this.screenshot.saveScreenshotElement(element, screenshotName) : [];
       const screenshots = [fullPageScreenshot, elementsScreenshots].flat();
 
       const now = new Date();

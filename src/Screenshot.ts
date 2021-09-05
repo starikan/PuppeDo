@@ -22,14 +22,14 @@ export default class Screenshot {
     }
   }
 
-  getScreenshotName(): string {
+  getScreenshotName(nameIncome: string): string {
     const { folder = '.' } = this.envs.output;
-    const name = `${getNowDateTime()}.png`;
+    const name = `${nameIncome || getNowDateTime()}.png`;
     return path.resolve(path.join(folder, name));
   }
 
-  async saveScreenshotElement(element: Element): Promise<string> {
-    const pathScreenshot = this.getScreenshotName();
+  async saveScreenshotElement(element: Element, name: string): Promise<string> {
+    const pathScreenshot = this.getScreenshotName(name);
 
     try {
       if (element) {
@@ -43,8 +43,8 @@ export default class Screenshot {
     return pathScreenshot;
   }
 
-  async saveScreenshotFull(): Promise<string> {
-    const pathScreenshot = this.getScreenshotName();
+  async saveScreenshotFull(name: string): Promise<string> {
+    const pathScreenshot = this.getScreenshotName(name);
 
     try {
       const page = this.envs.getActivePage() as BrowserPageType;

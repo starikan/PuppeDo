@@ -229,8 +229,6 @@ const resolveLogOptions = (
     textColor: 'sane' as ColorsType,
     backgroundColor: 'sane' as ColorsType,
     output: envsPool.output,
-    // screenshot: logOptions.screenshot || logOptionsParent.screenshot,
-    // fullpage: logOptions.fullpage || logOptionsParent.fullpage,
     ...logOptions,
   };
 
@@ -652,6 +650,8 @@ export class Test implements TestExtendType {
               backgroundColor: this.logOptions.backgroundColor,
               screenshot: this.logOptions.screenshot,
               fullpage: this.logOptions.fullpage,
+              screenshotName: this.logOptions.screenshotName,
+              fullpageName: this.logOptions.fullpageName,
               element,
             });
           }
