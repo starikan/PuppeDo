@@ -350,7 +350,7 @@ export default class Log {
         isFullpage && !extendInfo ? await this.screenshot.saveScreenshotFull(fullpageName) : [];
       const elementsScreenshots =
         isScreenshot && !extendInfo ? await this.screenshot.saveScreenshotElement(element, screenshotName) : [];
-      const screenshots = [fullPageScreenshot, elementsScreenshots].flat();
+      const screenshots = [fullPageScreenshot, elementsScreenshots].flat().filter((v) => !!v);
 
       const now = new Date();
       texts.forEach((textString) => {

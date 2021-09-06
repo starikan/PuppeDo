@@ -35,12 +35,13 @@ export default class Screenshot {
       if (element) {
         await element.screenshot({ path: pathScreenshot });
         await this.copyScreenshotToLatest(pathScreenshot);
+        return pathScreenshot;
       }
     } catch (error) {
       // Nothing to do
     }
 
-    return pathScreenshot;
+    return '';
   }
 
   async saveScreenshotFull(name: string): Promise<string> {
@@ -51,11 +52,12 @@ export default class Screenshot {
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
         await this.copyScreenshotToLatest(pathScreenshot);
+        return pathScreenshot;
       }
     } catch (error) {
       // Nothing to do
     }
 
-    return pathScreenshot;
+    return '';
   }
 }
