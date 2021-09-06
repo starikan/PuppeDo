@@ -23,6 +23,7 @@ const argsModify = {
   PPD_LOG_TIMER_SHOW: false,
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
+  PPD_CONTINUE_ON_ERROR_ENABLED: false,
 };
 
 const argsENV = {
@@ -48,6 +49,7 @@ const argsENV = {
   PPD_LOG_TIMER_SHOW: 'false',
   PPD_LOG_TIMESTAMP_SHOW: 'true',
   PPD_LOG_INDENT_LENGTH: '4',
+  PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
 };
 
 // Reset Arguments
