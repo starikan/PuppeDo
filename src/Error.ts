@@ -17,6 +17,7 @@ export interface ErrorType extends Error {
   message: string;
   stack: string;
   type: string;
+  breadcrumbs: string[];
 }
 
 type ErrorConstructorType = {
@@ -44,6 +45,7 @@ export class TestError extends AbstractError {
   stack: string;
   logger: Log;
   test: Test;
+  breadcrumbs: string[];
 
   constructor({ logger, parentError, test, envsId }: ErrorConstructorType) {
     super();
@@ -56,6 +58,7 @@ export class TestError extends AbstractError {
     this.testDescription = parentError?.testDescription || test.description;
     this.message = `${parentError?.message} || error in test = ${test.name}`;
     this.stack = parentError?.stack;
+    this.breadcrumbs = parentError?.breadcrumbs || test.breadcrumbs;
 
     this.logger = logger;
     this.test = test;
@@ -75,6 +78,28 @@ export class TestError extends AbstractError {
       levelIndent,
       error: this,
     });
+
+    if (levelIndent === 0) {
+      await this.summaryInfo();
+    }
+  }
+
+  async summaryInfo(): Promise<void> {
+    const { message = '', descriptionError = '', testDescription = '', breadcrumbs = [] } = this;
+    const texts = [
+      '',
+      '',
+      '',
+      'SUMMARY ERROR INFO:',
+      '',
+      `Message:     ${message.split(' || ')[0]}`,
+      `Error:       ${descriptionError}`,
+      `Description: ${testDescription}`,
+      `Path:        ${breadcrumbs.join(' -> ')}`,
+    ];
+    for (const text of texts) {
+      await this.logger.log({ level: 'error', text, extendInfo: true });
+    }
   }
 }
 

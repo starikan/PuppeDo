@@ -167,7 +167,6 @@ export const checkIf = async (
   levelIndent = 0,
   allData: Record<string, unknown> = {},
   logShowFlag = true,
-  descriptionError = '',
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
@@ -192,7 +191,7 @@ export const checkIf = async (
       fullpage: true,
       text: `Test stopped with expr ${ifType} = '${expr}'`,
     });
-    throw new Error(`${descriptionError}${descriptionError ? ' ' : ''}[Test stopped with expr ${ifType} = '${expr}]'`);
+    throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
   }
 
   return false;
@@ -607,15 +606,7 @@ export class Test implements TestExtendType {
 
         // ERROR IF
         if (this.errorIf) {
-          await checkIf(
-            this.errorIf,
-            'errorIf',
-            logger.log.bind(logger),
-            this.levelIndent + 1,
-            allData,
-            logShowFlag,
-            this.descriptionError,
-          );
+          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData, logShowFlag);
         }
 
         // Extend with data passed to functions
@@ -727,7 +718,6 @@ export class Test implements TestExtendType {
               ...localResults,
             },
             logShowFlag,
-            this.descriptionError,
           );
         }
 
