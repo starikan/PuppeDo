@@ -85,6 +85,7 @@ export type ArgumentsType = {
   PPD_LOG_TIMER_SHOW: boolean;
   PPD_LOG_TIMESTAMP_SHOW: boolean;
   PPD_LOG_INDENT_LENGTH: number;
+  PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
@@ -275,6 +276,7 @@ export type TestArgsType = {
   ppd: {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
+  continueOnError: boolean;
 };
 
 export type TestArgsExtType = {
@@ -332,6 +334,7 @@ export interface TestTypeYaml {
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
   argsRedefine?: Partial<ArgumentsType>;
+  continueOnError?: boolean;
 }
 
 export type TestType = Required<TestTypeYaml>;

@@ -132,13 +132,14 @@ const getTest = ({
   const test = new Test(testJson);
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
+    // debugger
     let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
       'options',
       'data',
       'selectors',
       'logOptions',
     ]);
-    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame']);
+    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame', 'continueOnError']);
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
     const result = await test.run(updatetTestJson);
     if (parentTest) {

@@ -169,6 +169,7 @@ PPD_LOG_NAMES_ONLY | Show only names in list/ All by default | `[]` | `String[]`
 PPD_LOG_TIMER_SHOW | Show timer in log | `false` | `Boolean`
 PPD_LOG_TIMESTAMP_SHOW | Show timer in log | `false` | `Boolean`
 PPD_LOG_INDENT_LENGTH | Indents in log | `4` | `Number`
+PPD_CONTINUE_ON_ERROR_ENABLED | continueOnError flag | `false` | `Boolean`
 
 Arguments applying order. From minor to major:
 1. Defaults

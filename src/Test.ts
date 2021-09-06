@@ -167,11 +167,12 @@ export const checkIf = async (
   levelIndent = 0,
   allData: Record<string, unknown> = {},
   logShowFlag = true,
+  continueOnError = false,
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
-    if (logShowFlag) {
+    if (logShowFlag && !continueOnError) {
       await log({
         level: 'info',
         screenshot: false,
@@ -184,13 +185,15 @@ export const checkIf = async (
   }
 
   if (exprResult && ifType !== 'if') {
-    await log({
-      level: 'error',
-      levelIndent,
-      screenshot: true,
-      fullpage: true,
-      text: `Test stopped with expr ${ifType} = '${expr}'`,
-    });
+    if (!continueOnError) {
+      await log({
+        level: 'error',
+        levelIndent,
+        screenshot: true,
+        fullpage: true,
+        text: `Test stopped with expr ${ifType} = '${expr}'`,
+      });
+    }
     throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
   }
 
@@ -371,6 +374,7 @@ export class Test implements TestExtendType {
   todo!: string;
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
+  continueOnError: boolean;
 
   envName!: string;
   envPageName!: string;
@@ -418,6 +422,7 @@ export class Test implements TestExtendType {
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
+    this.continueOnError = initValues.continueOnError || false;
 
     this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -436,8 +441,11 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
+        PPD_CONTINUE_ON_ERROR_ENABLED,
       } = { ...new Arguments().args, ...this.argsRedefine };
+
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
+      this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
 
       if (this.debug) {
         console.log(this);
@@ -587,6 +595,7 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
+          continueOnError: this.continueOnError,
         };
 
         // IF
@@ -598,6 +607,7 @@ export class Test implements TestExtendType {
             this.levelIndent + 1,
             allData,
             logShowFlag,
+            this.continueOnError,
           );
           if (skipIf) {
             return {};
@@ -606,7 +616,15 @@ export class Test implements TestExtendType {
 
         // ERROR IF
         if (this.errorIf) {
-          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData, logShowFlag);
+          await checkIf(
+            this.errorIf,
+            'errorIf',
+            logger.log.bind(logger),
+            this.levelIndent + 1,
+            allData,
+            logShowFlag,
+            this.continueOnError,
+          );
         }
 
         // Extend with data passed to functions
@@ -718,6 +736,7 @@ export class Test implements TestExtendType {
               ...localResults,
             },
             logShowFlag,
+            this.continueOnError,
           );
         }
 
@@ -755,10 +774,12 @@ export class Test implements TestExtendType {
 
         return localResults;
       } catch (error) {
-        // debugger;
         const newError = new TestError({ logger, parentError: error, test: this, envsId: this.envsId });
         await newError.log();
-        throw newError;
+        if (!this.continueOnError) {
+          throw newError;
+        }
+        return {};
       }
     };
 

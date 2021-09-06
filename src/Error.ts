@@ -65,21 +65,24 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    let text = this.descriptionError ? `${this.descriptionError} | ` : '';
-    text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
-    const { stepId, funcFile, testFile, levelIndent } = this.test;
-    await this.logger.log({
-      level: 'error',
-      text,
-      screenshot: false,
-      stepId,
-      funcFile,
-      testFile,
-      levelIndent,
-      error: this,
-    });
+    const { stepId, funcFile, testFile, levelIndent, continueOnError } = this.test;
 
-    if (levelIndent === 0) {
+    if (!continueOnError) {
+      let text = this.descriptionError ? `${this.descriptionError} | ` : '';
+      text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
+      await this.logger.log({
+        level: 'error',
+        text,
+        screenshot: false,
+        stepId,
+        funcFile,
+        testFile,
+        levelIndent,
+        error: this,
+      });
+    }
+
+    if (levelIndent === 0 || continueOnError) {
       await this.summaryInfo();
     }
   }
@@ -88,14 +91,13 @@ export class TestError extends AbstractError {
     const { message = '', descriptionError = '', testDescription = '', breadcrumbs = [] } = this;
     const texts = [
       '',
-      '',
-      '',
       'SUMMARY ERROR INFO:',
       '',
       `Message:     ${message.split(' || ')[0]}`,
       `Error:       ${descriptionError}`,
       `Description: ${testDescription}`,
       `Path:        ${breadcrumbs.join(' -> ')}`,
+      '',
     ];
     for (const text of texts) {
       await this.logger.log({ level: 'error', text, extendInfo: true });

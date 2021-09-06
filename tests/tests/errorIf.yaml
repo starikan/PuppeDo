@@ -33,3 +33,17 @@ runTest:
       description: Click some fake Text
       s: { selector: '.mainInputFake' }
       descriptionError: This is click error
+
+---
+name: continueOnError
+runTest:
+  - case:
+      description: Skip me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            errorIfResult: 1 === 1
+            descriptionError: This is error description
+
+  - case:
+      description: I am without errors

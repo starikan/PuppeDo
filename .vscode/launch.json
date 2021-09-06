@@ -203,6 +203,21 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "continueOnError",
+      "cwd": "${workspaceFolder}",
+      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "env": {
+        "PPD_ROOT": "tests",
+        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
+        "PPD_TESTS": "continueOnError",
+        "PPD_DEBUG_MODE": "true",
+        "PPD_CONTINUE_ON_ERROR_ENABLED": "true"
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "recursion Test",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
