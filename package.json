@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.83",
+  "version": "2.0.0-beta.84",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
   "typings": "./src/global.d.ts",
