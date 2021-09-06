@@ -731,10 +731,7 @@ export class Test implements TestExtendType {
             'errorIfResult',
             logger.log.bind(logger),
             this.levelIndent + 1,
-            {
-              ...allData,
-              ...localResults,
-            },
+            { ...allData, ...localResults },
             logShowFlag,
             this.continueOnError,
           );
