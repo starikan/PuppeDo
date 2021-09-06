@@ -167,6 +167,7 @@ export const checkIf = async (
   levelIndent = 0,
   allData: Record<string, unknown> = {},
   logShowFlag = true,
+  descriptionError = '',
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
@@ -191,7 +192,7 @@ export const checkIf = async (
       fullpage: true,
       text: `Test stopped with expr ${ifType} = '${expr}'`,
     });
-    throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
+    throw new Error(`${descriptionError}${descriptionError ? ' ' : ''}[Test stopped with expr ${ifType} = '${expr}]'`);
   }
 
   return false;
@@ -492,6 +493,7 @@ export class Test implements TestExtendType {
       } as Record<string, string | number>;
       this.description = inputs.description || this.description;
       this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
+      this.descriptionError = inputs.descriptionError || this.descriptionError;
       this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -605,7 +607,15 @@ export class Test implements TestExtendType {
 
         // ERROR IF
         if (this.errorIf) {
-          await checkIf(this.errorIf, 'errorIf', logger.log.bind(logger), this.levelIndent + 1, allData);
+          await checkIf(
+            this.errorIf,
+            'errorIf',
+            logger.log.bind(logger),
+            this.levelIndent + 1,
+            allData,
+            logShowFlag,
+            this.descriptionError,
+          );
         }
 
         // Extend with data passed to functions
@@ -707,10 +717,18 @@ export class Test implements TestExtendType {
 
         // ERROR
         if (this.errorIfResult) {
-          await checkIf(this.errorIfResult, 'errorIfResult', logger.log.bind(logger), this.levelIndent + 1, {
-            ...allData,
-            ...localResults,
-          });
+          await checkIf(
+            this.errorIfResult,
+            'errorIfResult',
+            logger.log.bind(logger),
+            this.levelIndent + 1,
+            {
+              ...allData,
+              ...localResults,
+            },
+            logShowFlag,
+            this.descriptionError,
+          );
         }
 
         // WHILE

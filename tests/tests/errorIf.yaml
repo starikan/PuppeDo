@@ -2,9 +2,10 @@ name: errorIf
 description: Error with IF
 
 runTest:
-  - clickSelector:
+  # - clickSelector:
   - blank:
       errorIf: 1 === 1
+      descriptionError: This is error description
 
 ---
 name: mainWithError
@@ -31,3 +32,4 @@ runTest:
   - clickSelector:
       description: Click some fake Text
       s: { selector: '.mainInputFake' }
+      descriptionError: This is click error

@@ -13,6 +13,7 @@ export interface ErrorType extends Error {
   socket: SocketType;
   stepId: string;
   testDescription: string;
+  descriptionError: string;
   message: string;
   stack: string;
   type: string;
@@ -37,6 +38,7 @@ export class TestError extends AbstractError {
   envs: Env;
   socket: SocketType;
   stepId: string;
+  descriptionError: string;
   testDescription: string;
   message: string;
   stack: string;
@@ -50,6 +52,7 @@ export class TestError extends AbstractError {
     this.envs = parentError?.envs || test.env;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
+    this.descriptionError = parentError?.descriptionError || test.descriptionError;
     this.testDescription = parentError?.testDescription || test.description;
     this.message = `${parentError?.message} || error in test = ${test.name}`;
     this.stack = parentError?.stack;
@@ -59,14 +62,17 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
+    let text = this.descriptionError ? `${this.descriptionError} | ` : '';
+    text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
+    const { stepId, funcFile, testFile, levelIndent } = this.test;
     await this.logger.log({
       level: 'error',
-      text: `Description: ${this.test.description || 'No test description'} (${this.test.name})`,
+      text,
       screenshot: false,
-      stepId: this.test.stepId,
-      funcFile: this.test.funcFile,
-      testFile: this.test.testFile,
-      levelIndent: this.test.levelIndent,
+      stepId,
+      funcFile,
+      testFile,
+      levelIndent,
       error: this,
     });
   }
