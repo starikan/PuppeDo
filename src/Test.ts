@@ -306,14 +306,15 @@ const fetchData = (
     ...selectors,
   };
 
+  const allDataLocal = { ...dataLocal, ...selectorsLocal };
   Object.entries(bindData).forEach((v: [string, string]) => {
     const [key, val] = v;
-    dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, dataLocal) };
+    dataLocal = { ...dataLocal, ...resolveDataFunctions({ [key]: val }, allDataLocal) };
   });
 
   Object.entries(bindSelectors).forEach((v: [string, string]) => {
     const [key, val] = v;
-    selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, selectorsLocal) };
+    selectorsLocal = { ...selectorsLocal, ...resolveDataFunctions({ [key]: val }, allDataLocal) };
   });
 
   return { dataLocal, selectorsLocal };
@@ -323,6 +324,17 @@ const getLogText = (text: string, nameTest = '', PPD_LOG_TEST_NAME = false): str
   const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
   const descriptionTest = text || 'TODO: Fill description';
   return `${nameTestResolved}${descriptionTest}`;
+};
+
+const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: Record<string, unknown>): void => {
+  const intersectionKeys = Object.keys(dataLocal).filter((v) => Object.keys(selectorsLocal).includes(v));
+  if (intersectionKeys.length) {
+    intersectionKeys.forEach((v) => {
+      if (dataLocal[v] !== selectorsLocal[v]) {
+        throw new Error(`Some keys in data and selectors intersect. It can corrupt data: '${v}'`);
+      }
+    });
+  }
 };
 
 export class Test implements TestExtendType {
@@ -522,6 +534,8 @@ export class Test implements TestExtendType {
           }
         }
 
+        checkIntersection(this.data, this.selectors);
+
         let { dataLocal, selectorsLocal } = fetchData(
           this.dataExt,
           this.selectorsExt,
@@ -545,14 +559,7 @@ export class Test implements TestExtendType {
           selectorsLocal,
         ));
 
-        const intersectionKeys = Object.keys(dataLocal).filter((v) => Object.keys(selectorsLocal).includes(v));
-        if (intersectionKeys.length) {
-          intersectionKeys.forEach((v) => {
-            if (dataLocal[v] !== selectorsLocal[v]) {
-              throw new Error(`Some keys in data and selectors intersect. It can corrupt data: '${v}'`);
-            }
-          });
-        }
+        checkIntersection(dataLocal, selectorsLocal);
 
         const allData = { ...selectorsLocal, ...dataLocal };
 

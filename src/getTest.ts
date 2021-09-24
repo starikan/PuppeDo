@@ -132,7 +132,6 @@ const getTest = ({
   const test = new Test(testJson);
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
-    // debugger
     let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
       'options',
       'data',

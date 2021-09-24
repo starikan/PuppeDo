@@ -349,10 +349,12 @@ export class EnvsPool implements EnvsPoolType {
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
-      const jsonBrowserResponse = await fetch(`${urlDevtoolsJson}json/version`, { method: 'GET' });
+      const jsonBrowserResponse = await fetch(`${urlDevtoolsJson}json/version`, {
+        method: 'GET',
+      });
 
       const jsonPages = await jsonPagesResponse.json();
-      const jsonBrowser = await jsonBrowserResponse.json();
+      const jsonBrowser = (await jsonBrowserResponse.json()) as { webSocketDebuggerUrl: string };
 
       if (!jsonBrowser || !jsonPages) {
         throw new Error(`Can't connect to ${urlDevtoolsJson}`);
