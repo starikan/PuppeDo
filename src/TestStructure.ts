@@ -73,7 +73,7 @@ export default class TestStructure {
   }
 
   resolveRunner(
-    runnerValue: Record<string, { name?: string; breadcrumbs?: string[] }>,
+    runnerValue: Record<string, { name?: string; breadcrumbs?: string[]; breadcrumbsDescriptions?: string[] }>,
     runnerNum: number,
     fullJSONIncome: TestExtendType,
     runnerBlock: string,
@@ -82,7 +82,8 @@ export default class TestStructure {
     fullJSON: TestExtendType;
     textDescription: string;
   } {
-    const runner: [string, { name?: string; breadcrumbs?: string[] }][] = Object.entries(runnerValue);
+    const runner: [string, { name?: string; breadcrumbs?: string[]; breadcrumbsDescriptions?: string[] }][] =
+      Object.entries(runnerValue);
     let [name, newRunner] = runner.length ? runner[0] : [null, {}];
     // It`s important. Subtest may named but no body.
     name = name || null;
@@ -91,6 +92,7 @@ export default class TestStructure {
     if (name) {
       newRunner.name = name;
       newRunner.breadcrumbs = [...fullJSONIncome.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
+      newRunner.breadcrumbsDescriptions = [...fullJSONIncome.breadcrumbsDescriptions, fullJSONIncome.description];
       const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(name, newRunner, levelIndent + 1);
       return { fullJSON, textDescription };
     }
@@ -108,6 +110,7 @@ export default class TestStructure {
     const fullJSON: TestExtendType = { ...TestStructure.getTestRaw(testName), ...testBody };
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
+    fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];
     fullJSON.levelIndent = levelIndent;
     fullJSON.stepId = crypto.randomBytes(16).toString('hex');
     fullJSON.source = JSON.stringify(fullJSON, null, 2);

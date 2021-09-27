@@ -121,7 +121,7 @@ export const runScriptInContext = (
   return result;
 };
 
-const checkNeeds = (needs: Array<string>, data: Record<string, unknown>, testName: string): boolean => {
+const checkNeeds = (needs: string[], data: Record<string, unknown>, testName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -261,8 +261,8 @@ const resolveLogOptions = (
 };
 
 const fetchData = (
-  dataExt: Array<string>,
-  selectorsExt: Array<string>,
+  dataExt: string[],
+  selectorsExt: string[],
   resultsFromParent: Record<string, unknown>,
   dataParent: Record<string, unknown>,
   data: Record<string, unknown>,
@@ -341,14 +341,14 @@ export class Test implements TestExtendType {
   name: string;
   envsId: string;
   type: 'atom' | 'test';
-  needData: Array<string>;
-  needSelectors: Array<string>;
+  needData: string[];
+  needSelectors: string[];
   dataParent!: Record<string, unknown>;
   selectorsParent!: Record<string, unknown>;
   options: Record<string, string | number>;
-  dataExt: Array<string>;
-  selectorsExt: Array<string>;
-  allowResults: Array<string>;
+  dataExt: string[];
+  selectorsExt: string[];
+  allowResults: string[];
   beforeTest: TestLifecycleFunctionType[];
   runTest: TestLifecycleFunctionType[];
   afterTest: TestLifecycleFunctionType[];
@@ -357,7 +357,8 @@ export class Test implements TestExtendType {
   source: string;
   socket: SocketType;
   stepId: string;
-  breadcrumbs: Array<string>;
+  breadcrumbs: string[];
+  breadcrumbsDescriptions: string[];
   funcFile: string;
   testFile: string;
   debug: boolean;
@@ -382,7 +383,7 @@ export class Test implements TestExtendType {
   resultsFromParent!: Record<string, unknown>;
   tags: string[];
   engineSupports: BrowserEngineType[];
-  allowOptions!: Array<string>;
+  allowOptions!: string[];
   todo!: string;
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
@@ -424,6 +425,7 @@ export class Test implements TestExtendType {
     this.socket = initValues.socket || blankSocket;
     this.stepId = initValues.stepId || '';
     this.breadcrumbs = initValues.breadcrumbs || [];
+    this.breadcrumbsDescriptions = initValues.breadcrumbsDescriptions || [];
     this.funcFile = initValues.funcFile || '';
     this.testFile = initValues.testFile || '';
     this.debug = initValues.debug || false;

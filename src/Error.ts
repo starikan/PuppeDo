@@ -18,6 +18,7 @@ export interface ErrorType extends Error {
   stack: string;
   type: string;
   breadcrumbs: string[];
+  breadcrumbsDescriptions: string[];
 }
 
 type ErrorConstructorType = {
@@ -46,6 +47,7 @@ export class TestError extends AbstractError {
   logger: Log;
   test: Test;
   breadcrumbs: string[];
+  breadcrumbsDescriptions: string[];
 
   constructor({ logger, parentError, test, envsId }: ErrorConstructorType) {
     super();
@@ -59,6 +61,7 @@ export class TestError extends AbstractError {
     this.message = `${parentError?.message} || error in test = ${test.name}`;
     this.stack = parentError?.stack;
     this.breadcrumbs = parentError?.breadcrumbs || test.breadcrumbs;
+    this.breadcrumbsDescriptions = parentError?.breadcrumbsDescriptions || test.breadcrumbsDescriptions;
 
     this.logger = logger;
     this.test = test;
@@ -88,15 +91,16 @@ export class TestError extends AbstractError {
   }
 
   async summaryInfo(): Promise<void> {
-    const { message = '', descriptionError = '', testDescription = '', breadcrumbs = [] } = this;
+    const { message = '', descriptionError = '', breadcrumbs = [], breadcrumbsDescriptions = [] } = this;
     const texts = [
       '',
       'SUMMARY ERROR INFO:',
       '',
       `Message:     ${message.split(' || ')[0]}`,
       `Error:       ${descriptionError}`,
-      `Description: ${testDescription}`,
       `Path:        ${breadcrumbs.join(' -> ')}`,
+      'Description:',
+      ...[breadcrumbsDescriptions.map((v, i) => `${' '.repeat((1 + i) * 3)}${v}`)],
       '',
     ];
     for (const text of texts) {

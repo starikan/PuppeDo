@@ -342,6 +342,7 @@ export type TestType = Required<TestTypeYaml>;
 export type TestExtendType = TestType & {
   levelIndent?: number;
   breadcrumbs?: string[];
+  breadcrumbsDescriptions?: string[];
   stepId?: string;
   source?: string;
   socket?: SocketType;
