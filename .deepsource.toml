@@ -1,1 +1,6 @@
 version = 1
+
+test_patterns = [
+  "**/*.js",
+  "**/*.ts",
+]
