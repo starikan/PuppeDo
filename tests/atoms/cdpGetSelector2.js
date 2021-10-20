@@ -1,4 +1,5 @@
 const pick = (obj, fields) => Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key)));
+const dialogId = 'dialog-ppd';
 
 module.exports = async function atomRun() {
   const dialogBox = () => {
@@ -736,20 +737,15 @@ module.exports = async function atomRun() {
     window.addEventListener('click', window.clickHandler, true);
   };
 
-  const addDialogHTML = () => {
+  const addDialogHTML = (dialogId) => {
     const body = document.getElementsByTagName('body');
     const div = document.createElement('div');
-    div.setAttribute('id', 'dialog-ppd');
+    div.setAttribute('id', dialogId);
     div.setAttribute('class', 'dialog');
     div.innerHTML = `
-      <div class="titlebar">Dialog Title...</div>
-      <button name="close"><!-- enter symbol here like &times; or &#x1f6c8; or use the default X if empty --></button>
-      <div class="content">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-      </div>
+      <div class="titlebar">PPD Creator</div>
+      <button name="close"></button>
+      <div id="content" class="content"></div>
       <div class="buttonpane">
         <div class="buttonset">
           <button name="ok">OK</button>
@@ -760,8 +756,8 @@ module.exports = async function atomRun() {
     body[0].appendChild(div);
   };
 
-  const runDialog = () => {
-    const dialog = DialogBox('dialog-ppd');
+  const runDialog = (dialogId) => {
+    const dialog = DialogBox(dialogId);
     dialog.showDialog();
   };
 
@@ -841,6 +837,17 @@ module.exports = async function atomRun() {
     return counts;
   };
 
+  const dialogDrawer = (dialogId) => {
+    window.dialogDrawer = (data) => {
+      const content = document.querySelector(`#${dialogId} .content`);
+      content.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    };
+  };
+
+  const sendDataToDialog = (data) => {
+    window.dialogDrawer(data);
+  };
+
   this.addScripts = async () => {
     const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js';
     const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
@@ -854,8 +861,9 @@ module.exports = async function atomRun() {
       await this.page.addStyleTag({ content: dialogCss });
       await this.page.evaluate(jsEvalOnClick);
       await this.page.evaluate(dialogBox);
-      await this.page.evaluate(addDialogHTML);
-      await this.page.evaluate(runDialog);
+      await this.page.evaluate(dialogDrawer, dialogId);
+      await this.page.evaluate(addDialogHTML, dialogId);
+      await this.page.evaluate(runDialog, dialogId);
 
       const engine = this.getEngine();
 
@@ -871,18 +879,22 @@ module.exports = async function atomRun() {
         try {
           const data = JSON.parse(textLog);
           const selectors = generateSelectors(data.path);
-          const selectorsCheck = await checkSelectors(selectors);
+          const selectorsVariants = await checkSelectors(selectors);
           // const { x, y } = data;
           // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
           // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
-          this.socket.sendYAML({
-            data: selectorsCheck,
-            type: 'atom',
-            name: 'cdpGetSelector',
-            envsId: this.envsId,
-            stepId: this.stepId,
-          });
-          console.log(selectorsCheck);
+
+          // const sendData = {
+          // data: selectorsVariants,
+          // type: 'atom',
+          // name: 'cdpGetSelector',
+          // envsId: this.envsId,
+          // stepId: this.stepId,
+          // };
+          // this.socket.sendYAML(sendData);
+          await this.page.evaluate(sendDataToDialog, { selectorsVariants });
+
+          console.log(selectorsVariants);
         } catch (err) {
           // debugger;
         }
