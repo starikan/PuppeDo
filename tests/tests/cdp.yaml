@@ -1,0 +1,13 @@
+name: cdp
+runTest:
+  - envSwitch:
+      bindData: { envName: myEnv }
+
+  - goTo:
+      data: { url: 'http:\\google.ru' }
+
+  - cdpGetSelector2:
+
+  - waitTimeReal:
+      data: { time: 10000 }
+      repeat: 1000
