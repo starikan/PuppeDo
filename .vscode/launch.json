@@ -31,23 +31,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "CDP",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "cdp",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
-        "PPD_LOG_LEVEL_NESTED": 1,
-        "PPD_LOG_IGNORE_HIDE_LOG": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "PuppeDo_ENV_blank",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
