@@ -421,7 +421,7 @@ module.exports = async function atomRun() {
         }),
         (_init = function (id, callback) {
           _dialog = document.getElementById(id);
-          _callback = callback; // Register callback function
+          _callback = _callback || callback; // Register callback function
 
           _dialog.style.visibility = 'hidden'; // We dont want to see anything..
           _dialog.style.display = 'block'; // but we need to render it to get the size of the dialog box
@@ -727,6 +727,7 @@ module.exports = async function atomRun() {
 
       const target = event.target;
       exportData.xpath = [xpath.getXPath(target), xpath.getUniqueXPath(target)];
+      exportData.type = 'selectorClick';
 
       // console.log(exportData);
       console.log(JSON.stringify(exportData, { skipInvalid: true }));
@@ -757,7 +758,10 @@ module.exports = async function atomRun() {
   };
 
   const runDialog = (dialogId) => {
-    const dialog = DialogBox(dialogId);
+    const callbackFunction = (data) => {
+      console.log(JSON.stringify({ button: data, type: 'servise' }));
+    };
+    const dialog = DialogBox(dialogId, callbackFunction);
     dialog.showDialog();
   };
 
@@ -848,66 +852,78 @@ module.exports = async function atomRun() {
     window.dialogDrawer(data);
   };
 
-  this.addScripts = async () => {
-    const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js';
-    const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
-    // https://github.com/johannhof/xpath-dom
-    const xpathFile = 'https://cdn.rawgit.com/johannhof/xpath-dom/master/dist/xpath-dom.min.js';
+  this.run = () => {
+    return new Promise(async (resolve, reject) => {
+      const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js';
+      const lodashFile = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js';
+      // https://github.com/johannhof/xpath-dom
+      const xpathFile = 'https://cdn.rawgit.com/johannhof/xpath-dom/master/dist/xpath-dom.min.js';
 
-    try {
-      await this.page.addScriptTag({ url: yamlFile });
-      await this.page.addScriptTag({ url: lodashFile });
-      await this.page.addScriptTag({ url: xpathFile });
-      await this.page.addStyleTag({ content: dialogCss });
-      await this.page.evaluate(jsEvalOnClick);
-      await this.page.evaluate(dialogBox);
-      await this.page.evaluate(dialogDrawer, dialogId);
-      await this.page.evaluate(addDialogHTML, dialogId);
-      await this.page.evaluate(runDialog, dialogId);
+      try {
+        await this.page.addScriptTag({ url: yamlFile });
+        await this.page.addScriptTag({ url: lodashFile });
+        await this.page.addScriptTag({ url: xpathFile });
+        await this.page.addStyleTag({ content: dialogCss });
+        await this.page.evaluate(jsEvalOnClick);
+        await this.page.evaluate(dialogBox);
+        await this.page.evaluate(dialogDrawer, dialogId);
+        await this.page.evaluate(addDialogHTML, dialogId);
+        await this.page.evaluate(runDialog, dialogId);
 
-      const engine = this.getEngine();
+        const engine = this.getEngine();
 
-      let client;
-      if (engine === 'playwright') {
-        client = await this.page.context().newCDPSession(this.page);
-      } else if (engine === 'puppeteer') {
-        client = await this.page.target().createCDPSession();
-      }
-      await client.send('Console.enable');
-      client.on('Console.messageAdded', async (e) => {
-        const textLog = e.message.text;
-        try {
-          const data = JSON.parse(textLog);
-          const selectors = generateSelectors(data.path);
-          const selectorsVariants = await checkSelectors(selectors);
-          // const { x, y } = data;
-          // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
-          // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
-
-          // const sendData = {
-          // data: selectorsVariants,
-          // type: 'atom',
-          // name: 'cdpGetSelector',
-          // envsId: this.envsId,
-          // stepId: this.stepId,
-          // };
-          // this.socket.sendYAML(sendData);
-          await this.page.evaluate(sendDataToDialog, { selectorsVariants });
-
-          console.log(selectorsVariants);
-        } catch (err) {
-          // debugger;
+        let client;
+        if (engine === 'playwright') {
+          client = await this.page.context().newCDPSession(this.page);
+        } else if (engine === 'puppeteer') {
+          client = await this.page.target().createCDPSession();
         }
-      });
+        await client.send('Console.enable');
+        client.on('Console.messageAdded', async (e) => {
+          const textLog = e.message.text;
+          try {
+            const data = JSON.parse(textLog);
 
-      await client.send('DOM.enable');
-      client.on('DOM.documentUpdated', this.addScripts);
+            if (data.type === 'selectorClick') {
+              const selectors = generateSelectors(data.path);
+              const selectorsVariants = await checkSelectors(selectors);
+              // const { x, y } = data;
+              // const { nodeId } = await client.send('DOM.getNodeForLocation', { x, y });
+              // const nodeIdDescribe = await client.send('DOM.describeNode', { nodeId });
 
-      // debugger;
-    } catch (err) {
-      debugger;
-    }
+              // const sendData = {
+              // data: selectorsVariants,
+              // type: 'atom',
+              // name: 'cdpGetSelector',
+              // envsId: this.envsId,
+              // stepId: this.stepId,
+              // };
+              // this.socket.sendYAML(sendData);
+              await this.page.evaluate(sendDataToDialog, { selectorsVariants });
+
+              console.log(selectorsVariants);
+            }
+            if (data.type === 'servise') {
+              if (data.button === 'ok') {
+                await client.detach();
+                resolve();
+              }
+            }
+          } catch (err) {
+            debugger;
+          }
+        });
+
+        await client.send('DOM.enable');
+        client.on('DOM.documentUpdated', this.run);
+
+        // debugger;
+      } catch (err) {
+        debugger;
+        reject();
+      }
+    });
   };
 
-  await this.addScripts();
+  await this.run();
 };

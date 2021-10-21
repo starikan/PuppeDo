@@ -8,6 +8,5 @@ runTest:
 
   - cdpGetSelector2:
 
-  - waitTimeReal:
-      data: { time: 10000 }
-      repeat: 1000
+  - goTo:
+      data: { url: 'http:\\ya.ru' }
