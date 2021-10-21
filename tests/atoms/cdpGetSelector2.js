@@ -17,8 +17,8 @@ module.exports = async function atomRun() {
         _maxY,
         _startX,
         _startY,
-        _startW,
-        _startH,
+        _startW = 300,
+        _startH = 400,
         _leftPos,
         _topPos,
         _isDrag = false,
@@ -454,7 +454,7 @@ module.exports = async function atomRun() {
                 ((_buttons.length - 1 - 1) * 16) / 2 // The formula is not correct, however, with fixed value 16 for margin-left: 16px it works
               : 0),
           );
-          _dialog.style.width = _minW + 'px';
+          _dialog.style.width = (_startW || _minW) + 'px';
 
           // Calculate minimal height
           _minH = Math.max(
@@ -473,7 +473,7 @@ module.exports = async function atomRun() {
                   parseInt(_dialogButtonPaneStyle.bottom) // .dialog .buttonpane { bottom: 16px; }
                 : 0),
           );
-          _dialog.style.height = _minH + 'px';
+          _dialog.style.height = (_startH || _minH) + 'px';
 
           _setDialogContent();
 
@@ -630,6 +630,21 @@ module.exports = async function atomRun() {
       background: #1a7;
       border-color: #ddd;
     }
+
+    #ppd-wait-data-process-wraper {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      z-index: 100000000;
+      top: 0;
+      backdrop-filter: blur(2px);
+      // display: grid;
+      align-items: center;
+      justify-items: center;
+      display: none
+    }
   `;
 
   const jsEvalOnClick = () => {
@@ -755,6 +770,65 @@ module.exports = async function atomRun() {
       </div>
     `;
     body[0].appendChild(div);
+    const waiter = document.createElement('div');
+    waiter.setAttribute('id', 'ppd-wait-data-process-wraper');
+    waiter.innerHTML = `
+      <div id="ppd-wait-data-process">
+        <?xml version="1.0" encoding="utf-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: rgb(241, 242, 243); display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+        <g transform="rotate(0 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9166666666666666s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(30 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8333333333333334s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(60 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.75s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(90 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6666666666666666s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(120 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5833333333333334s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(150 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(180 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.4166666666666667s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(210 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.3333333333333333s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(240 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.25s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(270 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.16666666666666666s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(300 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.08333333333333333s" repeatCount="indefinite"></animate>
+          </rect>
+        </g><g transform="rotate(330 50 50)">
+          <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#1d3f72">
+            <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate>
+          </rect>
+        </g>
+        </svg>
+      </div>
+    `;
+    body[0].appendChild(waiter);
   };
 
   const runDialog = (dialogId) => {
@@ -852,6 +926,11 @@ module.exports = async function atomRun() {
     window.dialogDrawer(data);
   };
 
+  const switchLoader = (flag = true) => {
+    const loader = document.getElementById('ppd-wait-data-process-wraper');
+    loader.style.setProperty('display', flag ? 'grid' : 'none');
+  };
+
   this.run = () => {
     return new Promise(async (resolve, reject) => {
       const yamlFile = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js';
@@ -883,6 +962,7 @@ module.exports = async function atomRun() {
           const textLog = e.message.text;
           try {
             const data = JSON.parse(textLog);
+            await this.page.evaluate(switchLoader, true);
 
             if (data.type === 'selectorClick') {
               const selectors = generateSelectors(data.path);
@@ -905,12 +985,15 @@ module.exports = async function atomRun() {
             }
             if (data.type === 'servise') {
               if (data.button === 'ok') {
+                await this.page.evaluate(switchLoader, false);
                 await client.detach();
                 resolve();
               }
             }
+
+            await this.page.evaluate(switchLoader, false);
           } catch (err) {
-            debugger;
+            // debugger;
           }
         });
 
