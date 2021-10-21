@@ -17,17 +17,8 @@ import {
   BrowserNameType,
   TestTypeYaml,
   TestExtendType,
+  AllDataType,
 } from './global.d';
-
-type AllDataType = {
-  allFiles: Array<string>;
-  allContent: Array<TestType | EnvType | DataType>;
-  atoms: Array<TestType>;
-  tests: Array<TestType>;
-  envs: Array<EnvType>;
-  data: Array<DataType>;
-  selectors: Array<DataType>;
-};
 
 export const BLANK_TEST: TestType = {
   afterTest: [],

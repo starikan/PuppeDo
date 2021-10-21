@@ -293,6 +293,7 @@ export type TestArgsExtType = {
   description: string;
   socket: SocketType;
   descriptionExtend: string[];
+  allData: AllDataType;
 } & TestArgsType;
 
 export type TestLifecycleFunctionType = (args?: TestArgsExtType) => Promise<Record<string, unknown>>;
@@ -360,3 +361,13 @@ export type TestExtendType = TestType & {
 export type TestExtendTypeKeys = keyof TestExtendType;
 
 export type TestFunctionsBlockNames = 'beforeTest' | 'runTest' | 'afterTest';
+
+export type AllDataType = {
+  allFiles: Array<string>;
+  allContent: Array<TestType | EnvType | DataType>;
+  atoms: Array<TestType>;
+  tests: Array<TestType>;
+  envs: Array<EnvType>;
+  data: Array<DataType>;
+  selectors: Array<DataType>;
+};

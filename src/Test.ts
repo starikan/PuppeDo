@@ -649,6 +649,7 @@ export class Test implements TestExtendType {
           description: descriptionResolved,
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,
+          allData: new TestsContent().allData,
         };
 
         // LOG TEST
