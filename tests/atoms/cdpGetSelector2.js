@@ -759,8 +759,9 @@ module.exports = async function atomRun() {
     div.setAttribute('id', dialogId);
     div.setAttribute('class', 'dialog');
     div.innerHTML = `
-      <div class="titlebar">PPD Creator</div>
-      <button name="close"></button>
+    <div class="titlebar">PPD Creator</div>
+    <button name="collapse"></button>
+    <button name="fullscreen"></button>
       <div id="content" class="content"></div>
       <div class="buttonpane">
         <div class="buttonset">
