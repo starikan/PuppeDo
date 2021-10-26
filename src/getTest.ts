@@ -40,7 +40,10 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     } else {
       const testFileExt = path.parse(testJsonNew.testFile).ext;
       const funcFile = path.resolve(testJsonNew.testFile.replace(testFileExt, '.js'));
-      atoms[testJsonNew.name] = atoms[testJsonNew.name] || __non_webpack_require__(funcFile);
+      atoms[testJsonNew.name] =
+        atoms[testJsonNew.name] ||
+        __non_webpack_require__(funcFile)[testJsonNew.name] ||
+        __non_webpack_require__(funcFile);
       testJsonNew.funcFile = path.resolve(funcFile);
     }
 
