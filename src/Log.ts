@@ -50,7 +50,7 @@ export const logStack = async (
   }
 };
 
-export const logTimer = async (log: LogFunctionType, levelIndent = 0, startTime: bigint): Promise<void> => {
+export const logTimer = async (log: LogFunctionType, startTime: bigint, levelIndent = 0): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
     const text = `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`;
@@ -298,7 +298,7 @@ export default class Log {
     }
 
     // eslint-disable-next-line no-control-regex
-    textsJoin = textsJoin.replace(new RegExp(/\[\d+m/gi), '');
+    textsJoin = textsJoin.replace(/\[\d+m/gi, '');
 
     fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
     fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
