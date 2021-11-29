@@ -5,7 +5,7 @@ import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import Environment from './Environment';
 import TestsContent from './TestContent';
-import { TestError } from './Error';
+import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Log';
 import globalExportPPD from './index';
 
@@ -388,6 +388,7 @@ export class Test implements TestExtendType {
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
   continueOnError: boolean;
+  continueIfResult: string;
 
   envName!: string;
   envPageName!: string;
@@ -437,6 +438,7 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
     this.continueOnError = initValues.continueOnError || false;
+    this.continueIfResult = initValues.continueIfResult || '';
 
     this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -779,8 +781,29 @@ export class Test implements TestExtendType {
           });
         }
 
+        if (this.continueIfResult) {
+          const continueIfResult = runScriptInContext(this.continueIfResult, { ...allData, ...localResults });
+          if (continueIfResult) {
+            throw new ContinueParentError({
+              localResults,
+              errorLevel: 1,
+              logger,
+              test: this,
+            });
+          }
+        }
+
         return localResults;
       } catch (error) {
+        if (error instanceof ContinueParentError) {
+          if (error.errorLevel) {
+            await error.log();
+            error.errorLevel -= 1;
+            throw error;
+          }
+          return error.localResults;
+        }
+
         const newError = new TestError({ logger, parentError: error, test: this, envsId: this.envsId });
         await newError.log();
         if (!this.continueOnError) {

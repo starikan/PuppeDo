@@ -21,11 +21,18 @@ export interface ErrorType extends Error {
   breadcrumbsDescriptions: string[];
 }
 
-type ErrorConstructorType = {
+type ErrorTestConstructor = {
   logger: Log;
   parentError: ErrorType;
   test: Test;
   envsId: string;
+};
+
+type ErrorContinueParentConstructor = {
+  localResults: Record<string, unknown>;
+  errorLevel: number;
+  logger: Log;
+  test: Test;
 };
 
 export class AbstractError extends Error {
@@ -49,7 +56,7 @@ export class TestError extends AbstractError {
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
 
-  constructor({ logger, parentError, test, envsId }: ErrorConstructorType) {
+  constructor({ logger, parentError, test, envsId }: ErrorTestConstructor) {
     super();
 
     this.envsId = parentError?.envsId || envsId;
@@ -106,6 +113,31 @@ export class TestError extends AbstractError {
     for (const text of texts) {
       await this.logger.log({ level: 'error', text, extendInfo: true });
     }
+  }
+}
+
+export class ContinueParentError extends AbstractError {
+  logger: Log;
+  test: Test;
+  errorLevel: number;
+  localResults: Record<string, unknown>;
+
+  constructor({ localResults, errorLevel, logger, test }: ErrorContinueParentConstructor) {
+    super();
+
+    this.localResults = localResults;
+    this.errorLevel = errorLevel;
+    this.logger = logger;
+    this.test = test;
+  }
+
+  async log(): Promise<void> {
+    const { levelIndent, continueIfResult } = this.test;
+    await this.logger.log({
+      level: 'warn',
+      levelIndent,
+      text: `Continue test with expr ${continueIfResult}'`,
+    });
   }
 }
 

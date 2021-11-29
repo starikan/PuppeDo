@@ -1,0 +1,17 @@
+name: continueIfResult
+runTest:
+  - blank:
+      description: First level
+
+  - blank:
+      description: First level to
+
+  - loop:
+      repeat: 3
+      runTest:
+        - blank:
+            bindDescription: "`Second level loop: ${$loop}`"
+            continueIfResult: "$loop < 3"
+
+  - blank:
+      description: Another First level

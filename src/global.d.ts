@@ -356,6 +356,7 @@ export type TestExtendType = TestType & {
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
   testFile?: string;
+  continueIfResult?: string;
 };
 
 export type TestExtendTypeKeys = keyof TestExtendType;
