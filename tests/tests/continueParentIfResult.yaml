@@ -1,4 +1,4 @@
-name: continueIfResult
+name: continueParentIfResult
 runTest:
   - blank:
       description: First level
@@ -11,7 +11,7 @@ runTest:
       runTest:
         - blank:
             bindDescription: "`Second level loop: ${$loop}`"
-            continueIfResult: "$loop < 3"
+            continueParentIfResult: "$loop < 3"
 
   - blank:
       description: Another First level

@@ -388,7 +388,7 @@ export class Test implements TestExtendType {
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
   continueOnError: boolean;
-  continueIfResult: string;
+  continueParentIfResult: string;
 
   envName!: string;
   envPageName!: string;
@@ -438,7 +438,7 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
     this.continueOnError = initValues.continueOnError || false;
-    this.continueIfResult = initValues.continueIfResult || '';
+    this.continueParentIfResult = initValues.continueParentIfResult || '';
 
     this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
       const startTime = getTimer().now;
@@ -781,9 +781,12 @@ export class Test implements TestExtendType {
           });
         }
 
-        if (this.continueIfResult) {
-          const continueIfResult = runScriptInContext(this.continueIfResult, { ...allData, ...localResults });
-          if (continueIfResult) {
+        if (this.continueParentIfResult) {
+          const continueParentIfResult = runScriptInContext(this.continueParentIfResult, {
+            ...allData,
+            ...localResults,
+          });
+          if (continueParentIfResult) {
             throw new ContinueParentError({
               localResults,
               errorLevel: 1,
