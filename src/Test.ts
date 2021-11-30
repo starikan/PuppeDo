@@ -526,6 +526,8 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
 
+      // let localResults = {};
+
       try {
         this.envName = envsPool.current.name || '';
         this.envPageName = envsPool.current.page || '';
@@ -807,12 +809,20 @@ export class Test implements TestExtendType {
           return error.localResults;
         }
 
-        const newError = new TestError({ logger, parentError: error, test: this, envsId: this.envsId });
-        await newError.log();
-        if (!this.continueOnError) {
-          throw newError;
+        let newError;
+        if (this.continueOnError) {
+          newError = new ContinueParentError({
+            localResults: error.localResults || {},
+            errorLevel: 0,
+            logger,
+            test: this,
+            parentError: error,
+          });
+        } else {
+          newError = new TestError({ logger, parentError: error, test: this });
         }
-        return {};
+        await newError.log();
+        throw newError;
       }
     };
 

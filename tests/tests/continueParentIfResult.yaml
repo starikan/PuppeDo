@@ -13,5 +13,8 @@ runTest:
             bindDescription: "`Second level loop: ${$loop}`"
             continueParentIfResult: "$loop < 3"
 
+        - blank:
+            description: "I`m next"
+
   - blank:
       description: Another First level
