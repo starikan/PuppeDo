@@ -2,13 +2,7 @@ name: breakParentIfResult
 description: 'breakParentIfResult'
 runTest:
   - blank:
-      description: First level
-
-  - blank:
-      description: First level to
-
-  - blank:
-      description: 'Parent blank'
+      description: 'Simple skipSublingIfResult'
       runTest:
         - blank:
             description: 'Skip after me'
@@ -17,9 +11,16 @@ runTest:
         - blank:
             description: 'I`m skiped'
 
+        - blank:
+            description: 'I`m skiped too'
+
   - loop:
+      description: 'Loop skipSublingIfResult'
       repeat: 5
       runTest:
+        - blank:
+            description: 'I`m first'
+
         - blank:
             bindDescription: '`Second level loop: ${$loop}`'
             skipSublingIfResult: '$loop <= 4'
@@ -27,7 +28,11 @@ runTest:
         - blank:
             description: 'I`m next'
 
+        - blank:
+            description: 'I`m next too'
+
   - loop:
+      description: 'Loop breakParentIfResult'
       repeat: 5
       runTest:
         - blank:

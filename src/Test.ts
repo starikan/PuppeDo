@@ -23,6 +23,7 @@ import {
   BrowserEngineType,
   TestExtendType,
   ArgumentsType,
+  TestMetaSublingExchangeData,
 } from './global.d';
 import Atom from './AtomCore';
 
@@ -380,6 +381,7 @@ export class Test implements TestExtendType {
   errorIf!: string;
   errorIfResult!: string;
   resultsFromPrevSubling!: Record<string, unknown>;
+  metaFromPrevSubling!: TestMetaSublingExchangeData;
   tags: string[];
   engineSupports: BrowserEngineType[];
   allowOptions!: string[];
@@ -463,9 +465,11 @@ export class Test implements TestExtendType {
         PPD_CONTINUE_ON_ERROR_ENABLED,
       } = { ...new Arguments().args, ...this.argsRedefine };
 
+      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
+      this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
+
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
-      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
       this.disable = inputs.disable || this.disable || false;
 
       if (this.debug) {
@@ -482,7 +486,10 @@ export class Test implements TestExtendType {
           logShowFlag,
           textColor: 'blue',
         });
-        return { result: {}, meta: {} };
+        return {
+          result: {},
+          meta: { disable: this.metaFromPrevSubling.skipBecausePrevSubling ? this.disable : false },
+        };
       }
 
       if (PPD_TAGS_TO_RUN.length && this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
@@ -744,7 +751,7 @@ export class Test implements TestExtendType {
           { ...selectorsLocal, ...dataLocal, ...results },
         );
 
-        const metaForNextSubling: Record<string, unknown> = {};
+        const metaForNextSubling: TestMetaSublingExchangeData = {};
 
         // ERROR
         if (this.errorIfResult) {
@@ -814,6 +821,7 @@ export class Test implements TestExtendType {
           });
           if (skipSublingIfResult) {
             metaForNextSubling.disable = true;
+            metaForNextSubling.skipBecausePrevSubling = true;
           }
         }
 

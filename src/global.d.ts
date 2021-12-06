@@ -252,6 +252,11 @@ export interface DataType extends DataYamlType {
 
 // ================ TESTS / ATOMS ====================
 
+export type TestMetaSublingExchangeData = {
+  disable?: boolean;
+  skipBecausePrevSubling?: boolean;
+};
+
 export type TestArgsType = {
   envsId: string;
   data: Record<string, unknown>;
@@ -358,7 +363,7 @@ export type TestExtendType = TestType & {
   testFile?: string;
   breakParentIfResult?: string;
   skipSublingIfResult?: string;
-  metaFromPrevSubling?: Record<string, unknown>;
+  metaFromPrevSubling?: TestMetaSublingExchangeData;
 };
 
 export type TestExtendTypeKeys = keyof TestExtendType;

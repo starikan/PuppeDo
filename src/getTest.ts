@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import path from 'path';
 
 import requireFromString from 'require-from-string';
@@ -92,7 +93,7 @@ const getTest = ({
   testJsonIncome: TestExtendType;
   envsId: string;
   socket: SocketType;
-  parentTestMetaCollector?: TestExtendType;
+  parentTestMetaCollector?: Partial<TestExtendType>;
 }): TestLifecycleFunctionType => {
   let testJson = testJsonIncome;
 
@@ -135,6 +136,12 @@ const getTest = ({
   const test = new Test(testJson);
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
+    if (parentTestMetaCollector?.stepId !== args?.stepId) {
+      parentTestMetaCollector.stepId = args.stepId;
+      parentTestMetaCollector.resultsFromPrevSubling = {};
+      parentTestMetaCollector.metaFromPrevSubling = {};
+    }
+
     let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(
       testJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
@@ -148,16 +155,15 @@ const getTest = ({
     );
 
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
+    updatetTestJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
 
     if (parentTestMetaCollector) {
-      // eslint-disable-next-line no-param-reassign
       parentTestMetaCollector.resultsFromPrevSubling = {
         ...(parentTestMetaCollector?.resultsFromPrevSubling || {}),
         ...result,
       };
-      // eslint-disable-next-line no-param-reassign
       parentTestMetaCollector.metaFromPrevSubling = meta;
     }
 
