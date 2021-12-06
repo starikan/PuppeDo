@@ -349,8 +349,7 @@ export type TestExtendType = TestType & {
   source?: string;
   socket?: SocketType;
   envsId?: string;
-  resultsFromChildren?: Record<string, unknown>;
-  resultsFromParent?: Record<string, unknown>;
+  resultsFromPrevSubling?: Record<string, unknown>;
   funcFile?: string;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;

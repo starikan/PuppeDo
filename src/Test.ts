@@ -379,8 +379,7 @@ export class Test implements TestExtendType {
   if!: string;
   errorIf!: string;
   errorIfResult!: string;
-  resultsFromChildren!: Record<string, unknown>;
-  resultsFromParent!: Record<string, unknown>;
+  resultsFromPrevSubling!: Record<string, unknown>;
   tags: string[];
   engineSupports: BrowserEngineType[];
   allowOptions!: string[];
@@ -466,7 +465,7 @@ export class Test implements TestExtendType {
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
-      this.resultsFromParent = inputs.resultsFromParent || {};
+      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
       this.disable = inputs.disable || this.disable || false;
 
       if (this.debug) {
@@ -551,7 +550,7 @@ export class Test implements TestExtendType {
         let { dataLocal, selectorsLocal } = fetchData(
           this.dataExt,
           this.selectorsExt,
-          this.resultsFromParent,
+          this.resultsFromPrevSubling,
           this.dataParent,
           this.data,
           this.bindData,

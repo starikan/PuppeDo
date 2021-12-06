@@ -87,7 +87,7 @@ const getTest = ({
   testJsonIncome,
   envsId,
   socket,
-  parentTest,
+  parentTest, // object fo share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
@@ -140,18 +140,20 @@ const getTest = ({
       { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
       ['options', 'data', 'selectors', 'logOptions'],
     );
+
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
       { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
       ['debug', 'frame', 'continueOnError', 'disable'],
     );
-    updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
+
+    updatetTestJson.resultsFromPrevSubling = parentTest?.resultsFromPrevSubling || {};
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
 
     if (parentTest) {
       // eslint-disable-next-line no-param-reassign
-      parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
+      parentTest.resultsFromPrevSubling = { ...(parentTest?.resultsFromPrevSubling || {}), ...result };
       // eslint-disable-next-line no-param-reassign
       parentTest.metaFromPrevSubling = meta;
     }
