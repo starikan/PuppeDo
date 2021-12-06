@@ -270,6 +270,7 @@ export type TestArgsType = {
   repeat: number;
   stepId: string;
   debug: boolean;
+  disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
   tags: string[];
@@ -356,7 +357,9 @@ export type TestExtendType = TestType & {
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
   testFile?: string;
-  continueParentIfResult?: string;
+  breakParentIfResult?: string;
+  skipSublingIfResult?: string;
+  metaFromPrevSubling?: Record<string, unknown>;
 };
 
 export type TestExtendTypeKeys = keyof TestExtendType;

@@ -1,6 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 import deepmerge from 'deepmerge';
 import dayjs from 'dayjs';
@@ -123,3 +124,5 @@ export const walkSync = (
 };
 
 export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
+
+export const getStepId = (): string => crypto.randomBytes(16).toString('hex');

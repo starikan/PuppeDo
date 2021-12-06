@@ -135,18 +135,25 @@ const getTest = ({
   const test = new Test(testJson);
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
-    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
-      'options',
-      'data',
-      'selectors',
-      'logOptions',
-    ]);
-    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame', 'continueOnError']);
+    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(
+      testJson,
+      { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
+      ['options', 'data', 'selectors', 'logOptions'],
+    );
+    updatetTestJson = propagateArgumentsSimpleOnAir(
+      updatetTestJson,
+      { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
+      ['debug', 'frame', 'continueOnError', 'disable'],
+    );
     updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
-    const result = await test.run(updatetTestJson);
+
+    const { result = {}, meta = {} } = await test.run(updatetTestJson);
+
     if (parentTest) {
       // eslint-disable-next-line no-param-reassign
       parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
+      // eslint-disable-next-line no-param-reassign
+      parentTest.metaFromPrevSubling = meta;
     }
     return result;
   };

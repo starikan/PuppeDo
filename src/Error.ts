@@ -134,11 +134,11 @@ export class ContinueParentError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { levelIndent, continueParentIfResult } = this.test;
+    const { levelIndent, breakParentIfResult } = this.test;
     await this.logger.log({
       level: 'warn',
       levelIndent,
-      text: `Continue: ${this.parentError?.message || `test with expr ${continueParentIfResult}'`}`,
+      text: `Continue: ${this.parentError?.message || `test with expr ${breakParentIfResult}'`}`,
     });
   }
 }
