@@ -720,7 +720,6 @@ export class Test implements TestExtendType {
         // RUN FUNCTIONS
         let resultFromTest = {};
 
-        // debugger;
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
         for (let funcs of FUNCTIONS) {
           funcs = [funcs].flat();
@@ -729,7 +728,6 @@ export class Test implements TestExtendType {
             resultFromTest = { ...resultFromTest, ...funResult };
           }
         }
-        // debugger;
 
         // RESULTS
         const results = this.allowResults.length ? pick(resultFromTest, this.allowResults) : resultFromTest;
@@ -745,6 +743,8 @@ export class Test implements TestExtendType {
           { ...this.bindResults, ...allowResultsObject },
           { ...selectorsLocal, ...dataLocal, ...results },
         );
+
+        const metaForNextSubling: Record<string, unknown> = {};
 
         // ERROR
         if (this.errorIfResult) {
@@ -807,19 +807,17 @@ export class Test implements TestExtendType {
           }
         }
 
-        const meta: Record<string, unknown> = {};
-
         if (this.skipSublingIfResult) {
           const skipSublingIfResult = runScriptInContext(this.skipSublingIfResult, {
             ...allData,
             ...localResults,
           });
           if (skipSublingIfResult) {
-            meta.disable = true;
+            metaForNextSubling.disable = true;
           }
         }
 
-        return { result: localResults, meta };
+        return { result: localResults, meta: metaForNextSubling };
       } catch (error) {
         if (error instanceof ContinueParentError) {
           if (error.errorLevel) {

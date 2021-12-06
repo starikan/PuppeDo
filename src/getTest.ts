@@ -87,12 +87,12 @@ const getTest = ({
   testJsonIncome,
   envsId,
   socket,
-  parentTest, // object fo share data with sublings
+  parentTestMetaCollector, // object fo share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
   socket: SocketType;
-  parentTest?: TestExtendType;
+  parentTestMetaCollector?: TestExtendType;
 }): TestLifecycleFunctionType => {
   let testJson = testJsonIncome;
 
@@ -124,7 +124,7 @@ const getTest = ({
       const newFunctions = [] as TestLifecycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
         if (['test', 'atom'].includes(testItem.type)) {
-          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson });
+          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTestMetaCollector: testJson });
           newFunctions.push(newFunction);
         }
       });
@@ -137,26 +137,30 @@ const getTest = ({
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
     let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(
       testJson,
-      { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
+      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
-      { ...args, ...(parentTest?.metaFromPrevSubling || {}) },
+      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
       ['debug', 'frame', 'continueOnError', 'disable'],
     );
 
-    updatetTestJson.resultsFromPrevSubling = parentTest?.resultsFromPrevSubling || {};
+    updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
 
-    if (parentTest) {
+    if (parentTestMetaCollector) {
       // eslint-disable-next-line no-param-reassign
-      parentTest.resultsFromPrevSubling = { ...(parentTest?.resultsFromPrevSubling || {}), ...result };
+      parentTestMetaCollector.resultsFromPrevSubling = {
+        ...(parentTestMetaCollector?.resultsFromPrevSubling || {}),
+        ...result,
+      };
       // eslint-disable-next-line no-param-reassign
-      parentTest.metaFromPrevSubling = meta;
+      parentTestMetaCollector.metaFromPrevSubling = meta;
     }
+
     return result;
   };
 
