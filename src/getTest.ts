@@ -87,12 +87,12 @@ const getTest = ({
   testJsonIncome,
   envsId,
   socket,
-  parentTest,
+  parentTestMetaCollector, // object fo share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
   socket: SocketType;
-  parentTest?: TestExtendType;
+  parentTestMetaCollector?: TestExtendType;
 }): TestLifecycleFunctionType => {
   let testJson = testJsonIncome;
 
@@ -124,7 +124,7 @@ const getTest = ({
       const newFunctions = [] as TestLifecycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
         if (['test', 'atom'].includes(testItem.type)) {
-          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTest: testJson });
+          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTestMetaCollector: testJson });
           newFunctions.push(newFunction);
         }
       });
@@ -135,19 +135,32 @@ const getTest = ({
   const test = new Test(testJson);
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
-    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(testJson, args, [
-      'options',
-      'data',
-      'selectors',
-      'logOptions',
-    ]);
-    updatetTestJson = propagateArgumentsSimpleOnAir(updatetTestJson, args, ['debug', 'frame', 'continueOnError']);
-    updatetTestJson.resultsFromParent = parentTest?.resultsFromChildren || {};
-    const result = await test.run(updatetTestJson);
-    if (parentTest) {
+    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(
+      testJson,
+      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
+      ['options', 'data', 'selectors', 'logOptions'],
+    );
+
+    updatetTestJson = propagateArgumentsSimpleOnAir(
+      updatetTestJson,
+      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
+      ['debug', 'frame', 'continueOnError', 'disable'],
+    );
+
+    updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
+
+    const { result = {}, meta = {} } = await test.run(updatetTestJson);
+
+    if (parentTestMetaCollector) {
       // eslint-disable-next-line no-param-reassign
-      parentTest.resultsFromChildren = { ...(parentTest?.resultsFromChildren || {}), ...result };
+      parentTestMetaCollector.resultsFromPrevSubling = {
+        ...(parentTestMetaCollector?.resultsFromPrevSubling || {}),
+        ...result,
+      };
+      // eslint-disable-next-line no-param-reassign
+      parentTestMetaCollector.metaFromPrevSubling = meta;
     }
+
     return result;
   };
 

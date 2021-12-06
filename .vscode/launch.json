@@ -218,13 +218,13 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "continueParentIfResult",
+      "name": "breakParentIfResult",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "continueParentIfResult",
+        "PPD_TESTS": "breakParentIfResult",
         "PPD_DEBUG_MODE": "true",
         "PPD_CONTINUE_ON_ERROR_ENABLED": "true"
       },

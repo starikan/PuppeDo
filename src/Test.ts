@@ -1,6 +1,6 @@
 import vm from 'vm';
 
-import { blankSocket, getTimer, merge, pick } from './Helpers';
+import { blankSocket, getTimer, merge, pick, getStepId } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import Environment from './Environment';
@@ -379,8 +379,7 @@ export class Test implements TestExtendType {
   if!: string;
   errorIf!: string;
   errorIfResult!: string;
-  resultsFromChildren!: Record<string, unknown>;
-  resultsFromParent!: Record<string, unknown>;
+  resultsFromPrevSubling!: Record<string, unknown>;
   tags: string[];
   engineSupports: BrowserEngineType[];
   allowOptions!: string[];
@@ -388,7 +387,8 @@ export class Test implements TestExtendType {
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
   continueOnError: boolean;
-  continueParentIfResult: string;
+  breakParentIfResult: string;
+  skipSublingIfResult: string;
 
   envName!: string;
   envPageName!: string;
@@ -398,8 +398,8 @@ export class Test implements TestExtendType {
     env: EnvType;
   };
 
-  runLogic: (inputs: TestExtendType) => Promise<Record<string, unknown>>;
-  run: (inputArgs: TestExtendType) => Promise<Record<string, unknown>>;
+  runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
+  run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
 
   constructor(initValues: TestExtendType) {
     this.name = initValues.name || '';
@@ -438,9 +438,12 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
     this.continueOnError = initValues.continueOnError || false;
-    this.continueParentIfResult = initValues.continueParentIfResult || '';
+    this.breakParentIfResult = initValues.breakParentIfResult || '';
+    this.skipSublingIfResult = initValues.skipSublingIfResult || '';
 
-    this.runLogic = async (inputs: TestExtendType): Promise<Record<string, unknown>> => {
+    this.runLogic = async (
+      inputs: TestExtendType,
+    ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -462,6 +465,8 @@ export class Test implements TestExtendType {
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
+      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
+      this.disable = inputs.disable || this.disable || false;
 
       if (this.debug) {
         console.log(this);
@@ -477,7 +482,7 @@ export class Test implements TestExtendType {
           logShowFlag,
           textColor: 'blue',
         });
-        return {};
+        return { result: {}, meta: {} };
       }
 
       if (PPD_TAGS_TO_RUN.length && this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
@@ -492,7 +497,7 @@ export class Test implements TestExtendType {
           logShowFlag,
           textColor: 'blue',
         });
-        return {};
+        return { result: {}, meta: {} };
       }
 
       // Get Data from parent test and merge it with current test
@@ -507,7 +512,6 @@ export class Test implements TestExtendType {
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases('bindResults', inputs) as Record<string, string>;
-      this.resultsFromParent = inputs.resultsFromParent || {};
 
       this.options = {
         ...this.options,
@@ -522,6 +526,7 @@ export class Test implements TestExtendType {
       this.while = inputs.while || this.while;
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
+      this.stepId = inputs.stepId || this.stepId;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
@@ -545,7 +550,7 @@ export class Test implements TestExtendType {
         let { dataLocal, selectorsLocal } = fetchData(
           this.dataExt,
           this.selectorsExt,
-          this.resultsFromParent,
+          this.resultsFromPrevSubling,
           this.dataParent,
           this.data,
           this.bindData,
@@ -604,6 +609,7 @@ export class Test implements TestExtendType {
           repeat: this.repeat,
           stepId: this.stepId,
           debug: this.debug,
+          disable: this.disable,
           logOptions: logForChild,
           frame: this.frame,
           tags: this.tags,
@@ -623,7 +629,7 @@ export class Test implements TestExtendType {
             this.continueOnError,
           );
           if (skipIf) {
-            return {};
+            return { result: {}, meta: {} };
           }
         }
 
@@ -738,6 +744,8 @@ export class Test implements TestExtendType {
           { ...selectorsLocal, ...dataLocal, ...results },
         );
 
+        const metaForNextSubling: Record<string, unknown> = {};
+
         // ERROR
         if (this.errorIfResult) {
           await checkIf(
@@ -765,6 +773,7 @@ export class Test implements TestExtendType {
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
+          repeatArgs.stepId = getStepId();
           const repeatResult = await this.run(repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
@@ -783,12 +792,12 @@ export class Test implements TestExtendType {
           });
         }
 
-        if (this.continueParentIfResult) {
-          const continueParentIfResult = runScriptInContext(this.continueParentIfResult, {
+        if (this.breakParentIfResult) {
+          const breakParentIfResult = runScriptInContext(this.breakParentIfResult, {
             ...allData,
             ...localResults,
           });
-          if (continueParentIfResult) {
+          if (breakParentIfResult) {
             throw new ContinueParentError({
               localResults,
               errorLevel: 1,
@@ -798,7 +807,17 @@ export class Test implements TestExtendType {
           }
         }
 
-        return localResults;
+        if (this.skipSublingIfResult) {
+          const skipSublingIfResult = runScriptInContext(this.skipSublingIfResult, {
+            ...allData,
+            ...localResults,
+          });
+          if (skipSublingIfResult) {
+            metaForNextSubling.disable = true;
+          }
+        }
+
+        return { result: localResults, meta: metaForNextSubling };
       } catch (error) {
         if (error instanceof ContinueParentError) {
           if (error.errorLevel) {
@@ -806,7 +825,7 @@ export class Test implements TestExtendType {
             error.errorLevel -= 1;
             throw error;
           }
-          return error.localResults;
+          return { result: error.localResults, meta: {} };
         }
 
         let newError;
@@ -826,7 +845,9 @@ export class Test implements TestExtendType {
       }
     };
 
-    this.run = async (inputArgs: TestExtendType): Promise<Record<string, unknown>> => {
+    this.run = async (
+      inputArgs: TestExtendType,
+    ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
       const blocker = new Blocker();
       const block = blocker.getBlock(this.stepId);
       const { blockEmitter } = blocker;
