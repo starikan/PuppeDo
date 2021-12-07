@@ -488,7 +488,10 @@ export class Test implements TestExtendType {
         });
         return {
           result: {},
-          meta: { disable: this.metaFromPrevSubling.skipBecausePrevSubling ? this.disable : false },
+          meta: {
+            skipBecausePrevSubling: this.metaFromPrevSubling.skipBecausePrevSubling,
+            disable: this.metaFromPrevSubling.skipBecausePrevSubling ? this.disable : false,
+          },
         };
       }
 
