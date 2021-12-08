@@ -4,7 +4,7 @@ const runServer = require('./server');
 
 const run = async () => {
   // Test with direct run from JS
-  await ppd.run({
+  const { logs } = await ppd.run({
     PPD_ROOT: 'tests',
     PPD_DATA: {
       PPD_DATA: 'BAZ',

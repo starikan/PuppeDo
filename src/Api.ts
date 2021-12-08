@@ -10,7 +10,10 @@ type RunOptions = {
   stdOut?: boolean;
 };
 
-export default async function run(argsInput = {}, options: RunOptions = {}): Promise<Record<string, unknown>> {
+export default async function run(
+  argsInput = {},
+  options: RunOptions = {},
+): Promise<{ results: Record<string, unknown>; logs: Record<string, unknown> }> {
   const { envsId, envsPool, socket, logger } = Environment();
   const { closeProcess = true, stdOut = true } = options;
   logger.bindData({ stdOut });
@@ -18,6 +21,7 @@ export default async function run(argsInput = {}, options: RunOptions = {}): Pro
   const argsTests = PPD_TESTS.filter((v) => !!v);
 
   const results = {};
+  const logs = {};
 
   if (!argsTests.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -41,9 +45,11 @@ export default async function run(argsInput = {}, options: RunOptions = {}): Pro
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` });
       const testResults = await test();
-      results[testName] = testResults;
 
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });
+
+      results[testName] = testResults;
+      logs[testName] = envsPool.log;
     }
 
     await envsPool.closeAllEnvs();
@@ -57,7 +63,7 @@ export default async function run(argsInput = {}, options: RunOptions = {}): Pro
     }, 0);
 
     console.log(JSON.stringify(results, null, 2));
-    return results;
+    return { results, logs };
   } catch (error) {
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {
       error.debug = true;

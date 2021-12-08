@@ -8,12 +8,28 @@ runTest:
             description: 'Skip me'
             disable: true
 
+        - blank:
+            description: 'Not skip me'
+
   - blank:
       description: 'Simple disable false'
       runTest:
         - blank:
             description: 'Not skip me'
+
+        - blank:
+            description: 'Not skip me'
             disable: false
+
+        - blank:
+            description: 'Not skip me'
+
+        - blank:
+            description: 'Skip me'
+            disable: true
+
+        - blank:
+            description: 'Not skip me'
 
   - blank:
       description: 'Simple skipSublingIfResult'
