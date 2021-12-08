@@ -473,8 +473,19 @@ export class Test implements TestExtendType {
         debugger;
       }
 
+      const resolveDisable = (thisDisable, metaFromPrevSubling): boolean => {
+        if (thisDisable) {
+          return true;
+        }
+        if (metaFromPrevSubling.skipBecausePrevSubling) {
+          return true;
+        }
+        return false;
+      };
+
       this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
-      const disable = inputs.disable === undefined || inputs.disable ? inputs.disable : this.disable || false;
+      const disable = resolveDisable(this.disable, this.metaFromPrevSubling);
+
       if (disable) {
         await logger.log({
           text: `Skip with disable: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
@@ -484,10 +495,7 @@ export class Test implements TestExtendType {
           textColor: 'blue',
         });
         // Drop disable for loops nested tests
-        this.disable =
-          this.metaFromPrevSubling.skipBecausePrevSubling && (inputs.disable === undefined || inputs.disable)
-            ? this.disable
-            : false;
+        this.disable = false;
         return {
           result: {},
           meta: {

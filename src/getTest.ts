@@ -151,7 +151,7 @@ const getTest = ({
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
-      ['debug', 'frame', 'continueOnError', 'disable'],
+      ['debug', 'frame', 'continueOnError'],
     );
 
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
