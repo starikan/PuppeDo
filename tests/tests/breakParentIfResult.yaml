@@ -2,23 +2,25 @@ name: breakParentIfResult
 description: 'breakParentIfResult'
 runTest:
   - blank:
+      description: 'Simple disable true'
+      runTest:
+        - blank:
+            description: 'Skip me'
+            disable: true
+
+  - blank:
+      description: 'Simple disable false'
+      runTest:
+        - blank:
+            description: 'Not skip me'
+            disable: false
+
+  - blank:
       description: 'Simple skipSublingIfResult'
       runTest:
         - blank:
             description: 'Skip after me'
             skipSublingIfResult: '1 === 1'
-
-        - blank:
-            description: 'I`m skiped'
-
-        - blank:
-            description: 'I`m skiped too'
-
-        - blank:
-            description: 'I`m skiped'
-
-        - blank:
-            description: 'I`m skiped too'
 
         - blank:
             description: 'I`m skiped'
@@ -41,7 +43,7 @@ runTest:
 
         - blank:
             bindDescription: '`Second level loop: ${$loop}`'
-            skipSublingIfResult: '$loop <= 4'
+            skipSublingIfResult: '$loop === 3'
 
         - blank:
             description: 'I`m next'
@@ -54,6 +56,28 @@ runTest:
 
         - blank:
             description: 'I`m next too'
+
+  - blank:
+      description: 'If with skipSublingIfResult'
+      runTest:
+        - blank:
+            if: "1 === 1"
+            description: 'Skip after me'
+            skipSublingIfResult: '1 === 1'
+
+        - blank:
+            description: 'I`m skiped'
+
+  - blank:
+      description: 'If false with skipSublingIfResult'
+      runTest:
+        - blank:
+            if: "1 !== 1"
+            description: 'Skip after me'
+            skipSublingIfResult: '1 === 1'
+
+        - blank:
+            description: 'I`m not skiped'
 
   - loop:
       description: 'Loop breakParentIfResult'
@@ -61,7 +85,7 @@ runTest:
       runTest:
         - blank:
             bindDescription: '`Second level loop: ${$loop}`'
-            breakParentIfResult: '$loop < 3'
+            breakParentIfResult: '$loop <= 3'
 
         - blank:
             description: 'I`m next'

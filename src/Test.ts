@@ -161,6 +161,7 @@ const resolveAliases = (alias: keyof typeof ALIASES, inputs: TestExtendType): Re
   return result;
 };
 
+// TODO: 2021-12-07 S.Starodubov move to class and improve with ${getLogText(text, this.name, PPD_LOG_TEST_NAME)}
 export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
@@ -179,7 +180,7 @@ export const checkIf = async (
         screenshot: false,
         fullpage: false,
         levelIndent,
-        text: `Skipping with expr '${expr}'`,
+        text: `Skip with IF expr '${expr}' === '${exprResult}'`,
       });
     }
     return true;
@@ -465,32 +466,33 @@ export class Test implements TestExtendType {
         PPD_CONTINUE_ON_ERROR_ENABLED,
       } = { ...new Arguments().args, ...this.argsRedefine };
 
-      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
-      this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
-
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
-      this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
-      this.disable = inputs.disable || this.disable || false;
-
       if (this.debug) {
         console.log(this);
         // eslint-disable-next-line no-debugger
         debugger;
       }
 
-      if (this.disable) {
+      this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
+      const disable = inputs.disable === undefined || inputs.disable ? inputs.disable : this.disable || false;
+      if (disable) {
         await logger.log({
-          text: `Skip with disable => ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
+          text: `Skip with disable: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logShowFlag,
           textColor: 'blue',
         });
+        // Drop disable for loops nested tests
+        this.disable =
+          this.metaFromPrevSubling.skipBecausePrevSubling && (inputs.disable === undefined || inputs.disable)
+            ? this.disable
+            : false;
         return {
           result: {},
           meta: {
             skipBecausePrevSubling: this.metaFromPrevSubling.skipBecausePrevSubling,
-            disable: this.metaFromPrevSubling.skipBecausePrevSubling ? this.disable : false,
+            disable,
           },
         };
       }
@@ -540,8 +542,8 @@ export class Test implements TestExtendType {
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
-
-      // let localResults = {};
+      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
+      this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
 
       try {
         this.envName = envsPool.current.name || '';
@@ -633,7 +635,7 @@ export class Test implements TestExtendType {
             this.if,
             'if',
             logger.log.bind(logger),
-            this.levelIndent + 1,
+            this.levelIndent,
             allData,
             logShowFlag,
             this.continueOnError,
@@ -649,7 +651,7 @@ export class Test implements TestExtendType {
             this.errorIf,
             'errorIf',
             logger.log.bind(logger),
-            this.levelIndent + 1,
+            this.levelIndent,
             allData,
             logShowFlag,
             this.continueOnError,

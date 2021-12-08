@@ -226,7 +226,6 @@
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
         "PPD_TESTS": "breakParentIfResult",
         "PPD_DEBUG_MODE": "true",
-        "PPD_CONTINUE_ON_ERROR_ENABLED": "true"
       },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
