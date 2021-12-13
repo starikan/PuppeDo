@@ -7,15 +7,25 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "RunALL",
-      "program": "${workspaceFolder}\\tests\\runAllTests.js",
+      "name": "RunAllE2E",
+      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Create snapshots",
+      "program": "${workspaceFolder}\\src.tests.e2e\\createSnapshots.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "From_JS_no_ENV",
-      "program": "${workspaceFolder}\\tests\\runners\\index.js",
+      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
+      "env": {
+        "LOCAL_RUN_TEST": "From_JS_no_ENV"
+      },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
@@ -120,7 +130,7 @@
       "request": "launch",
       "name": "PuppeDo_CLI2",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\tests\\runners\\index.js",
+      "program": "${workspaceFolder}\\src.tests.e2e\\runners\\index.js",
       "args": [
         "PPD_ROOT=tests PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
       ],

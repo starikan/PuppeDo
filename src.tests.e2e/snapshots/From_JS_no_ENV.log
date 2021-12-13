@@ -1,0 +1,440 @@
+{
+  "main": [
+    {
+      "text": "Test 'main' ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "\nMain test (main)\n   (envSwitch)\n   (initData)\n   Colored Case atom (case)\n      (goTo)\n      (checkSelector)\n         (waitForSelector)\n         (blank)\n         (checkSelectorRaw)\n   Input some text in field INPUT (blank)\n   (blank)\n      (clickSelector)\n         Wait selector (waitForSelector)\n         (blank)\n         Click (clickSelectorRaw)\n   I am not showing in log (blank)\n   Set result with colors (blank)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (getText)\n   Nested Click Atom (clickWithNestedWait)\n      (waitForSelector)\n      (clickSelector)\n         Wait selector (waitForSelector)\n         (blank)\n         Click (clickSelectorRaw)\n   Checking If statement (waitTime)\n   Get text with repeat (getText)\n   Some data function (blank)\n   Bind data from function (blank)\n   Input some text in field INPUT (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   Make awesome test (todo)\n   SubTest (subTest)\n      (loop)\n         (todo)\n         (todo)\n      Make awesome sub test (todo)\n      (todo)\n      Make awesome sub test 2 (test)\n   (blank)\n",
+      "screenshots": 0,
+      "type": "env",
+      "level": "env",
+      "levelIndent": 0
+    },
+    {
+      "text": "Prepare time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "(main) Main test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 0
+    },
+    {
+      "text": "(envSwitch) Switch on environment: 'mainEnv'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Environment switch on 'mainEnv'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(initData) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(case) Colored Case atom",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(goTo) Going on page http://localhost:3000/",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "Go to: http://localhost:3000/",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "(checkSelector) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "Check selector exist: '#main-input'",
+      "screenshots": 1,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "(blank) Input some text in field INPUT",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Type in selector: '#main-input', text: 'myDataBinded'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(blank) Nested click #main-input",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(clickSelector) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "Click selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "(blank) Set result with colors",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(typeInput) Wait selector: '#main-input' and type text: '' in input",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "Type in selector: '#main-input', text: ''",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "(typeInput) Wait selector: '#main-input' and type text: '0' in input",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "Type in selector: '#main-input', text: '0'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "(typeInput) Wait selector: '#main-input' and type text: '1' in input",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "Type in selector: '#main-input', text: '1'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "Skip with disable: (typeInput) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 1
+    },
+    {
+      "text": "(getText) Get text from selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Get text: '01' from selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(clickWithNestedWait) Nested Click Atom",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(waitForSelector) Wait for: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "(clickSelector) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "Click selector: '#main-input'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 4
+    },
+    {
+      "text": "Skip with IF expr '1 !== 1' === 'false'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "info",
+      "levelIndent": 1
+    },
+    {
+      "text": "(getText) Get text with repeat",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Get text: 'Test Document' from selector: 'title'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(getText) Get text with repeat",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Get text: 'Test Document' from selector: 'title'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(getText) Get text with repeat",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Get text: 'Test Document' from selector: 'title'",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 2
+    },
+    {
+      "text": "(blank) Some data function",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Bind data from function",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(typeInput) Input some text in field INPUT",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Wait for selector: '#main-input'",
+      "screenshots": 1,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "Type in selector: '#main-input', text: 'Title of HTML: Test Document'",
+      "screenshots": 2,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 3
+    },
+    {
+      "text": "(todo) Make awesome test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(subTest) SubTest",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Test 'main' time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    }
+  ],
+  "subTest": [
+    {
+      "text": "(subTest) SubTest",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 0
+    },
+    {
+      "text": "(loop) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(todo) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "(todo) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 2
+    },
+    {
+      "text": "(todo) Make awesome sub test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(todo) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "(test) Make awesome sub test 2",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": "Test 'subTest' time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    }
+  ]
+}
