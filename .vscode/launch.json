@@ -31,6 +31,16 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Data_check",
+      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
+      "env": {
+        "LOCAL_RUN_TEST": "Data_check"
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "From CMD with ENV",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
@@ -134,13 +144,6 @@
       "args": [
         "PPD_ROOT=tests PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
       ],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Data_check",
-      "program": "${workspaceFolder}\\tests\\indexData.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
