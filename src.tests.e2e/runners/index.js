@@ -1,5 +1,7 @@
 const testsE2E = {
-  From_JS_no_ENV: require('./main'),
+  main: require('./main'),
+  dataCheck: require('./dataCheck'),
+  screencast: require('./screencast'),
 };
 
 module.exports = testsE2E

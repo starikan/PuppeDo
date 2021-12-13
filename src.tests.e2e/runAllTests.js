@@ -3,7 +3,7 @@ const path = require('path');
 
 require('@puppedo/atoms');
 const ppd = require('../index');
-const runServer = require('../tests/server');
+const runServer = require('./server');
 
 const { logsCleaner } = require('./helpers');
 

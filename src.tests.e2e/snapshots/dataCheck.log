@@ -1,0 +1,137 @@
+{
+  "testDataCheck": [
+    {
+      "text": "Test 'testDataCheck' ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "\nCheck Data Flow. Pass in atoms. (testDataCheck)\n   Data parent test (blank)\n   Data direct inject (blank)\n   Data binding from parent test (blank)\n   Data create result from parent test (blank)\n   Data check result (blank)\n   Data check direct inject after result (blank)\n   Data check binding after result (blank)\n",
+      "screenshots": 0,
+      "type": "env",
+      "level": "env",
+      "levelIndent": 0
+    },
+    {
+      "text": "Prepare time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "(testDataCheck) Check Data Flow. Pass in atoms.",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 0
+    },
+    {
+      "text": "(blank) Data parent test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Data direct inject",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Data binding from parent test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Data create result from parent test",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Data check result",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "Skip with disable: (blank) Data check direct inject after result",
+      "screenshots": 0,
+      "type": "log",
+      "level": "raw",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) Data check binding after result",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": " (testDataCheck)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "Test 'testDataCheck' time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    }
+  ]
+}
