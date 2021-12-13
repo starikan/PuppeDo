@@ -2,9 +2,12 @@ name: Node.js CI
 
 on: [push]
 
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 # Skip downloading during yarn install
+  PLAYWRIGHT_BROWSERS_PATH: 0 # Places binaries to node_modules/@playwright/test
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -12,11 +15,15 @@ jobs:
         node-version: [14.x, 16.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run build
-    - run: npm run test
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: |
+          npx playwright install-deps
+          npm install
+          npx playwright install
+      - run: npm run build
+      - run: npm run test
+      - run: npm run e2e

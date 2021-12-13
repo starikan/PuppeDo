@@ -9,10 +9,12 @@ export const argsDefault: ArgumentsType = {
   PPD_ROOT_ADDITIONAL: [],
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github'],
   PPD_TESTS: [],
-  PPD_OUTPUT: 'output',
   PPD_DATA: {},
   PPD_SELECTORS: {},
   PPD_DEBUG_MODE: false,
+  PPD_TAGS_TO_RUN: [],
+  PPD_CONTINUE_ON_ERROR_ENABLED: false,
+  PPD_OUTPUT: 'output',
   PPD_LOG_DISABLED: false,
   PPD_LOG_EXTEND: false,
   PPD_LOG_LEVEL_NESTED: 0,
@@ -21,13 +23,11 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_FULLPAGE: false,
   PPD_LOG_TEST_NAME: true,
   PPD_LOG_IGNORE_HIDE_LOG: false,
-  PPD_TAGS_TO_RUN: [],
   PPD_LOG_DOCUMENTATION_MODE: false,
   PPD_LOG_NAMES_ONLY: [],
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_TIMER_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
-  PPD_CONTINUE_ON_ERROR_ENABLED: false,
 };
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {

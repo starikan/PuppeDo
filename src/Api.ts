@@ -4,6 +4,7 @@ import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
+import { LogEntry } from './global.d';
 
 type RunOptions = {
   closeProcess?: boolean;
@@ -49,7 +50,11 @@ export default async function run(
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });
 
       results[testName] = testResults;
-      logs[testName] = envsPool.log;
+
+      const stepIds = Object.values(logs)
+        .flat()
+        .map((s: LogEntry) => s.stepId);
+      logs[testName] = envsPool.log.filter((v) => !stepIds.includes(v.stepId));
     }
 
     await envsPool.closeAllEnvs();
