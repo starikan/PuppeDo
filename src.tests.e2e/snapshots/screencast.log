@@ -1,0 +1,88 @@
+{
+  "screencast": [
+    {
+      "text": "Test 'screencast' ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "\nScreencast Demo (screencast)\n   (blank)\n   (blank)\n   (blank)\n",
+      "screenshots": 0,
+      "type": "env",
+      "level": "env",
+      "levelIndent": 0
+    },
+    {
+      "text": "Prepare time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "(screencast) Screencast Demo",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 0
+    },
+    {
+      "text": "(blank) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": "(blank) TODO: Fill description",
+      "screenshots": 0,
+      "type": "log",
+      "level": "test",
+      "levelIndent": 1
+    },
+    {
+      "text": " (blank)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 1
+    },
+    {
+      "text": " (screencast)",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    },
+    {
+      "text": "Test 'screencast' time ",
+      "screenshots": 0,
+      "type": "log",
+      "level": "timer",
+      "levelIndent": 0
+    }
+  ]
+}

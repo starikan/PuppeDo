@@ -6,7 +6,7 @@ const port = 3000;
 
 const runServer = () => {
   const requestHandler = (_, response) => {
-    const data = fs.readFileSync(path.resolve('./tests/static/index.html'));
+    const data = fs.readFileSync(path.resolve('./src.tests.e2e/server.html'));
     response.writeHead(200, { 'Content-Type': 'text/html', 'Content-Length': data.length });
     response.write(data);
     response.end();

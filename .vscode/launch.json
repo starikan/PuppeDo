@@ -41,6 +41,17 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Screencast",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
+      "env": {
+        "LOCAL_RUN_TEST": "screencast"
+      },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "From CMD with ENV",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
@@ -261,14 +272,6 @@
         "PPD_TESTS": "recursion",
         "PPD_DEBUG_MODE": "true"
       },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Screencast",
-      "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\tests\\screencast.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
