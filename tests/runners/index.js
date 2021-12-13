@@ -1,10 +1,10 @@
 require('@puppedo/atoms');
-const ppd = require('../index');
-const runServer = require('./server');
+const ppd = require('../../index');
+const runServer = require('../server');
 
 const run = async () => {
   // Test with direct run from JS
-  const { logs } = await ppd.run({
+  await ppd.run({
     PPD_ROOT: 'tests',
     PPD_DATA: {
       PPD_DATA: 'BAZ',

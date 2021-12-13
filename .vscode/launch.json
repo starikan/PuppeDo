@@ -7,14 +7,21 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "PuppeDo_JS",
-      "program": "${workspaceFolder}\\tests\\index.js",
+      "name": "RunALL",
+      "program": "${workspaceFolder}\\tests\\runAllTests.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "PuppeDo_ENV",
+      "name": "From_JS_no_ENV",
+      "program": "${workspaceFolder}\\tests\\runners\\index.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "From CMD with ENV",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
       "env": {
@@ -113,7 +120,7 @@
       "request": "launch",
       "name": "PuppeDo_CLI2",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\tests\\index.js",
+      "program": "${workspaceFolder}\\tests\\runners\\index.js",
       "args": [
         "PPD_ROOT=tests PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
       ],
