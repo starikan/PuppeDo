@@ -10,7 +10,7 @@
     "prepublishOnly": "npm install && npm run lint && npm test && npm run e2e ",
     "lint": "eslint src/**/*.[jt]s src.tests/**/*.[jt]s",
     "test": "jest",
-    "e2e": "node .\\src.tests.e2e\\runAllTests.js"
+    "e2e": "node src.tests.e2e/runAllTests.js"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
   "license": "ISC",
