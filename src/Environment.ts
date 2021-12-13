@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { spawn, spawnSync } from 'child_process';
+import os from 'os';
+import { execSync, spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
 import fetch from 'node-fetch';
@@ -435,7 +436,17 @@ export class EnvsPool implements EnvsPoolType {
       const killOnEnd = env.browser?.killOnEnd || true;
       const killProcessName = env.browser?.killProcessName;
       if (killOnEnd && killProcessName) {
-        spawnSync('taskkill', ['/f', '/im', killProcessName]);
+        const platform = os.platform();
+
+        if (platform.startsWith('win')) {
+          spawnSync('taskkill', ['/f', '/im', killProcessName]);
+        }
+        else if (platform === 'darwin') {
+          execSync(`osascript -e 'quit app "${killProcessName}"'`);
+        }
+        else {
+          console.error(`Quitting a process is not supported on '${platform}' platform.`);
+        }
       }
     } catch (error) {
       // Nothing to do.
