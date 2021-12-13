@@ -440,11 +440,9 @@ export class EnvsPool implements EnvsPoolType {
 
         if (platform.startsWith('win')) {
           spawnSync('taskkill', ['/f', '/im', killProcessName]);
-        }
-        else if (platform === 'darwin') {
+        } else if (platform === 'darwin') {
           execSync(`osascript -e 'quit app "${killProcessName}"'`);
-        }
-        else {
+        } else {
           console.error(`Quitting a process is not supported on '${platform}' platform.`);
         }
       }
