@@ -9,4 +9,8 @@ const runBeforeTest = () => {
   // Nothing to do
 };
 
-module.exports = { params, runBeforeTest };
+const runAfterTest = () => {
+  // Nothing to do
+};
+
+module.exports = { params, runBeforeTest, runAfterTest };

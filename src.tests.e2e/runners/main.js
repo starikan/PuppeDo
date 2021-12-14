@@ -9,7 +9,6 @@ const params = {
     PPD_SELECTORS: 'DDD',
   },
   PPD_TESTS: ['main', 'subTest'],
-  PPD_DEBUG_MODE: true,
   PPD_LOG_SCREENSHOT: true,
   PPD_LOG_FULLPAGE: true,
   PPD_LOG_TIMER_SHOW: false,
@@ -20,4 +19,8 @@ const runBeforeTest = () => {
   // Nothing to do
 };
 
-module.exports = { params, runBeforeTest };
+const runAfterTest = () => {
+  // Nothing to do
+};
+
+module.exports = { params, runBeforeTest, runAfterTest };

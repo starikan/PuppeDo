@@ -10,6 +10,10 @@ beforeTest:
   - envSwitch:
       bindData: { envName: myEnv }
 
+# afterTest:
+#   - envClose:
+#       bindData: { envName: myEnv }
+
 runTest:
   - initData:
       const:
