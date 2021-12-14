@@ -219,7 +219,7 @@ export default class TestsContent extends Singleton {
       browser.engine === 'puppeteer' &&
       !['chrome', 'firefox'].includes(browser.browserName)
     ) {
-      throw new Error("Playwright supports only browsers: 'chrome', 'firefox'");
+      throw new Error("Puppeteer supports only browsers: 'chrome', 'firefox'");
     }
 
     if (!['run', 'connect'].includes(browser.runtime)) {
