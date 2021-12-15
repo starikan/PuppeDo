@@ -1,4 +1,4 @@
-[0m[0m[0mTest 'main' [0m
+[0m[0m[0mTest 'main' start on '0000-00-00_00-00-00.000'[0m
 [41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
 [0m[0m[34m
 Main test (main)
@@ -51,7 +51,7 @@ Main test (main)
       Make awesome sub test 2 (test)
    (blank)
 [0m
-[0m[0m[0mPrepare time [0m
+[0m[0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m[0m[32m(main) Main test[0m
 [0m|   [0m[32m(envSwitch) Switch on environment: 'mainEnv'[0m
 [0m|   |   [0m[0mEnvironment switch on 'mainEnv'[0m
@@ -62,7 +62,7 @@ Main test (main)
 [0m|   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m|   |   |   |   [0m[0mWait for selector: '#main-input'[0m
 [0m|   |   |   |   [0m[0mCheck selector exist: '#main-input'[0m
-[0m|   |   |   |    [0m[36m🖼 screenshot: [][0m
+[0m|   |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m|   [0m[32m(blank) Input some text in field INPUT[0m
 [0m|   |   [0m[0mType in selector: '#main-input', text: 'myDataBinded'[0m
 [0m|   [0m[47m[30m(blank) Nested click #main-input[0m[0m
@@ -99,15 +99,15 @@ Main test (main)
 [0m|   [0m[32m(blank) Bind data from function[0m
 [0m|   [0m[32m(typeInput) Input some text in field INPUT[0m
 [0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |    [0m[36m🖼 screenshot: [][0m
+[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m|   |   |   [0m[0mType in selector: '#main-input', text: 'Title of HTML: Test Document'[0m
-[0m|   |   |    [0m[36m🖼 screenshot: [][0m
-[0m|   |   |    [0m[36m🖼 screenshot: [][0m
+[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m|   [0m[41m[37m(todo) Make awesome test[0m[0m
 [0m|   [0m[32m(subTest) SubTest[0m
 [0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m[0m[0mTest 'main' time [0m
-[0m[0m[0mTest 'subTest' [0m
+[0m[0m[0mTest 'main' time 🕝: 00.000 s.[0m
+[0m[0m[0mTest 'subTest' start on '0000-00-00_00-00-00.000'[0m
 [0m[0m[34m
 SubTest (subTest)
    (loop)
@@ -117,7 +117,7 @@ SubTest (subTest)
    (todo)
    Make awesome sub test 2 (test)
 [0m
-[0m[0m[0mPrepare time [0m
+[0m[0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m[0m[32m(subTest) SubTest[0m
 [0m|   [0m[41m[32m(loop) TODO: Fill description[0m[0m
 [0m|   |   [0m[41m[37m(todo) TODO: Fill description[0m[0m
@@ -125,8 +125,8 @@ SubTest (subTest)
 [0m|   [0m[41m[37m(todo) Make awesome sub test[0m[0m
 [0m|   [0m[41m[37m(todo) TODO: Fill description[0m[0m
 [0m|   [0m[32m(test) Make awesome sub test 2[0m
-[0m[0m[0mTest 'subTest' time [0m
-[0m[0m[0mEvaluated time [0m
+[0m[0m[0mTest 'subTest' time 🕝: 00.000 s.[0m
+[0m[0m[0mEvaluated time 🕝: 00.000 s.[0m
 {
   "main": {},
   "subTest": {}

@@ -1,4 +1,4 @@
-[0m[0m[0mTest 'screencast' [0m
+[0m[0m[0mTest 'screencast' start on '0000-00-00_00-00-00.000'[0m
 [41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
 [0m[0m[34m
 Screencast Demo (screencast)
@@ -6,17 +6,17 @@ Screencast Demo (screencast)
    (blank)
    (blank)
 [0m
-[0m[0m[0mPrepare time [0m
+[0m[0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m[0m[32m(screencast) Screencast Demo[0m
 [0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m|   [0m[0m (blank)[0m
+[0m|   [0m[0m🕝: 00.000 s. (blank)[0m
 [0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m|   [0m[0m (blank)[0m
+[0m|   [0m[0m🕝: 00.000 s. (blank)[0m
 [0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m|   [0m[0m (blank)[0m
-[0m[0m[0m (screencast)[0m
-[0m[0m[0mTest 'screencast' time [0m
-[0m[0m[0mEvaluated time [0m
+[0m|   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m[0m[0m🕝: 00.000 s. (screencast)[0m
+[0m[0m[0mTest 'screencast' time 🕝: 00.000 s.[0m
+[0m[0m[0mEvaluated time 🕝: 00.000 s.[0m
 {
   "screencast": {}
 }

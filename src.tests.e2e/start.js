@@ -3,13 +3,24 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const testsE2E = require('./runners');
-const { logClean } = require('./helpers');
 
 const [, , ...args] = process.argv;
 const [tests, create, ...tail] = args;
 
 const testsResolve = tests ? tests.split(',').map((v) => v.trim()) : Object.keys(testsE2E);
 const createResolve = create ? create === 'true' : false;
+
+const logClean = (text) => {
+  let newText = text;
+  newText = newText.replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000');
+  newText = newText.replace(/🕝: \d+\.\d+ s./g, '🕝: 00.000 s.');
+  newText = newText.replace(
+    /start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g,
+    "start on '0000-00-00_00-00-00.000'",
+  );
+  newText = newText.replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]');
+  return newText;
+};
 
 for (const testName of testsResolve) {
   const prc = spawnSync('node', ['./src.tests.e2e/runAllTests.js'], {
