@@ -10,7 +10,7 @@ const params = {
 };
 
 const runBeforeTest = () => {
-  // Nothing to do
+  require('@puppedo/atoms');
 };
 
 const runAfterTest = () => {

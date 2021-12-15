@@ -2,25 +2,22 @@ const path = require('path');
 
 const params = null;
 
+const env = {
+  PPD_ROOT: 'tests',
+  PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', '..', 'node_modules\\@puppedo\\atoms')],
+  PPD_TESTS: 'main',
+  PPD_DATA: '{ "myEnv": "mainEnv" }',
+  PPD_LOG_LEVEL_NESTED: 1,
+  PPD_LOG_IGNORE_HIDE_LOG: 'true',
+  PPD_LOG_TIMESTAMP_SHOW: 'false',
+};
+
 const runBeforeTest = () => {
-  process.env.PPD_ROOT = 'tests';
-  process.env.PPD_ROOT_ADDITIONAL = [path.join(__dirname, '..', '..', 'node_modules\\@puppedo\\atoms')];
-  process.env.PPD_TESTS = 'main';
-  process.env.PPD_DATA = '{ "myEnv": "mainEnv" }';
-  process.env.PPD_LOG_LEVEL_NESTED = 1;
-  process.env.PPD_LOG_IGNORE_HIDE_LOG = 'true';
-  process.env.PPD_LOG_TIMESTAMP_SHOW = 'false';
+  // Nothing to do
 };
 
 const runAfterTest = () => {
-  delete process.env.PPD_ROOT;
-  delete process.env.PPD_ROOT_ADDITIONAL;
-  delete process.env.PPD_TESTS;
-  delete process.env.PPD_DATA;
-  delete process.env.PPD_DEBUG_MODE;
-  delete process.env.PPD_LOG_LEVEL_NESTED;
-  delete process.env.PPD_LOG_IGNORE_HIDE_LOG;
-  delete process.env.PPD_LOG_TIMESTAMP_SHOW;
+  // Nothing to do
 };
 
-module.exports = { params, runBeforeTest, runAfterTest };
+module.exports = { params, runBeforeTest, runAfterTest, env };

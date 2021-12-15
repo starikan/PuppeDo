@@ -16,6 +16,7 @@ for (const testName of testsResolve) {
     env: {
       ...process.env,
       LOCAL_RUN_TEST: testName,
+      ...(testsE2E[testName].env || {}),
     },
   });
 

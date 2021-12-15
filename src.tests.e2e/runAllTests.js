@@ -1,9 +1,17 @@
-require('@puppedo/atoms');
+const ppd = require('../index');
+
 const runServer = require('./server');
 
-const { runTest } = require('./helpers');
-
 const testsE2E = require('./runners');
+
+const runTest = async (runner) => {
+  if (!runner) {
+    return [];
+  }
+  await runner.runBeforeTest();
+  await ppd.run(runner.params);
+  await runner.runAfterTest();
+};
 
 const start = async () => {
   try {
