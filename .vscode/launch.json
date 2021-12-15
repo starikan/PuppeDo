@@ -58,31 +58,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "mainENVOld",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./src.tests.e2e/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "main",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
-        "PPD_LOG_LEVEL_NESTED": 1,
-        "PPD_LOG_IGNORE_HIDE_LOG": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "PuppeDo_ENV_blank",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "blankEnv"
-      },
+      "name": "blankENV",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["blankENV"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {

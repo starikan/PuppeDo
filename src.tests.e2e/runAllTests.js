@@ -8,9 +8,9 @@ const runTest = async (runner) => {
   if (!runner) {
     return [];
   }
-  await runner.runBeforeTest();
-  await ppd.run(runner.params);
-  await runner.runAfterTest();
+  runner.runBeforeTest && (await runner.runBeforeTest());
+  await ppd.run(runner.params || {});
+  runner.runAfterTest && (await runner.runAfterTest());
 };
 
 const start = async () => {

@@ -21,7 +21,7 @@ for (const testName of testsResolve) {
   });
 
   const outData = prc.stdout.toString();
-  console.log(outData);
+  // console.log(outData);
 
   if (createResolve) {
     const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
