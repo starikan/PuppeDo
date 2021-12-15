@@ -1,368 +1,105 @@
+[0m[0m[0mTest 'main' [0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m[0m[34m
+Main test (main)
+   (envSwitch)
+   (initData)
+   Colored Case atom (case)
+      (goTo)
+      (checkSelector)
+         (waitForSelector)
+         (blank)
+         (checkSelectorRaw)
+   Input some text in field INPUT (blank)
+   (blank)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   I am not showing in log (blank)
+   Set result with colors (blank)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (getText)
+   Nested Click Atom (clickWithNestedWait)
+      (waitForSelector)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   Checking If statement (waitTime)
+   Get text with repeat (getText)
+   Some data function (blank)
+   Bind data from function (blank)
+   Input some text in field INPUT (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   Make awesome test (todo)
+   SubTest (subTest)
+      (loop)
+         (todo)
+         (todo)
+      Make awesome sub test (todo)
+      (todo)
+      Make awesome sub test 2 (test)
+   (blank)
+[0m
+[0m[0m[0mPrepare time [0m
+[0m[0m[32m(main) Main test[0m
+[0m|   [0m[32m(envSwitch) Switch on environment: 'mainEnv'[0m
+[0m|   [0m[0m (envSwitch)[0m
+[0m|   [0m[41m[32m(initData) TODO: Fill description[0m[0m
+[0m|   [0m[0m (initData)[0m
+[0m|   [0m[47m[30m(case) Colored Case atom[0m[0m
+[0m|   [0m[0m (case)[0m
+[0m|   [0m[32m(blank) Input some text in field INPUT[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[47m[30m(blank) Nested click #main-input[0m[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) I am not showing in log[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[0m(blank) Set result with colors[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
+[0m|   [0m[0m (typeInput)[0m
+[0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
+[0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
+[0m|   [0m[0m (typeInput)[0m
+[0m|   [0m[0m (typeInput)[0m
+[0m|   [0m[34mSkip with disable: (typeInput) TODO: Fill description[0m
+[0m|   [0m[32m(getText) Get text from selector: '#main-input'[0m
+[0m|   [0m[0m (getText)[0m
+[0m|   [0m[43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
+[0m|   [0m[0m (clickWithNestedWait)[0m
+[0m|   [0m[36mSkip with IF expr '1 !== 1' === 'false'[0m
+[0m|   [0m[32m(getText) Get text with repeat[0m
+[0m|   [0m[32m(getText) Get text with repeat[0m
+[0m|   [0m[32m(getText) Get text with repeat[0m
+[0m|   [0m[0m (getText)[0m
+[0m|   [0m[0m (getText)[0m
+[0m|   [0m[0m (getText)[0m
+[0m|   [0m[32m(blank) Some data function[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) Bind data from function[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(typeInput) Input some text in field INPUT[0m
+[0m|   [0m[0m (typeInput)[0m
+[0m|   [0m[41m[37m(todo) Make awesome test[0m[0m
+[0m|   [0m[0m (todo)[0m
+[0m|   [0m[32m(subTest) SubTest[0m
+[0m|   [0m[0m (subTest)[0m
+[0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m|   [0m[0m (blank)[0m
+[0m[0m[0m (main)[0m
+[0m[0m[0mTest 'main' time [0m
+[0m[0m[0mEvaluated time [0m
 {
-  "main": [
-    {
-      "text": "Test 'main' ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "\nMain test (main)\n   (envSwitch)\n   (initData)\n   Colored Case atom (case)\n      (goTo)\n      (checkSelector)\n         (waitForSelector)\n         (blank)\n         (checkSelectorRaw)\n   Input some text in field INPUT (blank)\n   (blank)\n      (clickSelector)\n         Wait selector (waitForSelector)\n         (blank)\n         Click (clickSelectorRaw)\n   I am not showing in log (blank)\n   Set result with colors (blank)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   (getText)\n   Nested Click Atom (clickWithNestedWait)\n      (waitForSelector)\n      (clickSelector)\n         Wait selector (waitForSelector)\n         (blank)\n         Click (clickSelectorRaw)\n   Checking If statement (waitTime)\n   Get text with repeat (getText)\n   Some data function (blank)\n   Bind data from function (blank)\n   Input some text in field INPUT (typeInput)\n      Wait selector (waitForSelector)\n      Type in selector (typeInputRaw)\n   Make awesome test (todo)\n   SubTest (subTest)\n      (loop)\n         (todo)\n         (todo)\n      Make awesome sub test (todo)\n      (todo)\n      Make awesome sub test 2 (test)\n   (blank)\n   (envClose)\n",
-      "screenshots": 0,
-      "type": "env",
-      "level": "env",
-      "levelIndent": 0
-    },
-    {
-      "text": "Prepare time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "(main) Main test",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 0
-    },
-    {
-      "text": "(envSwitch) Switch on environment: 'mainEnv'",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (envSwitch)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(initData) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (initData)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(case) Colored Case atom",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (case)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Input some text in field INPUT",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Nested click #main-input",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) I am not showing in log",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Set result with colors",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(typeInput) Wait selector: '#main-input' and type text: '' in input",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (typeInput)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(typeInput) Wait selector: '#main-input' and type text: '0' in input",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": "(typeInput) Wait selector: '#main-input' and type text: '1' in input",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (typeInput)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (typeInput)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "Skip with disable: (typeInput) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "raw",
-      "levelIndent": 1
-    },
-    {
-      "text": "(getText) Get text from selector: '#main-input'",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (getText)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(clickWithNestedWait) Nested Click Atom",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (clickWithNestedWait)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "Skip with IF expr '1 !== 1' === 'false'",
-      "screenshots": 0,
-      "type": "log",
-      "level": "info",
-      "levelIndent": 1
-    },
-    {
-      "text": "(getText) Get text with repeat",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": "(getText) Get text with repeat",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": "(getText) Get text with repeat",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (getText)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (getText)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (getText)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Some data function",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Bind data from function",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(typeInput) Input some text in field INPUT",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (typeInput)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(todo) Make awesome test",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (todo)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(subTest) SubTest",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (subTest)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(envClose) Close environment: 'mainEnv'",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (envClose)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (main)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "Test 'main' time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    }
-  ]
+  "main": {}
 }

@@ -1,137 +1,33 @@
+[0m[0m[0mTest 'testDataCheck' [0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m[0m[34m
+Check Data Flow. Pass in atoms. (testDataCheck)
+   Data parent test (blank)
+   Data direct inject (blank)
+   Data binding from parent test (blank)
+   Data create result from parent test (blank)
+   Data check result (blank)
+   Data check direct inject after result (blank)
+   Data check binding after result (blank)
+[0m
+[0m[0m[0mPrepare time [0m
+[0m[0m[32m(testDataCheck) Check Data Flow. Pass in atoms.[0m
+[0m|   [0m[32m(blank) Data parent test[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) Data direct inject[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) Data binding from parent test[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) Data create result from parent test[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[32m(blank) Data check result[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[34mSkip with disable: (blank) Data check direct inject after result[0m
+[0m|   [0m[32m(blank) Data check binding after result[0m
+[0m|   [0m[0m (blank)[0m
+[0m[0m[0m (testDataCheck)[0m
+[0m[0m[0mTest 'testDataCheck' time [0m
+[0m[0m[0mEvaluated time [0m
 {
-  "testDataCheck": [
-    {
-      "text": "Test 'testDataCheck' ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "\nCheck Data Flow. Pass in atoms. (testDataCheck)\n   Data parent test (blank)\n   Data direct inject (blank)\n   Data binding from parent test (blank)\n   Data create result from parent test (blank)\n   Data check result (blank)\n   Data check direct inject after result (blank)\n   Data check binding after result (blank)\n",
-      "screenshots": 0,
-      "type": "env",
-      "level": "env",
-      "levelIndent": 0
-    },
-    {
-      "text": "Prepare time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "(testDataCheck) Check Data Flow. Pass in atoms.",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 0
-    },
-    {
-      "text": "(blank) Data parent test",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Data direct inject",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Data binding from parent test",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Data create result from parent test",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Data check result",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "Skip with disable: (blank) Data check direct inject after result",
-      "screenshots": 0,
-      "type": "log",
-      "level": "raw",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) Data check binding after result",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (testDataCheck)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "Test 'testDataCheck' time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    }
-  ]
+  "testDataCheck": {}
 }

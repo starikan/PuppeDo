@@ -8,38 +8,51 @@
       "type": "node",
       "request": "launch",
       "name": "RunAllE2E",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
-      "env": {
-        "PWDEBUG": "console",
-        "DEBUG": "pw:api"
-      },
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      // "env": {
+      //   "PWDEBUG": "console",
+      //   "DEBUG": "pw:api"
+      // },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Create snapshots",
-      "program": "${workspaceFolder}\\src.tests.e2e\\createSnapshots.js",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["", "true"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "main",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
-      "env": {
-        "LOCAL_RUN_TEST": "main"
-      },
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["main"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
       "type": "node",
       "request": "launch",
       "name": "mainENV",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
-      "env": {
-        "LOCAL_RUN_TEST": "mainENV"
-      },
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["mainENV"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "dataCheck",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["dataCheck"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "screencast",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["screencast"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
@@ -56,27 +69,6 @@
         "PPD_DEBUG_MODE": "true",
         "PPD_LOG_LEVEL_NESTED": 1,
         "PPD_LOG_IGNORE_HIDE_LOG": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "dataCheck",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
-      "env": {
-        "LOCAL_RUN_TEST": "dataCheck"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "screencast",
-      "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runAllTests.js",
-      "env": {
-        "LOCAL_RUN_TEST": "screencast"
       },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },

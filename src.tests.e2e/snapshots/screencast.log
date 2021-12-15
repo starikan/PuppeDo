@@ -1,88 +1,22 @@
+[0m[0m[0mTest 'screencast' [0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m[0m[34m
+Screencast Demo (screencast)
+   (blank)
+   (blank)
+   (blank)
+[0m
+[0m[0m[0mPrepare time [0m
+[0m[0m[32m(screencast) Screencast Demo[0m
+[0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m|   [0m[0m (blank)[0m
+[0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m|   [0m[0m (blank)[0m
+[0m[0m[0m (screencast)[0m
+[0m[0m[0mTest 'screencast' time [0m
+[0m[0m[0mEvaluated time [0m
 {
-  "screencast": [
-    {
-      "text": "Test 'screencast' ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "\nScreencast Demo (screencast)\n   (blank)\n   (blank)\n   (blank)\n",
-      "screenshots": 0,
-      "type": "env",
-      "level": "env",
-      "levelIndent": 0
-    },
-    {
-      "text": "Prepare time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "(screencast) Screencast Demo",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 0
-    },
-    {
-      "text": "(blank) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": "(blank) TODO: Fill description",
-      "screenshots": 0,
-      "type": "log",
-      "level": "test",
-      "levelIndent": 1
-    },
-    {
-      "text": " (blank)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 1
-    },
-    {
-      "text": " (screencast)",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    },
-    {
-      "text": "Test 'screencast' time ",
-      "screenshots": 0,
-      "type": "log",
-      "level": "timer",
-      "levelIndent": 0
-    }
-  ]
+  "screencast": {}
 }
