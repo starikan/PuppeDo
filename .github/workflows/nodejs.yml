@@ -26,4 +26,4 @@ jobs:
           npx playwright install
       - run: npm run build
       - run: npm run test
-      - run: npm run e2e
+      # - run: npm run e2e
