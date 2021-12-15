@@ -30,6 +30,18 @@ const testsE2E = {
       PPD_LOG_TIMESTAMP_SHOW: 'false',
     },
   },
+  mainCLI: {
+    args: [
+      'PPD_ROOT=tests',
+      `PPD_ROOT_ADDITIONAL=${path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')}`,
+      'PPD_TESTS=main',
+      "PPD_DATA={'myEnv':'mainEnv'}",
+      'PPD_DEBUG_MODE=true',
+      'PPD_LOG_EXTEND=true',
+      'PPD_LOG_SCREENSHOT=true',
+      'PPD_LOG_FULLPAGE=true',
+    ],
+  },
   dataCheck: {
     params: {
       PPD_ROOT: 'tests',

@@ -66,6 +66,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "mainCLI",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
+      "args": ["mainCLI"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
       "name": "PuppeDo_ENV_puppeteer",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
@@ -111,36 +120,7 @@
       },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "PuppeDo_CLI",
-      "cwd": "${workspaceFolder}",
-      "args": [
-        "-e",
-        "require('./tests/server')();require('./index').run()",
-        "PPD_ROOT=tests",
-        "PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
-        "PPD_TESTS=main",
-        "PPD_DATA={'myEnv':'mainEnv'}",
-        "PPD_DEBUG_MODE=true",
-        "PPD_LOG_EXTEND=true",
-        "PPD_LOG_SCREENSHOT=true",
-        "PPD_LOG_FULLPAGE=true"
-      ],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "PuppeDo_CLI2",
-      "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}\\src.tests.e2e\\runners\\index.js",
-      "args": [
-        "PPD_ROOT=tests PPD_TESTS=main PPD_DATA={'myEnv':'mainEnv'} PPD_DEBUG_MODE=true PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms"
-      ],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
+
     {
       "type": "node",
       "request": "launch",
