@@ -245,6 +245,7 @@ export class EnvsPool implements EnvsPoolType {
       windowSize = {},
       browserName: product = 'chrome',
       executablePath = '',
+      timeout = 30000,
     } = browserSettings;
     const { width = 1024, height = 768 } = windowSize;
 
@@ -258,6 +259,7 @@ export class EnvsPool implements EnvsPoolType {
       ignoreHTTPSErrors: true,
       defaultViewport: { width, height },
       executablePath,
+      timeout,
     });
 
     const pagesExists = await browser.pages();
@@ -277,10 +279,11 @@ export class EnvsPool implements EnvsPoolType {
       browserName = 'chromium',
       windowSize = {},
       executablePath = '',
+      timeout = 30000,
     } = browserSettings || {};
     const { width = 1024, height = 768 } = windowSize;
 
-    const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath };
+    const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath, timeout };
     if (browserName === 'chromium') {
       options.devtools = PPD_DEBUG_MODE;
     }
@@ -297,12 +300,14 @@ export class EnvsPool implements EnvsPoolType {
     webSocketDebuggerUrl: string,
     slowMo: number,
     windowSize: { width?: number; height?: number },
+    timeout: number,
   ): Promise<{ browser: BrowserPuppeteer; pages: Record<string, BrowserPageType> }> {
     const puppeteer = __non_webpack_require__('puppeteer');
     const browser = await puppeteer.connect({
       browserWSEndpoint: webSocketDebuggerUrl,
       ignoreHTTPSErrors: true,
       slowMo,
+      timeout,
     });
 
     const pagesRaw = await browser.pages();
@@ -323,12 +328,14 @@ export class EnvsPool implements EnvsPoolType {
     webSocketDebuggerUrl: string,
     slowMo: number,
     windowSize: { width?: number; height?: number },
+    timeout: number,
     browserName: BrowserNameType,
   ): Promise<{ browser: BrowserPlaywright; pages: Record<string, BrowserPageType> }> {
     const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].connect({
       wsEndpoint: webSocketDebuggerUrl,
       slowMo,
+      timeout,
     });
     const contexts = await browser.contexts({ ignoreHTTPSErrors: true });
     const pagesRaw = await contexts.pages();
@@ -346,7 +353,14 @@ export class EnvsPool implements EnvsPoolType {
   }
 
   static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
-    const { urlDevtoolsJson, windowSize = {}, slowMo = 0, engine = 'puppeteer', browserName } = browserSettings || {};
+    const {
+      urlDevtoolsJson,
+      windowSize = {},
+      slowMo = 0,
+      engine = 'puppeteer',
+      browserName,
+      timeout = 30000,
+    } = browserSettings || {};
 
     if (urlDevtoolsJson) {
       const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
@@ -367,11 +381,17 @@ export class EnvsPool implements EnvsPoolType {
       }
 
       if (engine === 'puppeteer') {
-        const { browser, pages } = await this.connectPuppeteer(webSocketDebuggerUrl, slowMo, windowSize);
+        const { browser, pages } = await this.connectPuppeteer(webSocketDebuggerUrl, slowMo, windowSize, timeout);
         return { browser, pages };
       }
       if (engine === 'playwright') {
-        const { browser, pages } = await this.connectPlaywright(webSocketDebuggerUrl, slowMo, windowSize, browserName);
+        const { browser, pages } = await this.connectPlaywright(
+          webSocketDebuggerUrl,
+          slowMo,
+          windowSize,
+          timeout,
+          browserName,
+        );
         return { browser, pages };
       }
       throw new Error('Can`t find any supported browser engine in environment');
