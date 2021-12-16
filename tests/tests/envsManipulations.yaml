@@ -30,3 +30,10 @@ runTest:
 
         - envClose:
             data: { envName: mainEnv }
+
+  - case:
+      description: Blank Env
+      runTest:
+        - envSwitch:
+
+        - envClose:

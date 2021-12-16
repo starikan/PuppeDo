@@ -3,7 +3,6 @@ const path = require('path');
 const testsE2E = {
   main: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_DATA: {
         PPD_DATA: 'BAZ',
         myEnv: 'mainEnv',
@@ -21,7 +20,6 @@ const testsE2E = {
   },
   mainENV: {
     env: {
-      PPD_ROOT: 'tests',
       PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')],
       PPD_TESTS: 'main',
       PPD_DATA: '{ "myEnv": "mainEnv" }',
@@ -44,7 +42,6 @@ const testsE2E = {
   },
   mainPuppeteer: {
     env: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'main',
       PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }',
       PPD_LOG_LEVEL_NESTED: 1,
@@ -84,7 +81,6 @@ const testsE2E = {
   },
   dataCheck: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: ['testDataCheck'],
       PPD_DATA: {
         CHECK_DATA: 'ARG_DATA',
@@ -97,23 +93,14 @@ const testsE2E = {
   },
   screencast: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'screencast',
       PPD_DEBUG_MODE: true,
       PPD_LOG_TIMESTAMP_SHOW: false,
     },
     runBeforeTest: () => require('@puppedo/atoms'),
   },
-  blankENV: {
-    env: {
-      PPD_ROOT: 'tests',
-      PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')],
-      PPD_TESTS: 'blankEnv',
-    },
-  },
   atoms: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'atomsTest',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
@@ -121,7 +108,6 @@ const testsE2E = {
   },
   tags: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'tagsTest',
       PPD_DATA: { myEnv: 'mainEnv' },
       PPD_TAGS_TO_RUN: 'testTag',
@@ -130,7 +116,6 @@ const testsE2E = {
   },
   descriptions: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'descriptionTest',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
@@ -138,7 +123,6 @@ const testsE2E = {
   },
   logs: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'logOptions',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
@@ -146,7 +130,6 @@ const testsE2E = {
   },
   continueOnError: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'continueOnError',
       PPD_DATA: { myEnv: 'mainEnv' },
       PPD_CONTINUE_ON_ERROR_ENABLED: true,
@@ -155,7 +138,6 @@ const testsE2E = {
   },
   breakParentIfResult: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'breakParentIfResult',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
@@ -163,7 +145,6 @@ const testsE2E = {
   },
   recursion: {
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'recursion',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
@@ -172,7 +153,6 @@ const testsE2E = {
   screenshots: {
     // TODO: 2021-12-16 S.Starodubov check files thats created
     params: {
-      PPD_ROOT: 'tests',
       PPD_TESTS: 'screenshots',
       PPD_DATA: { myEnv: 'mainEnv' },
       PPD_LOG_EXTEND: true,
