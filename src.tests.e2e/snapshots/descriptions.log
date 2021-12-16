@@ -1,0 +1,35 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'descriptionTest' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+Test values description and bindDescription (descriptionTest)
+   I am description (blank)
+   (blank)
+   I am description and I rewrite bindDescription (blank)
+   I am descriptionExtend (blank)
+   Loop description (loop)
+   (loop)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(descriptionTest) Test values description and bindDescription[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) I am description[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) I am bindDescription with binded value data: data and selector: selector[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) I am description and I rewrite bindDescription[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) I am descriptionExtend[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(loop) Loop description[0m
+[0m00:00:00.000 - test   |   [0m[32m(loop) Loop description[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m00:00:00.000 - test   |   [0m[32m(loop) Loop bindDescription 2[0m
+[0m00:00:00.000 - test   |   [0m[32m(loop) Loop bindDescription 1[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m                      [0m[0m🕝: 00.000 s. (descriptionTest)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'descriptionTest' time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+{
+  "descriptionTest": {}
+}

@@ -31,63 +31,7 @@
       "args": ["main"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "mainENV",
-      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["mainENV"],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "dataCheck",
-      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["dataCheck"],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "screencast",
-      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["screencast"],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "blankENV",
-      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["blankENV"],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "mainCLI",
-      "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["mainCLI"],
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
 
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "PuppeDo_ENV_puppeteer",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "main",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv_puppeteer\" }",
-        "PPD_DEBUG_MODE": "true",
-        "PPD_LOG_LEVEL_NESTED": 1
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
     {
       "type": "node",
       "request": "launch",
@@ -107,86 +51,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "PuppeDo_TEST_error",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "testWithNoAtom",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_LOG_EXTEND": "true",
-        "PPD_LOG_LEVEL_NESTED": 0
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Atoms Test",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "atomsTest",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Tags Test",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "tagsTest",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true",
-        "PPD_TAGS_TO_RUN": "testTag"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Descriptions Test",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "descriptionTest",
-        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-        "PPD_DEBUG_MODE": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "logOptions Test",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "logOptions",
-        "PPD_DEBUG_MODE": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "errorIf Test",
       "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
+      "args": ["-e", "require('./src.tests.e2e/server')();require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
@@ -198,62 +65,17 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "continueOnError",
+      "name": "PuppeDo_TEST_error",
       "cwd": "${workspaceFolder}",
       "args": ["-e", "require('./tests/server')();require('./index').run()"],
       "env": {
         "PPD_ROOT": "tests",
         "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "continueOnError",
-        "PPD_DEBUG_MODE": "true",
-        "PPD_CONTINUE_ON_ERROR_ENABLED": "true"
+        "PPD_TESTS": "testWithNoAtom",
+        "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
+        "PPD_LOG_EXTEND": "true",
+        "PPD_LOG_LEVEL_NESTED": 0
       },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "breakParentIfResult",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "breakParentIfResult",
-        "PPD_DEBUG_MODE": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "recursion Test",
-      "cwd": "${workspaceFolder}",
-      "args": ["-e", "require('./tests/server')();require('./index').run()"],
-      "env": {
-        "PPD_ROOT": "tests",
-        "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-        "PPD_TESTS": "recursion",
-        "PPD_DEBUG_MODE": "true"
-      },
-      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Screenshot",
-      "cwd": "${workspaceFolder}",
-      "args": [
-        "-e",
-        "require('./tests/server')();require('./index').run()",
-        "PPD_ROOT=tests",
-        "PPD_ROOT_ADDITIONAL=${workspaceFolder}\\node_modules\\@puppedo\\atoms",
-        "PPD_TESTS=screenshots",
-        "PPD_DEBUG_MODE=true",
-        "PPD_LOG_EXTEND=true",
-        "PPD_LOG_SCREENSHOT=true",
-        "PPD_LOG_FULLPAGE=true"
-      ],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]
