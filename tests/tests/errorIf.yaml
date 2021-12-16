@@ -33,6 +33,8 @@ runTest:
       description: Click some fake Text
       s: { selector: '.mainInputFake' }
       descriptionError: This is click error
+      options:
+        waitingTime: 1000
 
 ---
 name: continueOnError
@@ -50,11 +52,11 @@ runTest:
       continueOnError: true
       runTest:
         - blank:
-            bindDescription: "`Second level loop: ${$loop}`"
-            errorIfResult: "$loop < 2"
+            bindDescription: '`Second level loop: ${$loop}`'
+            errorIfResult: '$loop < 2'
 
         - blank:
-            description: "I`m next"
+            description: 'I`m next'
 
   - case:
       description: I am without errors

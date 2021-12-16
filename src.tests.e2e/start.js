@@ -19,7 +19,26 @@ const logClean = (text) => {
     "start on '0000-00-00_00-00-00.000'",
   );
   newText = newText.replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]');
-  return newText;
+  newText = newText.replace(/file:\/\/\/.+?node_modules/g, 'file:///');
+  newText = newText.replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log');
+  newText = newText.replace(/file:\/\/\/.+?tests/g, 'file:///');
+  newText = newText.replace(/\(.+?webpack:/g, '(');
+  newText = newText.replace(/\.[jt]s.+?\)/g, ')');
+  newText = newText.replace(/\(.+?src\.tests\.e2e/g, '(');
+
+  const splitedText = newText.split('\n');
+  const startIndex = splitedText.indexOf(
+    splitedText.find((v) => v.search('============== ALL DATA ==============') > 0),
+  );
+  const endIndex = splitedText.indexOf(
+    splitedText.find((v) => v.search('============== EXTEND FILE ==============') > 0),
+  );
+
+  if (startIndex > 0 && endIndex > 0) {
+    splitedText.splice(startIndex, endIndex - startIndex);
+  }
+
+  return splitedText.join('\n');
 };
 
 for (const testName of testsResolve) {

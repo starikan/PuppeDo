@@ -68,34 +68,14 @@ const testsE2E = {
     runBeforeTest: () => require('@puppedo/atoms'),
     isError: true,
   },
-  // mainWithError: {
-  //   params: {
-  //     PPD_TESTS: 'mainWithError',
-  //     PPD_DATA: { myEnv: 'mainEnv' },
-  //     PPD_LOG_EXTEND: true,
-  //     PPD_LOG_LEVEL_NESTED: 0,
-  //   },
-  //   runBeforeTest: () => require('@puppedo/atoms'),
-  //   isError: true,
-  // },
-
-  // {
-  //   "type": "node",
-  //   "request": "launch",
-  //   "name": "PuppeDo_ENV_error",
-  //   "cwd": "${workspaceFolder}",
-  //   "args": ["-e", "require('./tests/server')();require('./index').run()"],
-  //   "env": {
-  //     "PPD_ROOT": "tests",
-  //     "PPD_ROOT_ADDITIONAL": ["${workspaceFolder}\\node_modules\\@puppedo\\atoms"],
-  //     "PPD_TESTS": "mainWithError",
-  //     "PPD_DATA": "{ \"myEnv\": \"mainEnv\" }",
-  //     "PPD_LOG_EXTEND": "true",
-  //     "PPD_LOG_LEVEL_NESTED": 0
-  //   },
-  //   "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
-  // },
-
+  mainWithError: {
+    params: {
+      PPD_TESTS: 'mainWithError',
+      PPD_DATA: { myEnv: 'mainEnv' },
+    },
+    runBeforeTest: () => require('@puppedo/atoms'),
+    isError: true,
+  },
   dataCheck: {
     params: {
       PPD_ROOT: 'tests',
