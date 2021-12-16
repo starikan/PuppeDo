@@ -146,7 +146,7 @@ export class Arguments extends Singleton {
         // TODO: 2021-02-21 S.Starodubov need types validation
         const config = __non_webpack_require__(path.join(process.cwd(), 'puppedo.config.js'));
         const { args: argsFromConfig } = config || {};
-        configArgs = argsFromConfig;
+        configArgs = parser(argsFromConfig);
       } catch (error) {
         // Nothin to do
       }
