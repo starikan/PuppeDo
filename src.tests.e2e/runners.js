@@ -51,6 +51,12 @@ const testsE2E = {
     },
     runBeforeTest: () => require('@puppedo/atoms'),
   },
+  envsManipulations: {
+    params: {
+      PPD_TESTS: 'envsManipulations',
+    },
+    runBeforeTest: () => require('@puppedo/atoms'),
+  },
   errorIf: {
     params: {
       PPD_TESTS: 'errorIf',
@@ -164,6 +170,7 @@ const testsE2E = {
     runBeforeTest: () => require('@puppedo/atoms'),
   },
   screenshots: {
+    // TODO: 2021-12-16 S.Starodubov check files thats created
     params: {
       PPD_ROOT: 'tests',
       PPD_TESTS: 'screenshots',

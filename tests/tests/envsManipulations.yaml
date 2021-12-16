@@ -1,0 +1,32 @@
+name: envsManipulations
+descriptioon: Some environments manipulations
+runTest:
+  - case:
+      description: Open 2 env and close them
+      runTest:
+        - envSwitch:
+            data: { envName: mainEnv }
+
+        - envSwitch:
+            data: { envName: mainEnv_puppeteer }
+
+        - envSwitch:
+            data: { envName: mainEnv }
+
+        - envSwitch:
+            data: { envName: mainEnv_puppeteer }
+
+        - envSwitch:
+            data: { envName: mainEnv_puppeteer }
+
+        - envSwitch:
+            data: { envName: mainEnv }
+
+        - envSwitch:
+            data: { envName: mainEnv }
+
+        - envClose:
+            data: { envName: mainEnv_puppeteer }
+
+        - envClose:
+            data: { envName: mainEnv }
