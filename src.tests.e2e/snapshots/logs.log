@@ -1,0 +1,429 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'logOptions' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+logOptions test (logOptions)
+   Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦 (blank)
+   Check logOptions.logThis and logOptions.logChildren (case)
+      [1] I am no logOptions block and I am visible (blank)
+      [2] I am '🧑 = ✔️' and I am visible (blank)
+      [3] I am '👨‍👦‍👦 = ✔️' and I am visible (blank)
+      [-] I am '🧑 = ❌' and I am NOT🔴 visible (blank)
+      [4] I am '👨‍👦‍👦 = ❌' and I am visible (blank)
+      [5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible (blank)
+      [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible (blank)
+      [6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
+      [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible (blank)
+      I am no logOptions parent block (blank)
+         [1] I am no logOptions block and I am visible (blank)
+         [2] I am '🧑 = ✔️' and I am visible (blank)
+         [3] I am '👨‍👦‍👦 = ✔️' and I am visible (blank)
+         [-] I am '🧑 = ❌' and I am NOT🔴 visible (blank)
+         [4] I am '👨‍👦‍👦 = ❌' and I am visible (blank)
+         [5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible (blank)
+         [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible (blank)
+         [6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
+         [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible (blank)
+      I am '👨‍👦‍👦 = ❌' parent block and I am visible (blank)
+         [-] I am no logOptions visible block and I am NOT🔴 visible (blank)
+         [1] I am '🧑 = ✔️' and I am visible (blank)
+         [-] I am '👨‍👦‍👦 = ✔️' and I am NOT🔴 visible (blank)
+         [-] I am '🧑 = ❌' and I am NOT🔴 visible (blank)
+         [-] I am '👨‍👦‍👦 = ❌' and I am NOT🔴 visible (blank)
+         [2] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible (blank)
+         [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible (blank)
+         [3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
+         [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible (blank)
+   Check logOptions visible into loop with nested blocks (case)
+      I am '👨‍👦‍👦 = ❌' parent block and I am visible (blank)
+         I am no logOptions visible block and I am NOT🔴 visible (loop)
+            I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
+               I am no logOptions visible block and I am NOT🔴 visible (blank)
+      I am '👨‍👦‍👦 = ❌' parent block and I am visible (blank)
+         I am no logOptions visible block and I am NOT🔴 visible (loop)
+            I am '🧑 = ✔️' and I am visible (blank)
+               I am no logOptions visible block and I am NOT🔴 visible (blank)
+   logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white (case)
+      Text: none + Background: none (blank)
+      Text: sane + Background: none (blank)
+      Text: black + Background: none (blank)
+      Text: red + Background: none (blank)
+      Text: green + Background: none (blank)
+      Text: yellow + Background: none (blank)
+      Text: blue + Background: none (blank)
+      Text: magenta + Background: none (blank)
+      Text: cyan + Background: none (blank)
+      Text: white + Background: none (blank)
+      Text: none + Background: black (blank)
+      Text: sane + Background: black (blank)
+      Text: black + Background: black (blank)
+      Text: red + Background: black (blank)
+      Text: green + Background: black (blank)
+      Text: yellow + Background: black (blank)
+      Text: blue + Background: black (blank)
+      Text: magenta + Background: black (blank)
+      Text: cyan + Background: black (blank)
+      Text: white + Background: black (blank)
+      Text: none + Background: red (blank)
+      Text: sane + Background: red (blank)
+      Text: black + Background: red (blank)
+      Text: red + Background: red (blank)
+      Text: green + Background: red (blank)
+      Text: yellow + Background: red (blank)
+      Text: blue + Background: red (blank)
+      Text: magenta + Background: red (blank)
+      Text: cyan + Background: red (blank)
+      Text: white + Background: red (blank)
+      Text: none + Background: green (blank)
+      Text: sane + Background: green (blank)
+      Text: black + Background: green (blank)
+      Text: red + Background: green (blank)
+      Text: green + Background: green (blank)
+      Text: yellow + Background: green (blank)
+      Text: blue + Background: green (blank)
+      Text: magenta + Background: green (blank)
+      Text: cyan + Background: green (blank)
+      Text: white + Background: green (blank)
+      Text: none + Background: yellow (blank)
+      Text: sane + Background: yellow (blank)
+      Text: black + Background: yellow (blank)
+      Text: red + Background: yellow (blank)
+      Text: green + Background: yellow (blank)
+      Text: yellow + Background: yellow (blank)
+      Text: blue + Background: yellow (blank)
+      Text: magenta + Background: yellow (blank)
+      Text: cyan + Background: yellow (blank)
+      Text: white + Background: yellow (blank)
+      Text: none + Background: blue (blank)
+      Text: sane + Background: blue (blank)
+      Text: black + Background: blue (blank)
+      Text: red + Background: blue (blank)
+      Text: green + Background: blue (blank)
+      Text: yellow + Background: blue (blank)
+      Text: blue + Background: blue (blank)
+      Text: magenta + Background: blue (blank)
+      Text: cyan + Background: blue (blank)
+      Text: white + Background: blue (blank)
+      Text: none + Background: magenta (blank)
+      Text: sane + Background: magenta (blank)
+      Text: black + Background: magenta (blank)
+      Text: red + Background: magenta (blank)
+      Text: green + Background: magenta (blank)
+      Text: yellow + Background: magenta (blank)
+      Text: blue + Background: magenta (blank)
+      Text: magenta + Background: magenta (blank)
+      Text: cyan + Background: magenta (blank)
+      Text: white + Background: magenta (blank)
+      Text: none + Background: white (blank)
+      Text: sane + Background: white (blank)
+      Text: black + Background: white (blank)
+      Text: red + Background: white (blank)
+      Text: green + Background: white (blank)
+      Text: yellow + Background: white (blank)
+      Text: blue + Background: white (blank)
+      Text: magenta + Background: white (blank)
+      Text: cyan + Background: white (blank)
+      Text: white + Background: white (blank)
+      Text: none + Background: cyan (blank)
+      Text: sane + Background: cyan (blank)
+      Text: black + Background: cyan (blank)
+      Text: red + Background: cyan (blank)
+      Text: green + Background: cyan (blank)
+      Text: yellow + Background: cyan (blank)
+      Text: blue + Background: cyan (blank)
+      Text: magenta + Background: cyan (blank)
+      Text: cyan + Background: cyan (blank)
+      Text: white + Background: cyan (blank)
+      You can add to backgroundColor 'Background' word like 'whiteBackground' (case)
+         Background: blackBackground (blank)
+         Background: redBackground (blank)
+         Background: greenBackground (blank)
+         Background: yellowBackground (blank)
+         Background: blueBackground (blank)
+         Background: magentaBackground (blank)
+         Background: cyanBackground (blank)
+         Background: whiteBackground (blank)
+   Redefine colors in nested blocks (case)
+      Text: white + Background: green (blank)
+         I am not colored (blank)
+         Text: red + Background: white (loop)
+            I am not colored (blank)
+               Text: yellow + Background: magenta (blank)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(logOptions) logOptions test[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) Check logOptions.logThis and logOptions.logChildren[0m[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [1] I am no logOptions block and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [2] I am '🧑 = ✔️' and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [3] I am '👨‍👦‍👦 = ✔️' and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [4] I am '👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) [6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) I am no logOptions parent block[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [1] I am no logOptions block and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [2] I am '🧑 = ✔️' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [3] I am '👨‍👦‍👦 = ✔️' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [4] I am '👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) I am '👨‍👦‍👦 = ❌' parent block and I am visible[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [1] I am '🧑 = ✔️' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [2] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) [3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) Check logOptions visible into loop with nested blocks[0m[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) I am '👨‍👦‍👦 = ❌' parent block and I am visible[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) I am '👨‍👦‍👦 = ❌' parent block and I am visible[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am '🧑 = ✔️' and I am visible[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am '🧑 = ✔️' and I am visible[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white[0m[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) Text: none + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) Text: sane + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[30m(blank) Text: black + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[31m(blank) Text: red + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[32m(blank) Text: green + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[33m(blank) Text: yellow + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[34m(blank) Text: blue + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[35m(blank) Text: magenta + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[36m(blank) Text: cyan + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[37m(blank) Text: white + Background: none[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[32m(blank) Text: none + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[32m(blank) Text: sane + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[30m(blank) Text: black + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[31m(blank) Text: red + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[32m(blank) Text: green + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[33m(blank) Text: yellow + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[34m(blank) Text: blue + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[35m(blank) Text: magenta + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[36m(blank) Text: cyan + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[40m[37m(blank) Text: white + Background: black[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) Text: none + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) Text: sane + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[30m(blank) Text: black + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[31m(blank) Text: red + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) Text: green + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[33m(blank) Text: yellow + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[34m(blank) Text: blue + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[35m(blank) Text: magenta + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[36m(blank) Text: cyan + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[37m(blank) Text: white + Background: red[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[32m(blank) Text: none + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[32m(blank) Text: sane + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[30m(blank) Text: black + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[31m(blank) Text: red + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[32m(blank) Text: green + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[33m(blank) Text: yellow + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[34m(blank) Text: blue + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[35m(blank) Text: magenta + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[36m(blank) Text: cyan + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[37m(blank) Text: white + Background: green[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[32m(blank) Text: none + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[32m(blank) Text: sane + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[30m(blank) Text: black + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[31m(blank) Text: red + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[32m(blank) Text: green + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[33m(blank) Text: yellow + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[34m(blank) Text: blue + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[35m(blank) Text: magenta + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[36m(blank) Text: cyan + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[43m[37m(blank) Text: white + Background: yellow[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[32m(blank) Text: none + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[32m(blank) Text: sane + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[30m(blank) Text: black + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[31m(blank) Text: red + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[32m(blank) Text: green + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[33m(blank) Text: yellow + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[34m(blank) Text: blue + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[35m(blank) Text: magenta + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[36m(blank) Text: cyan + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[44m[37m(blank) Text: white + Background: blue[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[32m(blank) Text: none + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[32m(blank) Text: sane + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[30m(blank) Text: black + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[31m(blank) Text: red + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[32m(blank) Text: green + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[33m(blank) Text: yellow + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[34m(blank) Text: blue + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[35m(blank) Text: magenta + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[36m(blank) Text: cyan + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[45m[37m(blank) Text: white + Background: magenta[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[32m(blank) Text: none + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[32m(blank) Text: sane + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[30m(blank) Text: black + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[31m(blank) Text: red + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[32m(blank) Text: green + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[33m(blank) Text: yellow + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[34m(blank) Text: blue + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[35m(blank) Text: magenta + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[36m(blank) Text: cyan + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[37m(blank) Text: white + Background: white[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[32m(blank) Text: none + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[32m(blank) Text: sane + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[30m(blank) Text: black + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[31m(blank) Text: red + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[32m(blank) Text: green + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[33m(blank) Text: yellow + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[34m(blank) Text: blue + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[35m(blank) Text: magenta + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[36m(blank) Text: cyan + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[46m[37m(blank) Text: white + Background: cyan[0m[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) You can add to backgroundColor 'Background' word like 'whiteBackground'[0m[0m
+[0m00:00:00.000 - test   |   |   |   [0m[40m[32m(blank) Background: blackBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[41m[30m(blank) Background: redBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[42m[30m(blank) Background: greenBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[43m[30m(blank) Background: yellowBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[44m[30m(blank) Background: blueBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[45m[30m(blank) Background: magentaBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[46m[30m(blank) Background: cyanBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[47m[30m(blank) Background: whiteBackground[0m[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) Redefine colors in nested blocks[0m[0m
+[0m00:00:00.000 - test   |   |   [0m[42m[37m(blank) Text: white + Background: green[0m[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(blank) I am not colored[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[47m[31m(loop) Text: red + Background: white[0m[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am not colored[0m
+[0m00:00:00.000 - test   |   |   |   |   |   [0m[45m[33m(blank) Text: yellow + Background: magenta[0m[0m
+[0m                      |   |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[47m[31m(loop) Text: red + Background: white[0m[0m
+[0m00:00:00.000 - test   |   |   |   |   [0m[32m(blank) I am not colored[0m
+[0m00:00:00.000 - test   |   |   |   |   |   [0m[45m[33m(blank) Text: yellow + Background: magenta[0m[0m
+[0m                      |   |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (loop)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m                      [0m[0m🕝: 00.000 s. (logOptions)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'logOptions' time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+{
+  "logOptions": {}
+}

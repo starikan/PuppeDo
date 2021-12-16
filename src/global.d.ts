@@ -26,6 +26,7 @@ export type BrouserLaunchOptions = {
   args: Array<string>;
   devtools?: boolean;
   executablePath?: string;
+  timeout?: number;
 };
 
 export type PagesType = Record<string, BrowserPageType | BrowserFrame>;

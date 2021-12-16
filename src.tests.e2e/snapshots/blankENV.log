@@ -1,0 +1,21 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'blankEnv' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+(blankEnv)
+   (envSwitch)
+   (envClose)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[41m[32m(blankEnv) TODO: Fill description[0m[0m
+[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'null'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mEnvironment switch on 'null'[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m00:00:00.000 - test   |   [0m[32m(envClose) Close environment: 'null'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mAll Environments closed.[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (envClose)[0m
+[0m                      [0m[0m🕝: 00.000 s. (blankEnv)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'blankEnv' time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+{
+  "blankEnv": {}
+}

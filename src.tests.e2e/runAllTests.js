@@ -1,39 +1,35 @@
-const fs = require('fs');
-const path = require('path');
-
-require('@puppedo/atoms');
 const ppd = require('../index');
+
 const runServer = require('./server');
 
-const { logsCleaner } = require('./helpers');
+const testsE2E = require('./runners');
 
-const testsE2E = require('./runners/index');
-
-const run = async (runner) => {
-  const LOCAL_RUN_TEST = process.env.LOCAL_RUN_TEST || runner;
-  if (LOCAL_RUN_TEST) {
-    await testsE2E[LOCAL_RUN_TEST].runBeforeTest();
-    await ppd.run(testsE2E[LOCAL_RUN_TEST].params);
-    return;
+const runTest = async (runner) => {
+  if (!runner) {
+    return [];
   }
+  runner.runBeforeTest && (await runner.runBeforeTest());
+  await ppd.run(runner.params || {});
+  runner.runAfterTest && (await runner.runAfterTest());
+};
 
-  for (const testName of Object.keys(testsE2E)) {
-    await testsE2E[testName].runBeforeTest();
-    const { logs } = await ppd.run(testsE2E[testName].params);
-    const clearedLogs = logsCleaner(logs, null, 2);
-
-    const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
-    const snapshotData = fs.readFileSync(filePath).toString();
-
-    if (snapshotData !== JSON.stringify(clearedLogs, null, 2)) {
-      throw new Error(`E2E test error: ${testName}`);
+const start = async () => {
+  const LOCAL_RUN_TEST = process.env.LOCAL_RUN_TEST;
+  const runners = LOCAL_RUN_TEST ? [LOCAL_RUN_TEST] : Object.keys(testsE2E);
+  try {
+    runServer();
+    for (const runner of runners) {
+      try {
+        await runTest(testsE2E[runner]);
+      } catch (error) {
+        if (testsE2E[runner].isError) {
+          process.exit(0);
+        }
+      }
     }
+  } catch (error) {
+    console.log(error);
   }
 };
 
-try {
-  runServer();
-  run();
-} catch (error) {
-  console.log(error);
-}
+start();

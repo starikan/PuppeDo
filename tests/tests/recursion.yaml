@@ -4,16 +4,16 @@ description: Recursion
 runTest:
   - blank:
       description: Level 1
-      repeat: 100
+      repeat: 3
       runTest:
         - blank:
             description: Level 2
-            repeat: 100
+            repeat: 3
             runTest:
               - blank:
                   description: Level 3
-                  repeat: 100
+                  repeat: 3
                   runTest:
                     - blank:
                         description: Level 4
-                        repeat: 100
+                        repeat: 3

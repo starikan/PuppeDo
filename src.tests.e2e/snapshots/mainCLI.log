@@ -1,0 +1,242 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'main' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+Main test (main)
+   (envSwitch)
+   (initData)
+   Colored Case atom (case)
+      (goTo)
+      (checkSelector)
+         (waitForSelector)
+         (blank)
+         (checkSelectorRaw)
+   Input some text in field INPUT (blank)
+   (blank)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   I am not showing in log (blank)
+   Set result with colors (blank)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (getText)
+   Nested Click Atom (clickWithNestedWait)
+      (waitForSelector)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   Checking If statement (waitTime)
+   Get text with repeat (getText)
+   Some data function (blank)
+   Bind data from function (blank)
+   Input some text in field INPUT (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   Make awesome test (todo)
+   SubTest (subTest)
+      (loop)
+         (todo)
+         (todo)
+      Make awesome sub test (todo)
+      (todo)
+      Make awesome sub test 2 (test)
+   (blank)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(main) Main test[0m
+[0m                       [0m[36m👣[main][0m
+[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'mainEnv'[0m
+[0m                      |    [0m[36m👣[main -> beforeTest[0].envSwitch][0m
+[0m00:00:00.000 - raw    |   |   [0m[0mEnvironment switch on 'mainEnv'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m📌📋 (bD): {"envName":"myEnv"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[0].initData][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) Colored Case atom[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[1].case][0m
+[0m00:00:00.000 - test   |   |   [0m[32m(goTo) Going on page http://localhost:3000/[0m
+[0m                      |   |    [0m[36m👣[main -> runTest[1].case -> runTest[0].goTo][0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mGo to: http://localhost:3000/[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌📋 (bD): {"url":"baseUrl"}[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (goTo)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
+[0m                      |   |    [0m[36m👣[main -> runTest[1].case -> runTest[1].checkSelector][0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1,"screenshot":true}[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-input'[0m
+[0m00:00:00.000 - raw    |   |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
+[0m                      |   |   |   |   [0m[36m⚙️ (options): {"screenshot":true}[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Input some text in field INPUT[0m
+[0m                      |    [0m[36m👣[main -> runTest[2].blank][0m
+[0m00:00:00.000 - raw    |   |   [0m[0mType in selector: '#main-input', text: 'myDataBinded'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m📋 (data): {"text":"myDataBinded"}[0m
+[0m                      |   |   [0m[36m📌☸️ (bS): {"selector":"mainInput"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(blank) Nested click #main-input[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[3].blank][0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(clickSelector) TODO: Fill description[0m[0m
+[0m                      |   |    [0m[36m👣[main -> runTest[3].blank -> runTest[0].clickSelector][0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mClick selector: '#main-input'[0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[0m(blank) Set result with colors[0m
+[0m                      |    [0m[36m👣[main -> runTest[5].blank][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
+[0m                      |    [0m[36m👣[main -> runTest[6].typeInput][0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mType in selector: '#main-input', text: ''[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌📋 (bD): {"text":"text"}[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
+[0m                      |    [0m[36m👣[main -> runTest[7].typeInput][0m
+[0m                      |    [0m[36m🔆 repeats left: 1[0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"noClearInput":true}[0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mType in selector: '#main-input', text: '0'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌📋 (bD): {"text":"text"}[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"noClearInput":true}[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
+[0m                      |    [0m[36m👣[main -> runTest[7].typeInput][0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"noClearInput":true}[0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mType in selector: '#main-input', text: '1'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌📋 (bD): {"text":"text"}[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"noClearInput":true}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - raw    |   [0m[34mSkip with disable: (typeInput) TODO: Fill description[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text from selector: '#main-input'[0m
+[0m                      |    [0m[36m👣[main -> runTest[9].getText][0m
+[0m00:00:00.000 - raw    |   |   [0m[0mGet text: '01' from selector: '#main-input'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m📌☸️ (bS): {"selector":"mainInput"}[0m
+[0m                      |   |   [0m[36m↩️ (results): {"result":"text"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   [0m[43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[10].clickWithNestedWait][0m
+[0m00:00:00.000 - test   |   |   [0m[32m(waitForSelector) Wait for: '#main-input'[0m
+[0m                      |   |    [0m[36m👣[main -> runTest[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"mainInputInside"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
+[0m00:00:00.000 - test   |   |   [0m[41m[32m(clickSelector) TODO: Fill description[0m[0m
+[0m                      |   |    [0m[36m👣[main -> runTest[10].clickWithNestedWait -> runTest[1].clickSelector][0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   |   [0m[36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mClick selector: '#main-input'[0m
+[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
+[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   |   [0m[36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (clickWithNestedWait)[0m
+[0m00:00:00.000 - info   |   [0m[36mSkip with IF expr '1 !== 1' === 'false'[0m
+[0m                      |    [0m[36m👣[main -> runTest[10].clickWithNestedWait -> runTest[1].clickSelector -> runTest[2].clickSelectorRaw][0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m                      |    [0m[36m👣[main -> runTest[12].getText][0m
+[0m                      |    [0m[36m🔆 repeats left: 2[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mGet text: 'Test Document' from selector: 'title'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m☸️ (selectors): {"selector":"title"}[0m
+[0m                      |   |   [0m[36m↩️ (results): {"titleText":"text"}[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m                      |    [0m[36m👣[main -> runTest[12].getText][0m
+[0m                      |    [0m[36m🔆 repeats left: 1[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mGet text: 'Test Document' from selector: 'title'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+[0m                      |   |   [0m[36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+[0m                      |   |   [0m[36m↩️ (results): {"titleText":"text"}[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m                      |    [0m[36m👣[main -> runTest[12].getText][0m
+[0m00:00:00.000 - raw    |   |   [0m[0mGet text: 'Test Document' from selector: 'title'[0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   [0m[36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+[0m                      |   |   [0m[36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+[0m                      |   |   [0m[36m↩️ (results): {"titleText":"text"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Some data function[0m
+[0m                      |    [0m[36m👣[main -> runTest[13].blank][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Bind data from function[0m
+[0m                      |    [0m[36m👣[main -> runTest[14].blank][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Input some text in field INPUT[0m
+[0m                      |    [0m[36m👣[main -> runTest[15].typeInput][0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mWait for selector: '#main-input'[0m
+[0m00:00:00.000 - raw    |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"screenshot":true,"fullpage":true}[0m
+[0m00:00:00.000 - raw    |   |   |   [0m[0mType in selector: '#main-input', text: 'Title of HTML: Test Document'[0m
+[0m00:00:00.000 - raw    |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m00:00:00.000 - raw    |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m                      |   |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   |   |   [0m[36m📌📋 (bD): {"text":"text"}[0m
+[0m                      |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
+[0m                      |   |   |   [0m[36m⚙️ (options): {"screenshot":true,"fullpage":true}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Make awesome test[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[16].todo][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
+[0m00:00:00.000 - test   |   [0m[32m(subTest) SubTest[0m
+[0m                      |    [0m[36m👣[main -> runTest[17].subTest][0m
+[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (subTest)[0m
+[0m00:00:00.000 - test   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m                      |    [0m[36m👣[main -> runTest[18].blank][0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      [0m[0m🕝: 00.000 s. (main)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'main' time 🕝: 00.000 s.[0m
+[0m                       [0m[36m👣[main -> runTest[18].blank][0m
+[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+[0m                       [0m[36m👣[main -> runTest[18].blank][0m
+{
+  "main": {}
+}

@@ -1,0 +1,103 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'main' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+Main test (main)
+   (envSwitch)
+   (initData)
+   Colored Case atom (case)
+      (goTo)
+      (checkSelector)
+         (waitForSelector)
+         (blank)
+         (checkSelectorRaw)
+   Input some text in field INPUT (blank)
+   (blank)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   I am not showing in log (blank)
+   Set result with colors (blank)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   (getText)
+   Nested Click Atom (clickWithNestedWait)
+      (waitForSelector)
+      (clickSelector)
+         Wait selector (waitForSelector)
+         (blank)
+         Click (clickSelectorRaw)
+   Checking If statement (waitTime)
+   Get text with repeat (getText)
+   Some data function (blank)
+   Bind data from function (blank)
+   Input some text in field INPUT (typeInput)
+      Wait selector (waitForSelector)
+      Type in selector (typeInputRaw)
+   Make awesome test (todo)
+   SubTest (subTest)
+      (loop)
+         (todo)
+         (todo)
+      Make awesome sub test (todo)
+      (todo)
+      Make awesome sub test 2 (test)
+   (blank)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(main) Main test[0m
+[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'mainEnv_puppeteer'[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) Colored Case atom[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Input some text in field INPUT[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(blank) Nested click #main-input[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[0m(blank) Set result with colors[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - raw    |   [0m[34mSkip with disable: (typeInput) TODO: Fill description[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text from selector: '#main-input'[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   [0m[43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (clickWithNestedWait)[0m
+[0m00:00:00.000 - info   |   [0m[36mSkip with IF expr '1 !== 1' === 'false'[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m00:00:00.000 - test   |   [0m[32m(getText) Get text with repeat[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Some data function[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(blank) Bind data from function[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m00:00:00.000 - test   |   [0m[32m(typeInput) Input some text in field INPUT[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (typeInput)[0m
+[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Make awesome test[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
+[0m00:00:00.000 - test   |   [0m[32m(subTest) SubTest[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (subTest)[0m
+[0m00:00:00.000 - test   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m                      [0m[0m🕝: 00.000 s. (main)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'main' time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+{
+  "main": {}
+}
