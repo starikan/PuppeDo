@@ -14,14 +14,18 @@ const runTest = async (runner) => {
 };
 
 const start = async () => {
+  const LOCAL_RUN_TEST = process.env.LOCAL_RUN_TEST;
+  const runners = LOCAL_RUN_TEST ? [LOCAL_RUN_TEST] : Object.keys(testsE2E);
   try {
     runServer();
-
-    const LOCAL_RUN_TEST = process.env.LOCAL_RUN_TEST;
-    const runners = LOCAL_RUN_TEST ? [LOCAL_RUN_TEST] : Object.keys(testsE2E);
-
     for (const runner of runners) {
-      await runTest(testsE2E[runner]);
+      try {
+        await runTest(testsE2E[runner]);
+      } catch (error) {
+        if (testsE2E[runner].isError) {
+          process.exit(0);
+        }
+      }
     }
   } catch (error) {
     console.log(error);

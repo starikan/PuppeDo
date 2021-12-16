@@ -1,0 +1,36 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'errorIf' start on '0000-00-00_00-00-00.000'[0m
+[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
+[0m00:00:00.000 - env    [0m[34m
+Error with IF (errorIf)
+   (blank)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(errorIf) Error with IF[0m
+[31m00:00:00.000 - error  |   [0m[31mTest stopped with expr errorIf = '1 === 1'[0m
+[31m00:00:00.000 - error  |    errorIf[0m
+[31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
+[31m00:00:00.000 - error  |   [0m[31mThis is error description | Description: No test description (blank)[0m
+[31m00:00:00.000 - error  |    errorIf[0m
+[31m00:00:00.000 - error  |    (file:///c:\PPD\PuppeDo\node_modules\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
+[31m00:00:00.000 - error  [0m[31mThis is error description | Description: Error with IF (errorIf)[0m
+[31m00:00:00.000 - error   errorIf[0m
+[31m00:00:00.000 - error   (file:///c:\PPD\PuppeDo\tests\tests\errorIf.yaml)[0m
+[31m00:00:00.000 - error   [0m[31m================================================================================================[0m
+[31m                      [0m[31mTest stopped with expr errorIf = '1 === 1'[0m
+[31m                      [0m[31merror in test = blank[0m
+[31m                      [0m[31merror in test = errorIf[0m
+[31m                      [0m[31m================================================================================================[0m
+[31m                      [0m[31mError: Test stopped with expr errorIf = '1 === 1'[0m
+[31m                      [0m[31mat checkIf (c:\PPD\PuppeDo\dist\webpack:\@puppedo\core\src\Test.ts:199:11)[0m
+[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues:96:5)[0m
+[31m                      [0m[31mat Test.runLogic (c:\PPD\PuppeDo\dist\webpack:\@puppedo\core\src\Test.ts:658:11)[0m
+[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31mSUMMARY ERROR INFO:[0m
+[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31mMessage:     Test stopped with expr errorIf = '1 === 1'[0m
+[31m00:00:00.000 - error  [0m[31mError:       This is error description[0m
+[31m00:00:00.000 - error  [0m[31mPath:        errorIf -> runTest[0].blank[0m
+[31m00:00:00.000 - error  [0m[31mDescription:[0m
+[31m00:00:00.000 - error  [0m[31m   Error with IF[0m
+[31m00:00:00.000 - error  [0m[31m[0m
