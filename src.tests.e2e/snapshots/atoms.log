@@ -1,7 +1,7 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'atomsTest' start on '0000-00-00_00-00-00.000'[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'atoms' start on '0000-00-00_00-00-00.000'[0m
 [41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
 [0m00:00:00.000 - env    [0m[34m
-Test all Atoms (atomsTest)
+Test all Atoms (atoms)
    (initData)
    [ENV_SWITCH] First of all you need chose environment. (envSwitch)
    Blank Atoms (case)
@@ -34,7 +34,7 @@ Test all Atoms (atomsTest)
    [ENV_CLOSE] Close environment (envClose)
 [0m
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(atomsTest) Test all Atoms[0m
+[0m00:00:00.000 - test   [0m[32m(atoms) Test all Atoms[0m
 [0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m00:00:00.000 - test   |   [0m[32m(envSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
@@ -91,7 +91,7 @@ Test all Atoms (atomsTest)
 [0m00:00:00.000 - test   |   [0m[32m(envClose) [ENV_CLOSE] Close environment[0m
 [0m00:00:00.000 - raw    |   |   [0m[0mEnvironment 'mainEnv' closed.[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (envClose)[0m
-[0m00:00:00.000 - test   [0m[32m(atomsTest) Test all Atoms[0m
+[0m00:00:00.000 - test   [0m[32m(atoms) Test all Atoms[0m
 [0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m00:00:00.000 - test   |   [0m[32m(envSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
@@ -139,12 +139,12 @@ Test all Atoms (atomsTest)
 [0m00:00:00.000 - test   |   [0m[32m(envClose) [ENV_CLOSE] Close environment[0m
 [0m00:00:00.000 - raw    |   |   [0m[0mEnvironment 'mainEnv_puppeteer' closed.[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (envClose)[0m
-[0m                      [0m[0m🕝: 00.000 s. (atomsTest)[0m
-[0m                      [0m[0m🕝: 00.000 s. (atomsTest)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'atomsTest' time 🕝: 00.000 s.[0m
+[0m                      [0m[0m🕝: 00.000 s. (atoms)[0m
+[0m                      [0m[0m🕝: 00.000 s. (atoms)[0m
+[0m00:00:00.000 - timer  [0m[0mTest 'atoms' time 🕝: 00.000 s.[0m
 [0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
 {
-  "atomsTest": {
+  "atoms": {
     "result": {},
     "meta": {}
   }

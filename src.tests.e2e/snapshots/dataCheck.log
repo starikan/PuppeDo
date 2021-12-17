@@ -9,6 +9,7 @@ Check Data Flow. Pass in atoms. (testDataCheck)
    Data check result (blank)
    Data check direct inject after result (blank)
    Data check binding after result (blank)
+   Create complex object in result (initData)
 [0m
 [0m[0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m[0m[32m(testDataCheck) Check Data Flow. Pass in atoms.[0m
@@ -25,6 +26,8 @@ Check Data Flow. Pass in atoms. (testDataCheck)
 [0m|   [0m[34mSkip with disable: (blank) Data check direct inject after result[0m
 [0m|   [0m[32m(blank) Data check binding after result[0m
 [0m|   [0m[0m🕝: 00.000 s. (blank)[0m
+[0m|   [0m[32m(initData) Create complex object in result[0m
+[0m|   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m[0m[0m🕝: 00.000 s. (testDataCheck)[0m
 [0m[0m[0mTest 'testDataCheck' time 🕝: 00.000 s.[0m
 [0m[0m[0mEvaluated time 🕝: 00.000 s.[0m

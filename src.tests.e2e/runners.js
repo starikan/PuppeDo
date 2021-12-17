@@ -101,7 +101,7 @@ const testsE2E = {
   },
   atoms: {
     params: {
-      PPD_TESTS: 'atomsTest',
+      PPD_TESTS: 'atoms',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
     runBeforeTest: () => require('@puppedo/atoms'),

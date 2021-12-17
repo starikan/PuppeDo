@@ -42,6 +42,9 @@ const logClean = (text) => {
 };
 
 for (const testName of testsResolve) {
+  if (!testsE2E[testName]) {
+    throw new Error(`Can't find test "${testName}" in runners`);
+  }
   const options = {
     env: {
       ...process.env,

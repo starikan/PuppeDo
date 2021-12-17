@@ -40,3 +40,8 @@ runTest:
       description: Data check binding after result
       bindData: { CHECK_DATA: CHECK_DATA }
       errorIf: "CHECK_DATA !== 'TEST_DATA1'"
+
+  - initData:
+      description: Create complex object in result
+      const: { dataComplex: '(() => ({meta: $loop, data: {repeat: repeat, $loop: $loop}}))()' }
+      errorIfResult: JSON.stringify(dataComplex) !== '{"meta":1,"data":{"repeat":1,"$loop":1}}'

@@ -1,4 +1,4 @@
-name: atomsTest
+name: atoms
 description: Test all Atoms
 data: { envs: ['mainEnv', 'mainEnv_puppeteer'] }
 repeat: envs.length
