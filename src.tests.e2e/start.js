@@ -72,3 +72,5 @@ for (const testName of testsResolve) {
     }
   }
 }
+
+console.log('All E2E tests passed');
