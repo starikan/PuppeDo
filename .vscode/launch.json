@@ -26,6 +26,13 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "restart",
+      "program": "${workspaceFolder}\\src.tests.e2e\\restart.js",
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "main",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
       "args": ["main"],

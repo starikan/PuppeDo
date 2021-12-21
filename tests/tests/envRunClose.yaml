@@ -1,0 +1,11 @@
+name: envRunClose
+descriptioon: Some environments manipulations
+runTest:
+  - case:
+      description: Open 2 env and close them
+      runTest:
+        - envSwitch:
+            data: { envName: mainEnv }
+
+        - envClose:
+            data: { envName: mainEnv }
