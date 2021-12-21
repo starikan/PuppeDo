@@ -81,7 +81,7 @@ const testsE2E = {
   },
   dataCheck: {
     params: {
-      PPD_TESTS: ['testDataCheck'],
+      PPD_TESTS: ['dataCheck'],
       PPD_DATA: {
         CHECK_DATA: 'ARG_DATA',
       },

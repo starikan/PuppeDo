@@ -156,7 +156,7 @@ const resolveDataFunctions = (
 
 const resolveAliases = (alias: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
   const variants = [...(ALIASES[alias] || []), alias];
-  const values = Object.values(pick(inputs, variants)) as Record<string, unknown>[];
+  const values = (Object.values(pick(inputs, variants)) as Record<string, unknown>[]).map((v) => v || {});
   const result = merge(...values);
   return result;
 };

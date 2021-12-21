@@ -1,4 +1,4 @@
-name: testDataCheck
+name: dataCheck
 type: test
 description: Check Data Flow. Pass in atoms.
 
@@ -6,6 +6,11 @@ data:
   CHECK_DATA: TEST_DATA
 
 runTest:
+  - blank:
+      description: Empty section data and selectors
+      data:
+      selectors:
+
   - blank:
       description: Data parent test
       errorIf: "CHECK_DATA !== 'TEST_DATA'"
