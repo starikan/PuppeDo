@@ -63,6 +63,19 @@ runTest:
                   selectors: { selector: '#span-with-attr' }
                   errorIfResult: attributeValue !== 'attribute'
 
+        - case:
+            description: '[GET_TEXT]'
+            runTest:
+              - getText:
+                  description: Simple geting text from selector
+                  selectors: { selector: '#tag-with-text' }
+                  errorIfResult: text !== 'Text'
+
+              - getText:
+                  description: Simple geting blank text from selector
+                  selectors: { selector: '#span-with-attr' }
+                  errorIfResult: text !== ''
+
   - todo:
       description: CDP Atoms
 
