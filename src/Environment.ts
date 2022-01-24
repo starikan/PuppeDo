@@ -4,7 +4,7 @@ import os from 'os';
 import { execSync, spawn, spawnSync } from 'child_process';
 import crypto from 'crypto';
 
-import fetch from 'node-fetch';
+import axios from 'axios';
 import { Browser as BrowserPuppeteer } from 'puppeteer';
 import { Browser as BrowserPlaywright } from 'playwright';
 
@@ -363,13 +363,13 @@ export class EnvsPool implements EnvsPoolType {
     } = browserSettings || {};
 
     if (urlDevtoolsJson) {
-      const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`, { method: 'GET' });
-      const jsonBrowserResponse = await fetch(`${urlDevtoolsJson}json/version`, {
+      const jsonPagesResponse = await axios(`${urlDevtoolsJson}json`, { method: 'GET' });
+      const jsonBrowserResponse = await axios(`${urlDevtoolsJson}json/version`, {
         method: 'GET',
       });
 
-      const jsonPages = await jsonPagesResponse.json();
-      const jsonBrowser = (await jsonBrowserResponse.json()) as { webSocketDebuggerUrl: string };
+      const jsonPages = await jsonPagesResponse.data;
+      const jsonBrowser = (await jsonBrowserResponse.data) as { webSocketDebuggerUrl: string };
 
       if (!jsonBrowser || !jsonPages) {
         throw new Error(`Can't connect to ${urlDevtoolsJson}`);
