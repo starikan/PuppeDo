@@ -25,6 +25,9 @@ Test all Atoms (atoms)
             Click (clickSelectorRaw)
       [GET_ATTRIBUTES] (case)
          Simple geting atribute from selector (getAttribute)
+      [GET_TEXT] (case)
+         Simple geting text from selector (getText)
+         Simple geting blank text from selector (getText)
    CDP Atoms (todo)
    Checks Atoms (todo)
    Files Atoms (todo)
@@ -75,6 +78,14 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'[0m
 [0m                      |   |   |   [0m[0m🕝: 00.000 s. (getAttribute)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_TEXT][0m[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting text from selector[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: 'Text' from selector: '#tag-with-text'[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting blank text from selector[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: '' from selector: '#span-with-attr'[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[41m[37m(todo) CDP Atoms[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
@@ -122,6 +133,14 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - test   |   |   |   [0m[32m(getAttribute) Simple geting atribute from selector[0m
 [0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'[0m
 [0m                      |   |   |   [0m[0m🕝: 00.000 s. (getAttribute)[0m
+[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
+[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_TEXT][0m[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting text from selector[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: 'Text' from selector: '#tag-with-text'[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
+[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting blank text from selector[0m
+[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: '' from selector: '#span-with-attr'[0m
+[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[41m[37m(todo) CDP Atoms[0m[0m
