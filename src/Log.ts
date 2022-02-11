@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import yaml from 'js-yaml';
 
-import { paintString, colors, getNowDateTime } from './Helpers';
+import { paintString, colors, getNowDateTime, blankSocket } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
@@ -131,7 +131,7 @@ export default class Log {
     stdOut?: boolean;
   };
 
-  constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType) {
+  constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType = blankSocket) {
     this.envsId = envsId;
     this.envs = envsPool;
     this.socket = socket;

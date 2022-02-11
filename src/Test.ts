@@ -345,6 +345,7 @@ export class Test implements TestExtendType {
   type: 'atom' | 'test';
   needData: string[];
   needSelectors: string[];
+  needEnvParams: string[];
   dataParent!: Record<string, unknown>;
   selectorsParent!: Record<string, unknown>;
   options: Record<string, string | number>;
@@ -410,6 +411,7 @@ export class Test implements TestExtendType {
     this.type = initValues.type || ('type' as 'atom' | 'test');
     this.needData = initValues.needData || [];
     this.needSelectors = initValues.needSelectors || [];
+    this.needEnvParams = initValues.needEnvParams || [];
     this.data = initValues.data || {};
     this.selectors = initValues.selectors || {};
     this.options = initValues.options || {};
@@ -565,6 +567,14 @@ export class Test implements TestExtendType {
           }
         }
 
+        if (this.needEnvParams.length) {
+          for (const envParam of this.needEnvParams) {
+            if (!envParam.endsWith('?') && !Object.keys(process.env).includes(envParam)) {
+              throw new Error(`You need set environment parametr: ${envParam}`);
+            }
+          }
+        }
+
         checkIntersection(this.data, this.selectors);
 
         let { dataLocal, selectorsLocal } = fetchData(
@@ -635,6 +645,7 @@ export class Test implements TestExtendType {
           tags: this.tags,
           ppd: globalExportPPD,
           continueOnError: this.continueOnError,
+          argsEnv: { ...new Arguments().args, ...this.argsRedefine },
         };
 
         // IF

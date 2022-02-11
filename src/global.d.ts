@@ -284,6 +284,7 @@ export type TestArgsType = {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
   continueOnError: boolean;
+  argsEnv: Record<string, unknown>;
 };
 
 export type TestArgsExtType = {
@@ -310,6 +311,7 @@ export interface TestTypeYaml {
   type?: 'atom' | 'test';
   needData?: Array<string>;
   needSelectors?: Array<string>;
+  needEnvParams?: string[];
   options?: Record<string, string | number>;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;

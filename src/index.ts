@@ -10,6 +10,7 @@ import Log from './Log';
 import Singleton from './Singleton';
 import { paintString, blankSocket } from './Helpers';
 import { runScriptInContext } from './Test';
+import Screenshot from './Screenshot';
 
 export default {
   run,
@@ -26,4 +27,5 @@ export default {
   blankSocket,
   argsDefault,
   runScriptInContext,
+  Screenshot,
 };

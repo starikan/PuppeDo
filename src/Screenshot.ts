@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import { getNowDateTime } from './Helpers';
+import { blankSocket, getNowDateTime } from './Helpers';
 
 import { EnvsPoolType, SocketType, Element, BrowserPageType } from './global.d';
 
@@ -9,17 +9,26 @@ export default class Screenshot {
   envs: EnvsPoolType;
   socket: SocketType;
 
-  constructor(envsPool: EnvsPoolType, socket: SocketType) {
+  constructor(envsPool: EnvsPoolType, socket: SocketType = blankSocket) {
     this.envs = envsPool;
     this.socket = socket;
   }
 
+  static async copyScreenshotToFolder(pathScreenshot: string, folder: string, name = ''): Promise<void> {
+    console.log(pathScreenshot, folder, name);
+    const fileName = name ? name + path.extname(pathScreenshot) : path.basename(pathScreenshot);
+    const pathScreenshotNew = path.join(folder, fileName);
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true });
+    }
+    if (fs.existsSync(pathScreenshot)) {
+      fs.copyFileSync(pathScreenshot, pathScreenshotNew);
+    }
+  }
+
   async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
     const { folderLatest = '.' } = this.envs.output;
-    const pathScreenshotLatest = path.join(folderLatest, path.basename(pathScreenshot));
-    if (fs.existsSync(pathScreenshot)) {
-      fs.copyFileSync(pathScreenshot, pathScreenshotLatest);
-    }
+    await Screenshot.copyScreenshotToFolder(pathScreenshot, folderLatest);
   }
 
   getScreenshotName(nameIncome: string): string {
