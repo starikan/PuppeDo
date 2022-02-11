@@ -15,7 +15,6 @@ export default class Screenshot {
   }
 
   static async copyScreenshotToFolder(pathScreenshot: string, folder: string, name = ''): Promise<void> {
-    console.log(pathScreenshot, folder, name);
     const fileName = name ? name + path.extname(pathScreenshot) : path.basename(pathScreenshot);
     const pathScreenshotNew = path.join(folder, fileName);
     if (!fs.existsSync(folder)) {

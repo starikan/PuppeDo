@@ -49,6 +49,7 @@ export const BLANK_TEST: TestType = {
   name: '',
   needData: [],
   needSelectors: [],
+  needEnvParams: [],
   options: {},
   repeat: 1,
   runTest: [],
