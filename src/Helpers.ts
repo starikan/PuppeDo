@@ -106,7 +106,10 @@ export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-m
 
 export const walkSync = (
   dir: string,
-  options: { ignoreFolders: string[]; extensions?: string[] } = { ignoreFolders: [] },
+  options: { ignoreFolders: string[]; extensions?: string[]; ignoreFiles: string[] } = {
+    ignoreFolders: [],
+    ignoreFiles: [],
+  },
 ): string[] => {
   const baseDir = path.basename(dir);
   if (!fs.existsSync(dir) || options.ignoreFolders.includes(baseDir)) {
@@ -119,6 +122,7 @@ export const walkSync = (
     .readdirSync(dir)
     .map((f) => walkSync(path.join(dir, f), options))
     .flat()
+    .filter((v) => !options.ignoreFiles.includes(v))
     .filter((v) => (options.extensions ? options.extensions.includes(path.parse(v).ext) : true));
   return dirs;
 };

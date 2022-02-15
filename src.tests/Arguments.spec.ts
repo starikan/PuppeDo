@@ -9,6 +9,7 @@ const argsModify = {
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: ['iii', 'ooo'],
   PPD_ROOT_IGNORE: ['dqq'],
+  PPD_FILES_IGNORE: [],
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
   PPD_LOG_LEVEL_NESTED: 10,
@@ -24,6 +25,7 @@ const argsModify = {
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
   PPD_CONTINUE_ON_ERROR_ENABLED: false,
+  PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
 const argsENV = {
@@ -35,6 +37,7 @@ const argsENV = {
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: 'iii, ooo',
   PPD_ROOT_IGNORE: 'dqq',
+  PPD_FILES_IGNORE: '',
   PPD_SELECTORS: '{"joo": "jii"}',
   PPD_TESTS: 'suu',
   PPD_LOG_LEVEL_NESTED: '10',
@@ -50,6 +53,7 @@ const argsENV = {
   PPD_LOG_TIMESTAMP_SHOW: 'true',
   PPD_LOG_INDENT_LENGTH: '4',
   PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
+  PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
 };
 
 // Reset Arguments

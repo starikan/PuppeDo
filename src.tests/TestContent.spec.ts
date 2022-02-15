@@ -11,7 +11,7 @@ describe('TestContent', () => {
     const { ignorePaths, rootFolder, additionalFolders } = new TestsContent();
     expect(console.log).toHaveBeenCalled();
     spy.mockRestore();
-    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github']);
+    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github', '.vscode']);
     expect(rootFolder).toEqual(process.cwd());
     expect(additionalFolders).toEqual([]);
   });

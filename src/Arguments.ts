@@ -7,7 +7,8 @@ import { ArgumentsKeysType, ArgumentsType } from './global.d';
 export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
   PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github'],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
+  PPD_FILES_IGNORE: [],
   PPD_TESTS: [],
   PPD_DATA: {},
   PPD_SELECTORS: {},
@@ -28,6 +29,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_TIMER_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
+  PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {

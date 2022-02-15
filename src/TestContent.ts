@@ -68,6 +68,7 @@ export default class TestsContent extends Singleton {
   rootFolder!: string;
   additionalFolders!: Array<string>;
   ignorePaths!: Array<string>;
+  ignoreFiles!: Array<string>;
 
   constructor(reInit = false) {
     super();
@@ -77,6 +78,7 @@ export default class TestsContent extends Singleton {
       this.rootFolder = path.normalize(args.PPD_ROOT);
       this.additionalFolders = args.PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
       this.ignorePaths = args.PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
+      this.ignoreFiles = args.PPD_FILES_IGNORE.map((v: string) => path.join(this.rootFolder, path.normalize(v)));
       this.allData = this.getAllData();
     }
   }
@@ -114,42 +116,65 @@ export default class TestsContent extends Singleton {
   }
 
   getAllData(force = false): AllDataType {
+    const args = { ...new Arguments().args };
     if (force || !this.allData) {
       const allContent: Array<TestType | EnvType | DataType> = [];
-      const extensions = ['.yaml', '.yml', '.ppd'];
+      const extensions = ['.yaml', '.yml', '.ppd', '.json'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
       const paths = folders
         .map((folder) => {
           if (fs.existsSync(folder)) {
-            return walkSync(folder, { ignoreFolders: this.ignorePaths, extensions });
+            return walkSync(folder, { ignoreFolders: this.ignorePaths, ignoreFiles: this.ignoreFiles, extensions });
           }
           return [];
         })
         .flat();
 
       paths.forEach((filePath) => {
-        try {
-          const testsYaml = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
-          testsYaml.forEach((v) => {
-            const { name } = v;
-            if (!name) {
-              throw new Error('Every test need name');
+        let testData: Partial<TestTypeYaml>[] = [];
+        if (filePath.endsWith('.json')) {
+          try {
+            testData = __non_webpack_require__(filePath);
+            if (!Array.isArray(testData)) {
+              testData = [testData];
             }
-            const collect = {
-              ...{ type: 'test', name },
-              ...v,
-              ...{ testFile: filePath },
-            };
-            if (collect.type === 'test') {
-              allContent.push(resolveTest(collect as TestTypeYaml));
-            } else {
-              allContent.push(collect as EnvType | DataType);
-            }
-          });
-        } catch (e) {
-          console.log(`\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/`);
+          } catch (e) {
+            console.log(
+              `\u001B[41mError JSON read. File: '${filePath}'. Try to check it on https://jsonlint.com/
+              or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
+            );
+          }
+        } else {
+          try {
+            testData = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
+          } catch (e) {
+            console.log(
+              `\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/
+              or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
+            );
+          }
         }
+
+        testData.forEach((v) => {
+          const { name } = v;
+          if (!name && !args.PPD_IGNORE_TESTS_WITHOUT_NAME) {
+            throw new Error('Every test need name');
+          }
+          if (!name) {
+            return;
+          }
+          const collect = {
+            ...{ type: 'test', name },
+            ...v,
+            ...{ testFile: filePath },
+          };
+          if (collect.type === 'test') {
+            allContent.push(resolveTest(collect as TestTypeYaml));
+          } else {
+            allContent.push(collect as EnvType | DataType);
+          }
+        });
       });
 
       const atoms: Array<TestType> = TestsContent.checkDuplicates(

@@ -67,6 +67,7 @@ export type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
   PPD_ROOT_IGNORE: string[];
+  PPD_FILES_IGNORE: string[];
   PPD_TESTS: string[];
   PPD_OUTPUT: string;
   PPD_DATA: Record<string, unknown>;
@@ -87,6 +88,7 @@ export type ArgumentsType = {
   PPD_LOG_TIMESTAMP_SHOW: boolean;
   PPD_LOG_INDENT_LENGTH: number;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
+  PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
