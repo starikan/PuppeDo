@@ -19,19 +19,17 @@ export default class TestStructure {
     const keys = Object.keys(BLANK_TEST);
     const fullJSONFiltered: Partial<TestExtendType> = {};
     keys.forEach((v) => {
-      if (
-        ['string', 'boolean', 'number'].includes(typeof fullJSON[v]) &&
-        fullJSON[v] !== null &&
-        fullJSON[v] !== BLANK_TEST[v]
-      ) {
+      const value = fullJSON[v];
+
+      if (['string', 'boolean', 'number'].includes(typeof value) && value !== null && value !== BLANK_TEST[v]) {
         fullJSONFiltered[v] = fullJSON[v];
       }
       if (
-        ['object'].includes(typeof fullJSON[v]) &&
-        fullJSON[v] !== null &&
-        JSON.stringify(fullJSON[v]) !== JSON.stringify(BLANK_TEST[v])
+        ['object'].includes(typeof value) &&
+        value !== null &&
+        ((Array.isArray(value) && !value.length) || !Object.keys(value).length)
       ) {
-        fullJSONFiltered[v] = fullJSON[v];
+        fullJSONFiltered[v] = value;
       }
     });
 

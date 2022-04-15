@@ -36,13 +36,15 @@ export default class Screenshot {
     return path.resolve(path.join(folder, name));
   }
 
-  async saveScreenshotElement(element: Element, name: string): Promise<string> {
+  async saveScreenshotElement(element: Element, name: string, copyToLatest = true): Promise<string> {
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
       if (element) {
         await element.screenshot({ path: pathScreenshot });
-        await this.copyScreenshotToLatest(pathScreenshot);
+        if (copyToLatest) {
+          await this.copyScreenshotToLatest(pathScreenshot);
+        }
         return pathScreenshot;
       }
     } catch (error) {
@@ -52,14 +54,16 @@ export default class Screenshot {
     return '';
   }
 
-  async saveScreenshotFull(name: string): Promise<string> {
+  async saveScreenshotFull(name: string, copyToLatest = true): Promise<string> {
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
       const page = this.envs.getActivePage() as BrowserPageType;
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
-        await this.copyScreenshotToLatest(pathScreenshot);
+        if (copyToLatest) {
+          await this.copyScreenshotToLatest(pathScreenshot);
+        }
         return pathScreenshot;
       }
     } catch (error) {

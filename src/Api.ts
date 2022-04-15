@@ -9,6 +9,7 @@ import { LogEntry } from './global.d';
 type RunOptions = {
   closeProcess?: boolean;
   stdOut?: boolean;
+  closeAllEnvs?: boolean;
 };
 
 export default async function run(
@@ -16,7 +17,7 @@ export default async function run(
   options: RunOptions = {},
 ): Promise<{ results: Record<string, unknown>; logs: Record<string, unknown> }> {
   const { envsId, envsPool, socket, logger } = Environment();
-  const { closeProcess = true, stdOut = true } = options;
+  const { closeProcess = true, stdOut = true, closeAllEnvs = true } = options;
   logger.bindData({ stdOut });
   const { PPD_TESTS } = new Arguments({ ...argsInput }, true).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
@@ -57,7 +58,9 @@ export default async function run(
       logs[testName] = envsPool.log.filter((v) => !stepIds.includes(v.stepId));
     }
 
-    await envsPool.closeAllEnvs();
+    if (closeAllEnvs) {
+      await envsPool.closeAllEnvs();
+    }
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });
 
