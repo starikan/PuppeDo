@@ -10,7 +10,7 @@ import Atom from './AtomCore';
 
 import {
   SocketType,
-  TestArgsExtType,
+  TestArgsType,
   TestExtendType,
   TestExtendTypeKeys,
   TestFunctionsBlockNames,
@@ -67,7 +67,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
 
 const propagateArgumentsObjectsOnAir = (
   source: TestExtendType,
-  args: TestArgsExtType | undefined,
+  args: TestArgsType | undefined,
   list: TestExtendTypeKeys[] = [],
 ): TestExtendType => {
   const sourceValues = pick(source || {}, list);
@@ -80,7 +80,7 @@ const propagateArgumentsObjectsOnAir = (
 
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
-  args: TestArgsExtType | undefined,
+  args: TestArgsType | undefined,
   list: TestExtendTypeKeys[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
@@ -135,7 +135,7 @@ const getTest = ({
 
   const test = new Test(testJson);
 
-  const testResolver: TestLifecycleFunctionType = async (args?: TestArgsExtType): Promise<Record<string, unknown>> => {
+  const testResolver: TestLifecycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
     if (parentTestMetaCollector?.stepId !== args?.stepId) {
       parentTestMetaCollector.stepId = args.stepId;
       parentTestMetaCollector.resultsFromPrevSubling = {};

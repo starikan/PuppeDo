@@ -15,7 +15,6 @@ import {
   LogFunctionType,
   LogInputType,
   SocketType,
-  TestArgsExtType,
   TestArgsType,
 } from './global.d';
 import { ErrorType } from './Error';
@@ -61,7 +60,7 @@ export const logTimer = async (log: LogFunctionType, startTime: bigint, levelInd
 export const logExtend = async (
   log: LogFunctionType,
   levelIndent: number,
-  args: TestArgsExtType | undefined,
+  args: TestArgsType | undefined,
   isError = false,
 ): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
@@ -100,7 +99,7 @@ export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut 
 export const logDebug = async (
   log: LogFunctionType,
   levelIndent: number,
-  args: TestArgsExtType | undefined,
+  args: TestArgsType | undefined,
   stdOut = false,
   type: 'data' | 'selectors' | boolean = true,
 ): Promise<void> => {

@@ -15,7 +15,6 @@ import {
   ColorsType,
   SocketType,
   TestArgsType,
-  TestArgsExtType,
   EnvType,
   EnvStateType,
   LogFunctionType,
@@ -620,34 +619,6 @@ export class Test implements TestExtendType {
           this.logOptions.backgroundColor = 'red';
         }
 
-        // All data passed to log
-        const args: TestArgsType = {
-          envsId: this.envsId,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          dataTest: this.data,
-          selectorsTest: this.selectors,
-          envName: this.envName,
-          envPageName: this.envPageName,
-          options: this.options,
-          allowResults: this.allowResults,
-          bindResults: this.bindResults,
-          bindSelectors: this.bindSelectors,
-          bindData: this.bindData,
-          bindDescription: this.bindDescription,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
-          stepId: this.stepId,
-          debug: this.debug,
-          disable: this.disable,
-          logOptions: logForChild,
-          frame: this.frame,
-          tags: this.tags,
-          ppd: globalExportPPD,
-          continueOnError: this.continueOnError,
-          argsEnv: { ...new Arguments().args, ...this.argsRedefine },
-        };
-
         // IF
         if (this.if) {
           const skipIf = await checkIf(
@@ -679,8 +650,31 @@ export class Test implements TestExtendType {
 
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
-        const argsExt: TestArgsExtType = {
-          ...args,
+        const args: TestArgsType = {
+          envsId: this.envsId,
+          data: dataLocal,
+          selectors: selectorsLocal,
+          dataTest: this.data,
+          selectorsTest: this.selectors,
+          envName: this.envName,
+          envPageName: this.envPageName,
+          options: this.options,
+          allowResults: this.allowResults,
+          bindResults: this.bindResults,
+          bindSelectors: this.bindSelectors,
+          bindData: this.bindData,
+          bindDescription: this.bindDescription,
+          levelIndent: this.levelIndent,
+          repeat: this.repeat,
+          stepId: this.stepId,
+          debug: this.debug,
+          disable: this.disable,
+          logOptions: logForChild,
+          frame: this.frame,
+          tags: this.tags,
+          ppd: globalExportPPD,
+          continueOnError: this.continueOnError,
+          argsEnv: { ...new Arguments().args, ...this.argsRedefine },
           env: this.env,
           envs: envsPool,
           browser: this.env && this.env.state.browser,
@@ -740,7 +734,7 @@ export class Test implements TestExtendType {
         }
 
         if (this.debugInfo) {
-          logDebug(logger.log.bind(logger), 0, argsExt, true, this.debugInfo);
+          logDebug(logger.log.bind(logger), 0, args, true, this.debugInfo);
           if (this.debug) {
             console.log(this);
             // eslint-disable-next-line no-debugger
@@ -755,7 +749,7 @@ export class Test implements TestExtendType {
         for (let funcs of FUNCTIONS) {
           funcs = [funcs].flat();
           for (const func of funcs) {
-            const funResult = (await func(argsExt)) || {};
+            const funResult = (await func(args)) || {};
             resultFromTest = { ...resultFromTest, ...funResult };
           }
         }

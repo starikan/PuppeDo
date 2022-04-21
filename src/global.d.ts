@@ -287,9 +287,6 @@ export type TestArgsType = {
   };
   continueOnError: boolean;
   argsEnv: Record<string, unknown>;
-};
-
-export type TestArgsExtType = {
   env: {
     name: string;
     state: EnvStateType; // Browser, pages, cookies, etc.
@@ -304,9 +301,9 @@ export type TestArgsExtType = {
   socket: SocketType;
   descriptionExtend: string[];
   allData: AllDataType;
-} & TestArgsType;
+};
 
-export type TestLifecycleFunctionType = (args?: TestArgsExtType) => Promise<Record<string, unknown>>;
+export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
 export interface TestTypeYaml {
   name: string;

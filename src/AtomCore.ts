@@ -9,7 +9,7 @@ import {
   BrowserPageType,
   LogOptionsType,
   Element,
-  TestArgsExtType,
+  TestArgsType,
   LogFunctionType,
   LogInputType,
   ColorsType,
@@ -137,7 +137,7 @@ export default class Atom {
     }
   }
 
-  async runTest(args?: TestArgsExtType): Promise<Record<string, unknown>> {
+  async runTest(args?: TestArgsType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
     const entries = Object.entries(args || {});
