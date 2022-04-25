@@ -343,7 +343,7 @@ export interface TestTypeYaml {
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
   argsRedefine?: Partial<ArgumentsType>;
-  continueOnError?: boolean;
+  // continueOnError?: boolean;
 }
 
 export type TestType = Required<TestTypeYaml>;

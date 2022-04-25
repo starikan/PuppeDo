@@ -6,6 +6,8 @@ import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 import { LogEntry } from './global.d';
 
+import './Plugins/continueOnError';
+
 type RunOptions = {
   closeProcess?: boolean;
   stdOut?: boolean;

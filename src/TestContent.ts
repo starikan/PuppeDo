@@ -30,7 +30,7 @@ export const BLANK_TEST: TestType = {
   bindDescription: '',
   bindResults: {},
   bindSelectors: {},
-  continueOnError: false,
+  // continueOnError: false,
   data: {},
   dataExt: [],
   debug: false,

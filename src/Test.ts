@@ -25,6 +25,7 @@ import {
   TestMetaSublingExchangeData,
 } from './global.d';
 import Atom from './AtomCore';
+import { Plugins } from './Plugins';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -389,7 +390,6 @@ export class Test implements TestExtendType {
   todo!: string;
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
-  continueOnError: boolean;
   breakParentIfResult: string;
   skipSublingIfResult: string;
 
@@ -404,7 +404,11 @@ export class Test implements TestExtendType {
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
 
+  // continueOnError: boolean;
+
   constructor(initValues: TestExtendType) {
+    const plugins = new Plugins(this);
+
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
     this.type = initValues.type || ('type' as 'atom' | 'test');
@@ -441,13 +445,16 @@ export class Test implements TestExtendType {
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
-    this.continueOnError = initValues.continueOnError || false;
     this.breakParentIfResult = initValues.breakParentIfResult || '';
     this.skipSublingIfResult = initValues.skipSublingIfResult || '';
+
+    // this.continueOnError = initValues.continueOnError || false;
+    plugins.hook('initValues')(initValues);
 
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+      plugins.hook('runLogic')(inputs);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -464,7 +471,7 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
-        PPD_CONTINUE_ON_ERROR_ENABLED,
+        // PPD_CONTINUE_ON_ERROR_ENABLED,
       } = { ...new Arguments().args, ...this.argsRedefine };
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
@@ -552,7 +559,9 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
-      this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
+      // this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
+      // debugger;
+      plugins.hook('resolveValues')(inputs);
 
       try {
         this.envName = envsPool.current.name || '';
@@ -628,7 +637,8 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.continueOnError,
+            plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            // this.continueOnError,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -644,7 +654,8 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.continueOnError,
+            plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            // this.continueOnError,
           );
         }
 
@@ -673,7 +684,8 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
-          continueOnError: this.continueOnError,
+          // continueOnError: this.continueOnError,
+          continueOnError: plugins.getValue('continueOnError', 'continueOnError') as boolean,
           argsEnv: { ...new Arguments().args, ...this.argsRedefine },
           env: this.env,
           envs: envsPool,
@@ -780,7 +792,8 @@ export class Test implements TestExtendType {
             this.levelIndent + 1,
             { ...allData, ...localResults },
             logShowFlag,
-            this.continueOnError,
+            // this.continueOnError,
+            plugins.getValue('continueOnError', 'continueOnError') as boolean,
           );
         }
 
@@ -855,7 +868,8 @@ export class Test implements TestExtendType {
         }
 
         let newError;
-        if (this.continueOnError) {
+        // if (this.continueOnError) {
+        if (plugins.getValue('continueOnError', 'continueOnError') as boolean) {
           newError = new ContinueParentError({
             localResults: error.localResults || {},
             errorLevel: 0,

@@ -88,7 +88,7 @@ const getTest = ({
   testJsonIncome,
   envsId,
   socket,
-  parentTestMetaCollector, // object fo share data with sublings
+  parentTestMetaCollector, // object for share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
