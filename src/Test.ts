@@ -171,6 +171,7 @@ export const checkIf = async (
   logShowFlag = true,
   continueOnError = false,
 ): Promise<boolean> => {
+  // debugger
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
@@ -404,10 +405,10 @@ export class Test implements TestExtendType {
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
 
-  // continueOnError: boolean;
+  plugins: Plugins;
 
   constructor(initValues: TestExtendType) {
-    const plugins = new Plugins(this);
+    this.plugins = new Plugins(this);
 
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
@@ -448,13 +449,12 @@ export class Test implements TestExtendType {
     this.breakParentIfResult = initValues.breakParentIfResult || '';
     this.skipSublingIfResult = initValues.skipSublingIfResult || '';
 
-    // this.continueOnError = initValues.continueOnError || false;
-    plugins.hook('initValues')(initValues);
+    this.plugins.hook('initValues')(initValues);
 
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      plugins.hook('runLogic')(inputs);
+      this.plugins.hook('runLogic')(inputs);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -559,9 +559,8 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
-      // this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
-      // debugger;
-      plugins.hook('resolveValues')(inputs);
+
+      this.plugins.hook('resolveValues')(inputs);
 
       try {
         this.envName = envsPool.current.name || '';
@@ -637,8 +636,7 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            plugins.getValue('continueOnError', 'continueOnError') as boolean,
-            // this.continueOnError,
+            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -654,14 +652,13 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            plugins.getValue('continueOnError', 'continueOnError') as boolean,
-            // this.continueOnError,
+            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
           );
         }
 
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
-        const args: TestArgsType = {
+        const args: TestArgsType & Record<string, unknown> = {
           envsId: this.envsId,
           data: dataLocal,
           selectors: selectorsLocal,
@@ -684,8 +681,6 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
-          // continueOnError: this.continueOnError,
-          continueOnError: plugins.getValue('continueOnError', 'continueOnError') as boolean,
           argsEnv: { ...new Arguments().args, ...this.argsRedefine },
           env: this.env,
           envs: envsPool,
@@ -697,6 +692,8 @@ export class Test implements TestExtendType {
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,
           allData: new TestsContent().allData,
+          plugins: this.plugins,
+          continueOnError: this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
         };
 
         // LOG TEST
@@ -792,8 +789,7 @@ export class Test implements TestExtendType {
             this.levelIndent + 1,
             { ...allData, ...localResults },
             logShowFlag,
-            // this.continueOnError,
-            plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
           );
         }
 
@@ -868,8 +864,7 @@ export class Test implements TestExtendType {
         }
 
         let newError;
-        // if (this.continueOnError) {
-        if (plugins.getValue('continueOnError', 'continueOnError') as boolean) {
+        if (this.plugins.getValue('continueOnError', 'continueOnError') as boolean) {
           newError = new ContinueParentError({
             localResults: error.localResults || {},
             errorLevel: 0,

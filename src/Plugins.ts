@@ -13,10 +13,16 @@ type Hooks = {
   resolveValues?: (inputs: TestExtendType) => void;
 };
 
+type PropogationsAndShares = {
+  fromPrevSubling: string[];
+};
+
 interface PluginType {
   name: string;
   hook: (name: keyof Hooks) => (unknown) => void;
   hooks: Hooks;
+  propogationsAndShares?: PropogationsAndShares;
+  values: any;
 }
 
 type PluginFunction = (allPlugins: Plugins) => PluginType;
@@ -67,7 +73,6 @@ export class Plugins {
   }
 
   hook(name: keyof Hooks): (args: unknown) => void {
-    // debugger;
     return async (args: unknown) => {
       for (const plugin of this.plugins) {
         await plugin.hook(name)(args);
@@ -76,8 +81,23 @@ export class Plugins {
   }
 
   getValue(pluginName: string, valueName: string): unknown {
-    // debugger;
-    return this.plugins.find((v) => v.name === pluginName)?.[valueName] ?? this.originTest[valueName] ?? null;
+    return this.plugins.find((v) => v.name === pluginName)?.values[valueName] ?? this.originTest[valueName] ?? null;
+  }
+
+  getAllPropogatesAndSublings(type: keyof PropogationsAndShares): Record<string, unknown> {
+    const propogationsAndShares = this.plugins.filter((v) => v.propogationsAndShares);
+    const result = {};
+
+    if (type === 'fromPrevSubling') {
+      const fromPrevSublingPlugins = propogationsAndShares.filter((v) => v.propogationsAndShares.fromPrevSubling);
+      fromPrevSublingPlugins.forEach((fromPrevSublingPlugin) => {
+        fromPrevSublingPlugin.propogationsAndShares.fromPrevSubling.forEach((v) => {
+          result[v] = this.getValue(fromPrevSublingPlugin.name, v);
+        });
+      });
+    }
+
+    return result;
   }
 }
 
@@ -107,21 +127,26 @@ export class Plugin<TValues> implements PluginType {
     // Blank
   };
 
+  propogationsAndShares?: PropogationsAndShares;
+
   constructor({
     name,
     defaultValues,
     hooks,
     allPlugins,
+    propogationsAndShares,
   }: {
     name: string;
     defaultValues: TValues;
     hooks: Hooks;
     allPlugins: Plugins;
+    propogationsAndShares?: PropogationsAndShares;
   }) {
     this.name = name;
     this.defaultValues = defaultValues;
     this.allPlugins = allPlugins;
     this.hooks = { ...this.hooks, ...hooks };
+    this.propogationsAndShares = propogationsAndShares;
   }
 
   hook(name: keyof Hooks): (unknown) => void {
@@ -131,6 +156,7 @@ export class Plugin<TValues> implements PluginType {
       }
       return this.blankHook;
     } catch (error) {
+      // eslint-disable-next-line no-debugger
       debugger;
     }
     return this.blankHook;

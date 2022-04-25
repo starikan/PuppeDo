@@ -114,7 +114,6 @@ describe('TestContent', () => {
         afterTest: [],
         inlineJS: '',
         argsRedefine: {},
-        continueOnError: false,
       },
       {
         type: 'atom',
@@ -155,7 +154,6 @@ describe('TestContent', () => {
         afterTest: [],
         inlineJS: '',
         argsRedefine: {},
-        continueOnError: false,
       },
       {
         type: 'atom',
@@ -196,7 +194,6 @@ describe('TestContent', () => {
         afterTest: [],
         inlineJS: '',
         argsRedefine: {},
-        continueOnError: false,
       },
       {
         type: 'atom',
@@ -237,7 +234,6 @@ describe('TestContent', () => {
         afterTest: [],
         inlineJS: '',
         argsRedefine: {},
-        continueOnError: false,
       },
     ];
 

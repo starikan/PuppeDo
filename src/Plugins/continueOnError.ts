@@ -16,9 +16,9 @@ plugins.addPlugin(
     new Plugin<Type_continueOnError>({
       name,
       defaultValues: { continueOnError: false },
-      // propogationsAndShares: {
-      //   prevSubling: ['continueOnError']
-      // },
+      propogationsAndShares: {
+        fromPrevSubling: ['continueOnError'],
+      },
       hooks: {
         resolveValues: function resolveValues(inputs: TestExtendType & Type_continueOnError): void {
           const self = this as Plugin<Type_continueOnError>;

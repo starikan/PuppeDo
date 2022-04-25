@@ -285,7 +285,6 @@ export type TestArgsType = {
   ppd: {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
-  continueOnError: boolean;
   argsEnv: Record<string, unknown>;
   env: {
     name: string;

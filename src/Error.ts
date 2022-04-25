@@ -75,7 +75,8 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId, funcFile, testFile, levelIndent, continueOnError } = this.test;
+    const { stepId, funcFile, testFile, levelIndent } = this.test;
+    const continueOnError = this.test.plugins.getValue('continueOnError', 'continueOnError');
 
     if (!continueOnError) {
       let text = this.descriptionError ? `${this.descriptionError} | ` : '';

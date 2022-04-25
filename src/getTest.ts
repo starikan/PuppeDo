@@ -81,7 +81,7 @@ const propagateArgumentsObjectsOnAir = (
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
   args: TestArgsType | undefined,
-  list: TestExtendTypeKeys[] = [],
+  list: (TestExtendTypeKeys | string)[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
 const getTest = ({
@@ -148,10 +148,11 @@ const getTest = ({
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
+    const allPrevSublingsToPropogate = test.plugins.getAllPropogatesAndSublings('fromPrevSubling');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
-      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
-      ['debug', 'frame', 'continueOnError'],
+      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}), ...allPrevSublingsToPropogate },
+      ['debug', 'frame', ...Object.keys(allPrevSublingsToPropogate)],
     );
 
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
