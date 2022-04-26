@@ -25,7 +25,7 @@ plugins.addPlugin(
 
           const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
             ...new Arguments().args,
-            ...self.allPlugins.originTest.argsRedefine,
+            ...allPlugins.originTest.argsRedefine,
           };
 
           self.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
@@ -39,11 +39,9 @@ plugins.addPlugin(
 
 plugins.addPlugin(
   'skipSublingIfResult',
-  (allPlugins: Plugins) =>
+  () =>
     new Plugin<PluginSkipSublingIfResult>({
       name: 'skipSublingIfResult',
       defaultValues: { skipSublingIfResult: '' },
-      hooks: {},
-      allPlugins,
     }),
 );

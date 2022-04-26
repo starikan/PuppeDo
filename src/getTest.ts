@@ -148,11 +148,11 @@ const getTest = ({
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
-    const allPrevSublingsToPropogate = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
+    const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
-      ['debug', 'frame', ...Object.keys(allPrevSublingsToPropogate)],
+      ['debug', 'frame', ...Object.keys(fromPrevSublingSimple)],
     );
 
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};

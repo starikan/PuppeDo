@@ -18,15 +18,15 @@ type PropogationsAndShares = {
   fromPrevSublingSimple: string[];
 };
 
-interface PluginType {
+interface PluginType<TValues> {
   name: string;
   hook: (name: keyof Hooks) => (unknown) => void;
   hooks: Hooks;
   propogationsAndShares?: PropogationsAndShares;
-  values: any;
+  values: TValues;
 }
 
-type PluginFunction = (allPlugins: Plugins) => PluginType;
+type PluginFunction = (allPlugins?: Plugins) => PluginType<unknown>;
 
 // Storage of all scratch of plugins
 export class PluginsFabric extends Singleton {
@@ -56,7 +56,7 @@ export class PluginsFabric extends Singleton {
 }
 
 export class Plugins {
-  private plugins: PluginType[] = [];
+  private plugins: PluginType<unknown>[] = [];
 
   originTest: Test;
 
@@ -103,20 +103,20 @@ export class Plugins {
   }
 }
 
-export class Plugin<TValues> implements PluginType {
+export class Plugin<TValues> implements PluginType<TValues> {
   id = randomUUID();
 
   name: string;
 
-  defaultValues: TValues;
+  defaultValues?: TValues;
 
   values: TValues;
 
-  allPlugins: Plugins;
+  allPlugins?: Plugins;
 
   hooks: Required<Hooks> = {
     initValues: (initValues: TestExtendType & PliginsFields) => {
-      const newValues = { ...this.defaultValues, ...pick(initValues, Object.keys(this.defaultValues)) };
+      const newValues = { ...(this.defaultValues ?? {}), ...pick(initValues, Object.keys(this.defaultValues ?? {})) };
       this.values = newValues as TValues;
     },
     runLogic: () => {
@@ -136,21 +136,21 @@ export class Plugin<TValues> implements PluginType {
   constructor({
     name,
     defaultValues,
-    hooks,
-    allPlugins,
     propogationsAndShares,
+    allPlugins,
+    hooks = {},
   }: {
     name: string;
-    defaultValues: TValues;
-    hooks: Hooks;
-    allPlugins: Plugins;
+    defaultValues?: TValues;
     propogationsAndShares?: PropogationsAndShares;
+    allPlugins?: Plugins;
+    hooks?: Hooks;
   }) {
     this.name = name;
     this.defaultValues = defaultValues;
+    this.propogationsAndShares = propogationsAndShares;
     this.allPlugins = allPlugins;
     this.hooks = { ...this.hooks, ...hooks };
-    this.propogationsAndShares = propogationsAndShares;
   }
 
   hook(name: keyof Hooks): (unknown) => void {

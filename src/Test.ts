@@ -470,7 +470,6 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
-        // PPD_CONTINUE_ON_ERROR_ENABLED,
       } = { ...new Arguments().args, ...this.argsRedefine };
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
