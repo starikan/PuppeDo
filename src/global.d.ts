@@ -13,6 +13,7 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
+import { PluginContinueOnError } from './Plugins/continueOnError';
 
 // ================ BROWSERS ====================
 
@@ -304,7 +305,7 @@ export type TestArgsType = {
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
-export interface TestTypeYaml {
+export type TestTypeYaml = {
   name: string;
   type?: 'atom' | 'test';
   needData?: Array<string>;
@@ -342,8 +343,9 @@ export interface TestTypeYaml {
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
   argsRedefine?: Partial<ArgumentsType>;
-  // continueOnError?: boolean;
-}
+};
+
+export type PliginsFields = Partial<PluginContinueOnError> & Record<string, unknown>;
 
 export type TestType = Required<TestTypeYaml>;
 

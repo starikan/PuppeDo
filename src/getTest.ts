@@ -148,7 +148,7 @@ const getTest = ({
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
-    const allPrevSublingsToPropogate = test.plugins.getAllPropogatesAndSublings('fromPrevSubling');
+    const allPrevSublingsToPropogate = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },

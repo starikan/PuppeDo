@@ -15,7 +15,7 @@ type Hooks = {
 };
 
 type PropogationsAndShares = {
-  fromPrevSubling: string[];
+  fromPrevSublingSimple: string[];
 };
 
 interface PluginType {
@@ -89,10 +89,10 @@ export class Plugins {
     const propogationsAndShares = this.plugins.filter((v) => v.propogationsAndShares);
     const result = {};
 
-    if (type === 'fromPrevSubling') {
-      const fromPrevSublingPlugins = propogationsAndShares.filter((v) => v.propogationsAndShares.fromPrevSubling);
+    if (type === 'fromPrevSublingSimple') {
+      const fromPrevSublingPlugins = propogationsAndShares.filter((v) => v.propogationsAndShares.fromPrevSublingSimple);
       fromPrevSublingPlugins.forEach((fromPrevSublingPlugin) => {
-        fromPrevSublingPlugin.propogationsAndShares.fromPrevSubling.forEach((v) => {
+        fromPrevSublingPlugin.propogationsAndShares.fromPrevSublingSimple.forEach((v) => {
           result[v] = this.getValue(fromPrevSublingPlugin.name, v);
         });
       });

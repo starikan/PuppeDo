@@ -7,21 +7,21 @@ import { Plugin, Plugins, PluginsFabric } from '../Plugins';
 
 const name = 'continueOnError';
 
-type Type_continueOnError = { continueOnError: boolean };
+export type PluginContinueOnError = { continueOnError: boolean };
 
 const plugins = new PluginsFabric();
 plugins.addPlugin(
   name,
   (allPlugins: Plugins) =>
-    new Plugin<Type_continueOnError>({
+    new Plugin<PluginContinueOnError>({
       name,
       defaultValues: { continueOnError: false },
       propogationsAndShares: {
-        fromPrevSubling: ['continueOnError'],
+        fromPrevSublingSimple: ['continueOnError'],
       },
       hooks: {
-        resolveValues: function resolveValues(inputs: TestExtendType & Type_continueOnError): void {
-          const self = this as Plugin<Type_continueOnError>;
+        resolveValues: function resolveValues(inputs: TestExtendType & PluginContinueOnError): void {
+          const self = this as Plugin<PluginContinueOnError>;
 
           const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
             ...new Arguments().args,
