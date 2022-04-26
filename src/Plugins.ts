@@ -38,7 +38,7 @@ export class PluginsFabric extends Singleton {
     }
   }
 
-  getAllPlugins(): Record<string, PluginFunction> {
+  getAllPluginsScratch(): Record<string, PluginFunction> {
     return this.plugins;
   }
 
@@ -65,11 +65,11 @@ export class Plugins {
   };
 
   constructor(originTest: Test) {
-    const plugins = new PluginsFabric().getAllPlugins();
+    const plugins = new PluginsFabric().getAllPluginsScratch();
     this.originTest = originTest;
 
     for (const plugin of Object.values(plugins)) {
-      this.plugins.push(plugin(this));
+      this.plugins.push(plugin.bind(this)());
     }
   }
 
