@@ -342,7 +342,6 @@ export type TestTypeYaml = {
   runTest?: TestLifecycleFunctionType[] | TestExtendType[];
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
-  argsRedefine?: Partial<ArgumentsType>;
 };
 
 export type PliginsFields = Partial<PluginContinueOnError> & Record<string, unknown>;

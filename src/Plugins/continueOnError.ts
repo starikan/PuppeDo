@@ -1,10 +1,11 @@
 /* eslint-disable prefer-arrow-callback */
 import { Arguments } from '../Arguments';
-import { TestExtendType } from '../global.d';
+import { ArgumentsType, TestExtendType } from '../global.d';
 import { Plugin, Plugins, PluginsFabric } from '../Plugins';
 
 export type PluginContinueOnError = { continueOnError: boolean };
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
+export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
 const plugins = new PluginsFabric();
 
@@ -22,7 +23,7 @@ plugins.addPlugin('continueOnError', function continueOnError() {
 
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
           ...new Arguments().args,
-          ...allPlugins.originTest.argsRedefine,
+          ...allPlugins.getValue<PluginArgsRedefine>('argsRedefine').argsRedefine,
         };
 
         self.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
@@ -30,7 +31,6 @@ plugins.addPlugin('continueOnError', function continueOnError() {
           : false;
       },
     },
-    allPlugins,
   });
 });
 
@@ -38,5 +38,12 @@ plugins.addPlugin('skipSublingIfResult', function skipSublingIfResult() {
   return new Plugin<PluginSkipSublingIfResult>({
     name: 'skipSublingIfResult',
     defaultValues: { skipSublingIfResult: '' },
+  });
+});
+
+plugins.addPlugin('argsRedefine', function argsRedefine() {
+  return new Plugin<PluginArgsRedefine>({
+    name: 'argsRedefine',
+    defaultValues: { argsRedefine: {} },
   });
 });

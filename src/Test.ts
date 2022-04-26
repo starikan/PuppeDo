@@ -21,12 +21,11 @@ import {
   TestLifecycleFunctionType,
   BrowserEngineType,
   TestExtendType,
-  ArgumentsType,
   TestMetaSublingExchangeData,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './Plugins';
-import { PluginContinueOnError, PluginSkipSublingIfResult } from './Plugins/continueOnError';
+import { PluginArgsRedefine, PluginContinueOnError, PluginSkipSublingIfResult } from './Plugins/continueOnError';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -391,7 +390,6 @@ export class Test implements TestExtendType {
   allowOptions!: string[];
   todo!: string;
   inlineJS!: string;
-  argsRedefine: Partial<ArgumentsType>;
   breakParentIfResult: string;
 
   envName!: string;
@@ -445,7 +443,6 @@ export class Test implements TestExtendType {
     this.frame = initValues.frame || '';
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
-    this.argsRedefine = initValues.argsRedefine || {};
     this.breakParentIfResult = initValues.breakParentIfResult || '';
 
     this.plugins.hook('initValues')(initValues);
@@ -462,6 +459,7 @@ export class Test implements TestExtendType {
         envsPool,
       );
 
+      const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
       const {
         PPD_DEBUG_MODE,
         PPD_LOG_EXTEND,
@@ -470,7 +468,7 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
-      } = { ...new Arguments().args, ...this.argsRedefine };
+      } = { ...new Arguments().args, ...argsRedefine };
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       if (this.debug) {
@@ -679,7 +677,7 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
-          argsEnv: { ...new Arguments().args, ...this.argsRedefine },
+          argsEnv: { ...new Arguments().args, ...argsRedefine },
           env: this.env,
           envs: envsPool,
           browser: this.env && this.env.state.browser,

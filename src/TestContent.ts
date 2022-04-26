@@ -24,7 +24,6 @@ export const BLANK_TEST: TestType = {
   afterTest: [],
   allowOptions: [],
   allowResults: [],
-  argsRedefine: {},
   beforeTest: [],
   bindData: {},
   bindDescription: '',
