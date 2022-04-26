@@ -38,6 +38,7 @@ runTest:
 
 ---
 name: continueOnError
+description: continueOnError
 runTest:
   - case:
       description: Skip me if I broken

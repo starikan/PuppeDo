@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
+import { randomUUID } from 'crypto';
 import { TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
@@ -102,6 +103,8 @@ export class Plugins {
 }
 
 export class Plugin<TValues> implements PluginType {
+  id = randomUUID();
+
   name: string;
 
   defaultValues: TValues;

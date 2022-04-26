@@ -2,7 +2,7 @@
 [41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
               or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE
 [0m00:00:00.000 - env    [0m[34m
-(continueOnError)
+continueOnError (continueOnError)
    Skip me if I broken (case)
       (blank)
    (loop)
@@ -11,7 +11,7 @@
    I am without errors (case)
 [0m
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[41m[32m(continueOnError) TODO: Fill description[0m[0m
+[0m00:00:00.000 - test   [0m[32m(continueOnError) continueOnError[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Skip me if I broken[0m[0m
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
 [0m00:00:00.000 - warn   |   |   [0m[33mContinue: Test stopped with expr errorIfResult = '1 === 1'[0m
