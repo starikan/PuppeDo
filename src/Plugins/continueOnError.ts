@@ -2,19 +2,19 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-new */
 import { Arguments } from '../Arguments';
-import { ArgumentsType, TestExtendType } from '../global.d';
+import { TestExtendType } from '../global.d';
 import { Plugin, Plugins, PluginsFabric } from '../Plugins';
 
-const name = 'continueOnError';
-
 export type PluginContinueOnError = { continueOnError: boolean };
+export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
 
 const plugins = new PluginsFabric();
+
 plugins.addPlugin(
-  name,
+  'continueOnError',
   (allPlugins: Plugins) =>
     new Plugin<PluginContinueOnError>({
-      name,
+      name: 'continueOnError',
       defaultValues: { continueOnError: false },
       propogationsAndShares: {
         fromPrevSublingSimple: ['continueOnError'],
@@ -25,7 +25,7 @@ plugins.addPlugin(
 
           const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
             ...new Arguments().args,
-            ...(self.allPlugins.getValue('', 'argsRedefine') as Partial<ArgumentsType>),
+            ...self.allPlugins.originTest.argsRedefine,
           };
 
           self.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
@@ -33,6 +33,17 @@ plugins.addPlugin(
             : false;
         },
       },
+      allPlugins,
+    }),
+);
+
+plugins.addPlugin(
+  'skipSublingIfResult',
+  (allPlugins: Plugins) =>
+    new Plugin<PluginSkipSublingIfResult>({
+      name: 'skipSublingIfResult',
+      defaultValues: { skipSublingIfResult: '' },
+      hooks: {},
       allPlugins,
     }),
 );

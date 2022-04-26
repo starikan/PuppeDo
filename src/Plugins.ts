@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import { randomUUID } from 'crypto';
-import { TestExtendType } from './global.d';
+import { PliginsFields, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
@@ -9,9 +9,9 @@ import { Test } from './Test';
 // type hooks = 'initValues' | 'runLogic' | 'resolveValues';
 
 type Hooks = {
-  initValues?: (initValues: TestExtendType) => void;
+  initValues?: (initValues: TestExtendType & PliginsFields) => void;
   runLogic?: () => void;
-  resolveValues?: (inputs: TestExtendType) => void;
+  resolveValues?: (inputs: TestExtendType & PliginsFields) => void;
 };
 
 type PropogationsAndShares = {
@@ -81,8 +81,9 @@ export class Plugins {
     };
   }
 
-  getValue(pluginName: string, valueName: string): unknown {
-    return this.plugins.find((v) => v.name === pluginName)?.values[valueName] ?? this.originTest[valueName] ?? null;
+  getValue<TValues>(pluginName: string): TValues {
+    const { values } = this.plugins.find((v) => v.name === pluginName) as { values: TValues };
+    return values;
   }
 
   getAllPropogatesAndSublings(type: keyof PropogationsAndShares): Record<string, unknown> {
@@ -93,7 +94,7 @@ export class Plugins {
       const fromPrevSublingPlugins = propogationsAndShares.filter((v) => v.propogationsAndShares.fromPrevSublingSimple);
       fromPrevSublingPlugins.forEach((fromPrevSublingPlugin) => {
         fromPrevSublingPlugin.propogationsAndShares.fromPrevSublingSimple.forEach((v) => {
-          result[v] = this.getValue(fromPrevSublingPlugin.name, v);
+          result[v] = this.getValue(fromPrevSublingPlugin.name)[v];
         });
       });
     }
@@ -114,7 +115,7 @@ export class Plugin<TValues> implements PluginType {
   allPlugins: Plugins;
 
   hooks: Required<Hooks> = {
-    initValues: (initValues: TestExtendType) => {
+    initValues: (initValues: TestExtendType & PliginsFields) => {
       const newValues = { ...this.defaultValues, ...pick(initValues, Object.keys(this.defaultValues)) };
       this.values = newValues as TValues;
     },

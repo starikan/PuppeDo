@@ -26,6 +26,7 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './Plugins';
+import { PluginContinueOnError, PluginSkipSublingIfResult } from './Plugins/continueOnError';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -392,7 +393,6 @@ export class Test implements TestExtendType {
   inlineJS!: string;
   argsRedefine: Partial<ArgumentsType>;
   breakParentIfResult: string;
-  skipSublingIfResult: string;
 
   envName!: string;
   envPageName!: string;
@@ -447,7 +447,6 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.argsRedefine = initValues.argsRedefine || {};
     this.breakParentIfResult = initValues.breakParentIfResult || '';
-    this.skipSublingIfResult = initValues.skipSublingIfResult || '';
 
     this.plugins.hook('initValues')(initValues);
 
@@ -636,7 +635,7 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -652,7 +651,7 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
         }
 
@@ -693,7 +692,7 @@ export class Test implements TestExtendType {
           socket: this.socket,
           allData: new TestsContent().allData,
           plugins: this.plugins,
-          continueOnError: this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
+          continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
 
         // LOG TEST
@@ -789,7 +788,7 @@ export class Test implements TestExtendType {
             this.levelIndent + 1,
             { ...allData, ...localResults },
             logShowFlag,
-            this.plugins.getValue('continueOnError', 'continueOnError') as boolean,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
         }
 
@@ -841,12 +840,13 @@ export class Test implements TestExtendType {
           }
         }
 
-        if (this.skipSublingIfResult) {
-          const skipSublingIfResult = runScriptInContext(this.skipSublingIfResult, {
+        const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
+        if (skipSublingIfResult) {
+          const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {
             ...allData,
             ...localResults,
           });
-          if (skipSublingIfResult) {
+          if (skipSublingIfResultResolved) {
             metaForNextSubling.disable = true;
             metaForNextSubling.skipBecausePrevSubling = true;
           }
@@ -864,7 +864,7 @@ export class Test implements TestExtendType {
         }
 
         let newError;
-        if (this.plugins.getValue('continueOnError', 'continueOnError') as boolean) {
+        if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
           newError = new ContinueParentError({
             localResults: error.localResults || {},
             errorLevel: 0,

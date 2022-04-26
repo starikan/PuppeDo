@@ -6,6 +6,7 @@ import Environment from './Environment';
 import Env from './Env';
 
 import { SocketType } from './global.d';
+import { PluginContinueOnError } from './Plugins/continueOnError';
 
 export interface ErrorType extends Error {
   envsId: string;
@@ -76,7 +77,7 @@ export class TestError extends AbstractError {
 
   async log(): Promise<void> {
     const { stepId, funcFile, testFile, levelIndent } = this.test;
-    const continueOnError = this.test.plugins.getValue('continueOnError', 'continueOnError');
+    const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
       let text = this.descriptionError ? `${this.descriptionError} | ` : '';

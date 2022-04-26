@@ -365,7 +365,6 @@ export type TestExtendType = TestType & {
   logOptionsParent?: LogOptionsType;
   testFile?: string;
   breakParentIfResult?: string;
-  skipSublingIfResult?: string;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
 };
 
