@@ -161,6 +161,13 @@ const testsE2E = {
     },
     runBeforeTest: () => require('@puppedo/atoms'),
   },
+  argsRedefine: {
+    params: {
+      PPD_TESTS: 'argsRedefine',
+      PPD_DATA: { myEnv: 'mainEnv' },
+    },
+    runBeforeTest: () => require('@puppedo/atoms'),
+  },
 };
 
 module.exports = testsE2E;
