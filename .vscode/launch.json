@@ -41,7 +41,7 @@
       "request": "launch",
       "name": "main",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["breakParentIfResult"],
+      "args": ["skipSublingIfResult"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]
