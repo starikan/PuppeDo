@@ -23,6 +23,7 @@ const documentation = {
   exampleTest: '',
   name,
   type: 'plugin',
+  propogation: false,
 };
 
 export { documentation };

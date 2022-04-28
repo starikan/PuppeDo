@@ -120,6 +120,7 @@ const testsE2E = {
       PPD_TESTS: 'continueOnError',
       PPD_CONTINUE_ON_ERROR_ENABLED: true,
     },
+    isError: true,
   },
   breakParentIfResult: {
     params: {
