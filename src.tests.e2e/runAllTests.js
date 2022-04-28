@@ -4,13 +4,24 @@ const runServer = require('./server');
 
 const testsE2E = require('./runners');
 
+const runBeforeTest = () => require('@puppedo/atoms');
+
 const runTest = async (runner) => {
   if (!runner) {
     return [];
   }
-  runner.runBeforeTest && (await runner.runBeforeTest());
+
+  if (runner.runBeforeTest) {
+    await runner.runBeforeTest();
+  } else {
+    runBeforeTest();
+  }
+
   await ppd.run(runner.params || {});
-  runner.runAfterTest && (await runner.runAfterTest());
+
+  if (runner.runAfterTest) {
+    await runner.runAfterTest();
+  }
 };
 
 const start = async () => {

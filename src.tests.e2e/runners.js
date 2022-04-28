@@ -16,7 +16,6 @@ const testsE2E = {
       PPD_LOG_TIMER_SHOW: false,
       PPD_LOG_TIMESTAMP_SHOW: false,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   mainENV: {
     env: {
@@ -27,6 +26,7 @@ const testsE2E = {
       PPD_LOG_IGNORE_HIDE_LOG: 'true',
       PPD_LOG_TIMESTAMP_SHOW: 'false',
     },
+    runBeforeTest: () => {},
   },
   mainCLI: {
     args: [
@@ -39,6 +39,7 @@ const testsE2E = {
       'PPD_LOG_SCREENSHOT=true',
       'PPD_LOG_FULLPAGE=true',
     ],
+    runBeforeTest: () => {},
   },
   mainPuppeteer: {
     env: {
@@ -46,29 +47,24 @@ const testsE2E = {
       PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }',
       PPD_LOG_LEVEL_NESTED: 1,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   envsManipulations: {
     params: {
       PPD_TESTS: 'envsManipulations',
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   errorIf: {
     params: {
       PPD_TESTS: 'errorIf',
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
     isError: true,
   },
   testWithNoAtom: {
     params: {
       PPD_TESTS: 'testWithNoAtom',
-      PPD_DATA: { myEnv: 'mainEnv' },
       PPD_LOG_EXTEND: true,
       PPD_LOG_LEVEL_NESTED: 0,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
     isError: true,
   },
   mainWithError: {
@@ -77,7 +73,6 @@ const testsE2E = {
       PPD_DATA: { myEnv: 'mainEnv' },
       PPD_FILES_IGNORE: '',
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
     isError: true,
   },
   dataCheck: {
@@ -90,7 +85,6 @@ const testsE2E = {
       PPD_LOG_LEVEL_NESTED: 0,
       PPD_LOG_TIMESTAMP_SHOW: false,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   screencast: {
     params: {
@@ -98,58 +92,44 @@ const testsE2E = {
       PPD_DEBUG_MODE: true,
       PPD_LOG_TIMESTAMP_SHOW: false,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   atoms: {
     params: {
       PPD_TESTS: 'atoms',
       PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   tags: {
     params: {
       PPD_TESTS: 'tagsTest',
-      PPD_DATA: { myEnv: 'mainEnv' },
       PPD_TAGS_TO_RUN: 'testTag',
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   descriptions: {
     params: {
       PPD_TESTS: 'descriptionTest',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   logs: {
     params: {
       PPD_TESTS: 'logOptions',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   continueOnError: {
     params: {
       PPD_TESTS: 'continueOnError',
-      PPD_DATA: { myEnv: 'mainEnv' },
       PPD_CONTINUE_ON_ERROR_ENABLED: true,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   breakParentIfResult: {
     params: {
       PPD_TESTS: 'breakParentIfResult',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   recursion: {
     params: {
       PPD_TESTS: 'recursion',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   screenshots: {
     // TODO: 2021-12-16 S.Starodubov check files thats created
@@ -160,21 +140,16 @@ const testsE2E = {
       PPD_LOG_SCREENSHOT: true,
       PPD_LOG_FULLPAGE: true,
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   argsRedefine: {
     params: {
       PPD_TESTS: 'argsRedefine',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
   skipSublingIfResult: {
     params: {
       PPD_TESTS: 'skipSublingIfResult',
-      PPD_DATA: { myEnv: 'mainEnv' },
     },
-    runBeforeTest: () => require('@puppedo/atoms'),
   },
 };
 
