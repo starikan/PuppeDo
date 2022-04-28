@@ -168,6 +168,13 @@ const testsE2E = {
     },
     runBeforeTest: () => require('@puppedo/atoms'),
   },
+  skipSublingIfResult: {
+    params: {
+      PPD_TESTS: 'skipSublingIfResult',
+      PPD_DATA: { myEnv: 'mainEnv' },
+    },
+    runBeforeTest: () => require('@puppedo/atoms'),
+  },
 };
 
 module.exports = testsE2E;

@@ -1,0 +1,57 @@
+name: skipSublingIfResult
+description: "skipSublingIfResult"
+runTest:
+  - blank:
+      description: "Simple skipSublingIfResult"
+      runTest:
+        - blank:
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+        - blank:
+            description: "❌ I`m skiped too"
+
+  - loop:
+      description: "Loop skipSublingIfResult (Only repeat #3 Skip Subling)"
+      repeat: 5
+      runTest:
+        - blank:
+            description: "I`m first"
+
+        - blank:
+            bindDescription: "`loop: ${$loop}`"
+            skipSublingIfResult: "$loop === 3"
+
+        - blank:
+            description: "I`m next"
+
+        - blank:
+            description: "I`m next too"
+
+  - blank:
+      description: "If true with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 === 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+  - blank:
+      description: "If false with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 !== 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "✔️ I`m not skiped"
+
+  - blank:
+      description: ✔️ I`m not skiped. On higher level.
