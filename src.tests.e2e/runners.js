@@ -75,6 +75,7 @@ const testsE2E = {
     params: {
       PPD_TESTS: 'mainWithError',
       PPD_DATA: { myEnv: 'mainEnv' },
+      PPD_FILES_IGNORE: '',
     },
     runBeforeTest: () => require('@puppedo/atoms'),
     isError: true,

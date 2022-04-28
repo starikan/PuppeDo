@@ -1,6 +1,4 @@
 [0m00:00:00.000 - timer  [0m[0mTest 'argsRedefine' start on '0000-00-00_00-00-00.000'[0m
-[41mError YAML read. File: 'tests\tests\broken.yaml'. Try to check it on https://yamlchecker.com/
-              or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE
 [0m00:00:00.000 - env    [0m[34m
 argsRedefine check (argsRedefine)
    Check PPD_LOG_EXTEND true globaly (case)
