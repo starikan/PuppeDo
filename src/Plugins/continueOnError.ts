@@ -1,11 +1,10 @@
 /* eslint-disable prefer-arrow-callback */
 import { Arguments } from '../Arguments';
-import { ArgumentsType, TestExtendType } from '../global.d';
+import { TestExtendType } from '../global.d';
 import { Plugin, Plugins, PluginsFabric } from '../Plugins';
+import { PluginArgsRedefine } from './argsRedefine';
 
 export type PluginContinueOnError = { continueOnError: boolean };
-export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
-export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
 const plugins = new PluginsFabric();
 
@@ -31,19 +30,5 @@ plugins.addPlugin('continueOnError', function continueOnError() {
           : false;
       },
     },
-  });
-});
-
-plugins.addPlugin('skipSublingIfResult', function skipSublingIfResult() {
-  return new Plugin<PluginSkipSublingIfResult>({
-    name: 'skipSublingIfResult',
-    defaultValues: { skipSublingIfResult: '' },
-  });
-});
-
-plugins.addPlugin('argsRedefine', function argsRedefine() {
-  return new Plugin<PluginArgsRedefine>({
-    name: 'argsRedefine',
-    defaultValues: { argsRedefine: {} },
   });
 });

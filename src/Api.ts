@@ -6,7 +6,7 @@ import Environment from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 import { LogEntry } from './global.d';
 
-import './Plugins/continueOnError';
+import './Plugins';
 
 type RunOptions = {
   closeProcess?: boolean;

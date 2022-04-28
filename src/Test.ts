@@ -25,7 +25,9 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './Plugins';
-import { PluginArgsRedefine, PluginContinueOnError, PluginSkipSublingIfResult } from './Plugins/continueOnError';
+import { PluginContinueOnError } from './Plugins/continueOnError';
+import { PluginSkipSublingIfResult } from './Plugins/skipSublingIfResult';
+import { PluginArgsRedefine } from './Plugins/argsRedefine';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -407,6 +409,7 @@ export class Test implements TestExtendType {
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
+    this.plugins.hook('initValues')(initValues);
 
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
@@ -444,8 +447,6 @@ export class Test implements TestExtendType {
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
     this.breakParentIfResult = initValues.breakParentIfResult || '';
-
-    this.plugins.hook('initValues')(initValues);
 
     this.runLogic = async (
       inputs: TestExtendType,
