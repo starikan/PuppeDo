@@ -478,14 +478,14 @@ export class Test implements TestExtendType {
         debugger;
       }
 
-      const resolveDisable = (thisDisable, metaFromPrevSubling): boolean => {
+      const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
         if (thisDisable) {
-          return true;
+          return 'disable';
         }
         if (metaFromPrevSubling.skipBecausePrevSubling) {
-          return true;
+          return 'skipSublingIfResult';
         }
-        return false;
+        return '';
       };
 
       this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
@@ -493,7 +493,7 @@ export class Test implements TestExtendType {
 
       if (disable) {
         await logger.log({
-          text: `Skip with disable: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
+          text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logShowFlag,
@@ -505,7 +505,7 @@ export class Test implements TestExtendType {
           result: {},
           meta: {
             skipBecausePrevSubling: this.metaFromPrevSubling.skipBecausePrevSubling,
-            disable,
+            disable: Boolean(disable),
           },
         };
       }

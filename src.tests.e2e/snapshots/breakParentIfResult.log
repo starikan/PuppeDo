@@ -12,25 +12,6 @@ breakParentIfResult (breakParentIfResult)
       ✔️ Not skip me (blank)
       ❌ Skip me (blank)
       ✔️ Not skip me (blank)
-   Simple skipSublingIfResult (blank)
-      Skip after me (blank)
-      ❌ I`m skiped (blank)
-      ❌ I`m skiped too (blank)
-      ❌ I`m skiped (blank)
-      ❌ I`m skiped too (blank)
-   Loop skipSublingIfResult (loop)
-      I`m first (blank)
-      (blank)
-      I`m next (blank)
-      I`m next too (blank)
-      I`m next (blank)
-      I`m next too (blank)
-   If with skipSublingIfResult (blank)
-      Skip after me (blank)
-      ❌ I`m skiped (blank)
-   If false with skipSublingIfResult (blank)
-      Skip after me (blank)
-      ✔️ I`m not skiped (blank)
    Loop breakParentIfResult (loop)
       (blank)
       I`m next (blank)
@@ -54,90 +35,6 @@ breakParentIfResult (breakParentIfResult)
 [0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
 [0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ Skip me[0m
 [0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) Simple skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Skip after me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ I`m skiped[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ I`m skiped too[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ I`m skiped[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ I`m skiped too[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m first[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 5[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m first[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 4[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m first[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 3[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) I`m next[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) I`m next too[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) I`m next[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) I`m next too[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m first[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 2[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m first[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 1[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next too[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) If with skipSublingIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Skip after me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ I`m skiped[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) If false with skipSublingIfResult[0m
-[0m00:00:00.000 - info   |   |   [0m[36mSkip with IF expr '1 !== 1' === 'false'[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ I`m not skiped[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
 [0m00:00:00.000 - test   |   [0m[32m(loop) Loop breakParentIfResult[0m
