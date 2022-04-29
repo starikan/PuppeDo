@@ -6,7 +6,7 @@ import Environment from './Environment';
 import Env from './Env';
 
 import { SocketType } from './global.d';
-import { PluginContinueOnError } from './Plugins/continueOnError';
+import { PluginContinueOnError } from './Plugins/continueOnError/continueOnError';
 
 export interface ErrorType extends Error {
   envsId: string;

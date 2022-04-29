@@ -13,7 +13,9 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
-import { PluginContinueOnError } from './Plugins/continueOnError';
+import { PluginContinueOnError } from './Plugins/continueOnError/continueOnError';
+import { PluginSkipSublingIfResult } from './Plugins/skipSublingIfResult/skipSublingIfResult';
+import { PluginArgsRedefine } from './Plugins/argsRedefine';
 
 // ================ BROWSERS ====================
 
@@ -344,7 +346,10 @@ export type TestTypeYaml = {
   inlineJS?: string;
 };
 
-export type PliginsFields = Partial<PluginContinueOnError> & Record<string, unknown>;
+export type PliginsFields = Record<string, unknown> &
+  Partial<PluginSkipSublingIfResult> &
+  Partial<PluginArgsRedefine> &
+  Partial<PluginContinueOnError>;
 
 export type TestType = Required<TestTypeYaml>;
 

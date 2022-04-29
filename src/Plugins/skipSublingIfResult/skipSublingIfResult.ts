@@ -1,18 +1,16 @@
 /* eslint-disable prefer-arrow-callback */
-import { Plugin, PluginsFabric } from '../Plugins';
+import { Plugin } from '../../Plugins';
 
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
 
-const plugins = new PluginsFabric();
-
 const name = 'skipSublingIfResult';
 
-plugins.addPlugin(name, function skipSublingIfResult() {
+function plugin(): Plugin<PluginSkipSublingIfResult> {
   return new Plugin<PluginSkipSublingIfResult>({
     name,
     defaultValues: { skipSublingIfResult: '' },
   });
-});
+}
 
 const documentation = {
   description: `Валидное JS выражение. Которое переводится в контексте конкретного блока в Boolean.
@@ -26,4 +24,4 @@ const documentation = {
   propogation: false,
 };
 
-export { documentation };
+export default { name, documentation, plugin };

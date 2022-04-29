@@ -25,8 +25,8 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './Plugins';
-import { PluginContinueOnError } from './Plugins/continueOnError';
-import { PluginSkipSublingIfResult } from './Plugins/skipSublingIfResult';
+import { PluginContinueOnError } from './Plugins/continueOnError/continueOnError';
+import { PluginSkipSublingIfResult } from './Plugins/skipSublingIfResult/skipSublingIfResult';
 import { PluginArgsRedefine } from './Plugins/argsRedefine';
 
 const ALIASES = {
@@ -451,7 +451,7 @@ export class Test implements TestExtendType {
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      this.plugins.hook('runLogic')(inputs);
+      await this.plugins.hook('runLogic')(inputs);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -557,7 +557,7 @@ export class Test implements TestExtendType {
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
-      this.plugins.hook('resolveValues')(inputs);
+      await this.plugins.hook('resolveValues')(inputs);
 
       try {
         this.envName = envsPool.current.name || '';
