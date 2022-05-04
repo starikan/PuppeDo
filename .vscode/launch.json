@@ -36,6 +36,26 @@
       "program": "${workspaceFolder}\\src.tests.e2e\\restart.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Docs",
+    //   "command": "ts-node --project ${workspaceFolder}\\tsconfig.scripts.json ${workspaceFolder}\\docs\\createDocs.js"
+    // },
+    {
+      "name": "Docs",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "args": ["docs\\createDocs.ts"],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json"
+      }
+    },
     {
       "type": "node",
       "request": "launch",

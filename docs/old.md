@@ -1,21 +1,3 @@
-# PuppeDo
-Puppeteer tests flow with node.js
-
-# Installation
-
-## Windows
-
-  1. Install [NodeJS](https://nodejs.org/)
-
-      * you can use [Nodist](https://github.com/nullivex/nodist/)
-
-  1. Fetch node modules with `npm install` or `yarn`
-  1. Run tests
-
-## Generate project
-
-For start new project use [PuppeDoCLI](https://github.com/starikan/PuppeDoCLI)
-
 # Project structure
 
 All files must have extensions `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments)

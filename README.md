@@ -1,5 +1,7 @@
 # PuppeDo
+
 Puppeteer tests flow with node.js
+
 
 # Installation
 
@@ -15,6 +17,7 @@ Puppeteer tests flow with node.js
 ## Generate project
 
 For start new project use [PuppeDoCLI](https://github.com/starikan/PuppeDoCLI)
+
 
 # Project structure
 
@@ -345,3 +348,38 @@ afterTest:
 1. ```node -e require("PuppeDo").main()```
 2. SET PPD_%=%data%
  -->
+
+
+## Plugins
+
+### skipSublingIfResult
+Валидное JS выражение. Которое переводится в контексте конкретного блока в Boolean.
+
+На основании этого результата принимается решение:
+
+1. Если результат === true, то все последующие блоки на этом уровне пропускаются.
+
+2. Если false, то все последующие блоки игнорируют эту инструкцию.
+
+
+---
+### continueOnError
+Булевое значение. Отвечает за поведение блока при ошибке.
+
+Управление происходит с помощью глобальной переменной PPD_CONTINUE_ON_ERROR_ENABLED уоторая включает и выключает
+
+данную функцию. При PPD_CONTINUE_ON_ERROR_ENABLED === false данный параметр игнорируется.
+
+Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий
+
+Если continueOnError === false, то при ошибке в блоке он выдаст ошибку
+
+
+---
+### argsRedefine
+Переопределение агрументов ENV для конкретного кейса.
+
+Все аргументы описаны в ArgumentsType
+
+
+---

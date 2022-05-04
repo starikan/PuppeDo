@@ -377,3 +377,14 @@ export type AllDataType = {
   data: Array<DataType>;
   selectors: Array<DataType>;
 };
+
+// ================ PLUGINS ====================
+
+export type PluginDocumentation = {
+  description: string[];
+  example: string;
+  exampleTest: string;
+  name: string;
+  type: string;
+  propogation: boolean;
+};

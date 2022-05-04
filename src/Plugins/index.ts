@@ -18,3 +18,9 @@ export type PliginsFields = Record<string, unknown> &
   Partial<PluginContinueOnError>;
 
 export { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine };
+
+export const documentations = [
+  skipSublingIfResult.documentation,
+  continueOnError.documentation,
+  argsRedefine.documentation,
+];

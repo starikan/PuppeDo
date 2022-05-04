@@ -1,0 +1,7 @@
+%title%
+
+%installation%
+
+%old%
+
+%plugins%
