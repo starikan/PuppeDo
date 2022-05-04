@@ -41,7 +41,7 @@ const documentation = {
   Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий
   Если continueOnError === false, то при ошибке в блоке он выдаст ошибку`,
   example: '',
-  exampleTest: '',
+  exampleTest: './continueOnError.yaml',
   name,
   type: 'plugin',
   propogation: false,

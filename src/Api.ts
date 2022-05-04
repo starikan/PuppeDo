@@ -12,6 +12,7 @@ type RunOptions = {
   closeProcess?: boolean;
   stdOut?: boolean;
   closeAllEnvs?: boolean;
+  globalConfigFile?: string;
 };
 
 export default async function run(
@@ -19,9 +20,9 @@ export default async function run(
   options: RunOptions = {},
 ): Promise<{ results: Record<string, unknown>; logs: Record<string, unknown> }> {
   const { envsId, envsPool, socket, logger } = Environment();
-  const { closeProcess = true, stdOut = true, closeAllEnvs = true } = options;
+  const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
   logger.bindData({ stdOut });
-  const { PPD_TESTS } = new Arguments({ ...argsInput }, true).args;
+  const { PPD_TESTS } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
 
   const results = {};

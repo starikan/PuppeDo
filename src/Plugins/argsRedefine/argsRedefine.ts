@@ -16,7 +16,7 @@ function plugin(): Plugin<PluginArgsRedefine> {
 const documentation = {
   description: 'Переопределение агрументов ENV для конкретного кейса. Все аргументы описаны в ArgumentsType',
   example: '',
-  exampleTest: '',
+  exampleTest: './argsRedefine.yaml',
   name,
   type: 'plugin',
   propogation: false,

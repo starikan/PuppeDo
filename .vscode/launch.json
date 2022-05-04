@@ -39,9 +39,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "main",
+      "name": "Custom run",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["main"],
+      "args": ["mainWithError"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]

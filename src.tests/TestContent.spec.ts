@@ -20,14 +20,15 @@ describe('TestContent', () => {
     // eslint-disable-next-line no-new
     new Arguments(
       {
-        PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', 'foo'],
+        PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
         PPD_ROOT_ADDITIONAL: ['bar'],
         PPD_ROOT: 'tests',
       },
       true,
+      '',
     );
     const { ignorePaths, rootFolder, additionalFolders } = new TestsContent(true);
-    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', 'foo']);
+    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github', '.vscode']);
     expect(rootFolder).toEqual(path.normalize('tests'));
     expect(additionalFolders).toEqual(['bar']);
   });
@@ -59,6 +60,7 @@ describe('TestContent', () => {
         PPD_ROOT: 'notExistFolder',
       },
       true,
+      '',
     );
 
     const allData = new TestsContent(true).getAllData(true);

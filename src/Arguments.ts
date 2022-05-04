@@ -139,14 +139,14 @@ export class Arguments extends Singleton {
   argsEnv!: Partial<ArgumentsType>;
   argsCLI!: Partial<ArgumentsType>;
 
-  constructor(args: Partial<ArgumentsType> = {}, reInit = false) {
+  constructor(args: Partial<ArgumentsType> = {}, reInit = false, globalConfigFile = 'puppedo.config.js') {
     super();
     if (reInit || !this.args) {
       let configArgs = {};
 
       try {
         // TODO: 2021-02-21 S.Starodubov need types validation
-        const config = __non_webpack_require__(path.join(process.cwd(), 'puppedo.config.js'));
+        const config = __non_webpack_require__(path.join(process.cwd(), globalConfigFile));
         const { args: argsFromConfig } = config || {};
         configArgs = parser(argsFromConfig);
       } catch (error) {
@@ -157,6 +157,28 @@ export class Arguments extends Singleton {
       this.argsEnv = parser(process.env as Record<string, string>);
       this.argsCLI = parseCLI();
       this.args = { ...argsDefault, ...configArgs, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
+
+      for (const key of Object.keys(argsDefault)) {
+        if (Array.isArray(argsDefault[key])) {
+          this.args[key] = [
+            ...new Set([
+              ...(argsDefault[key] ?? []),
+              ...(configArgs[key] ?? []),
+              ...(this.argsEnv[key] ?? []),
+              ...(this.argsCLI[key] ?? []),
+              ...(this.argsJS[key] ?? []),
+            ]),
+          ];
+        } else if (typeof argsDefault[key] === 'object') {
+          this.args[key] = {
+            ...(argsDefault[key] ?? {}),
+            ...(configArgs[key] ?? {}),
+            ...(this.argsEnv[key] ?? {}),
+            ...(this.argsCLI[key] ?? {}),
+            ...(this.argsJS[key] ?? {}),
+          };
+        }
+      }
     }
   }
 }

@@ -69,11 +69,14 @@ const testsE2E = {
   },
   mainWithError: {
     params: {
+      PPD_ROOT: 'tests',
       PPD_TESTS: 'mainWithError',
       PPD_DATA: { myEnv: 'mainEnv' },
-      PPD_FILES_IGNORE: '',
+      PPD_FILES_IGNORE: ['tsconfig.json'],
+      PPD_DEBUG_MODE: true,
     },
     isError: true,
+    ignoreGlobalConfig: true,
   },
   dataCheck: {
     params: {

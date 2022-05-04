@@ -18,7 +18,7 @@ const documentation = {
   1. Если результат === true, то все последующие блоки на этом уровне пропускаются.
   2. Если false, то все последующие блоки игнорируют эту инструкцию.`,
   example: '',
-  exampleTest: '',
+  exampleTest: './skipSublingIfResult.yaml',
   name,
   type: 'plugin',
   propogation: false,

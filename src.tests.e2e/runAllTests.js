@@ -6,7 +6,7 @@ const testsE2E = require('./runners');
 
 const runBeforeTest = () => require('@puppedo/atoms');
 
-const runTest = async (runner) => {
+const runTest = async (runner, options = {}) => {
   if (!runner) {
     return [];
   }
@@ -17,7 +17,7 @@ const runTest = async (runner) => {
     runBeforeTest();
   }
 
-  await ppd.run(runner.params || {});
+  await ppd.run(runner.params || {}, options);
 
   if (runner.runAfterTest) {
     await runner.runAfterTest();
@@ -31,7 +31,9 @@ const start = async () => {
     runServer();
     for (const runner of runners) {
       try {
-        await runTest(testsE2E[runner]);
+        await runTest(testsE2E[runner], {
+          globalConfigFile: testsE2E[runner].ignoreGlobalConfig ? '' : 'puppedo.config.js',
+        });
       } catch (error) {
         if (testsE2E[runner].isError) {
           process.exit(0);

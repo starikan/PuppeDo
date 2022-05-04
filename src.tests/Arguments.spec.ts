@@ -8,7 +8,7 @@ const argsModify = {
   PPD_OUTPUT: 'zee',
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: ['iii', 'ooo'],
-  PPD_ROOT_IGNORE: ['dqq'],
+  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode', 'dqq'],
   PPD_FILES_IGNORE: [],
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
@@ -36,7 +36,7 @@ const argsENV = {
   PPD_OUTPUT: 'zee',
   PPD_ROOT: 'rrr',
   PPD_ROOT_ADDITIONAL: 'iii, ooo',
-  PPD_ROOT_IGNORE: 'dqq',
+  PPD_ROOT_IGNORE: '.git,node_modules,.history,output,.github,.vscode,dqq',
   PPD_FILES_IGNORE: '',
   PPD_SELECTORS: '{"joo": "jii"}',
   PPD_TESTS: 'suu',
@@ -59,10 +59,10 @@ const argsENV = {
 // Reset Arguments
 function setArg<T>(argName: string, argData: T): [T, string | Record<string, string>] {
   // eslint-disable-next-line no-new
-  new Arguments({}, true);
+  new Arguments({}, true, '');
 
   const argMock = { [argName]: argData };
-  const argResult = new Arguments(argMock, true).args[argName];
+  const argResult = new Arguments(argMock, true, '').args[argName];
 
   return [argData, argResult];
 }
@@ -74,7 +74,7 @@ function errors(name: string, type: string): Error {
 test('Arguments is Singleton and Default args', () => {
   expect(new Arguments().args).toEqual(argsDefault);
   expect(new Arguments().args).toEqual(argsDefault);
-  expect(new Arguments({ PPD_DEBUG_MODE: false }, true).args).toEqual(argsDefault);
+  expect(new Arguments({ PPD_DEBUG_MODE: false }, true, '').args).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
@@ -179,7 +179,15 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_ROOT', 'test');
   expect(argData).toEqual(argResult);
 
-  [argData, argResult] = setArg('PPD_ROOT_IGNORE', ['huu']);
+  [argData, argResult] = setArg('PPD_ROOT_IGNORE', [
+    '.git',
+    'node_modules',
+    '.history',
+    'output',
+    '.github',
+    '.vscode',
+    'huu',
+  ]);
   expect(argData).toEqual(argResult);
 
   [argData, argResult] = setArg('PPD_SELECTORS', { foo: 'bar' });
@@ -204,19 +212,19 @@ test('Arguments CLI', () => {
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];
-  const argsSplited = new Arguments({}, true).args;
+  const argsSplited = new Arguments({}, true, '').args;
   expect(argsModify).toEqual(argsSplited);
   process.argv = rawArgv;
 
   process.argv = [...process.argv, argsJSON.join(' ')];
-  const argsSolid = new Arguments({}, true).args;
+  const argsSolid = new Arguments({}, true, '').args;
   expect(argsModify).toEqual(argsSolid);
   process.argv = rawArgv;
 });
 
 test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsENV };
-  const { args } = new Arguments({}, true);
+  const { args } = new Arguments({}, true, '');
   expect(argsModify).toEqual(args);
   Object.keys(argsModify).forEach((v) => delete process.env[v]);
 });
