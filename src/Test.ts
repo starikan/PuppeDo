@@ -25,9 +25,7 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './Plugins';
-import { PluginContinueOnError } from './Plugins/continueOnError/continueOnError';
-import { PluginSkipSublingIfResult } from './Plugins/skipSublingIfResult/skipSublingIfResult';
-import { PluginArgsRedefine } from './Plugins/argsRedefine';
+import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins/index';
 
 const ALIASES = {
   data: ['d', '📋'],

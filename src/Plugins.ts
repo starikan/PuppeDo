@@ -1,8 +1,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import { randomUUID } from 'crypto';
-import { PliginsFields, TestExtendType } from './global.d';
+import { TestExtendType } from './global.d';
 import { pick } from './Helpers';
+import { PliginsFields } from './Plugins/index';
 import Singleton from './Singleton';
 import { Test } from './Test';
 

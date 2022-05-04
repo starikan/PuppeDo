@@ -1,6 +1,6 @@
 import { Plugin, Plugins } from '../../Plugins';
 import { Arguments } from '../../Arguments';
-import { PluginArgsRedefine } from '../argsRedefine';
+import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
 import { TestExtendType } from '../../global.d';
 
