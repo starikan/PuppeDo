@@ -381,7 +381,7 @@ export type AllDataType = {
 // ================ PLUGINS ====================
 
 export type PluginDocumentation = {
-  description: string[];
+  description: { ru?: string[]; en: string[] };
   example: string;
   exampleTest: string;
   name: string;

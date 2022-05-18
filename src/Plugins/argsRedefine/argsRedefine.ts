@@ -14,7 +14,10 @@ function plugin(): Plugin<PluginArgsRedefine> {
 }
 
 const documentation: PluginDocumentation = {
-  description: ['Переопределение агрументов ENV для конкретного кейса.', 'Все аргументы описаны в ArgumentsType'],
+  description: {
+    ru: ['Переопределение агрументов ENV для конкретного кейса.', 'Все аргументы описаны в ArgumentsType'],
+    en: ['TODO'],
+  },
   example: '',
   exampleTest: './argsRedefine.yaml',
   name,
