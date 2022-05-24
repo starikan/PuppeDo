@@ -48,6 +48,7 @@ const documentation: PluginDocumentation = {
   },
   example: '',
   exampleTest: 'src/Plugins/continueOnError/continueOnError.yaml',
+  exampleTestResult: 'src.tests.e2e/snapshots/continueOnError.log',
   name,
   type: 'plugin',
   propogation: false,

@@ -30,6 +30,15 @@ languages.forEach((lang) => {
       const exampleTest = fs.readFileSync(path.join(__dirname, '..', documentation.exampleTest), 'utf-8');
       plugins.push(`\`\`\`yaml\n${exampleTest}\n\`\`\``);
     }
+
+    if (documentation.exampleTestResult) {
+      const exampleTestResult = fs
+        .readFileSync(path.join(__dirname, '..', documentation.exampleTestResult), 'utf-8')
+        // eslint-disable-next-line no-control-regex
+        .replace(/\[\d{1,2}m/g, '');
+      plugins.push('### Output:');
+      plugins.push(`\`\`\`\n${exampleTestResult}\n\`\`\``);
+    }
   }
   replaces.plugins = plugins.join('\n');
 

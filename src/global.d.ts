@@ -384,6 +384,7 @@ export type PluginDocumentation = {
   description: { ru?: string[]; en: string[] };
   example: string;
   exampleTest: string;
+  exampleTestResult: string;
   name: string;
   type: string;
   propogation: boolean;

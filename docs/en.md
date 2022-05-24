@@ -458,6 +458,63 @@ runTest:
             descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
 
 ```
+### Output:
+```
+00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+continueOnError (continueOnError)
+   Skip me if I broken (case)
+      (blank)
+   (case)
+      (blank)
+      I`m next (blank)
+   I am without errors (case)
+   Error me if I broken (case)
+      (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (continueOnError) continueOnError
+00:00:00.000 - test   |   (case) Skip me if I broken
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - warn   |   |   Continue: Test stopped with expr errorIfResult = '1 === 1'
+00:00:00.000 - test   |   (case) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 3
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (case) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 2
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (case) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 1
+00:00:00.000 - warn   |   |   Continue: Test stopped with expr errorIfResult = '$loop < 2'
+                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) I am without errors
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) Error me if I broken
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '1 === 1'
+00:00:00.000 - error  |   |   |    continueOnError
+00:00:00.000 - error  |   |   |       runTest[3].case
+00:00:00.000 - error  |   |   |          runTest[0].blank
+00:00:00.000 - error  |   |   |    =======================================================================================
+00:00:00.000 - error  |   |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)
+00:00:00.000 - error  |   |    continueOnError
+00:00:00.000 - error  |   |       runTest[3].case
+00:00:00.000 - error  |   |          runTest[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - warn   |   Continue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank
+00:00:00.000 - timer  Test 'continueOnError' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "continueOnError": {}
+}
+
+```
 ## argsRedefine
 TODO
 
