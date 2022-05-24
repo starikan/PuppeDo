@@ -19,7 +19,7 @@ const documentation: PluginDocumentation = {
     en: ['TODO'],
   },
   example: '',
-  exampleTest: './argsRedefine.yaml',
+  exampleTest: 'src/Plugins/argsRedefine/argsRedefine.yaml',
   name,
   type: 'plugin',
   propogation: false,

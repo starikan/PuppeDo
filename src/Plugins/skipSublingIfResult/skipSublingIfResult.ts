@@ -24,7 +24,7 @@ const documentation: PluginDocumentation = {
     en: ['TODO'],
   },
   example: '',
-  exampleTest: './skipSublingIfResult.yaml',
+  exampleTest: 'src/Plugins/skipSublingIfResult/skipSublingIfResult.yaml',
   name,
   type: 'plugin',
   propogation: false,

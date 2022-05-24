@@ -39,15 +39,15 @@ const documentation: PluginDocumentation = {
   description: {
     ru: [
       'Булевое значение. Отвечает за поведение блока при ошибке.',
-      'Управление происходит с помощью глобальной переменной PPD_CONTINUE_ON_ERROR_ENABLED уоторая включает и выключает',
-      'данную функцию. При PPD_CONTINUE_ON_ERROR_ENABLED === false данный параметр игнорируется.',
+      'Управление происходит с помощью глобальной переменной [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) уоторая включает и выключает данную функцию.',
+      'При [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) === false "continueOnError" игнорируется.',
       'Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий',
       'Если continueOnError === false, то при ошибке в блоке он выдаст ошибку',
     ],
     en: ['TODO'],
   },
   example: '',
-  exampleTest: './continueOnError.yaml',
+  exampleTest: 'src/Plugins/continueOnError/continueOnError.yaml',
   name,
   type: 'plugin',
   propogation: false,

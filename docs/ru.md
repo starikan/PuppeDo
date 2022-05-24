@@ -350,9 +350,9 @@ afterTest:
  -->
 
 
-## Plugins
+# Plugins
 
-### skipSublingIfResult
+## skipSublingIfResult
 Валидное JS выражение. Которое переводится в контексте конкретного блока в Boolean.
 
 На основании этого результата принимается решение:
@@ -361,25 +361,146 @@ afterTest:
 
 2. Если false, то все последующие блоки игнорируют эту инструкцию.
 
+```yaml
+name: skipSublingIfResult
+description: "skipSublingIfResult"
+runTest:
+  - case:
+      description: "Simple skipSublingIfResult"
+      runTest:
+        - blank:
+            description: "✔️ I`m not skiped"
 
----
-### continueOnError
+        - blank:
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+        - blank:
+            description: "❌ I`m skiped too"
+
+  - case:
+      description: "Loop with skipSublingIfResult"
+      repeat: 3
+      runTest:
+        - blank:
+            description: "I`m first"
+
+        - blank:
+            bindDescription: "`Only repeat #2 Skip Subling. Loop: ${$loop}`"
+            skipSublingIfResult: "$loop === 2"
+
+        - blank:
+            description: "I`m next (skiped in #2 repeate)"
+
+        - blank:
+            description: "I`m next too (skiped in #2 repeate)"
+
+  - case:
+      description: "If true with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 === 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+  - case:
+      description: "If false with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 !== 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "✔️ I`m not skiped"
+
+  - case:
+      description: ✔️ I`m not skiped. On higher level.
+
+```
+## continueOnError
 Булевое значение. Отвечает за поведение блока при ошибке.
 
-Управление происходит с помощью глобальной переменной PPD_CONTINUE_ON_ERROR_ENABLED уоторая включает и выключает
+Управление происходит с помощью глобальной переменной [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) уоторая включает и выключает данную функцию.
 
-данную функцию. При PPD_CONTINUE_ON_ERROR_ENABLED === false данный параметр игнорируется.
+При [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) === false "continueOnError" игнорируется.
 
 Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий
 
 Если continueOnError === false, то при ошибке в блоке он выдаст ошибку
 
+```yaml
+name: continueOnError
+description: continueOnError
+runTest:
+  - case:
+      description: Skip me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            errorIfResult: 1 === 1
+            descriptionError: This is error description
 
----
-### argsRedefine
+  - case:
+      repeat: 3
+      continueOnError: true
+      runTest:
+        - blank:
+            bindDescription: "`Second level loop: ${$loop}`"
+            errorIfResult: "$loop < 2"
+
+        - blank:
+            description: "I`m next"
+
+  - case:
+      description: I am without errors
+
+  - case:
+      description: Error me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 1 === 1
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+
+```
+## argsRedefine
 Переопределение агрументов ENV для конкретного кейса.
 
 Все аргументы описаны в ArgumentsType
 
+```yaml
+name: argsRedefine
+description: argsRedefine check
 
----
+runTest:
+  - case:
+      description: Check PPD_LOG_EXTEND true globaly
+      runTest:
+        - blank:
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_LOG_TIMER_SHOW: false
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+
+```

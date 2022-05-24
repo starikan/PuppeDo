@@ -350,20 +350,141 @@ afterTest:
  -->
 
 
-## Plugins
+# Plugins
 
-### skipSublingIfResult
+## skipSublingIfResult
 TODO
 
+```yaml
+name: skipSublingIfResult
+description: "skipSublingIfResult"
+runTest:
+  - case:
+      description: "Simple skipSublingIfResult"
+      runTest:
+        - blank:
+            description: "✔️ I`m not skiped"
 
----
-### continueOnError
+        - blank:
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+        - blank:
+            description: "❌ I`m skiped too"
+
+  - case:
+      description: "Loop with skipSublingIfResult"
+      repeat: 3
+      runTest:
+        - blank:
+            description: "I`m first"
+
+        - blank:
+            bindDescription: "`Only repeat #2 Skip Subling. Loop: ${$loop}`"
+            skipSublingIfResult: "$loop === 2"
+
+        - blank:
+            description: "I`m next (skiped in #2 repeate)"
+
+        - blank:
+            description: "I`m next too (skiped in #2 repeate)"
+
+  - case:
+      description: "If true with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 === 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "❌ I`m skiped"
+
+  - case:
+      description: "If false with skipSublingIfResult"
+      runTest:
+        - blank:
+            if: "1 !== 1"
+            description: "Skip after me"
+            skipSublingIfResult: "1 === 1"
+
+        - blank:
+            description: "✔️ I`m not skiped"
+
+  - case:
+      description: ✔️ I`m not skiped. On higher level.
+
+```
+## continueOnError
 TODO
 
+```yaml
+name: continueOnError
+description: continueOnError
+runTest:
+  - case:
+      description: Skip me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            errorIfResult: 1 === 1
+            descriptionError: This is error description
 
----
-### argsRedefine
+  - case:
+      repeat: 3
+      continueOnError: true
+      runTest:
+        - blank:
+            bindDescription: "`Second level loop: ${$loop}`"
+            errorIfResult: "$loop < 2"
+
+        - blank:
+            description: "I`m next"
+
+  - case:
+      description: I am without errors
+
+  - case:
+      description: Error me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 1 === 1
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+
+```
+## argsRedefine
 TODO
 
+```yaml
+name: argsRedefine
+description: argsRedefine check
 
----
+runTest:
+  - case:
+      description: Check PPD_LOG_EXTEND true globaly
+      runTest:
+        - blank:
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_LOG_TIMER_SHOW: false
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+
+```
