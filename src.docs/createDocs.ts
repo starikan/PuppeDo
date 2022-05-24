@@ -36,7 +36,7 @@ languages.forEach((lang) => {
         .readFileSync(path.join(__dirname, '..', documentation.exampleTestResult), 'utf-8')
         // eslint-disable-next-line no-control-regex
         .replace(/\[\d{1,2}m/g, '');
-      plugins.push('### Output:');
+      plugins.push('#### Output:');
       plugins.push(`\`\`\`\n${exampleTestResult}\n\`\`\``);
     }
   }
