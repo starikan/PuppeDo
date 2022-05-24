@@ -23,7 +23,6 @@ const documentation: PluginDocumentation = {
     ],
     en: ['TODO'],
   },
-  example: '',
   exampleTest: 'src/Plugins/skipSublingIfResult/skipSublingIfResult.yaml',
   exampleTestResult: 'src.tests.e2e/snapshots/skipSublingIfResult.log',
   name,

@@ -380,9 +380,10 @@ export type AllDataType = {
 
 // ================ PLUGINS ====================
 
+export type DocumentationLanguages = 'ru' | 'en';
+
 export type PluginDocumentation = {
-  description: { ru?: string[]; en: string[] };
-  example: string;
+  description: { en: string[] } & Partial<Record<DocumentationLanguages, string[]>>;
   exampleTest: string;
   exampleTestResult: string;
   name: string;

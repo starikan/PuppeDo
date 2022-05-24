@@ -2,9 +2,10 @@ import path from 'path';
 import fs from 'fs';
 
 import { documentations } from '../src/Plugins/index';
+import { DocumentationLanguages } from '../src/global.d';
 
 const languageDefault = 'en';
-const languages = ['en', 'ru'];
+const languages: DocumentationLanguages[] = ['en', 'ru'];
 const parts = ['title', 'installation', 'old'];
 
 languages.forEach((lang) => {

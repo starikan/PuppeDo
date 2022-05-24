@@ -18,7 +18,6 @@ const documentation: PluginDocumentation = {
     ru: ['Переопределение агрументов ENV для конкретного кейса.', 'Все аргументы описаны в ArgumentsType'],
     en: ['TODO'],
   },
-  example: '',
   exampleTest: 'src/Plugins/argsRedefine/argsRedefine.yaml',
   exampleTestResult: 'src.tests.e2e/snapshots/argsRedefine.log',
   name,
