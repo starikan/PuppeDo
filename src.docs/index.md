@@ -2,6 +2,8 @@
 
 %installation%
 
-%old%
+%arguments%
 
 %plugins%
+
+%old%

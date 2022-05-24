@@ -6,7 +6,7 @@ import { DocumentationLanguages } from '../src/global.d';
 
 const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];
-const parts = ['title', 'installation', 'old'];
+const parts = ['title', 'installation', 'old', 'arguments'];
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};
