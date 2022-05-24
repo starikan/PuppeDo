@@ -19,6 +19,10 @@ Puppeteer tests flow with node.js
 For start new project use [PuppeDoCLI](https://github.com/starikan/PuppeDoCLI)
 
 
+# Project structure
+
+All files must have extensions `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments)
+
 # Running Arguments
 Parameter | Description | Default Value | Type
 ------------- | ------------- | ------------- | -------------
@@ -52,7 +56,7 @@ Arguments applying order. From minor to major:
 1. Arguments from script
 
 
-# Plugins
+# Test block settings
 
 ## skipSublingIfResult
 Валидное JS выражение. Которое переводится в контексте конкретного блока в Boolean.
@@ -376,11 +380,7 @@ argsRedefine check (argsRedefine)
 
 ```
 
-# Project structure
-
-All files must have extensions `*.yaml, *.yml, *.ppd`. All data in any place in folder [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments)
-
-## Environment files
+# Environment files
 
 File with environment information. There is may more then one env in test. You can switch between envs.
 
@@ -435,7 +435,7 @@ log:
   fullpage: true
 ```
 
-### Parameters
+## Parameters
 
 Parameter  | Description
 ------------- | -------------
@@ -450,7 +450,7 @@ envsExt | Array of envs that extend this env. Related to [PPD_ROOT and PPD_ROOT_
 browser | [Browser settings](#browser-settings)
 log | [Logging settings](#logging-settings)
 
-### Browser Settings
+## Browser Settings
 Parameter | Description | Default Value | Dependence
 ------------- | ------------- | -------------  | -------------
 type | Engine target: `browser` - browser, `electron` - electron app | `browser`
@@ -465,7 +465,7 @@ windowSize | Viewport size. Object `width, height` in px.
 runtimeEnv | [runtimeEnv settings](#runtimeEnv-settings)
 killOnEnd | Is close browser on end of tests. | `true`
 
-### runtimeEnv Settings
+## runtimeEnv Settings
 Parameter  | Description
 ------------- | -------------
 runtimeExecutable | todo
@@ -476,7 +476,7 @@ env | todo
 secondsToStartApp | todo
 secondsDelayAfterStartApp | todo
 
-### Logging Settings
+## Logging Settings
 Parameter  | Description
 ------------- | -------------
 level | todo
@@ -484,6 +484,7 @@ screenshot | todo
 fullpage | todo
 screenshotName | todo
 fullpageName | todo
+
 
 # Data and Selectors files
 ```yaml
@@ -499,7 +500,7 @@ type | `data` or `selectors`
 description | Description
 data | Object with data
 
-# Test files
+<!--# Test files
 #### Todo
 
 # Test atoms files
@@ -508,18 +509,7 @@ data | Object with data
 # Socket
 #### Todo
 
-# RoadMap 2.0.0
-
-1. + Arguments.
-  * PPD_LOG_LEVEL_NESTED
-  * PPD_LOG_SCREENSHOT
-  * PPD_LOG_FULLPAGE
-
-1. rename bindData -> dataBind
-
-1. rename bindSelectors -> selectorsBind
-
-<!-- # Editors Environment
+ # Editors Environment
 
 ## VSCode
 

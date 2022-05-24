@@ -6,22 +6,28 @@ import { DocumentationLanguages } from '../src/global.d';
 
 const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];
-const parts = ['title', 'installation', 'old', 'arguments'];
+
+const index = fs.readFileSync(path.join(__dirname, './index.md'), 'utf-8');
+const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]);
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};
 
   parts.forEach((part) => {
-    const defaultFile = path.join(__dirname, languageDefault, `${part}.md`);
-    const partFile = path.join(__dirname, lang, `${part}.md`);
-    const partData = fs.existsSync(partFile)
-      ? fs.readFileSync(partFile, 'utf-8')
-      : fs.readFileSync(defaultFile, 'utf-8');
-    replaces[part] = partData;
+    try {
+      const defaultFile = path.join(__dirname, languageDefault, `${part}.md`);
+      const partFile = path.join(__dirname, lang, `${part}.md`);
+      const partData = fs.existsSync(partFile)
+        ? fs.readFileSync(partFile, 'utf-8')
+        : fs.readFileSync(defaultFile, 'utf-8');
+      replaces[part] = partData;
+    } catch (error) {
+      console.log(`Can't find ${part} file`);
+    }
   });
 
   const plugins = [];
-  plugins.push('\n# Plugins\n');
+  plugins.push('\n# Test block settings\n');
   for (const plugin of documentations) {
     const documentation = plugin;
     plugins.push(`## ${documentation.name}`);
