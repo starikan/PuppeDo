@@ -424,6 +424,87 @@ runTest:
       description: ✔️ I`m not skiped. On higher level.
 
 ```
+### Output:
+```
+00:00:00.000 - timer  Test 'skipSublingIfResult' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+skipSublingIfResult (skipSublingIfResult)
+   Simple skipSublingIfResult (case)
+      ✔️ I`m not skiped (blank)
+      Skip after me (blank)
+      ❌ I`m skiped (blank)
+      ❌ I`m skiped too (blank)
+   Loop with skipSublingIfResult (case)
+      I`m first (blank)
+      (blank)
+      I`m next (skiped in #2 repeate) (blank)
+      I`m next too (skiped in #2 repeate) (blank)
+   If true with skipSublingIfResult (case)
+      Skip after me (blank)
+      ❌ I`m skiped (blank)
+   If false with skipSublingIfResult (case)
+      Skip after me (blank)
+      ✔️ I`m not skiped (blank)
+   ✔️ I`m not skiped. On higher level. (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (skipSublingIfResult) skipSublingIfResult
+00:00:00.000 - test   |   (case) Simple skipSublingIfResult
+00:00:00.000 - test   |   |   (blank) ✔️ I`m not skiped
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) Skip after me
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped
+00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped too
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+00:00:00.000 - test   |   |   (blank) I`m first
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 3
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next (skiped in #2 repeate)
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+00:00:00.000 - test   |   |   (blank) I`m first
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 2
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)
+00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)
+00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+00:00:00.000 - test   |   |   (blank) I`m first
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 1
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next (skiped in #2 repeate)
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) If true with skipSublingIfResult
+00:00:00.000 - test   |   |   (blank) Skip after me
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) If false with skipSublingIfResult
+00:00:00.000 - info   |   |   Skip with IF expr '1 !== 1' === 'false'
+00:00:00.000 - test   |   |   (blank) ✔️ I`m not skiped
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) ✔️ I`m not skiped. On higher level.
+                      |   🕝: 00.000 s. (case)
+                      🕝: 00.000 s. (skipSublingIfResult)
+00:00:00.000 - timer  Test 'skipSublingIfResult' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "skipSublingIfResult": {}
+}
+
+```
 ## continueOnError
 Булевое значение. Отвечает за поведение блока при ошибке.
 
@@ -559,5 +640,36 @@ runTest:
         PPD_LOG_TIMER_SHOW: false
       runTest:
         - blank:
+
+```
+### Output:
+```
+00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+argsRedefine check (argsRedefine)
+   Check PPD_LOG_EXTEND true globaly (case)
+      (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false (case)
+      (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child) (case)
+      (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (argsRedefine) argsRedefine check
+00:00:00.000 - test   |   (case) Check PPD_LOG_EXTEND true globaly
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+                      |   |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (argsRedefine)
+00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "argsRedefine": {}
+}
 
 ```

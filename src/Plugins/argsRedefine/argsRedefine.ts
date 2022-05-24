@@ -20,6 +20,7 @@ const documentation: PluginDocumentation = {
   },
   example: '',
   exampleTest: 'src/Plugins/argsRedefine/argsRedefine.yaml',
+  exampleTestResult: 'src.tests.e2e/snapshots/argsRedefine.log',
   name,
   type: 'plugin',
   propogation: false,

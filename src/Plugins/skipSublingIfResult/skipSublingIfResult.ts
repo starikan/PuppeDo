@@ -25,6 +25,7 @@ const documentation: PluginDocumentation = {
   },
   example: '',
   exampleTest: 'src/Plugins/skipSublingIfResult/skipSublingIfResult.yaml',
+  exampleTestResult: 'src.tests.e2e/snapshots/skipSublingIfResult.log',
   name,
   type: 'plugin',
   propogation: false,
