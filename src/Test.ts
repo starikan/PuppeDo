@@ -23,6 +23,7 @@ import {
   TestExtendType,
   ArgumentsType,
   TestMetaSublingExchangeData,
+  Element,
 } from './global.d';
 import Atom from './AtomCore';
 
@@ -691,7 +692,7 @@ export class Test implements TestExtendType {
         logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
 
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
-          const elements = [];
+          const elements: Element = [];
           if (this.logOptions.screenshot) {
             const atom = new Atom({ page: pageCurrent, env: this.env });
             const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];

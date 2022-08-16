@@ -2,13 +2,13 @@
 import {
   Page as PagePuppeteer,
   Browser as BrowserPuppeteer,
-  ElementHandle as ElementHandlePuppeteer,
+  // ElementHandle as ElementHandlePuppeteer,
   Frame as FramePuppeteer,
 } from 'puppeteer';
 import {
   Page as PagePlaywright,
   Browser as BrowserPlaywright,
-  ElementHandle as ElementHandlePlaywright,
+  // ElementHandle as ElementHandlePlaywright,
   Frame as FramePlaywright,
 } from 'playwright';
 
@@ -31,7 +31,7 @@ export type BrouserLaunchOptions = {
 
 export type PagesType = Record<string, BrowserPageType | BrowserFrame>;
 
-export type Element = ElementHandlePuppeteer | ElementHandlePlaywright;
+export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 // ================ HELPERS ====================
 
