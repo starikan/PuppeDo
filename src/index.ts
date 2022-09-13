@@ -11,6 +11,7 @@ import Singleton from './Singleton';
 import { paintString, blankSocket } from './Helpers';
 import { runScriptInContext } from './Test';
 import Screenshot from './Screenshot';
+import { Plugin, Plugins } from './Plugins';
 
 export default {
   run,
@@ -28,4 +29,6 @@ export default {
   argsDefault,
   runScriptInContext,
   Screenshot,
+  Plugin,
+  Plugins,
 };

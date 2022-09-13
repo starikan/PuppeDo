@@ -4,13 +4,24 @@ const runServer = require('./server');
 
 const testsE2E = require('./runners');
 
-const runTest = async (runner) => {
+const runBeforeTest = () => require('@puppedo/atoms');
+
+const runTest = async (runner, options = {}) => {
   if (!runner) {
     return [];
   }
-  runner.runBeforeTest && (await runner.runBeforeTest());
-  await ppd.run(runner.params || {});
-  runner.runAfterTest && (await runner.runAfterTest());
+
+  if (runner.runBeforeTest) {
+    await runner.runBeforeTest();
+  } else {
+    runBeforeTest();
+  }
+
+  await ppd.run(runner.params || {}, options);
+
+  if (runner.runAfterTest) {
+    await runner.runAfterTest();
+  }
 };
 
 const start = async () => {
@@ -20,7 +31,9 @@ const start = async () => {
     runServer();
     for (const runner of runners) {
       try {
-        await runTest(testsE2E[runner]);
+        await runTest(testsE2E[runner], {
+          globalConfigFile: testsE2E[runner].ignoreGlobalConfig ? '' : 'puppedo.config.js',
+        });
       } catch (error) {
         if (testsE2E[runner].isError) {
           process.exit(0);

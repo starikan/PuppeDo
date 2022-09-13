@@ -19,7 +19,7 @@ dataExt:
 
 beforeTest:
   - envSwitch:
-      data: { envName: 'mainEnv' }
+      data: { envName: "mainEnv" }
 
 runTest:
   - goTo:
@@ -31,32 +31,7 @@ runTest:
 
   - clickSelector:
       description: Click some fake Text
-      s: { selector: '.mainInputFake' }
+      s: { selector: ".mainInputFake" }
       descriptionError: This is click error
       options:
         waitingTime: 1000
-
----
-name: continueOnError
-runTest:
-  - case:
-      description: Skip me if I broken
-      continueOnError: true
-      runTest:
-        - blank:
-            errorIfResult: 1 === 1
-            descriptionError: This is error description
-
-  - loop:
-      repeat: 3
-      continueOnError: true
-      runTest:
-        - blank:
-            bindDescription: '`Second level loop: ${$loop}`'
-            errorIfResult: '$loop < 2'
-
-        - blank:
-            description: 'I`m next'
-
-  - case:
-      description: I am without errors

@@ -21,11 +21,12 @@ import {
   TestLifecycleFunctionType,
   BrowserEngineType,
   TestExtendType,
-  ArgumentsType,
   TestMetaSublingExchangeData,
   Element,
 } from './global.d';
 import Atom from './AtomCore';
+import { Plugins } from './Plugins';
+import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins/index';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -171,6 +172,7 @@ export const checkIf = async (
   logShowFlag = true,
   continueOnError = false,
 ): Promise<boolean> => {
+  // debugger
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
@@ -389,10 +391,7 @@ export class Test implements TestExtendType {
   allowOptions!: string[];
   todo!: string;
   inlineJS!: string;
-  argsRedefine: Partial<ArgumentsType>;
-  continueOnError: boolean;
   breakParentIfResult: string;
-  skipSublingIfResult: string;
 
   envName!: string;
   envPageName!: string;
@@ -405,7 +404,12 @@ export class Test implements TestExtendType {
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
 
+  plugins: Plugins;
+
   constructor(initValues: TestExtendType) {
+    this.plugins = new Plugins(this);
+    this.plugins.hook('initValues')(initValues);
+
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
     this.type = initValues.type || ('type' as 'atom' | 'test');
@@ -441,14 +445,12 @@ export class Test implements TestExtendType {
     this.frame = initValues.frame || '';
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
-    this.argsRedefine = initValues.argsRedefine || {};
-    this.continueOnError = initValues.continueOnError || false;
     this.breakParentIfResult = initValues.breakParentIfResult || '';
-    this.skipSublingIfResult = initValues.skipSublingIfResult || '';
 
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+      await this.plugins.hook('runLogic')(inputs);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -457,6 +459,7 @@ export class Test implements TestExtendType {
         envsPool,
       );
 
+      const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
       const {
         PPD_DEBUG_MODE,
         PPD_LOG_EXTEND,
@@ -465,8 +468,7 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
-        PPD_CONTINUE_ON_ERROR_ENABLED,
-      } = { ...new Arguments().args, ...this.argsRedefine };
+      } = { ...new Arguments().args, ...argsRedefine };
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       if (this.debug) {
@@ -475,14 +477,14 @@ export class Test implements TestExtendType {
         debugger;
       }
 
-      const resolveDisable = (thisDisable, metaFromPrevSubling): boolean => {
+      const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
         if (thisDisable) {
-          return true;
+          return 'disable';
         }
         if (metaFromPrevSubling.skipBecausePrevSubling) {
-          return true;
+          return 'skipSublingIfResult';
         }
-        return false;
+        return '';
       };
 
       this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
@@ -490,7 +492,7 @@ export class Test implements TestExtendType {
 
       if (disable) {
         await logger.log({
-          text: `Skip with disable: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
+          text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logShowFlag,
@@ -502,7 +504,7 @@ export class Test implements TestExtendType {
           result: {},
           meta: {
             skipBecausePrevSubling: this.metaFromPrevSubling.skipBecausePrevSubling,
-            disable,
+            disable: Boolean(disable),
           },
         };
       }
@@ -553,7 +555,8 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
-      this.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED ? inputs.continueOnError || this.continueOnError : false;
+
+      await this.plugins.hook('resolveValues')(inputs);
 
       try {
         this.envName = envsPool.current.name || '';
@@ -629,7 +632,7 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.continueOnError,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -645,13 +648,13 @@ export class Test implements TestExtendType {
             this.levelIndent,
             allData,
             logShowFlag,
-            this.continueOnError,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
         }
 
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
-        const args: TestArgsType = {
+        const args: TestArgsType & Record<string, unknown> = {
           envsId: this.envsId,
           data: dataLocal,
           selectors: selectorsLocal,
@@ -674,8 +677,7 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
-          continueOnError: this.continueOnError,
-          argsEnv: { ...new Arguments().args, ...this.argsRedefine },
+          argsEnv: { ...new Arguments().args, ...argsRedefine },
           env: this.env,
           envs: envsPool,
           browser: this.env && this.env.state.browser,
@@ -686,6 +688,8 @@ export class Test implements TestExtendType {
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,
           allData: new TestsContent().allData,
+          plugins: this.plugins,
+          continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
 
         // LOG TEST
@@ -781,7 +785,7 @@ export class Test implements TestExtendType {
             this.levelIndent + 1,
             { ...allData, ...localResults },
             logShowFlag,
-            this.continueOnError,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           );
         }
 
@@ -833,12 +837,13 @@ export class Test implements TestExtendType {
           }
         }
 
-        if (this.skipSublingIfResult) {
-          const skipSublingIfResult = runScriptInContext(this.skipSublingIfResult, {
+        const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
+        if (skipSublingIfResult) {
+          const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {
             ...allData,
             ...localResults,
           });
-          if (skipSublingIfResult) {
+          if (skipSublingIfResultResolved) {
             metaForNextSubling.disable = true;
             metaForNextSubling.skipBecausePrevSubling = true;
           }
@@ -856,7 +861,7 @@ export class Test implements TestExtendType {
         }
 
         let newError;
-        if (this.continueOnError) {
+        if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
           newError = new ContinueParentError({
             localResults: error.localResults || {},
             errorLevel: 0,

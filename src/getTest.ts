@@ -81,14 +81,14 @@ const propagateArgumentsObjectsOnAir = (
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
   args: TestArgsType | undefined,
-  list: TestExtendTypeKeys[] = [],
+  list: (TestExtendTypeKeys | string)[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
 const getTest = ({
   testJsonIncome,
   envsId,
   socket,
-  parentTestMetaCollector, // object fo share data with sublings
+  parentTestMetaCollector, // object for share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
@@ -148,10 +148,11 @@ const getTest = ({
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
+    const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
-      ['debug', 'frame', 'continueOnError'],
+      ['debug', 'frame', ...Object.keys(fromPrevSublingSimple)],
     );
 
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};

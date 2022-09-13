@@ -2,13 +2,17 @@
   "terminal.integrated.env.windows": {
     "NODIST_X64": "1"
   },
-  "spellright.language": [
-    "en",
-    "ru"
-  ],
-  "spellright.documentTypes": [
-    "markdown",
-    "latex",
-    "plaintext"
-  ],
+  "spellright.language": ["en", "ru"],
+  "spellright.documentTypes": ["markdown", "latex", "plaintext"],
+  "[yaml]": {
+    "editor.autoIndent": "advanced",
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "gitlens.codeLens.scopes": ["document"],
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "files.associations": {
+    "*.ppd": "yaml"
+  },
+  "indentRainbow.ignoreErrorLanguages": ["markdown", "html", "yaml"]
 }

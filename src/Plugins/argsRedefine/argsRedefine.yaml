@@ -1,0 +1,24 @@
+name: argsRedefine
+description: argsRedefine check
+
+runTest:
+  - case:
+      description: Check PPD_LOG_EXTEND true globaly
+      runTest:
+        - blank:
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_LOG_TIMER_SHOW: false
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:

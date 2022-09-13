@@ -285,7 +285,6 @@ export type TestArgsType = {
   ppd: {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
-  continueOnError: boolean;
   argsEnv: Record<string, unknown>;
   env: {
     name: string;
@@ -305,7 +304,7 @@ export type TestArgsType = {
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
-export interface TestTypeYaml {
+export type TestTypeYaml = {
   name: string;
   type?: 'atom' | 'test';
   needData?: Array<string>;
@@ -342,9 +341,7 @@ export interface TestTypeYaml {
   runTest?: TestLifecycleFunctionType[] | TestExtendType[];
   afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
-  argsRedefine?: Partial<ArgumentsType>;
-  continueOnError?: boolean;
-}
+};
 
 export type TestType = Required<TestTypeYaml>;
 
@@ -364,7 +361,6 @@ export type TestExtendType = TestType & {
   logOptionsParent?: LogOptionsType;
   testFile?: string;
   breakParentIfResult?: string;
-  skipSublingIfResult?: string;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
 };
 
@@ -380,4 +376,17 @@ export type AllDataType = {
   envs: Array<EnvType>;
   data: Array<DataType>;
   selectors: Array<DataType>;
+};
+
+// ================ PLUGINS ====================
+
+export type DocumentationLanguages = 'ru' | 'en';
+
+export type PluginDocumentation = {
+  description: { en: string[] } & Partial<Record<DocumentationLanguages, string[]>>;
+  exampleTest: string;
+  exampleTestResult: string;
+  name: string;
+  type: string;
+  propogation: boolean;
 };

@@ -1,0 +1,34 @@
+name: continueOnError
+description: continueOnError
+runTest:
+  - case:
+      description: Skip me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            errorIfResult: 1 === 1
+            descriptionError: This is error description
+
+  - case:
+      repeat: 3
+      continueOnError: true
+      runTest:
+        - blank:
+            bindDescription: "`Second level loop: ${$loop}`"
+            errorIfResult: "$loop < 2"
+
+        - blank:
+            description: "I`m next"
+
+  - case:
+      description: I am without errors
+
+  - case:
+      description: Error me if I broken
+      continueOnError: true
+      runTest:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 1 === 1
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False

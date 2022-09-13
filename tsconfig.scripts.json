@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "types": ["node", "webpack-env", "jest"],
+    "module": "CommonJS",
+    "esModuleInterop": true,
+  },
+  "lib": ["es2020", "es2020.array"],
+  "exclude": ["node_modules"]
+}
