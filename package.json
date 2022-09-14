@@ -1,13 +1,13 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.99",
+  "version": "2.0.0-beta.100",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
   "typings": "./src/global.d.ts",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "prepublishOnly": "npm install && npm run build && npm run lint && npm test && npm run e2e",
+    "prepublishOnly": "npm install && npm run build && npm run lint && npm test && npm docs && npm run e2e",
     "lint": "eslint src/**/*.[jt]s src.tests/**/*.[jt]s",
     "test": "jest",
     "docs": "ts-node --project ./tsconfig.scripts.json docs/createDocs.ts",
