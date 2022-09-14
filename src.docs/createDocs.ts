@@ -8,7 +8,7 @@ const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];
 
 const index = fs.readFileSync(path.join(__dirname, './index.md'), 'utf-8');
-const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]);
+const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]).filter((v) => !['plugins'].includes(v));
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};
@@ -26,12 +26,12 @@ languages.forEach((lang) => {
     }
   });
 
-  const plugins = [];
+  const plugins: string[] = [];
   plugins.push('\n# Test block settings\n');
   for (const plugin of documentations) {
     const documentation = plugin;
     plugins.push(`## ${documentation.name}`);
-    documentation.description[lang].forEach((line) => plugins.push(`${line}\n`));
+    (documentation?.description[lang] ?? []).forEach((line) => plugins.push(`${line}\n`));
 
     if (documentation.exampleTest) {
       const exampleTest = fs.readFileSync(path.join(__dirname, '..', documentation.exampleTest), 'utf-8');

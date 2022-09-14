@@ -10,7 +10,7 @@
     "prepublishOnly": "npm install && npm run build && npm run lint && npm test && npm docs && npm run e2e",
     "lint": "eslint src/**/*.[jt]s src.tests/**/*.[jt]s",
     "test": "jest",
-    "docs": "ts-node --project ./tsconfig.scripts.json docs/createDocs.ts",
+    "docs": "ts-node --project ./tsconfig.scripts.json ./src.docs/createDocs.ts",
     "e2e": "node src.tests.e2e/start.js"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
