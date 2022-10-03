@@ -57,6 +57,15 @@ Arguments applying order. From minor to major:
 
 
 # Test block settings
+   ```name:``` [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments)
+
+   ```description:```
+
+   ```skipSublingIfResult:```
+
+   ```continueOnError:```
+
+   ```argsRedefine:```
 
 ## skipSublingIfResult
 TODO
@@ -127,7 +136,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'skipSublingIfResult' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 skipSublingIfResult (skipSublingIfResult)
    Simple skipSublingIfResult (case)
       ✔️ I`m not skiped (blank)
@@ -248,7 +257,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 continueOnError (continueOnError)
    Skip me if I broken (case)
       (blank)
@@ -335,7 +344,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 argsRedefine check (argsRedefine)
    Check PPD_LOG_EXTEND true globaly (case)
       (blank)

@@ -408,7 +408,7 @@ export class Test implements TestExtendType {
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
-    this.plugins.hook('initValues')(initValues);
+    this.plugins.hook('initValues', initValues);
 
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
@@ -450,7 +450,7 @@ export class Test implements TestExtendType {
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      await this.plugins.hook('runLogic')(inputs);
+      this.plugins.hook('runLogic', inputs);
       const startTime = getTimer().now;
       const { envsPool, logger } = Environment(this.envsId);
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
@@ -556,7 +556,7 @@ export class Test implements TestExtendType {
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
-      await this.plugins.hook('resolveValues')(inputs);
+      this.plugins.hook('resolveValues', inputs);
 
       try {
         this.envName = envsPool.current.name || '';

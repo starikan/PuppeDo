@@ -74,13 +74,13 @@ export class Plugins {
     }
   }
 
-  hook(name: keyof Hooks): (args: unknown) => void {
-    return async (args: unknown) => {
-      for (const plugin of this.plugins) {
-        await plugin.hook(name)(args);
-      }
-    };
+  hook<T>(name: keyof Hooks, args: T): void {
+    for (const plugin of this.plugins) {
+      plugin.hook(name)(args);
+    }
   }
+
+  // TODO: 2022-10-03 S.Starodubov async hook
 
   getValue<TValues>(pluginName: string): TValues {
     const { values } = this.plugins.find((v) => v.name === pluginName) as { values: TValues };
