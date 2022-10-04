@@ -3,16 +3,13 @@
 import { randomUUID } from 'crypto';
 import { TestExtendType } from './global.d';
 import { pick } from './Helpers';
-import { PliginsFields } from './Plugins/index';
 import Singleton from './Singleton';
 import { Test } from './Test';
 
-// type hooks = 'initValues' | 'runLogic' | 'resolveValues';
-
 type Hooks = {
-  initValues?: (initValues: TestExtendType & PliginsFields) => void;
-  runLogic?: () => void;
-  resolveValues?: (inputs: TestExtendType & PliginsFields) => void;
+  initValues?: (initValues: TestExtendType) => void;
+  runLogic?: (inputs: TestExtendType) => void;
+  resolveValues?: (inputs: TestExtendType) => void;
 };
 
 type PropogationsAndShares = {
@@ -104,21 +101,21 @@ export class Plugins {
   }
 }
 
-export class Plugin<TValues> implements PluginType<TValues> {
+export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType<T> {
   id = randomUUID();
 
   name: string;
 
-  defaultValues?: TValues;
+  defaultValues?: T;
 
-  values: TValues;
+  values: T;
 
   allPlugins?: Plugins;
 
   hooks: Required<Hooks> = {
-    initValues: (initValues: TestExtendType & PliginsFields) => {
+    initValues: (initValues: TestExtendType) => {
       const newValues = { ...(this.defaultValues ?? {}), ...pick(initValues, Object.keys(this.defaultValues ?? {})) };
-      this.values = newValues as TValues;
+      this.values = newValues as T;
     },
     runLogic: () => {
       // Blank
@@ -142,7 +139,7 @@ export class Plugin<TValues> implements PluginType<TValues> {
     hooks = {},
   }: {
     name: string;
-    defaultValues?: TValues;
+    defaultValues?: T;
     propogationsAndShares?: PropogationsAndShares;
     allPlugins?: Plugins;
     hooks?: Hooks;
@@ -165,5 +162,13 @@ export class Plugin<TValues> implements PluginType<TValues> {
       debugger;
     }
     return this.blankHook;
+  }
+
+  getValue(value: keyof T): T[keyof T] {
+    return this.values[value];
+  }
+
+  setValues(values: Partial<T>): void {
+    this.values = { ...this.values, ...values };
   }
 }

@@ -1,0 +1,47 @@
+[0m00:00:00.000 - timer  [0m[0mTest 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'[0m
+[0m00:00:00.000 - env    [0m[34m
+descriptionErrorNested (descriptionErrorNested)
+   descriptionError 0 description (case)
+      descriptionError 1 description (blank)
+[0m
+[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
+[0m00:00:00.000 - test   [0m[32m(descriptionErrorNested) descriptionErrorNested[0m
+[0m00:00:00.000 - test   |   [0m[47m[30m(case) descriptionError 0 description[0m[0m
+[31m00:00:00.000 - error  |   |   [0m[31mTest stopped with expr errorIf = 'true'[0m
+[31m00:00:00.000 - error  |   |    descriptionErrorNested[0m
+[31m00:00:00.000 - error  |   |       runTest[0].case[0m
+[31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
+[31m00:00:00.000 - error  |   |   [0m[31mdescriptionError 1 | Description: descriptionError 1 description (blank)[0m
+[31m00:00:00.000 - error  |   |    descriptionErrorNested[0m
+[31m00:00:00.000 - error  |   |       runTest[0].case[0m
+[31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
+[31m00:00:00.000 - error  |   [0m[31mdescriptionError 1 | Description: descriptionError 0 description (case)[0m
+[31m00:00:00.000 - error  |    descriptionErrorNested[0m
+[31m00:00:00.000 - error  |       runTest[0].case[0m
+[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
+[31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
+[31m00:00:00.000 - error  [0m[31mdescriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)[0m
+[31m00:00:00.000 - error   descriptionErrorNested[0m
+[31m00:00:00.000 - error      runTest[0].case[0m
+[31m00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)[0m
+[31m00:00:00.000 - error   [0m[31m================================================================================================[0m
+[31m                      [0m[31mTest stopped with expr errorIf = 'true'[0m
+[31m                      [0m[31merror in test = blank[0m
+[31m                      [0m[31merror in test = case[0m
+[31m                      [0m[31merror in test = descriptionErrorNested[0m
+[31m                      [0m[31m================================================================================================[0m
+[31m                      [0m[31mError: Test stopped with expr errorIf = 'true'[0m
+[31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues:96:5)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31mSUMMARY ERROR INFO:[0m
+[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31mMessage: Test stopped with expr errorIf = 'true'[0m
+[31m00:00:00.000 - error  [0m[31mError: descriptionError 0[0m
+[31m00:00:00.000 - error  [0m[31mPath: descriptionErrorNested -> runTest[0].case -> runTest[0].blank[0m
+[31m00:00:00.000 - error  [0m[31mDescription:[0m
+[31m00:00:00.000 - error  [0m[31m   descriptionErrorNested[0m
+[31m00:00:00.000 - error  [0m[31m      descriptionError 0 description[0m
+[31m00:00:00.000 - error  [0m[31m[0m

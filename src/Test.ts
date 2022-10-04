@@ -25,8 +25,8 @@ import {
   Element,
 } from './global.d';
 import Atom from './AtomCore';
-import { Plugins } from './Plugins';
-import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins/index';
+import { Plugins } from './PluginsCore';
+import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -378,7 +378,6 @@ export class Test implements TestExtendType {
   bindResults!: Record<string, string>;
   description: string;
   descriptionExtend: string[];
-  descriptionError: string;
   bindDescription: string;
   while!: string;
   if!: string;
@@ -424,7 +423,6 @@ export class Test implements TestExtendType {
     this.allowResults = initValues.allowResults || [];
     this.description = initValues.description || '';
     this.descriptionExtend = initValues.descriptionExtend || [];
-    this.descriptionError = initValues.descriptionError || '';
     this.bindDescription = initValues.bindDescription || '';
     this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
     this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
@@ -544,7 +542,6 @@ export class Test implements TestExtendType {
       } as Record<string, string | number>;
       this.description = inputs.description || this.description;
       this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
-      this.descriptionError = inputs.descriptionError || this.descriptionError;
       this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;

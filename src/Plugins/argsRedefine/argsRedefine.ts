@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import { ArgumentsType, PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../Plugins';
+import { Plugin } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 

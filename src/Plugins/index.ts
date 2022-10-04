@@ -1,10 +1,11 @@
-import { PluginsFabric } from '../Plugins';
+import { PluginsFabric } from '../PluginsCore';
 
 import continueOnError, { PluginContinueOnError } from './continueOnError/continueOnError';
 import skipSublingIfResult, { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
 import argsRedefine, { PluginArgsRedefine } from './argsRedefine/argsRedefine';
+import descriptionError, { PluginDescriptionError } from './descriptionError/descriptionError';
 
-const plugins = [skipSublingIfResult, continueOnError, argsRedefine];
+const plugins = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
 
 const pluginsBusket = new PluginsFabric();
 
@@ -12,15 +13,11 @@ for (const plugin of plugins) {
   pluginsBusket.addPlugin(plugin.name, plugin.plugin);
 }
 
-export type PliginsFields = Record<string, unknown> &
-  Partial<PluginSkipSublingIfResult> &
+export const documentations = plugins.map((v) => v.documentation);
+
+export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginArgsRedefine> &
+  Partial<PluginDescriptionError> &
   Partial<PluginContinueOnError>;
 
-export { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine };
-
-export const documentations = [
-  skipSublingIfResult.documentation,
-  continueOnError.documentation,
-  argsRedefine.documentation,
-];
+export { PluginContinueOnError, PluginSkipSublingIfResult, PluginDescriptionError, PluginArgsRedefine };

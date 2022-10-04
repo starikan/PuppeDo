@@ -42,29 +42,17 @@ const testsE2E = {
     runBeforeTest: () => {},
   },
   mainPuppeteer: {
-    env: {
-      PPD_TESTS: 'main',
-      PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }',
-      PPD_LOG_LEVEL_NESTED: 1,
-    },
+    env: { PPD_TESTS: 'main', PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }', PPD_LOG_LEVEL_NESTED: 1 },
   },
   envsManipulations: {
-    params: {
-      PPD_TESTS: 'envsManipulations',
-    },
+    params: { PPD_TESTS: 'envsManipulations' },
   },
   errorIf: {
-    params: {
-      PPD_TESTS: 'errorIf',
-    },
+    params: { PPD_TESTS: 'errorIf' },
     isError: true,
   },
   testWithNoAtom: {
-    params: {
-      PPD_TESTS: 'testWithNoAtom',
-      PPD_LOG_EXTEND: true,
-      PPD_LOG_LEVEL_NESTED: 0,
-    },
+    params: { PPD_TESTS: 'testWithNoAtom', PPD_LOG_EXTEND: true, PPD_LOG_LEVEL_NESTED: 0 },
     isError: true,
   },
   mainWithError: {
@@ -90,50 +78,37 @@ const testsE2E = {
     },
   },
   screencast: {
-    params: {
-      PPD_TESTS: 'screencast',
-      PPD_DEBUG_MODE: true,
-      PPD_LOG_TIMESTAMP_SHOW: false,
-    },
+    params: { PPD_TESTS: 'screencast', PPD_DEBUG_MODE: true, PPD_LOG_TIMESTAMP_SHOW: false },
   },
   atoms: {
-    params: {
-      PPD_TESTS: 'atoms',
-      PPD_DATA: { myEnv: 'mainEnv' },
-    },
+    params: { PPD_TESTS: 'atoms', PPD_DATA: { myEnv: 'mainEnv' } },
   },
   tags: {
-    params: {
-      PPD_TESTS: 'tagsTest',
-      PPD_TAGS_TO_RUN: 'testTag',
-    },
+    params: { PPD_TESTS: 'tagsTest', PPD_TAGS_TO_RUN: 'testTag' },
   },
   descriptions: {
-    params: {
-      PPD_TESTS: 'descriptionTest',
-    },
+    params: { PPD_TESTS: 'descriptionTest' },
   },
   logs: {
-    params: {
-      PPD_TESTS: 'logOptions',
-    },
+    params: { PPD_TESTS: 'logOptions' },
   },
   continueOnError: {
-    params: {
-      PPD_TESTS: 'continueOnError',
-      PPD_CONTINUE_ON_ERROR_ENABLED: true,
-    },
+    params: { PPD_TESTS: 'continueOnError', PPD_CONTINUE_ON_ERROR_ENABLED: true },
+    isError: true,
+  },
+  descriptionError: {
+    params: { PPD_TESTS: 'descriptionError' },
+    isError: true,
+  },
+  descriptionErrorNested: {
+    params: { PPD_TESTS: 'descriptionErrorNested' },
     isError: true,
   },
   breakParentIfResult: {
-    params: {
-      PPD_TESTS: 'breakParentIfResult',
-    },
+    params: { PPD_TESTS: 'breakParentIfResult' },
   },
   recursion: {
-    params: {
-      PPD_TESTS: 'recursion',
-    },
+    params: { PPD_TESTS: 'recursion' },
   },
   screenshots: {
     // TODO: 2021-12-16 S.Starodubov check files thats created
@@ -146,14 +121,10 @@ const testsE2E = {
     },
   },
   argsRedefine: {
-    params: {
-      PPD_TESTS: 'argsRedefine',
-    },
+    params: { PPD_TESTS: 'argsRedefine' },
   },
   skipSublingIfResult: {
-    params: {
-      PPD_TESTS: 'skipSublingIfResult',
-    },
+    params: { PPD_TESTS: 'skipSublingIfResult' },
   },
 };
 

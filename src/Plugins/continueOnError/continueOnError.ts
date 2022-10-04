@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Plugin, Plugins } from '../../Plugins';
+import { Plugin, Plugins } from '../../PluginsCore';
 import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 

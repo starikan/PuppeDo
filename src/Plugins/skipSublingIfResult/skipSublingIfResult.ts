@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../Plugins';
+import { Plugin } from '../../PluginsCore';
 
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
 
