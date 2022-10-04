@@ -20,4 +20,7 @@ export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginDescriptionError> &
   Partial<PluginContinueOnError>;
 
-export { PluginContinueOnError, PluginSkipSublingIfResult, PluginDescriptionError, PluginArgsRedefine };
+export type { PluginContinueOnError };
+export type { PluginSkipSublingIfResult };
+export type { PluginDescriptionError };
+export type { PluginArgsRedefine };

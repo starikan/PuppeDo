@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import { documentations } from '../src/Plugins/index';
+import { documentations } from '../src/Plugins';
 import { DocumentationLanguages } from '../src/global.d';
 
 const languageDefault = 'en';
