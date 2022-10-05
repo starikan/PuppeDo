@@ -316,6 +316,71 @@ continueOnError (continueOnError)
 }
 
 ```
+## descriptionError
+TODO
+
+```yaml
+name: descriptionError
+description: descriptionError
+runTest:
+  - case:
+      description: "Simple descriptionError"
+      errorIf: true
+      descriptionError: "Simple descriptionError"
+
+---
+name: descriptionErrorNested
+description: descriptionErrorNested
+runTest:
+  - case:
+      description: "descriptionError 0 description"
+      descriptionError: "descriptionError 0"
+      runTest:
+        - blank:
+            description: "descriptionError 1 description"
+            errorIf: true
+            descriptionError: "descriptionError 1"
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionError (descriptionError)
+   Simple descriptionError (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionError) descriptionError
+00:00:00.000 - error  |   Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (case)
+00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  Simple descriptionError | Description: descriptionError (descriptionError)
+00:00:00.000 - error   descriptionError
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIf = 'true'
+                      error in test = case
+                      error in test = descriptionError
+                      ================================================================================================
+                      Error: Test stopped with expr errorIf = 'true'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+00:00:00.000 - error  
+00:00:00.000 - error  SUMMARY ERROR INFO:
+00:00:00.000 - error  
+00:00:00.000 - error  Message: Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  Error: Simple descriptionError
+00:00:00.000 - error  Path: descriptionError -> runTest[0].case
+00:00:00.000 - error  Description:
+00:00:00.000 - error     descriptionError
+00:00:00.000 - error  
+
+```
 ## argsRedefine
 Переопределение агрументов ENV для конкретного кейса.
 

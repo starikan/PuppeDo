@@ -110,21 +110,16 @@ export class TestError extends AbstractError {
 
   async summaryInfo(): Promise<void> {
     const { message = '', breadcrumbs = [], breadcrumbsDescriptions = [] } = this;
-
-    const texts = [
-      '',
-      'SUMMARY ERROR INFO:',
-      '',
-      `Message: ${message.split(' || ')[0]}`,
-      `Error: ${this.getDescriptionError()}`,
-      `Path: ${breadcrumbs.join(' -> ')}`,
-      'Description:',
-      ...[breadcrumbsDescriptions.map((v, i) => `${' '.repeat((1 + i) * 3)}${v}`)],
-      '',
-    ];
-    for (const text of texts) {
-      await this.logger.log({ level: 'error', text, extendInfo: true });
-    }
+    const text = [
+      `█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     ${message.split(' || ')[0]}
+                      █ Error:       ${this.getDescriptionError()}
+                      █ Path:        ${breadcrumbs.join(' -> ')}
+                      █ Description:`,
+      ...breadcrumbsDescriptions.map((v, i) => `                      █ ${' '.repeat((1 + i) * 3)}${v}`),
+    ].join('\n');
+    await this.logger.log({ level: 'error', text, extendInfo: true });
   }
 }
 

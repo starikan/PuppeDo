@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "prepublishOnly": "npm install && npm run build && npm run lint && npm test && npm docs && npm run e2e",
+    "prepublishOnly": "npm install && npm run build && npm run lint && npm test && npm run docs && npm run e2e",
     "lint": "eslint src/**/*.[jt]s src.tests/**/*.[jt]s",
     "test": "jest",
     "docs": "ts-node --project ./tsconfig.scripts.json ./src.docs/createDocs.ts",
