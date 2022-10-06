@@ -172,7 +172,6 @@ export const checkIf = async (
   logShowFlag = true,
   continueOnError = false,
 ): Promise<boolean> => {
-  // debugger
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
@@ -341,6 +340,16 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
+const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
+  if (thisDisable) {
+    return 'disable';
+  }
+  if (metaFromPrevSubling.skipBecausePrevSubling) {
+    return 'skipSublingIfResult';
+  }
+  return '';
+};
+
 export class Test implements TestExtendType {
   name: string;
   envsId: string;
@@ -474,16 +483,6 @@ export class Test implements TestExtendType {
         // eslint-disable-next-line no-debugger
         debugger;
       }
-
-      const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
-        if (thisDisable) {
-          return 'disable';
-        }
-        if (metaFromPrevSubling.skipBecausePrevSubling) {
-          return 'skipSublingIfResult';
-        }
-        return '';
-      };
 
       this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
       const disable = resolveDisable(this.disable, this.metaFromPrevSubling);
@@ -748,9 +747,9 @@ export class Test implements TestExtendType {
         let resultFromTest = {};
 
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
-        for (let funcs of FUNCTIONS) {
-          funcs = [funcs].flat();
-          for (const func of funcs) {
+        for (const funcs of FUNCTIONS) {
+          const funcsArray = [funcs].flat();
+          for (const func of funcsArray) {
             const funResult = (await func(args)) || {};
             resultFromTest = { ...resultFromTest, ...funResult };
           }
