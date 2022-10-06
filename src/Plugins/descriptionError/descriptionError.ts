@@ -25,11 +25,22 @@ function plugin(): Plugin<PluginDescriptionError> {
 
 const documentation: PluginDocumentation = {
   description: {
-    ru: ['TODO'],
+    ru: [
+      'При падении тестов в логи выводится информация из этого поля',
+      'Поле является исполняемым в контексте данных',
+    ],
     en: ['TODO'],
   },
-  exampleTest: 'src/Plugins/descriptionError/descriptionError.yaml',
-  exampleTestResult: 'src.tests.e2e/snapshots/descriptionError.log',
+  examples: [
+    {
+      test: 'src/Plugins/descriptionError/descriptionError.yaml',
+      result: 'src.tests.e2e/snapshots/descriptionError.log',
+    },
+    {
+      test: 'src/Plugins/descriptionError/descriptionErrorNested.yaml',
+      result: 'src.tests.e2e/snapshots/descriptionErrorNested.log',
+    },
+  ],
   name,
   type: 'plugin',
   propogation: false,

@@ -317,7 +317,9 @@ continueOnError (continueOnError)
 
 ```
 ## descriptionError
-TODO
+При падении тестов в логи выводится информация из этого поля
+
+Поле является исполняемым в контексте данных
 
 ```yaml
 name: descriptionError
@@ -327,19 +329,6 @@ runTest:
       description: "Simple descriptionError"
       errorIf: true
       descriptionError: "Simple descriptionError"
-
----
-name: descriptionErrorNested
-description: descriptionErrorNested
-runTest:
-  - case:
-      description: "descriptionError 0 description"
-      descriptionError: "descriptionError 0"
-      runTest:
-        - blank:
-            description: "descriptionError 1 description"
-            errorIf: true
-            descriptionError: "descriptionError 1"
 
 ```
 #### Output:
@@ -378,6 +367,70 @@ descriptionError (descriptionError)
 00:00:00.000 - error  Path: descriptionError -> runTest[0].case
 00:00:00.000 - error  Description:
 00:00:00.000 - error     descriptionError
+00:00:00.000 - error  
+
+```
+```yaml
+name: descriptionErrorNested
+description: descriptionErrorNested
+runTest:
+  - case:
+      description: "descriptionError 0 description"
+      descriptionError: "descriptionError 0"
+      runTest:
+        - blank:
+            description: "descriptionError 1 description"
+            errorIf: true
+            descriptionError: "descriptionError 1"
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionErrorNested (descriptionErrorNested)
+   descriptionError 0 description (case)
+      descriptionError 1 description (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionErrorNested) descriptionErrorNested
+00:00:00.000 - test   |   (case) descriptionError 0 description
+00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  |   |    descriptionErrorNested
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   |   descriptionError 1 | Description: descriptionError 1 description (blank)
+00:00:00.000 - error  |   |    descriptionErrorNested
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   descriptionError 1 | Description: descriptionError 0 description (case)
+00:00:00.000 - error  |    descriptionErrorNested
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  descriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)
+00:00:00.000 - error   descriptionErrorNested
+00:00:00.000 - error      runTest[0].case
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIf = 'true'
+                      error in test = blank
+                      error in test = case
+                      error in test = descriptionErrorNested
+                      ================================================================================================
+                      Error: Test stopped with expr errorIf = 'true'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+00:00:00.000 - error  
+00:00:00.000 - error  SUMMARY ERROR INFO:
+00:00:00.000 - error  
+00:00:00.000 - error  Message: Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  Error: descriptionError 0
+00:00:00.000 - error  Path: descriptionErrorNested -> runTest[0].case -> runTest[0].blank
+00:00:00.000 - error  Description:
+00:00:00.000 - error     descriptionErrorNested
+00:00:00.000 - error        descriptionError 0 description
 00:00:00.000 - error  
 
 ```

@@ -5,16 +5,3 @@ runTest:
       description: "Simple descriptionError"
       errorIf: true
       descriptionError: "Simple descriptionError"
-
----
-name: descriptionErrorNested
-description: descriptionErrorNested
-runTest:
-  - case:
-      description: "descriptionError 0 description"
-      descriptionError: "descriptionError 0"
-      runTest:
-        - blank:
-            description: "descriptionError 1 description"
-            errorIf: true
-            descriptionError: "descriptionError 1"

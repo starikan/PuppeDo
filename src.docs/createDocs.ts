@@ -33,14 +33,12 @@ languages.forEach((lang) => {
     plugins.push(`## ${documentation.name}`);
     (documentation?.description[lang] ?? []).forEach((line) => plugins.push(`${line}\n`));
 
-    if (documentation.exampleTest) {
-      const exampleTest = fs.readFileSync(path.join(__dirname, '..', documentation.exampleTest), 'utf-8');
+    for (const example of documentation.examples) {
+      const exampleTest = fs.readFileSync(path.join(__dirname, '..', example.test), 'utf-8');
       plugins.push(`\`\`\`yaml\n${exampleTest}\n\`\`\``);
-    }
 
-    if (documentation.exampleTestResult) {
       const exampleTestResult = fs
-        .readFileSync(path.join(__dirname, '..', documentation.exampleTestResult), 'utf-8')
+        .readFileSync(path.join(__dirname, '..', example.result), 'utf-8')
         // eslint-disable-next-line no-control-regex
         .replace(/\[\d{1,2}m/g, '');
       plugins.push('#### Output:');
