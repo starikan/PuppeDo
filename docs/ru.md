@@ -359,15 +359,13 @@ descriptionError (descriptionError)
                       at checkIf (\@puppedo\core\src\Test)
                       at processTicksAndRejections (node:internal/process/task_queues:96:5)
                       at Test.runLogic (\@puppedo\core\src\Test)
-00:00:00.000 - error  
-00:00:00.000 - error  SUMMARY ERROR INFO:
-00:00:00.000 - error  
-00:00:00.000 - error  Message: Test stopped with expr errorIf = 'true'
-00:00:00.000 - error  Error: Simple descriptionError
-00:00:00.000 - error  Path: descriptionError -> runTest[0].case
-00:00:00.000 - error  Description:
-00:00:00.000 - error     descriptionError
-00:00:00.000 - error  
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = 'true'
+                      █ Error:       Simple descriptionError
+                      █ Path:        descriptionError -> runTest[0].case
+                      █ Description:
+                      █    descriptionError
 
 ```
 ```yaml
@@ -375,11 +373,11 @@ name: descriptionErrorNested
 description: descriptionErrorNested
 runTest:
   - case:
-      description: "descriptionError 0 description"
+      description: "description 0"
       descriptionError: "descriptionError 0"
       runTest:
         - blank:
-            description: "descriptionError 1 description"
+            description: "description 1"
             errorIf: true
             descriptionError: "descriptionError 1"
 ```
@@ -388,22 +386,22 @@ runTest:
 00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 descriptionErrorNested (descriptionErrorNested)
-   descriptionError 0 description (case)
-      descriptionError 1 description (blank)
+   description 0 (case)
+      description 1 (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (descriptionErrorNested) descriptionErrorNested
-00:00:00.000 - test   |   (case) descriptionError 0 description
+00:00:00.000 - test   |   (case) description 0
 00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
 00:00:00.000 - error  |   |    descriptionErrorNested
 00:00:00.000 - error  |   |       runTest[0].case
 00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   |   descriptionError 1 | Description: descriptionError 1 description (blank)
+00:00:00.000 - error  |   |   descriptionError 1 | Description: description 1 (blank)
 00:00:00.000 - error  |   |    descriptionErrorNested
 00:00:00.000 - error  |   |       runTest[0].case
 00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   descriptionError 1 | Description: descriptionError 0 description (case)
+00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (case)
 00:00:00.000 - error  |    descriptionErrorNested
 00:00:00.000 - error  |       runTest[0].case
 00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
@@ -411,7 +409,7 @@ descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error  descriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error   descriptionErrorNested
 00:00:00.000 - error      runTest[0].case
-00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorNested.yaml)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIf = 'true'
                       error in test = blank
@@ -422,16 +420,74 @@ descriptionErrorNested (descriptionErrorNested)
                       at checkIf (\@puppedo\core\src\Test)
                       at processTicksAndRejections (node:internal/process/task_queues:96:5)
                       at Test.runLogic (\@puppedo\core\src\Test)
-00:00:00.000 - error  
-00:00:00.000 - error  SUMMARY ERROR INFO:
-00:00:00.000 - error  
-00:00:00.000 - error  Message: Test stopped with expr errorIf = 'true'
-00:00:00.000 - error  Error: descriptionError 0
-00:00:00.000 - error  Path: descriptionErrorNested -> runTest[0].case -> runTest[0].blank
-00:00:00.000 - error  Description:
-00:00:00.000 - error     descriptionErrorNested
-00:00:00.000 - error        descriptionError 0 description
-00:00:00.000 - error  
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = 'true'
+                      █ Error:       descriptionError 0
+                      █ Path:        descriptionErrorNested -> runTest[0].case -> runTest[0].blank
+                      █ Description:
+                      █    descriptionErrorNested
+                      █       description 0
+
+```
+```yaml
+name: descriptionErrorDynamic
+description: descriptionErrorDynamic
+allowResults: ["apples"]
+data: { apples: 5 }
+runTest:
+  - case:
+      bindDescription: "`I get ${apples} apples`"
+      descriptionError: "`Now I get only ${apples} apples`"
+      result: { apples: 1 }
+      errorIfResult: apples < 5
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionErrorDynamic' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionErrorDynamic (descriptionErrorDynamic)
+   (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionErrorDynamic) descriptionErrorDynamic
+00:00:00.000 - test   |   (case) I get 5 apples
+00:00:00.000 - error  |   |   Test stopped with expr errorIfResult = 'apples < 5'
+00:00:00.000 - error  |   |    descriptionErrorDynamic
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   Now I get only 1 apples | Description: No test description (case)
+00:00:00.000 - error  |    descriptionErrorDynamic
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  Now I get only 1 apples | Description: descriptionErrorDynamic (descriptionErrorDynamic)
+00:00:00.000 - error   descriptionErrorDynamic
+00:00:00.000 - error      runTest[0].case
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIfResult = 'apples < 5'
+                      error in test = case
+                      error in test = descriptionErrorDynamic
+                      ================================================================================================
+                      Error: Test stopped with expr errorIfResult = 'apples < 5'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Object.run (\@puppedo\core\src\Api)
+                      at runTest (\runAllTests)
+                      at start (\runAllTests)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIfResult = 'apples < 5'
+                      █ Error:       Now I get only 1 apples
+                      █ Path:        descriptionErrorDynamic -> runTest[0].case
+                      █ Description:
+                      █    descriptionErrorDynamic
 
 ```
 ## argsRedefine

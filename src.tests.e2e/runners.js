@@ -104,6 +104,10 @@ const testsE2E = {
     params: { PPD_TESTS: 'descriptionErrorNested' },
     isError: true,
   },
+  descriptionErrorDynamic: {
+    params: { PPD_TESTS: 'descriptionErrorDynamic' },
+    isError: true,
+  },
   breakParentIfResult: {
     params: { PPD_TESTS: 'breakParentIfResult' },
   },

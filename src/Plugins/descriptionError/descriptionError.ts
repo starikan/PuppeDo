@@ -79,6 +79,10 @@ const documentation: PluginDocumentation = {
       test: 'src/Plugins/descriptionError/descriptionErrorNested.yaml',
       result: 'src.tests.e2e/snapshots/descriptionErrorNested.log',
     },
+    {
+      test: 'src/Plugins/descriptionError/descriptionErrorDynamic.yaml',
+      result: 'src.tests.e2e/snapshots/descriptionErrorDynamic.log',
+    },
   ],
   name,
   type: 'plugin',

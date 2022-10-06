@@ -90,6 +90,7 @@ export class TestError extends AbstractError {
 
     if (!continueOnError) {
       let text = this.getDescriptionError() ? `${this.getDescriptionError()} | ` : '';
+      // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
       text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
       await this.logger.log({
         level: 'error',
