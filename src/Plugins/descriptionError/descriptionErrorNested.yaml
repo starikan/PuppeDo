@@ -2,10 +2,10 @@ name: descriptionErrorNested
 description: descriptionErrorNested
 runTest:
   - case:
-      description: "descriptionError 0 description"
+      description: "description 0"
       descriptionError: "descriptionError 0"
       runTest:
         - blank:
-            description: "descriptionError 1 description"
+            description: "description 1"
             errorIf: true
             descriptionError: "descriptionError 1"

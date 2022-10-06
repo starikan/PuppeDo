@@ -80,7 +80,7 @@ export class TestError extends AbstractError {
       this.parentTest?.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError ?? '';
     const currentDescriptionError =
       this.test.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError;
-    const result = parentDescriptionError || currentDescriptionError;
+    const result = currentDescriptionError || parentDescriptionError;
     return result;
   }
 
