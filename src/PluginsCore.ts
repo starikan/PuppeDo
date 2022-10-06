@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import { randomUUID } from 'crypto';
-import { TestExtendType } from './global.d';
+import { TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
@@ -10,6 +10,8 @@ type Hooks = {
   initValues?: (initValues: TestExtendType) => void;
   runLogic?: (inputs: TestExtendType) => void;
   resolveValues?: (inputs: TestExtendType) => void;
+  beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
+  afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
 
 type PropogationsAndShares = {
@@ -48,6 +50,7 @@ export class PluginsFabric extends Singleton {
     // do nothing
   }
 
+  // TODO: 2022-10-06 S.Starodubov order: 100 - порядок загрузки плагинов
   addPlugin(name: string, newPlugin: PluginFunction): void {
     this.plugins[name] = newPlugin;
   }
@@ -106,7 +109,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   name: string;
 
-  defaultValues?: T;
+  defaultValues: T;
 
   values: T;
 
@@ -114,13 +117,19 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   hooks: Required<Hooks> = {
     initValues: (initValues: TestExtendType) => {
-      const newValues = { ...(this.defaultValues ?? {}), ...pick(initValues, Object.keys(this.defaultValues ?? {})) };
+      const newValues = { ...this.defaultValues, ...pick(initValues, Object.keys(this.defaultValues)) };
       this.values = newValues as T;
     },
     runLogic: () => {
       // Blank
     },
     resolveValues: () => {
+      // Blank
+    },
+    beforeFunctions: () => {
+      // Blank
+    },
+    afterResults: () => {
       // Blank
     },
   };
@@ -139,13 +148,14 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     hooks = {},
   }: {
     name: string;
-    defaultValues?: T;
+    defaultValues: T;
     propogationsAndShares?: PropogationsAndShares;
     allPlugins?: Plugins;
     hooks?: Hooks;
   }) {
     this.name = name;
-    this.defaultValues = defaultValues;
+    this.defaultValues = { ...defaultValues };
+    this.values = { ...defaultValues };
     this.propogationsAndShares = propogationsAndShares;
     this.allPlugins = allPlugins;
     this.hooks = { ...this.hooks, ...hooks };

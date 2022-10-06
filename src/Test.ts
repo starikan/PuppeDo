@@ -650,7 +650,7 @@ export class Test implements TestExtendType {
 
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
-        const args: TestArgsType & Record<string, unknown> = {
+        const args: TestArgsType = {
           envsId: this.envsId,
           data: dataLocal,
           selectors: selectorsLocal,
@@ -685,6 +685,7 @@ export class Test implements TestExtendType {
           socket: this.socket,
           allData: new TestsContent().allData,
           plugins: this.plugins,
+          // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
 
@@ -743,6 +744,8 @@ export class Test implements TestExtendType {
           }
         }
 
+        this.plugins.hook('beforeFunctions', { args });
+
         // RUN FUNCTIONS
         let resultFromTest = {};
 
@@ -770,7 +773,7 @@ export class Test implements TestExtendType {
           { ...selectorsLocal, ...dataLocal, ...results },
         );
 
-        const metaForNextSubling: TestMetaSublingExchangeData = {};
+        this.plugins.hook('afterResults', { args, results: localResults });
 
         // ERROR
         if (this.errorIfResult) {
@@ -833,6 +836,7 @@ export class Test implements TestExtendType {
           }
         }
 
+        const metaForNextSubling: TestMetaSublingExchangeData = {};
         const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
         if (skipSublingIfResult) {
           const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {

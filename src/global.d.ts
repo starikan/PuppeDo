@@ -14,6 +14,7 @@ import {
 
 import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
+import { Plugins } from './PluginsCore';
 
 // ================ BROWSERS ====================
 
@@ -301,6 +302,8 @@ export type TestArgsType = {
   socket: SocketType;
   descriptionExtend: string[];
   allData: AllDataType;
+  plugins: Plugins;
+  continueOnError: boolean;
 };
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;

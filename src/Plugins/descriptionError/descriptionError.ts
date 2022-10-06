@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
 import { Plugin } from '../../PluginsCore';
+import { runScriptInContext } from '../../Test';
 
 export type PluginDescriptionError = { descriptionError: string };
 
@@ -11,11 +12,49 @@ function plugin(): Plugin<PluginDescriptionError> {
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
+      initValues: (initValues): void => {
+        pluginInstance.defaultValues.descriptionError = initValues.descriptionError ?? '';
+      },
+
       runLogic: (inputs): void => {
         const values: PluginDescriptionError = {
           descriptionError: inputs.descriptionError || pluginInstance.getValue('descriptionError'),
         };
         pluginInstance.setValues(values);
+      },
+
+      beforeFunctions: ({ args }): void => {
+        let newValue;
+        try {
+          newValue = runScriptInContext(
+            pluginInstance.defaultValues.descriptionError,
+            args.allData,
+            pluginInstance.defaultValues.descriptionError,
+          );
+        } catch (error) {
+          // Nothng t do
+        }
+        if (newValue) {
+          const values: PluginDescriptionError = { descriptionError: newValue };
+          pluginInstance.setValues(values);
+        }
+      },
+
+      afterResults: ({ results }): void => {
+        let newValue;
+        try {
+          newValue = runScriptInContext(
+            pluginInstance.defaultValues.descriptionError,
+            results,
+            pluginInstance.defaultValues.descriptionError,
+          );
+        } catch (error) {
+          // Nothng t do
+        }
+        if (newValue) {
+          const values: PluginDescriptionError = { descriptionError: newValue };
+          pluginInstance.setValues(values);
+        }
       },
     },
   });
