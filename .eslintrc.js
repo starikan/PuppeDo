@@ -28,7 +28,19 @@ module.exports = {
     'no-console': 'off',
 
     'prettier/prettier': 'error',
-    'max-len': ['error', { code: 120 }],
+    'max-len': [
+      'error',
+      {
+        code: 120,
+        comments: 200,
+        ignoreUrls: true,
+        ignorePattern: '^import .*',
+        ignoreTrailingComments: true,
+        ignoreTemplateLiterals: true,
+        ignoreStrings: true,
+        ignoreRegExpLiterals: true,
+      },
+    ],
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'import/extensions': ['error', 'ignorePackages', { js: 'never', jsx: 'never', ts: 'never', tsx: 'never' }],
     'object-curly-newline': ['error', { consistent: true }],
