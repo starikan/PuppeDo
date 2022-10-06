@@ -24,12 +24,10 @@ descriptionError (descriptionError)
 [31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
 [31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues:96:5)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mSUMMARY ERROR INFO:[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mMessage: Test stopped with expr errorIf = 'true'[0m
-[31m00:00:00.000 - error  [0m[31mError: Simple descriptionError[0m
-[31m00:00:00.000 - error  [0m[31mPath: descriptionError -> runTest[0].case[0m
-[31m00:00:00.000 - error  [0m[31mDescription:[0m
-[31m00:00:00.000 - error  [0m[31m   descriptionError[0m
-[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = 'true'
+                      █ Error:       Simple descriptionError
+                      █ Path:        descriptionError -> runTest[0].case
+                      █ Description:
+                      █    descriptionError[0m

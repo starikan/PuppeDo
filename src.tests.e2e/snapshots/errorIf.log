@@ -24,12 +24,10 @@ Error with IF (errorIf)
 [31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
 [31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues:96:5)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mSUMMARY ERROR INFO:[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mMessage: Test stopped with expr errorIf = '1 === 1'[0m
-[31m00:00:00.000 - error  [0m[31mError: This is error description[0m
-[31m00:00:00.000 - error  [0m[31mPath: errorIf -> runTest[0].blank[0m
-[31m00:00:00.000 - error  [0m[31mDescription:[0m
-[31m00:00:00.000 - error  [0m[31m   Error with IF[0m
-[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = '1 === 1'
+                      █ Error:       This is error description
+                      █ Path:        errorIf -> runTest[0].blank
+                      █ Description:
+                      █    Error with IF[0m
