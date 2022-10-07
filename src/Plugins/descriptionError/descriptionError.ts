@@ -12,11 +12,11 @@ function plugin(): Plugin<PluginDescriptionError> {
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
-      initValues: (initValues): void => {
+      initValues: ({ initValues }): void => {
         pluginInstance.defaultValues.descriptionError = initValues.descriptionError ?? '';
       },
 
-      runLogic: (inputs): void => {
+      runLogic: ({ inputs }): void => {
         const values: PluginDescriptionError = {
           descriptionError: inputs.descriptionError || pluginInstance.getValue('descriptionError'),
         };

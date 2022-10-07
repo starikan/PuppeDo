@@ -416,7 +416,7 @@ export class Test implements TestExtendType {
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
-    this.plugins.hook('initValues', initValues);
+    this.plugins.hook('initValues', { initValues });
 
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
@@ -457,9 +457,14 @@ export class Test implements TestExtendType {
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      this.plugins.hook('runLogic', inputs);
+      this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
+
       const { envsPool, logger } = Environment(this.envsId);
+      this.envName = envsPool.current.name || '';
+      this.envPageName = envsPool.current.page || '';
+      this.env = envsPool.envs[this.envName];
+
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},
         this.logOptions,
@@ -552,12 +557,8 @@ export class Test implements TestExtendType {
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
-      this.plugins.hook('resolveValues', inputs);
-
       try {
-        this.envName = envsPool.current.name || '';
-        this.envPageName = envsPool.current.page || '';
-        this.env = envsPool.envs[this.envName];
+        this.plugins.hook('resolveValues', { inputs });
 
         if (this.engineSupports.length) {
           const { engine } = this.env?.env?.browser || {};
@@ -619,35 +620,6 @@ export class Test implements TestExtendType {
           this.logOptions.backgroundColor = 'red';
         }
 
-        // IF
-        if (this.if) {
-          const skipIf = await checkIf(
-            this.if,
-            'if',
-            logger.log.bind(logger),
-            this.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-          );
-          if (skipIf) {
-            return { result: {}, meta: {} };
-          }
-        }
-
-        // ERROR IF
-        if (this.errorIf) {
-          await checkIf(
-            this.errorIf,
-            'errorIf',
-            logger.log.bind(logger),
-            this.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-          );
-        }
-
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
         const args: TestArgsType = {
@@ -688,6 +660,35 @@ export class Test implements TestExtendType {
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
+
+        // IF
+        if (this.if) {
+          const skipIf = await checkIf(
+            this.if,
+            'if',
+            logger.log.bind(logger),
+            this.levelIndent,
+            allData,
+            logShowFlag,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          );
+          if (skipIf) {
+            return { result: {}, meta: {} };
+          }
+        }
+
+        // ERROR IF
+        if (this.errorIf) {
+          await checkIf(
+            this.errorIf,
+            'errorIf',
+            logger.log.bind(logger),
+            this.levelIndent,
+            allData,
+            logShowFlag,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          );
+        }
 
         // LOG TEST
         logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });

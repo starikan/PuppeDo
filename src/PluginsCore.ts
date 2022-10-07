@@ -7,9 +7,9 @@ import Singleton from './Singleton';
 import { Test } from './Test';
 
 type Hooks = {
-  initValues?: (initValues: TestExtendType) => void;
-  runLogic?: (inputs: TestExtendType) => void;
-  resolveValues?: (inputs: TestExtendType) => void;
+  initValues?: ({ initValues }: { initValues: TestExtendType }) => void;
+  runLogic?: ({ inputs }: { inputs: TestExtendType }) => void;
+  resolveValues?: ({ inputs }: { inputs: TestExtendType }) => void;
   beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
@@ -116,7 +116,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   allPlugins?: Plugins;
 
   hooks: Required<Hooks> = {
-    initValues: (initValues: TestExtendType) => {
+    initValues: ({ initValues }) => {
       const newValues = { ...this.defaultValues, ...pick(initValues, Object.keys(this.defaultValues)) };
       this.values = newValues as T;
     },

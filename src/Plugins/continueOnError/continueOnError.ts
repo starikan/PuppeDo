@@ -3,7 +3,7 @@ import { Plugin, Plugins } from '../../PluginsCore';
 import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
-import { PluginDocumentation, TestExtendType } from '../../global.d';
+import { PluginDocumentation } from '../../global.d';
 
 export type PluginContinueOnError = { continueOnError: boolean };
 
@@ -11,28 +11,28 @@ const name = 'continueOnError';
 
 function plugin(): Plugin<PluginContinueOnError> {
   const allPlugins = this as Plugins;
-  return new Plugin<PluginContinueOnError>({
+  const pluginInstance = new Plugin<PluginContinueOnError>({
     name,
     defaultValues: { continueOnError: false },
     propogationsAndShares: {
       fromPrevSublingSimple: ['continueOnError'],
     },
     hooks: {
-      resolveValues: function resolveValues(inputs: TestExtendType & PluginContinueOnError): void {
-        const self = this as Plugin<PluginContinueOnError>;
-
+      resolveValues: ({ inputs }): void => {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
           ...new Arguments().args,
           ...allPlugins.getValue<PluginArgsRedefine>('argsRedefine').argsRedefine,
         };
 
-        self.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
-          ? inputs.continueOnError || self.values.continueOnError
+        pluginInstance.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
+          ? inputs.continueOnError || pluginInstance.values.continueOnError
           : false;
       },
     },
     allPlugins,
   });
+
+  return pluginInstance;
 }
 
 const documentation: PluginDocumentation = {
