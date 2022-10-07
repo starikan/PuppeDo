@@ -1,17 +1,18 @@
 /* eslint-disable prefer-arrow-callback */
 import { ArgumentsType, PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../PluginsCore';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
 const name = 'argsRedefine';
 
-function plugin(): Plugin<PluginArgsRedefine> {
-  return new Plugin<PluginArgsRedefine>({
+const plugin: PluginFunction<PluginArgsRedefine> = () => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: {} },
   });
-}
+  return pluginInstance;
+};
 
 const documentation: PluginDocumentation = {
   description: {

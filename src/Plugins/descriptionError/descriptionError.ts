@@ -1,14 +1,14 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../PluginsCore';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
 export type PluginDescriptionError = { descriptionError: string };
 
 const name = 'descriptionError';
 
-function plugin(): Plugin<PluginDescriptionError> {
-  const pluginInstance = new Plugin<PluginDescriptionError>({
+const plugin: PluginFunction<PluginDescriptionError> = () => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
@@ -60,7 +60,7 @@ function plugin(): Plugin<PluginDescriptionError> {
   });
 
   return pluginInstance;
-}
+};
 
 const documentation: PluginDocumentation = {
   description: {

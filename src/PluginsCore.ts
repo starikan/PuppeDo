@@ -18,7 +18,7 @@ type PropogationsAndShares = {
   fromPrevSublingSimple: string[];
 };
 
-interface PluginType<TValues> {
+export interface PluginType<TValues> {
   name: string;
   hook: (name: keyof Hooks) => (unknown) => void;
   hooks: Hooks;
@@ -26,11 +26,11 @@ interface PluginType<TValues> {
   values: TValues;
 }
 
-type PluginFunction = (allPlugins?: Plugins) => PluginType<unknown>;
+export type PluginFunction<T> = (allPlugins?: Plugins) => PluginType<T>;
 
 // Storage of all scratch of plugins
 export class PluginsFabric extends Singleton {
-  private plugins: Record<string, PluginFunction>;
+  private plugins: Record<string, PluginFunction<unknown>>;
   constructor(reInit = false) {
     super();
     if (!this.plugins || reInit) {
@@ -38,7 +38,7 @@ export class PluginsFabric extends Singleton {
     }
   }
 
-  getAllPluginsScratch(): Record<string, PluginFunction> {
+  getAllPluginsScratch(): Record<string, PluginFunction<unknown>> {
     return this.plugins;
   }
 
@@ -51,7 +51,7 @@ export class PluginsFabric extends Singleton {
   }
 
   // TODO: 2022-10-06 S.Starodubov order: 100 - порядок загрузки плагинов
-  addPlugin(name: string, newPlugin: PluginFunction): void {
+  addPlugin(name: string, newPlugin: PluginFunction<unknown>): void {
     this.plugins[name] = newPlugin;
   }
 }
@@ -70,7 +70,7 @@ export class Plugins {
     this.originTest = originTest;
 
     for (const plugin of Object.values(plugins)) {
-      this.plugins.push(plugin.bind(this)());
+      this.plugins.push(plugin(this));
     }
   }
 

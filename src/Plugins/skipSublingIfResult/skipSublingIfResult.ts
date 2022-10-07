@@ -1,17 +1,18 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../PluginsCore';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
 
 const name = 'skipSublingIfResult';
 
-function plugin(): Plugin<PluginSkipSublingIfResult> {
-  return new Plugin<PluginSkipSublingIfResult>({
+const plugin: PluginFunction<PluginSkipSublingIfResult> = () => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { skipSublingIfResult: '' },
   });
-}
+  return pluginInstance;
+};
 
 const documentation: PluginDocumentation = {
   description: {

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Plugin, Plugins } from '../../PluginsCore';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
@@ -9,9 +9,8 @@ export type PluginContinueOnError = { continueOnError: boolean };
 
 const name = 'continueOnError';
 
-function plugin(): Plugin<PluginContinueOnError> {
-  const allPlugins = this as Plugins;
-  const pluginInstance = new Plugin<PluginContinueOnError>({
+const plugin: PluginFunction<PluginContinueOnError> = (allPlugins) => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
     propogationsAndShares: {
@@ -33,7 +32,7 @@ function plugin(): Plugin<PluginContinueOnError> {
   });
 
   return pluginInstance;
-}
+};
 
 const documentation: PluginDocumentation = {
   description: {
