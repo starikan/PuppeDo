@@ -148,6 +148,7 @@ const getTest = ({
       ['options', 'data', 'selectors', 'logOptions'],
     );
 
+    // TODO: 2022-10-06 S.Starodubov переделать получание этих вещей из значений плагина через хук, чтобы хук возвращал то что надо
     const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,

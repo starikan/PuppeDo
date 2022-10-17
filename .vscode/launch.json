@@ -61,7 +61,7 @@
       "request": "launch",
       "name": "Custom run",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["mainWithError"],
+      "args": ["descriptionErrorDynamic"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]

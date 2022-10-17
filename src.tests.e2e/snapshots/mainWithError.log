@@ -64,13 +64,11 @@
 [31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat runTest (\runAllTests)[0m
 [31m                      [0m[31mat start (\runAllTests)[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mSUMMARY ERROR INFO:[0m
-[31m00:00:00.000 - error  [0m[31m[0m
-[31m00:00:00.000 - error  [0m[31mMessage:     Error in Atom[0m
-[31m00:00:00.000 - error  [0m[31mError:       This is click error[0m
-[31m00:00:00.000 - error  [0m[31mPath:        mainWithError -> runTest[1].clickSelector -> runTest[0].waitForSelector[0m
-[31m00:00:00.000 - error  [0m[31mDescription:[0m
-[31m00:00:00.000 - error  [0m[31m   [0m
-[31m00:00:00.000 - error  [0m[31m      Click some fake Text[0m
-[31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Error in Atom
+                      █ Error:       This is click error
+                      █ Path:        mainWithError -> runTest[1].clickSelector -> runTest[0].waitForSelector
+                      █ Description:
+                      █    
+                      █       Click some fake Text[0m

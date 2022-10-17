@@ -1,5 +1,5 @@
 name: envsManipulations
-descriptioon: Some environments manipulations
+description: Some environments manipulations
 runTest:
   - case:
       description: Open 2 env and close them

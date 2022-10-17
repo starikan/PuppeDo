@@ -1,39 +1,38 @@
 /* eslint-disable max-len */
-import { Plugin, Plugins } from '../../Plugins';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
-import { PluginDocumentation, TestExtendType } from '../../global.d';
+import { PluginDocumentation } from '../../global.d';
 
 export type PluginContinueOnError = { continueOnError: boolean };
 
 const name = 'continueOnError';
 
-function plugin(): Plugin<PluginContinueOnError> {
-  const allPlugins = this as Plugins;
-  return new Plugin<PluginContinueOnError>({
+const plugin: PluginFunction<PluginContinueOnError> = (allPlugins) => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
     propogationsAndShares: {
       fromPrevSublingSimple: ['continueOnError'],
     },
     hooks: {
-      resolveValues: function resolveValues(inputs: TestExtendType & PluginContinueOnError): void {
-        const self = this as Plugin<PluginContinueOnError>;
-
+      resolveValues: ({ inputs }): void => {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
           ...new Arguments().args,
           ...allPlugins.getValue<PluginArgsRedefine>('argsRedefine').argsRedefine,
         };
 
-        self.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
-          ? inputs.continueOnError || self.values.continueOnError
+        pluginInstance.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
+          ? inputs.continueOnError || pluginInstance.values.continueOnError
           : false;
       },
     },
     allPlugins,
   });
-}
+
+  return pluginInstance;
+};
 
 const documentation: PluginDocumentation = {
   description: {
@@ -46,8 +45,12 @@ const documentation: PluginDocumentation = {
     ],
     en: ['TODO'],
   },
-  exampleTest: 'src/Plugins/continueOnError/continueOnError.yaml',
-  exampleTestResult: 'src.tests.e2e/snapshots/continueOnError.log',
+  examples: [
+    {
+      test: 'src/Plugins/continueOnError/continueOnError.yaml',
+      result: 'src.tests.e2e/snapshots/continueOnError.log',
+    },
+  ],
   name,
   type: 'plugin',
   propogation: false,

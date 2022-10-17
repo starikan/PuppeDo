@@ -6,7 +6,7 @@ import Environment from './Environment';
 import Env from './Env';
 
 import { SocketType } from './global.d';
-import { PluginContinueOnError } from './Plugins/continueOnError/continueOnError';
+import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 
 export interface ErrorType extends Error {
   envsId: string;
@@ -14,12 +14,12 @@ export interface ErrorType extends Error {
   socket: SocketType;
   stepId: string;
   testDescription: string;
-  descriptionError: string;
   message: string;
   stack: string;
   type: string;
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
+  test?: Test;
 }
 
 type ErrorTestConstructor = {
@@ -48,12 +48,12 @@ export class TestError extends AbstractError {
   envs: Env;
   socket: SocketType;
   stepId: string;
-  descriptionError: string;
   testDescription: string;
   message: string;
   stack: string;
   logger: Log;
   test: Test;
+  parentTest: Test;
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
 
@@ -64,7 +64,6 @@ export class TestError extends AbstractError {
     this.envs = parentError?.envs || test.env;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
-    this.descriptionError = parentError?.descriptionError || test.descriptionError;
     this.testDescription = parentError?.testDescription || test.description;
     this.message = `${parentError?.message} || error in test = ${test.name}`;
     this.stack = parentError?.stack;
@@ -73,6 +72,16 @@ export class TestError extends AbstractError {
 
     this.logger = logger;
     this.test = test;
+    this.parentTest = parentError?.test;
+  }
+
+  getDescriptionError(): string {
+    const parentDescriptionError =
+      this.parentTest?.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError ?? '';
+    const currentDescriptionError =
+      this.test.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError;
+    const result = currentDescriptionError || parentDescriptionError;
+    return result;
   }
 
   async log(): Promise<void> {
@@ -80,7 +89,8 @@ export class TestError extends AbstractError {
     const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
-      let text = this.descriptionError ? `${this.descriptionError} | ` : '';
+      let text = this.getDescriptionError() ? `${this.getDescriptionError()} | ` : '';
+      // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
       text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
       await this.logger.log({
         level: 'error',
@@ -100,21 +110,17 @@ export class TestError extends AbstractError {
   }
 
   async summaryInfo(): Promise<void> {
-    const { message = '', descriptionError = '', breadcrumbs = [], breadcrumbsDescriptions = [] } = this;
-    const texts = [
-      '',
-      'SUMMARY ERROR INFO:',
-      '',
-      `Message:     ${message.split(' || ')[0]}`,
-      `Error:       ${descriptionError}`,
-      `Path:        ${breadcrumbs.join(' -> ')}`,
-      'Description:',
-      ...[breadcrumbsDescriptions.map((v, i) => `${' '.repeat((1 + i) * 3)}${v}`)],
-      '',
-    ];
-    for (const text of texts) {
-      await this.logger.log({ level: 'error', text, extendInfo: true });
-    }
+    const { message = '', breadcrumbs = [], breadcrumbsDescriptions = [] } = this;
+    const text = [
+      `█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     ${message.split(' || ')[0]}
+                      █ Error:       ${this.getDescriptionError()}
+                      █ Path:        ${breadcrumbs.join(' -> ')}
+                      █ Description:`,
+      ...breadcrumbsDescriptions.map((v, i) => `                      █ ${' '.repeat((1 + i) * 3)}${v}`),
+    ].join('\n');
+    await this.logger.log({ level: 'error', text, extendInfo: true });
   }
 }
 

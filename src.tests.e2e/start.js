@@ -5,7 +5,7 @@ const { spawnSync } = require('child_process');
 const testsE2E = require('./runners');
 
 const [, , ...args] = process.argv;
-const [tests, create, ...tail] = args;
+const [tests, create] = args;
 
 const testsResolve = tests ? tests.split(',').map((v) => v.trim()) : Object.keys(testsE2E);
 const createResolve = create ? create === 'true' : false;
@@ -22,6 +22,7 @@ const logClean = (text) => {
   newText = newText.replace(/file:\/\/\/.+?node_modules/g, 'file:///');
   newText = newText.replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log');
   newText = newText.replace(/file:\/\/\/.+?tests/g, 'file:///');
+  newText = newText.replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins');
   newText = newText.replace(/\(.+?webpack:/g, '(');
   newText = newText.replace(/\.[jt]s.+?\)/g, ')');
   newText = newText.replace(/\(.+?src\.tests\.e2e/g, '(');

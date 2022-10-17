@@ -1,25 +1,30 @@
 /* eslint-disable prefer-arrow-callback */
 import { ArgumentsType, PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../Plugins';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
 const name = 'argsRedefine';
 
-function plugin(): Plugin<PluginArgsRedefine> {
-  return new Plugin<PluginArgsRedefine>({
+const plugin: PluginFunction<PluginArgsRedefine> = () => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: {} },
   });
-}
+  return pluginInstance;
+};
 
 const documentation: PluginDocumentation = {
   description: {
     ru: ['Переопределение агрументов ENV для конкретного кейса.', 'Все аргументы описаны в ArgumentsType'],
     en: ['TODO'],
   },
-  exampleTest: 'src/Plugins/argsRedefine/argsRedefine.yaml',
-  exampleTestResult: 'src.tests.e2e/snapshots/argsRedefine.log',
+  examples: [
+    {
+      test: 'src/Plugins/argsRedefine/argsRedefine.yaml',
+      result: 'src.tests.e2e/snapshots/argsRedefine.log',
+    },
+  ],
   name,
   type: 'plugin',
   propogation: false,

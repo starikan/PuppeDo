@@ -13,6 +13,8 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
+import { PliginsFields } from './Plugins';
+import { Plugins } from './PluginsCore';
 
 // ================ BROWSERS ====================
 
@@ -300,6 +302,8 @@ export type TestArgsType = {
   socket: SocketType;
   descriptionExtend: string[];
   allData: AllDataType;
+  plugins: Plugins;
+  continueOnError: boolean;
 };
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
@@ -328,7 +332,6 @@ export type TestTypeYaml = {
   bindResults?: Record<string, string>;
   description?: string;
   descriptionExtend?: Array<string>;
-  descriptionError?: string;
   bindDescription?: string;
   repeat?: number;
   while?: string;
@@ -345,7 +348,7 @@ export type TestTypeYaml = {
 
 export type TestType = Required<TestTypeYaml>;
 
-export type TestExtendType = TestType & {
+export type TestExtendType = {
   levelIndent?: number;
   breadcrumbs?: string[];
   breadcrumbsDescriptions?: string[];
@@ -362,7 +365,8 @@ export type TestExtendType = TestType & {
   testFile?: string;
   breakParentIfResult?: string;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
-};
+} & TestType &
+  PliginsFields;
 
 export type TestExtendTypeKeys = keyof TestExtendType;
 
@@ -382,10 +386,14 @@ export type AllDataType = {
 
 export type DocumentationLanguages = 'ru' | 'en';
 
+type PluginDocumentationExample = {
+  test: string;
+  result: string;
+};
+
 export type PluginDocumentation = {
   description: { en: string[] } & Partial<Record<DocumentationLanguages, string[]>>;
-  exampleTest: string;
-  exampleTestResult: string;
+  examples: [PluginDocumentationExample, ...PluginDocumentationExample[]];
   name: string;
   type: string;
   propogation: boolean;

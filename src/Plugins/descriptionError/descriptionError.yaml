@@ -1,0 +1,7 @@
+name: descriptionError
+description: descriptionError
+runTest:
+  - case:
+      description: "Simple descriptionError"
+      errorIf: true
+      descriptionError: "Simple descriptionError"

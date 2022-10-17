@@ -25,8 +25,8 @@ import {
   Element,
 } from './global.d';
 import Atom from './AtomCore';
-import { Plugins } from './Plugins';
-import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins/index';
+import { Plugins } from './PluginsCore';
+import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
 
 const ALIASES = {
   data: ['d', '📋'],
@@ -172,7 +172,6 @@ export const checkIf = async (
   logShowFlag = true,
   continueOnError = false,
 ): Promise<boolean> => {
-  // debugger
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
@@ -341,6 +340,16 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
+const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
+  if (thisDisable) {
+    return 'disable';
+  }
+  if (metaFromPrevSubling.skipBecausePrevSubling) {
+    return 'skipSublingIfResult';
+  }
+  return '';
+};
+
 export class Test implements TestExtendType {
   name: string;
   envsId: string;
@@ -378,7 +387,6 @@ export class Test implements TestExtendType {
   bindResults!: Record<string, string>;
   description: string;
   descriptionExtend: string[];
-  descriptionError: string;
   bindDescription: string;
   while!: string;
   if!: string;
@@ -408,7 +416,7 @@ export class Test implements TestExtendType {
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
-    this.plugins.hook('initValues', initValues);
+    this.plugins.hook('initValues', { initValues });
 
     this.name = initValues.name || '';
     this.envsId = initValues.envsId || '';
@@ -424,7 +432,6 @@ export class Test implements TestExtendType {
     this.allowResults = initValues.allowResults || [];
     this.description = initValues.description || '';
     this.descriptionExtend = initValues.descriptionExtend || [];
-    this.descriptionError = initValues.descriptionError || '';
     this.bindDescription = initValues.bindDescription || '';
     this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
     this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
@@ -450,9 +457,14 @@ export class Test implements TestExtendType {
     this.runLogic = async (
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      this.plugins.hook('runLogic', inputs);
+      this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
+
       const { envsPool, logger } = Environment(this.envsId);
+      this.envName = envsPool.current.name || '';
+      this.envPageName = envsPool.current.page || '';
+      this.env = envsPool.envs[this.envName];
+
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},
         this.logOptions,
@@ -476,16 +488,6 @@ export class Test implements TestExtendType {
         // eslint-disable-next-line no-debugger
         debugger;
       }
-
-      const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
-        if (thisDisable) {
-          return 'disable';
-        }
-        if (metaFromPrevSubling.skipBecausePrevSubling) {
-          return 'skipSublingIfResult';
-        }
-        return '';
-      };
 
       this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
       const disable = resolveDisable(this.disable, this.metaFromPrevSubling);
@@ -544,7 +546,6 @@ export class Test implements TestExtendType {
       } as Record<string, string | number>;
       this.description = inputs.description || this.description;
       this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
-      this.descriptionError = inputs.descriptionError || this.descriptionError;
       this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
@@ -556,12 +557,8 @@ export class Test implements TestExtendType {
       this.logOptions = logOptionsNew;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
-      this.plugins.hook('resolveValues', inputs);
-
       try {
-        this.envName = envsPool.current.name || '';
-        this.envPageName = envsPool.current.page || '';
-        this.env = envsPool.envs[this.envName];
+        this.plugins.hook('resolveValues', { inputs });
 
         if (this.engineSupports.length) {
           const { engine } = this.env?.env?.browser || {};
@@ -623,38 +620,9 @@ export class Test implements TestExtendType {
           this.logOptions.backgroundColor = 'red';
         }
 
-        // IF
-        if (this.if) {
-          const skipIf = await checkIf(
-            this.if,
-            'if',
-            logger.log.bind(logger),
-            this.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-          );
-          if (skipIf) {
-            return { result: {}, meta: {} };
-          }
-        }
-
-        // ERROR IF
-        if (this.errorIf) {
-          await checkIf(
-            this.errorIf,
-            'errorIf',
-            logger.log.bind(logger),
-            this.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-          );
-        }
-
         // Extend with data passed to functions
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
-        const args: TestArgsType & Record<string, unknown> = {
+        const args: TestArgsType = {
           envsId: this.envsId,
           data: dataLocal,
           selectors: selectorsLocal,
@@ -689,8 +657,38 @@ export class Test implements TestExtendType {
           socket: this.socket,
           allData: new TestsContent().allData,
           plugins: this.plugins,
+          // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
+
+        // IF
+        if (this.if) {
+          const skipIf = await checkIf(
+            this.if,
+            'if',
+            logger.log.bind(logger),
+            this.levelIndent,
+            allData,
+            logShowFlag,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          );
+          if (skipIf) {
+            return { result: {}, meta: {} };
+          }
+        }
+
+        // ERROR IF
+        if (this.errorIf) {
+          await checkIf(
+            this.errorIf,
+            'errorIf',
+            logger.log.bind(logger),
+            this.levelIndent,
+            allData,
+            logShowFlag,
+            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          );
+        }
 
         // LOG TEST
         logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
@@ -747,13 +745,15 @@ export class Test implements TestExtendType {
           }
         }
 
+        this.plugins.hook('beforeFunctions', { args });
+
         // RUN FUNCTIONS
         let resultFromTest = {};
 
         const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
-        for (let funcs of FUNCTIONS) {
-          funcs = [funcs].flat();
-          for (const func of funcs) {
+        for (const funcs of FUNCTIONS) {
+          const funcsArray = [funcs].flat();
+          for (const func of funcsArray) {
             const funResult = (await func(args)) || {};
             resultFromTest = { ...resultFromTest, ...funResult };
           }
@@ -774,7 +774,7 @@ export class Test implements TestExtendType {
           { ...selectorsLocal, ...dataLocal, ...results },
         );
 
-        const metaForNextSubling: TestMetaSublingExchangeData = {};
+        this.plugins.hook('afterResults', { args, results: localResults });
 
         // ERROR
         if (this.errorIfResult) {
@@ -837,6 +837,7 @@ export class Test implements TestExtendType {
           }
         }
 
+        const metaForNextSubling: TestMetaSublingExchangeData = {};
         const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
         if (skipSublingIfResult) {
           const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {

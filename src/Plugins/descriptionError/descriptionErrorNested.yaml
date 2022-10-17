@@ -1,0 +1,11 @@
+name: descriptionErrorNested
+description: descriptionErrorNested
+runTest:
+  - case:
+      description: "description 0"
+      descriptionError: "descriptionError 0"
+      runTest:
+        - blank:
+            description: "description 1"
+            errorIf: true
+            descriptionError: "descriptionError 1"

@@ -1,0 +1,10 @@
+name: descriptionErrorDynamic
+description: descriptionErrorDynamic
+allowResults: ["apples"]
+data: { apples: 5 }
+runTest:
+  - case:
+      bindDescription: "`I get ${apples} apples`"
+      descriptionError: "`Now I get only ${apples} apples`"
+      result: { apples: 1 }
+      errorIfResult: apples < 5

@@ -1,17 +1,18 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
-import { Plugin } from '../../Plugins';
+import { Plugin, PluginFunction } from '../../PluginsCore';
 
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
 
 const name = 'skipSublingIfResult';
 
-function plugin(): Plugin<PluginSkipSublingIfResult> {
-  return new Plugin<PluginSkipSublingIfResult>({
+const plugin: PluginFunction<PluginSkipSublingIfResult> = () => {
+  const pluginInstance = new Plugin({
     name,
     defaultValues: { skipSublingIfResult: '' },
   });
-}
+  return pluginInstance;
+};
 
 const documentation: PluginDocumentation = {
   description: {
@@ -23,8 +24,12 @@ const documentation: PluginDocumentation = {
     ],
     en: ['TODO'],
   },
-  exampleTest: 'src/Plugins/skipSublingIfResult/skipSublingIfResult.yaml',
-  exampleTestResult: 'src.tests.e2e/snapshots/skipSublingIfResult.log',
+  examples: [
+    {
+      test: 'src/Plugins/skipSublingIfResult/skipSublingIfResult.yaml',
+      result: 'src.tests.e2e/snapshots/skipSublingIfResult.log',
+    },
+  ],
   name,
   type: 'plugin',
   propogation: false,

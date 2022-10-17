@@ -34,7 +34,6 @@ export const BLANK_TEST: TestType = {
   debug: false,
   debugInfo: false,
   description: '',
-  descriptionError: '',
   descriptionExtend: [],
   disable: false,
   engineSupports: [],
