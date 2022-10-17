@@ -1,14 +1,17 @@
 import path from 'path';
 import fs from 'fs';
 
-import { documentations } from '../src/Plugins';
+import { pluginsList } from '../src/Plugins';
 import { DocumentationLanguages } from '../src/global.d';
+import { PluginsFabric } from '../src/PluginsCore';
 
 const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];
 
 const index = fs.readFileSync(path.join(__dirname, './index.md'), 'utf-8');
 const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]).filter((v) => !['plugins'].includes(v));
+
+const allPlugins = new PluginsFabric(pluginsList);
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};
@@ -28,7 +31,7 @@ languages.forEach((lang) => {
 
   const plugins: string[] = [];
   plugins.push('\n# Test block settings\n');
-  for (const plugin of documentations) {
+  for (const plugin of allPlugins.getDocs()) {
     const documentation = plugin;
     plugins.push(`## ${documentation.name}`);
     (documentation?.description[lang] ?? []).forEach((line) => plugins.push(`${line}\n`));

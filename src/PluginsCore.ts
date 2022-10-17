@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import { randomUUID } from 'crypto';
-import { TestArgsType, TestExtendType } from './global.d';
+import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
@@ -28,18 +28,37 @@ export interface PluginType<TValues> {
 
 export type PluginFunction<T> = (allPlugins?: Plugins) => PluginType<T>;
 
+export type PluginModule<T> = {
+  name: string;
+  plugin: PluginFunction<T>;
+  documentation: PluginDocumentation;
+};
+
 // Storage of all scratch of plugins
 export class PluginsFabric extends Singleton {
   private plugins: Record<string, PluginFunction<unknown>>;
-  constructor(reInit = false) {
+
+  private documentation: Record<string, PluginDocumentation>;
+
+  constructor(plugins: PluginModule<unknown>[] = [], reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
+      this.documentation = {};
+
+      for (const plugin of plugins) {
+        this.addPlugin(plugin);
+        this.documentation[plugin.name] = plugin.documentation;
+      }
     }
   }
 
   getAllPluginsScratch(): Record<string, PluginFunction<unknown>> {
     return this.plugins;
+  }
+
+  getDocs(): PluginDocumentation[] {
+    return Object.values(this.documentation);
   }
 
   static getPlugin(): void {
@@ -51,8 +70,8 @@ export class PluginsFabric extends Singleton {
   }
 
   // TODO: 2022-10-06 S.Starodubov order: 100 - порядок загрузки плагинов
-  addPlugin(name: string, newPlugin: PluginFunction<unknown>): void {
-    this.plugins[name] = newPlugin;
+  addPlugin(plugin: PluginModule<unknown>): void {
+    this.plugins[plugin.name] = plugin.plugin;
   }
 }
 
