@@ -15,4 +15,11 @@ module.exports = {
       babelConfig: true,
     },
   },
+  // transform: {
+  //   '^.+\\.(ts|tsx)$': [
+  //     'ts-jest',
+  // https://kulshekhar.github.io/ts-jest/docs/getting-started/options/tsconfig
+  // { tsconfig: './tsconfig.json', babelConfig: './babel.config.js' },
+  //   ],
+  // },
 };
