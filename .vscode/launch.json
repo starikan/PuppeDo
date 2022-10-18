@@ -62,6 +62,7 @@
       "name": "Custom run",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
       "args": ["descriptionErrorDynamic"],
+      "env": { "PPD_DEBUG_MODE": true },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]

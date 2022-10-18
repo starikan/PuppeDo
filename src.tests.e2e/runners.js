@@ -34,7 +34,6 @@ const testsE2E = {
       `PPD_ROOT_ADDITIONAL=${path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')}`,
       'PPD_TESTS=main',
       "PPD_DATA={'myEnv':'mainEnv'}",
-      'PPD_DEBUG_MODE=true',
       'PPD_LOG_EXTEND=true',
       'PPD_LOG_SCREENSHOT=true',
       'PPD_LOG_FULLPAGE=true',
@@ -61,7 +60,6 @@ const testsE2E = {
       PPD_TESTS: 'mainWithError',
       PPD_DATA: { myEnv: 'mainEnv' },
       PPD_FILES_IGNORE: ['tsconfig.json'],
-      PPD_DEBUG_MODE: true,
     },
     isError: true,
     ignoreGlobalConfig: true,
@@ -72,13 +70,12 @@ const testsE2E = {
       PPD_DATA: {
         CHECK_DATA: 'ARG_DATA',
       },
-      PPD_DEBUG_MODE: true,
       PPD_LOG_LEVEL_NESTED: 0,
       PPD_LOG_TIMESTAMP_SHOW: false,
     },
   },
   screencast: {
-    params: { PPD_TESTS: 'screencast', PPD_DEBUG_MODE: true, PPD_LOG_TIMESTAMP_SHOW: false },
+    params: { PPD_TESTS: 'screencast', PPD_LOG_TIMESTAMP_SHOW: false },
   },
   atoms: {
     params: { PPD_TESTS: 'atoms', PPD_DATA: { myEnv: 'mainEnv' } },

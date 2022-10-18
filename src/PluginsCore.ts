@@ -80,17 +80,16 @@ export class PluginsFabric extends Singleton {
     this.orders[plugin.name] = plugin.order || null;
   }
 
-  printPluginsOrder(): Record<string, number | null> {
+  getPluginsOrder(): Record<string, number | null> {
     const newOrders = {};
-    const orders = this.getOrderedNames();
+    const orders = this.getPluginsOrderedNames();
     for (const order of orders) {
       newOrders[order] = this.orders[order];
     }
-    console.log(JSON.stringify(newOrders, null, 2));
     return newOrders;
   }
 
-  getOrderedNames(): string[] {
+  getPluginsOrderedNames(): string[] {
     const valuesNull = Object.entries(this.orders)
       .filter((v) => !v[1])
       .map((v) => v[0]);
@@ -123,7 +122,7 @@ export class Plugins {
 
   // TODO: 2022-10-18 S.Starodubov сделать так чтобы хук мог возвращать данные
   hook<T>(name: keyof Hooks, args: T): void {
-    const pluginsNames = new PluginsFabric().getOrderedNames();
+    const pluginsNames = new PluginsFabric().getPluginsOrderedNames();
     for (const pluginName of pluginsNames) {
       this.plugins.find((v) => v.name === pluginName).hook(name)(args);
     }

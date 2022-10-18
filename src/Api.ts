@@ -29,8 +29,12 @@ export default async function run(
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
   logger.bindData({ stdOut });
 
-  const { PPD_TESTS } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
+  const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
+
+  if (PPD_DEBUG_MODE) {
+    console.log(JSON.stringify(allPlugins.getPluginsOrder(), null, 2));
+  }
 
   const results = {};
   const logs = {};
