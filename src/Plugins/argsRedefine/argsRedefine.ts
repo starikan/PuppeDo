@@ -30,4 +30,6 @@ const documentation: PluginDocumentation = {
   propogation: false,
 };
 
-export default { name, documentation, plugin };
+const order = 100;
+
+export default { name, documentation, plugin, order };

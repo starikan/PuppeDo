@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable max-classes-per-file */
 import { randomUUID } from 'crypto';
 import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
@@ -26,12 +25,14 @@ export interface PluginType<TValues> {
   values: TValues;
 }
 
+// eslint-disable-next-line no-use-before-define
 export type PluginFunction<T> = (allPlugins?: Plugins) => PluginType<T>;
 
 export type PluginModule<T> = {
   name: string;
   plugin: PluginFunction<T>;
   documentation: PluginDocumentation;
+  order?: number;
 };
 
 // Storage of all scratch of plugins
@@ -40,16 +41,20 @@ export class PluginsFabric extends Singleton {
 
   private documentation: Record<string, PluginDocumentation>;
 
+  private orders: Record<string, number | null>;
+
   constructor(plugins: PluginModule<unknown>[] = [], reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
       this.documentation = {};
+      this.orders = {};
 
       for (const plugin of plugins) {
         this.addPlugin(plugin);
-        this.documentation[plugin.name] = plugin.documentation;
       }
+
+      // this.printPluginsOrder();
     }
   }
 
@@ -61,17 +66,40 @@ export class PluginsFabric extends Singleton {
     return Object.values(this.documentation);
   }
 
-  static getPlugin(): void {
-    // do nothing
+  getPlugin(name: string): PluginFunction<unknown> {
+    return this.plugins[name];
   }
 
   static registerPlugin(): void {
     // do nothing
   }
 
-  // TODO: 2022-10-06 S.Starodubov order: 100 - порядок загрузки плагинов
   addPlugin(plugin: PluginModule<unknown>): void {
     this.plugins[plugin.name] = plugin.plugin;
+    this.documentation[plugin.name] = plugin.documentation;
+    this.orders[plugin.name] = plugin.order || null;
+  }
+
+  printPluginsOrder(): Record<string, number | null> {
+    const newOrders = {};
+    const orders = this.getOrderedNames();
+    for (const order of orders) {
+      newOrders[order] = this.orders[order];
+    }
+    console.log(JSON.stringify(newOrders, null, 2));
+    return newOrders;
+  }
+
+  getOrderedNames(): string[] {
+    const valuesNull = Object.entries(this.orders)
+      .filter((v) => !v[1])
+      .map((v) => v[0]);
+
+    const valuesOrdered = Object.entries(this.orders)
+      .sort((a, b) => a[1] - b[1])
+      .filter((v) => !!v[1])
+      .map((v) => v[0]);
+    return [...valuesOrdered, ...valuesNull];
   }
 }
 
@@ -93,9 +121,11 @@ export class Plugins {
     }
   }
 
+  // TODO: 2022-10-18 S.Starodubov сделать так чтобы хук мог возвращать данные
   hook<T>(name: keyof Hooks, args: T): void {
-    for (const plugin of this.plugins) {
-      plugin.hook(name)(args);
+    const pluginsNames = new PluginsFabric().getOrderedNames();
+    for (const pluginName of pluginsNames) {
+      this.plugins.find((v) => v.name === pluginName).hook(name)(args);
     }
   }
 
