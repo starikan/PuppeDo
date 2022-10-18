@@ -119,8 +119,8 @@ export class EnvsPool implements EnvsPoolType {
       fs.mkdirSync(folderLatest);
     } else {
       const filesExists = fs.readdirSync(folderLatest);
-      for (let i = 0; i < filesExists.length; i += 1) {
-        fs.unlinkSync(path.join(folderLatest, filesExists[i]));
+      for (const fileExists of filesExists) {
+        fs.unlinkSync(path.join(folderLatest, fileExists));
       }
     }
 
@@ -480,8 +480,7 @@ export class EnvsPool implements EnvsPoolType {
   }
 
   async closeAllEnvs(): Promise<void> {
-    for (let i = 0; i < Object.keys(this.envs).length; i += 1) {
-      const name = Object.keys(this.envs)[i];
+    for (const name of Object.keys(this.envs)) {
       await this.closeEnv(name);
     }
   }
