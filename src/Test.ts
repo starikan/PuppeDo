@@ -3,7 +3,7 @@ import vm from 'vm';
 import { blankSocket, getTimer, merge, pick, getStepId } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
-import Environment from './Environment';
+import { Environment } from './Environment';
 import TestsContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Log';
@@ -460,7 +460,7 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
 
-      const { envsPool, logger } = Environment(this.envsId);
+      const { envsPool, logger } = new Environment().getEnv(this.envsId);
       this.envName = envsPool.current.name || '';
       this.envPageName = envsPool.current.page || '';
       this.env = envsPool.envs[this.envName];

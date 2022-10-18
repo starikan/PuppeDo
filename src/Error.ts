@@ -2,7 +2,7 @@
 import { Arguments } from './Arguments';
 import { Test } from './Test';
 import Log from './Log';
-import Environment from './Environment';
+import { Environment } from './Environment';
 import Env from './Env';
 
 import { SocketType } from './global.d';
@@ -168,7 +168,7 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     debugger;
   }
 
-  const { envsPool } = Environment(errorIncome.envsId);
+  const { envsPool } = new Environment().getEnv(errorIncome.envsId);
 
   if (envsPool.closeAllEnvs) {
     await envsPool.closeAllEnvs();

@@ -26,6 +26,7 @@ import {
   SocketType,
   EnvYamlType,
 } from './global.d';
+import Singleton from './Singleton';
 
 type EnvsInstanceType = {
   envsPool: EnvsPoolType;
@@ -492,22 +493,39 @@ export class EnvsPool implements EnvsPoolType {
   }
 }
 
-const instances: Record<string, EnvsInstanceType> = {};
+export class Environment extends Singleton {
+  private instances: Record<string, EnvsInstanceType>;
 
-export default (envsId = '', socket: SocketType = blankSocket): EnvsInstanceType => {
-  let envsIdLocal = envsId;
-  if (envsIdLocal) {
-    if (!instances[envsIdLocal]) {
-      throw new Error(`Unknown ENV ID ${envsIdLocal}`);
+  constructor(reInit = false) {
+    super();
+    if (reInit || !this.instances) {
+      this.instances = {};
     }
-  } else {
-    envsIdLocal = crypto.randomBytes(6).toString('hex');
-    const newEnvs = new EnvsPool();
-    const logger = new Log(envsIdLocal, newEnvs, socket);
-    instances[envsIdLocal] = { envsPool: newEnvs, socket, envsId: envsIdLocal, logger };
   }
 
-  instances[envsIdLocal].envsPool.initOutput(envsIdLocal);
+  static generateEnvsId(): string {
+    return crypto.randomBytes(6).toString('hex');
+  }
 
-  return instances[envsIdLocal];
-};
+  createEnvs(
+    data: { envsId?: string; socket?: SocketType; loggerOptions?: { stdOut?: boolean } } = {},
+  ): EnvsInstanceType {
+    const { envsId = Environment.generateEnvsId(), socket = blankSocket, loggerOptions } = data;
+
+    const envsPool = new EnvsPool();
+    envsPool.initOutput(envsId);
+
+    const logger = new Log(envsId, envsPool, socket, loggerOptions);
+
+    this.instances[envsId] = { envsPool, socket, envsId, logger };
+
+    return this.getEnv(envsId);
+  }
+
+  getEnv(envsId: string): EnvsInstanceType {
+    if (!this.instances[envsId]) {
+      throw new Error(`Unknown ENV ID ${envsId}`);
+    }
+    return this.instances[envsId];
+  }
+}

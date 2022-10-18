@@ -1,8 +1,8 @@
-import Environment from '../src/Environment';
+import { Environment } from '../src/Environment';
 
 describe('Environment', () => {
   test('Constructor', () => {
-    const { socket, envsPool, envsId, logger } = Environment();
+    const { socket, envsPool, envsId, logger } = new Environment().createEnvs();
     expect(socket).toBeDefined();
     expect(envsPool).toBeDefined();
     expect(envsId).toBeDefined();

@@ -5,7 +5,7 @@ import path from 'path';
 import Log from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
-import Environment from '../src/Environment';
+import { Environment } from '../src/Environment';
 
 const clearFiles = (fileName: string): void => {
   const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
@@ -18,13 +18,13 @@ const clearFiles = (fileName: string): void => {
 };
 
 describe('Log', () => {
-  const { logger } = Environment();
+  const { logger } = new Environment().createEnvs();
 
   test('Constructor', () => {
     expect(logger.envs).toBeDefined();
     expect(logger.socket).toBeDefined();
     expect(logger.envsId).toBeDefined();
-    expect(logger.binded).toBeDefined();
+    expect(logger.options).toBeDefined();
   });
 
   describe('Write into console', () => {
@@ -154,13 +154,13 @@ describe('Log', () => {
 
   test('bindData', () => {
     logger.bindData({ foo: 'bar' });
-    expect(logger.binded).toEqual({ foo: 'bar' });
+    expect(logger.options).toEqual({ foo: 'bar' });
     logger.bindData({ foo: 'bar' });
-    expect(logger.binded).toEqual({ foo: 'bar' });
+    expect(logger.options).toEqual({ foo: 'bar' });
     logger.bindData({ gii: 'huu' });
-    expect(logger.binded).toEqual({ foo: 'bar', gii: 'huu' });
+    expect(logger.options).toEqual({ foo: 'bar', gii: 'huu' });
     // logger.bindData('foo');
-    // expect(logger.binded).toEqual({ foo: 'bar', gii: 'huu' });
+    // expect(logger.options).toEqual({ foo: 'bar', gii: 'huu' });
   });
 
   test('checkLevel', () => {

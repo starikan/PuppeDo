@@ -18,11 +18,11 @@ import {
   TestArgsType,
 } from './global.d';
 import { ErrorType } from './Error';
-import Environment from './Environment';
+import { Environment } from './Environment';
 
 export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId = ''): Promise<void> => {
   if (envsId) {
-    const envs = Environment(envsId);
+    const envs = new Environment().getEnv(envsId);
     const outputFolder = envs.envsPool.output.folderFull || '.';
     const outputFile = path.join(outputFolder, 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
@@ -124,22 +124,29 @@ export default class Log {
   envs: EnvsPoolType;
   socket: SocketType;
   screenshot: Screenshot;
-  binded: {
+  options: {
     breadcrumbs?: Array<string>;
     testArgs?: TestArgsType;
     stdOut?: boolean;
   };
 
-  constructor(envsId: string, envsPool: EnvsPoolType, socket: SocketType = blankSocket) {
+  constructor(
+    envsId: string,
+    envsPool: EnvsPoolType,
+    socket: SocketType = blankSocket,
+    loggerOptions: { stdOut?: boolean } = {},
+  ) {
+    const { stdOut } = loggerOptions;
+
     this.envsId = envsId;
     this.envs = envsPool;
     this.socket = socket;
-    this.binded = {};
+    this.options = { stdOut };
     this.screenshot = new Screenshot(envsPool, socket);
   }
 
   bindData(data: Record<string, unknown> = {}): void {
-    this.binded = { ...this.binded, ...data };
+    this.options = { ...this.options, ...data };
   }
 
   static checkLevel(level: string): ColorsType | null {
@@ -176,7 +183,7 @@ export default class Log {
     const indentString = `|${' '.repeat(PPD_LOG_INDENT_LENGTH - 1)}`.repeat(levelIndent);
     const nowWithPad = PPD_LOG_TIMESTAMP_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
     const spacesPreffix = nowWithPad ? ' '.repeat(nowWithPad.length) : '';
-    const breadcrumbs = this.binded?.breadcrumbs || [];
+    const breadcrumbs = this.options?.breadcrumbs || [];
     const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
     const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
 
@@ -211,7 +218,7 @@ export default class Log {
         { text: tailText, textColor: tailColor },
       ]);
 
-      const repeat = this.binded?.testArgs?.repeat || 1;
+      const repeat = this.options?.testArgs?.repeat || 1;
       if (repeat > 1) {
         stringsLog.push([
           { text: headText, textColor: headColor },
@@ -316,7 +323,7 @@ export default class Log {
     levelIndent = 0,
     error = null,
     extendInfo = false,
-    stdOut = this.binded.stdOut !== undefined ? this.binded.stdOut : true,
+    stdOut = this.options.stdOut !== undefined ? this.options.stdOut : true,
     stepId = '',
     logShowFlag = true,
     textColor = 'sane',
@@ -403,7 +410,7 @@ export default class Log {
           type: level === 'env' ? 'env' : 'log',
           level,
           levelIndent,
-          stepId: this.binded.testArgs?.stepId || stepId,
+          stepId: this.options.testArgs?.stepId || stepId,
         };
         this.envs.log = [...this.envs.log, logEntry];
         this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
@@ -417,7 +424,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = this.socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = this.binded.testArgs?.stepId;
+      err.stepId = this.options.testArgs?.stepId;
       throw err;
     }
   }

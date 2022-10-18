@@ -2,7 +2,7 @@ import TestStructure from './TestStructure';
 import getTest from './getTest';
 import { Arguments } from './Arguments';
 import Blocker from './Blocker';
-import Environment from './Environment';
+import { Environment } from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
 import { LogEntry } from './global.d';
 import { pluginsList } from './Plugins';
@@ -25,9 +25,8 @@ export default async function run(
     allPlugins.addPlugin(plugin);
   }
 
-  const { envsId, envsPool, socket, logger } = Environment();
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  logger.bindData({ stdOut });
+  const { envsId, envsPool, socket, logger } = new Environment().createEnvs({ loggerOptions: { stdOut } });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
