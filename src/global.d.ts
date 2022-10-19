@@ -221,6 +221,15 @@ export interface EnvType extends EnvYamlType {
   testFile?: string;
 }
 
+export type Outputs = {
+  folder?: string;
+  folderLatest?: string;
+  folderLatestFull?: string;
+  output?: string;
+  name?: string;
+  folderFull?: string;
+};
+
 export interface EnvsPoolType {
   envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
   current: {
@@ -228,18 +237,10 @@ export interface EnvsPoolType {
     page?: string;
     test?: string;
   };
-  output: {
-    folder?: string;
-    folderLatest?: string;
-    folderLatestFull?: string;
-    output?: string;
-    name?: string;
-    folderFull?: string;
-  };
+  output: Outputs;
   log: Array<LogEntry>;
   closeAllEnvs: () => Promise<void>;
   getActivePage: () => BrowserPageType | BrowserFrame;
-  initOutput: (envsId: string) => void;
   setCurrentTest: (testName: string) => void;
 }
 

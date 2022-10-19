@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Browser as BrowserPuppeteer } from 'puppeteer';
 import { Browser as BrowserPlaywright } from 'playwright';
 
-import { sleep, blankSocket, getNowDateTime, resolveOutputFile, generateId } from './Helpers';
+import { sleep, blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
 import Env from './Env';
@@ -24,6 +24,7 @@ import {
   LogEntry,
   SocketType,
   EnvYamlType,
+  Outputs,
 } from './global.d';
 import Singleton from './Singleton';
 
@@ -47,14 +48,7 @@ export class EnvsPool implements EnvsPoolType {
   envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
   current: { name?: string; page?: string; test?: string };
   log: Array<LogEntry>;
-  output: {
-    folder?: string;
-    folderLatest?: string;
-    folderLatestFull?: string;
-    output?: string;
-    name?: string;
-    folderFull?: string;
-  };
+  output: Outputs;
 
   constructor() {
     this.envs = {};
@@ -70,60 +64,6 @@ export class EnvsPool implements EnvsPoolType {
       throw new Error('No active page');
     }
     return activeEnv.state.pages[pageName];
-  }
-
-  initOutput(envsId: string): void {
-    const { PPD_OUTPUT: output } = new Arguments().args;
-
-    if (!fs.existsSync(output)) {
-      fs.mkdirSync(output);
-    }
-    const now = getNowDateTime();
-
-    const folder = path.join(output, `${now}_${envsId}`);
-    fs.mkdirSync(folder);
-
-    fs.copyFileSync(resolveOutputFile(), path.join(folder, 'output.html'));
-
-    this.output.output = output;
-    this.output.name = envsId;
-    this.output.folder = folder;
-    this.output.folderFull = path.resolve(folder);
-
-    this.initOutputLatest();
-    this.initOutput = (): void => {
-      // Do nothing
-    };
-  }
-
-  initOutputLatest(): void {
-    const { PPD_OUTPUT: output } = new Arguments().args;
-
-    const folderLatest = path.join(output, 'latest');
-
-    if (!fs.existsSync(output)) {
-      fs.mkdirSync(output);
-    }
-
-    // Create latest log path
-    if (!fs.existsSync(folderLatest)) {
-      fs.mkdirSync(folderLatest);
-    } else {
-      const filesExists = fs.readdirSync(folderLatest);
-      for (const fileExists of filesExists) {
-        fs.unlinkSync(path.join(folderLatest, fileExists));
-      }
-    }
-
-    fs.copyFileSync(resolveOutputFile(), path.join(folderLatest, 'output.html'));
-
-    this.output.folderLatest = folderLatest;
-    this.output.folderLatestFull = path.resolve(folderLatest);
-
-    // Drop this function after first use
-    this.initOutputLatest = (): void => {
-      // Do nothing
-    };
   }
 
   async setEnv({
@@ -486,10 +426,13 @@ export class EnvsPool implements EnvsPoolType {
 export class Environment extends Singleton {
   private instances: Record<string, EnvsInstanceType>;
 
+  private output: Partial<Outputs>;
+
   constructor(reInit = false) {
     super();
     if (reInit || !this.instances) {
       this.instances = {};
+      this.output = initOutputLatest();
     }
   }
 
@@ -498,13 +441,14 @@ export class Environment extends Singleton {
   ): EnvsInstanceType {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
-    const envsPool = new EnvsPool();
-    envsPool.initOutput(envsId);
+    if (!this.instances[envsId]) {
+      const envsPool = new EnvsPool();
+      envsPool.output = { ...this.output, ...initOutput(envsId) };
 
-    const logger = new Log(envsId, envsPool, socket, loggerOptions);
+      const logger = new Log(envsId, envsPool, socket, loggerOptions);
 
-    this.instances[envsId] = { envsPool, socket, envsId, logger };
-
+      this.instances[envsId] = { envsPool, socket, envsId, logger };
+    }
     return this.getEnv(envsId);
   }
 
