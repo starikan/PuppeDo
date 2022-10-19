@@ -2,13 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { execSync, spawn, spawnSync } from 'child_process';
-import crypto from 'crypto';
 
 import axios from 'axios';
 import { Browser as BrowserPuppeteer } from 'puppeteer';
 import { Browser as BrowserPlaywright } from 'playwright';
 
-import { sleep, blankSocket, getNowDateTime } from './Helpers';
+import { sleep, blankSocket, getNowDateTime, resolveOutputFile, generateId } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
 import Env from './Env';
@@ -73,15 +72,6 @@ export class EnvsPool implements EnvsPoolType {
     return activeEnv.state.pages[pageName];
   }
 
-  static resolveOutputFile(): string {
-    const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
-    const outputSourceModule = path.resolve(
-      path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
-    );
-    const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
-    return outputSource;
-  }
-
   initOutput(envsId: string): void {
     const { PPD_OUTPUT: output } = new Arguments().args;
 
@@ -93,7 +83,7 @@ export class EnvsPool implements EnvsPoolType {
     const folder = path.join(output, `${now}_${envsId}`);
     fs.mkdirSync(folder);
 
-    fs.copyFileSync(EnvsPool.resolveOutputFile(), path.join(folder, 'output.html'));
+    fs.copyFileSync(resolveOutputFile(), path.join(folder, 'output.html'));
 
     this.output.output = output;
     this.output.name = envsId;
@@ -125,7 +115,7 @@ export class EnvsPool implements EnvsPoolType {
       }
     }
 
-    fs.copyFileSync(EnvsPool.resolveOutputFile(), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(resolveOutputFile(), path.join(folderLatest, 'output.html'));
 
     this.output.folderLatest = folderLatest;
     this.output.folderLatestFull = path.resolve(folderLatest);
@@ -503,14 +493,10 @@ export class Environment extends Singleton {
     }
   }
 
-  static generateEnvsId(): string {
-    return crypto.randomBytes(6).toString('hex');
-  }
-
   createEnvs(
     data: { envsId?: string; socket?: SocketType; loggerOptions?: { stdOut?: boolean } } = {},
   ): EnvsInstanceType {
-    const { envsId = Environment.generateEnvsId(), socket = blankSocket, loggerOptions } = data;
+    const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     const envsPool = new EnvsPool();
     envsPool.initOutput(envsId);

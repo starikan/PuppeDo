@@ -129,4 +129,13 @@ export const walkSync = (
 
 export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
 
-export const getStepId = (): string => crypto.randomBytes(16).toString('hex');
+export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
+
+export const resolveOutputFile = (): string => {
+  const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
+  const outputSourceModule = path.resolve(
+    path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
+  );
+  const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
+  return outputSource;
+};

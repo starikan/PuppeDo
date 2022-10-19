@@ -1,7 +1,7 @@
 import TestsContent, { BLANK_TEST } from './TestContent';
 
 import { TestExtendType, TestType } from './global.d';
-import { RUNNER_BLOCK_NAMES, getStepId } from './Helpers';
+import { RUNNER_BLOCK_NAMES, generateId } from './Helpers';
 
 export default class TestStructure {
   fullJSON: TestExtendType;
@@ -108,7 +108,7 @@ export default class TestStructure {
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];
     fullJSON.levelIndent = levelIndent;
-    fullJSON.stepId = getStepId();
+    fullJSON.stepId = generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
     let textDescription = TestStructure.generateDescriptionStep(fullJSON);

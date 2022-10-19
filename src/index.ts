@@ -5,7 +5,7 @@ import getTest from './getTest';
 import TestsContent from './TestContent';
 import { Arguments, argsDefault } from './Arguments';
 import Blocker from './Blocker';
-import Environment from './Environment';
+import { Environment } from './Environment';
 import Log from './Log';
 import Singleton from './Singleton';
 import { paintString, blankSocket } from './Helpers';

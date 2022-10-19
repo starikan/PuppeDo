@@ -1,6 +1,6 @@
 import vm from 'vm';
 
-import { blankSocket, getTimer, merge, pick, getStepId } from './Helpers';
+import { blankSocket, getTimer, merge, pick, generateId } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment } from './Environment';
@@ -803,7 +803,7 @@ export class Test implements TestExtendType {
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
           repeatArgs.repeat = this.repeat - 1;
-          repeatArgs.stepId = getStepId();
+          repeatArgs.stepId = generateId();
           const repeatResult = await this.run(repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
