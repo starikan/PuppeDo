@@ -25,6 +25,7 @@ import {
   SocketType,
   EnvYamlType,
   Outputs,
+  OutputsLatest,
 } from './global.d';
 import Singleton from './Singleton';
 
@@ -344,7 +345,10 @@ export class EnvsPool implements EnvsPoolType {
     } = runtimeEnv;
 
     const runArgs = [program, ...browserArgs];
-    const { folder, folderLatest } = this.output;
+
+    // eslint-disable-next-line no-use-before-define
+    const { folderLatest } = new Environment().getOuptut();
+    const { folder } = this.output;
 
     if (runtimeExecutable && folder && folderLatest) {
       process.env = { ...process.env, ...browserEnv };
@@ -426,13 +430,13 @@ export class EnvsPool implements EnvsPoolType {
 export class Environment extends Singleton {
   private instances: Record<string, EnvsInstanceType>;
 
-  private output: Partial<Outputs>;
+  private output: OutputsLatest;
 
-  constructor(reInit = false) {
+  constructor(output?: OutputsLatest, reInit = false) {
     super();
     if (reInit || !this.instances) {
       this.instances = {};
-      this.output = initOutputLatest();
+      this.output = output || initOutputLatest();
     }
   }
 
@@ -457,5 +461,9 @@ export class Environment extends Singleton {
       throw new Error(`Unknown ENV ID ${envsId}`);
     }
     return this.instances[envsId];
+  }
+
+  getOuptut(): OutputsLatest {
+    return this.output;
   }
 }

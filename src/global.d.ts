@@ -222,12 +222,16 @@ export interface EnvType extends EnvYamlType {
 }
 
 export type Outputs = {
+  output?: string;
+  name?: string;
   folder?: string;
+  folderFull?: string;
+};
+
+export type OutputsLatest = {
   folderLatest?: string;
   folderLatestFull?: string;
   output?: string;
-  name?: string;
-  folderFull?: string;
 };
 
 export interface EnvsPoolType {

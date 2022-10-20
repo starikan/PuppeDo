@@ -7,8 +7,10 @@ import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
 
+const output = '.temp';
+const [folder, folderLatest] = [path.join(output, 'folder'), path.join(output, 'folderLatest')];
+
 const clearFiles = (fileName: string): void => {
-  const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
   if (fs.existsSync(path.join(folder, fileName))) {
     fs.unlinkSync(path.join(folder, fileName));
   }
@@ -18,7 +20,7 @@ const clearFiles = (fileName: string): void => {
 };
 
 describe('Log', () => {
-  const { logger } = new Environment().createEnvs();
+  const { logger } = new Environment({ output, folderLatest }).createEnvs();
 
   test('Constructor', () => {
     expect(logger.envs).toBeDefined();
@@ -91,8 +93,6 @@ describe('Log', () => {
   });
 
   describe('Write log into files', () => {
-    const [folder, folderLatest] = [path.join('.temp', 'folder'), path.join('.temp', 'folderLatest')];
-
     beforeAll(() => {
       if (!fs.existsSync('.temp')) {
         fs.mkdirSync('.temp');
@@ -106,7 +106,7 @@ describe('Log', () => {
     });
 
     test('Simple output to default file', () => {
-      logger.envs.output = { folder, folderLatest };
+      logger.envs.output = { folder };
 
       clearFiles('output.log');
       logger.fileLog([
@@ -119,7 +119,7 @@ describe('Log', () => {
       expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
     });
     test('Write to optional file', () => {
-      logger.envs.output = { folder, folderLatest };
+      logger.envs.output = { folder };
 
       clearFiles('output_another.log');
       logger.fileLog(
@@ -135,7 +135,7 @@ describe('Log', () => {
       expect(fs.readFileSync(path.join(folderLatest, 'output_another.log')).toString()).toBe('info text\n');
     });
     test('Not standart input', () => {
-      logger.envs.output = { folder, folderLatest };
+      logger.envs.output = { folder };
 
       clearFiles('output.log');
       logger.fileLog('foo');

@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import deepmerge from 'deepmerge';
 import dayjs from 'dayjs';
 
-import { Outputs, SocketType, TestFunctionsBlockNames } from './global.d';
+import { Outputs, OutputsLatest, SocketType, TestFunctionsBlockNames } from './global.d';
 import { Arguments } from './Arguments';
 
 export function sleep(ms: number): Promise<void> {
@@ -141,7 +141,7 @@ export const resolveOutputHtmlFile = (): string => {
   return outputSource;
 };
 
-export const initOutputLatest = (): Partial<Outputs> => {
+export const initOutputLatest = (): OutputsLatest => {
   const { PPD_OUTPUT: output } = new Arguments().args;
 
   const folderLatest = path.join(output, 'latest');
@@ -165,6 +165,7 @@ export const initOutputLatest = (): Partial<Outputs> => {
   return {
     folderLatest,
     folderLatestFull: path.resolve(folderLatest),
+    output,
   };
 };
 

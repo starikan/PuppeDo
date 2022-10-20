@@ -4,6 +4,7 @@ import fs from 'fs';
 import { blankSocket, getNowDateTime } from './Helpers';
 
 import { EnvsPoolType, SocketType, Element, BrowserPageType } from './global.d';
+import { Environment } from './Environment';
 
 export default class Screenshot {
   envs: EnvsPoolType;
@@ -25,8 +26,8 @@ export default class Screenshot {
     }
   }
 
-  async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
-    const { folderLatest = '.' } = this.envs.output;
+  static async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
+    const { folderLatest = '.' } = new Environment().getOuptut();
     await Screenshot.copyScreenshotToFolder(pathScreenshot, folderLatest);
   }
 
@@ -43,7 +44,7 @@ export default class Screenshot {
       if (element) {
         await element.screenshot({ path: pathScreenshot });
         if (copyToLatest) {
-          await this.copyScreenshotToLatest(pathScreenshot);
+          await Screenshot.copyScreenshotToLatest(pathScreenshot);
         }
         return pathScreenshot;
       }
@@ -62,7 +63,7 @@ export default class Screenshot {
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
         if (copyToLatest) {
-          await this.copyScreenshotToLatest(pathScreenshot);
+          await Screenshot.copyScreenshotToLatest(pathScreenshot);
         }
         return pathScreenshot;
       }
