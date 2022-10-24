@@ -9,7 +9,7 @@ import { merge, walkSync } from './Helpers';
 
 import {
   TestType,
-  EnvType,
+  RunnerType,
   DataType,
   EnvBrowserType,
   BrowserTypeType,
@@ -80,7 +80,7 @@ export default class TestsContent extends Singleton {
     }
   }
 
-  static checkDuplicates<T extends TestExtendType | EnvType | DataType>(tests: Array<T>): Array<T> {
+  static checkDuplicates<T extends TestExtendType | RunnerType | DataType>(tests: Array<T>): Array<T> {
     const blankNames = tests.filter((v) => !v.name);
     if (blankNames.length) {
       throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
@@ -115,7 +115,7 @@ export default class TestsContent extends Singleton {
   getAllData(force = false): AllDataType {
     const args = { ...new Arguments().args };
     if (force || !this.allData) {
-      const allContent: Array<TestType | EnvType | DataType> = [];
+      const allContent: Array<TestType | RunnerType | DataType> = [];
       const extensions = ['.yaml', '.yml', '.ppd', '.json'];
       const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
@@ -169,7 +169,7 @@ export default class TestsContent extends Singleton {
           if (collect.type === 'test') {
             allContent.push(resolveTest(collect as TestTypeYaml));
           } else {
-            allContent.push(collect as EnvType | DataType);
+            allContent.push(collect as RunnerType | DataType);
           }
         });
       });
@@ -187,8 +187,8 @@ export default class TestsContent extends Singleton {
         allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
 
-      const envs: Array<EnvType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is EnvType => v.type === 'env'),
+      const envs: Array<RunnerType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is RunnerType => v.type === 'env'),
       );
       const envsResolved = TestsContent.resolveEnvs(envs, data, selectors);
 
@@ -256,14 +256,18 @@ export default class TestsContent extends Singleton {
     return browser;
   }
 
-  static resolveEnvs(envsAll: Array<EnvType>, dataAll: Array<DataType>, selectorsAll: Array<DataType>): Array<EnvType> {
-    return envsAll.map((env: EnvType) => {
+  static resolveEnvs(
+    envsAll: Array<RunnerType>,
+    dataAll: Array<DataType>,
+    selectorsAll: Array<DataType>,
+  ): Array<RunnerType> {
+    return envsAll.map((env: RunnerType) => {
       const envUpdated = env;
       const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
       envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser);
 
       envsExt.forEach((envsExtName: string) => {
-        const envsResolved: EnvType | undefined = envsAll.find((g: EnvType) => g.name === envsExtName);
+        const envsResolved: RunnerType | undefined = envsAll.find((g: RunnerType) => g.name === envsExtName);
         if (envsResolved) {
           if (envsResolved.browser) {
             envUpdated.browser = TestsContent.resolveBrowser(merge(envUpdated.browser, envsResolved.browser));

@@ -14,7 +14,7 @@ import {
   ColorsType,
   SocketType,
   TestArgsType,
-  EnvType,
+  RunnerType,
   RunnerStateType,
   LogFunctionType,
   TestLifecycleFunctionType,
@@ -276,7 +276,7 @@ const fetchData = (
   env: {
     name: string;
     state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: EnvType;
+    env: RunnerType;
   },
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
@@ -406,7 +406,7 @@ export class Test implements TestExtendType {
   env!: {
     name: string;
     state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: EnvType;
+    env: RunnerType;
   };
 
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;

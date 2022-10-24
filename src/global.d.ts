@@ -199,7 +199,7 @@ export type EnvBrowserType = {
   timeout?: number;
 };
 
-export type EnvYamlType = {
+export type RunnerYamlType = {
   name: string;
   type: 'env';
   browser: EnvBrowserType;
@@ -216,7 +216,7 @@ export type EnvYamlType = {
   };
 };
 
-export interface EnvType extends EnvYamlType {
+export interface RunnerType extends RunnerYamlType {
   testFile?: string;
 }
 
@@ -234,7 +234,7 @@ export type OutputsLatest = {
 };
 
 export interface EnvRunnersType {
-  runners: Record<string, { env: EnvType; name: string; state: RunnerStateType }>;
+  runners: Record<string, { env: RunnerType; name: string; state: RunnerStateType }>;
   current: {
     name?: string;
     page?: string;
@@ -294,7 +294,7 @@ export type TestArgsType = {
   env: {
     name: string;
     state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: EnvType;
+    env: RunnerType;
   };
   envs: EnvRunnersType;
   browser?: BrowserType;
@@ -377,10 +377,10 @@ export type TestFunctionsBlockNames = 'beforeTest' | 'runTest' | 'afterTest';
 
 export type AllDataType = {
   allFiles: Array<string>;
-  allContent: Array<TestType | EnvType | DataType>;
+  allContent: Array<TestType | RunnerType | DataType>;
   atoms: Array<TestType>;
   tests: Array<TestType>;
-  envs: Array<EnvType>;
+  envs: Array<RunnerType>;
   data: Array<DataType>;
   selectors: Array<DataType>;
 };

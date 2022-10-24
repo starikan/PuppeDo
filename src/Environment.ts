@@ -19,10 +19,10 @@ import {
   EnvBrowserType,
   EnvRunnersType,
   RunnerStateType,
-  EnvType,
+  RunnerType,
   LogEntry,
   SocketType,
-  EnvYamlType,
+  RunnerYamlType,
   Outputs,
   OutputsLatest,
 } from './global.d';
@@ -72,10 +72,10 @@ class EnvRunners implements EnvRunnersType {
     page = '',
   }: {
     name: string;
-    env: Record<string, unknown>;
+    env: Partial<RunnerYamlType>;
     page: string;
   }): Promise<void> {
-    const envResolved: EnvYamlType = { ...{ name: '__blank_env__', type: 'env', browser: BROWSER_DEFAULT }, ...env };
+    const envResolved: RunnerYamlType = { ...{ name: '__blank_env__', type: 'env', browser: BROWSER_DEFAULT }, ...env };
 
     let localName = name;
 
@@ -424,12 +424,12 @@ class EnvRunners implements EnvRunnersType {
   }
 }
 
-class Runner {
+export class Runner {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
-  env: EnvType;
+  env: RunnerType;
 
-  constructor(env: EnvType) {
+  constructor(env: RunnerType) {
     this.name = env.name;
     this.state = {};
     this.env = env;
