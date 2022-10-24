@@ -3,7 +3,6 @@ import { Page as PagePuppeteer, Frame as FramePuppeteer } from 'puppeteer';
 import { Page as PagePlaywright, Frame as FramePlaywright } from 'playwright';
 
 import { logExtend, logDebug, logArgs, logStack, logTimer, logExtendFileInfo, logErrorMessage } from './Log';
-import Env from './Env';
 
 import {
   BrowserPageType,
@@ -15,13 +14,14 @@ import {
   ColorsType,
   BrowserFrame,
 } from './global.d';
+import { EnvState } from './Environment';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
-  env?: Env;
+  env?: EnvState;
   page?: BrowserPageType | BrowserFrame;
 };
 
@@ -33,7 +33,7 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env!: Env;
+  env!: EnvState;
   page!: BrowserPageType | BrowserFrame;
   log!: LogFunctionType;
 

@@ -10,7 +10,7 @@ import { Outputs, OutputsLatest } from '../src/global.d';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
-const { logger } = new Environment().createEnvs();
+const { logger } = new Environment().createEnv();
 new Environment().getOutput = (): OutputsLatest & Outputs => ({
   folder,
   folderLatest,

@@ -25,7 +25,6 @@ export interface PluginType<TValues> {
   values: TValues;
 }
 
-// eslint-disable-next-line no-use-before-define
 export type PluginFunction<T> = (allPlugins?: Plugins) => PluginType<T>;
 
 export type PluginModule<T> = {

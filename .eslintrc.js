@@ -27,6 +27,7 @@ module.exports = {
     'operator-linebreak': ['off', 'after'], // prettier conflict
     'no-console': 'off',
     'max-classes-per-file': 'off',
+    'no-use-before-define': 'off',
 
     'prettier/prettier': 'error',
     'max-len': [

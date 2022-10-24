@@ -2,15 +2,14 @@
 import { Arguments } from './Arguments';
 import { Test } from './Test';
 import Log from './Log';
-import { Environment } from './Environment';
-import Env from './Env';
+import { Environment, EnvState } from './Environment';
 
 import { SocketType } from './global.d';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 
 export interface ErrorType extends Error {
   envsId: string;
-  envs: Env;
+  envs: EnvState;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -45,7 +44,7 @@ export class AbstractError extends Error {
 
 export class TestError extends AbstractError {
   envsId: string;
-  envs: Env;
+  envs: EnvState;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -168,10 +167,10 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     debugger;
   }
 
-  const { envsPool } = new Environment().getEnv(errorIncome.envsId);
+  const env = new Environment().getEnv(errorIncome.envsId);
 
-  if (envsPool.closeAllEnvs) {
-    await envsPool.closeAllEnvs();
+  if (env.closeAllEnvs) {
+    await env.closeAllEnvs();
   }
 
   process.exit(1);

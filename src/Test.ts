@@ -460,7 +460,7 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
 
-      const { envsPool, logger } = new Environment().getEnv(this.envsId);
+      const { env: envsPool, logger } = new Environment().getEnvAllInstance(this.envsId);
       this.envName = envsPool.current.name || '';
       this.envPageName = envsPool.current.page || '';
       this.env = envsPool.envs[this.envName];

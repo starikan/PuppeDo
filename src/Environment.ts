@@ -10,7 +10,6 @@ import { Browser as BrowserPlaywright } from 'playwright';
 import { sleep, blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
 import TestsContent from './TestContent';
 import { Arguments } from './Arguments';
-import Env from './Env';
 import Log from './Log';
 import {
   BrouserLaunchOptions,
@@ -30,7 +29,7 @@ import {
 import Singleton from './Singleton';
 
 type EnvsInstanceType = {
-  envsPool: EnvsPoolType;
+  env: EnvsPoolType;
   socket: SocketType;
   envsId: string;
   logger: Log;
@@ -87,7 +86,7 @@ export class EnvsPool implements EnvsPoolType {
         const envFromFile = envs.find((v) => v.name === name);
         if (envFromFile) {
           const envLocal = JSON.parse(JSON.stringify(envFromFile));
-          this.envs[name] = new Env(envLocal);
+          this.envs[name] = new EnvState(envLocal);
           await this.runBrowsers(name);
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
@@ -97,7 +96,7 @@ export class EnvsPool implements EnvsPoolType {
       }
     } else {
       localName = envResolved.name;
-      this.envs[localName] = new Env(envResolved);
+      this.envs[localName] = new EnvState(envResolved);
       await this.runBrowsers(localName);
     }
 
@@ -347,7 +346,6 @@ export class EnvsPool implements EnvsPoolType {
 
     const runArgs = [program, ...browserArgs];
 
-    // eslint-disable-next-line no-use-before-define
     const { folderLatest, folder } = new Environment().getOutput(this.envsId);
 
     if (runtimeExecutable && folder && folderLatest) {
@@ -427,6 +425,18 @@ export class EnvsPool implements EnvsPoolType {
   }
 }
 
+export class EnvState {
+  name: string;
+  state: EnvStateType; // Browser, pages, cookies, etc.
+  env: EnvType;
+
+  constructor(env: EnvType) {
+    this.name = env.name;
+    this.state = {};
+    this.env = env;
+  }
+}
+
 export class Environment extends Singleton {
   private instances: Record<string, EnvsInstanceType>;
 
@@ -440,25 +450,34 @@ export class Environment extends Singleton {
     }
   }
 
-  createEnvs(
+  createEnv(
     data: { envsId?: string; socket?: SocketType; loggerOptions?: { stdOut?: boolean } } = {},
   ): EnvsInstanceType {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
-      const envsPool = new EnvsPool(envsId);
-      const logger = new Log(envsId, envsPool, loggerOptions);
+      const env = new EnvsPool(envsId);
+      const logger = new Log(envsId, env, loggerOptions);
 
-      this.instances[envsId] = { output, envsPool, socket, envsId, logger };
+      this.instances[envsId] = { output, env, socket, envsId, logger };
     }
-    return this.getEnv(envsId);
+    return this.getEnvAllInstance(envsId);
   }
 
-  getEnv(envsId: string): EnvsInstanceType {
-    if (!this.instances[envsId]) {
+  private checkId(envsId: string): void {
+    if (!envsId || !this.instances[envsId]) {
       throw new Error(`Unknown ENV ID ${envsId}`);
     }
+  }
+
+  getEnv(envsId: string): EnvsPoolType {
+    this.checkId(envsId);
+    return this.instances[envsId].env;
+  }
+
+  getEnvAllInstance(envsId: string): EnvsInstanceType {
+    this.checkId(envsId);
     return this.instances[envsId];
   }
 
@@ -466,10 +485,12 @@ export class Environment extends Singleton {
     if (!envsId) {
       return this.output;
     }
+    this.checkId(envsId);
     return { ...this.output, ...this.instances[envsId].output };
   }
 
   getSocket(envsId: string): SocketType {
+    this.checkId(envsId);
     return this.instances[envsId].socket;
   }
 }
