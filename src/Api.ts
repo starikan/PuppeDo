@@ -26,7 +26,7 @@ export default async function run(
   }
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, env, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
+  const { envsId, envRunners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
@@ -50,7 +50,7 @@ export default async function run(
 
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
-      env.setCurrentTest(testName);
+      envRunners.setCurrentTest(testName);
 
       const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();
@@ -72,7 +72,7 @@ export default async function run(
     }
 
     if (closeAllEnvs) {
-      await env.closeAllEnvs();
+      await envRunners.closeAllEnvs();
     }
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });

@@ -233,7 +233,7 @@ export type OutputsLatest = {
   output?: string;
 };
 
-export interface EnvsPoolType {
+export interface EnvRunnersType {
   envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
   current: {
     name?: string;

@@ -58,7 +58,7 @@ export default class Screenshot {
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
-      const page = new Environment().getEnv(this.envsId).getActivePage() as BrowserPageType;
+      const page = new Environment().getEnvRunners(this.envsId).getActivePage() as BrowserPageType;
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
         if (copyToLatest) {

@@ -9,7 +9,7 @@ import Screenshot from './Screenshot';
 
 import {
   ColorsType,
-  EnvsPoolType,
+  EnvRunnersType,
   LogEntrieType,
   LogEntry,
   LogFunctionType,
@@ -119,7 +119,7 @@ export const logDebug = async (
 
 export default class Log {
   envsId: string;
-  envs: EnvsPoolType;
+  envsRunners: EnvRunnersType;
   screenshot: Screenshot;
   options: {
     breadcrumbs?: Array<string>;
@@ -127,12 +127,12 @@ export default class Log {
     stdOut?: boolean;
   };
 
-  constructor(envsId: string, envsPool: EnvsPoolType, loggerOptions: { stdOut?: boolean } = {}) {
+  constructor(envsId: string, envsRunners: EnvRunnersType, loggerOptions: { stdOut?: boolean } = {}) {
     const { stdOut } = loggerOptions;
 
     this.envsId = envsId;
     // TODO: 2022-10-21 S.Starodubov убрать это не нужно тут, получать из Environment
-    this.envs = envsPool;
+    this.envsRunners = envsRunners;
     this.options = { stdOut };
     this.screenshot = new Screenshot(envsId);
   }

@@ -17,7 +17,7 @@ import {
   BrowserNameType,
   BrowserPageType,
   EnvBrowserType,
-  EnvsPoolType,
+  EnvRunnersType,
   EnvStateType,
   EnvType,
   LogEntry,
@@ -29,7 +29,7 @@ import {
 import Singleton from './Singleton';
 
 type EnvsInstanceType = {
-  env: EnvsPoolType;
+  envRunners: EnvRunnersType;
   socket: SocketType;
   envsId: string;
   logger: Log;
@@ -46,7 +46,7 @@ const BROWSER_DEFAULT: EnvBrowserType = {
   slowMo: 1,
 };
 
-export class EnvsPool implements EnvsPoolType {
+export class EnvRunners implements EnvRunnersType {
   envs: Record<string, EnvState>;
   current: { name?: string; page?: string; test?: string };
   envsId: string;
@@ -127,7 +127,7 @@ export class EnvsPool implements EnvsPoolType {
 
     if (type === 'electron') {
       if (runtime === 'connect') {
-        const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+        const { browser, pages } = await EnvRunners.connectElectron(browserSettings);
         envPool.state = { ...envPool.state, ...{ browser, pages } };
       }
       if (runtime === 'run') {
@@ -365,7 +365,7 @@ export class EnvsPool implements EnvsPoolType {
       let connectionTryes = 0;
       while (connectionTryes < secondsToStartApp) {
         try {
-          const { browser, pages } = await EnvsPool.connectElectron(browserSettings);
+          const { browser, pages } = await EnvRunners.connectElectron(browserSettings);
           await sleep(secondsDelayAfterStartApp * 1000);
           return { browser, pages, pid: prc.pid };
         } catch (error) {
@@ -456,10 +456,10 @@ export class Environment extends Singleton {
 
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
-      const env = new EnvsPool(envsId);
-      const logger = new Log(envsId, env, loggerOptions);
+      const envRunners = new EnvRunners(envsId);
+      const logger = new Log(envsId, envRunners, loggerOptions);
 
-      this.instances[envsId] = { output, env, socket, envsId, logger, log: [] };
+      this.instances[envsId] = { output, envRunners, socket, envsId, logger, log: [] };
     }
     return this.getEnvAllInstance(envsId);
   }
@@ -470,9 +470,9 @@ export class Environment extends Singleton {
     }
   }
 
-  getEnv(envsId: string): EnvsPoolType {
+  getEnvRunners(envsId: string): EnvRunnersType {
     this.checkId(envsId);
-    return this.instances[envsId].env;
+    return this.instances[envsId].envRunners;
   }
 
   getEnvAllInstance(envsId: string): EnvsInstanceType {

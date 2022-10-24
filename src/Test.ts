@@ -460,10 +460,10 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
 
-      const { env: envsPool, logger } = new Environment().getEnvAllInstance(this.envsId);
-      this.envName = envsPool.current.name || '';
-      this.envPageName = envsPool.current.page || '';
-      this.env = envsPool.envs[this.envName];
+      const { envRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
+      this.envName = envRunners.current.name || '';
+      this.envPageName = envRunners.current.page || '';
+      this.env = envRunners.envs[this.envName];
 
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},
@@ -647,7 +647,7 @@ export class Test implements TestExtendType {
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
           env: this.env,
-          envs: envsPool,
+          envs: envRunners,
           browser: this.env && this.env.state.browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),

@@ -2,10 +2,10 @@ import { Environment } from '../src/Environment';
 
 describe('Environment', () => {
   test('Constructor', () => {
-    const { output, socket, env, envsId, logger } = new Environment().createEnv();
+    const { output, socket, envRunners, envsId, logger } = new Environment().createEnv();
 
     expect(socket).toBeDefined();
-    expect(env).toBeDefined();
+    expect(envRunners).toBeDefined();
     expect(envsId).toBeDefined();
     expect(logger).toBeDefined();
     expect(output).toBeDefined();
