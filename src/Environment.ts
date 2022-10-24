@@ -33,6 +33,7 @@ type EnvsInstanceType = {
   socket: SocketType;
   envsId: string;
   logger: Log;
+  log: Array<LogEntry>;
   output: Outputs;
 };
 
@@ -46,15 +47,13 @@ const BROWSER_DEFAULT: EnvBrowserType = {
 };
 
 export class EnvsPool implements EnvsPoolType {
-  envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
+  envs: Record<string, EnvState>;
   current: { name?: string; page?: string; test?: string };
-  log: Array<LogEntry>;
   envsId: string;
 
   constructor(envsId: string) {
     this.envs = {};
     this.current = {};
-    this.log = [];
     this.envsId = envsId;
   }
 
@@ -460,7 +459,7 @@ export class Environment extends Singleton {
       const env = new EnvsPool(envsId);
       const logger = new Log(envsId, env, loggerOptions);
 
-      this.instances[envsId] = { output, env, socket, envsId, logger };
+      this.instances[envsId] = { output, env, socket, envsId, logger, log: [] };
     }
     return this.getEnvAllInstance(envsId);
   }

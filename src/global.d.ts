@@ -240,7 +240,6 @@ export interface EnvsPoolType {
     page?: string;
     test?: string;
   };
-  log: Array<LogEntry>;
   envsId: string;
   closeAllEnvs: () => Promise<void>;
   getActivePage: () => BrowserPageType | BrowserFrame;

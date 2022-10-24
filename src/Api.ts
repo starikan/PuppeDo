@@ -26,7 +26,7 @@ export default async function run(
   }
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, env, logger } = new Environment().createEnv({ loggerOptions: { stdOut } });
+  const { envsId, env, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
@@ -64,10 +64,11 @@ export default async function run(
 
       results[testName] = testResults;
 
+      // TODO: 2022-10-24 S.Starodubov Refactor this? It`s only for self tests
       const stepIds = Object.values(logs)
         .flat()
         .map((s: LogEntry) => s.stepId);
-      logs[testName] = env.log.filter((v) => !stepIds.includes(v.stepId));
+      logs[testName] = log.filter((v) => !stepIds.includes(v.stepId));
     }
 
     if (closeAllEnvs) {

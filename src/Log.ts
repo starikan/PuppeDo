@@ -335,6 +335,7 @@ export default class Log {
     }
 
     const socket = new Environment().getSocket(this.envsId);
+    const { log } = new Environment().getEnvAllInstance(this.envsId);
 
     try {
       // SCREENSHOT ON ERROR ONLY ONES
@@ -406,8 +407,8 @@ export default class Log {
           levelIndent,
           stepId: this.options.testArgs?.stepId || stepId,
         };
-        this.envs.log = [...this.envs.log, logEntry];
 
+        log.push(logEntry);
         socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
         // Export YAML log every step
