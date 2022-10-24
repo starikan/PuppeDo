@@ -50,15 +50,6 @@ class EnvRunners implements EnvRunnersType {
     this.envsId = envsId;
   }
 
-  getActivePage(): BrowserPageType | BrowserFrame {
-    const activeEnv = this.runners[this.current?.name || ''];
-    const pageName = this.current?.page || '';
-    if (!activeEnv.state.pages) {
-      throw new Error('No active page');
-    }
-    return activeEnv.state.pages[pageName];
-  }
-
   async setEnv({
     name,
     env = {},
@@ -79,17 +70,17 @@ class EnvRunners implements EnvRunnersType {
         if (envFromFile) {
           const envLocal = JSON.parse(JSON.stringify(envFromFile));
           this.runners[name] = new Runner(this.envsId, envLocal);
-          await this.runners[name].runBrowsers();
+          await this.runners[name].runEngine();
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
         }
       } else if (!this.runners[name]?.state?.browser) {
-        await this.runners[name].runBrowsers();
+        await this.runners[name].runEngine();
       }
     } else {
       localName = envResolved.name;
       this.runners[localName] = new Runner(this.envsId, envResolved);
-      await this.runners[localName].runBrowsers();
+      await this.runners[localName].runEngine();
     }
 
     this.current.name = localName;
@@ -101,31 +92,7 @@ class EnvRunners implements EnvRunnersType {
   }
 
   async closeEnv(name: string): Promise<void> {
-    const { state, runnerData } = this.runners[name] || {};
-    try {
-      await state?.browser?.close();
-    } catch (error) {
-      // Nothing to do.
-    }
-    try {
-      const killOnEnd = runnerData.browser?.killOnEnd || true;
-      const killProcessName = runnerData.browser?.killProcessName;
-      if (killOnEnd && killProcessName) {
-        const platform = os.platform();
-
-        if (platform.startsWith('win')) {
-          spawnSync('taskkill', ['/f', '/im', killProcessName]);
-        } else if (platform === 'darwin') {
-          execSync(`osascript -e 'quit app "${killProcessName}"'`);
-        } else if (platform === 'linux') {
-          execSync(`pkill ${killProcessName}`);
-        } else {
-          console.error(`Quitting a process is not supported on '${platform}' platform.`);
-        }
-      }
-    } catch (error) {
-      // Nothing to do.
-    }
+    await this.runners[name].stopEngine();
 
     delete this.runners[name].state.browser;
     delete this.runners[name].state.browserSettings;
@@ -145,6 +112,15 @@ class EnvRunners implements EnvRunnersType {
       this.current.test = testName;
     }
   }
+
+  getActivePage(): BrowserPageType | BrowserFrame {
+    const activeEnv = this.runners[this.current?.name || ''];
+    const pageName = this.current?.page || '';
+    if (!activeEnv.state.pages) {
+      throw new Error('No active page');
+    }
+    return activeEnv.state.pages[pageName];
+  }
 }
 
 export class Runner implements RunnerClassType {
@@ -160,7 +136,7 @@ export class Runner implements RunnerClassType {
     this.envsId = envsId;
   }
 
-  async runBrowsers(): Promise<void> {
+  async runEngine(): Promise<void> {
     const browserSettings = { ...BROWSER_DEFAULT, ...this.runnerData.browser };
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
@@ -188,6 +164,33 @@ export class Runner implements RunnerClassType {
         const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, this.envsId);
         this.state = { ...this.state, ...{ browser, pages, pid } };
       }
+    }
+  }
+
+  async stopEngine(): Promise<void> {
+    try {
+      await this.state?.browser?.close();
+    } catch (error) {
+      // Nothing to do.
+    }
+    try {
+      const killOnEnd = this.runnerData.browser?.killOnEnd || true;
+      const killProcessName = this.runnerData.browser?.killProcessName;
+      if (killOnEnd && killProcessName) {
+        const platform = os.platform();
+
+        if (platform.startsWith('win')) {
+          spawnSync('taskkill', ['/f', '/im', killProcessName]);
+        } else if (platform === 'darwin') {
+          execSync(`osascript -e 'quit app "${killProcessName}"'`);
+        } else if (platform === 'linux') {
+          execSync(`pkill ${killProcessName}`);
+        } else {
+          console.error(`Quitting a process is not supported on '${platform}' platform.`);
+        }
+      }
+    } catch (error) {
+      // Nothing to do.
     }
   }
 }
