@@ -1,18 +1,16 @@
 import path from 'path';
 import fs from 'fs';
 
-import { blankSocket, getNowDateTime } from './Helpers';
+import { getNowDateTime } from './Helpers';
 
-import { EnvsPoolType, SocketType, Element, BrowserPageType } from './global.d';
+import { Element, BrowserPageType } from './global.d';
 import { Environment } from './Environment';
 
 export default class Screenshot {
-  envs: EnvsPoolType;
-  socket: SocketType;
+  envsId: string;
 
-  constructor(envsPool: EnvsPoolType, socket: SocketType = blankSocket) {
-    this.envs = envsPool;
-    this.socket = socket;
+  constructor(envsId: string) {
+    this.envsId = envsId;
   }
 
   static async copyScreenshotToFolder(pathScreenshot: string, folder: string, name = ''): Promise<void> {
@@ -27,12 +25,13 @@ export default class Screenshot {
   }
 
   static async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
-    const { folderLatest = '.' } = new Environment().getOuptut();
+    const { folderLatest = '.' } = new Environment().getOutput();
     await Screenshot.copyScreenshotToFolder(pathScreenshot, folderLatest);
   }
 
   getScreenshotName(nameIncome: string): string {
-    const { folder = '.' } = this.envs.output;
+    // TODO: 2022-10-21 S.Starodubov todo
+    const { folder = '.' } = new Environment().getOutput(this.envsId);
     const name = `${nameIncome || getNowDateTime()}.png`;
     return path.resolve(path.join(folder, name));
   }
@@ -59,7 +58,7 @@ export default class Screenshot {
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
-      const page = this.envs.getActivePage() as BrowserPageType;
+      const page = new Environment().getEnv(this.envsId).envsPool.getActivePage() as BrowserPageType;
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
         if (copyToLatest) {

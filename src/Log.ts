@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import yaml from 'js-yaml';
 
-import { paintString, colors, getNowDateTime, blankSocket } from './Helpers';
+import { paintString, colors, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
@@ -14,7 +14,6 @@ import {
   LogEntry,
   LogFunctionType,
   LogInputType,
-  SocketType,
   TestArgsType,
 } from './global.d';
 import { ErrorType } from './Error';
@@ -22,9 +21,8 @@ import { Environment } from './Environment';
 
 export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId = ''): Promise<void> => {
   if (envsId) {
-    const envs = new Environment().getEnv(envsId);
-    const outputFolder = envs.envsPool.output.folderFull || '.';
-    const outputFile = path.join(outputFolder, 'output.log');
+    const output = new Environment().getOutput(envsId);
+    const outputFile = path.join(output.folderFull || '.', 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
     await log({ text, levelIndent, level: 'error', extendInfo: true });
   }
@@ -122,7 +120,6 @@ export const logDebug = async (
 export default class Log {
   envsId: string;
   envs: EnvsPoolType;
-  socket: SocketType;
   screenshot: Screenshot;
   options: {
     breadcrumbs?: Array<string>;
@@ -130,19 +127,14 @@ export default class Log {
     stdOut?: boolean;
   };
 
-  constructor(
-    envsId: string,
-    envsPool: EnvsPoolType,
-    socket: SocketType = blankSocket,
-    loggerOptions: { stdOut?: boolean } = {},
-  ) {
+  constructor(envsId: string, envsPool: EnvsPoolType, loggerOptions: { stdOut?: boolean } = {}) {
     const { stdOut } = loggerOptions;
 
     this.envsId = envsId;
+    // TODO: 2022-10-21 S.Starodubov убрать это не нужно тут, получать из Environment
     this.envs = envsPool;
-    this.socket = socket;
     this.options = { stdOut };
-    this.screenshot = new Screenshot(envsPool, socket);
+    this.screenshot = new Screenshot(envsId);
   }
 
   bindData(data: Record<string, unknown> = {}): void {
@@ -294,8 +286,7 @@ export default class Log {
   }
 
   fileLog(texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void {
-    const { folderLatest = '.' } = new Environment().getOuptut();
-    const { folder = '.' } = this.envs.output;
+    const { folderLatest = '.', folder = '.' } = new Environment().getOutput(this.envsId);
 
     let textsJoin = '';
     if (Array.isArray(texts)) {
@@ -414,7 +405,9 @@ export default class Log {
           stepId: this.options.testArgs?.stepId || stepId,
         };
         this.envs.log = [...this.envs.log, logEntry];
-        this.socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
+
+        const socket = new Environment().getSocket(this.envsId);
+        socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
         // Export YAML log every step
         const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
@@ -422,8 +415,10 @@ export default class Log {
       });
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
+      const socket = new Environment().getSocket(this.envsId);
+
       err.message += ' || error in log';
-      err.socket = this.socket;
+      err.socket = socket;
       err.debug = PPD_DEBUG_MODE;
       err.stepId = this.options.testArgs?.stepId;
       throw err;

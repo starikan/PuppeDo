@@ -6,9 +6,16 @@ import Log from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
+import { Outputs, OutputsLatest } from '../src/global.d';
 
-const output = '.temp';
-const [folder, folderLatest] = [path.join(output, 'folder'), path.join(output, 'folderLatest')];
+const outputFolder = '.temp';
+const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
+const { logger } = new Environment().createEnvs();
+new Environment().getOutput = (): OutputsLatest & Outputs => ({
+  folder,
+  folderLatest,
+  output: outputFolder,
+});
 
 const clearFiles = (fileName: string): void => {
   if (fs.existsSync(path.join(folder, fileName))) {
@@ -20,11 +27,9 @@ const clearFiles = (fileName: string): void => {
 };
 
 describe('Log', () => {
-  const { logger } = new Environment({ output, folderLatest }).createEnvs();
-
   test('Constructor', () => {
     expect(logger.envs).toBeDefined();
-    expect(logger.socket).toBeDefined();
+    expect(logger.envsId).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.options).toBeDefined();
   });
@@ -106,8 +111,6 @@ describe('Log', () => {
     });
 
     test('Simple output to default file', () => {
-      logger.envs.output = { folder };
-
       clearFiles('output.log');
       logger.fileLog([
         [
@@ -119,8 +122,6 @@ describe('Log', () => {
       expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
     });
     test('Write to optional file', () => {
-      logger.envs.output = { folder };
-
       clearFiles('output_another.log');
       logger.fileLog(
         [
@@ -135,8 +136,6 @@ describe('Log', () => {
       expect(fs.readFileSync(path.join(folderLatest, 'output_another.log')).toString()).toBe('info text\n');
     });
     test('Not standart input', () => {
-      logger.envs.output = { folder };
-
       clearFiles('output.log');
       logger.fileLog('foo');
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');

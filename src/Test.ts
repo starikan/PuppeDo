@@ -11,7 +11,6 @@ import globalExportPPD from './index';
 
 import {
   LogOptionsType,
-  EnvsPoolType,
   ColorsType,
   SocketType,
   TestArgsType,
@@ -226,7 +225,7 @@ const updateDataWithNeeds = (
 const resolveLogOptions = (
   logOptionsParent: LogOptionsType,
   logOptions: LogOptionsType,
-  envsPool: EnvsPoolType,
+  envsId: string,
 ): { logShowFlag: boolean; logForChild: LogOptionsType; logOptionsNew: LogOptionsType } => {
   const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
   const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = logOptionsParent;
@@ -234,7 +233,8 @@ const resolveLogOptions = (
   const logOptionsNew = {
     textColor: 'sane' as ColorsType,
     backgroundColor: 'sane' as ColorsType,
-    output: envsPool.output,
+    // TODO: 2022-10-21 S.Starodubov todo
+    output: new Environment().getOutput(envsId),
     ...logOptions,
   };
 
@@ -468,7 +468,7 @@ export class Test implements TestExtendType {
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},
         this.logOptions,
-        envsPool,
+        this.envsId,
       );
 
       const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');

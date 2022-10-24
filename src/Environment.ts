@@ -34,6 +34,7 @@ type EnvsInstanceType = {
   socket: SocketType;
   envsId: string;
   logger: Log;
+  output: Outputs;
 };
 
 const BROWSER_DEFAULT: EnvBrowserType = {
@@ -49,13 +50,13 @@ export class EnvsPool implements EnvsPoolType {
   envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
   current: { name?: string; page?: string; test?: string };
   log: Array<LogEntry>;
-  output: Outputs;
+  envsId: string;
 
-  constructor() {
+  constructor(envsId: string) {
     this.envs = {};
     this.current = {};
-    this.output = {};
     this.log = [];
+    this.envsId = envsId;
   }
 
   getActivePage(): BrowserPageType | BrowserFrame {
@@ -347,8 +348,7 @@ export class EnvsPool implements EnvsPoolType {
     const runArgs = [program, ...browserArgs];
 
     // eslint-disable-next-line no-use-before-define
-    const { folderLatest } = new Environment().getOuptut();
-    const { folder } = this.output;
+    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
 
     if (runtimeExecutable && folder && folderLatest) {
       process.env = { ...process.env, ...browserEnv };
@@ -432,11 +432,11 @@ export class Environment extends Singleton {
 
   private output: OutputsLatest;
 
-  constructor(output?: OutputsLatest, reInit = false) {
+  constructor(reInit = false) {
     super();
     if (reInit || !this.instances) {
       this.instances = {};
-      this.output = output || initOutputLatest();
+      this.output = initOutputLatest();
     }
   }
 
@@ -446,12 +446,11 @@ export class Environment extends Singleton {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     if (!this.instances[envsId]) {
-      const envsPool = new EnvsPool();
-      envsPool.output = { ...this.output, ...initOutput(envsId) };
+      const output = initOutput(envsId);
+      const envsPool = new EnvsPool(envsId);
+      const logger = new Log(envsId, envsPool, loggerOptions);
 
-      const logger = new Log(envsId, envsPool, socket, loggerOptions);
-
-      this.instances[envsId] = { envsPool, socket, envsId, logger };
+      this.instances[envsId] = { output, envsPool, socket, envsId, logger };
     }
     return this.getEnv(envsId);
   }
@@ -463,7 +462,14 @@ export class Environment extends Singleton {
     return this.instances[envsId];
   }
 
-  getOuptut(): OutputsLatest {
-    return this.output;
+  getOutput(envsId?: string): OutputsLatest & Outputs {
+    if (!envsId) {
+      return this.output;
+    }
+    return { ...this.output, ...this.instances[envsId].output };
+  }
+
+  getSocket(envsId: string): SocketType {
+    return this.instances[envsId].socket;
   }
 }

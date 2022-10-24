@@ -241,8 +241,8 @@ export interface EnvsPoolType {
     page?: string;
     test?: string;
   };
-  output: Outputs;
   log: Array<LogEntry>;
+  envsId: string;
   closeAllEnvs: () => Promise<void>;
   getActivePage: () => BrowserPageType | BrowserFrame;
   setCurrentTest: (testName: string) => void;
