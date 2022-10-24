@@ -25,6 +25,7 @@ import {
   RunnerYamlType,
   Outputs,
   OutputsLatest,
+  RunnerClassType,
 } from './global.d';
 import Singleton from './Singleton';
 
@@ -108,8 +109,8 @@ class EnvRunners implements EnvRunnersType {
   }
 
   async runBrowsers(envName: string): Promise<void> {
-    const envPool = this.runners[envName];
-    const browserSettings = { ...BROWSER_DEFAULT, ...envPool.env.browser };
+    const runner = this.runners[envName];
+    const browserSettings = { ...BROWSER_DEFAULT, ...runner.runnerData.browser };
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
 
@@ -128,20 +129,20 @@ class EnvRunners implements EnvRunnersType {
     if (type === 'electron') {
       if (runtime === 'connect') {
         const { browser, pages } = await EnvRunners.connectElectron(browserSettings);
-        envPool.state = { ...envPool.state, ...{ browser, pages } };
+        runner.state = { ...runner.state, ...{ browser, pages } };
       }
       if (runtime === 'run') {
-        const { browser, pages, pid } = await this.runElectron(browserSettings, envPool.name);
-        envPool.state = { ...envPool.state, ...{ browser, pages, pid } };
+        const { browser, pages, pid } = await this.runElectron(browserSettings, runner.name);
+        runner.state = { ...runner.state, ...{ browser, pages, pid } };
       }
     }
   }
 
   async addPage(envName: string, name = 'main', options: { width?: number; height?: number } = {}): Promise<void> {
-    const envPool = this.runners[envName];
+    const runner = this.runners[envName];
     const { width = 1024, height = 768 } = options;
-    const { browser } = envPool.state;
-    const browserSettings = envPool.env.browser;
+    const { browser } = runner.state;
+    const browserSettings = runner.runnerData.browser;
 
     let page: BrowserPageType | null = null;
     if (browserSettings.engine === 'puppeteer') {
@@ -162,13 +163,13 @@ class EnvRunners implements EnvRunnersType {
       throw new Error('Cant add new page');
     }
 
-    envPool.state.pages = { ...envPool.state.pages, ...{ [name]: page } };
+    runner.state.pages = { ...runner.state.pages, ...{ [name]: page } };
   }
 
   async runPuppeteer(envName: string): Promise<void> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const envPool = this.runners[envName];
-    const browserSettings = envPool.env.browser;
+    const runner = this.runners[envName];
+    const browserSettings = runner.runnerData.browser;
     const {
       headless = true,
       slowMo = 0,
@@ -196,13 +197,13 @@ class EnvRunners implements EnvRunnersType {
     const pagesExists = await browser.pages();
 
     const pages = { main: pagesExists[0] };
-    envPool.state = { ...envPool.state, ...{ browser, pages } };
+    runner.state = { ...runner.state, ...{ browser, pages } };
   }
 
   async runPlaywright(envName: string): Promise<void> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const envPool = this.runners[envName];
-    const browserSettings = envPool.env.browser;
+    const runner = this.runners[envName];
+    const browserSettings = runner.runnerData.browser;
     const {
       headless = true,
       slowMo = 0,
@@ -222,7 +223,7 @@ class EnvRunners implements EnvRunnersType {
     const playwright = __non_webpack_require__('playwright');
     const browser = await playwright[browserName].launch(options);
 
-    envPool.state = { ...envPool.state, ...{ browser } };
+    runner.state = { ...runner.state, ...{ browser } };
 
     await this.addPage(envName, 'main', { width, height });
   }
@@ -378,15 +379,15 @@ class EnvRunners implements EnvRunnersType {
   }
 
   async closeEnv(name: string): Promise<void> {
-    const { state, env } = this.runners[name] || {};
+    const { state, runnerData } = this.runners[name] || {};
     try {
       await state?.browser?.close();
     } catch (error) {
       // Nothing to do.
     }
     try {
-      const killOnEnd = env.browser?.killOnEnd || true;
-      const killProcessName = env.browser?.killProcessName;
+      const killOnEnd = runnerData.browser?.killOnEnd || true;
+      const killProcessName = runnerData.browser?.killProcessName;
       if (killOnEnd && killProcessName) {
         const platform = os.platform();
 
@@ -424,15 +425,15 @@ class EnvRunners implements EnvRunnersType {
   }
 }
 
-export class Runner {
+export class Runner implements RunnerClassType {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
-  env: RunnerType;
+  runnerData: RunnerType;
 
-  constructor(env: RunnerType) {
-    this.name = env.name;
+  constructor(runnerData: RunnerType) {
+    this.name = runnerData.name;
     this.state = {};
-    this.env = env;
+    this.runnerData = runnerData;
   }
 }
 

@@ -220,6 +220,12 @@ export interface RunnerType extends RunnerYamlType {
   testFile?: string;
 }
 
+export type RunnerClassType = {
+  name: string;
+  state: RunnerStateType; // Browser, pages, cookies, etc.
+  runnerData: RunnerType;
+};
+
 export type Outputs = {
   output?: string;
   name?: string;
@@ -234,7 +240,7 @@ export type OutputsLatest = {
 };
 
 export interface EnvRunnersType {
-  runners: Record<string, { env: RunnerType; name: string; state: RunnerStateType }>;
+  runners: Record<string, RunnerClassType>;
   current: {
     name?: string;
     page?: string;
@@ -291,11 +297,7 @@ export type TestArgsType = {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
   argsEnv: Record<string, unknown>;
-  env: {
-    name: string;
-    state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: RunnerType;
-  };
+  env: RunnerClassType;
   envs: EnvRunnersType;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;

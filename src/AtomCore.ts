@@ -48,7 +48,7 @@ export default class Atom {
   }
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
-    const atomEngine = this.env.env.browser.engine;
+    const atomEngine = this.env.runnerData.browser.engine;
 
     if (!enginesAvailable.includes(atomEngine)) {
       throw new Error(`There is unknown engine: ${atomEngine}. Use this engines: ${enginesAvailable}`);

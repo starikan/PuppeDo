@@ -14,14 +14,13 @@ import {
   ColorsType,
   SocketType,
   TestArgsType,
-  RunnerType,
-  RunnerStateType,
   LogFunctionType,
   TestLifecycleFunctionType,
   BrowserEngineType,
   TestExtendType,
   TestMetaSublingExchangeData,
   Element,
+  RunnerClassType,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
@@ -273,11 +272,7 @@ const fetchData = (
   selectorsParent: Record<string, unknown>,
   selectors: Record<string, unknown>,
   bindSelectors: Record<string, string>,
-  env: {
-    name: string;
-    state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: RunnerType;
-  },
+  env: RunnerClassType,
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
   const { data: allData, selectors: allSelectors } = new TestsContent().allData;
@@ -293,7 +288,7 @@ const fetchData = (
 
   let dataLocal = {
     ...PPD_DATA,
-    ...(env?.env?.data || {}),
+    ...(env?.runnerData?.data || {}),
     ...dataExtResolved,
     ...dataParent,
     ...(resultsFromParent || {}),
@@ -302,7 +297,7 @@ const fetchData = (
 
   let selectorsLocal = {
     ...PPD_SELECTORS,
-    ...(env?.env?.selectors || {}),
+    ...(env?.runnerData?.selectors || {}),
     ...selectorsExtResolved,
     ...selectorsParent,
     ...(resultsFromParent || {}),
@@ -403,11 +398,7 @@ export class Test implements TestExtendType {
 
   envName!: string;
   envPageName!: string;
-  env!: {
-    name: string;
-    state: RunnerStateType; // Browser, pages, cookies, etc.
-    env: RunnerType;
-  };
+  env!: RunnerClassType;
 
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
@@ -561,7 +552,7 @@ export class Test implements TestExtendType {
         this.plugins.hook('resolveValues', { inputs });
 
         if (this.engineSupports.length) {
-          const { engine } = this.env?.env?.browser || {};
+          const { engine } = this.env?.runnerData?.browser || {};
           if (engine && !this.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }
