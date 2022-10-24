@@ -2,14 +2,14 @@
 import { Arguments } from './Arguments';
 import { Test } from './Test';
 import Log from './Log';
-import { Environment, EnvState } from './Environment';
+import { Environment, Runner } from './Environment';
 
 import { SocketType } from './global.d';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 
 export interface ErrorType extends Error {
   envsId: string;
-  envs: EnvState;
+  runners: Runner;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -44,7 +44,7 @@ export class AbstractError extends Error {
 
 export class TestError extends AbstractError {
   envsId: string;
-  envs: EnvState;
+  runners: Runner;
   socket: SocketType;
   stepId: string;
   testDescription: string;
@@ -60,7 +60,7 @@ export class TestError extends AbstractError {
     super();
 
     this.envsId = parentError?.envsId || test.envsId;
-    this.envs = parentError?.envs || test.env;
+    this.runners = parentError?.runners || test.env;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
     this.testDescription = parentError?.testDescription || test.description;

@@ -18,7 +18,7 @@ import {
   BrowserPageType,
   EnvBrowserType,
   EnvRunnersType,
-  EnvStateType,
+  RunnerStateType,
   EnvType,
   LogEntry,
   SocketType,
@@ -47,18 +47,18 @@ const BROWSER_DEFAULT: EnvBrowserType = {
 };
 
 export class EnvRunners implements EnvRunnersType {
-  envs: Record<string, EnvState>;
+  runners: Record<string, Runner>;
   current: { name?: string; page?: string; test?: string };
   envsId: string;
 
   constructor(envsId: string) {
-    this.envs = {};
+    this.runners = {};
     this.current = {};
     this.envsId = envsId;
   }
 
   getActivePage(): BrowserPageType | BrowserFrame {
-    const activeEnv = this.envs[this.current?.name || ''];
+    const activeEnv = this.runners[this.current?.name || ''];
     const pageName = this.current?.page || '';
     if (!activeEnv.state.pages) {
       throw new Error('No active page');
@@ -80,35 +80,35 @@ export class EnvRunners implements EnvRunnersType {
     let localName = name;
 
     if (name) {
-      if (!this.envs[name]) {
+      if (!this.runners[name]) {
         const { envs } = new TestsContent().allData;
         const envFromFile = envs.find((v) => v.name === name);
         if (envFromFile) {
           const envLocal = JSON.parse(JSON.stringify(envFromFile));
-          this.envs[name] = new EnvState(envLocal);
+          this.runners[name] = new Runner(envLocal);
           await this.runBrowsers(name);
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
         }
-      } else if (!this.envs[name]?.state?.browser) {
+      } else if (!this.runners[name]?.state?.browser) {
         await this.runBrowsers(name);
       }
     } else {
       localName = envResolved.name;
-      this.envs[localName] = new EnvState(envResolved);
+      this.runners[localName] = new Runner(envResolved);
       await this.runBrowsers(localName);
     }
 
     this.current.name = localName;
-    if (page && this.envs[localName]?.state?.pages?.[page]) {
+    if (page && this.runners[localName]?.state?.pages?.[page]) {
       this.current.page = page;
-    } else if (this.envs[localName]?.state?.pages?.main) {
+    } else if (this.runners[localName]?.state?.pages?.main) {
       this.current.page = 'main';
     }
   }
 
   async runBrowsers(envName: string): Promise<void> {
-    const envPool = this.envs[envName];
+    const envPool = this.runners[envName];
     const browserSettings = { ...BROWSER_DEFAULT, ...envPool.env.browser };
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
@@ -138,7 +138,7 @@ export class EnvRunners implements EnvRunnersType {
   }
 
   async addPage(envName: string, name = 'main', options: { width?: number; height?: number } = {}): Promise<void> {
-    const envPool = this.envs[envName];
+    const envPool = this.runners[envName];
     const { width = 1024, height = 768 } = options;
     const { browser } = envPool.state;
     const browserSettings = envPool.env.browser;
@@ -167,7 +167,7 @@ export class EnvRunners implements EnvRunnersType {
 
   async runPuppeteer(envName: string): Promise<void> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const envPool = this.envs[envName];
+    const envPool = this.runners[envName];
     const browserSettings = envPool.env.browser;
     const {
       headless = true,
@@ -201,7 +201,7 @@ export class EnvRunners implements EnvRunnersType {
 
   async runPlaywright(envName: string): Promise<void> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const envPool = this.envs[envName];
+    const envPool = this.runners[envName];
     const browserSettings = envPool.env.browser;
     const {
       headless = true,
@@ -283,7 +283,7 @@ export class EnvRunners implements EnvRunnersType {
     return { browser, pages };
   }
 
-  static async connectElectron(browserSettings: EnvBrowserType): Promise<EnvStateType> {
+  static async connectElectron(browserSettings: EnvBrowserType): Promise<RunnerStateType> {
     const {
       urlDevtoolsJson,
       windowSize = {},
@@ -331,7 +331,7 @@ export class EnvRunners implements EnvRunnersType {
     throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
   }
 
-  async runElectron(browserSettings: EnvBrowserType, envName: string): Promise<EnvStateType> {
+  async runElectron(browserSettings: EnvBrowserType, envName: string): Promise<RunnerStateType> {
     const { runtimeEnv = {} } = browserSettings;
     const {
       runtimeExecutable,
@@ -378,7 +378,7 @@ export class EnvRunners implements EnvRunnersType {
   }
 
   async closeEnv(name: string): Promise<void> {
-    const { state, env } = this.envs[name] || {};
+    const { state, env } = this.runners[name] || {};
     try {
       await state?.browser?.close();
     } catch (error) {
@@ -404,15 +404,15 @@ export class EnvRunners implements EnvRunnersType {
       // Nothing to do.
     }
 
-    delete this.envs[name].state.browser;
-    delete this.envs[name].state.browserSettings;
-    delete this.envs[name].state.pages;
-    delete this.envs[name].state.contexts;
-    delete this.envs[name].state.pid;
+    delete this.runners[name].state.browser;
+    delete this.runners[name].state.browserSettings;
+    delete this.runners[name].state.pages;
+    delete this.runners[name].state.contexts;
+    delete this.runners[name].state.pid;
   }
 
   async closeAllEnvs(): Promise<void> {
-    for (const name of Object.keys(this.envs)) {
+    for (const name of Object.keys(this.runners)) {
       await this.closeEnv(name);
     }
   }
@@ -424,9 +424,9 @@ export class EnvRunners implements EnvRunnersType {
   }
 }
 
-export class EnvState {
+export class Runner {
   name: string;
-  state: EnvStateType; // Browser, pages, cookies, etc.
+  state: RunnerStateType; // Browser, pages, cookies, etc.
   env: EnvType;
 
   constructor(env: EnvType) {

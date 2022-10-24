@@ -15,7 +15,7 @@ import {
   SocketType,
   TestArgsType,
   EnvType,
-  EnvStateType,
+  RunnerStateType,
   LogFunctionType,
   TestLifecycleFunctionType,
   BrowserEngineType,
@@ -275,7 +275,7 @@ const fetchData = (
   bindSelectors: Record<string, string>,
   env: {
     name: string;
-    state: EnvStateType; // Browser, pages, cookies, etc.
+    state: RunnerStateType; // Browser, pages, cookies, etc.
     env: EnvType;
   },
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
@@ -405,7 +405,7 @@ export class Test implements TestExtendType {
   envPageName!: string;
   env!: {
     name: string;
-    state: EnvStateType; // Browser, pages, cookies, etc.
+    state: RunnerStateType; // Browser, pages, cookies, etc.
     env: EnvType;
   };
 
@@ -463,7 +463,7 @@ export class Test implements TestExtendType {
       const { envRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
       this.envName = envRunners.current.name || '';
       this.envPageName = envRunners.current.page || '';
-      this.env = envRunners.envs[this.envName];
+      this.env = envRunners.runners[this.envName];
 
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},

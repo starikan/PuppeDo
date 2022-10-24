@@ -159,7 +159,7 @@ export type SocketType = {
 
 // ================ ENVS ====================
 
-export type EnvStateType = {
+export type RunnerStateType = {
   browser?: BrowserType;
   browserSettings?: EnvBrowserType;
   pages?: PagesType;
@@ -234,7 +234,7 @@ export type OutputsLatest = {
 };
 
 export interface EnvRunnersType {
-  envs: Record<string, { env: EnvType; name: string; state: EnvStateType }>;
+  runners: Record<string, { env: EnvType; name: string; state: RunnerStateType }>;
   current: {
     name?: string;
     page?: string;
@@ -293,10 +293,10 @@ export type TestArgsType = {
   argsEnv: Record<string, unknown>;
   env: {
     name: string;
-    state: EnvStateType; // Browser, pages, cookies, etc.
+    state: RunnerStateType; // Browser, pages, cookies, etc.
     env: EnvType;
   };
-  envs: EnvsPoolType;
+  envs: EnvRunnersType;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;

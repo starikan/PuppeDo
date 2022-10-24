@@ -14,14 +14,14 @@ import {
   ColorsType,
   BrowserFrame,
 } from './global.d';
-import { EnvState } from './Environment';
+import { Runner } from './Environment';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
-  env?: EnvState;
+  env?: Runner;
   page?: BrowserPageType | BrowserFrame;
 };
 
@@ -33,7 +33,7 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env!: EnvState;
+  env!: Runner;
   page!: BrowserPageType | BrowserFrame;
   log!: LogFunctionType;
 
