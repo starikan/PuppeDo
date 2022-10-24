@@ -46,7 +46,7 @@ const BROWSER_DEFAULT: EnvBrowserType = {
   slowMo: 1,
 };
 
-export class EnvRunners implements EnvRunnersType {
+class EnvRunners implements EnvRunnersType {
   runners: Record<string, Runner>;
   current: { name?: string; page?: string; test?: string };
   envsId: string;
@@ -424,7 +424,7 @@ export class EnvRunners implements EnvRunnersType {
   }
 }
 
-export class Runner {
+class Runner {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
   env: EnvType;

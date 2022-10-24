@@ -28,6 +28,7 @@ module.exports = {
     'no-console': 'off',
     'max-classes-per-file': 'off',
     'no-use-before-define': 'off',
+    'import/prefer-default-export': 'off',
 
     'prettier/prettier': 'error',
     'max-len': [
