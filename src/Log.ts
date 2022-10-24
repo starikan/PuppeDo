@@ -334,6 +334,8 @@ export default class Log {
       return;
     }
 
+    const socket = new Environment().getSocket(this.envsId);
+
     try {
       // SCREENSHOT ON ERROR ONLY ONES
       // TODO: 2020-02-05 S.Starodubov get values from env.yaml
@@ -406,7 +408,6 @@ export default class Log {
         };
         this.envs.log = [...this.envs.log, logEntry];
 
-        const socket = new Environment().getSocket(this.envsId);
         socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
         // Export YAML log every step
@@ -415,7 +416,6 @@ export default class Log {
       });
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
-      const socket = new Environment().getSocket(this.envsId);
 
       err.message += ' || error in log';
       err.socket = socket;

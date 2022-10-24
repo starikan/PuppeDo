@@ -26,7 +26,7 @@ export default async function run(
   }
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, envsPool, socket, logger } = new Environment().createEnvs({ loggerOptions: { stdOut } });
+  const { envsId, envsPool, logger } = new Environment().createEnvs({ loggerOptions: { stdOut } });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);
@@ -54,7 +54,7 @@ export default async function run(
 
       const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();
-      const test = getTest({ testJsonIncome: fullJSON, envsId, socket });
+      const test = getTest({ testJsonIncome: fullJSON, envsId });
 
       await logger.log({ level: 'env', text: `\n${textDescription}` });
       await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` });

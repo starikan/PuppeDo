@@ -9,7 +9,6 @@ import { Test } from './Test';
 import Atom from './AtomCore';
 
 import {
-  SocketType,
   TestArgsType,
   TestExtendType,
   TestExtendTypeKeys,
@@ -17,6 +16,7 @@ import {
   TestLifecycleFunctionType,
   TestType,
 } from './global.d';
+import { Environment } from './Environment';
 
 const atoms: Record<string, TestLifecycleFunctionType> = {};
 
@@ -87,12 +87,10 @@ const propagateArgumentsSimpleOnAir = (
 const getTest = ({
   testJsonIncome,
   envsId,
-  socket,
   parentTestMetaCollector, // object for share data with sublings
 }: {
   testJsonIncome: TestExtendType;
   envsId: string;
-  socket: SocketType;
   parentTestMetaCollector?: Partial<TestExtendType>;
 }): TestLifecycleFunctionType => {
   let testJson = testJsonIncome;
@@ -107,6 +105,8 @@ const getTest = ({
     v,
     testJson[v] as TestExtendType[],
   ]);
+
+  const socket = new Environment().getSocket(envsId);
 
   testJson = resolveJS(testJson);
   testJson.envsId = envsId;
@@ -125,7 +125,7 @@ const getTest = ({
       const newFunctions = [] as TestLifecycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
         if (['test', 'atom'].includes(testItem.type)) {
-          const newFunction = getTest({ testJsonIncome: testItem, envsId, socket, parentTestMetaCollector: testJson });
+          const newFunction = getTest({ testJsonIncome: testItem, envsId, parentTestMetaCollector: testJson });
           newFunctions.push(newFunction);
         }
       });
