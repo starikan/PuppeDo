@@ -50,7 +50,7 @@ export default async function run(
 
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
-      envRunners.setCurrentTest(testName);
+      new Environment().setCurrent(envsId, { name: testName });
 
       const { fullJSON, textDescription } = new TestStructure(testName);
       new Blocker().reset();

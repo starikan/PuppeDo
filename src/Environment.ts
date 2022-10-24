@@ -17,6 +17,7 @@ import {
   Outputs,
   OutputsLatest,
   RunnerClassType,
+  RunnerCurrentType,
 } from './global.d';
 import Singleton from './Singleton';
 import { Engines } from './Engines';
@@ -28,6 +29,7 @@ type EnvsInstanceType = {
   logger: Log;
   log: Array<LogEntry>;
   output: Outputs;
+  current: RunnerCurrentType;
 };
 
 const BROWSER_DEFAULT: EnvBrowserType = {
@@ -41,12 +43,10 @@ const BROWSER_DEFAULT: EnvBrowserType = {
 
 class EnvRunners implements EnvRunnersType {
   runners: Record<string, Runner>;
-  current: { name?: string; page?: string; test?: string };
   envsId: string;
 
   constructor(envsId: string) {
     this.runners = {};
-    this.current = {};
     this.envsId = envsId;
   }
 
@@ -83,12 +83,15 @@ class EnvRunners implements EnvRunnersType {
       await this.runners[localName].runEngine();
     }
 
-    this.current.name = localName;
+    const newCurrent: RunnerCurrentType = {};
+    newCurrent.name = localName;
     if (page && this.runners[localName]?.state?.pages?.[page]) {
-      this.current.page = page;
+      newCurrent.page = page;
     } else if (this.runners[localName]?.state?.pages?.main) {
-      this.current.page = 'main';
+      newCurrent.page = 'main';
     }
+
+    new Environment().setCurrent(this.envsId, newCurrent);
   }
 
   async closeEnv(name: string): Promise<void> {
@@ -107,19 +110,14 @@ class EnvRunners implements EnvRunnersType {
     }
   }
 
-  setCurrentTest(testName = ''): void {
-    if (testName) {
-      this.current.test = testName;
-    }
-  }
-
   getActivePage(): BrowserPageType | BrowserFrame {
-    const activeEnv = this.runners[this.current?.name || ''];
-    const pageName = this.current?.page || '';
+    const current = new Environment().getCurrent(this.envsId);
+    const { name = '', page = '' } = current;
+    const activeEnv = this.runners[name];
     if (!activeEnv.state.pages) {
       throw new Error('No active page');
     }
-    return activeEnv.state.pages[pageName];
+    return activeEnv.state.pages[page];
   }
 }
 
@@ -217,8 +215,9 @@ export class Environment extends Singleton {
       const output = initOutput(envsId);
       const envRunners = new EnvRunners(envsId);
       const logger = new Log(envsId, envRunners, loggerOptions);
+      const current: RunnerCurrentType = {};
 
-      this.instances[envsId] = { output, envRunners, socket, envsId, logger, log: [] };
+      this.instances[envsId] = { output, envRunners, socket, envsId, logger, current, log: [] };
     }
     return this.getEnvAllInstance(envsId);
   }
@@ -250,5 +249,15 @@ export class Environment extends Singleton {
   getSocket(envsId: string): SocketType {
     this.checkId(envsId);
     return this.instances[envsId].socket;
+  }
+
+  getCurrent(envsId: string): Partial<RunnerCurrentType> {
+    this.checkId(envsId);
+    return this.instances[envsId].current;
+  }
+
+  setCurrent(envsId: string, newData: Partial<RunnerCurrentType>): void {
+    this.checkId(envsId);
+    this.instances[envsId].current = { ...this.instances[envsId].current, ...newData };
   }
 }

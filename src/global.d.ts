@@ -227,6 +227,12 @@ export type RunnerClassType = {
   envsId: string;
 };
 
+export type RunnerCurrentType = {
+  name?: string;
+  page?: string;
+  test?: string;
+};
+
 export type Outputs = {
   output?: string;
   name?: string;
@@ -242,15 +248,9 @@ export type OutputsLatest = {
 
 export interface EnvRunnersType {
   runners: Record<string, RunnerClassType>;
-  current: {
-    name?: string;
-    page?: string;
-    test?: string;
-  };
   envsId: string;
   closeAllEnvs: () => Promise<void>;
   getActivePage: () => BrowserPageType | BrowserFrame;
-  setCurrentTest: (testName: string) => void;
 }
 
 // ================ DATA / SELECTORS ====================

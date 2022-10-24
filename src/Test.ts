@@ -452,8 +452,11 @@ export class Test implements TestExtendType {
       const startTime = getTimer().now;
 
       const { envRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
-      this.envName = envRunners.current.name || '';
-      this.envPageName = envRunners.current.page || '';
+      const current = new Environment().getCurrent(this.envsId);
+      const { name = '', page = '' } = current;
+
+      this.envName = name;
+      this.envPageName = page;
       this.env = envRunners.runners[this.envName];
 
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
