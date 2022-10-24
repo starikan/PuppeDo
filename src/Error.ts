@@ -4,7 +4,7 @@ import { Test } from './Test';
 import Log from './Log';
 import { Environment, Runner } from './Environment';
 
-import { SocketType } from './global.d';
+import { RunnerClassType, SocketType } from './global.d';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 
 export interface ErrorType extends Error {
@@ -44,7 +44,7 @@ export class AbstractError extends Error {
 
 export class TestError extends AbstractError {
   envsId: string;
-  runners: Runner;
+  runners: RunnerClassType;
   socket: SocketType;
   stepId: string;
   testDescription: string;

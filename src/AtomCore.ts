@@ -13,15 +13,15 @@ import {
   LogInputType,
   ColorsType,
   BrowserFrame,
+  RunnerClassType,
 } from './global.d';
-import { Runner } from './Environment';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
-  env?: Runner;
+  env?: RunnerClassType;
   page?: BrowserPageType | BrowserFrame;
 };
 
@@ -33,7 +33,7 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env!: Runner;
+  env!: RunnerClassType;
   page!: BrowserPageType | BrowserFrame;
   log!: LogFunctionType;
 

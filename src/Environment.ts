@@ -1,20 +1,11 @@
-import fs from 'fs';
-import path from 'path';
 import os from 'os';
-import { execSync, spawn, spawnSync } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 
-import axios from 'axios';
-import { Browser as BrowserPuppeteer } from 'puppeteer';
-import { Browser as BrowserPlaywright } from 'playwright';
-
-import { sleep, blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
+import { blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
 import TestsContent from './TestContent';
-import { Arguments } from './Arguments';
 import Log from './Log';
 import {
-  BrouserLaunchOptions,
   BrowserFrame,
-  BrowserNameType,
   BrowserPageType,
   EnvBrowserType,
   EnvRunnersType,
@@ -28,6 +19,7 @@ import {
   RunnerClassType,
 } from './global.d';
 import Singleton from './Singleton';
+import { Engines } from './Engines';
 
 type EnvsInstanceType = {
   envRunners: EnvRunnersType;
@@ -86,18 +78,18 @@ class EnvRunners implements EnvRunnersType {
         const envFromFile = envs.find((v) => v.name === name);
         if (envFromFile) {
           const envLocal = JSON.parse(JSON.stringify(envFromFile));
-          this.runners[name] = new Runner(envLocal);
-          await this.runBrowsers(name);
+          this.runners[name] = new Runner(this.envsId, envLocal);
+          await this.runners[name].runBrowsers();
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
         }
       } else if (!this.runners[name]?.state?.browser) {
-        await this.runBrowsers(name);
+        await this.runners[name].runBrowsers();
       }
     } else {
       localName = envResolved.name;
-      this.runners[localName] = new Runner(envResolved);
-      await this.runBrowsers(localName);
+      this.runners[localName] = new Runner(this.envsId, envResolved);
+      await this.runners[localName].runBrowsers();
     }
 
     this.current.name = localName;
@@ -106,276 +98,6 @@ class EnvRunners implements EnvRunnersType {
     } else if (this.runners[localName]?.state?.pages?.main) {
       this.current.page = 'main';
     }
-  }
-
-  async runBrowsers(envName: string): Promise<void> {
-    const runner = this.runners[envName];
-    const browserSettings = { ...BROWSER_DEFAULT, ...runner.runnerData.browser };
-    // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
-    const { type, engine, runtime } = browserSettings;
-
-    if (type === 'browser' && runtime === 'run' && engine === 'puppeteer') {
-      await this.runPuppeteer(envName);
-    }
-
-    if (type === 'browser' && runtime === 'run' && engine === 'playwright') {
-      await this.runPlaywright(envName);
-    }
-
-    if (type === 'browser' && runtime === 'connect') {
-      // TODO: 2020-11-07 S.Starodubov todo
-    }
-
-    if (type === 'electron') {
-      if (runtime === 'connect') {
-        const { browser, pages } = await EnvRunners.connectElectron(browserSettings);
-        runner.state = { ...runner.state, ...{ browser, pages } };
-      }
-      if (runtime === 'run') {
-        const { browser, pages, pid } = await this.runElectron(browserSettings, runner.name);
-        runner.state = { ...runner.state, ...{ browser, pages, pid } };
-      }
-    }
-  }
-
-  async addPage(envName: string, name = 'main', options: { width?: number; height?: number } = {}): Promise<void> {
-    const runner = this.runners[envName];
-    const { width = 1024, height = 768 } = options;
-    const { browser } = runner.state;
-    const browserSettings = runner.runnerData.browser;
-
-    let page: BrowserPageType | null = null;
-    if (browserSettings.engine === 'puppeteer') {
-      page = await (browser as BrowserPuppeteer).newPage();
-      if (width && height) {
-        await page.setViewport({ width, height });
-      }
-    }
-
-    if (browserSettings.engine === 'playwright') {
-      page = await (browser as BrowserPlaywright).newPage({ viewport: { width, height }, ignoreHTTPSErrors: true });
-      // if (width && height) {
-      //   await page.setViewportSize({ width, height });
-      // }
-    }
-
-    if (!page) {
-      throw new Error('Cant add new page');
-    }
-
-    runner.state.pages = { ...runner.state.pages, ...{ [name]: page } };
-  }
-
-  async runPuppeteer(envName: string): Promise<void> {
-    const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const runner = this.runners[envName];
-    const browserSettings = runner.runnerData.browser;
-    const {
-      headless = true,
-      slowMo = 0,
-      args = [],
-      windowSize = {},
-      browserName: product = 'chrome',
-      executablePath = '',
-      timeout = 30000,
-    } = browserSettings;
-    const { width = 1024, height = 768 } = windowSize;
-
-    const puppeteer = __non_webpack_require__('puppeteer');
-    const browser: BrowserPuppeteer = await puppeteer.launch({
-      headless,
-      slowMo,
-      args,
-      devtools: PPD_DEBUG_MODE,
-      product,
-      ignoreHTTPSErrors: true,
-      defaultViewport: { width, height },
-      executablePath,
-      timeout,
-    });
-
-    const pagesExists = await browser.pages();
-
-    const pages = { main: pagesExists[0] };
-    runner.state = { ...runner.state, ...{ browser, pages } };
-  }
-
-  async runPlaywright(envName: string): Promise<void> {
-    const { PPD_DEBUG_MODE = false } = new Arguments().args;
-    const runner = this.runners[envName];
-    const browserSettings = runner.runnerData.browser;
-    const {
-      headless = true,
-      slowMo = 0,
-      args = [],
-      browserName = 'chromium',
-      windowSize = {},
-      executablePath = '',
-      timeout = 30000,
-    } = browserSettings || {};
-    const { width = 1024, height = 768 } = windowSize;
-
-    const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath, timeout };
-    if (browserName === 'chromium') {
-      options.devtools = PPD_DEBUG_MODE;
-    }
-
-    const playwright = __non_webpack_require__('playwright');
-    const browser = await playwright[browserName].launch(options);
-
-    runner.state = { ...runner.state, ...{ browser } };
-
-    await this.addPage(envName, 'main', { width, height });
-  }
-
-  static async connectPuppeteer(
-    webSocketDebuggerUrl: string,
-    slowMo: number,
-    windowSize: { width?: number; height?: number },
-    timeout: number,
-  ): Promise<{ browser: BrowserPuppeteer; pages: Record<string, BrowserPageType> }> {
-    const puppeteer = __non_webpack_require__('puppeteer');
-    const browser = await puppeteer.connect({
-      browserWSEndpoint: webSocketDebuggerUrl,
-      ignoreHTTPSErrors: true,
-      slowMo,
-      timeout,
-    });
-
-    const pagesRaw = await browser.pages();
-
-    if (!pagesRaw.length) {
-      throw new Error('Can`t find any pages in connection');
-    }
-    const pages = { main: pagesRaw[0] };
-
-    const { width, height } = windowSize;
-    if (width && height) {
-      await pages.main.setViewport({ width, height });
-    }
-    return { browser, pages };
-  }
-
-  static async connectPlaywright(
-    webSocketDebuggerUrl: string,
-    slowMo: number,
-    windowSize: { width?: number; height?: number },
-    timeout: number,
-    browserName: BrowserNameType,
-  ): Promise<{ browser: BrowserPlaywright; pages: Record<string, BrowserPageType> }> {
-    const playwright = __non_webpack_require__('playwright');
-    const browser = await playwright[browserName].connect({
-      wsEndpoint: webSocketDebuggerUrl,
-      slowMo,
-      timeout,
-    });
-    const contexts = await browser.contexts({ ignoreHTTPSErrors: true });
-    const pagesRaw = await contexts.pages();
-
-    if (!pagesRaw.length) {
-      throw new Error('Can`t find any pages in connection');
-    }
-    const pages = { main: pagesRaw[0] };
-
-    const { width, height } = windowSize;
-    if (width && height) {
-      await pages.main.setViewportSize({ width, height });
-    }
-    return { browser, pages };
-  }
-
-  static async connectElectron(browserSettings: EnvBrowserType): Promise<RunnerStateType> {
-    const {
-      urlDevtoolsJson,
-      windowSize = {},
-      slowMo = 0,
-      engine = 'puppeteer',
-      browserName,
-      timeout = 30000,
-    } = browserSettings || {};
-
-    if (urlDevtoolsJson) {
-      const jsonPagesResponse = await axios(`${urlDevtoolsJson}json`, { method: 'GET' });
-      const jsonBrowserResponse = await axios(`${urlDevtoolsJson}json/version`, {
-        method: 'GET',
-      });
-
-      const jsonPages = await jsonPagesResponse.data;
-      const jsonBrowser = (await jsonBrowserResponse.data) as { webSocketDebuggerUrl: string };
-
-      if (!jsonBrowser || !jsonPages) {
-        throw new Error(`Can't connect to ${urlDevtoolsJson}`);
-      }
-
-      const { webSocketDebuggerUrl } = jsonBrowser;
-      if (!webSocketDebuggerUrl) {
-        throw new Error('webSocketDebuggerUrl empty. Possibly wrong Electron version running');
-      }
-
-      if (engine === 'puppeteer') {
-        const { browser, pages } = await this.connectPuppeteer(webSocketDebuggerUrl, slowMo, windowSize, timeout);
-        return { browser, pages };
-      }
-      if (engine === 'playwright') {
-        const { browser, pages } = await this.connectPlaywright(
-          webSocketDebuggerUrl,
-          slowMo,
-          windowSize,
-          timeout,
-          browserName,
-        );
-        return { browser, pages };
-      }
-      throw new Error('Can`t find any supported browser engine in environment');
-    }
-
-    throw new Error(`Can't connect to Electron ${urlDevtoolsJson}`);
-  }
-
-  async runElectron(browserSettings: EnvBrowserType, envName: string): Promise<RunnerStateType> {
-    const { runtimeEnv = {} } = browserSettings;
-    const {
-      runtimeExecutable,
-      program = '',
-      cwd = '',
-      args: browserArgs = [],
-      env: browserEnv = {},
-      secondsToStartApp = 30,
-      secondsDelayAfterStartApp = 0,
-    } = runtimeEnv;
-
-    const runArgs = [program, ...browserArgs];
-
-    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
-
-    if (runtimeExecutable && folder && folderLatest) {
-      process.env = { ...process.env, ...browserEnv };
-
-      const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env });
-
-      if (prc) {
-        fs.writeFileSync(path.join(folder, `${envName}.log`), '');
-        fs.writeFileSync(path.join(folderLatest, `${envName}.log`), '');
-
-        prc.stdout.on('data', (data) => {
-          fs.appendFileSync(path.join(folder, `${envName}.log`), String(data));
-          fs.appendFileSync(path.join(folderLatest, `${envName}.log`), String(data));
-        });
-      }
-
-      let connectionTryes = 0;
-      while (connectionTryes < secondsToStartApp) {
-        try {
-          const { browser, pages } = await EnvRunners.connectElectron(browserSettings);
-          await sleep(secondsDelayAfterStartApp * 1000);
-          return { browser, pages, pid: prc.pid };
-        } catch (error) {
-          await sleep(1000);
-          connectionTryes += 1;
-        }
-      }
-    }
-    throw new Error(`Can't run Electron ${runtimeExecutable}`);
   }
 
   async closeEnv(name: string): Promise<void> {
@@ -429,11 +151,44 @@ export class Runner implements RunnerClassType {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
   runnerData: RunnerType;
+  envsId: string;
 
-  constructor(runnerData: RunnerType) {
+  constructor(envsId: string, runnerData: RunnerType) {
     this.name = runnerData.name;
     this.state = {};
     this.runnerData = runnerData;
+    this.envsId = envsId;
+  }
+
+  async runBrowsers(): Promise<void> {
+    const browserSettings = { ...BROWSER_DEFAULT, ...this.runnerData.browser };
+    // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
+    const { type, engine, runtime } = browserSettings;
+
+    if (type === 'browser' && runtime === 'run' && engine === 'puppeteer') {
+      const newState = await Engines.runPuppeteer(this.runnerData, this.state);
+      this.state = { ...this.state, ...newState };
+    }
+
+    if (type === 'browser' && runtime === 'run' && engine === 'playwright') {
+      const newState = await Engines.runPlaywright(this.runnerData, this.state);
+      this.state = { ...this.state, ...newState };
+    }
+
+    if (type === 'browser' && runtime === 'connect') {
+      // TODO: 2020-11-07 S.Starodubov todo
+    }
+
+    if (type === 'electron') {
+      if (runtime === 'connect') {
+        const { browser, pages } = await Engines.connectElectron(browserSettings);
+        this.state = { ...this.state, ...{ browser, pages } };
+      }
+      if (runtime === 'run') {
+        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, this.envsId);
+        this.state = { ...this.state, ...{ browser, pages, pid } };
+      }
+    }
   }
 }
 

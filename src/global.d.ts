@@ -224,6 +224,7 @@ export type RunnerClassType = {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
   runnerData: RunnerType;
+  envsId: string;
 };
 
 export type Outputs = {
