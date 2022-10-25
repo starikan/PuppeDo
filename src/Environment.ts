@@ -229,7 +229,7 @@ export class Environment extends Singleton {
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
       const runners = new Runners(envsId);
-      const logger = new Log(envsId, runners, loggerOptions);
+      const logger = new Log(envsId, loggerOptions);
       const current: RunnerCurrentType = {};
 
       this.instances[envsId] = { output, runners, socket, envsId, logger, current, log: [] };

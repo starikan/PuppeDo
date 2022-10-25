@@ -98,15 +98,13 @@ export type ArgumentsKeysType = keyof ArgumentsType;
 // ================ LOGGER ====================
 
 export type LogEntry = {
-  text?: string;
-  time?: string;
-  dataEnvs?: Record<string, unknown>;
-  dataEnvsGlobal?: Record<string, unknown>;
-  screenshots?: Array<string>;
-  type?: string;
-  level?: string;
-  levelIndent?: number;
-  stepId?: string;
+  text: string;
+  time: string;
+  screenshots: Array<string>;
+  type: string;
+  level: string;
+  levelIndent: number;
+  stepId: string;
 };
 
 export type LogOptionsType = {
@@ -155,7 +153,7 @@ export type LogFunctionType = (options: LogInputType) => Promise<void>;
 
 export type SocketType = {
   send: () => void;
-  sendYAML: (data: { type: string; data: LogEntry; envsId: string }) => void;
+  sendYAML: (data: { type: string; data: LogEntry | ErrorType; envsId: string }) => void;
 };
 
 // ================ ENVS ====================

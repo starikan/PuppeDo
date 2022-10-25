@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import Log from '../src/Log';
+import { checkLevel, consoleLog, fileLog, makeLog } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
@@ -10,7 +10,7 @@ import { Outputs, OutputsLatest } from '../src/global.d';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
-const { logger } = new Environment().createEnv();
+const { logger, envsId } = new Environment().createEnv();
 new Environment().getOutput = (): OutputsLatest & Outputs => ({
   folder,
   folderLatest,
@@ -28,7 +28,6 @@ const clearFiles = (fileName: string): void => {
 
 describe('Log', () => {
   test('Constructor', () => {
-    expect(logger.runners).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.options).toBeDefined();
@@ -40,7 +39,7 @@ describe('Log', () => {
     });
 
     test('Console with colorization', () => {
-      Log.consoleLog([
+      consoleLog([
         [
           { text: 'info ', textColor: 'sane' },
           { text: 'text', textColor: 'info' },
@@ -50,7 +49,7 @@ describe('Log', () => {
     });
 
     test('Console with default colorization', () => {
-      Log.consoleLog([
+      consoleLog([
         [
           { text: 'info ', textColor: 'sane' },
           { text: 'text', textColor: 'sane' },
@@ -60,7 +59,7 @@ describe('Log', () => {
     });
 
     test('Console with background colorization default', () => {
-      Log.consoleLog([
+      consoleLog([
         [
           { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
           { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
@@ -70,7 +69,7 @@ describe('Log', () => {
     });
 
     test('Console with background colorization exist color', () => {
-      Log.consoleLog([
+      consoleLog([
         [
           { text: 'info ', textColor: 'sane', backgroundColor: 'redBackground' },
           { text: 'text', textColor: 'sane', backgroundColor: 'redBackground' },
@@ -82,7 +81,7 @@ describe('Log', () => {
     });
 
     test('Console multiline', () => {
-      Log.consoleLog([
+      consoleLog([
         [
           { text: 'info ', textColor: 'sane' },
           { text: 'text', textColor: 'sane' },
@@ -112,18 +111,23 @@ describe('Log', () => {
 
     test('Simple output to default file', () => {
       clearFiles('output.log');
-      logger.fileLog([
+      fileLog(
+        envsId,
         [
-          { text: 'info ', textColor: 'sane' },
-          { text: 'text', textColor: 'info' },
+          [
+            { text: 'info ', textColor: 'sane' },
+            { text: 'text', textColor: 'info' },
+          ],
         ],
-      ]);
+        'output.log',
+      );
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('info text\n');
       expect(fs.readFileSync(path.join(folderLatest, 'output.log')).toString()).toBe('info text\n');
     });
     test('Write to optional file', () => {
       clearFiles('output_another.log');
-      logger.fileLog(
+      fileLog(
+        envsId,
         [
           [
             { text: 'info ', textColor: 'sane' },
@@ -137,50 +141,48 @@ describe('Log', () => {
     });
     test('Not standart input', () => {
       clearFiles('output.log');
-      logger.fileLog('foo');
+      fileLog(envsId, 'foo', 'output.log');
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('foo\n');
 
       clearFiles('output.log');
-      logger.fileLog([
+      fileLog(
+        envsId,
         [
-          { text: '', textColor: 'sane' },
-          { text: 'text', textColor: 'info' },
+          [
+            { text: '', textColor: 'sane' },
+            { text: 'text', textColor: 'info' },
+          ],
         ],
-      ]);
+        'output.log',
+      );
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
     });
   });
 
   test('bindData', () => {
-    logger.bindData({ foo: 'bar' });
-    expect(logger.options).toEqual({ foo: 'bar' });
-    logger.bindData({ foo: 'bar' });
-    expect(logger.options).toEqual({ foo: 'bar' });
-    logger.bindData({ gii: 'huu' });
-    expect(logger.options).toEqual({ foo: 'bar', gii: 'huu' });
-    // logger.bindData('foo');
-    // expect(logger.options).toEqual({ foo: 'bar', gii: 'huu' });
+    logger.bindData({ stdOut: true });
+    expect(logger.options).toEqual({ stdOut: true });
   });
 
   test('checkLevel', () => {
-    expect(Log.checkLevel('raw')).toBe('raw');
-    expect(Log.checkLevel('timer')).toBe('timer');
-    expect(Log.checkLevel('debug')).toBe('debug');
-    expect(Log.checkLevel('info')).toBe('info');
-    expect(Log.checkLevel('test')).toBe('test');
-    expect(Log.checkLevel('warn')).toBe('warn');
-    expect(Log.checkLevel('error')).toBe('error');
-    expect(Log.checkLevel('env')).toBe('env');
+    expect(checkLevel('raw')).toBe('raw');
+    expect(checkLevel('timer')).toBe('timer');
+    expect(checkLevel('debug')).toBe('debug');
+    expect(checkLevel('info')).toBe('info');
+    expect(checkLevel('test')).toBe('test');
+    expect(checkLevel('warn')).toBe('warn');
+    expect(checkLevel('error')).toBe('error');
+    expect(checkLevel('env')).toBe('env');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, true);
-    expect(Log.checkLevel('raw')).toBe('raw');
-    expect(Log.checkLevel('timer')).toBe('timer');
-    expect(Log.checkLevel('debug')).toBe(null);
-    expect(Log.checkLevel('info')).toBe(null);
-    expect(Log.checkLevel('test')).toBe('test');
-    expect(Log.checkLevel('warn')).toBe('warn');
-    expect(Log.checkLevel('error')).toBe('error');
-    expect(Log.checkLevel('env')).toBe(null);
+    expect(checkLevel('raw')).toBe('raw');
+    expect(checkLevel('timer')).toBe('timer');
+    expect(checkLevel('debug')).toBe(null);
+    expect(checkLevel('info')).toBe(null);
+    expect(checkLevel('test')).toBe('test');
+    expect(checkLevel('warn')).toBe('warn');
+    expect(checkLevel('error')).toBe('error');
+    expect(checkLevel('env')).toBe(null);
   });
 
   test('makeLog', () => {
@@ -188,49 +190,75 @@ describe('Log', () => {
     const nowFormated = getNowDateTime(now, 'HH:mm:ss.SSS');
     new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, true);
 
-    expect(logger.makeLog('info', 0, 'text', now)).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', now })).toEqual([
       [
         { text: `${nowFormated} - info   `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(logger.makeLog('info', 2, 'text', now)).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', now })).toEqual([
       [
         { text: `${nowFormated} - info   | | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
+    expect(
+      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, funcFile: '', testFile: null, extendInfo: true }),
+    ).toEqual([
       [
         { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(logger.makeLog('error', 1, 'text', now, null, null, true)).toEqual([
+    expect(
+      makeLog({ level: 'error', levelIndent: 1, text: 'text', now, funcFile: null, testFile: null, extendInfo: true }),
+    ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error' },
         { text: 'text', textColor: 'error' },
       ],
     ]);
 
-    expect(logger.makeLog('info', 1, 'text', now, null, null, true, [])).toEqual([
+    expect(
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        now,
+        funcFile: null,
+        testFile: null,
+        extendInfo: true,
+        screenshots: [],
+      }),
+    ).toEqual([
       [
         { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(logger.makeLog('info', 1, 'text', now, null, null, true, ['foo', 'bar'])).toEqual([
+    expect(
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        now,
+        funcFile: null,
+        testFile: null,
+        extendInfo: true,
+        screenshots: ['foo', 'bar'],
+      }),
+    ).toEqual([
       [
         { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -246,7 +274,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -255,8 +283,7 @@ describe('Log', () => {
 
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: [] });
-    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: [] })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -264,8 +291,9 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
-    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    expect(
+      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+    ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -277,8 +305,18 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
-    expect(logger.makeLog('info', 1, 'text', now, null, null, true)).toEqual([
+    expect(
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        now,
+        funcFile: null,
+        testFile: null,
+        extendInfo: true,
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+      }),
+    ).toEqual([
       [
         { text: '                      | ', textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -286,8 +324,9 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
-    expect(logger.makeLog('raw', 1, 'text', now)).toEqual([
+    expect(
+      makeLog({ level: 'raw', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+    ).toEqual([
       [
         { text: `${nowFormated} - raw    | `, textColor: 'sane' },
         { text: 'text', textColor: 'raw' },
@@ -295,8 +334,9 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
-    expect(logger.makeLog('error', 1, 'text', now)).toEqual([
+    expect(
+      makeLog({ level: 'error', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+    ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error' },
         { text: 'text', textColor: 'error' },
@@ -313,8 +353,9 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
-    expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    expect(
+      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+    ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -322,10 +363,19 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    logger.bindData({ breadcrumbs: ['foo.runTest[0]', 'hee'] });
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');
-    expect(logger.makeLog('error', 1, 'text', now, 'funcFile', 'testFile')).toEqual([
+    expect(
+      makeLog({
+        level: 'error',
+        levelIndent: 1,
+        text: 'text',
+        now,
+        funcFile: 'funcFile',
+        testFile: 'testFile',
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+      }),
+    ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error' },
         { text: 'text', textColor: 'error' },
@@ -345,7 +395,7 @@ describe('Log', () => {
 
     // describe('Repeat in makeLog', () => {
     // logger.bindData({ testArgs: { repeat: 2 } });
-    // expect(logger.makeLog('info', 1, 'text', now)).toEqual([
+    // expect(makeLog({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - info   |  `, textColor: 'sane' },
     //     { text: 'text', textColor: 'info' },
@@ -361,7 +411,7 @@ describe('Log', () => {
     // ]);
     // });
 
-    // expect(logger.makeLog('error', 0, 'text', now)).toEqual([
+    // expect(makeLog({level:'error', levelIndent: 0, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - error  `, textColor: 'error' },
     //     { text: 'text', textColor: 'error' },
@@ -392,7 +442,7 @@ describe('Log', () => {
     //   ],
     // ]);
 
-    // expect(logger.makeLog('info', 1, 'text', now, null, null, true, [], null, 'red', 'red')).toEqual([
+    // expect(makeLog({level:'info', levelIndent: 1, text: 'text', now, null, null, true, [], null, 'red', 'red')).toEqual([
     //   [
     //     { text: '                      | ', textColor: 'sane' },
     //     { text: 'text', textColor: 'red', backgroundColor: 'redBackground' },
