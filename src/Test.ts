@@ -3,7 +3,7 @@ import vm from 'vm';
 import { blankSocket, getTimer, merge, pick, generateId } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
-import { Environment } from './Environment';
+import { Environment, Runner } from './Environment';
 import TestsContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Log';
@@ -20,7 +20,6 @@ import {
   TestExtendType,
   TestMetaSublingExchangeData,
   Element,
-  RunnerClassType,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
@@ -272,7 +271,7 @@ const fetchData = (
   selectorsParent: Record<string, unknown>,
   selectors: Record<string, unknown>,
   bindSelectors: Record<string, string>,
-  env: RunnerClassType,
+  env: Runner,
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
   const { data: allData, selectors: allSelectors } = new TestsContent().allData;
@@ -288,7 +287,7 @@ const fetchData = (
 
   let dataLocal = {
     ...PPD_DATA,
-    ...(env?.runnerData?.data || {}),
+    ...((env && env.getRunnerData().data) || {}),
     ...dataExtResolved,
     ...dataParent,
     ...(resultsFromParent || {}),
@@ -297,7 +296,7 @@ const fetchData = (
 
   let selectorsLocal = {
     ...PPD_SELECTORS,
-    ...(env?.runnerData?.selectors || {}),
+    ...((env && env.getRunnerData().selectors) || {}),
     ...selectorsExtResolved,
     ...selectorsParent,
     ...(resultsFromParent || {}),
@@ -398,7 +397,7 @@ export class Test implements TestExtendType {
 
   envName!: string;
   envPageName!: string;
-  env!: RunnerClassType;
+  env!: Runner;
 
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
@@ -555,7 +554,7 @@ export class Test implements TestExtendType {
         this.plugins.hook('resolveValues', { inputs });
 
         if (this.engineSupports.length) {
-          const { engine } = this.env?.runnerData?.browser || {};
+          const { engine } = this.env.getRunnerData().browser || {};
           if (engine && !this.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }

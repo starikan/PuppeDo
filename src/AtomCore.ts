@@ -13,15 +13,15 @@ import {
   LogInputType,
   ColorsType,
   BrowserFrame,
-  RunnerClassType,
 } from './global.d';
+import { Runner } from './Environment';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
-  env?: RunnerClassType;
+  env?: Runner;
   page?: BrowserPageType | BrowserFrame;
 };
 
@@ -33,7 +33,7 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env!: RunnerClassType;
+  env!: Runner;
   page!: BrowserPageType | BrowserFrame;
   log!: LogFunctionType;
 
@@ -48,7 +48,7 @@ export default class Atom {
   }
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
-    const atomEngine = this.env.runnerData.browser.engine;
+    const atomEngine = this.env.getRunnerData().browser.engine;
 
     if (!enginesAvailable.includes(atomEngine)) {
       throw new Error(`There is unknown engine: ${atomEngine}. Use this engines: ${enginesAvailable}`);

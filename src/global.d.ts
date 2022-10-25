@@ -14,7 +14,7 @@ import {
 import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
 import { Plugins } from './PluginsCore';
-import { Environment, Runners } from './Environment';
+import { Environment, Runner, Runners } from './Environment';
 
 // ================ BROWSERS ====================
 
@@ -221,12 +221,6 @@ export interface RunnerType extends RunnerYamlType {
   testFile?: string;
 }
 
-export type RunnerClassType = {
-  name: string;
-  state: RunnerStateType; // Browser, pages, cookies, etc.
-  runnerData: RunnerType;
-};
-
 export type RunnerCurrentType = {
   name?: string;
   page?: string;
@@ -292,7 +286,7 @@ export type TestArgsType = {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
   argsEnv: Record<string, unknown>;
-  env: RunnerClassType;
+  env: Runner;
   envs: Runners;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;

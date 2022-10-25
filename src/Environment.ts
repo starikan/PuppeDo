@@ -15,7 +15,6 @@ import {
   RunnerYamlType,
   Outputs,
   OutputsLatest,
-  RunnerClassType,
   RunnerCurrentType,
 } from './global.d';
 import Singleton from './Singleton';
@@ -119,15 +118,29 @@ export class Runners {
   }
 }
 
-export class Runner implements RunnerClassType {
-  name: string;
+export class Runner {
+  private name: string;
+
   state: RunnerStateType; // Browser, pages, cookies, etc.
-  runnerData: RunnerType;
+
+  private runnerData: RunnerType;
 
   constructor(runnerData: RunnerType) {
     this.name = runnerData.name;
     this.state = {};
     this.runnerData = runnerData;
+  }
+
+  getRunnerData(): RunnerType {
+    return this.runnerData;
+  }
+
+  getState(): RunnerStateType {
+    return this.state;
+  }
+
+  setState(data: Partial<RunnerStateType>): void {
+    this.state = { ...this.state, ...data };
   }
 
   async runEngine(envsId): Promise<void> {
