@@ -14,6 +14,7 @@ import {
 import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
 import { Plugins } from './PluginsCore';
+import { Environment, Runners } from './Environment';
 
 // ================ BROWSERS ====================
 
@@ -224,7 +225,6 @@ export type RunnerClassType = {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
   runnerData: RunnerType;
-  envsId: string;
 };
 
 export type RunnerCurrentType = {
@@ -245,13 +245,6 @@ export type OutputsLatest = {
   folderLatestFull?: string;
   output?: string;
 };
-
-export interface EnvRunnersType {
-  runners: Record<string, RunnerClassType>;
-  envsId: string;
-  closeAllEnvs: () => Promise<void>;
-  getActivePage: () => BrowserPageType | BrowserFrame;
-}
 
 // ================ DATA / SELECTORS ====================
 
@@ -274,6 +267,7 @@ export type TestMetaSublingExchangeData = {
 
 export type TestArgsType = {
   envsId: string;
+  environment: Environment;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
   dataTest: Record<string, unknown>;
@@ -299,7 +293,7 @@ export type TestArgsType = {
   };
   argsEnv: Record<string, unknown>;
   env: RunnerClassType;
-  envs: EnvRunnersType;
+  envs: Runners;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;

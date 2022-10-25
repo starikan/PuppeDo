@@ -8,7 +8,6 @@ import {
   BrowserFrame,
   BrowserPageType,
   EnvBrowserType,
-  EnvRunnersType,
   RunnerStateType,
   RunnerType,
   LogEntry,
@@ -23,7 +22,7 @@ import Singleton from './Singleton';
 import { Engines } from './Engines';
 
 type EnvsInstanceType = {
-  envRunners: EnvRunnersType;
+  runners: Runners;
   socket: SocketType;
   envsId: string;
   logger: Log;
@@ -41,9 +40,10 @@ const BROWSER_DEFAULT: EnvBrowserType = {
   slowMo: 1,
 };
 
-class EnvRunners implements EnvRunnersType {
-  runners: Record<string, Runner>;
-  envsId: string;
+export class Runners {
+  private runners: Record<string, Runner>;
+
+  private envsId: string;
 
   constructor(envsId: string) {
     this.runners = {};
@@ -69,18 +69,18 @@ class EnvRunners implements EnvRunnersType {
         const envFromFile = envs.find((v) => v.name === name);
         if (envFromFile) {
           const envLocal = JSON.parse(JSON.stringify(envFromFile));
-          this.runners[name] = new Runner(this.envsId, envLocal);
-          await this.runners[name].runEngine();
+          this.runners[name] = new Runner(envLocal);
+          await this.runners[name].runEngine(this.envsId);
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
         }
       } else if (!this.runners[name]?.state?.browser) {
-        await this.runners[name].runEngine();
+        await this.runners[name].runEngine(this.envsId);
       }
     } else {
       localName = envResolved.name;
-      this.runners[localName] = new Runner(this.envsId, envResolved);
-      await this.runners[localName].runEngine();
+      this.runners[localName] = new Runner(envResolved);
+      await this.runners[localName].runEngine(this.envsId);
     }
 
     const newCurrent: RunnerCurrentType = {};
@@ -96,12 +96,6 @@ class EnvRunners implements EnvRunnersType {
 
   async closeEnv(name: string): Promise<void> {
     await this.runners[name].stopEngine();
-
-    delete this.runners[name].state.browser;
-    delete this.runners[name].state.browserSettings;
-    delete this.runners[name].state.pages;
-    delete this.runners[name].state.contexts;
-    delete this.runners[name].state.pid;
   }
 
   async closeAllEnvs(): Promise<void> {
@@ -119,23 +113,26 @@ class EnvRunners implements EnvRunnersType {
     }
     return activeEnv.state.pages[page];
   }
+
+  getRunnerByName(name: string): Runner {
+    return this.runners[name];
+  }
 }
 
 export class Runner implements RunnerClassType {
   name: string;
   state: RunnerStateType; // Browser, pages, cookies, etc.
   runnerData: RunnerType;
-  envsId: string;
 
-  constructor(envsId: string, runnerData: RunnerType) {
+  constructor(runnerData: RunnerType) {
     this.name = runnerData.name;
     this.state = {};
     this.runnerData = runnerData;
-    this.envsId = envsId;
   }
 
-  async runEngine(): Promise<void> {
+  async runEngine(envsId): Promise<void> {
     const browserSettings = { ...BROWSER_DEFAULT, ...this.runnerData.browser };
+    const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
 
@@ -159,7 +156,7 @@ export class Runner implements RunnerClassType {
         this.state = { ...this.state, ...{ browser, pages } };
       }
       if (runtime === 'run') {
-        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, this.envsId);
+        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, outputs);
         this.state = { ...this.state, ...{ browser, pages, pid } };
       }
     }
@@ -190,6 +187,12 @@ export class Runner implements RunnerClassType {
     } catch (error) {
       // Nothing to do.
     }
+
+    delete this.state.browser;
+    delete this.state.browserSettings;
+    delete this.state.pages;
+    delete this.state.contexts;
+    delete this.state.pid;
   }
 }
 
@@ -213,11 +216,11 @@ export class Environment extends Singleton {
 
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
-      const envRunners = new EnvRunners(envsId);
-      const logger = new Log(envsId, envRunners, loggerOptions);
+      const runners = new Runners(envsId);
+      const logger = new Log(envsId, runners, loggerOptions);
       const current: RunnerCurrentType = {};
 
-      this.instances[envsId] = { output, envRunners, socket, envsId, logger, current, log: [] };
+      this.instances[envsId] = { output, runners, socket, envsId, logger, current, log: [] };
     }
     return this.getEnvAllInstance(envsId);
   }
@@ -228,9 +231,9 @@ export class Environment extends Singleton {
     }
   }
 
-  getEnvRunners(envsId: string): EnvRunnersType {
+  getEnvRunners(envsId: string): Runners {
     this.checkId(envsId);
-    return this.instances[envsId].envRunners;
+    return this.instances[envsId].runners;
   }
 
   getEnvAllInstance(envsId: string): EnvsInstanceType {

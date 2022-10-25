@@ -28,7 +28,7 @@ const clearFiles = (fileName: string): void => {
 
 describe('Log', () => {
   test('Constructor', () => {
-    expect(logger.envsRunners).toBeDefined();
+    expect(logger.runners).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.envsId).toBeDefined();
     expect(logger.options).toBeDefined();

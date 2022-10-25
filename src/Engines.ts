@@ -12,10 +12,11 @@ import {
   BrowserNameType,
   BrowserPageType,
   EnvBrowserType,
+  Outputs,
+  OutputsLatest,
   RunnerStateType,
   RunnerType,
 } from './global.d';
-import { Environment } from './Environment';
 import { sleep } from './Helpers';
 
 export class Engines {
@@ -76,7 +77,11 @@ export class Engines {
     return { browser, pages };
   }
 
-  static async runElectron(browserSettings: EnvBrowserType, envName: string, envsId: string): Promise<RunnerStateType> {
+  static async runElectron(
+    browserSettings: EnvBrowserType,
+    envName: string,
+    outputs: Outputs & OutputsLatest,
+  ): Promise<RunnerStateType> {
     const { runtimeEnv = {} } = browserSettings;
     const {
       runtimeExecutable,
@@ -90,7 +95,7 @@ export class Engines {
 
     const runArgs = [program, ...browserArgs];
 
-    const { folderLatest, folder } = new Environment().getOutput(envsId);
+    const { folderLatest, folder } = outputs;
 
     if (runtimeExecutable && folder && folderLatest) {
       process.env = { ...process.env, ...browserEnv };

@@ -451,13 +451,13 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
 
-      const { envRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
+      const { runners, logger } = new Environment().getEnvAllInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
-      const { name = '', page = '' } = current;
+      const { name: runnerNameCurrent = '', page = '' } = current;
 
-      this.envName = name;
+      this.envName = runnerNameCurrent;
       this.envPageName = page;
-      this.env = envRunners.runners[this.envName];
+      this.env = runners.getRunnerByName(runnerNameCurrent);
 
       const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
         inputs.logOptionsParent || {},
@@ -618,12 +618,16 @@ export class Test implements TestExtendType {
         const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
         const args: TestArgsType = {
           envsId: this.envsId,
+          environment: new Environment(),
+          envName: this.envName,
+          envPageName: this.envPageName,
+          env: this.env,
+          envs: runners,
+          name: this.name,
           data: dataLocal,
           selectors: selectorsLocal,
           dataTest: this.data,
           selectorsTest: this.selectors,
-          envName: this.envName,
-          envPageName: this.envPageName,
           options: this.options,
           allowResults: this.allowResults,
           bindResults: this.bindResults,
@@ -640,12 +644,9 @@ export class Test implements TestExtendType {
           tags: this.tags,
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
-          env: this.env,
-          envs: envRunners,
           browser: this.env && this.env.state.browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
-          name: this.name,
           description: descriptionResolved,
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,

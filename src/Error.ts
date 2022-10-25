@@ -167,10 +167,10 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     debugger;
   }
 
-  const envRunners = new Environment().getEnvRunners(errorIncome.envsId);
+  const runners = new Environment().getEnvRunners(errorIncome.envsId);
 
-  if (envRunners.closeAllEnvs) {
-    await envRunners.closeAllEnvs();
+  if (runners.closeAllEnvs) {
+    await runners.closeAllEnvs();
   }
 
   process.exit(1);

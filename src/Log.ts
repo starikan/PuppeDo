@@ -7,17 +7,9 @@ import { paintString, colors, getNowDateTime } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import {
-  ColorsType,
-  EnvRunnersType,
-  LogEntrieType,
-  LogEntry,
-  LogFunctionType,
-  LogInputType,
-  TestArgsType,
-} from './global.d';
+import { ColorsType, LogEntrieType, LogEntry, LogFunctionType, LogInputType, TestArgsType } from './global.d';
 import { ErrorType } from './Error';
-import { Environment } from './Environment';
+import { Environment, Runners } from './Environment';
 
 export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId = ''): Promise<void> => {
   if (envsId) {
@@ -119,7 +111,7 @@ export const logDebug = async (
 
 export default class Log {
   envsId: string;
-  envsRunners: EnvRunnersType;
+  runners: Runners;
   screenshot: Screenshot;
   options: {
     breadcrumbs?: Array<string>;
@@ -127,12 +119,12 @@ export default class Log {
     stdOut?: boolean;
   };
 
-  constructor(envsId: string, envsRunners: EnvRunnersType, loggerOptions: { stdOut?: boolean } = {}) {
+  constructor(envsId: string, runners: Runners, loggerOptions: { stdOut?: boolean } = {}) {
     const { stdOut } = loggerOptions;
 
     this.envsId = envsId;
     // TODO: 2022-10-21 S.Starodubov убрать это не нужно тут, получать из Environment
-    this.envsRunners = envsRunners;
+    this.runners = runners;
     this.options = { stdOut };
     this.screenshot = new Screenshot(envsId);
   }
