@@ -104,8 +104,7 @@ export class Runners {
   }
 
   getActivePage(): BrowserPageType | BrowserFrame {
-    const current = new Environment().getCurrent(this.envsId);
-    const { name = '', page = '' } = current;
+    const { name = '', page = '' } = new Environment().getCurrent(this.envsId);
     const activeEnv = this.runners[name];
     if (!activeEnv.getState().pages) {
       throw new Error('No active page');
@@ -145,14 +144,16 @@ export class Runner {
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
 
-    if (type === 'browser' && runtime === 'run' && engine === 'puppeteer') {
-      const newState = await Engines.runPuppeteer(this.runnerData, this.state);
-      this.state = { ...this.state, ...newState };
-    }
+    let newState = {};
 
-    if (type === 'browser' && runtime === 'run' && engine === 'playwright') {
-      const newState = await Engines.runPlaywright(this.runnerData, this.state);
-      this.state = { ...this.state, ...newState };
+    if (type === 'browser' && runtime === 'run') {
+      if (engine === 'puppeteer') {
+        newState = await Engines.runPuppeteer(this.runnerData, this.state);
+      }
+
+      if (engine === 'playwright') {
+        newState = await Engines.runPlaywright(this.runnerData, this.state);
+      }
     }
 
     if (type === 'browser' && runtime === 'connect') {
@@ -162,13 +163,15 @@ export class Runner {
     if (type === 'electron') {
       if (runtime === 'connect') {
         const { browser, pages } = await Engines.connectElectron(browserSettings);
-        this.state = { ...this.state, ...{ browser, pages } };
+        newState = { browser, pages };
       }
       if (runtime === 'run') {
         const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, outputs);
-        this.state = { ...this.state, ...{ browser, pages, pid } };
+        newState = { browser, pages, pid };
       }
     }
+
+    this.state = { ...this.state, ...newState };
   }
 
   async stopEngine(): Promise<void> {
