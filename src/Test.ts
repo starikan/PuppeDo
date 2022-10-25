@@ -614,7 +614,7 @@ export class Test implements TestExtendType {
         }
 
         // Extend with data passed to functions
-        const pageCurrent = this.env && this.env.state?.pages && this.env.state?.pages[this.envPageName];
+        const pageCurrent = this.env && this.env.getState()?.pages?.[this.envPageName];
         const args: TestArgsType = {
           envsId: this.envsId,
           environment: new Environment(),
@@ -643,7 +643,7 @@ export class Test implements TestExtendType {
           tags: this.tags,
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
-          browser: this.env && this.env.state.browser,
+          browser: this.env && this.env.getState().browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
           description: descriptionResolved,

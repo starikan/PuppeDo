@@ -73,7 +73,7 @@ export class Runners {
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
         }
-      } else if (!this.runners[name]?.state?.browser) {
+      } else if (!this.runners[name]?.getState().browser) {
         await this.runners[name].runEngine(this.envsId);
       }
     } else {
@@ -84,9 +84,9 @@ export class Runners {
 
     const newCurrent: RunnerCurrentType = {};
     newCurrent.name = localName;
-    if (page && this.runners[localName]?.state?.pages?.[page]) {
+    if (page && this.runners[localName]?.getState().pages?.[page]) {
       newCurrent.page = page;
-    } else if (this.runners[localName]?.state?.pages?.main) {
+    } else if (this.runners[localName]?.getState().pages?.main) {
       newCurrent.page = 'main';
     }
 
@@ -107,10 +107,10 @@ export class Runners {
     const current = new Environment().getCurrent(this.envsId);
     const { name = '', page = '' } = current;
     const activeEnv = this.runners[name];
-    if (!activeEnv.state.pages) {
+    if (!activeEnv.getState().pages) {
       throw new Error('No active page');
     }
-    return activeEnv.state.pages[page];
+    return activeEnv.getState().pages?.[page];
   }
 
   getRunnerByName(name: string): Runner {
@@ -121,7 +121,7 @@ export class Runners {
 export class Runner {
   private name: string;
 
-  state: RunnerStateType; // Browser, pages, cookies, etc.
+  private state: RunnerStateType; // Browser, pages, cookies, etc.
 
   private runnerData: RunnerType;
 
@@ -137,10 +137,6 @@ export class Runner {
 
   getState(): RunnerStateType {
     return this.state;
-  }
-
-  setState(data: Partial<RunnerStateType>): void {
-    this.state = { ...this.state, ...data };
   }
 
   async runEngine(envsId): Promise<void> {
