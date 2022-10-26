@@ -293,8 +293,6 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
 export default class Log {
   envsId: string;
 
-  screenshot: Screenshot;
-
   options: LogOptions;
 
   constructor(envsId: string, loggerOptions: { stdOut?: boolean } = {}) {
@@ -302,7 +300,6 @@ export default class Log {
 
     this.envsId = envsId;
     this.options = { stdOut };
-    this.screenshot = new Screenshot(envsId);
   }
 
   bindData(data: LogOptions = {}): void {
@@ -331,6 +328,8 @@ export default class Log {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const texts = [text].flat();
     const levelText = checkLevel(level);
+    const socket = new Environment().getSocket(this.envsId);
+    const { log } = new Environment().getEnvAllInstance(this.envsId);
 
     if (
       !levelText ||
@@ -340,9 +339,6 @@ export default class Log {
     ) {
       return;
     }
-
-    const socket = new Environment().getSocket(this.envsId);
-    const { log } = new Environment().getEnvAllInstance(this.envsId);
 
     try {
       // SCREENSHOT ON ERROR ONLY ONES
@@ -354,15 +350,18 @@ export default class Log {
         [isScreenshot, isFullpage] = [true, true];
       }
 
-      const fullPageScreenshot =
-        isFullpage && !extendInfo ? await this.screenshot.saveScreenshotFull(fullpageName) : [];
-      const elementsScreenshots =
-        isScreenshot && !extendInfo ? await this.screenshot.saveScreenshotElement(element, screenshotName) : [];
-      const screenshots = [fullPageScreenshot, elementsScreenshots].flat().filter((v) => !!v);
+      const screenshots = await new Screenshot(this.envsId).getScreenshotsLogEntry(
+        isFullpage && !extendInfo,
+        isScreenshot && !extendInfo,
+        fullpageName,
+        element,
+        screenshotName,
+      );
 
       const now = new Date();
-      texts.forEach((textString) => {
-        const logTexts = makeLog({
+
+      const logTexts = texts.map((textString) => {
+        const logText = makeLog({
           level: levelText,
           levelIndent,
           text: textString,
@@ -377,15 +376,20 @@ export default class Log {
           breadcrumbs: this.options?.breadcrumbs || [],
           repeat: this.options?.testArgs?.repeat || 1,
         });
+        return logText;
+      });
 
+      for (const logText of logTexts) {
         // STDOUT
         if (stdOut) {
-          consoleLog(logTexts);
+          consoleLog(logText);
         }
 
         // EXPORT TEXT LOG
-        fileLog(this.envsId, logTexts, 'output.log');
+        fileLog(this.envsId, logText, 'output.log');
+      }
 
+      const logEntries = texts.map((textString) => {
         const logEntry: LogEntry = {
           text: textString,
           time: getNowDateTime(now),
@@ -395,14 +399,17 @@ export default class Log {
           levelIndent,
           stepId: this.options.testArgs?.stepId || stepId,
         };
+        return logEntry;
+      });
 
+      for (const logEntry of logEntries) {
         log.push(logEntry);
         socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
         // Export YAML log every step
         const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
         fileLog(this.envsId, yamlString, 'output.yaml');
-      });
+      }
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
 

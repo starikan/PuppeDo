@@ -72,4 +72,11 @@ export default class Screenshot {
 
     return '';
   }
+
+  async getScreenshotsLogEntry(isFullpage, isScreenshot, fullpageName, element, screenshotName): Promise<string[]> {
+    const fullPageScreenshot = isFullpage ? await this.saveScreenshotFull(fullpageName) : [];
+    const elementsScreenshots = isScreenshot ? await this.saveScreenshotElement(element, screenshotName) : [];
+    const screenshots = [fullPageScreenshot, elementsScreenshots].flat().filter((v) => !!v);
+    return screenshots;
+  }
 }

@@ -343,6 +343,12 @@ descriptionError (descriptionError)
                       at checkIf (\@puppedo\core\src\Test)
                       at processTicksAndRejections (node:internal/process/task_queues:96:5)
                       at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Object.run (\@puppedo\core\src\Api)
+                      at runTest (\runAllTests)
+                      at start (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
@@ -404,6 +410,13 @@ descriptionErrorNested (descriptionErrorNested)
                       at checkIf (\@puppedo\core\src\Test)
                       at processTicksAndRejections (node:internal/process/task_queues:96:5)
                       at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at testResolver (\@puppedo\core\src\getTest)
+                      at Object.run (\@puppedo\core\src\Api)
+                      at runTest (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
