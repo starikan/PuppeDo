@@ -64,12 +64,8 @@ Test all Atoms (atoms)
 [0m                      |   |   [0m[0m🕝: 00.000 s. (goTo)[0m
 [0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [CLICK_SELECTOR][0m[0m
 [0m00:00:00.000 - test   |   |   |   [0m[32m(clickSelector) Simple Click on link[0m
-[0m00:00:00.000 - raw    |   |   |   |   |   [0m[0mWait for selector: '#main-link'[0m
-[0m00:00:00.000 - raw    |   |   |   |   |   [0m[0mClick selector: '#main-link'[0m
 [0m                      |   |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
 [0m00:00:00.000 - test   |   |   |   [0m[32m(clickSelector) Link Click after wait it (auto waitForSelector include)[0m
-[0m00:00:00.000 - raw    |   |   |   |   |   [0m[0mWait for selector: '#child-link'[0m
-[0m00:00:00.000 - raw    |   |   |   |   |   [0m[0mClick selector: '#child-link'[0m
 [0m                      |   |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_ATTRIBUTES][0m[0m

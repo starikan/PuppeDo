@@ -106,7 +106,7 @@ export const logDebug = async (
 
   await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
 
-  console.log(args);
+  // console.log(args);
 };
 
 export const checkLevel = (level: string): ColorsType | null => {
@@ -307,32 +307,37 @@ export default class Log {
   }
 
   async log({
-    funcFile = '',
-    testFile = '',
     text = '',
-    screenshot = false,
-    fullpage = false,
-    screenshotName,
-    fullpageName,
     level = 'info',
-    element,
     levelIndent = 0,
+    element,
     error = null,
     extendInfo = false,
     stdOut = this.options.stdOut !== undefined ? this.options.stdOut : true,
     stepId = '',
     logShowFlag = true,
-    textColor = 'sane',
-    backgroundColor = 'sane',
+    funcFile = '',
+    testFile = '',
+    logOptions = {},
   }: LogInputType): Promise<void> {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED, PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const texts = [text].flat();
     const levelText = checkLevel(level);
     const socket = new Environment().getSocket(this.envsId);
     const { log } = new Environment().getEnvAllInstance(this.envsId);
+    const {
+      screenshot = false,
+      fullpage = false,
+      fullpageName,
+      screenshotName,
+      textColor = 'sane',
+      backgroundColor = 'sane',
+      logThis = true,
+    } = logOptions;
 
     if (
       !levelText ||
+      !logThis ||
       (levelText !== 'error' && !logShowFlag) ||
       (levelText !== 'error' && PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED) || // SKIP LOG BY LEVELS
       (levelText !== 'error' && PPD_LOG_DISABLED) // NO LOG FILES ONLY STDOUT

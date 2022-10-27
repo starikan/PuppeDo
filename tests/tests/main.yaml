@@ -30,7 +30,7 @@ runTest:
         - checkSelector:
             bindSelectors: { selector: nested.mainInput }
             errorIfResult: 'exists === false'
-            options:
+            logOptions:
               screenshot: true
 
   - blank:
@@ -165,7 +165,7 @@ runTest:
       description: Input some text in field INPUT
       bS: { selector: mainInput }
       🔑📋: { text: myDataBinded }
-      o:
+      logOptions:
         screenshot: true
         fullpage: true
 

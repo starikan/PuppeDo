@@ -114,7 +114,6 @@ export type LogOptionsType = {
   fullpage?: boolean;
   screenshotName?: string;
   fullpageName?: string;
-  levelIndent?: number;
   level?: ColorsType;
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
@@ -128,23 +127,18 @@ export type LogEntrieType = {
 
 export type LogInputType = {
   text: string | string[];
+  level?: ColorsType;
   funcFile?: string;
   testFile?: string;
-  screenshot?: boolean;
-  fullpage?: boolean;
-  screenshotName?: string;
-  fullpageName?: string;
-  level?: ColorsType;
   element?: Element;
   levelIndent?: number;
   error?: Error | ErrorType | null;
   extendInfo?: boolean;
   stdOut?: boolean;
   stepId?: string;
-  textColor?: ColorsType;
-  backgroundColor?: ColorsType;
   logShowFlag?: boolean;
   page?: PagePuppeteer | PagePlaywright;
+  logOptions?: LogOptionsType;
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;

@@ -148,17 +148,17 @@ export default class Atom {
       }
     });
 
-    const logOptionsDefault = {
+    const logOptionsDefault: LogOptionsType = {
       screenshot: false,
       fullpage: false,
-      level: 'raw' as ColorsType,
-      levelIndent: this.levelIndent + 1,
     };
-    const logOptions = { ...logOptionsDefault, ...(this.options || {}), ...(this.logOptions || {}) };
 
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
-        await args.log({ ...logOptions, ...customLog });
+        const logOptions = { ...logOptionsDefault, ...(this.logOptions || {}), ...(customLog.logOptions || {}) };
+        const logData = { level: 'raw' as ColorsType, levelIndent: this.levelIndent + 1, logOptions, ...customLog };
+        logData.logOptions.logThis = logData.level === 'error' ? true : logData.logOptions.logThis;
+        await args.log(logData);
       }
     };
 

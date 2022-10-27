@@ -1,7 +1,7 @@
 import TestsContent, { BLANK_TEST } from './TestContent';
 
 import { TestExtendType, TestType } from './global.d';
-import { RUNNER_BLOCK_NAMES, generateId } from './Helpers';
+import { RUNNER_BLOCK_NAMES, generateId, deepMergeField } from './Helpers';
 
 export default class TestStructure {
   fullJSON: TestExtendType;
@@ -97,13 +97,14 @@ export default class TestStructure {
 
   getFullDepthJSONRecurce(
     testName: string,
-    testBody = {},
+    testBody: Partial<TestExtendType> = {},
     levelIndent = 0,
   ): {
     fullJSON: TestExtendType;
     textDescription: string;
   } {
-    const fullJSON: TestExtendType = { ...TestStructure.getTestRaw(testName), ...testBody };
+    const rawTest = TestStructure.getTestRaw(testName);
+    const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];

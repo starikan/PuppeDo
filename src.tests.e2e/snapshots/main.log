@@ -59,25 +59,15 @@ Main test (main)
 [0m|   |   [0m[32m(goTo) Going on page http://localhost:3000/[0m
 [0m|   |   |   [0m[0mGo to: http://localhost:3000/[0m
 [0m|   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m|   |   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   |   [0m[0mCheck selector exist: '#main-input'[0m
-[0m|   |   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m|   |    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m|   [0m[32m(blank) Input some text in field INPUT[0m
 [0m|   |   [0m[0mType in selector: '#main-input', text: 'myDataBinded'[0m
 [0m|   [0m[47m[30m(blank) Nested click #main-input[0m[0m
 [0m|   |   [0m[41m[32m(clickSelector) TODO: Fill description[0m[0m
-[0m|   |   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   |   [0m[0mClick selector: '#main-input'[0m
 [0m|   [0m[0m(blank) Set result with colors[0m
 [0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
-[0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   [0m[0mType in selector: '#main-input', text: ''[0m
 [0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
-[0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   [0m[0mType in selector: '#main-input', text: '0'[0m
 [0m|   [0m[32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
-[0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   [0m[0mType in selector: '#main-input', text: '1'[0m
 [0m|   [0m[34mSkip with disable: (typeInput) TODO: Fill description[0m
 [0m|   [0m[32m(getText) Get text from selector: '#main-input'[0m
 [0m|   |   [0m[0mGet text: '01' from selector: '#main-input'[0m
@@ -85,8 +75,6 @@ Main test (main)
 [0m|   |   [0m[32m(waitForSelector) Wait for: '#main-input'[0m
 [0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
 [0m|   |   [0m[41m[32m(clickSelector) TODO: Fill description[0m[0m
-[0m|   |   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |   |   [0m[0mClick selector: '#main-input'[0m
 [0m|   [0m[36mSkip with IF expr '1 !== 1' === 'false'[0m
 [0m|   [0m[32m(getText) Get text with repeat[0m
 [0m|   |   [0m[0mGet text: 'Test Document' from selector: 'title'[0m
@@ -97,11 +85,8 @@ Main test (main)
 [0m|   [0m[32m(blank) Some data function[0m
 [0m|   [0m[32m(blank) Bind data from function[0m
 [0m|   [0m[32m(typeInput) Input some text in field INPUT[0m
-[0m|   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m|   |   |   [0m[0mType in selector: '#main-input', text: 'Title of HTML: Test Document'[0m
-[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m|   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m|    [0m[36m🖼 screenshot: [screenshot_path][0m
+[0m|    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m|   [0m[41m[37m(todo) Make awesome test[0m[0m
 [0m|   [0m[32m(subTest) SubTest[0m
 [0m|   [0m[41m[32m(blank) TODO: Fill description[0m[0m

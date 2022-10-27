@@ -94,12 +94,14 @@ export class TestError extends AbstractError {
       await this.logger.log({
         level: 'error',
         text,
-        screenshot: false,
         stepId,
         funcFile,
         testFile,
         levelIndent,
         error: this,
+        logOptions: {
+          screenshot: false,
+        },
       });
     }
 

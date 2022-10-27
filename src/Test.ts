@@ -174,11 +174,13 @@ export const checkIf = async (
   if (!exprResult && ifType === 'if') {
     if (logShowFlag && !continueOnError) {
       await log({
-        level: 'info',
-        screenshot: false,
-        fullpage: false,
-        levelIndent,
         text: `Skip with IF expr '${expr}' === '${exprResult}'`,
+        level: 'info',
+        levelIndent,
+        logOptions: {
+          screenshot: false,
+          fullpage: false,
+        },
       });
     }
     return true;
@@ -187,11 +189,13 @@ export const checkIf = async (
   if (exprResult && ifType !== 'if') {
     if (!continueOnError) {
       await log({
+        text: `Test stopped with expr ${ifType} = '${expr}'`,
         level: 'error',
         levelIndent,
-        screenshot: true,
-        fullpage: true,
-        text: `Test stopped with expr ${ifType} = '${expr}'`,
+        logOptions: {
+          screenshot: true,
+          fullpage: true,
+        },
       });
     }
     throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
@@ -223,23 +227,16 @@ const updateDataWithNeeds = (
 const resolveLogOptions = (
   logOptionsParent: LogOptionsType,
   logOptions: LogOptionsType,
-  envsId: string,
-): { logShowFlag: boolean; logForChild: LogOptionsType; logOptionsNew: LogOptionsType } => {
+): { logShowFlag: boolean; logForChild: LogOptionsType } => {
   const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
-  const { logThis: logThisParent = true, logChildren: logChildrenParent = true } = logOptionsParent;
-
-  const logOptionsNew = {
-    textColor: 'sane' as ColorsType,
-    backgroundColor: 'sane' as ColorsType,
-    // TODO: 2022-10-21 S.Starodubov todo
-    output: new Environment().getOutput(envsId),
-    ...logOptions,
-  };
+  const { logChildren: logChildrenParent = true } = logOptionsParent;
 
   const logForChild: LogOptionsType = {
     ...{ logChildren: logChildrenParent },
-    ...logOptionsNew,
-    ...{ logThis: logThisParent },
+    ...{ logThis: logChildrenParent },
+    textColor: 'sane' as ColorsType,
+    backgroundColor: 'sane' as ColorsType,
+    ...logOptions,
   };
 
   let logShowFlag = true;
@@ -258,7 +255,7 @@ const resolveLogOptions = (
     logShowFlag = true;
   }
 
-  return { logShowFlag, logForChild, logOptionsNew };
+  return { logShowFlag, logForChild };
 };
 
 const fetchData = (
@@ -458,11 +455,7 @@ export class Test implements TestExtendType {
       this.envPageName = page;
       this.env = runners.getRunnerByName(runnerNameCurrent);
 
-      const { logShowFlag, logForChild, logOptionsNew } = resolveLogOptions(
-        inputs.logOptionsParent || {},
-        this.logOptions,
-        this.envsId,
-      );
+      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.logOptions);
 
       const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
       const {
@@ -491,7 +484,9 @@ export class Test implements TestExtendType {
           level: 'raw',
           levelIndent: this.levelIndent,
           logShowFlag,
-          textColor: 'blue',
+          logOptions: {
+            textColor: 'blue',
+          },
         });
         // Drop disable for loops nested tests
         this.disable = false;
@@ -514,7 +509,9 @@ export class Test implements TestExtendType {
           level: 'raw',
           levelIndent: this.levelIndent,
           logShowFlag,
-          textColor: 'blue',
+          logOptions: {
+            textColor: 'blue',
+          },
         });
         return { result: {}, meta: {} };
       }
@@ -547,7 +544,7 @@ export class Test implements TestExtendType {
       this.stepId = inputs.stepId || this.stepId;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
-      this.logOptions = logOptionsNew;
+      this.logOptions = logForChild;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
       try {
@@ -707,13 +704,8 @@ export class Test implements TestExtendType {
               level: 'test',
               levelIndent: this.levelIndent,
               logShowFlag,
-              textColor: this.logOptions.textColor,
-              backgroundColor: this.logOptions.backgroundColor,
-              screenshot: this.logOptions.screenshot,
-              fullpage: this.logOptions.fullpage,
-              screenshotName: this.logOptions.screenshotName,
-              fullpageName: this.logOptions.fullpageName,
               element,
+              logOptions: this.logOptions,
             });
           }
 
@@ -722,9 +714,11 @@ export class Test implements TestExtendType {
               await logger.log({
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
-                textColor: 'cyan' as ColorsType,
                 levelIndent: this.levelIndent + 1,
                 logShowFlag,
+                logOptions: {
+                  textColor: 'cyan' as ColorsType,
+                },
               });
             }
           }

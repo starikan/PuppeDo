@@ -66,15 +66,6 @@ screenshots (screenshots)
 [0m                      |    [0m[36m👣[screenshots -> runTest[0].case][0m
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[0].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Only one element[0m[0m
@@ -82,24 +73,6 @@ screenshots (screenshots)
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Named element screenshot[0m[0m
@@ -107,24 +80,6 @@ screenshots (screenshots)
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) 3 elements[0m[0m
@@ -132,68 +87,14 @@ screenshots (screenshots)
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-input'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-input'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-input'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-link'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-link'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-link'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen[0m[0m
@@ -201,24 +102,6 @@ screenshots (screenshots)
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen named screenshot[0m[0m
@@ -226,24 +109,6 @@ screenshots (screenshots)
 [0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen + Element[0m[0m
@@ -252,24 +117,6 @@ screenshots (screenshots)
 [0m                      |   |    [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
 [0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(waitForSelector) Wait for: '#main-button'[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[0].waitForSelector][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mWait for selector: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m⚙️ (options): {"noThrow":true,"waitingTime":1}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (waitForSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[1].blank][0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[41m[32m(checkSelectorRaw) TODO: Fill description[0m[0m
-[0m                      |   |   |    [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mCheck selector exist: '#main-button'[0m
-[0m                      |   |   |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   |   |   [0m[36m📌📋 (bD): {"selectorNumber":"selectorNumber"}[0m
-[0m                      |   |   |   |   [0m[36m📌☸️ (bS): {"selector":"selector"}[0m
-[0m                      |   |   |   |   [0m[36m↩️ (results): {"exists":"exists"}[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (checkSelectorRaw)[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
 [0m                      [0m[0m🕝: 00.000 s. (screenshots)[0m
