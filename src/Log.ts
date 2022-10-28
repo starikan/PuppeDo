@@ -1,13 +1,9 @@
 import path from 'path';
-import fs from 'fs';
 
-import yaml from 'js-yaml';
-
-import { paintString, colors, getNowDateTime, omit } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import { ColorsType, LogEntrieType, LogEntry, LogFunctionType, LogInputType, TestArgsType } from './global.d';
+import { ColorsType, LogEntrieType, LogFunctionType, LogInputType, LogPipe, TestArgsType } from './global.d';
 import { ErrorType } from './Error';
 import { Environment } from './Environment';
 
@@ -130,229 +126,12 @@ type LogOptions = {
   stdOut?: boolean;
 };
 
-export const makeLog = ({
-  level = 'sane',
-  levelIndent = 0,
-  text = '',
-  time = new Date(),
-  funcFile = '',
-  testFile = '',
-  extendInfo = false,
-  screenshots = [],
-  error = null,
-  textColor = 'sane',
-  backgroundColor = 'sane',
-  breadcrumbs = [],
-  repeat = 1,
-}: LogEntry): LogEntrieType[][] => {
-  const errorTyped = error;
-  const { PPD_LOG_EXTEND, PPD_LOG_TIMESTAMP_SHOW, PPD_LOG_INDENT_LENGTH } = new Arguments().args;
-
-  const indentString = `|${' '.repeat(PPD_LOG_INDENT_LENGTH - 1)}`.repeat(levelIndent);
-  const nowWithPad = PPD_LOG_TIMESTAMP_SHOW ? `${getNowDateTime(time, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
-  const spacesPreffix = nowWithPad ? ' '.repeat(nowWithPad.length) : '';
-  const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
-  const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
-
-  let backColor =
-    backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
-      ? (colors[colors[backgroundColor] + 10] as ColorsType)
-      : backgroundColor;
-
-  if (!Object.keys(colors).includes(backColor)) {
-    backColor = 'sane';
-  }
-
-  const head: LogEntrieType = {
-    text: `${extendInfo && level !== 'error' ? spacesPreffix : nowWithPad}${indentString}`,
-    textColor: headColor,
-  };
-  const tail: LogEntrieType = {
-    text,
-    textColor: textColor !== 'sane' ? textColor : level,
-  };
-  if (backColor !== 'sane') {
-    tail.backgroundColor = backColor;
-  }
-
-  const stringsLog: LogEntrieType[][] = [[head, tail]];
-
-  if (breadcrumbs && breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND && level !== 'error' && !extendInfo) {
-    const headText = `${spacesPreffix}${indentString} `;
-    const tailText = `👣[${breadcrumbs.join(' -> ')}]`;
-    stringsLog.push([
-      { text: headText, textColor: headColor },
-      { text: tailText, textColor: tailColor },
-    ]);
-
-    if (repeat > 1) {
-      stringsLog.push([
-        { text: headText, textColor: headColor },
-        { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor },
-      ]);
-    }
-  }
-
-  if (level === 'error' && !extendInfo) {
-    breadcrumbs.forEach((v, i) => {
-      stringsLog.push([{ text: `${nowWithPad}${indentString}${'   '.repeat(i)} ${v}`, textColor: 'error' }]);
-    });
-    if (testFile) {
-      stringsLog.push([
-        {
-          text: `${nowWithPad}${indentString} (file:///${path.resolve(testFile)})`,
-          textColor: 'error',
-        },
-      ]);
-    }
-    if (funcFile) {
-      stringsLog.push([
-        {
-          text: `${nowWithPad}${indentString} (file:///${path.resolve(funcFile)})`,
-          textColor: 'error',
-        },
-      ]);
-    }
-  }
-
-  (screenshots || []).forEach((v) => {
-    stringsLog.push([
-      { text: `${nowWithPad}${indentString} `, textColor: headColor },
-      { text: `🖼 screenshot: [${v}]`, textColor: tailColor },
-    ]);
-  });
-
-  if (level === 'error' && !extendInfo) {
-    stringsLog.push([
-      { text: `${nowWithPad}${indentString} `, textColor: headColor },
-      { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor },
-    ]);
-  }
-
-  if (level === 'error' && !extendInfo && levelIndent === 0) {
-    const message = (errorTyped?.message || '').split(' || ');
-    const stack = (errorTyped?.stack || '').split('\n    ');
-
-    [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
-      stringsLog.push([
-        { text: ' '.repeat(22), textColor: 'error' },
-        { text: v, textColor: 'error' },
-      ]);
-    });
-  }
-
-  return stringsLog;
-};
-
-export const consoleLog = (entries: LogEntrieType[][]): void => {
-  entries.forEach((entry) => {
-    const line = entry
-      .map((part) => {
-        let text = paintString(part.text, part.textColor);
-        if (part.backgroundColor && part.backgroundColor !== 'sane') {
-          text = paintString(text, part.backgroundColor);
-        }
-        return text;
-      })
-      .join('');
-    console.log(line);
-  });
-};
-
-export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void => {
-  const { folderLatest = '.', folder = '.' } = new Environment().getOutput(envsId);
-
-  let textsJoin = '';
-  if (Array.isArray(texts)) {
-    textsJoin = texts.map((text) => text.map((log) => log.text || '').join('')).join('\n');
-  } else {
-    textsJoin = texts.toString();
-  }
-
-  // eslint-disable-next-line no-control-regex
-  textsJoin = textsJoin.replace(/\[\d+m/gi, '');
-
-  fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
-  fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
-};
-
-type LogTransformer = (logEntry: LogEntry) => Promise<Partial<LogEntry> | LogEntry>;
-
-type LogFormatter = (logEntry: LogEntry, logEntryTransformed: Partial<LogEntry>) => Promise<LogEntrieType[][] | string>;
-
-type LogExporter = (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
-  options: LogExporterOptions,
-) => Promise<void>;
-
-type LogExporterOptions = { envsId: string; skipThis: boolean };
-
-const transformerEquity: LogTransformer = async (logEntry: LogEntry) => logEntry;
-
-const transformerYamlLog: LogTransformer = async (logEntry: LogEntry) => omit(logEntry, ['error']);
-
-const formatterEntry: LogFormatter = async (logEntry: LogEntry): Promise<LogEntrieType[][]> => makeLog(logEntry);
-
-const formatterYamlToString: LogFormatter = async (
-  logEntry: LogEntry,
-  logEntryTransformed: Partial<LogEntry>,
-): Promise<string> => {
-  const yamlString = `-\n${yaml
-    .dump(logEntryTransformed, { lineWidth: 1000, indent: 2 })
-    .replace(/^/gm, ' '.repeat(2))}`;
-  return yamlString;
-};
-
-// const formatterBlank: LogFormatter = async (): Promise<LogEntrieType[][]> => [];
-
-const exporterConsole: LogExporter = async (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
-  options: LogExporterOptions,
-): Promise<void> => {
-  if (options.skipThis) {
-    return;
-  }
-  consoleLog(logEntryFormated);
-};
-
-const exporterLogFile: LogExporter = async (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
-  options: LogExporterOptions,
-): Promise<void> => {
-  fileLog(options.envsId, logEntryFormated, 'output.log');
-};
-
-const exporterSocket: LogExporter = async (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
-  options: LogExporterOptions,
-): Promise<void> => {
-  const socket = new Environment().getSocket(options.envsId);
-  socket.sendYAML({ type: 'log', data: logEntry, envsId: options.envsId });
-};
-
-const exporterYamlLog: LogExporter = async (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
-  options: LogExporterOptions,
-): Promise<void> => {
-  fileLog(options.envsId, logString, 'output.yaml');
-};
-
 export default class Log {
   envsId: string;
 
   options: LogOptions;
 
-  private pipes: { transformer: LogTransformer; formatter: LogFormatter; exporter: LogExporter }[];
+  private pipes: LogPipe[];
 
   constructor(envsId: string, loggerOptions: { stdOut?: boolean } = {}) {
     const { stdOut } = loggerOptions;
@@ -360,16 +139,15 @@ export default class Log {
     this.envsId = envsId;
     this.options = { stdOut };
 
-    this.pipes = [
-      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole },
-      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile },
-      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
-      { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
-    ];
+    this.pipes = [];
   }
 
   bindData(data: LogOptions = {}): void {
     this.options = { ...this.options, ...data };
+  }
+
+  addLogPipe(pipe: LogPipe): void {
+    this.pipes.push(pipe);
   }
 
   async log({
@@ -431,29 +209,22 @@ export default class Log {
 
       const time = new Date();
 
-      const logEntries = texts.map((textString) => {
-        const logEntry: LogEntry = {
-          text: textString,
-          level: levelText,
-          levelIndent,
-          time,
-          screenshots,
-          type: levelText === 'env' ? 'env' : 'log',
-          stepId: this.options.testArgs?.stepId || stepId,
-          funcFile,
-          testFile,
-          extendInfo,
-          error,
-          textColor,
-          backgroundColor: levelText === 'error' ? 'sane' : backgroundColor,
-          breadcrumbs: this.options?.breadcrumbs || [],
-          repeat: this.options?.testArgs?.repeat || 1,
-        };
-
-        log.push(logEntry);
-
-        return logEntry;
-      });
+      const logEntries = texts.map((textString) => ({
+        text: textString,
+        level: levelText,
+        levelIndent,
+        time,
+        screenshots,
+        stepId: this.options.testArgs?.stepId || stepId,
+        funcFile,
+        testFile,
+        extendInfo,
+        error,
+        textColor,
+        backgroundColor: levelText === 'error' ? 'sane' : backgroundColor,
+        breadcrumbs: this.options?.breadcrumbs || [],
+        repeat: this.options?.testArgs?.repeat || 1,
+      }));
 
       for (const logEntry of logEntries) {
         for (const pipe of this.pipes) {
@@ -463,6 +234,7 @@ export default class Log {
             await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
               envsId: this.envsId,
               skipThis: !stdOut,
+              fullLog: log,
             });
           } catch (e) {
             console.log(`Error in logger pipe: ${e.message}`);

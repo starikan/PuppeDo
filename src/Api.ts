@@ -7,6 +7,15 @@ import { getTimer, getNowDateTime } from './Helpers';
 import { LogEntry } from './global.d';
 import { pluginsList } from './Plugins';
 import { PluginModule, PluginsFabric } from './PluginsCore';
+import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
+import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
+import {
+  exporterConsole,
+  exporterLogFile,
+  exporterLogInMemory,
+  exporterSocket,
+  exporterYamlLog,
+} from './Loggers/Exporters';
 
 type RunOptions = {
   closeProcess?: boolean;
@@ -27,6 +36,11 @@ export default async function run(
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
   const { envsId, runners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
+  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory });
+  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole });
+  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile });
+  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket });
+  logger.addLogPipe({ transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);

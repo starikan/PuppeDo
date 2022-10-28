@@ -2,11 +2,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import { checkLevel, consoleLog, fileLog, makeLog } from '../src/Log';
+import { checkLevel } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
 import { Outputs, OutputsLatest } from '../src/global.d';
+import { consoleLog, fileLog } from '../src/Loggers/Exporters';
+import { makeLog } from '../src/Loggers/Formatters';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
@@ -190,21 +192,21 @@ describe('Log', () => {
     const nowFormated = getNowDateTime(time, 'HH:mm:ss.SSS');
     new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, true);
 
-    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, type: 'log', stepId: '' })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, type: 'log', stepId: '' })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', time, type: 'log', stepId: '' })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', time, stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -220,7 +222,6 @@ describe('Log', () => {
         funcFile: '',
         testFile: null,
         extendInfo: true,
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -239,7 +240,6 @@ describe('Log', () => {
         funcFile: null,
         testFile: null,
         extendInfo: true,
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -259,7 +259,6 @@ describe('Log', () => {
         testFile: null,
         extendInfo: true,
         screenshots: [],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -279,7 +278,6 @@ describe('Log', () => {
         testFile: null,
         extendInfo: true,
         screenshots: ['foo', 'bar'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -298,7 +296,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, type: 'log', stepId: '' })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -307,9 +305,7 @@ describe('Log', () => {
 
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    expect(
-      makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], type: 'log', stepId: '' }),
-    ).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -324,7 +320,6 @@ describe('Log', () => {
         text: 'text',
         time,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -349,7 +344,6 @@ describe('Log', () => {
         testFile: null,
         extendInfo: true,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -367,7 +361,6 @@ describe('Log', () => {
         text: 'text',
         time,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -385,7 +378,6 @@ describe('Log', () => {
         text: 'text',
         time,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -412,7 +404,6 @@ describe('Log', () => {
         text: 'text',
         time,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([
@@ -434,7 +425,6 @@ describe('Log', () => {
         funcFile: 'funcFile',
         testFile: 'testFile',
         breadcrumbs: ['foo.runTest[0]', 'hee'],
-        type: 'log',
         stepId: '',
       }),
     ).toEqual([

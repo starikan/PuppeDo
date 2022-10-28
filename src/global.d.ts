@@ -103,7 +103,6 @@ export type LogEntry = {
   levelIndent: number;
   time: Date;
   screenshots?: Array<string>;
-  type: 'env' | 'log';
   stepId: string;
 
   funcFile?: string;
@@ -151,6 +150,24 @@ export type LogInputType = {
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;
+
+export type LogTransformer = (logEntry: LogEntry) => Promise<Partial<LogEntry> | LogEntry>;
+
+export type LogFormatter = (
+  logEntry: LogEntry,
+  logEntryTransformed: Partial<LogEntry>,
+) => Promise<LogEntrieType[][] | string>;
+
+export type LogExporter = (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+) => Promise<void>;
+
+export type LogExporterOptions = { envsId: string; skipThis: boolean; fullLog: LogEntry[] };
+
+export type LogPipe = { transformer: LogTransformer; formatter: LogFormatter; exporter: LogExporter };
 
 // ================ SOCKET ====================
 
