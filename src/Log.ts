@@ -276,20 +276,96 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
   fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
 };
 
-// abstract class LogFormatter {
-//   abstract formatEntryToString(entry: LogEntrieType): string;
-// }
+type LogTransformer = (logEntry: LogEntry) => Promise<Partial<LogEntry> | LogEntry>;
+
+type LogFormatter = (logEntry: LogEntry, logEntryTransformed: Partial<LogEntry>) => Promise<LogEntrieType[][] | string>;
+
+type LogExporter = (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+) => Promise<void>;
+
+type LogExporterOptions = { envsId: string; skipThis: boolean };
+
+const transformerEquity: LogTransformer = async (logEntry: LogEntry) => logEntry;
+
+const transformerYamlLog: LogTransformer = async (logEntry: LogEntry) => omit(logEntry, ['error']);
+
+const formatterEntry: LogFormatter = async (logEntry: LogEntry): Promise<LogEntrieType[][]> => makeLog(logEntry);
+
+const formatterYamlToString: LogFormatter = async (
+  logEntry: LogEntry,
+  logEntryTransformed: Partial<LogEntry>,
+): Promise<string> => {
+  const yamlString = `-\n${yaml
+    .dump(logEntryTransformed, { lineWidth: 1000, indent: 2 })
+    .replace(/^/gm, ' '.repeat(2))}`;
+  return yamlString;
+};
+
+// const formatterBlank: LogFormatter = async (): Promise<LogEntrieType[][]> => [];
+
+const exporterConsole: LogExporter = async (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+): Promise<void> => {
+  if (options.skipThis) {
+    return;
+  }
+  consoleLog(logEntryFormated);
+};
+
+const exporterLogFile: LogExporter = async (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+): Promise<void> => {
+  fileLog(options.envsId, logEntryFormated, 'output.log');
+};
+
+const exporterSocket: LogExporter = async (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+): Promise<void> => {
+  const socket = new Environment().getSocket(options.envsId);
+  socket.sendYAML({ type: 'log', data: logEntry, envsId: options.envsId });
+};
+
+const exporterYamlLog: LogExporter = async (
+  logEntry: LogEntry,
+  logEntryFormated: LogEntrieType[][],
+  logString: string,
+  options: LogExporterOptions,
+): Promise<void> => {
+  fileLog(options.envsId, logString, 'output.yaml');
+};
 
 export default class Log {
   envsId: string;
 
   options: LogOptions;
 
+  private pipes: { transformer: LogTransformer; formatter: LogFormatter; exporter: LogExporter }[];
+
   constructor(envsId: string, loggerOptions: { stdOut?: boolean } = {}) {
     const { stdOut } = loggerOptions;
 
     this.envsId = envsId;
     this.options = { stdOut };
+
+    this.pipes = [
+      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole },
+      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile },
+      { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
+      { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
+    ];
   }
 
   bindData(data: LogOptions = {}): void {
@@ -373,30 +449,25 @@ export default class Log {
           breadcrumbs: this.options?.breadcrumbs || [],
           repeat: this.options?.testArgs?.repeat || 1,
         };
+
+        log.push(logEntry);
+
         return logEntry;
       });
 
       for (const logEntry of logEntries) {
-        const logText = makeLog(logEntry);
-        // STDOUT
-        if (stdOut) {
-          consoleLog(logText);
+        for (const pipe of this.pipes) {
+          try {
+            const transformedEntry = await pipe.transformer(logEntry);
+            const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
+            await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
+              envsId: this.envsId,
+              skipThis: !stdOut,
+            });
+          } catch (e) {
+            console.log(`Error in logger pipe: ${e.message}`);
+          }
         }
-
-        // EXPORT TEXT LOG
-        fileLog(this.envsId, logText, 'output.log');
-      }
-
-      for (const logEntry of logEntries) {
-        log.push(logEntry);
-        socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
-
-        // Export YAML log every step
-        const logEntryYaml = omit(logEntry, ['error']);
-        const yamlString = `-\n${yaml
-          .dump(logEntryYaml, { lineWidth: 1000, indent: 2 })
-          .replace(/^/gm, ' '.repeat(2))}`;
-        fileLog(this.envsId, yamlString, 'output.yaml');
       }
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
