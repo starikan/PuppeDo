@@ -99,12 +99,21 @@ export type ArgumentsKeysType = keyof ArgumentsType;
 
 export type LogEntry = {
   text: string;
-  time: string;
-  screenshots: Array<string>;
-  type: string;
-  level: string;
+  level: ColorsType;
   levelIndent: number;
+  time: Date;
+  screenshots?: Array<string>;
+  type: 'env' | 'log';
   stepId: string;
+
+  funcFile?: string;
+  testFile?: string;
+  extendInfo?: boolean;
+  error?: Error | ErrorType | null;
+  textColor?: ColorsType;
+  backgroundColor?: ColorsType;
+  breadcrumbs?: string[];
+  repeat?: number;
 };
 
 export type LogOptionsType = {

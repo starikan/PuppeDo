@@ -186,25 +186,25 @@ describe('Log', () => {
   });
 
   test('makeLog', () => {
-    const now = new Date();
-    const nowFormated = getNowDateTime(now, 'HH:mm:ss.SSS');
+    const time = new Date();
+    const nowFormated = getNowDateTime(time, 'HH:mm:ss.SSS');
     new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, true);
 
-    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', now })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, type: 'log', stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, type: 'log', stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', now })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', time, type: 'log', stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -212,7 +212,17 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, funcFile: '', testFile: null, extendInfo: true }),
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        funcFile: '',
+        testFile: null,
+        extendInfo: true,
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: '                      | ', textColor: 'sane' },
@@ -221,7 +231,17 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({ level: 'error', levelIndent: 1, text: 'text', now, funcFile: null, testFile: null, extendInfo: true }),
+      makeLog({
+        level: 'error',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        funcFile: null,
+        testFile: null,
+        extendInfo: true,
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error' },
@@ -234,11 +254,13 @@ describe('Log', () => {
         level: 'info',
         levelIndent: 1,
         text: 'text',
-        now,
+        time,
         funcFile: null,
         testFile: null,
         extendInfo: true,
         screenshots: [],
+        type: 'log',
+        stepId: '',
       }),
     ).toEqual([
       [
@@ -252,11 +274,13 @@ describe('Log', () => {
         level: 'info',
         levelIndent: 1,
         text: 'text',
-        now,
+        time,
         funcFile: null,
         testFile: null,
         extendInfo: true,
         screenshots: ['foo', 'bar'],
+        type: 'log',
+        stepId: '',
       }),
     ).toEqual([
       [
@@ -274,7 +298,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now })).toEqual([
+    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, type: 'log', stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -283,7 +307,9 @@ describe('Log', () => {
 
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: [] })).toEqual([
+    expect(
+      makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], type: 'log', stepId: '' }),
+    ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
         { text: 'text', textColor: 'info' },
@@ -292,7 +318,15 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     expect(
-      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
@@ -310,11 +344,13 @@ describe('Log', () => {
         level: 'info',
         levelIndent: 1,
         text: 'text',
-        now,
+        time,
         funcFile: null,
         testFile: null,
         extendInfo: true,
         breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
       }),
     ).toEqual([
       [
@@ -325,7 +361,15 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     expect(
-      makeLog({ level: 'raw', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+      makeLog({
+        level: 'raw',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: `${nowFormated} - raw    | `, textColor: 'sane' },
@@ -335,7 +379,15 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
     expect(
-      makeLog({ level: 'error', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+      makeLog({
+        level: 'error',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error' },
@@ -354,7 +406,15 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, true);
     expect(
-      makeLog({ level: 'info', levelIndent: 1, text: 'text', now, breadcrumbs: ['foo.runTest[0]', 'hee'] }),
+      makeLog({
+        level: 'info',
+        levelIndent: 1,
+        text: 'text',
+        time,
+        breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
+      }),
     ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
@@ -370,10 +430,12 @@ describe('Log', () => {
         level: 'error',
         levelIndent: 1,
         text: 'text',
-        now,
+        time,
         funcFile: 'funcFile',
         testFile: 'testFile',
         breadcrumbs: ['foo.runTest[0]', 'hee'],
+        type: 'log',
+        stepId: '',
       }),
     ).toEqual([
       [

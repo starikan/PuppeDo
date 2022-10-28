@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import yaml from 'js-yaml';
 
-import { paintString, colors, getNowDateTime } from './Helpers';
+import { paintString, colors, getNowDateTime, omit } from './Helpers';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
@@ -134,7 +134,7 @@ export const makeLog = ({
   level = 'sane',
   levelIndent = 0,
   text = '',
-  now = new Date(),
+  time = new Date(),
   funcFile = '',
   testFile = '',
   extendInfo = false,
@@ -144,26 +144,12 @@ export const makeLog = ({
   backgroundColor = 'sane',
   breadcrumbs = [],
   repeat = 1,
-}: {
-  level: ColorsType;
-  levelIndent: number;
-  text: string;
-  now: Date;
-  funcFile?: string;
-  testFile?: string;
-  extendInfo?: boolean;
-  screenshots?: string[];
-  error?: Error | ErrorType | null;
-  textColor?: ColorsType;
-  backgroundColor?: ColorsType;
-  breadcrumbs?: string[];
-  repeat?: number;
-}): LogEntrieType[][] => {
+}: LogEntry): LogEntrieType[][] => {
   const errorTyped = error;
   const { PPD_LOG_EXTEND, PPD_LOG_TIMESTAMP_SHOW, PPD_LOG_INDENT_LENGTH } = new Arguments().args;
 
   const indentString = `|${' '.repeat(PPD_LOG_INDENT_LENGTH - 1)}`.repeat(levelIndent);
-  const nowWithPad = PPD_LOG_TIMESTAMP_SHOW ? `${getNowDateTime(now, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
+  const nowWithPad = PPD_LOG_TIMESTAMP_SHOW ? `${getNowDateTime(time, 'HH:mm:ss.SSS')} - ${level.padEnd(5)}  ` : '';
   const spacesPreffix = nowWithPad ? ' '.repeat(nowWithPad.length) : '';
   const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
   const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
@@ -290,6 +276,10 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
   fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
 };
 
+// abstract class LogFormatter {
+//   abstract formatEntryToString(entry: LogEntrieType): string;
+// }
+
 export default class Log {
   envsId: string;
 
@@ -363,28 +353,31 @@ export default class Log {
         screenshotName,
       );
 
-      const now = new Date();
+      const time = new Date();
 
-      const logTexts = texts.map((textString) => {
-        const logText = makeLog({
+      const logEntries = texts.map((textString) => {
+        const logEntry: LogEntry = {
+          text: textString,
           level: levelText,
           levelIndent,
-          text: textString,
-          now,
+          time,
+          screenshots,
+          type: levelText === 'env' ? 'env' : 'log',
+          stepId: this.options.testArgs?.stepId || stepId,
           funcFile,
           testFile,
           extendInfo,
-          screenshots,
           error,
           textColor,
           backgroundColor: levelText === 'error' ? 'sane' : backgroundColor,
           breadcrumbs: this.options?.breadcrumbs || [],
           repeat: this.options?.testArgs?.repeat || 1,
-        });
-        return logText;
+        };
+        return logEntry;
       });
 
-      for (const logText of logTexts) {
+      for (const logEntry of logEntries) {
+        const logText = makeLog(logEntry);
         // STDOUT
         if (stdOut) {
           consoleLog(logText);
@@ -394,25 +387,15 @@ export default class Log {
         fileLog(this.envsId, logText, 'output.log');
       }
 
-      const logEntries = texts.map((textString) => {
-        const logEntry: LogEntry = {
-          text: textString,
-          time: getNowDateTime(now),
-          screenshots,
-          type: level === 'env' ? 'env' : 'log',
-          level,
-          levelIndent,
-          stepId: this.options.testArgs?.stepId || stepId,
-        };
-        return logEntry;
-      });
-
       for (const logEntry of logEntries) {
         log.push(logEntry);
         socket.sendYAML({ type: 'log', data: logEntry, envsId: this.envsId });
 
         // Export YAML log every step
-        const yamlString = `-\n${yaml.dump(logEntry, { lineWidth: 1000, indent: 2 }).replace(/^/gm, ' '.repeat(2))}`;
+        const logEntryYaml = omit(logEntry, ['error']);
+        const yamlString = `-\n${yaml
+          .dump(logEntryYaml, { lineWidth: 1000, indent: 2 })
+          .replace(/^/gm, ' '.repeat(2))}`;
         fileLog(this.envsId, yamlString, 'output.yaml');
       }
     } catch (err) {
