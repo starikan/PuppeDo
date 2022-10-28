@@ -2,8 +2,6 @@
 import { Page as PagePuppeteer, Frame as FramePuppeteer } from 'puppeteer';
 import { Page as PagePlaywright, Frame as FramePlaywright } from 'playwright';
 
-import { logExtend, logDebug, logArgs, logStack, logTimer, logExtendFileInfo, logErrorMessage } from './Log';
-
 import {
   BrowserPageType,
   LogOptionsType,
@@ -15,6 +13,15 @@ import {
   BrowserFrame,
 } from './global.d';
 import { Runner } from './Environment';
+import {
+  logArgs,
+  logDebug,
+  logErrorMessage,
+  logExtend,
+  logExtendFileInfo,
+  logStack,
+  logTimer,
+} from './Loggers/CustomLogEntries';
 
 const enginesAvailable = ['puppeteer', 'playwright'];
 

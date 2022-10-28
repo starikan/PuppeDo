@@ -6,7 +6,7 @@ import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
 import TestsContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
-import { logDebug } from './Log';
+import { logDebug } from './Loggers/CustomLogEntries';
 import globalExportPPD from './index';
 
 import {
