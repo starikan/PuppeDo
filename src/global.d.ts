@@ -102,9 +102,9 @@ export type LogEntry = {
   level: ColorsType;
   levelIndent: number;
   time: Date;
-  screenshots?: Array<string>;
   stepId: string;
 
+  screenshots?: string[];
   funcFile?: string;
   testFile?: string;
   extendInfo?: boolean;

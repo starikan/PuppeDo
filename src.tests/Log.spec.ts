@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { checkLevel } from '../src/Log';
+import Log from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
@@ -167,24 +167,24 @@ describe('Log', () => {
   });
 
   test('checkLevel', () => {
-    expect(checkLevel('raw')).toBe('raw');
-    expect(checkLevel('timer')).toBe('timer');
-    expect(checkLevel('debug')).toBe('debug');
-    expect(checkLevel('info')).toBe('info');
-    expect(checkLevel('test')).toBe('test');
-    expect(checkLevel('warn')).toBe('warn');
-    expect(checkLevel('error')).toBe('error');
-    expect(checkLevel('env')).toBe('env');
+    expect(Log.checkLevel('raw')).toBe('raw');
+    expect(Log.checkLevel('timer')).toBe('timer');
+    expect(Log.checkLevel('debug')).toBe('debug');
+    expect(Log.checkLevel('info')).toBe('info');
+    expect(Log.checkLevel('test')).toBe('test');
+    expect(Log.checkLevel('warn')).toBe('warn');
+    expect(Log.checkLevel('error')).toBe('error');
+    expect(Log.checkLevel('env')).toBe('env');
 
     new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, true);
-    expect(checkLevel('raw')).toBe('raw');
-    expect(checkLevel('timer')).toBe('timer');
-    expect(checkLevel('debug')).toBe(null);
-    expect(checkLevel('info')).toBe(null);
-    expect(checkLevel('test')).toBe('test');
-    expect(checkLevel('warn')).toBe('warn');
-    expect(checkLevel('error')).toBe('error');
-    expect(checkLevel('env')).toBe(null);
+    expect(Log.checkLevel('raw')).toBe('raw');
+    expect(Log.checkLevel('timer')).toBe('timer');
+    expect(Log.checkLevel('debug')).toBe(null);
+    expect(Log.checkLevel('info')).toBe(null);
+    expect(Log.checkLevel('test')).toBe('test');
+    expect(Log.checkLevel('warn')).toBe('warn');
+    expect(Log.checkLevel('error')).toBe('error');
+    expect(Log.checkLevel('env')).toBe(null);
   });
 
   test('makeLog', () => {

@@ -54,6 +54,9 @@ export const exporterLogFile: LogExporter = async (
   logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
+  if (options.skipThis) {
+    return;
+  }
   fileLog(options.envsId, logEntryFormated, 'output.log');
 };
 
