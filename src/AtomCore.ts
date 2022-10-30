@@ -23,14 +23,14 @@ import {
   logTimer,
 } from './Loggers/CustomLogEntries';
 
-const enginesAvailable = ['puppeteer', 'playwright'];
-
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
   env?: Runner;
   page?: BrowserPageType | BrowserFrame;
 };
+
+const enginesAvailable: EnginesType[] = ['puppeteer', 'playwright'];
 
 class AtomError extends Error {
   constructor(message: string) {
@@ -40,14 +40,13 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env!: Runner;
-  page!: BrowserPageType | BrowserFrame;
-  log!: LogFunctionType;
-
-  levelIndent!: number;
-  logOptions!: LogOptionsType;
-  options!: Record<string, string>;
-  frame!: string;
+  env: Runner;
+  page: BrowserPageType | BrowserFrame;
+  log: LogFunctionType;
+  levelIndent: number;
+  logOptions: LogOptionsType;
+  options: Record<string, string>;
+  frame: string;
 
   constructor(init: AtomInit = {}) {
     this.page = init.page || this.page;
@@ -147,8 +146,8 @@ export default class Atom {
   async runTest(args?: TestArgsType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
-    const entries = Object.entries(args || {});
-    entries.forEach((entry) => {
+    const testArgs = Object.entries(args || {});
+    testArgs.forEach((entry) => {
       const [key, value] = entry;
       if (Object.prototype.hasOwnProperty.call(args, key)) {
         this[key] = value;
