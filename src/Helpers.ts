@@ -194,7 +194,11 @@ export const initOutput = (envsId: string): Partial<Outputs> => {
 };
 
 export const deepMergeField = <T>(obj1: T, obj2: Partial<T>, fieldsObjectsMerge: string[] = []): T => {
-  const mergedFields = fieldsObjectsMerge.reduce((s, v) => {
+  const fieldsObjectsMergeResolves = fieldsObjectsMerge.length
+    ? fieldsObjectsMerge
+    : [...new Set([...Object.keys(obj1), ...Object.keys(obj2)])];
+
+  const mergedFields = fieldsObjectsMergeResolves.reduce((s, v) => {
     // eslint-disable-next-line no-param-reassign
     s[v] = { ...(obj1[v] || {}), ...(obj2[v] || {}) };
     return s;

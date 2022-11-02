@@ -29,12 +29,6 @@ const clearFiles = (fileName: string): void => {
 };
 
 describe('Log', () => {
-  test('Constructor', () => {
-    expect(logger.envsId).toBeDefined();
-    expect(logger.envsId).toBeDefined();
-    expect(logger.options).toBeDefined();
-  });
-
   describe('Write into console', () => {
     beforeEach(() => {
       console.log = jest.fn();
@@ -163,7 +157,6 @@ describe('Log', () => {
 
   test('bindData', () => {
     logger.bindData({ stdOut: true });
-    expect(logger.options).toEqual({ stdOut: true });
   });
 
   test('checkLevel', () => {

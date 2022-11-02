@@ -70,8 +70,10 @@ export default async function run(
       new Blocker().reset();
       const test = getTest({ testJsonIncome: fullJSON, envsId });
 
-      await logger.log({ level: 'env', text: `\n${textDescription}` });
-      await logger.log({ level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` });
+      await logger.bulkLog([
+        { level: 'env', text: `\n${textDescription}` },
+        { level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` },
+      ]);
       const testResults = await test();
 
       await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });

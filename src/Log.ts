@@ -11,9 +11,9 @@ type LogOptions = {
 };
 
 export default class Log {
-  envsId: string;
+  private envsId: string;
 
-  options: LogOptions;
+  private options: LogOptions;
 
   private pipes: LogPipe[];
 
@@ -81,6 +81,12 @@ export default class Log {
     );
 
     return screenshots;
+  }
+
+  async bulkLog(data: LogInputType[]): Promise<void> {
+    for (const entry of data) {
+      await this.log(entry);
+    }
   }
 
   async log({
