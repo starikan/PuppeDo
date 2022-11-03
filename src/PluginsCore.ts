@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { randomUUID } from 'crypto';
+import crypto, { randomUUID } from 'crypto';
 import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
@@ -152,7 +152,8 @@ export class Plugins {
 }
 
 export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType<T> {
-  id = randomUUID();
+  // NodeJS > v14.17.0 randomUUID supports. https://nodejs.org/api/crypto.html#cryptorandomuuidoptions
+  id = randomUUID ? randomUUID() : crypto.randomBytes(20).toString('hex');
 
   name: string;
 
