@@ -4,17 +4,6 @@ import { TestExtendType, TestType } from './global.d';
 import { RUNNER_BLOCK_NAMES, generateId, deepMergeField } from './Helpers';
 
 export default class TestStructure {
-  fullJSON: TestExtendType;
-  fullJSONFiltered: TestExtendType;
-  textDescription: string;
-
-  constructor(testName: string) {
-    const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(testName);
-    this.fullJSONFiltered = TestStructure.filterFullJSON(fullJSON);
-    this.fullJSON = fullJSON;
-    this.textDescription = textDescription;
-  }
-
   static filterFullJSON(fullJSON: TestExtendType): TestExtendType {
     const keys = Object.keys(BLANK_TEST);
     const fullJSONFiltered: Partial<TestExtendType> = {};
@@ -43,18 +32,28 @@ export default class TestStructure {
     return fullJSONFiltered as TestExtendType;
   }
 
-  static generateDescriptionStep(fullJSON: TestExtendType): string {
+  static getRunnerBlocks(fullJSON: TestExtendType): Array<TestExtendType> {
+    return [...(fullJSON.beforeTest || []), ...(fullJSON.runTest || []), ...(fullJSON.afterTest || [])].filter(
+      (v) => typeof v !== 'function',
+    ) as TestExtendType[];
+  }
+
+  static generateDescription(fullJSON: TestExtendType, indentLength = 3): string {
     const { description, name, todo, levelIndent = 0 } = fullJSON;
 
     const descriptionString = [
-      '   '.repeat(levelIndent),
+      ' '.repeat(levelIndent * indentLength),
       todo ? `TODO: ${todo}== ` : '',
       description ? `${description} ` : '',
       name ? `(${name})` : '',
-      '\n',
     ].join('');
 
-    return descriptionString;
+    const blocks = TestStructure.getRunnerBlocks(fullJSON)
+      .map((v) => TestStructure.generateDescription(v))
+      .join('');
+    const result = `${descriptionString}\n${blocks}`;
+
+    return result;
   }
 
   static getTestRaw(name: string): TestType {
@@ -74,10 +73,7 @@ export default class TestStructure {
     fullJSONIncome: TestExtendType,
     runnerBlock: string,
     levelIndent: number,
-  ): {
-    fullJSON: TestExtendType;
-    textDescription: string;
-  } {
+  ): TestExtendType {
     const runner: [string, { name?: string; breadcrumbs?: string[]; breadcrumbsDescriptions?: string[] }][] =
       Object.entries(runnerValue);
     let [name, newRunner] = runner.length ? runner[0] : [null, {}];
@@ -89,20 +85,13 @@ export default class TestStructure {
       newRunner.name = name;
       newRunner.breadcrumbs = [...fullJSONIncome.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
       newRunner.breadcrumbsDescriptions = [...fullJSONIncome.breadcrumbsDescriptions, fullJSONIncome.description];
-      const { fullJSON, textDescription } = this.getFullDepthJSONRecurce(name, newRunner, levelIndent + 1);
-      return { fullJSON, textDescription };
+      const fullJSON = this.getFullDepthJSONRecurce(name, newRunner, levelIndent + 1);
+      return fullJSON;
     }
-    return { fullJSON: null, textDescription: null };
+    return null;
   }
 
-  getFullDepthJSONRecurce(
-    testName: string,
-    testBody: Partial<TestExtendType> = {},
-    levelIndent = 0,
-  ): {
-    fullJSON: TestExtendType;
-    textDescription: string;
-  } {
+  getFullDepthJSONRecurce(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
 
@@ -112,22 +101,12 @@ export default class TestStructure {
     fullJSON.stepId = generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
-    let textDescription = TestStructure.generateDescriptionStep(fullJSON);
-
     RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
       const runnerBlockValue = fullJSON[runnerBlock] || [];
       if (Array.isArray(runnerBlockValue)) {
         runnerBlockValue.forEach((runnerValue, runnerNum) => {
-          const { fullJSON: fullJSONResponce, textDescription: textDescriptionResponse } = this.resolveRunner(
-            runnerValue,
-            runnerNum,
-            fullJSON,
-            runnerBlock,
-            levelIndent,
-          );
+          const fullJSONResponce = this.resolveRunner(runnerValue, runnerNum, fullJSON, runnerBlock, levelIndent);
           if (fullJSONResponce) fullJSON[runnerBlock][runnerNum] = fullJSONResponce;
-          // TODO: 2020-11-20 S.Starodubov сделать генерацию дескрипшена из полной JSON а не во время
-          if (textDescriptionResponse) textDescription += textDescriptionResponse;
         });
       } else {
         const errorString = `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
@@ -136,6 +115,6 @@ export default class TestStructure {
       }
     });
 
-    return { fullJSON, textDescription };
+    return fullJSON;
   }
 }

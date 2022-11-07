@@ -15,6 +15,7 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
+// TODO: 2022-11-07 S.Starodubov https://github.com/RebeccaStevens/deepmerge-ts/blob/main/docs/API.md
 export function merge<T>(...objects: T[]): T {
   return deepmerge.all(objects, { arrayMerge: (_, source) => source });
 }
