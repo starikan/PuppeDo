@@ -66,7 +66,7 @@ export default async function run(
 
       new Environment().setCurrent(envsId, { name: testName });
 
-      const fullJSON = new TestStructure().getFullDepthJSONRecurce(testName);
+      const fullJSON = TestStructure.getFullDepthJSONRecurce(testName);
       const textDescription = TestStructure.generateDescription(fullJSON);
 
       new Blocker().reset();
