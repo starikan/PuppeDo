@@ -59,7 +59,7 @@ export class Runners {
     page: string;
   }): Promise<void> {
     const runnerResolved: RunnerYamlType = {
-      ...{ name: '__blank_runner__', type: 'env', browser: BROWSER_DEFAULT },
+      ...{ name: '__blank_runner__', type: 'runner', browser: BROWSER_DEFAULT },
       ...runner,
     };
 
@@ -67,13 +67,13 @@ export class Runners {
 
     if (name) {
       if (!this.runners[name]) {
-        const { envs } = new TestsContent().allData;
-        const runnerFromFile = envs.find((v) => v.name === name);
+        const { runners } = new TestsContent().allData;
+        const runnerFromFile = runners.find((v) => v.name === name);
         if (runnerFromFile) {
           this.runners[name] = new Runner(JSON.parse(JSON.stringify(runnerFromFile)));
           await this.runners[name].runEngine(this.envsId);
         } else {
-          throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
+          throw new Error(`Can't init runner '${name}'. Check 'envs' parameter`);
         }
       } else if (!this.runners[name]?.getState().browser) {
         await this.runners[name].runEngine(this.envsId);

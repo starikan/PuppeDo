@@ -1,6 +1,6 @@
 ---
 name: mainEnv_puppeteer
-type: env
+type: runner
 description: My runner puppeteer
 
 dataExt:

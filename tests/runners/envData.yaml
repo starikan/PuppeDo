@@ -1,6 +1,6 @@
 ---
 name: envData
-type: env
+type: runner
 description: My Runner Data Check
 
 data:

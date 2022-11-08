@@ -183,11 +183,11 @@ export default class TestsContent extends Singleton {
         allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
       const runners: Array<RunnerType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is RunnerType => v.type === 'env'),
+        allContent.filter((v): v is RunnerType => v.type === 'runner'),
       );
       const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
 
-      this.allData = { allFiles: paths, allContent, atoms, tests, envs: runnersResolved, data, selectors };
+      this.allData = { allFiles: paths, allContent, atoms, tests, runners: runnersResolved, data, selectors };
     }
 
     return this.allData;

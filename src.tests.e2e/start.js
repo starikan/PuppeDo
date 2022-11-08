@@ -7,8 +7,8 @@ const testsE2E = require('./runners');
 const [, , ...args] = process.argv;
 const [tests, create] = args;
 
-const testsResolve = tests ? tests.split(',').map((v) => v.trim()) : Object.keys(testsE2E);
-const createResolve = create ? create === 'true' : false;
+const testsResolved = tests ? tests.split(',').map((v) => v.trim()) : Object.keys(testsE2E);
+const createResolved = create ? create === 'true' : false;
 
 const logClean = (text) => {
   let newText = text;
@@ -42,7 +42,7 @@ const logClean = (text) => {
   return splitedText.join('\n');
 };
 
-for (const testName of testsResolve) {
+for (const testName of testsResolved) {
   if (!testsE2E[testName]) {
     throw new Error(`Can't find test "${testName}" in runners`);
   }
@@ -59,7 +59,7 @@ for (const testName of testsResolve) {
   const outData = prc.stdout.toString();
   // console.log(outData);
 
-  if (createResolve) {
+  if (createResolved) {
     const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
     fs.writeFileSync(filePath, logClean(outData));
   } else {

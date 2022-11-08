@@ -1,6 +1,6 @@
 ---
 name: runnerExt
-type: env
+type: runner
 description: My Secret Runner Ext
 
 data:

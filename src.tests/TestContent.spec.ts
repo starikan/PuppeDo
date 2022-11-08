@@ -34,7 +34,7 @@ describe('TestContent', () => {
     expect(allData.allContent).toBeDefined();
     expect(allData.atoms).toBeDefined();
     expect(allData.tests).toBeDefined();
-    expect(allData.envs).toBeDefined();
+    expect(allData.runners).toBeDefined();
     expect(allData.data).toBeDefined();
     expect(allData.selectors).toBeDefined();
   });
@@ -55,7 +55,7 @@ describe('TestContent', () => {
     expect(allData.allContent).toEqual([]);
     expect(allData.atoms).toEqual([]);
     expect(allData.tests).toEqual([]);
-    expect(allData.envs).toEqual([]);
+    expect(allData.runners).toEqual([]);
     expect(allData.data).toEqual([]);
     expect(allData.selectors).toEqual([]);
   });
@@ -228,7 +228,7 @@ describe('TestContent', () => {
       headless: false,
       slowMo: 1,
     };
-    expect(() => CD([{ name: '', testFile: 'bar', type: 'env', browser: DEFAULT_BROWSER }])).toThrow(
+    expect(() => CD([{ name: '', testFile: 'bar', type: 'runner', browser: DEFAULT_BROWSER }])).toThrow(
       new Error("There is blank 'name' value in files:\nbar"),
     );
 

@@ -220,7 +220,7 @@ export type EnvBrowserType = {
 
 export type RunnerYamlType = {
   name: string;
-  type: 'env';
+  type: 'runner';
   browser: EnvBrowserType;
   description?: string;
   data?: Record<string, unknown>;
@@ -389,7 +389,7 @@ export type AllDataType = {
   allContent: Array<TestType | RunnerType | DataType>;
   atoms: Array<TestType>;
   tests: Array<TestType>;
-  envs: Array<RunnerType>;
+  runners: Array<RunnerType>;
   data: Array<DataType>;
   selectors: Array<DataType>;
 };
