@@ -1,7 +1,7 @@
 [0m00:00:00.000 - timer  [0m[0mTest 'screenshots' start on '0000-00-00_00-00-00.000'[0m
 [0m00:00:00.000 - env    [0m[34m
 screenshots (screenshots)
-   (envSwitch)
+   (runnerSwitch)
    (goTo)
    No screenshot (case)
       (checkSelector)
@@ -50,12 +50,12 @@ screenshots (screenshots)
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m00:00:00.000 - test   [0m[32m(screenshots) screenshots[0m
 [0m                       [0m[36m👣[screenshots][0m
-[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'mainEnv'[0m
-[0m                      |    [0m[36m👣[screenshots -> beforeTest[0].envSwitch][0m
-[0m00:00:00.000 - raw    |   |   [0m[0mEnvironment switch on 'mainEnv'[0m
+[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainEnv'[0m
+[0m                      |    [0m[36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainEnv'[0m
 [0m                      |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   [0m[36m📌📋 (bD): {"envName":"myEnv"}[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m                      |   |   [0m[36m📌📋 (bD): {"runnerName":"myEnv"}[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
 [0m00:00:00.000 - test   |   [0m[32m(goTo) Going on page http://localhost:3000/[0m
 [0m                      |    [0m[36m👣[screenshots -> beforeTest[1].goTo][0m
 [0m00:00:00.000 - raw    |   |   [0m[0mGo to: http://localhost:3000/[0m

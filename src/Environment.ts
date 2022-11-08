@@ -21,7 +21,7 @@ import Singleton from './Singleton';
 import { Engines } from './Engines';
 
 type EnvsInstanceType = {
-  runners: Runners;
+  allRunners: Runners;
   socket: SocketType;
   envsId: string;
   logger: Log;
@@ -49,18 +49,18 @@ export class Runners {
     this.envsId = envsId;
   }
 
-  async setEnv({
+  async switchRunner({
     name,
-    env = {},
+    runner = {},
     page = '',
   }: {
     name: string;
-    env: Partial<RunnerYamlType>;
+    runner: Partial<RunnerYamlType>;
     page: string;
   }): Promise<void> {
     const runnerResolved: RunnerYamlType = {
       ...{ name: '__blank_runner__', type: 'env', browser: BROWSER_DEFAULT },
-      ...env,
+      ...runner,
     };
 
     let localName = name;
@@ -95,13 +95,13 @@ export class Runners {
     new Environment().setCurrent(this.envsId, newCurrent);
   }
 
-  async closeEnv(name: string): Promise<void> {
+  async closeRunner(name: string): Promise<void> {
     await this.runners[name].stopEngine();
   }
 
-  async closeAllEnvs(): Promise<void> {
+  async closeAllRunners(): Promise<void> {
     for (const name of Object.keys(this.runners)) {
-      await this.closeEnv(name);
+      await this.closeRunner(name);
     }
   }
 
@@ -230,11 +230,11 @@ export class Environment extends Singleton {
 
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
-      const runners = new Runners(envsId);
+      const allRunners = new Runners(envsId);
       const logger = new Log(envsId, loggerOptions);
       const current: RunnerCurrentType = {};
 
-      this.instances[envsId] = { output, runners, socket, envsId, logger, current, log: [] };
+      this.instances[envsId] = { output, allRunners, socket, envsId, logger, current, log: [] };
     }
     return this.getEnvAllInstance(envsId);
   }
@@ -247,7 +247,7 @@ export class Environment extends Singleton {
 
   getEnvRunners(envsId: string): Runners {
     this.checkId(envsId);
-    return this.instances[envsId].runners;
+    return this.instances[envsId].allRunners;
   }
 
   getEnvAllInstance(envsId: string): EnvsInstanceType {

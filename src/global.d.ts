@@ -305,7 +305,7 @@ export type TestArgsType = {
   };
   argsEnv: Record<string, unknown>;
   env: Runner;
-  envs: Runners;
+  allRunners: Runners;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;

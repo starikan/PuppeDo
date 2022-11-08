@@ -447,13 +447,13 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const startTime = getTimer().now;
 
-      const { runners, logger } = new Environment().getEnvAllInstance(this.envsId);
+      const { allRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
       const { name: runnerNameCurrent = '', page = '' } = current;
 
       this.envName = runnerNameCurrent;
       this.envPageName = page;
-      this.env = runners.getRunnerByName(runnerNameCurrent);
+      this.env = allRunners.getRunnerByName(runnerNameCurrent);
 
       const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.logOptions);
 
@@ -618,7 +618,7 @@ export class Test implements TestExtendType {
           envName: this.envName,
           envPageName: this.envPageName,
           env: this.env,
-          envs: runners,
+          allRunners,
           name: this.name,
           data: dataLocal,
           selectors: selectorsLocal,

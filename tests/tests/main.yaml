@@ -7,12 +7,12 @@ dataExt:
   - dataExtMain
 
 beforeTest:
-  - envSwitch:
-      bindData: { envName: myEnv }
+  - runnerSwitch:
+      bindData: { runnerName: myEnv }
 
 # afterTest:
-#   - envClose:
-#       bindData: { envName: myEnv }
+#   - runnerClose:
+#       bindData: { runnerName: myEnv }
 
 runTest:
   - initData:

@@ -18,8 +18,8 @@ dataExt:
   - dataExtMain
 
 beforeTest:
-  - envSwitch:
-      data: { envName: "mainEnv" }
+  - runnerSwitch:
+      data: { runnerName: "mainEnv" }
 
 runTest:
   - goTo:

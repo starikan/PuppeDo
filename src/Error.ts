@@ -171,8 +171,8 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
 
   const runners = new Environment().getEnvRunners(errorIncome.envsId);
 
-  if (runners.closeAllEnvs) {
-    await runners.closeAllEnvs();
+  if (runners.closeAllRunners) {
+    await runners.closeAllRunners();
   }
 
   process.exit(1);

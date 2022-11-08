@@ -3,8 +3,8 @@ description: screenshots
 data: { 'myEnv': 'mainEnv' }
 
 beforeTest:
-  - envSwitch:
-      bindData: { envName: myEnv }
+  - runnerSwitch:
+      bindData: { runnerName: myEnv }
 
   - goTo:
       bindDescription: "'Going on page ' + url"

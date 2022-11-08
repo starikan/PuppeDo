@@ -35,7 +35,7 @@ export default async function run(
   }
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, runners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
+  const { envsId, allRunners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
   logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory });
   logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole });
   logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile });
@@ -90,7 +90,7 @@ export default async function run(
     }
 
     if (closeAllEnvs) {
-      await runners.closeAllEnvs();
+      await allRunners.closeAllRunners();
     }
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });

@@ -1,14 +1,14 @@
 name: atoms
 description: Test all Atoms
-data: { envs: ['mainEnv', 'mainEnv_puppeteer'] }
-repeat: envs.length
+data: { runners: ['mainEnv', 'mainEnv_puppeteer'] }
+repeat: runners.length
 runTest:
   - initData:
-      const: { currEnv: 'envs[envs.length - $loop]' }
+      const: { currentRunner: 'runners[runners.length - $loop]' }
 
-  - envSwitch:
+  - runnerSwitch:
       description: '[ENV_SWITCH] First of all you need chose environment.'
-      bindData: { envName: currEnv }
+      bindData: { runnerName: currentRunner }
 
   - case:
       description: Blank Atoms
@@ -44,7 +44,7 @@ runTest:
         - case:
             description: '[CLICK_SELECTOR]'
             todo: Puppeteer click NB!
-            if: "currEnv !== 'mainEnv_puppeteer'"
+            if: "currentRunner !== 'mainEnv_puppeteer'"
             runTest:
               - clickSelector:
                   description: Simple Click on link
@@ -94,6 +94,6 @@ runTest:
   - todo:
       description: Selectors Atoms
 
-  - envClose:
-      description: '[ENV_CLOSE] Close environment'
-      bindData: { envName: currEnv }
+  - runnerClose:
+      description: '[RUNNER_CLOSE] Close runner'
+      bindData: { runnerName: currentRunner }

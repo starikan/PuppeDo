@@ -4,8 +4,8 @@ runTest:
   - case:
       description: Open 2 env and close them
       runTest:
-        - envSwitch:
-            data: { envName: mainEnv }
+        - runnerSwitch:
+            data: { runnerName: mainEnv }
 
-        - envClose:
-            data: { envName: mainEnv }
+        - runnerClose:
+            data: { runnerName: mainEnv }

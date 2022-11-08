@@ -1,7 +1,7 @@
 [0m00:00:00.000 - timer  [0m[0mTest 'main' start on '0000-00-00_00-00-00.000'[0m
 [0m00:00:00.000 - env    [0m[34m
 Main test (main)
-   (envSwitch)
+   (runnerSwitch)
    (initData)
    Colored Case atom (case)
       (goTo)
@@ -52,8 +52,8 @@ Main test (main)
 [0m
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m00:00:00.000 - test   [0m[32m(main) Main test[0m
-[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'mainEnv_puppeteer'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainEnv_puppeteer'[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
 [0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Colored Case atom[0m[0m

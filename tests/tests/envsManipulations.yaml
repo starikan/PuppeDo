@@ -1,39 +1,39 @@
 name: envsManipulations
-description: Some environments manipulations
+description: Some runners manipulations
 runTest:
   - case:
-      description: Open 2 env and close them
+      description: Open 2 runners and close them
       runTest:
-        - envSwitch:
-            data: { envName: mainEnv }
+        - runnerSwitch:
+            data: { runnerName: mainEnv }
 
-        - envSwitch:
-            data: { envName: mainEnv_puppeteer }
+        - runnerSwitch:
+            data: { runnerName: mainEnv_puppeteer }
 
-        - envSwitch:
-            data: { envName: mainEnv }
+        - runnerSwitch:
+            data: { runnerName: mainEnv }
 
-        - envSwitch:
-            data: { envName: mainEnv_puppeteer }
+        - runnerSwitch:
+            data: { runnerName: mainEnv_puppeteer }
 
-        - envSwitch:
-            data: { envName: mainEnv_puppeteer }
+        - runnerSwitch:
+            data: { runnerName: mainEnv_puppeteer }
 
-        - envSwitch:
-            data: { envName: mainEnv }
+        - runnerSwitch:
+            data: { runnerName: mainEnv }
 
-        - envSwitch:
-            data: { envName: mainEnv }
+        - runnerSwitch:
+            data: { runnerName: mainEnv }
 
-        - envClose:
-            data: { envName: mainEnv_puppeteer }
+        - runnerClose:
+            data: { runnerName: mainEnv_puppeteer }
 
-        - envClose:
-            data: { envName: mainEnv }
+        - runnerClose:
+            data: { runnerName: mainEnv }
 
   - case:
-      description: Blank Env
+      description: Blank Runner
       runTest:
-        - envSwitch:
+        - runnerSwitch:
 
-        - envClose:
+        - runnerClose:

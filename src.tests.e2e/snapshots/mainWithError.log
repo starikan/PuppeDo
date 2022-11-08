@@ -3,7 +3,7 @@
               or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE
 [0m00:00:00.000 - env    [0m[34m
 (mainWithError)
-   (envSwitch)
+   (runnerSwitch)
    (goTo)
    Click some fake Text (clickSelector)
       Wait selector (waitForSelector)
@@ -12,9 +12,9 @@
 [0m
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m00:00:00.000 - test   [0m[41m[32m(mainWithError) TODO: Fill description[0m[0m
-[0m00:00:00.000 - test   |   [0m[32m(envSwitch) Switch on environment: 'mainEnv'[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mEnvironment switch on 'mainEnv'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (envSwitch)[0m
+[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainEnv'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainEnv'[0m
+[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
 [0m00:00:00.000 - test   |   [0m[32m(goTo) Go to url: 'http://localhost:3000/'[0m
 [0m00:00:00.000 - raw    |   |   [0m[0mGo to: http://localhost:3000/[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (goTo)[0m
