@@ -1,10 +1,7 @@
 ---
-name: envData
+name: mainEnv_puppeteer
 type: env
-description: My Env Data Check
-
-data:
-  CHECK_DATA: ENV_DATA_RAW
+description: My runner puppeteer
 
 dataExt:
   - data
@@ -12,13 +9,13 @@ dataExt:
 selectorsExt:
   - selectors
 
-envsExt:
-  - envExt
+runnersExt:
+  - runnerExt
 
 browser:
   type: browser
-  engine: playwright
-  browserName: chromium
+  engine: puppeteer
+  browserName: chrome
   runtime: run
   args:
   - "--window-size=1024,918"

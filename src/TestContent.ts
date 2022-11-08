@@ -203,14 +203,14 @@ export default class TestsContent extends Singleton {
       const {
         dataExt = [],
         selectorsExt = [],
-        envsExt = [],
+        runnersExt = [],
         data: dataEnv = {},
         selectors: selectorsEnv = {},
       } = runner;
       runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
 
-      envsExt.forEach((envsExtName: string) => {
-        const runnersResolved: RunnerType | undefined = runnersAll.find((g: RunnerType) => g.name === envsExtName);
+      runnersExt.forEach((runnersExtName: string) => {
+        const runnersResolved: RunnerType | undefined = runnersAll.find((g: RunnerType) => g.name === runnersExtName);
         if (runnersResolved) {
           if (runnersResolved.browser) {
             runnerUpdated.browser = Engines.resolveBrowser(merge(runnerUpdated.browser, runnersResolved.browser));
@@ -220,7 +220,7 @@ export default class TestsContent extends Singleton {
           runnerUpdated.selectors = { ...(runnerUpdated.selectors || {}), ...(runnersResolved.selectors || {}) };
           runnerUpdated.description = `${runnerUpdated.description || ''} -> ${runnersResolved.description || ''}`;
         } else {
-          throw new Error(`PuppeDo can't resolve extended runner '${envsExtName}' in runner '${runner.name}'`);
+          throw new Error(`PuppeDo can't resolve extended runner '${runnersExtName}' in runner '${runner.name}'`);
         }
       });
 

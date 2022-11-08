@@ -227,7 +227,7 @@ export type RunnerYamlType = {
   selectors?: Record<string, unknown>;
   dataExt?: Array<string>;
   selectorsExt?: Array<string>;
-  envsExt?: Array<string>;
+  runnersExt?: Array<string>;
   log?: {
     level?: string;
     screenshot?: boolean;

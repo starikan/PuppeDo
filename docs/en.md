@@ -549,16 +549,16 @@ argsRedefine check (argsRedefine)
 
 ```
 
-# Environment files
+# Runner file
 
-File with environment information. There is may more then one env in test. You can switch between envs.
+File with runner information. There is may more then one runner in test. You can switch between runners.
 
-If there exist more then one env with the same name they merge. Use in for development redefinition parts of env in private env file. I.e. for running electron app from your local files.
+If there exist more then one runner with the same name they merge. Use in for development redefinition parts of runner in private runner file. I.e. for start electron app from your local files.
 
 ```yaml
 name: mainEnv
 type: env
-description: My env
+description: My runner
 
 data:
   myEnvData: foo
@@ -574,7 +574,7 @@ selectorsExt:
   - selectorsExt
   - privateSelectors
 
-envsExt:
+runnersExt:
   - privateEnv
 
 browser:
@@ -608,14 +608,14 @@ log:
 
 Parameter  | Description
 ------------- | -------------
-name | Name of environment. Use it for running envs with [Running arguments](#running-arguments). Feel free for naming but with caution use spaces.
-type | For environment files it should be `env`.
+name | Name of runner. Use it for running runners with [Running arguments](#running-arguments). Feel free for naming but with caution use spaces.
+type | For runner files it should be `env`.
 description | Description
-data | Object with data for passing in this env.
-selectors | Object with selectors for passing in this env.
-dataExt | Array of data that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
-selectorsExt | Array of selectors that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
-envsExt | Array of envs that extend this env. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
+data | Object with data for passing in this runner.
+selectors | Object with selectors for passing in this runner.
+dataExt | Array of data that extend this runner. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
+selectorsExt | Array of selectors that extend this runner. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
+runnersExt | Array of runners that extend this runner. Related to [PPD_ROOT and PPD_ROOT_ADDITIONAL](#running-arguments). You can use asterisk to load all files from folder `data/*`
 browser | [Browser settings](#browser-settings)
 log | [Logging settings](#logging-settings)
 
@@ -798,7 +798,7 @@ afterTest:
     - --output - Папка для логов (default: "output")
     - --envs - МАССИВ (это обязательно) со ссылками на файлы описание сред выполнения
     - --rootFolder - Папка с тестами (default: ".")
-    - --envsExt - Расширение значений envs (для CI)
+    - --runnersExt - Расширение значений envs (для CI)
         ```
         Пример:
 

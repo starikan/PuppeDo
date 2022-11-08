@@ -1,7 +1,10 @@
 ---
-name: mainEnv
+name: envData
 type: env
-description: My Env
+description: My Runner Data Check
+
+data:
+  CHECK_DATA: ENV_DATA_RAW
 
 dataExt:
   - data
@@ -9,8 +12,8 @@ dataExt:
 selectorsExt:
   - selectors
 
-envsExt:
-  - envExt
+runnersExt:
+  - runnerExt
 
 browser:
   type: browser
@@ -21,7 +24,6 @@ browser:
   - "--window-size=1024,918"
   headless: false
   slowMo: 5
-  timeout: 10000
   windowSize:
     width: 1024
     height: 768

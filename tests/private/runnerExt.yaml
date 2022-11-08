@@ -1,7 +1,7 @@
 ---
+name: runnerExt
 type: env
-name: envExt
-description: My Secret Env Ext
+description: My Secret Runner Ext
 
 data:
   CHECK_DATA: ENV_DATA_FROM_EXT_ENV
