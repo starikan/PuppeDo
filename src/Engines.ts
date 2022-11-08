@@ -9,8 +9,10 @@ import axios from 'axios';
 import { Arguments } from './Arguments';
 import {
   BrouserLaunchOptions,
+  BrowserEngineType,
   BrowserNameType,
   BrowserPageType,
+  BrowserTypeType,
   EnvBrowserType,
   Outputs,
   OutputsLatest,
@@ -20,6 +22,64 @@ import {
 import { sleep } from './Helpers';
 
 export class Engines {
+  static resolveBrowser(browserInput: EnvBrowserType): EnvBrowserType {
+    const DEFAULT_BROWSER: EnvBrowserType = {
+      type: 'browser',
+      engine: 'playwright',
+      browserName: 'chromium',
+      runtime: 'run',
+      headless: false,
+      slowMo: 1,
+    };
+    const ALLOW_BROWSER_TYPES: BrowserTypeType[] = ['browser', 'electron'];
+    const ALLOW_BROWSER_EGINES: BrowserEngineType[] = ['puppeteer', 'playwright'];
+    const ALLOW_BROWSER_MANES: BrowserNameType[] = ['chrome', 'chromium', 'firefox', 'webkit'];
+
+    const browser = { ...DEFAULT_BROWSER, ...(browserInput || {}) };
+
+    if (!ALLOW_BROWSER_TYPES.includes(browser.type)) {
+      throw new Error(
+        `PuppeDo can't find this type of envitonment: "${browser.type}". Allow this types: ${ALLOW_BROWSER_TYPES}`,
+      );
+    }
+
+    if (!ALLOW_BROWSER_EGINES.includes(browser.engine) && (browser.type === 'browser' || browser.type === 'electron')) {
+      throw new Error(`PuppeDo can't find engine: "${browser.engine}". Allow this engines: ${ALLOW_BROWSER_EGINES}`);
+    }
+
+    if (!ALLOW_BROWSER_MANES.includes(browser.browserName)) {
+      throw new Error(
+        `PuppeDo can't find this type of browser: "${browser.browserName}". Allow this types: ${ALLOW_BROWSER_MANES}`,
+      );
+    }
+
+    if (
+      browser.type === 'browser' &&
+      browser.engine === 'playwright' &&
+      !['chromium', 'firefox', 'webkit'].includes(browser.browserName)
+    ) {
+      throw new Error("Playwright supports only browsers: 'chromium', 'firefox', 'webkit'");
+    }
+
+    if (
+      browser.type === 'browser' &&
+      browser.engine === 'puppeteer' &&
+      !['chrome', 'firefox'].includes(browser.browserName)
+    ) {
+      throw new Error("Puppeteer supports only browsers: 'chrome', 'firefox'");
+    }
+
+    if (!['run', 'connect'].includes(browser.runtime)) {
+      throw new Error('PuppeDo can run or connect to browser only');
+    }
+
+    if (browser.runtime === 'connect' && browser.type === 'browser') {
+      throw new Error("PuppeDo can't connect to browser yet");
+    }
+
+    return browser;
+  }
+
   static async runPlaywright(runnerData: RunnerType, state: RunnerStateType): Promise<RunnerStateType> {
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const browserSettings = runnerData.browser;

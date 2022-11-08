@@ -58,17 +58,19 @@ export class Runners {
     env: Partial<RunnerYamlType>;
     page: string;
   }): Promise<void> {
-    const envResolved: RunnerYamlType = { ...{ name: '__blank_env__', type: 'env', browser: BROWSER_DEFAULT }, ...env };
+    const runnerResolved: RunnerYamlType = {
+      ...{ name: '__blank_runner__', type: 'env', browser: BROWSER_DEFAULT },
+      ...env,
+    };
 
     let localName = name;
 
     if (name) {
       if (!this.runners[name]) {
         const { envs } = new TestsContent().allData;
-        const envFromFile = envs.find((v) => v.name === name);
-        if (envFromFile) {
-          const envLocal = JSON.parse(JSON.stringify(envFromFile));
-          this.runners[name] = new Runner(envLocal);
+        const runnerFromFile = envs.find((v) => v.name === name);
+        if (runnerFromFile) {
+          this.runners[name] = new Runner(JSON.parse(JSON.stringify(runnerFromFile)));
           await this.runners[name].runEngine(this.envsId);
         } else {
           throw new Error(`Can't init environment '${name}'. Check 'envs' parameter`);
@@ -77,8 +79,8 @@ export class Runners {
         await this.runners[name].runEngine(this.envsId);
       }
     } else {
-      localName = envResolved.name;
-      this.runners[localName] = new Runner(envResolved);
+      localName = runnerResolved.name;
+      this.runners[localName] = new Runner(runnerResolved);
       await this.runners[localName].runEngine(this.envsId);
     }
 

@@ -7,18 +7,8 @@ import Singleton from './Singleton';
 import { Arguments } from './Arguments';
 import { merge, walkSync } from './Helpers';
 
-import {
-  TestType,
-  RunnerType,
-  DataType,
-  EnvBrowserType,
-  BrowserTypeType,
-  BrowserEngineType,
-  BrowserNameType,
-  TestTypeYaml,
-  TestExtendType,
-  AllDataType,
-} from './global.d';
+import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
+import { Engines } from './Engines';
 
 export const BLANK_TEST: TestType = {
   afterTest: [],
@@ -203,64 +193,6 @@ export default class TestsContent extends Singleton {
     return this.allData;
   }
 
-  static resolveBrowser(browserInput: EnvBrowserType): EnvBrowserType {
-    const DEFAULT_BROWSER: EnvBrowserType = {
-      type: 'browser',
-      engine: 'playwright',
-      browserName: 'chromium',
-      runtime: 'run',
-      headless: false,
-      slowMo: 1,
-    };
-    const ALLOW_BROWSER_TYPES: BrowserTypeType[] = ['browser', 'electron'];
-    const ALLOW_BROWSER_EGINES: BrowserEngineType[] = ['puppeteer', 'playwright'];
-    const ALLOW_BROWSER_MANES: BrowserNameType[] = ['chrome', 'chromium', 'firefox', 'webkit'];
-
-    const browser = { ...DEFAULT_BROWSER, ...(browserInput || {}) };
-
-    if (!ALLOW_BROWSER_TYPES.includes(browser.type)) {
-      throw new Error(
-        `PuppeDo can't find this type of envitonment: "${browser.type}". Allow this types: ${ALLOW_BROWSER_TYPES}`,
-      );
-    }
-
-    if (!ALLOW_BROWSER_EGINES.includes(browser.engine) && (browser.type === 'browser' || browser.type === 'electron')) {
-      throw new Error(`PuppeDo can't find engine: "${browser.engine}". Allow this engines: ${ALLOW_BROWSER_EGINES}`);
-    }
-
-    if (!ALLOW_BROWSER_MANES.includes(browser.browserName)) {
-      throw new Error(
-        `PuppeDo can't find this type of browser: "${browser.browserName}". Allow this types: ${ALLOW_BROWSER_MANES}`,
-      );
-    }
-
-    if (
-      browser.type === 'browser' &&
-      browser.engine === 'playwright' &&
-      !['chromium', 'firefox', 'webkit'].includes(browser.browserName)
-    ) {
-      throw new Error("Playwright supports only browsers: 'chromium', 'firefox', 'webkit'");
-    }
-
-    if (
-      browser.type === 'browser' &&
-      browser.engine === 'puppeteer' &&
-      !['chrome', 'firefox'].includes(browser.browserName)
-    ) {
-      throw new Error("Puppeteer supports only browsers: 'chrome', 'firefox'");
-    }
-
-    if (!['run', 'connect'].includes(browser.runtime)) {
-      throw new Error('PuppeDo can run or connect to browser only');
-    }
-
-    if (browser.runtime === 'connect' && browser.type === 'browser') {
-      throw new Error("PuppeDo can't connect to browser yet");
-    }
-
-    return browser;
-  }
-
   static resolveEnvs(
     envsAll: Array<RunnerType>,
     dataAll: Array<DataType>,
@@ -269,13 +201,13 @@ export default class TestsContent extends Singleton {
     return envsAll.map((env: RunnerType) => {
       const envUpdated = env;
       const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
-      envUpdated.browser = TestsContent.resolveBrowser(envUpdated.browser);
+      envUpdated.browser = Engines.resolveBrowser(envUpdated.browser);
 
       envsExt.forEach((envsExtName: string) => {
         const envsResolved: RunnerType | undefined = envsAll.find((g: RunnerType) => g.name === envsExtName);
         if (envsResolved) {
           if (envsResolved.browser) {
-            envUpdated.browser = TestsContent.resolveBrowser(merge(envUpdated.browser, envsResolved.browser));
+            envUpdated.browser = Engines.resolveBrowser(merge(envUpdated.browser, envsResolved.browser));
           }
           envUpdated.log = { ...(envUpdated.log || {}), ...(envsResolved.log || {}) };
           envUpdated.data = { ...(envUpdated.data || {}), ...(envsResolved.data || {}) };
