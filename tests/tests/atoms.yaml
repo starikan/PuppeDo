@@ -1,6 +1,6 @@
 name: atoms
 description: Test all Atoms
-data: { runners: ['mainEnv', 'mainEnv_puppeteer'] }
+data: { runners: ['mainRunner', 'mainRunnerPuppeteer'] }
 repeat: runners.length
 runTest:
   - initData:
@@ -44,7 +44,7 @@ runTest:
         - case:
             description: '[CLICK_SELECTOR]'
             todo: Puppeteer click NB!
-            if: "currentRunner !== 'mainEnv_puppeteer'"
+            if: "currentRunner !== 'mainRunnerPuppeteer'"
             runTest:
               - clickSelector:
                   description: Simple Click on link

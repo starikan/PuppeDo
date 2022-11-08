@@ -1,7 +1,7 @@
 ---
-name: mainEnv
+name: mainRunnerPuppeteer
 type: runner
-description: My runner
+description: My runner puppeteer
 
 dataExt:
   - data
@@ -14,14 +14,13 @@ runnersExt:
 
 browser:
   type: browser
-  engine: playwright
-  browserName: chromium
+  engine: puppeteer
+  browserName: chrome
   runtime: run
   args:
   - "--window-size=1024,918"
   headless: false
   slowMo: 5
-  timeout: 10000
   windowSize:
     width: 1024
     height: 768

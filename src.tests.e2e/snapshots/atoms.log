@@ -40,7 +40,7 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainEnv'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunner'[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Blank Atoms[0m[0m
 [0m00:00:00.000 - test   |   |   [0m[32m(blank) [BLANK][0m
@@ -95,13 +95,13 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - test   |   [0m[41m[37m(todo) Selectors Atoms[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
 [0m00:00:00.000 - test   |   [0m[32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainEnv' closed.[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainRunner' closed.[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (runnerClose)[0m
 [0m00:00:00.000 - test   [0m[32m(atoms) Test all Atoms[0m
 [0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
 [0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainEnv_puppeteer'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunnerPuppeteer'[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
 [0m00:00:00.000 - test   |   [0m[47m[30m(case) Blank Atoms[0m[0m
 [0m00:00:00.000 - test   |   |   [0m[32m(blank) [BLANK][0m
@@ -123,7 +123,7 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - test   |   |   [0m[32m(goTo) [GO_TO][0m
 [0m00:00:00.000 - raw    |   |   |   [0m[0mGo to: http://localhost:3000/[0m
 [0m                      |   |   [0m[0m🕝: 00.000 s. (goTo)[0m
-[0m00:00:00.000 - info   |   |   [0m[36mSkip with IF expr 'currentRunner !== 'mainEnv_puppeteer'' === 'false'[0m
+[0m00:00:00.000 - info   |   |   [0m[36mSkip with IF expr 'currentRunner !== 'mainRunnerPuppeteer'' === 'false'[0m
 [0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_ATTRIBUTES][0m[0m
 [0m00:00:00.000 - test   |   |   |   [0m[32m(getAttribute) Simple geting atribute from selector[0m
 [0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'[0m
@@ -151,7 +151,7 @@ Test all Atoms (atoms)
 [0m00:00:00.000 - test   |   [0m[41m[37m(todo) Selectors Atoms[0m[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
 [0m00:00:00.000 - test   |   [0m[32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainEnv_puppeteer' closed.[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainRunnerPuppeteer' closed.[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (runnerClose)[0m
 [0m                      [0m[0m🕝: 00.000 s. (atoms)[0m
 [0m                      [0m[0m🕝: 00.000 s. (atoms)[0m

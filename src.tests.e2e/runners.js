@@ -5,7 +5,7 @@ const testsE2E = {
     params: {
       PPD_DATA: {
         PPD_DATA: 'BAZ',
-        myEnv: 'mainEnv',
+        myEnv: 'mainRunner',
       },
       PPD_SELECTORS: {
         PPD_SELECTORS: 'DDD',
@@ -21,7 +21,7 @@ const testsE2E = {
     env: {
       PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')],
       PPD_TESTS: 'main',
-      PPD_DATA: '{ "myEnv": "mainEnv" }',
+      PPD_DATA: '{ "myEnv": "mainRunner" }',
       PPD_LOG_LEVEL_NESTED: 1,
       PPD_LOG_IGNORE_HIDE_LOG: 'true',
       PPD_LOG_TIMESTAMP_SHOW: 'false',
@@ -33,7 +33,7 @@ const testsE2E = {
       'PPD_ROOT=tests',
       `PPD_ROOT_ADDITIONAL=${path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')}`,
       'PPD_TESTS=main',
-      "PPD_DATA={'myEnv':'mainEnv'}",
+      "PPD_DATA={'myEnv':'mainRunner'}",
       'PPD_LOG_EXTEND=true',
       'PPD_LOG_SCREENSHOT=true',
       'PPD_LOG_FULLPAGE=true',
@@ -41,7 +41,7 @@ const testsE2E = {
     runBeforeTest: () => {},
   },
   mainPuppeteer: {
-    env: { PPD_TESTS: 'main', PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }', PPD_LOG_LEVEL_NESTED: 1 },
+    env: { PPD_TESTS: 'main', PPD_DATA: '{ "myEnv": "mainRunnerPuppeteer" }', PPD_LOG_LEVEL_NESTED: 1 },
   },
   runnersManipulations: {
     params: { PPD_TESTS: 'runnersManipulations' },
@@ -58,7 +58,7 @@ const testsE2E = {
     params: {
       PPD_ROOT: 'tests',
       PPD_TESTS: 'mainWithError',
-      PPD_DATA: { myEnv: 'mainEnv' },
+      PPD_DATA: { myEnv: 'mainRunner' },
       PPD_FILES_IGNORE: ['tsconfig.json'],
     },
     isError: true,
@@ -78,7 +78,7 @@ const testsE2E = {
     params: { PPD_TESTS: 'screencast', PPD_LOG_TIMESTAMP_SHOW: false },
   },
   atoms: {
-    params: { PPD_TESTS: 'atoms', PPD_DATA: { myEnv: 'mainEnv' } },
+    params: { PPD_TESTS: 'atoms', PPD_DATA: { myEnv: 'mainRunner' } },
   },
   tags: {
     params: { PPD_TESTS: 'tagsTest', PPD_TAGS_TO_RUN: 'testTag' },
@@ -115,7 +115,7 @@ const testsE2E = {
     // TODO: 2021-12-16 S.Starodubov check files thats created
     params: {
       PPD_TESTS: 'screenshots',
-      PPD_DATA: { myEnv: 'mainEnv' },
+      PPD_DATA: { myEnv: 'mainRunner' },
       PPD_LOG_EXTEND: true,
       PPD_LOG_SCREENSHOT: true,
       PPD_LOG_FULLPAGE: true,

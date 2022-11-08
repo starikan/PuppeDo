@@ -5,31 +5,31 @@ runTest:
       description: Open 2 runners and close them
       runTest:
         - runnerSwitch:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv_puppeteer }
+            data: { runnerName: mainRunnerPuppeteer }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv_puppeteer }
+            data: { runnerName: mainRunnerPuppeteer }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv_puppeteer }
+            data: { runnerName: mainRunnerPuppeteer }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
         - runnerSwitch:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
         - runnerClose:
-            data: { runnerName: mainEnv_puppeteer }
+            data: { runnerName: mainRunnerPuppeteer }
 
         - runnerClose:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
   - case:
       description: Blank Runner

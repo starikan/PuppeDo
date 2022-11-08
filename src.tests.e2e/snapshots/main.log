@@ -52,8 +52,8 @@ Main test (main)
 [0m
 [0m[0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m[0m[32m(main) Main test[0m
-[0m|   [0m[32m(runnerSwitch) Switch on runner: 'mainEnv'[0m
-[0m|   |   [0m[0mRunner switch on 'mainEnv'[0m
+[0m|   [0m[32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
+[0m|   |   [0m[0mRunner switch on 'mainRunner'[0m
 [0m|   [0m[41m[32m(initData) TODO: Fill description[0m[0m
 [0m|   [0m[47m[30m(case) Colored Case atom[0m[0m
 [0m|   |   [0m[32m(goTo) Going on page http://localhost:3000/[0m

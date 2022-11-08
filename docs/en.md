@@ -556,8 +556,8 @@ File with runner information. There is may more then one runner in test. You can
 If there exist more then one runner with the same name they merge. Use in for development redefinition parts of runner in private runner file. I.e. for start electron app from your local files.
 
 ```yaml
-name: mainEnv
-type: env
+name: mainRunner
+type: runner
 description: My runner
 
 data:

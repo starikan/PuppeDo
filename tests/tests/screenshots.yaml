@@ -1,6 +1,6 @@
 name: screenshots
 description: screenshots
-data: { 'myEnv': 'mainEnv' }
+data: { 'myEnv': 'mainRunner' }
 
 beforeTest:
   - runnerSwitch:

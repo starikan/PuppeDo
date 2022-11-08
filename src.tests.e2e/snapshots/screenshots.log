@@ -50,9 +50,9 @@ screenshots (screenshots)
 [0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
 [0m00:00:00.000 - test   [0m[32m(screenshots) screenshots[0m
 [0m                       [0m[36m👣[screenshots][0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainEnv'[0m
+[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
 [0m                      |    [0m[36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainEnv'[0m
+[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunner'[0m
 [0m                      |   |   [0m[0m⌛: 00.000 s.[0m
 [0m                      |   |   [0m[36m📌📋 (bD): {"runnerName":"myEnv"}[0m
 [0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m

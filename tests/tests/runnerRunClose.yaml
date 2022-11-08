@@ -5,7 +5,7 @@ runTest:
       description: Open 2 env and close them
       runTest:
         - runnerSwitch:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
 
         - runnerClose:
-            data: { runnerName: mainEnv }
+            data: { runnerName: mainRunner }
