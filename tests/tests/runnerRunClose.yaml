@@ -1,5 +1,5 @@
-name: envRunClose
-description: Some environments manipulations
+name: runnerRunClose
+description: Some runners manipulations
 runTest:
   - case:
       description: Open 2 env and close them

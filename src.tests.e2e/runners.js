@@ -43,8 +43,8 @@ const testsE2E = {
   mainPuppeteer: {
     env: { PPD_TESTS: 'main', PPD_DATA: '{ "myEnv": "mainEnv_puppeteer" }', PPD_LOG_LEVEL_NESTED: 1 },
   },
-  envsManipulations: {
-    params: { PPD_TESTS: 'envsManipulations' },
+  runnersManipulations: {
+    params: { PPD_TESTS: 'runnersManipulations' },
   },
   errorIf: {
     params: { PPD_TESTS: 'errorIf' },

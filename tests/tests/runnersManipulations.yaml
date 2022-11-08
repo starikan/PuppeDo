@@ -1,4 +1,4 @@
-name: envsManipulations
+name: runnersManipulations
 description: Some runners manipulations
 runTest:
   - case:

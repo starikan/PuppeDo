@@ -6,7 +6,7 @@ const run = async () => {
 
     await ppd.run(
       {
-        PPD_TESTS: 'envRunClose',
+        PPD_TESTS: 'runnerRunClose',
       },
       { closeProcess: false },
     );
