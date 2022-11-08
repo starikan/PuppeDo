@@ -61,23 +61,38 @@ export const BLANK_TEST: TestType = {
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
 
 export default class TestsContent extends Singleton {
-  allData!: AllDataType;
-  rootFolder!: string;
-  additionalFolders!: Array<string>;
-  ignorePaths!: Array<string>;
-  ignoreFiles!: Array<string>;
+  allData: AllDataType;
 
   constructor(reInit = false) {
     super();
-    const args = { ...new Arguments().args };
 
     if (reInit || !this.allData) {
-      this.rootFolder = path.normalize(args.PPD_ROOT);
-      this.additionalFolders = args.PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
-      this.ignorePaths = args.PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
-      this.ignoreFiles = args.PPD_FILES_IGNORE.map((v: string) => path.join(this.rootFolder, path.normalize(v)));
       this.allData = this.getAllData();
     }
+  }
+
+  static getPaths(): string[] {
+    const { PPD_ROOT, PPD_ROOT_ADDITIONAL, PPD_ROOT_IGNORE, PPD_FILES_IGNORE } = new Arguments().args;
+
+    const rootFolder = path.normalize(PPD_ROOT);
+    const additionalFolders = PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
+    const ignoreFolders = PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
+    const ignoreFiles = PPD_FILES_IGNORE.map((v: string) => path.join(rootFolder, path.normalize(v)));
+
+    // TODO: 2022-11-07 S.Starodubov move to Arguments
+    const PPD_FILES_EXTENSIONS_AVAILABLE = ['.yaml', '.yml', '.ppd', '.json'];
+    const folders = [rootFolder, ...additionalFolders].map((v) => path.normalize(v));
+
+    const paths = folders
+      .map((folder) => {
+        if (fs.existsSync(folder)) {
+          return walkSync(folder, { ignoreFolders, ignoreFiles, extensions: PPD_FILES_EXTENSIONS_AVAILABLE });
+        }
+        return [];
+      })
+      .flat();
+
+    return paths;
   }
 
   static checkDuplicates<T extends TestExtendType | RunnerType | DataType>(tests: Array<T>): Array<T> {
@@ -113,21 +128,12 @@ export default class TestsContent extends Singleton {
   }
 
   getAllData(force = false): AllDataType {
-    const args = { ...new Arguments().args };
+    const { PPD_IGNORE_TESTS_WITHOUT_NAME } = new Arguments().args;
+
     if (force || !this.allData) {
       const allContent: Array<TestType | RunnerType | DataType> = [];
-      const extensions = ['.yaml', '.yml', '.ppd', '.json'];
-      const folders = [this.rootFolder, ...this.additionalFolders].map((v) => path.normalize(v));
 
-      const paths = folders
-        .map((folder) => {
-          if (fs.existsSync(folder)) {
-            return walkSync(folder, { ignoreFolders: this.ignorePaths, ignoreFiles: this.ignoreFiles, extensions });
-          }
-          return [];
-        })
-        .flat();
-
+      const paths = TestsContent.getPaths();
       paths.forEach((filePath) => {
         let testData: Partial<TestTypeYaml>[] = [];
         if (filePath.endsWith('.json')) {
@@ -155,7 +161,7 @@ export default class TestsContent extends Singleton {
 
         testData.forEach((v) => {
           const { name } = v;
-          if (!name && !args.PPD_IGNORE_TESTS_WITHOUT_NAME) {
+          if (!name && !PPD_IGNORE_TESTS_WITHOUT_NAME) {
             throw new Error('Every test need name');
           }
           if (!name) {
@@ -186,7 +192,6 @@ export default class TestsContent extends Singleton {
       const selectors: Array<DataType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
-
       const envs: Array<RunnerType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is RunnerType => v.type === 'env'),
       );

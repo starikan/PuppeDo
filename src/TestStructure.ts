@@ -4,7 +4,7 @@ import { TestExtendType, TestType } from './global.d';
 import { RUNNER_BLOCK_NAMES, generateId, deepMergeField } from './Helpers';
 
 export default class TestStructure {
-  static filterFullJSON(fullJSON: TestExtendType): TestExtendType {
+  static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
     const keys = Object.keys(BLANK_TEST);
     const fullJSONFiltered: Partial<TestExtendType> = {};
     keys.forEach((v) => {
@@ -24,7 +24,7 @@ export default class TestStructure {
 
     if (fullJSONFiltered.runTest && fullJSONFiltered.runTest.length) {
       fullJSONFiltered.runTest = (fullJSONFiltered.runTest as TestExtendType[]).map((v: TestExtendType) => {
-        const result = TestStructure.filterFullJSON(v);
+        const result = TestStructure.filteredFullJSON(v);
         return result;
       });
     }
@@ -81,17 +81,13 @@ export default class TestStructure {
       newRunner.name = name;
       newRunner.breadcrumbs = [...fullJSONIncome.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
       newRunner.breadcrumbsDescriptions = [...fullJSONIncome.breadcrumbsDescriptions, fullJSONIncome.description];
-      const fullJSON = TestStructure.getFullDepthJSONRecurce(name, newRunner, levelIndent + 1);
+      const fullJSON = TestStructure.getFullDepthJSON(name, newRunner, levelIndent + 1);
       return fullJSON;
     }
     return null;
   }
 
-  static getFullDepthJSONRecurce(
-    testName: string,
-    testBody: Partial<TestExtendType> = {},
-    levelIndent = 0,
-  ): TestExtendType {
+  static getFullDepthJSON(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
 

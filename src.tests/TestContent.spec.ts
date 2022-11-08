@@ -1,4 +1,4 @@
-import path from 'path';
+// import path from 'path';
 
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
@@ -6,31 +6,18 @@ import { Arguments } from '../src/Arguments';
 import { DataType, EnvBrowserType, TestExtendType } from '../src/global.d';
 
 describe('TestContent', () => {
-  test('Init', () => {
-    const spy = jest.spyOn(console, 'log').mockImplementation();
-    const { ignorePaths, rootFolder, additionalFolders } = new TestsContent();
-    expect(console.log).toHaveBeenCalled();
-    spy.mockRestore();
-    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github', '.vscode']);
-    expect(rootFolder).toEqual(process.cwd());
-    expect(additionalFolders).toEqual([]);
-  });
-
-  test('Init with args', () => {
+  beforeAll(() => {
     // eslint-disable-next-line no-new
     new Arguments(
       {
         PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
+        PPD_FILES_IGNORE: ['tests\\broken.yaml'],
         PPD_ROOT_ADDITIONAL: ['bar'],
         PPD_ROOT: 'tests',
       },
       true,
       '',
     );
-    const { ignorePaths, rootFolder, additionalFolders } = new TestsContent(true);
-    expect(ignorePaths).toEqual(['.git', 'node_modules', '.history', 'output', '.github', '.vscode']);
-    expect(rootFolder).toEqual(path.normalize('tests'));
-    expect(additionalFolders).toEqual(['bar']);
   });
 
   test('Getting data', () => {
