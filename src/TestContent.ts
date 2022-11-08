@@ -182,67 +182,71 @@ export default class TestsContent extends Singleton {
       const selectors: Array<DataType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
-      const envs: Array<RunnerType> = TestsContent.checkDuplicates(
+      const runners: Array<RunnerType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is RunnerType => v.type === 'env'),
       );
-      const envsResolved = TestsContent.resolveEnvs(envs, data, selectors);
+      const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
 
-      this.allData = { allFiles: paths, allContent, atoms, tests, envs: envsResolved, data, selectors };
+      this.allData = { allFiles: paths, allContent, atoms, tests, envs: runnersResolved, data, selectors };
     }
 
     return this.allData;
   }
 
-  static resolveEnvs(
-    envsAll: Array<RunnerType>,
+  static resolveRunners(
+    runnersAll: Array<RunnerType>,
     dataAll: Array<DataType>,
     selectorsAll: Array<DataType>,
   ): Array<RunnerType> {
-    return envsAll.map((env: RunnerType) => {
-      const envUpdated = env;
-      const { dataExt = [], selectorsExt = [], envsExt = [], data: dataEnv = {}, selectors: selectorsEnv = {} } = env;
-      envUpdated.browser = Engines.resolveBrowser(envUpdated.browser);
+    return runnersAll.map((runner: RunnerType) => {
+      const runnerUpdated = runner;
+      const {
+        dataExt = [],
+        selectorsExt = [],
+        envsExt = [],
+        data: dataEnv = {},
+        selectors: selectorsEnv = {},
+      } = runner;
+      runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
 
       envsExt.forEach((envsExtName: string) => {
-        const envsResolved: RunnerType | undefined = envsAll.find((g: RunnerType) => g.name === envsExtName);
-        if (envsResolved) {
-          if (envsResolved.browser) {
-            envUpdated.browser = Engines.resolveBrowser(merge(envUpdated.browser, envsResolved.browser));
+        const runnersResolved: RunnerType | undefined = runnersAll.find((g: RunnerType) => g.name === envsExtName);
+        if (runnersResolved) {
+          if (runnersResolved.browser) {
+            runnerUpdated.browser = Engines.resolveBrowser(merge(runnerUpdated.browser, runnersResolved.browser));
           }
-          envUpdated.log = { ...(envUpdated.log || {}), ...(envsResolved.log || {}) };
-          envUpdated.data = { ...(envUpdated.data || {}), ...(envsResolved.data || {}) };
-          envUpdated.selectors = { ...(envUpdated.selectors || {}), ...(envsResolved.selectors || {}) };
-          envUpdated.description = `${envUpdated.description || ''} -> ${envsResolved.description || ''}`;
+          runnerUpdated.log = { ...(runnerUpdated.log || {}), ...(runnersResolved.log || {}) };
+          runnerUpdated.data = { ...(runnerUpdated.data || {}), ...(runnersResolved.data || {}) };
+          runnerUpdated.selectors = { ...(runnerUpdated.selectors || {}), ...(runnersResolved.selectors || {}) };
+          runnerUpdated.description = `${runnerUpdated.description || ''} -> ${runnersResolved.description || ''}`;
         } else {
-          throw new Error(`PuppeDo can't resolve extended environment '${envsExtName}' in environment '${env.name}'`);
+          throw new Error(`PuppeDo can't resolve extended runner '${envsExtName}' in runner '${runner.name}'`);
         }
       });
 
       dataExt.forEach((dataExtName: string) => {
         const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
         if (dataResolved) {
-          envUpdated.data = { ...(envUpdated.data || {}), ...(dataResolved.data || {}), ...dataEnv };
+          runnerUpdated.data = { ...(runnerUpdated.data || {}), ...(dataResolved.data || {}), ...dataEnv };
         } else {
-          throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in environment '${env.name}'`);
+          throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in runner '${runner.name}'`);
         }
       });
 
       selectorsExt.forEach((selectorsExtName: string) => {
         const selectorsResolved: DataType | undefined = selectorsAll.find((g: DataType) => g.name === selectorsExtName);
         if (selectorsResolved) {
-          envUpdated.selectors = {
-            ...(envUpdated.selectors || {}),
+          runnerUpdated.selectors = {
+            ...(runnerUpdated.selectors || {}),
             ...(selectorsResolved.data || {}),
             ...selectorsEnv,
           };
         } else {
-          throw new Error(
-            `PuppeDo can't resolve extended selectors '${selectorsExtName}' in environment '${env.name}'`,
-          );
+          throw new Error(`PuppeDo can't resolve extended selectors '${selectorsExtName}' in runner '${runner.name}'`);
         }
       });
 
-      return envUpdated;
+      return runnerUpdated;
     });
   }
 }
