@@ -26,7 +26,7 @@ import {
 type EnginesType = 'puppeteer' | 'playwright';
 
 type AtomInit = {
-  env?: Runner;
+  runner?: Runner;
   page?: BrowserPageType | BrowserFrame;
 };
 
@@ -40,7 +40,7 @@ class AtomError extends Error {
 }
 
 export default class Atom {
-  env: Runner;
+  runner: Runner;
   page: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
   levelIndent: number;
@@ -50,11 +50,11 @@ export default class Atom {
 
   constructor(init: AtomInit = {}) {
     this.page = init.page || this.page;
-    this.env = init.env || this.env;
+    this.runner = init.runner || this.runner;
   }
 
   getEngine(engine: EnginesType | null): boolean | EnginesType {
-    const atomEngine = this.env.getRunnerData().browser.engine;
+    const atomEngine = this.runner.getRunnerData().browser.engine;
 
     if (!enginesAvailable.includes(atomEngine)) {
       throw new Error(`There is unknown engine: ${atomEngine}. Use this engines: ${enginesAvailable}`);

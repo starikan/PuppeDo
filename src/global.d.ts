@@ -284,8 +284,6 @@ export type TestArgsType = {
   selectors: Record<string, unknown>;
   dataTest: Record<string, unknown>;
   selectorsTest: Record<string, unknown>;
-  envName: string;
-  envPageName: string;
   options: Record<string, string | number>;
   allowResults: Array<string>;
   bindResults: Record<string, string>;
@@ -304,7 +302,7 @@ export type TestArgsType = {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
   argsEnv: Record<string, unknown>;
-  env: Runner;
+  runner: Runner;
   allRunners: Runners;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;

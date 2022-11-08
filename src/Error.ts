@@ -60,7 +60,7 @@ export class TestError extends AbstractError {
     super();
 
     this.envsId = parentError?.envsId || test.envsId;
-    this.runners = parentError?.runners || test.env;
+    this.runners = parentError?.runners || test.runner;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
     this.testDescription = parentError?.testDescription || test.description;

@@ -392,9 +392,7 @@ export class Test implements TestExtendType {
   inlineJS!: string;
   breakParentIfResult: string;
 
-  envName!: string;
-  envPageName!: string;
-  env!: Runner;
+  runner!: Runner;
 
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
   run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
@@ -449,11 +447,8 @@ export class Test implements TestExtendType {
 
       const { allRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
-      const { name: runnerNameCurrent = '', page = '' } = current;
 
-      this.envName = runnerNameCurrent;
-      this.envPageName = page;
-      this.env = allRunners.getRunnerByName(runnerNameCurrent);
+      this.runner = allRunners.getRunnerByName(current.name || '');
 
       const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.logOptions);
 
@@ -551,7 +546,7 @@ export class Test implements TestExtendType {
         this.plugins.hook('resolveValues', { inputs });
 
         if (this.engineSupports.length) {
-          const { engine } = this.env.getRunnerData().browser || {};
+          const { engine } = this.runner.getRunnerData().browser || {};
           if (engine && !this.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }
@@ -577,7 +572,7 @@ export class Test implements TestExtendType {
           this.selectorsParent,
           this.selectors,
           this.bindSelectors,
-          this.env,
+          this.runner,
         );
 
         checkNeeds(this.needData, dataLocal, this.name);
@@ -611,13 +606,11 @@ export class Test implements TestExtendType {
         }
 
         // Extend with data passed to functions
-        const pageCurrent = this.env && this.env.getState()?.pages?.[this.envPageName];
+        const pageCurrent = this.runner && this.runner.getState()?.pages?.[current.page];
         const args: TestArgsType = {
           envsId: this.envsId,
           environment: new Environment(),
-          envName: this.envName,
-          envPageName: this.envPageName,
-          env: this.env,
+          runner: this.runner,
           allRunners,
           name: this.name,
           data: dataLocal,
@@ -640,7 +633,7 @@ export class Test implements TestExtendType {
           tags: this.tags,
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
-          browser: this.env && this.env.getState().browser,
+          browser: this.runner && this.runner.getState().browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
           description: descriptionResolved,
@@ -687,7 +680,7 @@ export class Test implements TestExtendType {
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
-            const atom = new Atom({ page: pageCurrent, env: this.env });
+            const atom = new Atom({ page: pageCurrent, runner: this.runner });
             const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];
             for (const selector of selectors) {
               elements.push(await atom.getElement(selector));
