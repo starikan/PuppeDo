@@ -268,7 +268,7 @@ const fetchData = (
   selectorsParent: Record<string, unknown>,
   selectors: Record<string, unknown>,
   bindSelectors: Record<string, string>,
-  env: Runner,
+  runner: Runner,
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
   const { data: allData, selectors: allSelectors } = new TestsContent().allData;
@@ -284,7 +284,7 @@ const fetchData = (
 
   let dataLocal = {
     ...PPD_DATA,
-    ...((env && env.getRunnerData().data) || {}),
+    ...((runner && runner.getRunnerData().data) || {}),
     ...dataExtResolved,
     ...dataParent,
     ...(resultsFromParent || {}),
@@ -293,7 +293,7 @@ const fetchData = (
 
   let selectorsLocal = {
     ...PPD_SELECTORS,
-    ...((env && env.getRunnerData().selectors) || {}),
+    ...((runner && runner.getRunnerData().selectors) || {}),
     ...selectorsExtResolved,
     ...selectorsParent,
     ...(resultsFromParent || {}),
