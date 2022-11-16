@@ -16,7 +16,6 @@ import {
   exporterSocket,
   exporterYamlLog,
 } from './Loggers/Exporters';
-import { PluginModule } from './PluginsCore';
 
 export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
 
@@ -56,25 +55,19 @@ export const argsDefault: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
-export const resolveOptions = (
-  options: RunOptions,
-): {
-  pluginsList: PluginModule<unknown>[];
-  loggerPipes: LogPipe[];
-  argsConfig: Partial<ArgumentsType>;
-} => {
+export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
   const configGlobal = __non_webpack_require__(
-    path.join(process.cwd(), options.globalConfigFile || 'puppedo.config.js'),
+    path.join(process.cwd(), options.globalConfigFile ?? 'puppedo.config.js'),
   );
 
-  const config: {
-    pluginsList: PluginModule<unknown>[];
-    loggerPipes: LogPipe[];
-    argsConfig: Partial<ArgumentsType>;
-  } = {
-    pluginsList: [...pluginsListDefault, ...(configGlobal.pluginsList || []), ...(options?.pluginsList || [])],
-    loggerPipes: [...loggerPipesDefault, ...(configGlobal.loggerPipes || []), ...(options?.loggerPipes || [])],
+  const config: RunOptions = {
+    pluginsList: [...pluginsListDefault, ...(configGlobal.pluginsList ?? []), ...(options.pluginsList ?? [])],
+    loggerPipes: [...loggerPipesDefault, ...(configGlobal.loggerPipes ?? []), ...(options.loggerPipes ?? [])],
     argsConfig: configGlobal.args || {},
+    closeAllEnvs: options.closeAllEnvs ?? true,
+    closeProcess: options.closeProcess ?? true,
+    stdOut: options.stdOut ?? true,
+    globalConfigFile: options.globalConfigFile || 'puppedo.config.js',
   };
 
   return config;

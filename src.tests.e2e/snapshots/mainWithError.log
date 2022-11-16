@@ -59,9 +59,9 @@
 [31m                      [0m[31mat testResolver (\@puppedo\core\src\getTest)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
 [31m                      [0m[31mat testResolver (\@puppedo\core\src\getTest)[0m
+[31m                      [0m[31mat runTest (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat runTest (\runAllTests)[0m
-[31m                      [0m[31mat start (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Error in Atom

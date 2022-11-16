@@ -410,11 +410,11 @@ export type PluginDocumentation = {
 };
 
 export type RunOptions = {
-  closeProcess?: boolean;
-  stdOut?: boolean;
-  closeAllEnvs?: boolean;
-  globalConfigFile?: string;
-  pluginsList?: PluginModule<unknown>[];
-  loggerPipes?: LogPipe[];
-  argsConfig?: Partial<ArgumentsType>;
+  closeProcess: boolean;
+  stdOut: boolean;
+  closeAllEnvs: boolean;
+  globalConfigFile: string;
+  pluginsList: PluginModule<unknown>[];
+  loggerPipes: LogPipe[];
+  argsConfig: Partial<ArgumentsType>;
 };

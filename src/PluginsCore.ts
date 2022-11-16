@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import crypto, { randomUUID } from 'crypto';
+import { Arguments } from './Arguments';
 import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
@@ -53,7 +54,11 @@ export class PluginsFabric extends Singleton {
         this.addPlugin(plugin);
       }
 
-      // this.printPluginsOrder();
+      const { PPD_DEBUG_MODE } = new Arguments().args;
+
+      if (PPD_DEBUG_MODE) {
+        console.log(JSON.stringify(this.getPluginsOrder(), null, 2));
+      }
     }
   }
 
