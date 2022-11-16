@@ -4,7 +4,7 @@ import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { Environment } from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
-import { LogEntry } from './global.d';
+import { LogEntry, LogPipe } from './global.d';
 import { pluginsList } from './Plugins';
 import { PluginModule, PluginsFabric } from './PluginsCore';
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
@@ -23,7 +23,16 @@ type RunOptions = {
   closeAllEnvs?: boolean;
   globalConfigFile?: string;
   plugins?: PluginModule<unknown>[];
+  loggerPipes?: LogPipe[];
 };
+
+const loggerPipesDefault: LogPipe[] = [
+  { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },
+  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole },
+  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile },
+  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
+  { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
+];
 
 export default async function run(
   argsInput = {},
@@ -35,12 +44,9 @@ export default async function run(
   }
 
   const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, allRunners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut } });
-  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory });
-  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole });
-  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile });
-  logger.addLogPipe({ transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket });
-  logger.addLogPipe({ transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog });
+  const { envsId, allRunners, logger, log } = new Environment().createEnv({
+    loggerOptions: { stdOut, loggerPipes: [...loggerPipesDefault, ...(options.loggerPipes || [])] },
+  });
 
   const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
   const argsTests = PPD_TESTS.filter((v) => !!v);

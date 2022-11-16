@@ -16,6 +16,7 @@ import {
   Outputs,
   OutputsLatest,
   RunnerCurrentType,
+  LogPipe,
 } from './global.d';
 import Singleton from './Singleton';
 import { Engines } from './Engines';
@@ -224,7 +225,7 @@ export class Environment extends Singleton {
   }
 
   createEnv(
-    data: { envsId?: string; socket?: SocketType; loggerOptions?: { stdOut?: boolean } } = {},
+    data: { envsId?: string; socket?: SocketType; loggerOptions?: { stdOut?: boolean; loggerPipes?: LogPipe[] } } = {},
   ): EnvsInstanceType {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
@@ -232,6 +233,11 @@ export class Environment extends Singleton {
       const output = initOutput(envsId);
       const allRunners = new Runners(envsId);
       const logger = new Log(envsId, loggerOptions);
+
+      for (const loggerPipe of loggerOptions?.loggerPipes || []) {
+        logger.addLogPipe(loggerPipe);
+      }
+
       const current: RunnerCurrentType = {};
 
       this.instances[envsId] = { output, allRunners, socket, envsId, logger, current, log: [] };

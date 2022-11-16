@@ -11,12 +11,13 @@ const {
   Blocker,
   Log,
   Singleton,
-  sleep,
-  merge,
   paintString,
   blankSocket,
   argsDefault,
   runScriptInContext,
+  Screenshot,
+  Plugin,
+  Plugins,
 } = require('./dist/index').default;
 
 process.on('unhandledRejection', errorHandler);
@@ -36,11 +37,12 @@ if (!module.parent) {
     Blocker,
     Log,
     Singleton,
-    sleep,
-    merge,
     paintString,
     blankSocket,
     argsDefault,
     runScriptInContext,
+    Screenshot,
+    Plugin,
+    Plugins,
   };
 }
