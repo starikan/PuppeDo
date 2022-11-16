@@ -1,6 +1,5 @@
-import yaml from 'js-yaml';
 import path from 'path';
-
+import yaml from 'js-yaml';
 import { Arguments } from '../Arguments';
 import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../global.d';
 import { colors, getNowDateTime } from '../Helpers';

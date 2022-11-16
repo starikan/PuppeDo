@@ -62,5 +62,12 @@ module.exports = {
     'security/detect-non-literal-fs-filename': 'off',
 
     'no-restricted-syntax': ['error', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
+
+    'import/order': [
+      'error',
+      {
+        groups: ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
+      },
+    ],
   },
 };

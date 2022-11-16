@@ -1,5 +1,4 @@
 import vm from 'vm';
-
 import { blankSocket, getTimer, merge, pick, generateId } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
@@ -7,8 +6,6 @@ import { Environment, Runner } from './Environment';
 import TestsContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
-import globalExportPPD from './index';
-
 import {
   LogOptionsType,
   ColorsType,
@@ -24,6 +21,7 @@ import {
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
+import globalExportPPD from './index';
 
 const ALIASES = {
   data: ['d', '📋'],
