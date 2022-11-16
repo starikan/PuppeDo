@@ -15,8 +15,8 @@ describe('TestContent', () => {
         PPD_ROOT_ADDITIONAL: ['bar'],
         PPD_ROOT: 'tests',
       },
+      {},
       true,
-      '',
     );
   });
 
@@ -46,8 +46,8 @@ describe('TestContent', () => {
         PPD_ROOT_ADDITIONAL: [],
         PPD_ROOT: 'notExistFolder',
       },
+      {},
       true,
-      '',
     );
 
     const allData = new TestsContent(true).getAllData(true);

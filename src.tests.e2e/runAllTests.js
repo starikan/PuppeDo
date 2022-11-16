@@ -31,9 +31,7 @@ const start = async () => {
     runServer();
     for (const runner of runners) {
       try {
-        await runTest(testsE2E[runner], {
-          globalConfigFile: testsE2E[runner].ignoreGlobalConfig ? '' : 'puppedo.config.js',
-        });
+        await runTest(testsE2E[runner]);
       } catch (error) {
         if (testsE2E[runner].isError) {
           process.exit(0);

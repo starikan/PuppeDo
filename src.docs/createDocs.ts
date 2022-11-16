@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import { pluginsList } from '../src/Plugins';
+import { pluginsListDefault } from '../src/Defaults';
 import { DocumentationLanguages } from '../src/global.d';
 import { PluginsFabric } from '../src/PluginsCore';
 
@@ -11,7 +11,7 @@ const languages: DocumentationLanguages[] = ['en', 'ru'];
 const index = fs.readFileSync(path.join(__dirname, './index.md'), 'utf-8');
 const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]).filter((v) => !['plugins'].includes(v));
 
-const allPlugins = new PluginsFabric(pluginsList);
+const allPlugins = new PluginsFabric(pluginsListDefault);
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};

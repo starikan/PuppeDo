@@ -4,52 +4,26 @@ import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { Environment } from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
-import { LogEntry, LogPipe } from './global.d';
-import { pluginsList } from './Plugins';
-import { PluginModule, PluginsFabric } from './PluginsCore';
-import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
-import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
-import {
-  exporterConsole,
-  exporterLogFile,
-  exporterLogInMemory,
-  exporterSocket,
-  exporterYamlLog,
-} from './Loggers/Exporters';
+import { LogEntry, RunOptions } from './global.d';
+import { PluginsFabric } from './PluginsCore';
 
-type RunOptions = {
-  closeProcess?: boolean;
-  stdOut?: boolean;
-  closeAllEnvs?: boolean;
-  globalConfigFile?: string;
-  plugins?: PluginModule<unknown>[];
-  loggerPipes?: LogPipe[];
-};
-
-const loggerPipesDefault: LogPipe[] = [
-  { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },
-  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterConsole },
-  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile },
-  { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
-  { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
-];
+import { resolveOptions } from './Defaults';
 
 export default async function run(
   argsInput = {},
   options: RunOptions = {},
 ): Promise<{ results: Record<string, unknown>; logs: Record<string, unknown> }> {
+  const { loggerPipes, pluginsList, argsConfig } = resolveOptions(options);
+
+  const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments(argsInput, argsConfig, true).args;
+
   const allPlugins = new PluginsFabric(pluginsList);
-  for (const plugin of options.plugins || []) {
+  for (const plugin of pluginsList) {
     allPlugins.addPlugin(plugin);
   }
 
-  const { closeProcess = true, stdOut = true, closeAllEnvs = true, globalConfigFile } = options;
-  const { envsId, allRunners, logger, log } = new Environment().createEnv({
-    loggerOptions: { stdOut, loggerPipes: [...loggerPipesDefault, ...(options.loggerPipes || [])] },
-  });
-
-  const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments({ ...argsInput }, true, globalConfigFile).args;
-  const argsTests = PPD_TESTS.filter((v) => !!v);
+  const { closeProcess = true, stdOut = true, closeAllEnvs = true } = options;
+  const { envsId, allRunners, logger, log } = new Environment().createEnv({ loggerOptions: { stdOut, loggerPipes } });
 
   if (PPD_DEBUG_MODE) {
     console.log(JSON.stringify(allPlugins.getPluginsOrder(), null, 2));
@@ -58,14 +32,14 @@ export default async function run(
   const results = {};
   const logs = {};
 
-  if (!argsTests.length) {
+  if (!PPD_TESTS.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
   }
 
   try {
     const startTime = getTimer().now;
 
-    for (const testName of argsTests) {
+    for (const testName of PPD_TESTS) {
       const startTimeTest = getTimer().now;
 
       await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });

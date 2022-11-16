@@ -1,4 +1,5 @@
-import { Arguments, argsDefault } from '../src/Arguments';
+import { Arguments } from '../src/Arguments';
+import { argsDefault } from '../src/Defaults';
 
 const argsModify = {
   PPD_DATA: { foo: 'bar' },
@@ -59,10 +60,10 @@ const argsENV = {
 // Reset Arguments
 function setArg<T>(argName: string, argData: T): [T, string | Record<string, string>] {
   // eslint-disable-next-line no-new
-  new Arguments({}, true, '');
+  new Arguments({}, {}, true);
 
   const argMock = { [argName]: argData };
-  const argResult = new Arguments(argMock, true, '').args[argName];
+  const argResult = new Arguments(argMock, {}, true).args[argName];
 
   return [argData, argResult];
 }
@@ -74,7 +75,7 @@ function errors(name: string, type: string): Error {
 test('Arguments is Singleton and Default args', () => {
   expect(new Arguments().args).toEqual(argsDefault);
   expect(new Arguments().args).toEqual(argsDefault);
-  expect(new Arguments({ PPD_DEBUG_MODE: false }, true, '').args).toEqual(argsDefault);
+  expect(new Arguments({ PPD_DEBUG_MODE: false }, {}, true).args).toEqual(argsDefault);
 });
 
 test('Arguments check', () => {
@@ -212,19 +213,19 @@ test('Arguments CLI', () => {
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];
-  const argsSplited = new Arguments({}, true, '').args;
+  const argsSplited = new Arguments({}, {}, true).args;
   expect(argsModify).toEqual(argsSplited);
   process.argv = rawArgv;
 
   process.argv = [...process.argv, argsJSON.join(' ')];
-  const argsSolid = new Arguments({}, true, '').args;
+  const argsSolid = new Arguments({}, {}, true).args;
   expect(argsModify).toEqual(argsSolid);
   process.argv = rawArgv;
 });
 
 test('Arguments ENV', () => {
   process.env = { ...process.env, ...argsENV };
-  const { args } = new Arguments({}, true, '');
+  const { args } = new Arguments({}, {}, true);
   expect(argsModify).toEqual(args);
   Object.keys(argsModify).forEach((v) => delete process.env[v]);
 });

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Plugin, PluginFunction } from '../../PluginsCore';
+import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
@@ -58,4 +58,4 @@ const documentation: PluginDocumentation = {
 
 const order = 200;
 
-export default { name, documentation, plugin, order };
+export default { name, documentation, plugin, order } as PluginModule<PluginContinueOnError>;

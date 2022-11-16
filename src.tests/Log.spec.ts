@@ -169,7 +169,7 @@ describe('Log', () => {
     expect(Log.checkLevel('error')).toBe('error');
     expect(Log.checkLevel('env')).toBe('env');
 
-    new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, true);
+    new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, {}, true);
     expect(Log.checkLevel('raw')).toBe('raw');
     expect(Log.checkLevel('timer')).toBe('timer');
     expect(Log.checkLevel('debug')).toBe(null);
@@ -183,7 +183,7 @@ describe('Log', () => {
   test('makeLog', () => {
     const time = new Date();
     const nowFormated = getNowDateTime(time, 'HH:mm:ss.SSS');
-    new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
 
     expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, stepId: '' })).toEqual([
       [
@@ -288,7 +288,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
@@ -297,7 +297,7 @@ describe('Log', () => {
     ]);
 
     // Breadcrumbs
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], stepId: '' })).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane' },
@@ -305,7 +305,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
       makeLog({
         level: 'info',
@@ -326,7 +326,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
       makeLog({
         level: 'info',
@@ -346,7 +346,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
       makeLog({
         level: 'raw',
@@ -363,7 +363,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
       makeLog({
         level: 'error',
@@ -389,7 +389,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
       makeLog({
         level: 'info',
@@ -406,7 +406,7 @@ describe('Log', () => {
       ],
     ]);
 
-    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, true);
+    new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');
     expect(
@@ -497,13 +497,13 @@ describe('Log', () => {
 
   // describe('log', () => {
   //   test('log', async () => {
-  //     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' }, true);
+  //     new Arguments({ PPD_LOG_LEVEL_TYPE: 'info' },{}, true);
   //     expect(await logger.log({ level: 'raw' })).toBeFalsy();
 
-  //     new Arguments({ PPD_LOG_LEVEL_NESTED: 1 }, true);
+  //     new Arguments({ PPD_LOG_LEVEL_NESTED: 1 },{}, true);
   //     expect(await logger.log({ levelIndent: 2 })).toBeFalsy();
 
-  //     new Arguments({ PPD_LOG_DISABLED: true }, true);
+  //     new Arguments({ PPD_LOG_DISABLED: true },{}, true);
   //     expect(await logger.log({})).toBeFalsy();
   //   });
   // });

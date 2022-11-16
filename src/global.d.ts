@@ -13,7 +13,7 @@ import {
 
 import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
-import { Plugins } from './PluginsCore';
+import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 
 // ================ BROWSERS ====================
@@ -407,4 +407,14 @@ export type PluginDocumentation = {
   name: string;
   type: string;
   propogation: boolean;
+};
+
+export type RunOptions = {
+  closeProcess?: boolean;
+  stdOut?: boolean;
+  closeAllEnvs?: boolean;
+  globalConfigFile?: string;
+  pluginsList?: PluginModule<unknown>[];
+  loggerPipes?: LogPipe[];
+  argsConfig?: Partial<ArgumentsType>;
 };

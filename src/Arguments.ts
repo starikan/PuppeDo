@@ -1,36 +1,8 @@
-import path from 'path';
-
 import Singleton from './Singleton';
 
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
-
-export const argsDefault: ArgumentsType = {
-  PPD_ROOT: process.cwd(),
-  PPD_ROOT_ADDITIONAL: [],
-  PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
-  PPD_FILES_IGNORE: [],
-  PPD_TESTS: [],
-  PPD_DATA: {},
-  PPD_SELECTORS: {},
-  PPD_DEBUG_MODE: false,
-  PPD_TAGS_TO_RUN: [],
-  PPD_CONTINUE_ON_ERROR_ENABLED: false,
-  PPD_OUTPUT: 'output',
-  PPD_LOG_DISABLED: false,
-  PPD_LOG_EXTEND: false,
-  PPD_LOG_LEVEL_NESTED: 0,
-  PPD_LOG_LEVEL_TYPE_IGNORE: [],
-  PPD_LOG_SCREENSHOT: false,
-  PPD_LOG_FULLPAGE: false,
-  PPD_LOG_TEST_NAME: true,
-  PPD_LOG_IGNORE_HIDE_LOG: false,
-  PPD_LOG_DOCUMENTATION_MODE: false,
-  PPD_LOG_NAMES_ONLY: [],
-  PPD_LOG_TIMESTAMP_SHOW: true,
-  PPD_LOG_TIMER_SHOW: true,
-  PPD_LOG_INDENT_LENGTH: 4,
-  PPD_IGNORE_TESTS_WITHOUT_NAME: true,
-};
+import { argsDefault } from './Defaults';
+import { pick } from './Helpers';
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
   if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
@@ -44,9 +16,14 @@ const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
 };
 
 const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
-  if (!Array.isArray(argsDefault[key]) || Array.isArray(val)) {
+  if (!Array.isArray(argsDefault[key])) {
     return val;
   }
+
+  if (Array.isArray(val)) {
+    return val.filter((v) => v !== null && v !== undefined && v !== '');
+  }
+
   let newVal: string[] | null = null;
   if (typeof val === 'string') {
     try {
@@ -58,7 +35,8 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   if (!Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'array' required.`);
   }
-  return newVal.filter((v) => v);
+
+  return newVal.filter((v) => v !== null && v !== undefined && v !== '');
 };
 
 const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknown> | T => {
@@ -133,52 +111,36 @@ const parseCLI = (): Partial<ArgumentsType> => {
   return parser(Object.fromEntries(argsRaw));
 };
 
+const mergeField = (
+  keys: string[],
+  configs: [Partial<ArgumentsType>, ...Array<Partial<ArgumentsType>>],
+): Partial<ArgumentsType> => {
+  const args = configs.reduce((collector, v) => ({ ...collector, ...v }), argsDefault);
+
+  for (const key of keys) {
+    if (Array.isArray(argsDefault[key])) {
+      args[key] = [...new Set([argsDefault[key] || [], configs.map((v) => v[key]).flat()].flat())];
+    } else if (typeof argsDefault[key] === 'object') {
+      args[key] = configs.reduce((collector, v) => ({ ...collector, ...v[key] }), argsDefault[key]);
+    }
+  }
+
+  return pick(args, keys);
+};
+
 export class Arguments extends Singleton {
   args!: ArgumentsType;
-  argsJS!: Partial<ArgumentsType>;
-  argsEnv!: Partial<ArgumentsType>;
-  argsCLI!: Partial<ArgumentsType>;
 
-  constructor(args: Partial<ArgumentsType> = {}, reInit = false, globalConfigFile = 'puppedo.config.js') {
+  constructor(args: Partial<ArgumentsType> = {}, argsConfig: Partial<ArgumentsType> = {}, reInit = false) {
     super();
     if (reInit || !this.args) {
-      let configArgs = {};
+      const argsInput = parser(args);
+      const argsEnv = parser(process.env as Record<string, string>);
+      const argsCLI = parseCLI();
 
-      try {
-        // TODO: 2021-02-21 S.Starodubov need types validation
-        const config = __non_webpack_require__(path.join(process.cwd(), globalConfigFile));
-        const { args: argsFromConfig } = config || {};
-        configArgs = parser(argsFromConfig);
-      } catch (error) {
-        // Nothin to do
-      }
-
-      this.argsJS = parser(args);
-      this.argsEnv = parser(process.env as Record<string, string>);
-      this.argsCLI = parseCLI();
-      this.args = { ...argsDefault, ...configArgs, ...this.argsEnv, ...this.argsCLI, ...this.argsJS };
-
-      for (const key of Object.keys(argsDefault)) {
-        if (Array.isArray(argsDefault[key])) {
-          this.args[key] = [
-            ...new Set([
-              ...(argsDefault[key] ?? []),
-              ...(configArgs[key] ?? []),
-              ...(this.argsEnv[key] ?? []),
-              ...(this.argsCLI[key] ?? []),
-              ...(this.argsJS[key] ?? []),
-            ]),
-          ];
-        } else if (typeof argsDefault[key] === 'object') {
-          this.args[key] = {
-            ...(argsDefault[key] ?? {}),
-            ...(configArgs[key] ?? {}),
-            ...(this.argsEnv[key] ?? {}),
-            ...(this.argsCLI[key] ?? {}),
-            ...(this.argsJS[key] ?? {}),
-          };
-        }
-      }
+      this.args = parser(
+        mergeField(Object.keys(argsDefault), [argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput]),
+      ) as ArgumentsType;
     }
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import { ArgumentsType, PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction } from '../../PluginsCore';
+import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
@@ -32,4 +32,4 @@ const documentation: PluginDocumentation = {
 
 const order = 100;
 
-export default { name, documentation, plugin, order };
+export default { name, documentation, plugin, order } as PluginModule<PluginArgsRedefine>;

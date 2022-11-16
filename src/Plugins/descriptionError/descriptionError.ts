@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction } from '../../PluginsCore';
+import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
 export type PluginDescriptionError = { descriptionError: string };
@@ -91,4 +91,4 @@ const documentation: PluginDocumentation = {
 
 const order = 300;
 
-export default { name, documentation, plugin, order };
+export default { name, documentation, plugin, order } as PluginModule<PluginDescriptionError>;

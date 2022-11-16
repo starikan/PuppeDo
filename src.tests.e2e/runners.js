@@ -62,7 +62,6 @@ const testsE2E = {
       PPD_FILES_IGNORE: ['tsconfig.json'],
     },
     isError: true,
-    ignoreGlobalConfig: true,
   },
   dataCheck: {
     params: {
