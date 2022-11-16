@@ -16,6 +16,7 @@ import {
   exporterSocket,
   exporterYamlLog,
 } from './Loggers/Exporters';
+import { blankSocket } from './Helpers';
 
 export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
 
@@ -68,6 +69,7 @@ export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
     closeProcess: options.closeProcess ?? true,
     stdOut: options.stdOut ?? true,
     globalConfigFile: options.globalConfigFile || 'puppedo.config.js',
+    socket: blankSocket,
   };
 
   return config;

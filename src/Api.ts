@@ -10,7 +10,7 @@ import { PluginsFabric } from './PluginsCore';
 import { resolveOptions } from './Defaults';
 
 const initEnvironment = (options: RunOptions, argsInput): string => {
-  const { loggerPipes, pluginsList, argsConfig, stdOut } = options;
+  const { loggerPipes, pluginsList, argsConfig, stdOut, socket } = options;
 
   const { PPD_TESTS } = new Arguments(argsInput, argsConfig, true).args;
 
@@ -23,7 +23,7 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
     allPlugins.addPlugin(plugin);
   }
 
-  const { envsId } = new Environment().createEnv({ loggerOptions: { stdOut, loggerPipes } });
+  const { envsId } = new Environment().createEnv({ socket, loggerOptions: { stdOut, loggerPipes } });
 
   return envsId;
 };

@@ -417,4 +417,5 @@ export type RunOptions = {
   pluginsList: PluginModule<unknown>[];
   loggerPipes: LogPipe[];
   argsConfig: Partial<ArgumentsType>;
+  socket: SocketType;
 };

@@ -234,7 +234,7 @@ export class Environment extends Singleton {
       const allRunners = new Runners(envsId);
       const logger = new Log(envsId, loggerOptions);
 
-      for (const loggerPipe of loggerOptions?.loggerPipes || []) {
+      for (const loggerPipe of loggerOptions?.loggerPipes ?? []) {
         logger.addLogPipe(loggerPipe);
       }
 
