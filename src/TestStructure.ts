@@ -89,7 +89,9 @@ export default class TestStructure {
 
   static getFullDepthJSON(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
-    const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
+    const fullJSON: TestExtendType = deepMergeField<TestExtendType, string>(rawTest, testBody, [
+      'logOptions',
+    ]) as TestExtendType;
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];

@@ -1,7 +1,8 @@
 import { Arguments } from '../src/Arguments';
 import { argsDefault } from '../src/Defaults';
+import { ArgumentsKeysType, ArgumentsType, ArgumentsValuesType } from '../src/global.d';
 
-const argsModify = {
+const argsModify: ArgumentsType = {
   PPD_DATA: { foo: 'bar' },
   PPD_DEBUG_MODE: true,
   PPD_LOG_DISABLED: true,
@@ -14,7 +15,7 @@ const argsModify = {
   PPD_SELECTORS: { joo: 'jii' },
   PPD_TESTS: ['suu'],
   PPD_LOG_LEVEL_NESTED: 10,
-  PPD_LOG_LEVEL_TYPE_IGNORE: ['joo'],
+  PPD_LOG_LEVEL_TYPE_IGNORE: ['sane'],
   PPD_LOG_SCREENSHOT: true,
   PPD_LOG_FULLPAGE: true,
   PPD_LOG_TEST_NAME: false,
@@ -29,7 +30,7 @@ const argsModify = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
-const argsENV = {
+const argsENV: Record<ArgumentsKeysType, string> = {
   PPD_DATA: '{"foo":"bar"}',
   PPD_DEBUG_MODE: 'true',
   PPD_LOG_DISABLED: 'true',
@@ -42,7 +43,7 @@ const argsENV = {
   PPD_SELECTORS: '{"joo": "jii"}',
   PPD_TESTS: 'suu',
   PPD_LOG_LEVEL_NESTED: '10',
-  PPD_LOG_LEVEL_TYPE_IGNORE: 'joo',
+  PPD_LOG_LEVEL_TYPE_IGNORE: 'sane',
   PPD_LOG_SCREENSHOT: 'true',
   PPD_LOG_FULLPAGE: 'true',
   PPD_LOG_TEST_NAME: 'false',
@@ -58,7 +59,7 @@ const argsENV = {
 };
 
 // Reset Arguments
-function setArg<T>(argName: string, argData: T): [T, string | Record<string, string>] {
+function setArg<T>(argName: ArgumentsKeysType, argData: T): [T, ArgumentsValuesType] {
   // eslint-disable-next-line no-new
   new Arguments({}, {}, true);
 
@@ -80,7 +81,7 @@ test('Arguments is Singleton and Default args', () => {
 
 test('Arguments check', () => {
   let argData: string | boolean | Record<string, string> | string[] | number;
-  let argResult: string | Record<string, string>;
+  let argResult: ArgumentsValuesType;
 
   // Object
   [, argResult] = setArg('PPD_DATA', '{"foo": "bar"}');
@@ -207,9 +208,10 @@ test('Arguments check', () => {
 test('Arguments CLI', () => {
   const rawArgv = process.argv;
 
-  const argsJSON = Object.keys(argsModify).map((key) => {
+  const keys = Object.keys(argsModify) as ArgumentsKeysType[];
+  const argsJSON = keys.map((key): string => {
     const isString = typeof argsModify[key] === 'string';
-    const val = isString ? argsModify[key] : JSON.stringify(argsModify[key]);
+    const val = isString ? (argsModify[key] as string) : JSON.stringify(argsModify[key]);
     return `${key}=${val}`;
   });
   process.argv = [...process.argv, ...argsJSON];

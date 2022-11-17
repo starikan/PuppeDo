@@ -1,7 +1,7 @@
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import { ColorsType, LogEntrieType, LogEntry, LogInputType, LogPipe, TestArgsType } from './global.d';
+import { ColorsType, LogEntrieType, LogEntry, LogInputType, LogOptionsType, LogPipe, TestArgsType } from './global.d';
 import { Environment } from './Environment';
 
 type LogOptions = {
@@ -48,7 +48,12 @@ export default class Log {
     return level as ColorsType;
   }
 
-  static isManualSkipEntry(levelText, logThis, logShowFlag, levelIndent): boolean {
+  static isManualSkipEntry(
+    levelText: ColorsType,
+    logThis: boolean,
+    logShowFlag: boolean,
+    levelIndent: number,
+  ): boolean {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED } = new Arguments().args;
     const manualSkipEntry =
       !levelText ||
@@ -59,7 +64,13 @@ export default class Log {
     return manualSkipEntry;
   }
 
-  async getScreenshots(logOptions, levelText, levelIndent, extendInfo, element): Promise<string[]> {
+  async getScreenshots(
+    logOptions: LogOptionsType,
+    levelText: ColorsType,
+    levelIndent: number,
+    extendInfo: boolean,
+    element,
+  ): Promise<string[]> {
     const { PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const { screenshot = false, fullpage = false, fullpageName, screenshotName } = logOptions;
 

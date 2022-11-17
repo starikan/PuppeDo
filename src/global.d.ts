@@ -15,6 +15,7 @@ import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
+import { argsDefault } from './Defaults';
 
 // ================ BROWSERS ====================
 
@@ -94,6 +95,8 @@ export type ArgumentsType = {
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
+
+export type ArgumentsValuesType = typeof argsDefault[ArgumentsKeysType];
 
 // ================ LOGGER ====================
 

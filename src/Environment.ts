@@ -1,6 +1,5 @@
 import os from 'os';
 import { execSync, spawnSync } from 'child_process';
-
 import { blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
 import TestsContent from './TestContent';
 import Log from './Log';
@@ -109,10 +108,10 @@ export class Runners {
   getActivePage(): BrowserPageType | BrowserFrame {
     const { name = '', page = '' } = new Environment().getCurrent(this.envsId);
     const activeEnv = this.runners[name];
-    if (!activeEnv.getState().pages) {
+    if (!activeEnv.getState().pages && !activeEnv.getState().pages?.[page]) {
       throw new Error('No active page');
     }
-    return activeEnv.getState().pages?.[page];
+    return activeEnv.getState().pages[page];
   }
 
   getRunnerByName(name: string): Runner {
@@ -141,7 +140,7 @@ export class Runner {
     return this.state;
   }
 
-  async runEngine(envsId): Promise<void> {
+  async runEngine(envsId: string): Promise<void> {
     const browserSettings = { ...BROWSER_DEFAULT, ...this.runnerData.browser };
     const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
@@ -212,9 +211,9 @@ export class Runner {
 }
 
 export class Environment extends Singleton {
-  private instances: Record<string, EnvsInstanceType>;
+  private instances!: Record<string, EnvsInstanceType>;
 
-  private output: OutputsLatest;
+  private output!: OutputsLatest;
 
   constructor(reInit = false) {
     super();

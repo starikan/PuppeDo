@@ -1,5 +1,5 @@
+import { deepmerge } from 'deepmerge-ts';
 import Singleton from './Singleton';
-
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
 import { argsDefault } from './Defaults';
 import { pick } from './Helpers';
@@ -20,11 +20,12 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
     return val;
   }
 
+  let newVal: string[] | null = null;
+
   if (Array.isArray(val)) {
-    return val.filter((v) => v !== null && v !== undefined && v !== '');
+    newVal = val;
   }
 
-  let newVal: string[] | null = null;
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
@@ -32,11 +33,12 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
       newVal = val.split(',').map((v: string) => v.trim());
     }
   }
+
   if (!Array.isArray(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'array' required.`);
   }
 
-  return newVal.filter((v) => v !== null && v !== undefined && v !== '');
+  return [...new Set(newVal.filter((v) => v !== null && v !== undefined && v !== ''))];
 };
 
 const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknown> | T => {
@@ -82,7 +84,7 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
 const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   const params: ArgumentsKeysType[] = Object.keys(argsDefault) as ArgumentsKeysType[];
   const result = params.reduce<Partial<ArgumentsType>>(
-    (acc: Partial<ArgumentsType>, key: ArgumentsKeysType): Partial<ArgumentsType> => {
+    (acc: Partial<ArgumentsType>, key: keyof ArgumentsType): Partial<ArgumentsType> => {
       let newVal = args[key];
       if (newVal === undefined) {
         return acc;
@@ -111,23 +113,6 @@ const parseCLI = (): Partial<ArgumentsType> => {
   return parser(Object.fromEntries(argsRaw));
 };
 
-const mergeField = (
-  keys: string[],
-  configs: [Partial<ArgumentsType>, ...Array<Partial<ArgumentsType>>],
-): Partial<ArgumentsType> => {
-  const args = configs.reduce((collector, v) => ({ ...collector, ...v }), argsDefault);
-
-  for (const key of keys) {
-    if (Array.isArray(argsDefault[key])) {
-      args[key] = [...new Set([argsDefault[key] || [], configs.map((v) => v[key]).flat()].flat())];
-    } else if (typeof argsDefault[key] === 'object') {
-      args[key] = configs.reduce((collector, v) => ({ ...collector, ...v[key] }), argsDefault[key]);
-    }
-  }
-
-  return pick(args, keys);
-};
-
 export class Arguments extends Singleton {
   args!: ArgumentsType;
 
@@ -138,8 +123,9 @@ export class Arguments extends Singleton {
       const argsEnv = parser(process.env as Record<string, string>);
       const argsCLI = parseCLI();
 
+      const allKeys = Object.keys(argsDefault) as ArgumentsKeysType[];
       this.args = parser(
-        mergeField(Object.keys(argsDefault), [argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput]),
+        pick(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput), allKeys),
       ) as ArgumentsType;
     }
   }

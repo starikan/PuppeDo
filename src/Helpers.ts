@@ -194,15 +194,20 @@ export const initOutput = (envsId: string): Partial<Outputs> => {
   };
 };
 
-export const deepMergeField = <T>(obj1: T, obj2: Partial<T>, fieldsObjectsMerge: string[] = []): T => {
+export const deepMergeField = <T extends Record<string, unknown>, U extends string>(
+  obj1: Partial<T>,
+  obj2: Partial<T>,
+  fieldsObjectsMerge: U[] = [],
+): Partial<T> => {
   const fieldsObjectsMergeResolves = fieldsObjectsMerge.length
     ? fieldsObjectsMerge
-    : [...new Set([...Object.keys(obj1), ...Object.keys(obj2)])];
+    : ([...new Set([...Object.keys(obj1), ...Object.keys(obj2)])] as U[]);
 
-  const mergedFields = fieldsObjectsMergeResolves.reduce((s, v) => {
-    // eslint-disable-next-line no-param-reassign
-    s[v] = { ...(obj1[v] || {}), ...(obj2[v] || {}) };
-    return s;
+  const mergedFields = fieldsObjectsMergeResolves.reduce((acc: Partial<T>, v: U) => {
+    acc[v] = { ...(obj1[v] || {}), ...(obj2[v] || {}) } as T[U];
+    return acc;
   }, {});
-  return { ...obj1, ...obj2, ...mergedFields };
+
+  const result = { ...obj1, ...obj2, ...mergedFields };
+  return result;
 };

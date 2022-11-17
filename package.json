@@ -43,6 +43,7 @@
     "axios": "1.1.3",
     "dayjs": "1.11.5",
     "deepmerge": "4.2.2",
+    "deepmerge-ts": "4.2.2",
     "js-yaml": "4.1.0",
     "require-from-string": "2.0.2",
     "source-map-support": "0.5.21"
