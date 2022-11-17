@@ -2,7 +2,6 @@ import { deepmerge } from 'deepmerge-ts';
 import Singleton from './Singleton';
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
 import { argsDefault } from './Defaults';
-import { pick } from './Helpers';
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
   if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
@@ -123,10 +122,7 @@ export class Arguments extends Singleton {
       const argsEnv = parser(process.env as Record<string, string>);
       const argsCLI = parseCLI();
 
-      const allKeys = Object.keys(argsDefault) as ArgumentsKeysType[];
-      this.args = parser(
-        pick(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput), allKeys),
-      ) as ArgumentsType;
+      this.args = parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
     }
   }
 }

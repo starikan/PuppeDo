@@ -3,7 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-import deepmerge from 'deepmerge';
+import deepmergeJs from 'deepmerge';
+// import { deepmerge } from 'deepmerge-ts';
 import dayjs from 'dayjs';
 
 import { Outputs, OutputsLatest, SocketType, TestFunctionsBlockNames } from './global.d';
@@ -15,10 +16,24 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-// TODO: 2022-11-07 S.Starodubov https://github.com/RebeccaStevens/deepmerge-ts/blob/main/docs/API.md
 export function merge<T>(...objects: T[]): T {
-  return deepmerge.all(objects, { arrayMerge: (_, source) => source });
+  // return deepmerge(...objects) as T;
+  return deepmergeJs.all(objects, { arrayMerge: (_, source) => source });
 }
+
+export const deepMergeField = <T extends Record<string, unknown>>(
+  obj1: T,
+  obj2: Partial<T>,
+  fieldsMerge: Array<keyof T>,
+): T => {
+  const mergedFields = fieldsMerge.reduce((acc: Partial<T>, v) => {
+    acc[v] = { ...(obj1[v] ?? {}), ...(obj2[v] ?? {}) } as T[keyof T];
+    return acc;
+  }, {});
+
+  const result = { ...obj1, ...obj2, ...mergedFields };
+  return result;
+};
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -192,22 +207,4 @@ export const initOutput = (envsId: string): Partial<Outputs> => {
     folder,
     folderFull: path.resolve(folder),
   };
-};
-
-export const deepMergeField = <T extends Record<string, unknown>, U extends string>(
-  obj1: Partial<T>,
-  obj2: Partial<T>,
-  fieldsObjectsMerge: U[] = [],
-): Partial<T> => {
-  const fieldsObjectsMergeResolves = fieldsObjectsMerge.length
-    ? fieldsObjectsMerge
-    : ([...new Set([...Object.keys(obj1), ...Object.keys(obj2)])] as U[]);
-
-  const mergedFields = fieldsObjectsMergeResolves.reduce((acc: Partial<T>, v: U) => {
-    acc[v] = { ...(obj1[v] || {}), ...(obj2[v] || {}) } as T[U];
-    return acc;
-  }, {});
-
-  const result = { ...obj1, ...obj2, ...mergedFields };
-  return result;
 };
