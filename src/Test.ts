@@ -329,7 +329,7 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
-const resolveDisable = (thisDisable, metaFromPrevSubling): string => {
+const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSublingExchangeData): string => {
   if (thisDisable) {
     return 'disable';
   }
@@ -604,7 +604,7 @@ export class Test implements TestExtendType {
         }
 
         // Extend with data passed to functions
-        const pageCurrent = this.runner && this.runner.getState()?.pages?.[current.page];
+        const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
         const args: TestArgsType = {
           envsId: this.envsId,
           environment: new Environment(),

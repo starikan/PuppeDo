@@ -108,10 +108,10 @@ export class Runners {
   getActivePage(): BrowserPageType | BrowserFrame {
     const { name = '', page = '' } = new Environment().getCurrent(this.envsId);
     const activeEnv = this.runners[name];
-    if (!activeEnv.getState().pages && !activeEnv.getState().pages?.[page]) {
+    if (!activeEnv.getState()?.pages?.[page]) {
       throw new Error('No active page');
     }
-    return activeEnv.getState().pages[page];
+    return activeEnv.getState()?.pages?.[page];
   }
 
   getRunnerByName(name: string): Runner {
@@ -120,11 +120,11 @@ export class Runners {
 }
 
 export class Runner {
-  private name: string;
+  private name!: string;
 
-  private state: RunnerStateType; // Browser, pages, cookies, etc.
+  private state!: RunnerStateType; // Browser, pages, cookies, etc.
 
-  private runnerData: RunnerType;
+  private runnerData!: RunnerType;
 
   constructor(runnerData: RunnerType) {
     this.name = runnerData.name;

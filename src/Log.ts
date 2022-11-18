@@ -1,7 +1,16 @@
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import { ColorsType, LogEntrieType, LogEntry, LogInputType, LogOptionsType, LogPipe, TestArgsType } from './global.d';
+import {
+  ColorsType,
+  Element,
+  LogEntrieType,
+  LogEntry,
+  LogInputType,
+  LogOptionsType,
+  LogPipe,
+  TestArgsType,
+} from './global.d';
 import { Environment } from './Environment';
 
 type LogOptions = {
@@ -69,7 +78,7 @@ export default class Log {
     levelText: ColorsType,
     levelIndent: number,
     extendInfo: boolean,
-    element,
+    element: Element,
   ): Promise<string[]> {
     const { PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const { screenshot = false, fullpage = false, fullpageName, screenshotName } = logOptions;
@@ -87,8 +96,8 @@ export default class Log {
       isFullpage && !extendInfo,
       isScreenshot && !extendInfo,
       fullpageName,
-      element,
       screenshotName,
+      element,
     );
 
     return screenshots;

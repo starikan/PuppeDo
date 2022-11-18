@@ -51,7 +51,7 @@ export const BLANK_TEST: TestType = {
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
 
 export default class TestsContent extends Singleton {
-  allData: AllDataType;
+  allData!: AllDataType;
 
   constructor(reInit = false) {
     super();
