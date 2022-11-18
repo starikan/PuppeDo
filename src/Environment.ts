@@ -111,7 +111,7 @@ export class Runners {
     if (!activeEnv.getState()?.pages?.[page]) {
       throw new Error('No active page');
     }
-    return activeEnv.getState()?.pages?.[page];
+    return activeEnv.getState().pages[page];
   }
 
   getRunnerByName(name: string): Runner {
