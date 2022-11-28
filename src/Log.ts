@@ -19,6 +19,8 @@ type LogOptions = {
   stdOut?: boolean;
 };
 
+const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
+
 export default class Log {
   private envsId: string;
 
@@ -43,7 +45,6 @@ export default class Log {
   }
 
   static checkLevel(level: string): ColorsType | null {
-    const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
     const { PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
 
     if (level === 'error') {
@@ -58,7 +59,7 @@ export default class Log {
   }
 
   static isManualSkipEntry(
-    levelText: ColorsType,
+    levelText: ColorsType | null,
     logThis: boolean,
     logShowFlag: boolean,
     levelIndent: number,
@@ -75,13 +76,17 @@ export default class Log {
 
   async getScreenshots(
     logOptions: LogOptionsType,
-    levelText: ColorsType,
+    levelText: ColorsType | null,
     levelIndent: number,
     extendInfo: boolean,
     element: Element,
   ): Promise<string[]> {
     const { PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const { screenshot = false, fullpage = false, fullpageName, screenshotName } = logOptions;
+
+    if (!levelText) {
+      return [];
+    }
 
     // TODO: 2020-02-05 S.Starodubov get values from env.yaml
     let isScreenshot = PPD_LOG_SCREENSHOT ? screenshot : false;
@@ -95,9 +100,9 @@ export default class Log {
     const screenshots = await new Screenshot(this.envsId).getScreenshotsLogEntry(
       isFullpage && !extendInfo,
       isScreenshot && !extendInfo,
+      element,
       fullpageName,
       screenshotName,
-      element,
     );
 
     return screenshots;
@@ -134,7 +139,7 @@ export default class Log {
       const logEntries = texts.map((textString) => {
         const logEntry: LogEntry = {
           text: textString,
-          level: levelText,
+          level: levelText ?? ('raw' as ColorsType),
           levelIndent,
           time: new Date(),
           screenshots,

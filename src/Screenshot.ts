@@ -29,14 +29,14 @@ export default class Screenshot {
     await Screenshot.copyScreenshotToFolder(pathScreenshot, folderLatest);
   }
 
-  getScreenshotName(nameIncome: string): string {
+  getScreenshotName(nameIncome?: string): string {
     // TODO: 2022-10-21 S.Starodubov todo
     const { folder = '.' } = new Environment().getOutput(this.envsId);
     const name = `${nameIncome || getNowDateTime()}.png`;
     return path.resolve(path.join(folder, name));
   }
 
-  async saveScreenshotElement(element: Element, name: string, copyToLatest = true): Promise<string> {
+  async saveScreenshotElement(element: Element, name?: string, copyToLatest = true): Promise<string> {
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
@@ -54,7 +54,8 @@ export default class Screenshot {
     return '';
   }
 
-  async saveScreenshotFull(name: string, copyToLatest = true): Promise<string> {
+  async saveScreenshotFull(nameIncome?: string, copyToLatest = true): Promise<string> {
+    const name = `${nameIncome || getNowDateTime()}_full.png`;
     const pathScreenshot = this.getScreenshotName(name);
 
     try {
@@ -76,9 +77,9 @@ export default class Screenshot {
   async getScreenshotsLogEntry(
     isFullpage: boolean,
     isScreenshot: boolean,
-    fullpageName: string,
-    screenshotName: string,
     element: Element,
+    fullpageName?: string,
+    screenshotName?: string,
   ): Promise<string[]> {
     const fullPageScreenshot = isFullpage ? await this.saveScreenshotFull(fullpageName) : [];
     const elementsScreenshots = isScreenshot ? await this.saveScreenshotElement(element, screenshotName) : [];

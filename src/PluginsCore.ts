@@ -20,13 +20,13 @@ type PropogationsAndShares = {
 
 export interface PluginType<TValues> {
   name: string;
-  hook: (name: keyof Hooks) => (unknown) => void;
+  hook: (name: keyof Hooks) => (_: unknown) => void;
   hooks: Hooks;
   propogationsAndShares?: PropogationsAndShares;
   values: TValues;
 }
 
-export type PluginFunction<T> = (allPlugins?: Plugins) => PluginType<T>;
+export type PluginFunction<T> = (allPlugins: Plugins) => PluginType<T>;
 
 export type PluginModule<T> = {
   name: string;
