@@ -44,39 +44,25 @@ export default class Log {
     this.pipes.push(pipe);
   }
 
-  static checkLevel(level: string): ColorsType | null {
+  static checkLevel(level: ColorsType): boolean {
     const { PPD_LOG_LEVEL_TYPE_IGNORE } = new Arguments().args;
-
-    if (level === 'error') {
-      return 'error' as ColorsType;
-    }
-
-    if (PPD_LOG_LEVEL_TYPE_IGNORE.includes(level as ColorsType) || !LEVELS.includes(level as ColorsType)) {
-      return null;
-    }
-
-    return level as ColorsType;
+    return !(PPD_LOG_LEVEL_TYPE_IGNORE.includes(level) || !LEVELS.includes(level));
   }
 
-  static isManualSkipEntry(
-    levelText: ColorsType | null,
-    logThis: boolean,
-    logShowFlag: boolean,
-    levelIndent: number,
-  ): boolean {
+  static isManualSkipEntry(level: ColorsType, logThis: boolean, logShowFlag: boolean, levelIndent: number): boolean {
     const { PPD_LOG_DISABLED, PPD_LOG_LEVEL_NESTED } = new Arguments().args;
     const manualSkipEntry =
-      !levelText ||
+      !Log.checkLevel(level) ||
       !logThis ||
-      (levelText !== 'error' && !logShowFlag) ||
-      (levelText !== 'error' && PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED) || // SKIP LOG BY LEVELS
-      (levelText !== 'error' && PPD_LOG_DISABLED); // NO LOG FILES ONLY STDOUT
+      (level !== 'error' && !logShowFlag) ||
+      (level !== 'error' && PPD_LOG_LEVEL_NESTED && levelIndent > PPD_LOG_LEVEL_NESTED) || // SKIP LOG BY LEVELS
+      (level !== 'error' && PPD_LOG_DISABLED); // NO LOG FILES ONLY STDOUT
     return manualSkipEntry;
   }
 
   async getScreenshots(
     logOptions: LogOptionsType,
-    levelText: ColorsType | null,
+    level: ColorsType,
     levelIndent: number,
     extendInfo: boolean,
     element: Element,
@@ -84,7 +70,7 @@ export default class Log {
     const { PPD_LOG_SCREENSHOT, PPD_LOG_FULLPAGE } = new Arguments().args;
     const { screenshot = false, fullpage = false, fullpageName, screenshotName } = logOptions;
 
-    if (!levelText) {
+    if (!Log.checkLevel(level)) {
       return [];
     }
 
@@ -93,7 +79,7 @@ export default class Log {
     let isFullpage = PPD_LOG_FULLPAGE ? fullpage : false;
 
     // SCREENSHOT ON ERROR ONLY ONES
-    if (levelText === 'error' && levelIndent === 0) {
+    if (level === 'error' && levelIndent === 0) {
       [isScreenshot, isFullpage] = [true, true];
     }
 
@@ -116,7 +102,7 @@ export default class Log {
 
   async log({
     text = '',
-    level = 'info',
+    level = 'raw',
     levelIndent = 0,
     element,
     error = null,
@@ -129,17 +115,16 @@ export default class Log {
     logOptions = {},
   }: LogInputType): Promise<void> {
     const texts = [text].flat();
-    const levelText = Log.checkLevel(level);
     const { log } = new Environment().getEnvAllInstance(this.envsId);
     const { textColor = 'sane', backgroundColor = 'sane', logThis = true } = logOptions;
-    const manualSkipEntry = Log.isManualSkipEntry(levelText, logThis, logShowFlag, levelIndent);
-    const screenshots = await this.getScreenshots(logOptions, levelText, levelIndent, extendInfo, element);
+    const manualSkipEntry = Log.isManualSkipEntry(level, logThis, logShowFlag, levelIndent);
+    const screenshots = await this.getScreenshots(logOptions, level, levelIndent, extendInfo, element);
 
     try {
       const logEntries = texts.map((textString) => {
         const logEntry: LogEntry = {
           text: textString,
-          level: levelText ?? ('raw' as ColorsType),
+          level: level ?? ('raw' as ColorsType),
           levelIndent,
           time: new Date(),
           screenshots,
@@ -149,7 +134,7 @@ export default class Log {
           extendInfo,
           error,
           textColor,
-          backgroundColor: levelText === 'error' ? 'sane' : backgroundColor,
+          backgroundColor: level === 'error' ? 'sane' : backgroundColor,
           breadcrumbs: this.options?.breadcrumbs || [],
           repeat: this.options?.testArgs?.repeat || 1,
         };

@@ -160,24 +160,24 @@ describe('Log', () => {
   });
 
   test('checkLevel', () => {
-    expect(Log.checkLevel('raw')).toBe('raw');
-    expect(Log.checkLevel('timer')).toBe('timer');
-    expect(Log.checkLevel('debug')).toBe('debug');
-    expect(Log.checkLevel('info')).toBe('info');
-    expect(Log.checkLevel('test')).toBe('test');
-    expect(Log.checkLevel('warn')).toBe('warn');
-    expect(Log.checkLevel('error')).toBe('error');
-    expect(Log.checkLevel('env')).toBe('env');
+    expect(Log.checkLevel('raw')).toBe(true);
+    expect(Log.checkLevel('timer')).toBe(true);
+    expect(Log.checkLevel('debug')).toBe(true);
+    expect(Log.checkLevel('info')).toBe(true);
+    expect(Log.checkLevel('test')).toBe(true);
+    expect(Log.checkLevel('warn')).toBe(true);
+    expect(Log.checkLevel('error')).toBe(true);
+    expect(Log.checkLevel('env')).toBe(true);
 
     new Arguments({ PPD_LOG_LEVEL_TYPE_IGNORE: ['info', 'debug', 'env'] }, {}, true);
-    expect(Log.checkLevel('raw')).toBe('raw');
-    expect(Log.checkLevel('timer')).toBe('timer');
-    expect(Log.checkLevel('debug')).toBe(null);
-    expect(Log.checkLevel('info')).toBe(null);
-    expect(Log.checkLevel('test')).toBe('test');
-    expect(Log.checkLevel('warn')).toBe('warn');
-    expect(Log.checkLevel('error')).toBe('error');
-    expect(Log.checkLevel('env')).toBe(null);
+    expect(Log.checkLevel('raw')).toBe(true);
+    expect(Log.checkLevel('timer')).toBe(true);
+    expect(Log.checkLevel('debug')).toBe(false);
+    expect(Log.checkLevel('info')).toBe(false);
+    expect(Log.checkLevel('test')).toBe(true);
+    expect(Log.checkLevel('warn')).toBe(true);
+    expect(Log.checkLevel('error')).toBe(true);
+    expect(Log.checkLevel('env')).toBe(false);
   });
 
   test('makeLog', () => {
