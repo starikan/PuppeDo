@@ -73,7 +73,7 @@ export class Runners {
           this.runners[name] = new Runner(JSON.parse(JSON.stringify(runnerFromFile)));
           await this.runners[name].runEngine(this.envsId);
         } else {
-          throw new Error(`Can't init runner '${name}'. Check 'envs' parameter`);
+          throw new Error(`Can't init runner '${name}'. Check 'runner' parameter`);
         }
       } else if (!this.runners[name]?.getState().browser) {
         await this.runners[name].runEngine(this.envsId);
