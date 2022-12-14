@@ -123,8 +123,6 @@ export class Arguments extends Singleton {
       const argsCLI = parseCLI();
 
       this.args = parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
-
-      console.log(JSON.stringify(this.args, null, 2));
     }
   }
 }
