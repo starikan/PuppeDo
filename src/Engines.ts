@@ -37,8 +37,6 @@ export class Engines {
 
     const browser = { ...DEFAULT_BROWSER, ...(browserInput || {}) };
 
-    debugger
-
     if (!ALLOW_BROWSER_TYPES.includes(browser.type)) {
       throw new Error(
         `PuppeDo can't find this type of envitonment: "${browser.type}". Allow this types: ${ALLOW_BROWSER_TYPES}`,
@@ -83,7 +81,6 @@ export class Engines {
   }
 
   static async runPlaywright(runnerData: RunnerType, state: RunnerStateType): Promise<RunnerStateType> {
-    debugger
     const { PPD_DEBUG_MODE = false } = new Arguments().args;
     const browserSettings = runnerData.browser;
     const {
