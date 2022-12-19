@@ -421,4 +421,5 @@ export type RunOptions = {
   loggerPipes: LogPipe[];
   argsConfig: Partial<ArgumentsType>;
   socket: SocketType;
+  debug: boolean;
 };

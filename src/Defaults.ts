@@ -70,6 +70,7 @@ export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
     stdOut: options.stdOut ?? true,
     globalConfigFile: options.globalConfigFile || 'puppedo.config.js',
     socket: blankSocket,
+    debug: !!options.debug,
   };
 
   return config;
