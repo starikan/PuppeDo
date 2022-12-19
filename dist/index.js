@@ -12909,6 +12909,7 @@ class Engines {
       ...DEFAULT_BROWSER,
       ...(browserInput || {})
     };
+    debugger;
     if (!ALLOW_BROWSER_TYPES.includes(browser.type)) {
       throw new Error(`PuppeDo can't find this type of envitonment: "${browser.type}". Allow this types: ${ALLOW_BROWSER_TYPES}`);
     }
@@ -12933,6 +12934,7 @@ class Engines {
     return browser;
   }
   static async runPlaywright(runnerData, state) {
+    debugger;
     const {
       PPD_DEBUG_MODE = false
     } = new Arguments().args;
@@ -15274,6 +15276,7 @@ class TestsContent extends Singleton {
       const selectors = TestsContent.checkDuplicates(allContent.filter(v => v.type === 'selectors'));
       const runners = TestsContent.checkDuplicates(allContent.filter(v => v.type === 'runner'));
       const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
+      debugger;
       this.allData = {
         allFiles: paths,
         allContent,
@@ -15298,6 +15301,7 @@ class TestsContent extends Singleton {
       } = runner;
       runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
       runnersExt.forEach(runnersExtName => {
+        debugger;
         const runnersResolved = runnersAll.find(g => g.name === runnersExtName);
         if (runnersResolved) {
           if (runnersResolved.browser) {
