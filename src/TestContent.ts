@@ -8,7 +8,6 @@ import { Arguments } from './Arguments';
 import { merge, walkSync } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
-import { Engines } from './Engines';
 
 export const BLANK_TEST: TestType = {
   afterTest: [],
@@ -207,13 +206,12 @@ export default class TestsContent extends Singleton {
         data: dataEnv = {},
         selectors: selectorsEnv = {},
       } = runner;
-      runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
 
       runnersExt.forEach((runnersExtName: string) => {
         const runnersResolved: RunnerType | undefined = runnersAll.find((g: RunnerType) => g.name === runnersExtName);
         if (runnersResolved) {
           if (runnersResolved.browser) {
-            runnerUpdated.browser = Engines.resolveBrowser(merge(runnerUpdated.browser, runnersResolved.browser));
+            runnerUpdated.browser = merge(runnerUpdated.browser, runnersResolved.browser);
           }
           runnerUpdated.log = { ...(runnerUpdated.log || {}), ...(runnersResolved.log || {}) };
           runnerUpdated.data = { ...(runnerUpdated.data || {}), ...(runnersResolved.data || {}) };

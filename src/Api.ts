@@ -84,6 +84,10 @@ export default async function run(
   const { logger, log } = new Environment().getEnvAllInstance(envsId);
   const { PPD_TESTS } = new Arguments().args;
 
+  if (options.debug) {
+    await logger.log({ level: 'timer', text: `Args: ${JSON.stringify(new Arguments().args)}` });
+  }
+
   try {
     const startTime = getTimer().now;
 
