@@ -21,16 +21,16 @@ import {
 } from './global.d';
 import { sleep } from './Helpers';
 
+export const DEFAULT_BROWSER: EnvBrowserType = {
+  type: 'browser',
+  engine: 'playwright',
+  runtime: 'run',
+  browserName: 'chromium',
+  headless: false,
+  slowMo: 1,
+};
 export class Engines {
   static resolveBrowser(browserInput: EnvBrowserType): EnvBrowserType {
-    const DEFAULT_BROWSER: EnvBrowserType = {
-      type: 'browser',
-      engine: 'playwright',
-      browserName: 'chromium',
-      runtime: 'run',
-      headless: false,
-      slowMo: 1,
-    };
     const ALLOW_BROWSER_TYPES: BrowserTypeType[] = ['browser', 'electron'];
     const ALLOW_BROWSER_EGINES: BrowserEngineType[] = ['puppeteer', 'playwright'];
     const ALLOW_BROWSER_MANES: BrowserNameType[] = ['chrome', 'chromium', 'firefox', 'webkit'];

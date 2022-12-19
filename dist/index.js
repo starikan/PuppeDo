@@ -12892,16 +12892,16 @@ const {
 
 
 
+const DEFAULT_BROWSER = {
+  type: 'browser',
+  engine: 'playwright',
+  runtime: 'run',
+  browserName: 'chromium',
+  headless: false,
+  slowMo: 1
+};
 class Engines {
   static resolveBrowser(browserInput) {
-    const DEFAULT_BROWSER = {
-      type: 'browser',
-      engine: 'playwright',
-      browserName: 'chromium',
-      runtime: 'run',
-      headless: false,
-      slowMo: 1
-    };
     const ALLOW_BROWSER_TYPES = ['browser', 'electron'];
     const ALLOW_BROWSER_EGINES = ['puppeteer', 'playwright'];
     const ALLOW_BROWSER_MANES = ['chrome', 'chromium', 'firefox', 'webkit'];
@@ -13249,14 +13249,6 @@ class Engines {
 
 
 
-const BROWSER_DEFAULT = {
-  type: 'browser',
-  engine: 'playwright',
-  runtime: 'run',
-  browserName: 'chromium',
-  headless: false,
-  slowMo: 1
-};
 class Runners {
   constructor(envsId) {
     this.runners = {};
@@ -13272,7 +13264,7 @@ class Runners {
       ...{
         name: '__blank_runner__',
         type: 'runner',
-        browser: BROWSER_DEFAULT
+        browser: DEFAULT_BROWSER
       },
       ...runner
     };
@@ -13346,10 +13338,10 @@ class Runner {
     return this.state;
   }
   async runEngine(envsId) {
-    const browserSettings = {
-      ...BROWSER_DEFAULT,
+    const browserSettings = Engines.resolveBrowser({
+      ...DEFAULT_BROWSER,
       ...this.runnerData.browser
-    };
+    });
     const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const {
@@ -15110,7 +15102,6 @@ class Arguments extends Singleton {
 
 
 
-
 const BLANK_TEST = {
   afterTest: [],
   allowOptions: [],
@@ -15299,13 +15290,15 @@ class TestsContent extends Singleton {
         data: dataEnv = {},
         selectors: selectorsEnv = {}
       } = runner;
-      runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
+
+      // runnerUpdated.browser = Engines.resolveBrowser(runnerUpdated.browser);
+
       runnersExt.forEach(runnersExtName => {
         debugger;
         const runnersResolved = runnersAll.find(g => g.name === runnersExtName);
         if (runnersResolved) {
           if (runnersResolved.browser) {
-            runnerUpdated.browser = Engines.resolveBrowser(Helpers_merge(runnerUpdated.browser, runnersResolved.browser));
+            runnerUpdated.browser = Helpers_merge(runnerUpdated.browser, runnersResolved.browser);
           }
           runnerUpdated.log = {
             ...(runnerUpdated.log || {}),

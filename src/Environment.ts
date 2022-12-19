@@ -6,7 +6,6 @@ import Log from './Log';
 import {
   BrowserFrame,
   BrowserPageType,
-  EnvBrowserType,
   RunnerStateType,
   RunnerType,
   LogEntry,
@@ -18,7 +17,7 @@ import {
   LogPipe,
 } from './global.d';
 import Singleton from './Singleton';
-import { Engines } from './Engines';
+import { DEFAULT_BROWSER, Engines } from './Engines';
 
 type EnvsInstanceType = {
   allRunners: Runners;
@@ -28,15 +27,6 @@ type EnvsInstanceType = {
   log: Array<LogEntry>;
   output: Outputs;
   current: RunnerCurrentType;
-};
-
-const BROWSER_DEFAULT: EnvBrowserType = {
-  type: 'browser',
-  engine: 'playwright',
-  runtime: 'run',
-  browserName: 'chromium',
-  headless: false,
-  slowMo: 1,
 };
 
 export class Runners {
@@ -59,7 +49,7 @@ export class Runners {
     page: string;
   }): Promise<void> {
     const runnerResolved: RunnerYamlType = {
-      ...{ name: '__blank_runner__', type: 'runner', browser: BROWSER_DEFAULT },
+      ...{ name: '__blank_runner__', type: 'runner', browser: DEFAULT_BROWSER },
       ...runner,
     };
 
@@ -141,7 +131,7 @@ export class Runner {
   }
 
   async runEngine(envsId: string): Promise<void> {
-    const browserSettings = { ...BROWSER_DEFAULT, ...this.runnerData.browser };
+    const browserSettings = Engines.resolveBrowser({ ...DEFAULT_BROWSER, ...this.runnerData.browser });
     const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
