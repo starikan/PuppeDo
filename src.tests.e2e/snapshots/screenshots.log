@@ -1,5 +1,5 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'screenshots' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'screenshots' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 screenshots (screenshots)
    (runnerSwitch)
    (goTo)
@@ -47,83 +47,83 @@ screenshots (screenshots)
          (blank)
          (checkSelectorRaw)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(screenshots) screenshots[0m
-[0m                       [0m[36m👣[screenshots][0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
-[0m                      |    [0m[36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunner'[0m
-[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   [0m[36m📌📋 (bD): {"runnerName":"myEnv"}[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
-[0m00:00:00.000 - test   |   [0m[32m(goTo) Going on page http://localhost:3000/[0m
-[0m                      |    [0m[36m👣[screenshots -> beforeTest[1].goTo][0m
-[0m00:00:00.000 - raw    |   |   [0m[0mGo to: http://localhost:3000/[0m
-[0m                      |   |   [0m[0m⌛: 00.000 s.[0m
-[0m                      |   |   [0m[36m📌📋 (bD): {"url":"baseUrl"}[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (goTo)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) No screenshot[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[0].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[0].case -> runTest[0].checkSelector][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Only one element[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[1].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Named element screenshot[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[2].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) 3 elements[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[3].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[4].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen named screenshot[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[5].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Fullscreen + Element[0m[0m
-[0m                      |    [0m[36m👣[screenshots -> runTest[6].case][0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(checkSelector) TODO: Fill description[0m[0m
-[0m                      |   |    [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m00:00:00.000 - test   |   |    [0m[36m🖼 screenshot: [screenshot_path][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (checkSelector)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m                      [0m[0m🕝: 00.000 s. (screenshots)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'screenshots' time 🕝: 00.000 s.[0m
-[0m                       [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
-[0m                       [0m[36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(screenshots) screenshots[0m
+                       [36m👣[screenshots][0m
+00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
+                      |    [36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   |   ⌛: 00.000 s.
+                      |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   [32m(goTo) Going on page http://localhost:3000/[0m
+                      |    [36m👣[screenshots -> beforeTest[1].goTo][0m
+00:00:00.000 - raw    |   |   Go to: http://localhost:3000/
+                      |   |   ⌛: 00.000 s.
+                      |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
+                      |   🕝: 00.000 s. (goTo)
+00:00:00.000 - test   |   [47m[30m(case) No screenshot[0m[0m
+                      |    [36m👣[screenshots -> runTest[0].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[0].case -> runTest[0].checkSelector][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Only one element[0m[0m
+                      |    [36m👣[screenshots -> runTest[1].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[1].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Named element screenshot[0m[0m
+                      |    [36m👣[screenshots -> runTest[2].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[2].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) 3 elements[0m[0m
+                      |    [36m👣[screenshots -> runTest[3].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[3].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[3].case -> runTest[1].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[3].case -> runTest[2].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Fullscreen[0m[0m
+                      |    [36m👣[screenshots -> runTest[4].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[4].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Fullscreen named screenshot[0m[0m
+                      |    [36m👣[screenshots -> runTest[5].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[5].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Fullscreen + Element[0m[0m
+                      |    [36m👣[screenshots -> runTest[6].case][0m
+00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
+                      |   |    [36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
+                      |   |   🕝: 00.000 s. (checkSelector)
+                      |   🕝: 00.000 s. (case)
+                      🕝: 00.000 s. (screenshots)
+00:00:00.000 - timer  Test 'screenshots' time 🕝: 00.000 s.
+                       [36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+                       [36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
 {
   "screenshots": {}
 }

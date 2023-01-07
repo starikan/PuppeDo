@@ -1,22 +1,22 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'tagsTest' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'tagsTest' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 Tags testing (tagsTest)
    No tags block (blank)
    Tag in list (blank)
    Tag not in list. Skipped. (blank)
    Disable = true. Skipped. (blank)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(tagsTest) Tags testing[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) No tags block[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) Tag in list[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - raw    |   [0m[34mSkip with tags: ["testTagNotShow"] => (blank) Tag not in list. Skipped.[0m
-[0m00:00:00.000 - raw    |   [0m[34mSkip with disable: (blank) Disable = true. Skipped.[0m
-[0m                      [0m[0m🕝: 00.000 s. (tagsTest)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'tagsTest' time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(tagsTest) Tags testing[0m
+00:00:00.000 - test   |   [32m(blank) No tags block[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Tag in list[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - raw    |   [34mSkip with tags: ["testTagNotShow"] => (blank) Tag not in list. Skipped.[0m
+00:00:00.000 - raw    |   [34mSkip with disable: (blank) Disable = true. Skipped.[0m
+                      🕝: 00.000 s. (tagsTest)
+00:00:00.000 - timer  Test 'tagsTest' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "tagsTest": {}
 }

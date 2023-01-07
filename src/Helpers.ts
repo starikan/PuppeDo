@@ -7,33 +7,8 @@ import deepmergeJs from 'deepmerge';
 // import { deepmerge } from 'deepmerge-ts';
 import dayjs from 'dayjs';
 
-import { Outputs, OutputsLatest, SocketType, TestFunctionsBlockNames } from './global.d';
+import { ColorsType, Outputs, OutputsLatest, SocketType, TestFunctionsBlockNames } from './global.d';
 import { Arguments } from './Arguments';
-
-export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-export function merge<T>(...objects: T[]): T {
-  // return deepmerge(...objects) as T;
-  return deepmergeJs.all(objects, { arrayMerge: (_, source) => source });
-}
-
-export const deepMergeField = <T extends Record<string, unknown>>(
-  obj1: T,
-  obj2: Partial<T>,
-  fieldsMerge: Array<keyof T>,
-): T => {
-  const mergedFields = fieldsMerge.reduce((acc: Partial<T>, v) => {
-    acc[v] = { ...(obj1[v] ?? {}), ...(obj2[v] ?? {}) } as T[keyof T];
-    return acc;
-  }, {});
-
-  const result = { ...obj1, ...obj2, ...mergedFields };
-  return result;
-};
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -88,8 +63,37 @@ export enum colors {
   env = colors.blue,
 }
 
-export const paintString = (str: string, color: keyof typeof colors = 'sane'): string =>
-  `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+export function merge<T>(...objects: T[]): T {
+  // return deepmerge(...objects) as T;
+  return deepmergeJs.all(objects, { arrayMerge: (_, source) => source });
+}
+
+export const deepMergeField = <T extends Record<string, unknown>>(
+  obj1: T,
+  obj2: Partial<T>,
+  fieldsMerge: Array<keyof T>,
+): T => {
+  const mergedFields = fieldsMerge.reduce((acc: Partial<T>, v) => {
+    acc[v] = { ...(obj1[v] ?? {}), ...(obj2[v] ?? {}) } as T[keyof T];
+    return acc;
+  }, {});
+
+  const result = { ...obj1, ...obj2, ...mergedFields };
+  return result;
+};
+
+export const paintString = (str: string, color: ColorsType = 'sane'): string => {
+  if (['sane', 'raw', 'timer', 'debug'].includes(color)) {
+    return str;
+  }
+  return `\u001b[${colors[color] || 0}m${str}\u001b[0m`;
+};
 
 export const blankSocket: SocketType = {
   send: () => {

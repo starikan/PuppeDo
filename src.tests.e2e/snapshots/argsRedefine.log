@@ -1,5 +1,5 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'argsRedefine' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 argsRedefine check (argsRedefine)
    Check PPD_LOG_EXTEND true globaly (case)
       (blank)
@@ -8,20 +8,20 @@ argsRedefine check (argsRedefine)
    Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child) (case)
       (blank)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(argsRedefine) argsRedefine check[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Check PPD_LOG_EXTEND true globaly[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      [0m[0m🕝: 00.000 s. (argsRedefine)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'argsRedefine' time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(argsRedefine) argsRedefine check[0m
+00:00:00.000 - test   |   [47m[30m(case) Check PPD_LOG_EXTEND true globaly[0m[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false[0m[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)[0m[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (argsRedefine)
+00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "argsRedefine": {}
 }

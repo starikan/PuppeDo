@@ -1,5 +1,5 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'continueOnError' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 continueOnError (continueOnError)
    Skip me if I broken (case)
       (blank)
@@ -10,30 +10,30 @@ continueOnError (continueOnError)
    Error me if I broken (case)
       (blank)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(continueOnError) continueOnError[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Skip me if I broken[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
-[0m00:00:00.000 - warn   |   |   [0m[33mContinue: Test stopped with expr errorIfResult = '1 === 1'[0m
-[0m00:00:00.000 - test   |   [0m[41m[30m(case) TODO: Fill description[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 3[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[41m[30m(case) TODO: Fill description[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 2[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[41m[30m(case) TODO: Fill description[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 1[0m
-[0m00:00:00.000 - warn   |   |   [0m[33mContinue: Test stopped with expr errorIfResult = '$loop < 2'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) I am without errors[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Error me if I broken[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[32m(blank) TODO: Fill description[0m[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(continueOnError) continueOnError[0m
+00:00:00.000 - test   |   [47m[30m(case) Skip me if I broken[0m[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+00:00:00.000 - warn   |   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1'[0m
+00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 3[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 2[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 1[0m
+00:00:00.000 - warn   |   |   [33mContinue: Test stopped with expr errorIfResult = '$loop < 2'[0m
+                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) I am without errors[0m[0m
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Error me if I broken[0m[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
 [31m00:00:00.000 - error  |   |   |   [0m[31mTest stopped with expr errorIfResult = '1 === 1'[0m
 [31m00:00:00.000 - error  |   |   |    continueOnError[0m
 [31m00:00:00.000 - error  |   |   |       runTest[3].case[0m
@@ -45,9 +45,9 @@ continueOnError (continueOnError)
 [31m00:00:00.000 - error  |   |          runTest[0].blank[0m
 [31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
-[0m00:00:00.000 - warn   |   [0m[33mContinue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'continueOnError' time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+00:00:00.000 - warn   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank[0m
+00:00:00.000 - timer  Test 'continueOnError' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "continueOnError": {}
 }

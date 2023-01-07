@@ -16,6 +16,7 @@ import { PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
+import { colors } from './Helpers';
 
 // ================ BROWSERS ====================
 
@@ -38,33 +39,7 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 // ================ HELPERS ====================
 
-export type ColorsType =
-  | 'sane'
-  | 'black'
-  | 'red'
-  | 'green'
-  | 'yellow'
-  | 'blue'
-  | 'magenta'
-  | 'cyan'
-  | 'white'
-  | 'blackBackground'
-  | 'redBackground'
-  | 'greenBackground'
-  | 'yellowBackground'
-  | 'blueBackground'
-  | 'magentaBackground'
-  | 'cyanBackground'
-  | 'whiteBackground'
-  | 'raw'
-  | 'timer'
-  | 'debug'
-  | 'info'
-  | 'test'
-  | 'warn'
-  | 'error'
-  | 'trace'
-  | 'env';
+export type ColorsType = keyof typeof colors;
 
 export type ArgumentsType = {
   PPD_ROOT: string;

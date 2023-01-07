@@ -41,7 +41,7 @@ describe('Log', () => {
           { text: 'text', textColor: 'info', backgroundColor: 'sane' },
         ],
       ]);
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('info \u001b[36mtext\u001b[0m');
     });
 
     test('Console with default colorization', () => {
@@ -51,7 +51,7 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('info text');
     });
 
     test('Console with background colorization default', () => {
@@ -61,7 +61,7 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('info text');
     });
 
     test('Console with background colorization exist color', () => {
@@ -71,9 +71,7 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'redBackground' },
         ],
       ]);
-      expect(console.log).toHaveBeenCalledWith(
-        '\u001b[41m\u001b[0minfo \u001b[0m\u001b[0m\u001b[41m\u001b[0mtext\u001b[0m\u001b[0m',
-      );
+      expect(console.log).toHaveBeenCalledWith('\u001b[41minfo \u001b[0m\u001b[41mtext\u001b[0m');
     });
 
     test('Console multiline', () => {
@@ -87,8 +85,8 @@ describe('Log', () => {
           { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
-      expect(console.log).toHaveBeenCalledWith('\u001b[0minfo\u001b[0m\u001b[0mtext\u001b[0m');
+      expect(console.log).toHaveBeenCalledWith('info text');
+      expect(console.log).toHaveBeenCalledWith('info text');
     });
   });
 
@@ -359,7 +357,7 @@ describe('Log', () => {
     ).toEqual([
       [
         { text: `${nowFormated} - raw    | `, textColor: 'sane', backgroundColor: 'sane' },
-        { text: 'text', textColor: 'raw', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
       ],
     ]);
 

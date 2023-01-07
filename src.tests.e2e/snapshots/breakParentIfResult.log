@@ -1,5 +1,5 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'breakParentIfResult' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'breakParentIfResult' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 breakParentIfResult (breakParentIfResult)
    Simple disable true (blank)
       ❌ Skip me (blank)
@@ -17,53 +17,53 @@ breakParentIfResult (breakParentIfResult)
       I`m next (blank)
    Another First level (blank)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(breakParentIfResult) breakParentIfResult[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) Simple disable true[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ Skip me[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) Simple disable false[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - raw    |   |   [0m[34mSkip with disable: (blank) ❌ Skip me[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) ✔️ Not skip me[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop breakParentIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 5[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop breakParentIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 4[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) I`m next[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   [0m[32m(loop) Loop breakParentIfResult[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) Second level loop: 3[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - warn   |   |   [0m[33mContinue: test with expr $loop <= 3'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m00:00:00.000 - test   |   [0m[32m(blank) Another First level[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m                      [0m[0m🕝: 00.000 s. (breakParentIfResult)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'breakParentIfResult' time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(breakParentIfResult) breakParentIfResult[0m
+00:00:00.000 - test   |   [32m(blank) Simple disable true[0m
+00:00:00.000 - raw    |   |   [34mSkip with disable: (blank) ❌ Skip me[0m
+00:00:00.000 - test   |   |   [32m(blank) ✔️ Not skip me[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Simple disable false[0m
+00:00:00.000 - test   |   |   [32m(blank) ✔️ Not skip me[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) ✔️ Not skip me[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) ✔️ Not skip me[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - raw    |   |   [34mSkip with disable: (blank) ❌ Skip me[0m
+00:00:00.000 - test   |   |   [32m(blank) ✔️ Not skip me[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(loop) Loop breakParentIfResult[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 5[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(loop) Loop breakParentIfResult[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 4[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(loop) Loop breakParentIfResult[0m
+00:00:00.000 - test   |   |   [32m(blank) Second level loop: 3[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - warn   |   |   [33mContinue: test with expr $loop <= 3'[0m
+                      |   🕝: 00.000 s. (loop)
+                      |   🕝: 00.000 s. (loop)
+00:00:00.000 - test   |   [32m(blank) Another First level[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (breakParentIfResult)
+00:00:00.000 - timer  Test 'breakParentIfResult' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "breakParentIfResult": {}
 }

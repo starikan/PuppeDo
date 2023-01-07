@@ -16,15 +16,9 @@ test('Helpers -> sleep', async () => {
 });
 
 test('Helpers -> paintString', () => {
-  // expect(paintString('*******', 0)).toEqual('\u001b[0m*******\u001b[0m');
-  // expect(paintString('*******', 'some weird')).toEqual('\u001b[0m*******\u001b[0m');
-  // expect(paintString('*******', true)).toEqual('\u001b[0m*******\u001b[0m');
-  // expect(paintString('*******', [])).toEqual('\u001b[0m*******\u001b[0m');
-  // expect(paintString('*******', ['foo'])).toEqual('\u001b[0m*******\u001b[0m');
-  // expect(paintString('*******', {})).toEqual('\u001b[0m*******\u001b[0m');
-  expect(paintString('*******')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******')).toEqual('*******');
 
-  expect(paintString('*******', 'sane')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'sane')).toEqual('*******');
   expect(paintString('*******', 'black')).toEqual('\u001b[30m*******\u001b[0m');
   expect(paintString('*******', 'red')).toEqual('\u001b[31m*******\u001b[0m');
   expect(paintString('*******', 'green')).toEqual('\u001b[32m*******\u001b[0m');
@@ -34,9 +28,9 @@ test('Helpers -> paintString', () => {
   expect(paintString('*******', 'cyan')).toEqual('\u001b[36m*******\u001b[0m');
   expect(paintString('*******', 'white')).toEqual('\u001b[37m*******\u001b[0m');
 
-  expect(paintString('*******', 'raw')).toEqual('\u001b[0m*******\u001b[0m');
-  expect(paintString('*******', 'timer')).toEqual('\u001b[0m*******\u001b[0m');
-  expect(paintString('*******', 'debug')).toEqual('\u001b[0m*******\u001b[0m');
+  expect(paintString('*******', 'raw')).toEqual('*******');
+  expect(paintString('*******', 'timer')).toEqual('*******');
+  expect(paintString('*******', 'debug')).toEqual('*******');
   expect(paintString('*******', 'info')).toEqual('\u001b[36m*******\u001b[0m');
   expect(paintString('*******', 'test')).toEqual('\u001b[32m*******\u001b[0m');
   expect(paintString('*******', 'warn')).toEqual('\u001b[33m*******\u001b[0m');

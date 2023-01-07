@@ -1,12 +1,12 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 descriptionErrorNested (descriptionErrorNested)
    description 0 (case)
       description 1 (blank)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(descriptionErrorNested) descriptionErrorNested[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) description 0[0m[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(descriptionErrorNested) descriptionErrorNested[0m
+00:00:00.000 - test   |   [47m[30m(case) description 0[0m[0m
 [31m00:00:00.000 - error  |   |   [0m[31mTest stopped with expr errorIf = 'true'[0m
 [31m00:00:00.000 - error  |   |    descriptionErrorNested[0m
 [31m00:00:00.000 - error  |   |       runTest[0].case[0m

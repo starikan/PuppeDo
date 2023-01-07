@@ -17,6 +17,18 @@ const resolveBackColor = (backgroundColor: ColorsType): ColorsType => {
   return backColor;
 };
 
+const resolveColor = (textColor: ColorsType, level: ColorsType): ColorsType => {
+  if (colors[textColor] !== colors.sane) {
+    return textColor;
+  }
+
+  if (colors[level] === colors.sane) {
+    return 'sane';
+  }
+
+  return level;
+};
+
 // TODO: 2023-01-07 S.Starodubov split this
 export const makeLog = ({
   level = 'sane',
@@ -50,7 +62,7 @@ export const makeLog = ({
 
   const tail: LogEntrieType = {
     text,
-    textColor: textColor !== 'sane' ? textColor : level,
+    textColor: resolveColor(textColor, level),
     backgroundColor: resolveBackColor(backgroundColor),
   };
 

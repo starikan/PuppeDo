@@ -1,5 +1,5 @@
-[0m00:00:00.000 - timer  [0m[0mTest 'atoms' start on '0000-00-00_00-00-00.000'[0m
-[0m00:00:00.000 - env    [0m[34m
+00:00:00.000 - timer  Test 'atoms' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
 Test all Atoms (atoms)
    (initData)
    [ENV_SWITCH] First of all you need chose environment. (runnerSwitch)
@@ -35,128 +35,128 @@ Test all Atoms (atoms)
    Selectors Atoms (todo)
    [RUNNER_CLOSE] Close runner (runnerClose)
 [0m
-[0m00:00:00.000 - timer  [0m[0mPrepare time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - test   [0m[32m(atoms) Test all Atoms[0m
-[0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunner'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Blank Atoms[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) [BLANK][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [CASE][0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(if) [IF][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (if)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(initData) [INIT_DATA][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (initData)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(loop) [LOOP][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(test) [TEST][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (test)[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[37m(todo) [TODO][0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Main Atoms[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(goTo) [GO_TO][0m
-[0m00:00:00.000 - raw    |   |   |   [0m[0mGo to: http://localhost:3000/[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (goTo)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [CLICK_SELECTOR][0m[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(clickSelector) Simple Click on link[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(clickSelector) Link Click after wait it (auto waitForSelector include)[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (clickSelector)[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_ATTRIBUTES][0m[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getAttribute) Simple geting atribute from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getAttribute)[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_TEXT][0m[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting text from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: 'Text' from selector: '#tag-with-text'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting blank text from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: '' from selector: '#span-with-attr'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) CDP Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Checks Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Files Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Modify Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Mouse Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Selectors Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainRunner' closed.[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (runnerClose)[0m
-[0m00:00:00.000 - test   [0m[32m(atoms) Test all Atoms[0m
-[0m00:00:00.000 - test   |   [0m[41m[32m(initData) TODO: Fill description[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (initData)[0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner switch on 'mainRunnerPuppeteer'[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (runnerSwitch)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Blank Atoms[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(blank) [BLANK][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (blank)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [CASE][0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(if) [IF][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (if)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(initData) [INIT_DATA][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (initData)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(loop) [LOOP][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (loop)[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(test) [TEST][0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (test)[0m
-[0m00:00:00.000 - test   |   |   [0m[41m[37m(todo) [TODO][0m[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[47m[30m(case) Main Atoms[0m[0m
-[0m00:00:00.000 - test   |   |   [0m[32m(goTo) [GO_TO][0m
-[0m00:00:00.000 - raw    |   |   |   [0m[0mGo to: http://localhost:3000/[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (goTo)[0m
-[0m00:00:00.000 - info   |   |   [0m[36mSkip with IF expr 'currentRunner !== 'mainRunnerPuppeteer'' === 'false'[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_ATTRIBUTES][0m[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getAttribute) Simple geting atribute from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getAttribute)[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   |   [0m[47m[30m(case) [GET_TEXT][0m[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting text from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: 'Text' from selector: '#tag-with-text'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
-[0m00:00:00.000 - test   |   |   |   [0m[32m(getText) Simple geting blank text from selector[0m
-[0m00:00:00.000 - raw    |   |   |   |   [0m[0mGet text: '' from selector: '#span-with-attr'[0m
-[0m                      |   |   |   [0m[0m🕝: 00.000 s. (getText)[0m
-[0m                      |   |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (case)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) CDP Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Checks Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Files Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Modify Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Mouse Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[41m[37m(todo) Selectors Atoms[0m[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (todo)[0m
-[0m00:00:00.000 - test   |   [0m[32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
-[0m00:00:00.000 - raw    |   |   [0m[0mRunner 'mainRunnerPuppeteer' closed.[0m
-[0m                      |   [0m[0m🕝: 00.000 s. (runnerClose)[0m
-[0m                      [0m[0m🕝: 00.000 s. (atoms)[0m
-[0m                      [0m[0m🕝: 00.000 s. (atoms)[0m
-[0m00:00:00.000 - timer  [0m[0mTest 'atoms' time 🕝: 00.000 s.[0m
-[0m00:00:00.000 - timer  [0m[0mEvaluated time 🕝: 00.000 s.[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(atoms) Test all Atoms[0m
+00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
+                      |   🕝: 00.000 s. (initData)
+00:00:00.000 - test   |   [32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   [47m[30m(case) Blank Atoms[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) [BLANK][0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [47m[30m(case) [CASE][0m[0m
+                      |   |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   |   [32m(if) [IF][0m
+                      |   |   🕝: 00.000 s. (if)
+00:00:00.000 - test   |   |   [32m(initData) [INIT_DATA][0m
+                      |   |   🕝: 00.000 s. (initData)
+00:00:00.000 - test   |   |   [32m(loop) [LOOP][0m
+                      |   |   🕝: 00.000 s. (loop)
+00:00:00.000 - test   |   |   [32m(test) [TEST][0m
+                      |   |   🕝: 00.000 s. (test)
+00:00:00.000 - test   |   |   [41m[37m(todo) [TODO][0m[0m
+                      |   |   🕝: 00.000 s. (todo)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Main Atoms[0m[0m
+00:00:00.000 - test   |   |   [32m(goTo) [GO_TO][0m
+00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
+                      |   |   🕝: 00.000 s. (goTo)
+00:00:00.000 - test   |   |   [47m[30m(case) [CLICK_SELECTOR][0m[0m
+00:00:00.000 - test   |   |   |   [32m(clickSelector) Simple Click on link[0m
+                      |   |   |   🕝: 00.000 s. (clickSelector)
+00:00:00.000 - test   |   |   |   [32m(clickSelector) Link Click after wait it (auto waitForSelector include)[0m
+                      |   |   |   🕝: 00.000 s. (clickSelector)
+                      |   |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   |   [47m[30m(case) [GET_ATTRIBUTES][0m[0m
+00:00:00.000 - test   |   |   |   [32m(getAttribute) Simple geting atribute from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'
+                      |   |   |   🕝: 00.000 s. (getAttribute)
+                      |   |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   |   [47m[30m(case) [GET_TEXT][0m[0m
+00:00:00.000 - test   |   |   |   [32m(getText) Simple geting text from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get text: 'Text' from selector: '#tag-with-text'
+                      |   |   |   🕝: 00.000 s. (getText)
+00:00:00.000 - test   |   |   |   [32m(getText) Simple geting blank text from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get text: '' from selector: '#span-with-attr'
+                      |   |   |   🕝: 00.000 s. (getText)
+                      |   |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [41m[37m(todo) CDP Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Checks Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Files Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Modify Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Mouse Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Selectors Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
+00:00:00.000 - raw    |   |   Runner 'mainRunner' closed.
+                      |   🕝: 00.000 s. (runnerClose)
+00:00:00.000 - test   [32m(atoms) Test all Atoms[0m
+00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
+                      |   🕝: 00.000 s. (initData)
+00:00:00.000 - test   |   [32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunnerPuppeteer'
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   [47m[30m(case) Blank Atoms[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) [BLANK][0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [47m[30m(case) [CASE][0m[0m
+                      |   |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   |   [32m(if) [IF][0m
+                      |   |   🕝: 00.000 s. (if)
+00:00:00.000 - test   |   |   [32m(initData) [INIT_DATA][0m
+                      |   |   🕝: 00.000 s. (initData)
+00:00:00.000 - test   |   |   [32m(loop) [LOOP][0m
+                      |   |   🕝: 00.000 s. (loop)
+00:00:00.000 - test   |   |   [32m(test) [TEST][0m
+                      |   |   🕝: 00.000 s. (test)
+00:00:00.000 - test   |   |   [41m[37m(todo) [TODO][0m[0m
+                      |   |   🕝: 00.000 s. (todo)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [47m[30m(case) Main Atoms[0m[0m
+00:00:00.000 - test   |   |   [32m(goTo) [GO_TO][0m
+00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
+                      |   |   🕝: 00.000 s. (goTo)
+00:00:00.000 - info   |   |   [36mSkip with IF expr 'currentRunner !== 'mainRunnerPuppeteer'' === 'false'[0m
+00:00:00.000 - test   |   |   [47m[30m(case) [GET_ATTRIBUTES][0m[0m
+00:00:00.000 - test   |   |   |   [32m(getAttribute) Simple geting atribute from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'
+                      |   |   |   🕝: 00.000 s. (getAttribute)
+                      |   |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   |   [47m[30m(case) [GET_TEXT][0m[0m
+00:00:00.000 - test   |   |   |   [32m(getText) Simple geting text from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get text: 'Text' from selector: '#tag-with-text'
+                      |   |   |   🕝: 00.000 s. (getText)
+00:00:00.000 - test   |   |   |   [32m(getText) Simple geting blank text from selector[0m
+00:00:00.000 - raw    |   |   |   |   Get text: '' from selector: '#span-with-attr'
+                      |   |   |   🕝: 00.000 s. (getText)
+                      |   |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   [41m[37m(todo) CDP Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Checks Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Files Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Modify Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Mouse Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[37m(todo) Selectors Atoms[0m[0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
+00:00:00.000 - raw    |   |   Runner 'mainRunnerPuppeteer' closed.
+                      |   🕝: 00.000 s. (runnerClose)
+                      🕝: 00.000 s. (atoms)
+                      🕝: 00.000 s. (atoms)
+00:00:00.000 - timer  Test 'atoms' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "atoms": {
     "result": {},
