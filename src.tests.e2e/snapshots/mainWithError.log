@@ -20,7 +20,7 @@
 [31m00:00:00.000 - error  [0m[31m============== ERROR MESSAGE ==============[0m
 [31m00:00:00.000 - error  [0m[31mpage.waitForSelector: Timeout 1000ms exceeded.[0m
 [31m00:00:00.000 - error  [0m[31m=========================== logs ===========================[0m
-[31m00:00:00.000 - error  [0m[31mwaiting for selector ".mainInputFake" to be visible[0m
+[31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
 [31m00:00:00.000 - error  [0m[31m============================================================[0m
 [31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m=============== EXTEND FILE ===============[0m

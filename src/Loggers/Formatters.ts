@@ -4,6 +4,7 @@ import { Arguments } from '../Arguments';
 import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../global.d';
 import { colors, getNowDateTime } from '../Helpers';
 
+// TODO: 2023-01-07 S.Starodubov split this
 export const makeLog = ({
   level = 'sane',
   levelIndent = 0,
