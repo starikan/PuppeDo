@@ -4,6 +4,19 @@ import { Arguments } from '../Arguments';
 import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../global.d';
 import { colors, getNowDateTime } from '../Helpers';
 
+const resolveBackColor = (backgroundColor: ColorsType): ColorsType => {
+  let backColor =
+    backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
+      ? (colors[colors[backgroundColor] + 10] as ColorsType)
+      : backgroundColor;
+
+  if (!Object.keys(colors).includes(backColor)) {
+    backColor = 'sane';
+  }
+
+  return backColor;
+};
+
 // TODO: 2023-01-07 S.Starodubov split this
 export const makeLog = ({
   level = 'sane',
@@ -29,26 +42,17 @@ export const makeLog = ({
   const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
   const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
 
-  let backColor =
-    backgroundColor && colors[backgroundColor] >= 30 && colors[backgroundColor] < 38
-      ? (colors[colors[backgroundColor] + 10] as ColorsType)
-      : backgroundColor;
-
-  if (!Object.keys(colors).includes(backColor)) {
-    backColor = 'sane';
-  }
-
   const head: LogEntrieType = {
     text: `${extendInfo && level !== 'error' ? spacesPreffix : nowWithPad}${indentString}`,
     textColor: headColor,
+    backgroundColor: 'sane',
   };
+
   const tail: LogEntrieType = {
     text,
     textColor: textColor !== 'sane' ? textColor : level,
+    backgroundColor: resolveBackColor(backgroundColor),
   };
-  if (backColor !== 'sane') {
-    tail.backgroundColor = backColor;
-  }
 
   const stringsLog: LogEntrieType[][] = [[head, tail]];
 
@@ -56,27 +60,30 @@ export const makeLog = ({
     const headText = `${spacesPreffix}${indentString} `;
     const tailText = `👣[${breadcrumbs.join(' -> ')}]`;
     stringsLog.push([
-      { text: headText, textColor: headColor },
-      { text: tailText, textColor: tailColor },
+      { text: headText, textColor: headColor, backgroundColor: 'sane' },
+      { text: tailText, textColor: tailColor, backgroundColor: 'sane' },
     ]);
 
     if (repeat > 1) {
       stringsLog.push([
-        { text: headText, textColor: headColor },
-        { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor },
+        { text: headText, textColor: headColor, backgroundColor: 'sane' },
+        { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor, backgroundColor: 'sane' },
       ]);
     }
   }
 
   if (level === 'error' && !extendInfo) {
     breadcrumbs.forEach((v, i) => {
-      stringsLog.push([{ text: `${nowWithPad}${indentString}${'   '.repeat(i)} ${v}`, textColor: 'error' }]);
+      stringsLog.push([
+        { text: `${nowWithPad}${indentString}${'   '.repeat(i)} ${v}`, textColor: 'error', backgroundColor: 'sane' },
+      ]);
     });
     if (testFile) {
       stringsLog.push([
         {
           text: `${nowWithPad}${indentString} (file:///${path.resolve(testFile)})`,
           textColor: 'error',
+          backgroundColor: 'sane',
         },
       ]);
     }
@@ -85,6 +92,7 @@ export const makeLog = ({
         {
           text: `${nowWithPad}${indentString} (file:///${path.resolve(funcFile)})`,
           textColor: 'error',
+          backgroundColor: 'sane',
         },
       ]);
     }
@@ -92,15 +100,15 @@ export const makeLog = ({
 
   (screenshots || []).forEach((v) => {
     stringsLog.push([
-      { text: `${nowWithPad}${indentString} `, textColor: headColor },
-      { text: `🖼 screenshot: [${v}]`, textColor: tailColor },
+      { text: `${nowWithPad}${indentString} `, textColor: headColor, backgroundColor: 'sane' },
+      { text: `🖼 screenshot: [${v}]`, textColor: tailColor, backgroundColor: 'sane' },
     ]);
   });
 
   if (level === 'error' && !extendInfo) {
     stringsLog.push([
-      { text: `${nowWithPad}${indentString} `, textColor: headColor },
-      { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor },
+      { text: `${nowWithPad}${indentString} `, textColor: headColor, backgroundColor: 'sane' },
+      { text: '='.repeat(120 - (levelIndent + 1) * 3 - 21), textColor: tailColor, backgroundColor: 'sane' },
     ]);
   }
 
@@ -110,8 +118,8 @@ export const makeLog = ({
 
     [...message, '='.repeat(120 - (levelIndent + 1) * 3 - 21), ...stack].forEach((v) => {
       stringsLog.push([
-        { text: ' '.repeat(22), textColor: 'error' },
-        { text: v, textColor: 'error' },
+        { text: ' '.repeat(22), textColor: 'error', backgroundColor: 'sane' },
+        { text: v, textColor: 'error', backgroundColor: 'sane' },
       ]);
     });
   }

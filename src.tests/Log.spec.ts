@@ -37,8 +37,8 @@ describe('Log', () => {
     test('Console with colorization', () => {
       consoleLog([
         [
-          { text: 'info ', textColor: 'sane' },
-          { text: 'text', textColor: 'info' },
+          { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+          { text: 'text', textColor: 'info', backgroundColor: 'sane' },
         ],
       ]);
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[36mtext\u001b[0m');
@@ -47,8 +47,8 @@ describe('Log', () => {
     test('Console with default colorization', () => {
       consoleLog([
         [
-          { text: 'info ', textColor: 'sane' },
-          { text: 'text', textColor: 'sane' },
+          { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+          { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
@@ -79,12 +79,12 @@ describe('Log', () => {
     test('Console multiline', () => {
       consoleLog([
         [
-          { text: 'info ', textColor: 'sane' },
-          { text: 'text', textColor: 'sane' },
+          { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+          { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
         [
-          { text: 'info', textColor: 'sane' },
-          { text: 'text', textColor: 'sane' },
+          { text: 'info', textColor: 'sane', backgroundColor: 'sane' },
+          { text: 'text', textColor: 'sane', backgroundColor: 'sane' },
         ],
       ]);
       expect(console.log).toHaveBeenCalledWith('\u001b[0minfo \u001b[0m\u001b[0mtext\u001b[0m');
@@ -111,8 +111,8 @@ describe('Log', () => {
         envsId,
         [
           [
-            { text: 'info ', textColor: 'sane' },
-            { text: 'text', textColor: 'info' },
+            { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+            { text: 'text', textColor: 'info', backgroundColor: 'sane' },
           ],
         ],
         'output.log',
@@ -126,8 +126,8 @@ describe('Log', () => {
         envsId,
         [
           [
-            { text: 'info ', textColor: 'sane' },
-            { text: 'text', textColor: 'info' },
+            { text: 'info ', textColor: 'sane', backgroundColor: 'sane' },
+            { text: 'text', textColor: 'info', backgroundColor: 'sane' },
           ],
         ],
         'output_another.log',
@@ -145,8 +145,8 @@ describe('Log', () => {
         envsId,
         [
           [
-            { text: '', textColor: 'sane' },
-            { text: 'text', textColor: 'info' },
+            { text: '', textColor: 'sane', backgroundColor: 'sane' },
+            { text: 'text', textColor: 'info', backgroundColor: 'sane' },
           ],
         ],
         'output.log',
@@ -187,22 +187,22 @@ describe('Log', () => {
 
     expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, stepId: '' })).toEqual([
       [
-        { text: `${nowFormated} - info   `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
     expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
       [
-        { text: `${nowFormated} - info   | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
     expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', time, stepId: '' })).toEqual([
       [
-        { text: `${nowFormated} - info   | | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -219,8 +219,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: '                      | ', textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -237,8 +237,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - error  | `, textColor: 'error' },
-        { text: 'text', textColor: 'error' },
+        { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'error', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -256,8 +256,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: '                      | ', textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -275,24 +275,24 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: '                      | ', textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
       [
-        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
-        { text: '🖼 screenshot: [foo]', textColor: 'info' },
+        { text: `${nowFormated} - info   |  `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: '🖼 screenshot: [foo]', textColor: 'info', backgroundColor: 'sane' },
       ],
       [
-        { text: `${nowFormated} - info   |  `, textColor: 'sane' },
-        { text: '🖼 screenshot: [bar]', textColor: 'info' },
+        { text: `${nowFormated} - info   |  `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: '🖼 screenshot: [bar]', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
       [
-        { text: `${nowFormated} - info   | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -300,8 +300,8 @@ describe('Log', () => {
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], stepId: '' })).toEqual([
       [
-        { text: `${nowFormated} - info   | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -317,12 +317,12 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - info   | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
       [
-        { text: '                      |  ', textColor: 'sane' },
-        { text: '👣[foo.runTest[0] -> hee]', textColor: 'info' },
+        { text: '                      |  ', textColor: 'sane', backgroundColor: 'sane' },
+        { text: '👣[foo.runTest[0] -> hee]', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -341,8 +341,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: '                      | ', textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -358,8 +358,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - raw    | `, textColor: 'sane' },
-        { text: 'text', textColor: 'raw' },
+        { text: `${nowFormated} - raw    | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'raw', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -375,16 +375,17 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - error  | `, textColor: 'error' },
-        { text: 'text', textColor: 'error' },
+        { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'error', backgroundColor: 'sane' },
       ],
-      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error' }],
-      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error', backgroundColor: 'sane' }],
+      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error', backgroundColor: 'sane' }],
       [
-        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        { text: `${nowFormated} - error  |  `, textColor: 'error', backgroundColor: 'sane' },
         {
           text: '=============================================================================================',
           textColor: 'error',
+          backgroundColor: 'sane',
         },
       ],
     ]);
@@ -401,8 +402,8 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - info   | `, textColor: 'sane' },
-        { text: 'text', textColor: 'info' },
+        { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
@@ -422,18 +423,19 @@ describe('Log', () => {
       }),
     ).toEqual([
       [
-        { text: `${nowFormated} - error  | `, textColor: 'error' },
-        { text: 'text', textColor: 'error' },
+        { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
+        { text: 'text', textColor: 'error', backgroundColor: 'sane' },
       ],
-      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error' }],
-      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error' }],
-      [{ text: `${nowFormated} - error  |  (file:///${testFile})`, textColor: 'error' }],
-      [{ text: `${nowFormated} - error  |  (file:///${funcFile})`, textColor: 'error' }],
+      [{ text: `${nowFormated} - error  |  foo.runTest[0]`, textColor: 'error', backgroundColor: 'sane' }],
+      [{ text: `${nowFormated} - error  |     hee`, textColor: 'error', backgroundColor: 'sane' }],
+      [{ text: `${nowFormated} - error  |  (file:///${testFile})`, textColor: 'error', backgroundColor: 'sane' }],
+      [{ text: `${nowFormated} - error  |  (file:///${funcFile})`, textColor: 'error', backgroundColor: 'sane' }],
       [
-        { text: `${nowFormated} - error  |  `, textColor: 'error' },
+        { text: `${nowFormated} - error  |  `, textColor: 'error', backgroundColor: 'sane' },
         {
           text: '=============================================================================================',
           textColor: 'error',
+          backgroundColor: 'sane',
         },
       ],
     ]);

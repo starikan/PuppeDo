@@ -133,7 +133,7 @@ export type LogOptionsType = {
 export type LogEntrieType = {
   text: string;
   textColor: ColorsType;
-  backgroundColor?: ColorsType;
+  backgroundColor: ColorsType;
 };
 
 export type LogInputType = {
