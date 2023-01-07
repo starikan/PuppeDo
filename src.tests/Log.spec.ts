@@ -8,7 +8,7 @@ import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
 import { Outputs, OutputsLatest } from '../src/global.d';
 import { consoleLog, fileLog } from '../src/Loggers/Exporters';
-import { makeLog } from '../src/Loggers/Formatters';
+import { formatterEntry } from '../src/Loggers/Formatters';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
@@ -178,26 +178,26 @@ describe('Log', () => {
     expect(Log.checkLevel('env')).toBe(false);
   });
 
-  test('makeLog', () => {
+  test('formatterEntry', async () => {
     const time = new Date();
     const nowFormated = getNowDateTime(time, 'HH:mm:ss.SSS');
     new Arguments({ PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
 
-    expect(makeLog({ level: 'info', levelIndent: 0, text: 'text', time, stepId: '' })).toEqual([
+    expect(await formatterEntry({ level: 'info', levelIndent: 0, text: 'text', time, stepId: '' }, {})).toEqual([
       [
         { text: `${nowFormated} - info   `, textColor: 'sane', backgroundColor: 'sane' },
         { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
+    expect(await formatterEntry({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' }, {})).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
         { text: 'text', textColor: 'info', backgroundColor: 'sane' },
       ],
     ]);
 
-    expect(makeLog({ level: 'info', levelIndent: 2, text: 'text', time, stepId: '' })).toEqual([
+    expect(await formatterEntry({ level: 'info', levelIndent: 2, text: 'text', time, stepId: '' }, {})).toEqual([
       [
         { text: `${nowFormated} - info   | | `, textColor: 'sane', backgroundColor: 'sane' },
         { text: 'text', textColor: 'info', backgroundColor: 'sane' },
@@ -205,16 +205,19 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: '',
-        testFile: '',
-        extendInfo: true,
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: '',
+          testFile: '',
+          extendInfo: true,
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
@@ -223,16 +226,19 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({
-        level: 'error',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: '',
-        testFile: '',
-        extendInfo: true,
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'error',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: '',
+          testFile: '',
+          extendInfo: true,
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
@@ -241,17 +247,20 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: '',
-        testFile: '',
-        extendInfo: true,
-        screenshots: [],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: '',
+          testFile: '',
+          extendInfo: true,
+          screenshots: [],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
@@ -260,17 +269,20 @@ describe('Log', () => {
     ]);
 
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: '',
-        testFile: '',
-        extendInfo: true,
-        screenshots: ['foo', 'bar'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: '',
+          testFile: '',
+          extendInfo: true,
+          screenshots: ['foo', 'bar'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
@@ -287,7 +299,7 @@ describe('Log', () => {
     ]);
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' })).toEqual([
+    expect(await formatterEntry({ level: 'info', levelIndent: 1, text: 'text', time, stepId: '' }, {})).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
         { text: 'text', textColor: 'info', backgroundColor: 'sane' },
@@ -296,7 +308,9 @@ describe('Log', () => {
 
     // Breadcrumbs
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
-    expect(makeLog({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], stepId: '' })).toEqual([
+    expect(
+      await formatterEntry({ level: 'info', levelIndent: 1, text: 'text', time, breadcrumbs: [], stepId: '' }, {}),
+    ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
         { text: 'text', textColor: 'info', backgroundColor: 'sane' },
@@ -305,14 +319,17 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
@@ -326,17 +343,20 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: '',
-        testFile: '',
-        extendInfo: true,
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: '',
+          testFile: '',
+          extendInfo: true,
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: '                      | ', textColor: 'sane', backgroundColor: 'sane' },
@@ -346,14 +366,17 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
-      makeLog({
-        level: 'raw',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'raw',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - raw    | `, textColor: 'sane', backgroundColor: 'sane' },
@@ -363,14 +386,17 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
-      makeLog({
-        level: 'error',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'error',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
@@ -390,14 +416,17 @@ describe('Log', () => {
 
     new Arguments({ PPD_LOG_EXTEND: false, PPD_LOG_INDENT_LENGTH: 2 }, {}, true);
     expect(
-      makeLog({
-        level: 'info',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'info',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - info   | `, textColor: 'sane', backgroundColor: 'sane' },
@@ -409,16 +438,19 @@ describe('Log', () => {
     const funcFile = path.resolve('funcFile');
     const testFile = path.resolve('testFile');
     expect(
-      makeLog({
-        level: 'error',
-        levelIndent: 1,
-        text: 'text',
-        time,
-        funcFile: 'funcFile',
-        testFile: 'testFile',
-        breadcrumbs: ['foo.runTest[0]', 'hee'],
-        stepId: '',
-      }),
+      await formatterEntry(
+        {
+          level: 'error',
+          levelIndent: 1,
+          text: 'text',
+          time,
+          funcFile: 'funcFile',
+          testFile: 'testFile',
+          breadcrumbs: ['foo.runTest[0]', 'hee'],
+          stepId: '',
+        },
+        {},
+      ),
     ).toEqual([
       [
         { text: `${nowFormated} - error  | `, textColor: 'error', backgroundColor: 'sane' },
@@ -438,9 +470,9 @@ describe('Log', () => {
       ],
     ]);
 
-    // describe('Repeat in makeLog', () => {
+    // describe('Repeat in await formatterEntry', () => {
     // logger.bindData({ testArgs: { repeat: 2 } });
-    // expect(makeLog({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
+    // expect(await formatterEntry({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - info   |  `, textColor: 'sane' },
     //     { text: 'text', textColor: 'info' },
@@ -456,7 +488,7 @@ describe('Log', () => {
     // ]);
     // });
 
-    // expect(makeLog({level:'error', levelIndent: 0, text: 'text', now)).toEqual([
+    // expect(await formatterEntry({level:'error', levelIndent: 0, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - error  `, textColor: 'error' },
     //     { text: 'text', textColor: 'error' },
@@ -487,7 +519,7 @@ describe('Log', () => {
     //   ],
     // ]);
 
-    // expect(makeLog({level:'info', levelIndent: 1, text: 'text', now, null, null, true, [], null, 'red', 'red')).toEqual([
+    // expect(await formatterEntry({level:'info', levelIndent: 1, text: 'text', now, null, null, true, [], null, 'red', 'red')).toEqual([
     //   [
     //     { text: '                      | ', textColor: 'sane' },
     //     { text: 'text', textColor: 'red', backgroundColor: 'redBackground' },

@@ -47,7 +47,7 @@ const getPrefix = (
 
 const getSpliter = (levelIndent = 0): string => '='.repeat(120 - (levelIndent + 1) * 3 - 21);
 
-export const makeLog = ({
+export const formatterEntry: LogFormatter = async ({
   level = 'sane',
   levelIndent = 0,
   text = '',
@@ -61,7 +61,7 @@ export const makeLog = ({
   backgroundColor = 'sane',
   breadcrumbs = [],
   repeat = 1,
-}: LogEntry): LogEntrieType[][] => {
+}: LogEntry): Promise<LogEntrieType[][]> => {
   const errorTyped = error;
   const message = (errorTyped?.message || '').split(' || ');
   const stack = (errorTyped?.stack || '').split('\n    ');
@@ -136,8 +136,6 @@ export const makeLog = ({
 };
 
 export const formatterEmpty: LogFormatter = async (): Promise<string> => '';
-
-export const formatterEntry: LogFormatter = async (logEntry: LogEntry): Promise<LogEntrieType[][]> => makeLog(logEntry);
 
 export const formatterYamlToString: LogFormatter = async (
   logEntry: LogEntry,
