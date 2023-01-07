@@ -47,7 +47,6 @@ const getPrefix = (
 
 const getSpliter = (levelIndent = 0): string => '='.repeat(120 - (levelIndent + 1) * 3 - 21);
 
-// TODO: 2023-01-07 S.Starodubov split this
 export const makeLog = ({
   level = 'sane',
   levelIndent = 0,
@@ -64,92 +63,76 @@ export const makeLog = ({
   repeat = 1,
 }: LogEntry): LogEntrieType[][] => {
   const errorTyped = error;
+  const message = (errorTyped?.message || '').split(' || ');
+  const stack = (errorTyped?.stack || '').split('\n    ');
+
   const { PPD_LOG_EXTEND } = new Arguments().args;
 
   const { spacesPrefix, timePrefix } = getPrefix(time, level, levelIndent);
   const headColor: ColorsType = level === 'error' ? 'error' : 'sane';
   const tailColor: ColorsType = level === 'error' ? 'error' : 'info';
 
-  const stringsLog: LogEntrieType[][] = [
-    [
-      {
-        text: extendInfo && level !== 'error' ? spacesPrefix : timePrefix,
-        textColor: headColor,
-        backgroundColor: 'sane',
-      },
-      {
-        text,
-        textColor: resolveColor(textColor, level),
-        backgroundColor: resolveBackColor(backgroundColor),
-      },
-    ],
-  ];
+  const isExtend = level !== 'error' && extendInfo;
+  const isError = level === 'error' && !extendInfo;
+  const isErrorTopLevel = isError && levelIndent === 0;
+  const isBreadcrumbs = level !== 'error' && !extendInfo && !!breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND;
+  const isRepeat = isBreadcrumbs && repeat > 1;
+  const isTestFile = isError && !!testFile;
+  const isFuncFile = isError && !!funcFile;
 
-  if (level !== 'error' && !extendInfo && breadcrumbs && breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND) {
-    stringsLog.push([
+  const stringsLog: Array<LogEntrieType[] | null | boolean> = [
+    [
+      { text: isExtend ? spacesPrefix : timePrefix, textColor: headColor, backgroundColor: 'sane' },
+      { text, textColor: resolveColor(textColor, level), backgroundColor: resolveBackColor(backgroundColor) },
+    ],
+
+    isBreadcrumbs && [
       { text: `${spacesPrefix} `, textColor: headColor, backgroundColor: 'sane' },
       { text: `👣[${breadcrumbs.join(' -> ')}]`, textColor: tailColor, backgroundColor: 'sane' },
-    ]);
+    ],
 
-    if (repeat > 1) {
-      stringsLog.push([
-        { text: `${spacesPrefix} `, textColor: headColor, backgroundColor: 'sane' },
-        { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor, backgroundColor: 'sane' },
-      ]);
-    }
-  }
+    isRepeat && [
+      { text: `${spacesPrefix} `, textColor: headColor, backgroundColor: 'sane' },
+      { text: `🔆 repeats left: ${repeat - 1}`, textColor: tailColor, backgroundColor: 'sane' },
+    ],
 
-  if (level === 'error' && !extendInfo) {
-    breadcrumbs.forEach((v, i) => {
-      stringsLog.push([{ text: `${timePrefix}${'   '.repeat(i)} ${v}`, textColor: 'error', backgroundColor: 'sane' }]);
-    });
-    if (testFile) {
-      stringsLog.push([
-        {
-          text: `${timePrefix} (file:///${path.resolve(testFile)})`,
-          textColor: 'error',
-          backgroundColor: 'sane',
-        },
-      ]);
-    }
-    if (funcFile) {
-      stringsLog.push([
-        {
-          text: `${timePrefix} (file:///${path.resolve(funcFile)})`,
-          textColor: 'error',
-          backgroundColor: 'sane',
-        },
-      ]);
-    }
-  }
+    ...breadcrumbs.map((v, i): LogEntrieType[] | null => {
+      if (isError) {
+        return [{ text: `${timePrefix}${'   '.repeat(i)} ${v}`, textColor: 'error', backgroundColor: 'sane' }];
+      }
+      return null;
+    }),
 
-  (screenshots || []).forEach((v) => {
-    stringsLog.push([
+    isTestFile && [
+      { text: `${timePrefix} (file:///${path.resolve(testFile)})`, textColor: 'error', backgroundColor: 'sane' },
+    ],
+
+    isFuncFile && [
+      { text: `${timePrefix} (file:///${path.resolve(funcFile)})`, textColor: 'error', backgroundColor: 'sane' },
+    ],
+
+    ...screenshots.map((v): LogEntrieType[] => [
       { text: `${timePrefix} `, textColor: headColor, backgroundColor: 'sane' },
       { text: `🖼 screenshot: [${v}]`, textColor: tailColor, backgroundColor: 'sane' },
-    ]);
-  });
+    ]),
 
-  if (level === 'error' && !extendInfo) {
-    stringsLog.push([
+    isError && [
       { text: `${timePrefix} `, textColor: headColor, backgroundColor: 'sane' },
       { text: getSpliter(levelIndent), textColor: tailColor, backgroundColor: 'sane' },
-    ]);
+    ],
 
-    if (levelIndent === 0) {
-      const message = (errorTyped?.message || '').split(' || ');
-      const stack = (errorTyped?.stack || '').split('\n    ');
-
-      [...message, getSpliter(), ...stack].forEach((v) => {
-        stringsLog.push([
+    ...[...message, getSpliter(), ...stack].map((v): LogEntrieType[] | null => {
+      if (isErrorTopLevel) {
+        return [
           { text: ' '.repeat(22), textColor: 'error', backgroundColor: 'sane' },
           { text: v, textColor: 'error', backgroundColor: 'sane' },
-        ]);
-      });
-    }
-  }
+        ];
+      }
+      return null;
+    }),
+  ];
 
-  return stringsLog;
+  return stringsLog.filter((v) => v) as LogEntrieType[][];
 };
 
 export const formatterEmpty: LogFormatter = async (): Promise<string> => '';
