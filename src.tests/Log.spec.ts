@@ -470,7 +470,7 @@ describe('Log', () => {
       ],
     ]);
 
-    // describe('Repeat in await formatterEntry', () => {
+    // describe('Repeat in formatterEntry', () => {
     // logger.bindData({ testArgs: { repeat: 2 } });
     // expect(await formatterEntry({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
     //   [
