@@ -17,6 +17,7 @@ import {
   exporterYamlLog,
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
+import { exporterAllure } from './Loggers/Allure';
 
 export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
 
@@ -26,6 +27,7 @@ export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterLogFile },
   { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
   { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
+  { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterAllure },
 ];
 
 export const argsDefault: ArgumentsType = {
