@@ -100,6 +100,25 @@ export default class Log {
     }
   }
 
+  async runPipes(logEntries: LogEntry[], skipThis = false): Promise<void> {
+    const { log } = new Environment().getEnvAllInstance(this.envsId);
+    for (const logEntry of logEntries) {
+      for (const pipe of this.pipes) {
+        try {
+          const transformedEntry = await pipe.transformer(logEntry);
+          const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
+          await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
+            envsId: this.envsId,
+            skipThis,
+            fullLog: log,
+          });
+        } catch (e) {
+          console.log(`Error in logger pipe: ${e.message}`);
+        }
+      }
+    }
+  }
+
   async log({
     text = '',
     level = 'raw',
@@ -115,7 +134,6 @@ export default class Log {
     logOptions = {},
   }: LogInputType): Promise<void> {
     const texts = [text].flat();
-    const { log } = new Environment().getEnvAllInstance(this.envsId);
     const { textColor = 'sane', backgroundColor = 'sane', logThis = true } = logOptions;
     const manualSkipEntry = Log.isManualSkipEntry(level, logThis, logShowFlag, levelIndent);
     const screenshots = await this.getScreenshots(logOptions, level, levelIndent, extendInfo, element);
@@ -141,21 +159,7 @@ export default class Log {
         return logEntry;
       });
 
-      for (const logEntry of logEntries) {
-        for (const pipe of this.pipes) {
-          try {
-            const transformedEntry = await pipe.transformer(logEntry);
-            const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
-            await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
-              envsId: this.envsId,
-              skipThis: !stdOut || manualSkipEntry,
-              fullLog: log,
-            });
-          } catch (e) {
-            console.log(`Error in logger pipe: ${e.message}`);
-          }
-        }
-      }
+      await this.runPipes(logEntries, !stdOut || manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
       const socket = new Environment().getSocket(this.envsId);
