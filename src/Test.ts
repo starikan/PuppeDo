@@ -476,8 +476,8 @@ export class Test implements TestExtendType {
           text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
           levelIndent: this.levelIndent,
-          logShowFlag,
           logOptions: {
+            logShowFlag,
             textColor: 'blue',
           },
         });
@@ -501,8 +501,8 @@ export class Test implements TestExtendType {
           )}`,
           level: 'raw',
           levelIndent: this.levelIndent,
-          logShowFlag,
           logOptions: {
+            logShowFlag,
             textColor: 'blue',
           },
         });
@@ -694,9 +694,8 @@ export class Test implements TestExtendType {
               text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
               level: 'test',
               levelIndent: this.levelIndent,
-              logShowFlag,
               element,
-              logOptions: this.logOptions,
+              logOptions: { ...this.logOptions, logShowFlag },
             });
           }
 
@@ -706,8 +705,8 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
-                logShowFlag,
                 logOptions: {
+                  logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
               });
@@ -796,8 +795,10 @@ export class Test implements TestExtendType {
             text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
             level: 'timer',
             levelIndent: this.levelIndent,
-            logShowFlag,
             extendInfo: true,
+            logOptions: {
+              logShowFlag,
+            },
           });
         }
 

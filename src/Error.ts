@@ -95,11 +95,11 @@ export class TestError extends AbstractError {
         level: 'error',
         text,
         stepId,
-        funcFile,
-        testFile,
         levelIndent,
         error: this,
         logOptions: {
+          funcFile,
+          testFile,
           screenshot: false,
         },
       });

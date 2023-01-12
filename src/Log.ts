@@ -125,16 +125,20 @@ export default class Log {
     levelIndent = 0,
     element,
     error = null,
-    extendInfo = false,
     stdOut = this.options.stdOut !== undefined ? this.options.stdOut : true,
     stepId = '',
-    logShowFlag = true,
-    funcFile = '',
-    testFile = '',
     logOptions = {},
+    extendInfo = false,
   }: LogInputType): Promise<void> {
     const texts = [text].flat();
-    const { textColor = 'sane', backgroundColor = 'sane', logThis = true } = logOptions;
+    const {
+      textColor = 'sane',
+      backgroundColor = 'sane',
+      logThis = true,
+      funcFile = '',
+      testFile = '',
+      logShowFlag = true,
+    } = logOptions;
     const manualSkipEntry = Log.isManualSkipEntry(level, logThis, logShowFlag, levelIndent);
     const screenshots = await this.getScreenshots(logOptions, level, levelIndent, extendInfo, element);
 
@@ -146,13 +150,13 @@ export default class Log {
           levelIndent,
           time: new Date(),
           screenshots,
-          stepId: this.options.testArgs?.stepId || stepId,
           funcFile,
           testFile,
           extendInfo,
           error,
           textColor,
           backgroundColor: level === 'error' ? 'sane' : backgroundColor,
+          stepId: this.options.testArgs?.stepId || stepId,
           breadcrumbs: this.options?.breadcrumbs || [],
           repeat: this.options?.testArgs?.repeat || 1,
         };

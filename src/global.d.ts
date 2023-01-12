@@ -81,7 +81,6 @@ export type LogEntry = {
   levelIndent: number;
   time: Date;
   stepId: string;
-
   screenshots?: string[];
   funcFile?: string;
   testFile?: string;
@@ -103,6 +102,9 @@ export type LogOptionsType = {
   level?: ColorsType;
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
+  funcFile?: string;
+  testFile?: string;
+  logShowFlag?: boolean;
 };
 
 export type LogEntrieType = {
@@ -112,17 +114,14 @@ export type LogEntrieType = {
 };
 
 export type LogInputType = {
+  extendInfo?: boolean;
   text: string | string[];
   level?: ColorsType;
-  funcFile?: string;
-  testFile?: string;
   element?: Element;
   levelIndent?: number;
   error?: Error | ErrorType | null;
-  extendInfo?: boolean;
   stdOut?: boolean;
   stepId?: string;
-  logShowFlag?: boolean;
   page?: PagePuppeteer | PagePlaywright;
   logOptions?: LogOptionsType;
 };
