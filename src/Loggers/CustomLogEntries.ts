@@ -10,14 +10,14 @@ export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: numbe
     const output = new Environment().getOutput(envsId);
     const outputFile = path.join(output.folderFull || '.', 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
-    await log({ text, levelIndent, level: 'error', extendInfo: true });
+    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
   }
 };
 
 export const logErrorMessage = async (log: LogFunctionType, levelIndent: number, error: ErrorType): Promise<void> => {
   if (error.message) {
     const text = ['============== ERROR MESSAGE ==============', ...error.message.split('\n'), ''];
-    await log({ text, levelIndent, level: 'error', extendInfo: true });
+    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
   }
 };
 
@@ -29,7 +29,7 @@ export const logStack = async (
 ): Promise<void> => {
   if (error.stack) {
     const text = ['============== ERROR STACK ==============', ...error.stack.split('\n'), ''];
-    await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
   }
 };
 
@@ -37,7 +37,7 @@ export const logTimer = async (log: LogFunctionType, startTime: bigint, levelInd
   const { PPD_LOG_EXTEND } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
     const text = `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`;
-    await log({ text, level: 'timer', levelIndent: levelIndent + 1, extendInfo: true });
+    await log({ text, level: 'timer', levelIndent: levelIndent + 1, logMeta: { extendInfo: true } });
   }
 };
 
@@ -69,7 +69,7 @@ export const logExtend = async (
       text,
       levelIndent: isError ? levelIndent : levelIndent + 1,
       level: isError ? 'error' : 'info',
-      extendInfo: true,
+      logMeta: { extendInfo: true },
     });
   }
 };
@@ -77,7 +77,7 @@ export const logExtend = async (
 export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
   const args = Object.entries(new Arguments().args).map((v) => `${v[0]}: ${JSON.stringify(v[1])}`);
   const text = ['============== ARGUMENTS ==============', ...args, ''];
-  await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
 };
 
 export const logDebug = async (
@@ -98,7 +98,7 @@ export const logDebug = async (
     text = [...text, '============== DEBUG SELECTORS ==============', ...selectorsDebug, ''];
   }
 
-  await log({ text, levelIndent, level: 'error', extendInfo: true, stdOut });
+  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
 
   // console.log(args);
 };

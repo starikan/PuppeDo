@@ -795,10 +795,8 @@ export class Test implements TestExtendType {
             text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
             level: 'timer',
             levelIndent: this.levelIndent,
-            extendInfo: true,
-            logOptions: {
-              logShowFlag,
-            },
+            logOptions: { logShowFlag },
+            logMeta: { extendInfo: true },
           });
         }
 

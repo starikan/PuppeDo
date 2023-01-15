@@ -92,9 +92,16 @@ export type LogEntry = {
   repeat?: number;
 };
 
+export type LogMetaInfoType = {
+  funcFile?: string;
+  testFile?: string;
+  extendInfo?: boolean;
+};
+
 export type LogOptionsType = {
   logThis?: boolean;
   logChildren?: boolean;
+  logShowFlag?: boolean;
   screenshot?: boolean;
   fullpage?: boolean;
   screenshotName?: string;
@@ -102,9 +109,6 @@ export type LogOptionsType = {
   level?: ColorsType;
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
-  funcFile?: string;
-  testFile?: string;
-  logShowFlag?: boolean;
 };
 
 export type LogEntrieType = {
@@ -114,7 +118,6 @@ export type LogEntrieType = {
 };
 
 export type LogInputType = {
-  extendInfo?: boolean;
   text: string | string[];
   level?: ColorsType;
   element?: Element;
@@ -123,6 +126,7 @@ export type LogInputType = {
   stdOut?: boolean;
   stepId?: string;
   page?: PagePuppeteer | PagePlaywright;
+  logMeta?: LogMetaInfoType;
   logOptions?: LogOptionsType;
 };
 

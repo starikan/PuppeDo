@@ -97,11 +97,8 @@ export class TestError extends AbstractError {
         stepId,
         levelIndent,
         error: this,
-        logOptions: {
-          funcFile,
-          testFile,
-          screenshot: false,
-        },
+        logMeta: { funcFile, testFile },
+        logOptions: { screenshot: false },
       });
     }
 
@@ -121,7 +118,7 @@ export class TestError extends AbstractError {
                       █ Description:`,
       ...breadcrumbsDescriptions.map((v, i) => `                      █ ${' '.repeat((1 + i) * 3)}${v}`),
     ].join('\n');
-    await this.logger.log({ level: 'error', text, extendInfo: true });
+    await this.logger.log({ level: 'error', text, logMeta: { extendInfo: true } });
   }
 }
 
