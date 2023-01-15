@@ -13,15 +13,7 @@ import {
   BrowserFrame,
 } from './global.d';
 import { Runner } from './Environment';
-import {
-  logArgs,
-  logDebug,
-  logErrorMessage,
-  logExtend,
-  logExtendFileInfo,
-  logStack,
-  logTimer,
-} from './Loggers/CustomLogEntries';
+import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
 
 type EnginesType = 'puppeteer' | 'playwright';
 
@@ -176,12 +168,11 @@ export default class Atom {
       return result;
     } catch (error) {
       await logTimer(this.log, startTime, this.levelIndent);
-      await logErrorMessage(this.log, 0, error);
-      await logStack(this.log, 0, error);
+      await logError(this.log, error);
       await logExtend(this.log, 0, args, true);
       await logArgs(this.log, 0);
-      await logDebug(this.log, 0, args);
-      await logExtendFileInfo(this.log, 0, (args || {}).envsId);
+      await logDebug(this.log, args);
+      await logExtendFileInfo(this.log, args);
 
       throw new AtomError('Error in Atom');
     }

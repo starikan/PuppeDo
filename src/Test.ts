@@ -715,7 +715,7 @@ export class Test implements TestExtendType {
         }
 
         if (this.debugInfo) {
-          logDebug(logger.log.bind(logger), 0, args, true, this.debugInfo);
+          logDebug(logger.log.bind(logger), args);
           if (this.debug) {
             console.log(this);
             // eslint-disable-next-line no-debugger

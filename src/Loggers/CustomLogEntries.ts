@@ -5,31 +5,24 @@ import { Environment } from '../Environment';
 import { ErrorType } from '../Error';
 import { LogFunctionType, TestArgsType } from '../global.d';
 
-export const logExtendFileInfo = async (log: LogFunctionType, levelIndent: number, envsId = ''): Promise<void> => {
-  if (envsId) {
-    const output = new Environment().getOutput(envsId);
+export const logExtendFileInfo = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
+  if (args?.envsId) {
+    const output = new Environment().getOutput(args?.envsId);
     const outputFile = path.join(output.folderFull || '.', 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
-    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
+    await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
   }
 };
 
-export const logErrorMessage = async (log: LogFunctionType, levelIndent: number, error: ErrorType): Promise<void> => {
+export const logError = async (log: LogFunctionType, error: ErrorType): Promise<void> => {
   if (error.message) {
     const text = ['============== ERROR MESSAGE ==============', ...error.message.split('\n'), ''];
-    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
+    await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
   }
-};
 
-export const logStack = async (
-  log: LogFunctionType,
-  levelIndent: number,
-  error: ErrorType,
-  stdOut = false,
-): Promise<void> => {
   if (error.stack) {
     const text = ['============== ERROR STACK ==============', ...error.stack.split('\n'), ''];
-    await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
+    await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
   }
 };
 
@@ -80,25 +73,21 @@ export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut 
   await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
 };
 
-export const logDebug = async (
-  log: LogFunctionType,
-  levelIndent: number,
-  args: TestArgsType | undefined,
-  stdOut = false,
-  type: 'data' | 'selectors' | boolean = true,
-): Promise<void> => {
+export const logDebug = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
   let text: string[] = [];
   const { data, selectors } = args || {};
-  if (data && Object.keys(data).length && (type === true || type === 'data')) {
+
+  if (data && Object.keys(data).length) {
     const dataDebug = JSON.stringify(data, null, 2).split('\n');
     text = [...text, '============== DEBUG DATA ==============', ...dataDebug, ''];
   }
-  if (selectors && Object.keys(selectors).length && (type === true || type === 'selectors')) {
+
+  if (selectors && Object.keys(selectors).length) {
     const selectorsDebug = JSON.stringify(selectors, null, 2).split('\n');
     text = [...text, '============== DEBUG SELECTORS ==============', ...selectorsDebug, ''];
   }
 
-  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
+  await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
 
   // console.log(args);
 };
