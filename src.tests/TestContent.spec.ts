@@ -101,6 +101,7 @@ describe('TestContent', () => {
         runTest: [],
         afterTest: [],
         inlineJS: '',
+        breakParentIfResult: '',
       },
       {
         type: 'atom',
@@ -139,6 +140,7 @@ describe('TestContent', () => {
         runTest: [],
         afterTest: [],
         inlineJS: '',
+        breakParentIfResult: '',
       },
       {
         type: 'atom',
@@ -177,6 +179,7 @@ describe('TestContent', () => {
         runTest: [],
         afterTest: [],
         inlineJS: '',
+        breakParentIfResult: '',
       },
       {
         type: 'atom',
@@ -215,6 +218,7 @@ describe('TestContent', () => {
         runTest: [],
         afterTest: [],
         inlineJS: '',
+        breakParentIfResult: '',
       },
     ];
 

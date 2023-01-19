@@ -63,30 +63,6 @@ export default class TestStructure {
     return JSON.parse(JSON.stringify(testSource));
   }
 
-  static resolveRunner(
-    runnerValue: Record<string, { name?: string; breadcrumbs?: string[]; breadcrumbsDescriptions?: string[] }>,
-    runnerNum: number,
-    fullJSONIncome: TestExtendType,
-    runnerBlock: string,
-    levelIndent: number,
-  ): TestExtendType {
-    const runner: [string, { name?: string; breadcrumbs?: string[]; breadcrumbsDescriptions?: string[] }][] =
-      Object.entries(runnerValue);
-    let [name, newRunner] = runner.length ? runner[0] : [null, {}];
-    // It`s important. Subtest may named but no body.
-    name = name || null;
-    newRunner = newRunner || {};
-
-    if (name) {
-      newRunner.name = name;
-      newRunner.breadcrumbs = [...fullJSONIncome.breadcrumbs, `${runnerBlock}[${runnerNum}].${name}`];
-      newRunner.breadcrumbsDescriptions = [...fullJSONIncome.breadcrumbsDescriptions, fullJSONIncome.description];
-      const fullJSON = TestStructure.getFullDepthJSON(name, newRunner, levelIndent + 1);
-      return fullJSON;
-    }
-    return null;
-  }
-
   static getFullDepthJSON(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
@@ -97,24 +73,24 @@ export default class TestStructure {
     fullJSON.stepId = generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
-    RUNNER_BLOCK_NAMES.forEach((runnerBlock) => {
-      const runnerBlockValue = fullJSON[runnerBlock] || [];
+    RUNNER_BLOCK_NAMES.forEach((runnerBlockName) => {
+      const runnerBlockValue = (fullJSON[runnerBlockName] || []) as { string: TestExtendType }[];
       if (!Array.isArray(runnerBlockValue)) {
-        const errorString = `Running block '${runnerBlock}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
+        const errorString = `Running block '${runnerBlockName}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
         must be array of tests`;
         throw new Error(errorString);
       }
-      runnerBlockValue.forEach((runnerValue, runnerNum: number) => {
-        const fullJSONResponce = TestStructure.resolveRunner(
-          runnerValue,
-          runnerNum,
-          fullJSON,
-          runnerBlock,
-          levelIndent,
-        );
-        if (fullJSONResponce) {
-          fullJSON[runnerBlock][runnerNum] = fullJSONResponce;
-        }
+      runnerBlockValue.forEach((runnerValue: { string: TestExtendType }, runnerNum: number) => {
+        const runner: [string, TestExtendType] = Object.entries(runnerValue)[0];
+        const name = runner[0];
+        const newRunner = runner[1] ?? ({ name } as TestExtendType);
+
+        newRunner.name = name;
+        newRunner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${runnerBlockName}[${runnerNum}].${name}`];
+        newRunner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
+
+        const fullJSONResponce = TestStructure.getFullDepthJSON(name, newRunner, levelIndent + 1);
+        fullJSON[runnerBlockName][runnerNum] = fullJSONResponce;
       });
     });
 

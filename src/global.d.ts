@@ -299,6 +299,9 @@ export type TestArgsType = {
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
+/**
+ * YAML test file structure
+ */
 export type TestTypeYaml = {
   name: string;
   type?: 'atom' | 'test';
@@ -331,10 +334,12 @@ export type TestTypeYaml = {
   errorIfResult?: string;
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
-  beforeTest?: TestLifecycleFunctionType[] | TestExtendType[];
-  runTest?: TestLifecycleFunctionType[] | TestExtendType[];
-  afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
+  breakParentIfResult?: string;
+  // TODO: 2023-01-18 S.Starodubov split this in separate types
+  beforeTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  runTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  afterTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
 };
 
 export type TestType = Required<TestTypeYaml>;
@@ -348,14 +353,13 @@ export type TestExtendType = {
   socket?: SocketType;
   envsId?: string;
   resultsFromPrevSubling?: Record<string, unknown>;
-  funcFile?: string;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
-  testFile?: string;
-  breakParentIfResult?: string;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
+  funcFile?: string;
+  testFile?: string;
 } & TestType &
   PliginsFields;
 

@@ -45,6 +45,7 @@ export const BLANK_TEST: TestType = {
   todo: '',
   type: 'test',
   while: '',
+  breakParentIfResult: '',
 };
 
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
@@ -161,7 +162,7 @@ export default class TestsContent extends Singleton {
             ...v,
             ...{ testFile: filePath },
           };
-          if (collect.type === 'test') {
+          if (['test'].includes(collect.type)) {
             allContent.push(resolveTest(collect as TestTypeYaml));
           } else {
             allContent.push(collect as RunnerType | DataType);
@@ -170,10 +171,10 @@ export default class TestsContent extends Singleton {
       });
 
       const atoms: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestExtendType => v.type === 'atom'),
+        allContent.filter((v): v is TestType => v.type === 'atom'),
       );
       const tests: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestExtendType => v.type === 'test'),
+        allContent.filter((v): v is TestType => v.type === 'test'),
       );
       const data: Array<DataType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'data'),
