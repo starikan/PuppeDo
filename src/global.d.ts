@@ -123,7 +123,6 @@ export type LogInputType = {
   element?: Element;
   levelIndent?: number;
   error?: Error | ErrorType | null;
-  stdOut?: boolean;
   stepId?: string;
   page?: PagePuppeteer | PagePlaywright;
   logMeta?: LogMetaInfoType;

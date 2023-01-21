@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import Log from '../src/Log';
+import { Log } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
@@ -154,7 +154,7 @@ describe('Log', () => {
   });
 
   test('bindData', () => {
-    logger.bindData({ stdOut: true });
+    logger.bindOptions({ stdOut: true });
   });
 
   test('checkLevel', () => {
@@ -471,7 +471,7 @@ describe('Log', () => {
     ]);
 
     // describe('Repeat in formatterEntry', () => {
-    // logger.bindData({ testArgs: { repeat: 2 } });
+    // logger.bindOptions({ testArgs: { repeat: 2 } });
     // expect(await formatterEntry({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - info   |  `, textColor: 'sane' },

@@ -67,10 +67,10 @@ export const logExtend = async (
   }
 };
 
-export const logArgs = async (log: LogFunctionType, levelIndent: number, stdOut = false): Promise<void> => {
+export const logArgs = async (log: LogFunctionType, levelIndent: number): Promise<void> => {
   const args = Object.entries(new Arguments().args).map((v) => `${v[0]}: ${JSON.stringify(v[1])}`);
   const text = ['============== ARGUMENTS ==============', ...args, ''];
-  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true }, stdOut });
+  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
 };
 
 export const logDebug = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {

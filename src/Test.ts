@@ -673,7 +673,7 @@ export class Test implements TestExtendType {
         }
 
         // LOG TEST
-        logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
+        logger.bindOptions({ breadcrumbs: this.breadcrumbs, testArgs: args });
 
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];

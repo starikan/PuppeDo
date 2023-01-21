@@ -12,8 +12,9 @@ import {
   TestArgsType,
 } from './global.d';
 import { Environment } from './Environment';
+import Singleton from './Singleton';
 
-type LogOptions = {
+type LogOptionsInit = {
   breadcrumbs?: Array<string>;
   testArgs?: TestArgsType;
   stdOut?: boolean;
@@ -21,27 +22,40 @@ type LogOptions = {
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 
-export default class Log {
-  private envsId: string;
+export class LogOptions extends Singleton {
+  options!: { stdOut?: boolean; loggerPipes?: LogPipe[] };
 
-  private options: LogOptions;
+  constructor(options: Partial<{ stdOut?: boolean; loggerPipes?: LogPipe[] }> = {}, reInit = false) {
+    super();
+    if (reInit || !this.options) {
+      this.options = options;
 
-  private pipes: LogPipe[];
-
-  constructor(envsId: string, loggerOptions: { stdOut?: boolean } = {}) {
-    const { stdOut } = loggerOptions;
-
-    this.envsId = envsId;
-    this.options = { stdOut };
-    this.pipes = [];
+      if (!this.options.loggerPipes) {
+        this.options.loggerPipes = [];
+      }
+    }
   }
 
-  bindData(data: LogOptions = {}): void {
+  bindOptions(data: { stdOut?: boolean; loggerPipes?: LogPipe[] } = {}): void {
     this.options = { ...this.options, ...data };
   }
 
   addLogPipe(pipe: LogPipe): void {
-    this.pipes.push(pipe);
+    this.options.loggerPipes.push(pipe);
+  }
+}
+
+export class Log {
+  private envsId: string;
+
+  private options: LogOptionsInit;
+
+  constructor(envsId: string) {
+    this.envsId = envsId;
+  }
+
+  bindOptions(data: LogOptionsInit = {}): void {
+    this.options = { ...this.options, ...data };
   }
 
   static checkLevel(level: ColorsType): boolean {
@@ -100,16 +114,17 @@ export default class Log {
     }
   }
 
-  async runPipes(logEntries: LogEntry[], skipThis = false): Promise<void> {
+  async runPipes(logEntries: LogEntry[], manualSkipEntry = false): Promise<void> {
     const { log } = new Environment().getEnvAllInstance(this.envsId);
+    const { loggerPipes, stdOut = true } = new LogOptions().options;
     for (const logEntry of logEntries) {
-      for (const pipe of this.pipes) {
+      for (const pipe of loggerPipes) {
         try {
           const transformedEntry = await pipe.transformer(logEntry);
           const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
           await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
             envsId: this.envsId,
-            skipThis,
+            skipThis: !stdOut || manualSkipEntry,
             fullLog: log,
           });
         } catch (e) {
@@ -125,8 +140,7 @@ export default class Log {
     levelIndent = 0,
     element,
     error = null,
-    stdOut = this.options.stdOut !== undefined ? this.options.stdOut : true,
-    stepId = '',
+    stepId = null,
     logMeta = {},
     logOptions = {},
   }: LogInputType): Promise<void> {
@@ -150,14 +164,14 @@ export default class Log {
           error,
           textColor,
           backgroundColor: level === 'error' ? 'sane' : backgroundColor,
-          stepId: this.options.testArgs?.stepId || stepId,
-          breadcrumbs: this.options?.breadcrumbs || [],
-          repeat: this.options?.testArgs?.repeat || 1,
+          stepId: stepId ?? this.options?.testArgs?.stepId ?? '',
+          breadcrumbs: this.options?.breadcrumbs ?? [],
+          repeat: this.options?.testArgs?.repeat ?? 1,
         };
         return logEntry;
       });
 
-      await this.runPipes(logEntries, !stdOut || manualSkipEntry);
+      await this.runPipes(logEntries, manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
       const socket = new Environment().getSocket(this.envsId);
@@ -165,7 +179,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = this.options.testArgs?.stepId;
+      err.stepId = stepId ?? this.options?.testArgs?.stepId ?? '';
       throw err;
     }
   }

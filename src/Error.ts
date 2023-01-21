@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Arguments } from './Arguments';
 import { Test } from './Test';
-import Log from './Log';
+import { Log } from './Log';
 import { Environment, Runner } from './Environment';
 
 import { SocketType } from './global.d';

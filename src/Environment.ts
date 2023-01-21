@@ -2,7 +2,7 @@ import os from 'os';
 import { execSync, spawnSync } from 'child_process';
 import { blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
 import TestsContent from './TestContent';
-import Log from './Log';
+import { Log, LogOptions } from './Log';
 import {
   BrowserFrame,
   BrowserPageType,
@@ -221,11 +221,10 @@ export class Environment extends Singleton {
     if (!this.instances[envsId]) {
       const output = initOutput(envsId);
       const allRunners = new Runners(envsId);
-      const logger = new Log(envsId, loggerOptions);
 
-      for (const loggerPipe of loggerOptions?.loggerPipes ?? []) {
-        logger.addLogPipe(loggerPipe);
-      }
+      // eslint-disable-next-line no-new
+      new LogOptions(loggerOptions);
+      const logger = new Log(envsId);
 
       const current: RunnerCurrentType = {};
 

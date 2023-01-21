@@ -7,7 +7,7 @@ import { Arguments } from './Arguments';
 import { argsDefault } from './Defaults';
 import Blocker from './Blocker';
 import { Environment } from './Environment';
-import Log from './Log';
+import { Log } from './Log';
 import Singleton from './Singleton';
 import { paintString, blankSocket } from './Helpers';
 import { runScriptInContext } from './Test';
