@@ -54,13 +54,10 @@
 [31m00:00:00.000 - error  |   [0m[31mThis is click error | Description: Click some fake Text (clickSelector)[0m
 [31m00:00:00.000 - error  |    mainWithError[0m
 [31m00:00:00.000 - error  |       runTest[1].clickSelector[0m
-[31m00:00:00.000 - error  |          runTest[0].waitForSelector[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\main\clickSelector.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
 [31m00:00:00.000 - error  [0m[31mThis is click error | Description: No test description (mainWithError)[0m
 [31m00:00:00.000 - error   mainWithError[0m
-[31m00:00:00.000 - error      runTest[1].clickSelector[0m
-[31m00:00:00.000 - error         runTest[0].waitForSelector[0m
 [31m00:00:00.000 - error   (file:///\tests\errorIf.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m🖼 screenshot: [screenshot_path][0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m

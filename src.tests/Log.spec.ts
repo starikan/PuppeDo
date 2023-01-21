@@ -12,7 +12,7 @@ import { formatterEntry } from '../src/Loggers/Formatters';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
-const { logger, envsId } = new Environment().createEnv();
+const { envsId } = new Environment().createEnv();
 new Environment().getOutput = (): OutputsLatest & Outputs => ({
   folder,
   folderLatest,
@@ -151,10 +151,6 @@ describe('Log', () => {
       );
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
     });
-  });
-
-  test('bindData', () => {
-    logger.bindOptions({ stdOut: true });
   });
 
   test('checkLevel', () => {

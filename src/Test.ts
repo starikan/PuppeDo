@@ -166,6 +166,7 @@ export const checkIf = async (
   allData: Record<string, unknown> = {},
   logShowFlag = true,
   continueOnError = false,
+  breadcrumbs = [],
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
@@ -179,6 +180,7 @@ export const checkIf = async (
           screenshot: false,
           fullpage: false,
         },
+        logMeta: { breadcrumbs },
       });
     }
     return true;
@@ -194,6 +196,7 @@ export const checkIf = async (
           screenshot: true,
           fullpage: true,
         },
+        logMeta: { breadcrumbs },
       });
     }
     throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
@@ -480,6 +483,7 @@ export class Test implements TestExtendType {
             logShowFlag,
             textColor: 'blue',
           },
+          logMeta: { breadcrumbs: this.breadcrumbs },
         });
         // Drop disable for loops nested tests
         this.disable = false;
@@ -505,6 +509,7 @@ export class Test implements TestExtendType {
             logShowFlag,
             textColor: 'blue',
           },
+          logMeta: { breadcrumbs: this.breadcrumbs },
         });
         return { result: {}, meta: {} };
       }
@@ -639,6 +644,7 @@ export class Test implements TestExtendType {
           socket: this.socket,
           allData: new TestsContent().allData,
           plugins: this.plugins,
+          breadcrumbs: this.breadcrumbs,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
@@ -653,6 +659,7 @@ export class Test implements TestExtendType {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -669,12 +676,11 @@ export class Test implements TestExtendType {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
         }
 
         // LOG TEST
-        logger.bindOptions({ breadcrumbs: this.breadcrumbs, testArgs: args });
-
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
@@ -696,6 +702,7 @@ export class Test implements TestExtendType {
               levelIndent: this.levelIndent,
               element,
               logOptions: { ...this.logOptions, logShowFlag },
+              logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
             });
           }
 
@@ -709,6 +716,7 @@ export class Test implements TestExtendType {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
+                logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
               });
             }
           }
@@ -764,6 +772,7 @@ export class Test implements TestExtendType {
             { ...allData, ...localResults },
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
         }
 
@@ -796,7 +805,7 @@ export class Test implements TestExtendType {
             level: 'timer',
             levelIndent: this.levelIndent,
             logOptions: { logShowFlag },
-            logMeta: { extendInfo: true },
+            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, testArgs: args },
           });
         }
 

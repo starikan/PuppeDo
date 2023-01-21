@@ -84,7 +84,7 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId, funcFile, testFile, levelIndent } = this.test;
+    const { stepId, funcFile, testFile, levelIndent, breadcrumbs } = this.test;
     const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
@@ -97,7 +97,7 @@ export class TestError extends AbstractError {
         stepId,
         levelIndent,
         error: this,
-        logMeta: { funcFile, testFile },
+        logMeta: { funcFile, testFile, breadcrumbs },
         logOptions: { screenshot: false },
       });
     }
@@ -140,11 +140,12 @@ export class ContinueParentError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { levelIndent, breakParentIfResult } = this.test;
+    const { levelIndent, breakParentIfResult, breadcrumbs } = this.test;
     await this.logger.log({
       level: 'warn',
       levelIndent,
       text: `Continue: ${this.parentError?.message || `test with expr ${breakParentIfResult}'`}`,
+      logMeta: { breadcrumbs },
     });
   }
 }

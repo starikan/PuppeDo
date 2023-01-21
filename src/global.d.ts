@@ -96,6 +96,8 @@ export type LogMetaInfoType = {
   funcFile?: string;
   testFile?: string;
   extendInfo?: boolean;
+  breadcrumbs?: string[];
+  testArgs?: TestArgsType;
 };
 
 export type LogOptionsType = {
@@ -293,6 +295,7 @@ export type TestArgsType = {
   descriptionExtend: string[];
   allData: AllDataType;
   plugins: Plugins;
+  breadcrumbs: string[];
   continueOnError: boolean;
 };
 

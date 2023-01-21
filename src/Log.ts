@@ -1,24 +1,9 @@
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import {
-  ColorsType,
-  Element,
-  LogEntrieType,
-  LogEntry,
-  LogInputType,
-  LogOptionsType,
-  LogPipe,
-  TestArgsType,
-} from './global.d';
+import { ColorsType, Element, LogEntrieType, LogEntry, LogInputType, LogOptionsType, LogPipe } from './global.d';
 import { Environment } from './Environment';
 import Singleton from './Singleton';
-
-type LogOptionsInit = {
-  breadcrumbs?: Array<string>;
-  testArgs?: TestArgsType;
-  stdOut?: boolean;
-};
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 
@@ -48,14 +33,8 @@ export class LogOptions extends Singleton {
 export class Log {
   private envsId: string;
 
-  private options: LogOptionsInit;
-
   constructor(envsId: string) {
     this.envsId = envsId;
-  }
-
-  bindOptions(data: LogOptionsInit = {}): void {
-    this.options = { ...this.options, ...data };
   }
 
   static checkLevel(level: ColorsType): boolean {
@@ -164,9 +143,9 @@ export class Log {
           error,
           textColor,
           backgroundColor: level === 'error' ? 'sane' : backgroundColor,
-          stepId: stepId ?? this.options?.testArgs?.stepId ?? '',
-          breadcrumbs: this.options?.breadcrumbs ?? [],
-          repeat: this.options?.testArgs?.repeat ?? 1,
+          stepId: stepId ?? logMeta.testArgs?.stepId ?? '',
+          breadcrumbs: logMeta.breadcrumbs ?? [],
+          repeat: logMeta.testArgs?.repeat ?? 1,
         };
         return logEntry;
       });
@@ -179,7 +158,7 @@ export class Log {
       err.message += ' || error in log';
       err.socket = socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = stepId ?? this.options?.testArgs?.stepId ?? '';
+      err.stepId = stepId ?? logMeta.testArgs?.stepId ?? '';
       throw err;
     }
   }

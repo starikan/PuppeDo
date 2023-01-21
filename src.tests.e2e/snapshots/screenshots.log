@@ -121,9 +121,7 @@ screenshots (screenshots)
                       |   🕝: 00.000 s. (case)
                       🕝: 00.000 s. (screenshots)
 00:00:00.000 - timer  Test 'screenshots' time 🕝: 00.000 s.
-                       [36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
-                       [36m👣[screenshots -> runTest[6].case -> runTest[0].checkSelector -> runTest[2].checkSelectorRaw][0m
 {
   "screenshots": {}
 }

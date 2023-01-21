@@ -154,7 +154,13 @@ export default class Atom {
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
         const logOptions = { ...logOptionsDefault, ...(this.logOptions || {}), ...(customLog.logOptions || {}) };
-        const logData = { level: 'raw' as ColorsType, levelIndent: this.levelIndent + 1, logOptions, ...customLog };
+        const logData = {
+          level: 'raw' as ColorsType,
+          levelIndent: this.levelIndent + 1,
+          logOptions,
+          logMeta: { breadcrumbs: args.breadcrumbs },
+          ...customLog,
+        };
         logData.logOptions.logThis = logData.level === 'error' ? true : logData.logOptions.logThis;
         await args.log(logData);
       }
