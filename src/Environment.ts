@@ -15,9 +15,11 @@ import {
   OutputsLatest,
   RunnerCurrentType,
   LogPipe,
+  TestExtendType,
 } from './global.d';
 import Singleton from './Singleton';
 import { DEFAULT_BROWSER, Engines } from './Engines';
+import TestStructure from './TestStructure';
 
 type EnvsInstanceType = {
   allRunners: Runners;
@@ -27,6 +29,7 @@ type EnvsInstanceType = {
   log: Array<LogEntry>;
   output: Outputs;
   current: RunnerCurrentType;
+  testsStruct: Record<string, TestExtendType>;
 };
 
 export class Runners {
@@ -228,7 +231,7 @@ export class Environment extends Singleton {
 
       const current: RunnerCurrentType = {};
 
-      this.instances[envsId] = { output, allRunners, socket, envsId, logger, current, log: [] };
+      this.instances[envsId] = { output, allRunners, socket, envsId, logger, current, log: [], testsStruct: {} };
     }
     return this.getEnvAllInstance(envsId);
   }
@@ -237,6 +240,24 @@ export class Environment extends Singleton {
     if (!envsId || !this.instances[envsId]) {
       throw new Error(`Unknown ENV ID ${envsId}`);
     }
+  }
+
+  /**
+   * It returns the full structure of a test.
+   * @param {string} envsId - The id of the environment instance.
+   * @param {string} name - The name of the test.
+   * @returns The fullStruct is being returned.
+   */
+  getStruct(envsId: string, name: string): TestExtendType {
+    const existsStruct = this.getEnvAllInstance(envsId).testsStruct[name];
+    if (existsStruct) {
+      return existsStruct;
+    }
+
+    const fullStruct = TestStructure.getFullDepthJSON(name);
+    this.instances[envsId].testsStruct[name] = fullStruct;
+
+    return fullStruct;
   }
 
   getEnvRunners(envsId: string): Runners {
