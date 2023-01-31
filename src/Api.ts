@@ -35,10 +35,9 @@ const runTest = async (testName: string, envsId: string): Promise<Record<string,
 
   await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
-  new Environment().setCurrent(envsId, { name: testName });
-
-  const fullJSON = TestStructure.getFullDepthJSON(testName);
+  const fullJSON = new Environment().getStruct(envsId, testName);
   const textDescription = TestStructure.generateDescription(fullJSON);
+  new Environment().setCurrent(envsId, { name: testName });
 
   new Blocker().reset();
 
