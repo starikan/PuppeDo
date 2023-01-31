@@ -7,9 +7,11 @@ Error with IF (errorIf)
 00:00:00.000 - test   [32m(errorIf) Error with IF[0m
 [31m00:00:00.000 - error  |   [0m[31mTest stopped with expr errorIf = '1 === 1'[0m
 [31m00:00:00.000 - error  |    errorIf[0m
+[31m00:00:00.000 - error  |       runTest[0].blank[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
 [31m00:00:00.000 - error  |   [0m[31mThis is error description | Description: No test description (blank)[0m
 [31m00:00:00.000 - error  |    errorIf[0m
+[31m00:00:00.000 - error  |       runTest[0].blank[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
 [31m00:00:00.000 - error  [0m[31mThis is error description | Description: Error with IF (errorIf)[0m

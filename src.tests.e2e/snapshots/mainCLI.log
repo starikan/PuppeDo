@@ -123,7 +123,7 @@ Main test (main)
                       |   |   🕝: 00.000 s. (clickSelector)
                       |   🕝: 00.000 s. (clickWithNestedWait)
 00:00:00.000 - info   |   [36mSkip with IF expr '1 !== 1' === 'false'[0m
-                      |    [36m👣[main -> runTest[10].clickWithNestedWait -> runTest[1].clickSelector -> runTest[2].clickSelectorRaw][0m
+                      |    [36m👣[main -> runTest[11].waitTime][0m
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
                       |    [36m👣[main -> runTest[12].getText][0m
                       |    [36m🔆 repeats left: 2[0m
@@ -172,9 +172,7 @@ Main test (main)
                       |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (main)
 00:00:00.000 - timer  Test 'main' time 🕝: 00.000 s.
-                       [36m👣[main -> runTest[18].blank][0m
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
-                       [36m👣[main -> runTest[18].blank][0m
 {
   "main": {}
 }

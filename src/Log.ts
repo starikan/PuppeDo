@@ -1,47 +1,40 @@
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import {
-  ColorsType,
-  Element,
-  LogEntrieType,
-  LogEntry,
-  LogInputType,
-  LogOptionsType,
-  LogPipe,
-  TestArgsType,
-} from './global.d';
+import { ColorsType, Element, LogEntrieType, LogEntry, LogInputType, LogOptionsType, LogPipe } from './global.d';
 import { Environment } from './Environment';
-
-type LogOptions = {
-  breadcrumbs?: Array<string>;
-  testArgs?: TestArgsType;
-  stdOut?: boolean;
-};
+import Singleton from './Singleton';
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 
-export default class Log {
-  private envsId: string;
+export class LogOptions extends Singleton {
+  options!: { stdOut?: boolean; loggerPipes?: LogPipe[] };
 
-  private options: LogOptions;
+  constructor(options: Partial<{ stdOut?: boolean; loggerPipes?: LogPipe[] }> = {}, reInit = false) {
+    super();
+    if (reInit || !this.options) {
+      this.options = options;
 
-  private pipes: LogPipe[];
-
-  constructor(envsId: string, loggerOptions: { stdOut?: boolean } = {}) {
-    const { stdOut } = loggerOptions;
-
-    this.envsId = envsId;
-    this.options = { stdOut };
-    this.pipes = [];
+      if (!this.options.loggerPipes) {
+        this.options.loggerPipes = [];
+      }
+    }
   }
 
-  bindData(data: LogOptions = {}): void {
+  bindOptions(data: { stdOut?: boolean; loggerPipes?: LogPipe[] } = {}): void {
     this.options = { ...this.options, ...data };
   }
 
   addLogPipe(pipe: LogPipe): void {
-    this.pipes.push(pipe);
+    this.options.loggerPipes.push(pipe);
+  }
+}
+
+export class Log {
+  private envsId: string;
+
+  constructor(envsId: string) {
+    this.envsId = envsId;
   }
 
   static checkLevel(level: ColorsType): boolean {
@@ -100,23 +93,39 @@ export default class Log {
     }
   }
 
+  async runPipes(logEntries: LogEntry[], manualSkipEntry = false): Promise<void> {
+    const { log } = new Environment().getEnvAllInstance(this.envsId);
+    const { loggerPipes, stdOut = true } = new LogOptions().options;
+    for (const logEntry of logEntries) {
+      for (const pipe of loggerPipes) {
+        try {
+          const transformedEntry = await pipe.transformer(logEntry);
+          const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
+          await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
+            envsId: this.envsId,
+            skipThis: !stdOut || manualSkipEntry,
+            fullLog: log,
+          });
+        } catch (e) {
+          console.log(`Error in logger pipe: ${e.message}`);
+        }
+      }
+    }
+  }
+
   async log({
     text = '',
     level = 'raw',
     levelIndent = 0,
     element,
     error = null,
-    extendInfo = false,
-    stdOut = this.options.stdOut !== undefined ? this.options.stdOut : true,
-    stepId = '',
-    logShowFlag = true,
-    funcFile = '',
-    testFile = '',
+    stepId = null,
+    logMeta = {},
     logOptions = {},
   }: LogInputType): Promise<void> {
     const texts = [text].flat();
-    const { log } = new Environment().getEnvAllInstance(this.envsId);
-    const { textColor = 'sane', backgroundColor = 'sane', logThis = true } = logOptions;
+    const { textColor = 'sane', backgroundColor = 'sane', logThis = true, logShowFlag = true } = logOptions;
+    const { funcFile = '', testFile = '', extendInfo = false } = logMeta;
     const manualSkipEntry = Log.isManualSkipEntry(level, logThis, logShowFlag, levelIndent);
     const screenshots = await this.getScreenshots(logOptions, level, levelIndent, extendInfo, element);
 
@@ -128,34 +137,20 @@ export default class Log {
           levelIndent,
           time: new Date(),
           screenshots,
-          stepId: this.options.testArgs?.stepId || stepId,
           funcFile,
           testFile,
           extendInfo,
           error,
           textColor,
           backgroundColor: level === 'error' ? 'sane' : backgroundColor,
-          breadcrumbs: this.options?.breadcrumbs || [],
-          repeat: this.options?.testArgs?.repeat || 1,
+          stepId: stepId ?? logMeta.testArgs?.stepId ?? '',
+          breadcrumbs: logMeta.breadcrumbs ?? [],
+          repeat: logMeta.testArgs?.repeat ?? 1,
         };
         return logEntry;
       });
 
-      for (const logEntry of logEntries) {
-        for (const pipe of this.pipes) {
-          try {
-            const transformedEntry = await pipe.transformer(logEntry);
-            const formatedEntry = await pipe.formatter(logEntry, transformedEntry);
-            await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
-              envsId: this.envsId,
-              skipThis: !stdOut || manualSkipEntry,
-              fullLog: log,
-            });
-          } catch (e) {
-            console.log(`Error in logger pipe: ${e.message}`);
-          }
-        }
-      }
+      await this.runPipes(logEntries, manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
       const socket = new Environment().getSocket(this.envsId);
@@ -163,7 +158,7 @@ export default class Log {
       err.message += ' || error in log';
       err.socket = socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = this.options.testArgs?.stepId;
+      err.stepId = stepId ?? logMeta.testArgs?.stepId ?? '';
       throw err;
     }
   }

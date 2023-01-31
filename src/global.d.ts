@@ -81,7 +81,6 @@ export type LogEntry = {
   levelIndent: number;
   time: Date;
   stepId: string;
-
   screenshots?: string[];
   funcFile?: string;
   testFile?: string;
@@ -93,9 +92,18 @@ export type LogEntry = {
   repeat?: number;
 };
 
+export type LogMetaInfoType = {
+  funcFile?: string;
+  testFile?: string;
+  extendInfo?: boolean;
+  breadcrumbs?: string[];
+  testArgs?: TestArgsType;
+};
+
 export type LogOptionsType = {
   logThis?: boolean;
   logChildren?: boolean;
+  logShowFlag?: boolean;
   screenshot?: boolean;
   fullpage?: boolean;
   screenshotName?: string;
@@ -114,16 +122,12 @@ export type LogEntrieType = {
 export type LogInputType = {
   text: string | string[];
   level?: ColorsType;
-  funcFile?: string;
-  testFile?: string;
   element?: Element;
   levelIndent?: number;
   error?: Error | ErrorType | null;
-  extendInfo?: boolean;
-  stdOut?: boolean;
   stepId?: string;
-  logShowFlag?: boolean;
   page?: PagePuppeteer | PagePlaywright;
+  logMeta?: LogMetaInfoType;
   logOptions?: LogOptionsType;
 };
 
@@ -291,11 +295,15 @@ export type TestArgsType = {
   descriptionExtend: string[];
   allData: AllDataType;
   plugins: Plugins;
+  breadcrumbs: string[];
   continueOnError: boolean;
 };
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
+/**
+ * YAML test file structure
+ */
 export type TestTypeYaml = {
   name: string;
   type?: 'atom' | 'test';
@@ -328,10 +336,12 @@ export type TestTypeYaml = {
   errorIfResult?: string;
   tags?: Array<string>;
   engineSupports?: BrowserEngineType[];
-  beforeTest?: TestLifecycleFunctionType[] | TestExtendType[];
-  runTest?: TestLifecycleFunctionType[] | TestExtendType[];
-  afterTest?: TestLifecycleFunctionType[] | TestExtendType[];
   inlineJS?: string;
+  breakParentIfResult?: string;
+  // TODO: 2023-01-18 S.Starodubov split this in separate types
+  beforeTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  runTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  afterTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
 };
 
 export type TestType = Required<TestTypeYaml>;
@@ -345,14 +355,13 @@ export type TestExtendType = {
   socket?: SocketType;
   envsId?: string;
   resultsFromPrevSubling?: Record<string, unknown>;
-  funcFile?: string;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
   optionsParent?: Record<string, string | number>;
   logOptionsParent?: LogOptionsType;
-  testFile?: string;
-  breakParentIfResult?: string;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
+  funcFile?: string;
+  testFile?: string;
 } & TestType &
   PliginsFields;
 

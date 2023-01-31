@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Arguments } from './Arguments';
 import { Test } from './Test';
-import Log from './Log';
+import { Log } from './Log';
 import { Environment, Runner } from './Environment';
 
 import { SocketType } from './global.d';
@@ -84,7 +84,7 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId, funcFile, testFile, levelIndent } = this.test;
+    const { stepId, funcFile, testFile, levelIndent, breadcrumbs } = this.test;
     const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
@@ -95,13 +95,10 @@ export class TestError extends AbstractError {
         level: 'error',
         text,
         stepId,
-        funcFile,
-        testFile,
         levelIndent,
         error: this,
-        logOptions: {
-          screenshot: false,
-        },
+        logMeta: { funcFile, testFile, breadcrumbs },
+        logOptions: { screenshot: false },
       });
     }
 
@@ -121,7 +118,7 @@ export class TestError extends AbstractError {
                       █ Description:`,
       ...breadcrumbsDescriptions.map((v, i) => `                      █ ${' '.repeat((1 + i) * 3)}${v}`),
     ].join('\n');
-    await this.logger.log({ level: 'error', text, extendInfo: true });
+    await this.logger.log({ level: 'error', text, logMeta: { extendInfo: true } });
   }
 }
 
@@ -143,11 +140,12 @@ export class ContinueParentError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { levelIndent, breakParentIfResult } = this.test;
+    const { levelIndent, breakParentIfResult, breadcrumbs } = this.test;
     await this.logger.log({
       level: 'warn',
       levelIndent,
       text: `Continue: ${this.parentError?.message || `test with expr ${breakParentIfResult}'`}`,
+      logMeta: { breadcrumbs },
     });
   }
 }

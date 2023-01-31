@@ -166,6 +166,7 @@ export const checkIf = async (
   allData: Record<string, unknown> = {},
   logShowFlag = true,
   continueOnError = false,
+  breadcrumbs = [],
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
@@ -179,6 +180,7 @@ export const checkIf = async (
           screenshot: false,
           fullpage: false,
         },
+        logMeta: { breadcrumbs },
       });
     }
     return true;
@@ -194,6 +196,7 @@ export const checkIf = async (
           screenshot: true,
           fullpage: true,
         },
+        logMeta: { breadcrumbs },
       });
     }
     throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
@@ -476,10 +479,11 @@ export class Test implements TestExtendType {
           text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
           level: 'raw',
           levelIndent: this.levelIndent,
-          logShowFlag,
           logOptions: {
+            logShowFlag,
             textColor: 'blue',
           },
+          logMeta: { breadcrumbs: this.breadcrumbs },
         });
         // Drop disable for loops nested tests
         this.disable = false;
@@ -501,10 +505,11 @@ export class Test implements TestExtendType {
           )}`,
           level: 'raw',
           levelIndent: this.levelIndent,
-          logShowFlag,
           logOptions: {
+            logShowFlag,
             textColor: 'blue',
           },
+          logMeta: { breadcrumbs: this.breadcrumbs },
         });
         return { result: {}, meta: {} };
       }
@@ -639,6 +644,7 @@ export class Test implements TestExtendType {
           socket: this.socket,
           allData: new TestsContent().allData,
           plugins: this.plugins,
+          breadcrumbs: this.breadcrumbs,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
@@ -653,6 +659,7 @@ export class Test implements TestExtendType {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -669,12 +676,11 @@ export class Test implements TestExtendType {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
         }
 
         // LOG TEST
-        logger.bindData({ breadcrumbs: this.breadcrumbs, testArgs: args });
-
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
@@ -694,9 +700,9 @@ export class Test implements TestExtendType {
               text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
               level: 'test',
               levelIndent: this.levelIndent,
-              logShowFlag,
               element,
-              logOptions: this.logOptions,
+              logOptions: { ...this.logOptions, logShowFlag },
+              logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
             });
           }
 
@@ -706,17 +712,18 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
-                logShowFlag,
                 logOptions: {
+                  logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
+                logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
               });
             }
           }
         }
 
         if (this.debugInfo) {
-          logDebug(logger.log.bind(logger), 0, args, true, this.debugInfo);
+          logDebug(logger.log.bind(logger), args);
           if (this.debug) {
             console.log(this);
             // eslint-disable-next-line no-debugger
@@ -765,6 +772,7 @@ export class Test implements TestExtendType {
             { ...allData, ...localResults },
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+            this.breadcrumbs,
           );
         }
 
@@ -796,8 +804,8 @@ export class Test implements TestExtendType {
             text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
             level: 'timer',
             levelIndent: this.levelIndent,
-            logShowFlag,
-            extendInfo: true,
+            logOptions: { logShowFlag },
+            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, testArgs: args },
           });
         }
 

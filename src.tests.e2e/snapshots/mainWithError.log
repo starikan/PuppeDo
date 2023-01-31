@@ -23,6 +23,24 @@
 [31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
 [31m00:00:00.000 - error  [0m[31m============================================================[0m
 [31m00:00:00.000 - error  [0m[31m[0m
+[31m00:00:00.000 - error  [0m[31m============== ERROR STACK ==============[0m
+[31m00:00:00.000 - error  [0m[31mpage.waitForSelector: Timeout 1000ms exceeded.[0m
+[31m00:00:00.000 - error  [0m[31m=========================== logs ===========================[0m
+[31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
+[31m00:00:00.000 - error  [0m[31m============================================================[0m
+[31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (C:\DEV\PPD\PuppeDo\node_modules\@puppedo\atoms\src\main\waitForSelector)[0m
+[31m00:00:00.000 - error  [0m[31m    at Atom.runTest (\@puppedo\core\src\AtomCore)[0m
+[31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getTest)[0m
+[31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getTest)[0m
+[31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getTest)[0m
+[31m00:00:00.000 - error  [0m[31m    at runTest (\@puppedo\core\src\Api)[0m
+[31m00:00:00.000 - error  [0m[31m    at Object.run (\@puppedo\core\src\Api)[0m
+[31m00:00:00.000 - error  [0m[31m    at runTest (\runAllTests)[0m
+[31m00:00:00.000 - error  [0m[31m    at start (\runAllTests)[0m
+[31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m=============== EXTEND FILE ===============[0m
 [31m00:00:00.000 - error  [0m[31mfile:///output.log[0m
 [31m00:00:00.000 - error  [0m[31m[0m
@@ -36,13 +54,10 @@
 [31m00:00:00.000 - error  |   [0m[31mThis is click error | Description: Click some fake Text (clickSelector)[0m
 [31m00:00:00.000 - error  |    mainWithError[0m
 [31m00:00:00.000 - error  |       runTest[1].clickSelector[0m
-[31m00:00:00.000 - error  |          runTest[0].waitForSelector[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\main\clickSelector.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
 [31m00:00:00.000 - error  [0m[31mThis is click error | Description: No test description (mainWithError)[0m
 [31m00:00:00.000 - error   mainWithError[0m
-[31m00:00:00.000 - error      runTest[1].clickSelector[0m
-[31m00:00:00.000 - error         runTest[0].waitForSelector[0m
 [31m00:00:00.000 - error   (file:///\tests\errorIf.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m🖼 screenshot: [screenshot_path][0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m

@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import Log from '../src/Log';
+import { Log } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
@@ -12,7 +12,7 @@ import { formatterEntry } from '../src/Loggers/Formatters';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
-const { logger, envsId } = new Environment().createEnv();
+const { envsId } = new Environment().createEnv();
 new Environment().getOutput = (): OutputsLatest & Outputs => ({
   folder,
   folderLatest,
@@ -151,10 +151,6 @@ describe('Log', () => {
       );
       expect(fs.readFileSync(path.join(folder, 'output.log')).toString()).toBe('text\n');
     });
-  });
-
-  test('bindData', () => {
-    logger.bindData({ stdOut: true });
   });
 
   test('checkLevel', () => {
@@ -471,7 +467,7 @@ describe('Log', () => {
     ]);
 
     // describe('Repeat in formatterEntry', () => {
-    // logger.bindData({ testArgs: { repeat: 2 } });
+    // logger.bindOptions({ testArgs: { repeat: 2 } });
     // expect(await formatterEntry({level:'info', levelIndent: 1, text: 'text', now)).toEqual([
     //   [
     //     { text: `${nowFormated} - info   |  `, textColor: 'sane' },

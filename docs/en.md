@@ -326,9 +326,11 @@ descriptionError (descriptionError)
 00:00:00.000 - test   (descriptionError) descriptionError
 00:00:00.000 - error  |   Test stopped with expr errorIf = 'true'
 00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |       runTest[0].case
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (case)
 00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |       runTest[0].case
 00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error  Simple descriptionError | Description: descriptionError (descriptionError)
@@ -386,10 +388,12 @@ descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
 00:00:00.000 - error  |   |    descriptionErrorNested
 00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |          runTest[0].blank
 00:00:00.000 - error  |   |    ==========================================================================================
 00:00:00.000 - error  |   |   descriptionError 1 | Description: description 1 (blank)
 00:00:00.000 - error  |   |    descriptionErrorNested
 00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |          runTest[0].blank
 00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |   |    ==========================================================================================
 00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (case)
@@ -399,7 +403,6 @@ descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error  descriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error   descriptionErrorNested
-00:00:00.000 - error      runTest[0].case
 00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorNested.yaml)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIf = 'true'
@@ -462,7 +465,6 @@ descriptionErrorDynamic (descriptionErrorDynamic)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error  Now I get only 1 apples | Description: descriptionErrorDynamic (descriptionErrorDynamic)
 00:00:00.000 - error   descriptionErrorDynamic
-00:00:00.000 - error      runTest[0].case
 00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIfResult = 'apples < 5'

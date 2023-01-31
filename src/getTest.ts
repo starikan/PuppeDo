@@ -137,7 +137,10 @@ const getTest = ({
 
   const testResolver: TestLifecycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
     if (parentTestMetaCollector?.stepId !== args?.stepId) {
-      parentTestMetaCollector.stepId = args.stepId;
+      // it`s a magic and I don`t know why is this works, but it fix steps Id hierarchy
+      if (parentTestMetaCollector?.repeat !== args?.repeat) {
+        parentTestMetaCollector.stepId = args.stepId;
+      }
       parentTestMetaCollector.resultsFromPrevSubling = {};
       parentTestMetaCollector.metaFromPrevSubling = {};
     }

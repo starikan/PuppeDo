@@ -13,15 +13,7 @@ import {
   BrowserFrame,
 } from './global.d';
 import { Runner } from './Environment';
-import {
-  logArgs,
-  logDebug,
-  logErrorMessage,
-  logExtend,
-  logExtendFileInfo,
-  logStack,
-  logTimer,
-} from './Loggers/CustomLogEntries';
+import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
 
 type EnginesType = 'puppeteer' | 'playwright';
 
@@ -162,7 +154,13 @@ export default class Atom {
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
         const logOptions = { ...logOptionsDefault, ...(this.logOptions || {}), ...(customLog.logOptions || {}) };
-        const logData = { level: 'raw' as ColorsType, levelIndent: this.levelIndent + 1, logOptions, ...customLog };
+        const logData = {
+          level: 'raw' as ColorsType,
+          levelIndent: this.levelIndent + 1,
+          logOptions,
+          logMeta: { breadcrumbs: args.breadcrumbs },
+          ...customLog,
+        };
         logData.logOptions.logThis = logData.level === 'error' ? true : logData.logOptions.logThis;
         await args.log(logData);
       }
@@ -176,12 +174,11 @@ export default class Atom {
       return result;
     } catch (error) {
       await logTimer(this.log, startTime, this.levelIndent);
-      await logErrorMessage(this.log, 0, error);
-      await logStack(this.log, 0, error);
+      await logError(this.log, error);
       await logExtend(this.log, 0, args, true);
       await logArgs(this.log, 0);
-      await logDebug(this.log, 0, args);
-      await logExtendFileInfo(this.log, 0, (args || {}).envsId);
+      await logDebug(this.log, args);
+      await logExtendFileInfo(this.log, args);
 
       throw new AtomError('Error in Atom');
     }
