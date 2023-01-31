@@ -147,7 +147,7 @@ export type LogExporter = (
   options: LogExporterOptions,
 ) => Promise<void>;
 
-export type LogExporterOptions = { envsId: string; skipThis: boolean; fullLog: LogEntry[] };
+export type LogExporterOptions = { envsId: string; skipThis: boolean };
 
 export type LogPipe = { transformer: LogTransformer; formatter: LogFormatter; exporter: LogExporter };
 

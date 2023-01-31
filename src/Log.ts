@@ -94,7 +94,6 @@ export class Log {
   }
 
   async runPipes(logEntries: LogEntry[], manualSkipEntry = false): Promise<void> {
-    const { log } = new Environment().getEnvAllInstance(this.envsId);
     const { loggerPipes, stdOut = true } = new LogOptions().options;
     for (const logEntry of logEntries) {
       for (const pipe of loggerPipes) {
@@ -104,7 +103,6 @@ export class Log {
           await pipe.exporter(logEntry, formatedEntry as LogEntrieType[][], formatedEntry as string, {
             envsId: this.envsId,
             skipThis: !stdOut || manualSkipEntry,
-            fullLog: log,
           });
         } catch (e) {
           console.log(`Error in logger pipe: ${e.message}`);
