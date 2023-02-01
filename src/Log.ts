@@ -122,7 +122,7 @@ export class Log {
     logOptions = {},
   }: LogInputType): Promise<void> {
     const texts = [text].flat();
-    const { textColor = 'sane', backgroundColor = 'sane', logThis = true, logShowFlag = true } = logOptions;
+    const { textColor = 'sane', backgroundColor = 'sane', logThis = true, logShowFlag = true, args } = logOptions;
     const { funcFile = '', testFile = '', extendInfo = false } = logMeta;
     const manualSkipEntry = Log.isManualSkipEntry(level, logThis, logShowFlag, levelIndent);
     const screenshots = await this.getScreenshots(logOptions, level, levelIndent, extendInfo, element);
@@ -144,6 +144,7 @@ export class Log {
           stepId: stepId ?? logMeta.testArgs?.stepId ?? '',
           breadcrumbs: logMeta.breadcrumbs ?? [],
           repeat: logMeta.testArgs?.repeat ?? 1,
+          args,
         };
         return logEntry;
       });

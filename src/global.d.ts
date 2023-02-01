@@ -90,6 +90,7 @@ export type LogEntry = {
   backgroundColor?: ColorsType;
   breadcrumbs?: string[];
   repeat?: number;
+  args: TestArgsType;
 };
 
 export type LogMetaInfoType = {
@@ -111,6 +112,7 @@ export type LogOptionsType = {
   level?: ColorsType;
   textColor?: ColorsType;
   backgroundColor?: ColorsType;
+  args?: TestArgsType;
 };
 
 export type LogEntrieType = {

@@ -701,7 +701,7 @@ export class Test implements TestExtendType {
               level: 'test',
               levelIndent: this.levelIndent,
               element,
-              logOptions: { ...this.logOptions, logShowFlag },
+              logOptions: { ...this.logOptions, logShowFlag, args },
               logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
             });
           }

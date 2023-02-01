@@ -17,9 +17,10 @@ import {
   exporterYamlLog,
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
-import { exporterAllure } from './Loggers/Allure';
+import { exporterAllure } from './Plugins/logger-allure/Allure';
+import allureSuite from './Plugins/logger-allure/allureSuite';
 
-export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
+export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine, allureSuite];
 
 export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },
