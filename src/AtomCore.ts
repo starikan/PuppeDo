@@ -169,14 +169,14 @@ export default class Atom {
     try {
       await this.updateFrame();
       const result = await this.atomRun();
-      await logTimer(this.log, startTime, this.levelIndent);
-      await logExtend(this.log, this.levelIndent, args);
+      await logTimer(this.log, startTime, args);
+      await logExtend(this.log, args);
       return result;
     } catch (error) {
-      await logTimer(this.log, startTime, this.levelIndent);
+      await logTimer(this.log, startTime, args);
       await logError(this.log, error);
-      await logExtend(this.log, 0, args, true);
-      await logArgs(this.log, 0);
+      await logExtend(this.log, args, true);
+      await logArgs(this.log);
       await logDebug(this.log, args);
       await logExtendFileInfo(this.log, args);
 
