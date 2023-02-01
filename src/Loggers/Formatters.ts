@@ -86,7 +86,7 @@ export const formatterEntry: LogFormatter = async ({
       { text: isExtend ? spacesPrefix : timePrefix, textColor: headColor, backgroundColor: 'sane' },
       { text, textColor: resolveColor(textColor, level), backgroundColor: resolveBackColor(backgroundColor) },
       // {
-      //   text: `${stepId} / ${text.substring(0, 5)}`,
+      //   text: `${stepId} / ${text}`,
       //   textColor: resolveColor(textColor, level),
       //   backgroundColor: resolveBackColor(backgroundColor),
       // },
