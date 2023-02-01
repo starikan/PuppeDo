@@ -26,11 +26,16 @@ export const logError = async (log: LogFunctionType, error: ErrorType): Promise<
   }
 };
 
-export const logTimer = async (log: LogFunctionType, startTime: bigint, args: TestArgsType): Promise<void> => {
+export const logTimer = async (
+  log: LogFunctionType,
+  startTime: bigint,
+  endTime: bigint,
+  args: TestArgsType,
+): Promise<void> => {
   const { levelIndent = 0 } = args;
   const { PPD_LOG_EXTEND } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
-    const text = `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`;
+    const text = `⌛: ${(Number(endTime - startTime) / 1e9).toFixed(3)} s.`;
     await log({ text, level: 'timer', levelIndent: levelIndent + 1, logMeta: { extendInfo: true } });
   }
 };
