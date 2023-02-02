@@ -97,7 +97,7 @@ export type LogMetaInfoType = {
   testFile?: string;
   extendInfo?: boolean;
   breadcrumbs?: string[];
-  testArgs?: TestArgsType;
+  repeat?: number;
 };
 
 export type LogOptionsType = {
@@ -129,6 +129,7 @@ export type LogInputType = {
   page?: PagePuppeteer | PagePlaywright;
   logMeta?: LogMetaInfoType;
   logOptions?: LogOptionsType;
+  args?: TestArgsType;
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;

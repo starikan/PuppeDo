@@ -684,6 +684,7 @@ export class Test implements TestExtendType {
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
+            // Create Atom for get elements only
             const atom = new Atom({ page: pageCurrent, runner: this.runner });
             const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];
             for (const selector of selectors) {
@@ -701,8 +702,10 @@ export class Test implements TestExtendType {
               level: 'test',
               levelIndent: this.levelIndent,
               element,
+              stepId: this.stepId,
               logOptions: { ...this.logOptions, logShowFlag },
-              logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
+              logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+              args,
             });
           }
 
@@ -712,11 +715,13 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
+                stepId: this.stepId,
                 logOptions: {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
-                logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
+                logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+                args,
               });
             }
           }
@@ -804,8 +809,9 @@ export class Test implements TestExtendType {
             text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
             level: 'timer',
             levelIndent: this.levelIndent,
+            stepId: this.stepId,
             logOptions: { logShowFlag },
-            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, testArgs: args },
+            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat },
           });
         }
 

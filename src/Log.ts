@@ -111,13 +111,20 @@ export class Log {
     }
   }
 
+  // private updateTree(logEntries: LogEntry[]): void {
+  //   const { testTree } = new Environment().getEnvAllInstance(this.envsId);
+  //   for (const logEntry of logEntries) {
+  //     console.log(logEntry.stepId);
+  //   }
+  // }
+
   async log({
     text = '',
     level = 'raw',
     levelIndent = 0,
     element,
     error = null,
-    stepId = null,
+    stepId = '',
     logMeta = {},
     logOptions = {},
   }: LogInputType): Promise<void> {
@@ -141,13 +148,14 @@ export class Log {
           error,
           textColor,
           backgroundColor: level === 'error' ? 'sane' : backgroundColor,
-          stepId: stepId ?? logMeta.testArgs?.stepId ?? '',
+          stepId,
           breadcrumbs: logMeta.breadcrumbs ?? [],
-          repeat: logMeta.testArgs?.repeat ?? 1,
+          repeat: logMeta.repeat ?? 1,
         };
         return logEntry;
       });
 
+      // this.updateTree(logEntries);
       await this.runPipes(logEntries, manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;
@@ -156,7 +164,7 @@ export class Log {
       err.message += ' || error in log';
       err.socket = socket;
       err.debug = PPD_DEBUG_MODE;
-      err.stepId = stepId ?? logMeta.testArgs?.stepId ?? '';
+      err.stepId = stepId ?? '';
       throw err;
     }
   }
