@@ -36,7 +36,14 @@ export const logTimer = async (
   const { PPD_LOG_EXTEND } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
     const text = `⌛: ${(Number(endTime - startTime) / 1e9).toFixed(3)} s.`;
-    await log({ text, level: 'timer', levelIndent: levelIndent + 1, stepId, logMeta: { extendInfo: true } });
+    await log({
+      text,
+      // text: `${text} / ${stepId}`,
+      level: 'timer',
+      levelIndent: levelIndent + 1,
+      stepId,
+      logMeta: { extendInfo: true },
+    });
   }
 };
 

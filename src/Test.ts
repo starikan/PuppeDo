@@ -698,6 +698,7 @@ export class Test implements TestExtendType {
 
           for (const element of elements) {
             await logger.log({
+              // text: `${getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME)} / ${this.stepId}`,
               text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
               level: 'test',
               levelIndent: this.levelIndent,
@@ -801,19 +802,20 @@ export class Test implements TestExtendType {
         }
 
         // TIMER IN CONSOLE
-        if (
-          (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
-          (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name))
-        ) {
-          await logger.log({
-            text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
-            level: 'timer',
-            levelIndent: this.levelIndent,
-            stepId: this.stepId,
-            logOptions: { logShowFlag },
-            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat },
-          });
-        }
+        await logger.log({
+          text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
+          // text: `🕝: ${getTimer(startTime).delta} (${this.name}) / ${this.stepId}`,
+          level: 'timer',
+          levelIndent: this.levelIndent,
+          stepId: this.stepId,
+          logOptions: {
+            logShowFlag:
+              logShowFlag &&
+              (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
+              (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)),
+          },
+          logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat },
+        });
 
         if (this.breakParentIfResult) {
           const breakParentIfResult = runScriptInContext(this.breakParentIfResult, {

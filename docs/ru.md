@@ -133,7 +133,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'skipSublingIfResult' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 skipSublingIfResult (skipSublingIfResult)
    Simple skipSublingIfResult (case)
       ✔️ I`m not skiped (blank)
@@ -262,7 +262,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 continueOnError (continueOnError)
    Skip me if I broken (case)
       (blank)
@@ -334,7 +334,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 descriptionError (descriptionError)
    Simple descriptionError (case)
 
@@ -393,7 +393,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 descriptionErrorNested (descriptionErrorNested)
    description 0 (case)
       description 1 (blank)
@@ -463,7 +463,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'descriptionErrorDynamic' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 descriptionErrorDynamic (descriptionErrorDynamic)
    (case)
 
@@ -542,7 +542,7 @@ runTest:
 #### Output:
 ```
 00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
+00:00:00.000 - env
 argsRedefine check (argsRedefine)
    Check PPD_LOG_EXTEND true globaly (case)
       (blank)
