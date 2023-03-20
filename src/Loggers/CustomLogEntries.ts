@@ -33,12 +33,11 @@ export const logTimer = async (
   args: TestArgsType,
 ): Promise<void> => {
   const { levelIndent = 0, stepId } = args;
-  const { PPD_LOG_EXTEND } = new Arguments().args;
+  const { PPD_LOG_EXTEND, PPD_LOG_STEPID } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
     const text = `⌛: ${(Number(endTime - startTime) / 1e9).toFixed(3)} s.`;
     await log({
-      text,
-      // text: `${text} / ${stepId}`,
+      text: `${text}${PPD_LOG_STEPID ? ` [${stepId}]` : ''}`,
       level: 'timer',
       levelIndent: levelIndent + 1,
       stepId,

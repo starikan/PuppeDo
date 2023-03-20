@@ -65,6 +65,7 @@ export type ArgumentsType = {
   PPD_LOG_TIMER_SHOW: boolean;
   PPD_LOG_TIMESTAMP_SHOW: boolean;
   PPD_LOG_INDENT_LENGTH: number;
+  PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
 };
