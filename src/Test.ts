@@ -798,17 +798,6 @@ export class Test implements TestExtendType {
           }
         }
 
-        // REPEAT
-        if (this.repeat > 1) {
-          const repeatArgs = { ...inputs };
-          repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
-          repeatArgs.data = { ...repeatArgs.data, ...localResults };
-          repeatArgs.repeat = this.repeat - 1;
-          repeatArgs.stepId = generateId();
-          const repeatResult = await this.run(repeatArgs);
-          localResults = { ...localResults, ...repeatResult };
-        }
-
         // TIMER IN CONSOLE
         await logger.log({
           text: `🕝: ${getTimer(startTime).delta} (${this.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
@@ -823,6 +812,17 @@ export class Test implements TestExtendType {
           },
           logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat },
         });
+
+        // REPEAT
+        if (this.repeat > 1) {
+          const repeatArgs = { ...inputs };
+          repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
+          repeatArgs.data = { ...repeatArgs.data, ...localResults };
+          repeatArgs.repeat = this.repeat - 1;
+          repeatArgs.stepId = generateId();
+          const repeatResult = await this.run(repeatArgs);
+          localResults = { ...localResults, ...repeatResult };
+        }
 
         if (this.breakParentIfResult) {
           const breakParentIfResult = runScriptInContext(this.breakParentIfResult, {
