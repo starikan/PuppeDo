@@ -1,11 +1,13 @@
-type TreeEntryDataType = Record<string, unknown> & {
+import { TestExtendType } from './global.d';
+
+type TreeEntryDataType = TestExtendType & {
   timeStart: number;
   timeEnd: number;
 };
 
 type TreeEntryType = Partial<TreeEntryDataType> & {
   stepId: string;
-  steps: TreeType;
+  steps?: TreeType;
 };
 
 type TreeType = TreeEntryType[];
@@ -47,11 +49,12 @@ export class TestTree {
         return entry;
       }
 
-      const found = this.findNode(entry.steps, stepId);
+      const found = this.findNode(entry.steps ?? [], stepId);
       if (found) {
         return found;
       }
     }
+
     return null;
   }
 
@@ -66,20 +69,13 @@ export class TestTree {
    */
   createStep(stepIdParent: string | null, stepId: string, payload: Partial<TreeEntryDataType>): TreeType {
     // Top step
-    if (!stepIdParent) {
-      this.tree.push({
-        stepId,
-        ...payload,
-        steps: [],
-      });
+    if (!stepIdParent && stepId) {
+      this.tree.push({ stepId, ...payload });
     } else {
       const entry = this.findNode(this.tree, stepIdParent);
       if (entry) {
-        entry.steps.push({
-          stepId,
-          ...payload,
-          steps: [],
-        });
+        entry.steps = entry.steps ?? [];
+        entry.steps.push({ stepId, ...payload });
       }
     }
 
@@ -95,10 +91,9 @@ export class TestTree {
   updateStep(stepId: string, payload: Partial<TreeEntryDataType>): TreeType {
     let entry = this.findNode(this.tree, stepId);
     if (entry) {
-      entry = {
-        ...entry,
-        ...payload,
-      };
+      entry = { ...entry, ...payload };
+    } else {
+      this.createStep(null, stepId, payload);
     }
 
     return this.getTree();

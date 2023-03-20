@@ -111,12 +111,12 @@ export class Log {
     }
   }
 
-  // private updateTree(logEntries: LogEntry[]): void {
-  //   const { testTree } = new Environment().getEnvAllInstance(this.envsId);
-  //   for (const logEntry of logEntries) {
-  //     console.log(logEntry.stepId);
-  //   }
-  // }
+  private updateTree(logEntries: LogEntry[]): void {
+    const { testTree } = new Environment().getEnvAllInstance(this.envsId);
+    for (const logEntry of logEntries) {
+      testTree.updateStep(logEntry.stepId, {});
+    }
+  }
 
   async log({
     text = '',
@@ -155,7 +155,7 @@ export class Log {
         return logEntry;
       });
 
-      // this.updateTree(logEntries);
+      this.updateTree(logEntries);
       await this.runPipes(logEntries, manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;

@@ -152,6 +152,7 @@ const getTest = ({
     );
 
     // TODO: 2022-10-06 S.Starodubov переделать получание этих вещей из значений плагина через хук, чтобы хук возвращал то что надо
+    // TODO: 2023-03-20 S.Starodubov нормальную типизацию
     const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
     updatetTestJson = propagateArgumentsSimpleOnAir(
       updatetTestJson,
@@ -162,11 +163,11 @@ const getTest = ({
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
     updatetTestJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
 
-    const { stepId } = testJson;
+    const { stepId, name } = testJson;
     const { stepId: stepIdParent } = args ?? {};
 
     const { testTree } = new Environment().getEnvAllInstance(testJson.envsId);
-    testTree.createStep(stepIdParent ?? null, stepId, { ...fromPrevSublingSimple });
+    testTree.createStep(stepIdParent ?? null, stepId, { ...fromPrevSublingSimple, name });
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
 
