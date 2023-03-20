@@ -445,7 +445,7 @@ export class Test implements TestExtendType {
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
       this.plugins.hook('runLogic', { inputs });
-      const startTime = getTimer().now;
+      const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
       const { allRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
@@ -799,8 +799,9 @@ export class Test implements TestExtendType {
         }
 
         // TIMER IN CONSOLE
+        const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
         await logger.log({
-          text: `🕝: ${getTimer(startTime).delta} (${this.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
+          text: `🕝: ${deltaStr} (${this.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
           level: 'timer',
           levelIndent: this.levelIndent,
           stepId: this.stepId,
@@ -810,7 +811,7 @@ export class Test implements TestExtendType {
               (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
               (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)),
           },
-          logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat },
+          logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
         });
 
         // REPEAT

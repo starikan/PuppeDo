@@ -1,7 +1,16 @@
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
-import { ColorsType, Element, LogEntrieType, LogEntry, LogInputType, LogOptionsType, LogPipe } from './global.d';
+import {
+  ColorsType,
+  Element,
+  LogEntrieType,
+  LogEntry,
+  LogInputType,
+  LogOptionsType,
+  LogPipe,
+  TreeEntryDataType,
+} from './global.d';
 import { Environment } from './Environment';
 import Singleton from './Singleton';
 
@@ -114,7 +123,12 @@ export class Log {
   private updateTree(logEntries: LogEntry[]): void {
     const { testTree } = new Environment().getEnvAllInstance(this.envsId);
     for (const logEntry of logEntries) {
-      testTree.updateStep(logEntry.stepId, {});
+      const payload: Partial<TreeEntryDataType> = {};
+      if (logEntry.level === 'timer') {
+        payload.timeStart = logEntry.logMeta?.timeStart;
+        payload.timeEnd = logEntry.logMeta?.timeEnd;
+      }
+      testTree.updateStep(logEntry.stepId, payload);
     }
   }
 
@@ -151,6 +165,7 @@ export class Log {
           stepId,
           breadcrumbs: logMeta.breadcrumbs ?? [],
           repeat: logMeta.repeat ?? 1,
+          logMeta,
         };
         return logEntry;
       });

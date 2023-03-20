@@ -1,16 +1,4 @@
-import { TestExtendType } from './global.d';
-
-type TreeEntryDataType = TestExtendType & {
-  timeStart: number;
-  timeEnd: number;
-};
-
-type TreeEntryType = Partial<TreeEntryDataType> & {
-  stepId: string;
-  steps?: TreeType;
-};
-
-type TreeType = TreeEntryType[];
+import { TreeEntryDataType, TreeEntryType, TreeType } from './global.d';
 
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."
@@ -89,9 +77,11 @@ export class TestTree {
    * @returns The tree
    */
   updateStep(stepId: string, payload: Partial<TreeEntryDataType>): TreeType {
-    let entry = this.findNode(this.tree, stepId);
+    const entry = this.findNode(this.tree, stepId);
     if (entry) {
-      entry = { ...entry, ...payload };
+      for (const key of Object.keys(payload)) {
+        entry[key] = payload[key];
+      }
     } else {
       this.createStep(null, stepId, payload);
     }

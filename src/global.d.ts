@@ -91,6 +91,7 @@ export type LogEntry = {
   backgroundColor?: ColorsType;
   breadcrumbs?: string[];
   repeat?: number;
+  logMeta?: LogMetaInfoType;
 };
 
 export type LogMetaInfoType = {
@@ -99,6 +100,8 @@ export type LogMetaInfoType = {
   extendInfo?: boolean;
   breadcrumbs?: string[];
   repeat?: number;
+  timeStart?: Date;
+  timeEnd?: Date;
 };
 
 export type LogOptionsType = {
@@ -409,3 +412,15 @@ export type RunOptions = {
   socket: SocketType;
   debug: boolean;
 };
+
+export type TreeEntryDataType = TestExtendType & {
+  timeStart: Date;
+  timeEnd: Date;
+};
+
+export type TreeEntryType = Partial<TreeEntryDataType> & {
+  stepId: string;
+  steps?: TreeType;
+};
+
+export type TreeType = TreeEntryType[];

@@ -4,6 +4,7 @@ import { Arguments } from '../Arguments';
 import { Environment } from '../Environment';
 import { ErrorType } from '../Error';
 import { LogFunctionType, TestArgsType } from '../global.d';
+import { getTimer } from '../Helpers';
 
 export const logExtendFileInfo = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
   if (args?.envsId) {
@@ -35,13 +36,13 @@ export const logTimer = async (
   const { levelIndent = 0, stepId } = args;
   const { PPD_LOG_EXTEND, PPD_LOG_STEPID } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
-    const text = `⌛: ${(Number(endTime - startTime) / 1e9).toFixed(3)} s.`;
+    const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt: startTime, timeEndBigInt: endTime });
     await log({
-      text: `${text}${PPD_LOG_STEPID ? ` [${stepId}]` : ''}`,
+      text: `⌛: ${deltaStr}${PPD_LOG_STEPID ? ` [${stepId}]` : ''}`,
       level: 'timer',
       levelIndent: levelIndent + 1,
       stepId,
-      logMeta: { extendInfo: true },
+      logMeta: { extendInfo: true, timeStart, timeEnd },
     });
   }
 };
