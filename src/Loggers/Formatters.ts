@@ -60,7 +60,6 @@ export const formatterEntry: LogFormatter = async ({
   textColor = 'sane',
   backgroundColor = 'sane',
   breadcrumbs = [],
-  // stepId = '',
   repeat = 1,
 }: LogEntry): Promise<LogEntrieType[][]> => {
   const errorTyped = error;
@@ -85,11 +84,6 @@ export const formatterEntry: LogFormatter = async ({
     [
       { text: isExtend ? spacesPrefix : timePrefix, textColor: headColor, backgroundColor: 'sane' },
       { text, textColor: resolveColor(textColor, level), backgroundColor: resolveBackColor(backgroundColor) },
-      // {
-      //   text: `${stepId} / ${text}`,
-      //   textColor: resolveColor(textColor, level),
-      //   backgroundColor: resolveBackColor(backgroundColor),
-      // },
     ],
 
     isBreadcrumbs && [

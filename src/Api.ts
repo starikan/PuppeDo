@@ -101,7 +101,6 @@ export default async function run(
       results[testName] = testResults;
     }
 
-    // console.log(JSON.stringify(testTree, null, 2));
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
     await closeEnvironment(options, envsId);
 
