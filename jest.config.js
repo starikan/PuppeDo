@@ -6,15 +6,29 @@ module.exports = {
   // roots: ['<rootDir>/src'],
   // testResultsProcessor: '<rootDir>/node_modules/ts-jest/coverageprocessor.js',
   testMatch: ['<rootDir>/src.tests/**/*.+(ts|tsx)'],
-  transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.ts'],
+
+  transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',
       babelConfig: true,
     },
   },
+
+  // transform: {
+  //   '^.+\\.(ts|tsx)$': [
+  //     'ts-jest',
+  //     {
+  //       tsconfig: 'tsconfig.json',
+  //       babelConfig: true,
+  //       // other ts-jest configurations
+  //       // ...
+  //     },
+  //   ],
+  // },
+
   // transform: {
   //   '^.+\\.(ts|tsx)$': [
   //     'ts-jest',
