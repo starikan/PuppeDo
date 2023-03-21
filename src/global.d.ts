@@ -72,7 +72,10 @@ export type ArgumentsType = {
 
 export type ArgumentsKeysType = keyof ArgumentsType;
 
-export type ArgumentsValuesType = typeof argsDefault[ArgumentsKeysType];
+// Fix conflict prettier in package.json with vscode plugin
+type ArgumentsValuesType_UtilityType = typeof argsDefault;
+
+export type ArgumentsValuesType = ArgumentsValuesType_UtilityType[ArgumentsKeysType];
 
 // ================ LOGGER ====================
 

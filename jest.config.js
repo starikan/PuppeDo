@@ -8,32 +8,13 @@ module.exports = {
   testMatch: ['<rootDir>/src.tests/**/*.+(ts|tsx)'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.ts'],
-
-  transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.json',
-      babelConfig: true,
-    },
+  transform: {
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+        babelConfig: true,
+      },
+    ],
   },
-
-  // transform: {
-  //   '^.+\\.(ts|tsx)$': [
-  //     'ts-jest',
-  //     {
-  //       tsconfig: 'tsconfig.json',
-  //       babelConfig: true,
-  //       // other ts-jest configurations
-  //       // ...
-  //     },
-  //   ],
-  // },
-
-  // transform: {
-  //   '^.+\\.(ts|tsx)$': [
-  //     'ts-jest',
-  // https://kulshekhar.github.io/ts-jest/docs/getting-started/options/tsconfig
-  // { tsconfig: './tsconfig.json', babelConfig: './babel.config.js' },
-  //   ],
-  // },
 };
