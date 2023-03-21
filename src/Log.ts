@@ -128,7 +128,7 @@ export class Log {
         payload.timeStart = logEntry.logMeta?.timeStart;
         payload.timeEnd = logEntry.logMeta?.timeEnd;
       }
-      testTree.updateStep(logEntry.stepId, payload);
+      testTree.updateStep({ stepId: logEntry.stepId, payload });
     }
   }
 

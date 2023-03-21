@@ -1,5 +1,16 @@
 import { TreeEntryDataType, TreeEntryType, TreeType } from './global.d';
 
+type CreateStepParams = {
+  stepIdParent?: string | null;
+  stepId: string;
+  payload: Partial<TreeEntryDataType>;
+};
+
+type UpdateStepParams = {
+  stepId: string;
+  payload: Partial<TreeEntryDataType>;
+};
+
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."
 
@@ -55,14 +66,14 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  createStep(stepIdParent: string | null, stepId: string, payload: Partial<TreeEntryDataType>): TreeType {
+  createStep({ stepIdParent, stepId, payload }: CreateStepParams): TreeType {
     // Top step
     if (!stepIdParent && stepId) {
       this.tree.push({ stepId, ...payload });
     } else {
       const entry = this.findNode(this.tree, stepIdParent);
       if (entry) {
-        entry.steps = entry.steps ?? [];
+        entry.steps ??= [];
         entry.steps.push({ stepId, ...payload });
       }
     }
@@ -76,14 +87,14 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  updateStep(stepId: string, payload: Partial<TreeEntryDataType>): TreeType {
+  updateStep({ stepId, payload }: UpdateStepParams): TreeType {
     const entry = this.findNode(this.tree, stepId);
     if (entry) {
-      for (const key of Object.keys(payload)) {
-        entry[key] = payload[key];
+      for (const [key, value] of Object.entries(payload)) {
+        entry[key] = value;
       }
     } else {
-      this.createStep(null, stepId, payload);
+      this.createStep({ stepIdParent: null, stepId, payload });
     }
 
     return this.getTree();
