@@ -4,6 +4,7 @@ import { Arguments } from '../Arguments';
 import { Environment } from '../Environment';
 import { ErrorType } from '../Error';
 import { LogFunctionType, TestArgsType } from '../global.d';
+import { getTimer } from '../Helpers';
 
 export const logExtendFileInfo = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
   if (args?.envsId) {
@@ -26,22 +27,33 @@ export const logError = async (log: LogFunctionType, error: ErrorType): Promise<
   }
 };
 
-export const logTimer = async (log: LogFunctionType, startTime: bigint, levelIndent = 0): Promise<void> => {
-  const { PPD_LOG_EXTEND } = new Arguments().args;
+export const logTimer = async (
+  log: LogFunctionType,
+  startTime: bigint,
+  endTime: bigint,
+  args: TestArgsType,
+): Promise<void> => {
+  const { levelIndent = 0, stepId } = args;
+  const { PPD_LOG_EXTEND, PPD_LOG_STEPID } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
-    const text = `⌛: ${(Number(process.hrtime.bigint() - startTime) / 1e9).toFixed(3)} s.`;
-    await log({ text, level: 'timer', levelIndent: levelIndent + 1, logMeta: { extendInfo: true } });
+    const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt: startTime, timeEndBigInt: endTime });
+    await log({
+      text: `⌛: ${deltaStr}${PPD_LOG_STEPID ? ` [${stepId}]` : ''}`,
+      level: 'timer',
+      levelIndent: levelIndent + 1,
+      stepId,
+      logMeta: { extendInfo: true, timeStart, timeEnd },
+    });
   }
 };
 
 export const logExtend = async (
   log: LogFunctionType,
-  levelIndent: number,
   args: TestArgsType | undefined,
   isError = false,
 ): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
-  const { dataTest, bindData, selectorsTest, bindSelectors, bindResults, options } = args || {};
+  const { dataTest, bindData, selectorsTest, bindSelectors, bindResults, options, levelIndent = 0 } = args || {};
   if (PPD_LOG_EXTEND || isError) {
     let text = [
       ['📋 (data):', dataTest],
@@ -60,17 +72,17 @@ export const logExtend = async (
 
     await log({
       text,
-      levelIndent: isError ? levelIndent : levelIndent + 1,
+      levelIndent: isError ? 0 : levelIndent + 1,
       level: isError ? 'error' : 'info',
       logMeta: { extendInfo: true },
     });
   }
 };
 
-export const logArgs = async (log: LogFunctionType, levelIndent: number): Promise<void> => {
+export const logArgs = async (log: LogFunctionType): Promise<void> => {
   const args = Object.entries(new Arguments().args).map((v) => `${v[0]}: ${JSON.stringify(v[1])}`);
   const text = ['============== ARGUMENTS ==============', ...args, ''];
-  await log({ text, levelIndent, level: 'error', logMeta: { extendInfo: true } });
+  await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
 };
 
 export const logDebug = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {

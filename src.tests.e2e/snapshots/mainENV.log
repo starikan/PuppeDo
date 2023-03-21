@@ -69,8 +69,8 @@ Prepare time 🕝: 00.000 s.
 |   [32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
 |   🕝: 00.000 s. (typeInput)
 |   [32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
-|   [32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
 |   🕝: 00.000 s. (typeInput)
+|   [32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
 |   🕝: 00.000 s. (typeInput)
 |   [34mSkip with disable: (typeInput) TODO: Fill description[0m
 |   [32m(getText) Get text from selector: '#main-input'[0m
@@ -79,10 +79,10 @@ Prepare time 🕝: 00.000 s.
 |   🕝: 00.000 s. (clickWithNestedWait)
 |   [36mSkip with IF expr '1 !== 1' === 'false'[0m
 |   [32m(getText) Get text with repeat[0m
-|   [32m(getText) Get text with repeat[0m
+|   🕝: 00.000 s. (getText)
 |   [32m(getText) Get text with repeat[0m
 |   🕝: 00.000 s. (getText)
-|   🕝: 00.000 s. (getText)
+|   [32m(getText) Get text with repeat[0m
 |   🕝: 00.000 s. (getText)
 |   [32m(blank) Some data function[0m
 |   🕝: 00.000 s. (blank)

@@ -19,12 +19,12 @@ Test values description and bindDescription (descriptionTest)
 00:00:00.000 - test   |   [32m(blank) I am descriptionExtend[0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(loop) Loop description[0m
+                      |   🕝: 00.000 s. (loop)
 00:00:00.000 - test   |   [32m(loop) Loop description[0m
                       |   🕝: 00.000 s. (loop)
-                      |   🕝: 00.000 s. (loop)
 00:00:00.000 - test   |   [32m(loop) Loop bindDescription 2[0m
-00:00:00.000 - test   |   [32m(loop) Loop bindDescription 1[0m
                       |   🕝: 00.000 s. (loop)
+00:00:00.000 - test   |   [32m(loop) Loop bindDescription 1[0m
                       |   🕝: 00.000 s. (loop)
                       🕝: 00.000 s. (descriptionTest)
 00:00:00.000 - timer  Test 'descriptionTest' time 🕝: 00.000 s.

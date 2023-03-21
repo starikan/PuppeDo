@@ -29,7 +29,7 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
 };
 
 const runTest = async (testName: string, envsId: string): Promise<Record<string, unknown>> => {
-  const startTimeTest = getTimer().now;
+  const { timeStartBigInt } = getTimer();
 
   const { logger } = new Environment().getEnvAllInstance(envsId);
 
@@ -45,12 +45,12 @@ const runTest = async (testName: string, envsId: string): Promise<Record<string,
 
   await logger.bulkLog([
     { level: 'env', text: `\n${textDescription}` },
-    { level: 'timer', text: `Prepare time 🕝: ${getTimer(startTimeTest).delta}` },
+    { level: 'timer', text: `Prepare time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` },
   ]);
 
   const testResults = await test();
 
-  await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer(startTimeTest).delta}` });
+  await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
 
   return testResults;
 };
@@ -88,7 +88,7 @@ export default async function run(
   }
 
   try {
-    const startTime = getTimer().now;
+    const { timeStartBigInt } = getTimer();
 
     for (const testName of PPD_TESTS) {
       const testResults = await runTest(testName, envsId);
@@ -101,7 +101,7 @@ export default async function run(
       results[testName] = testResults;
     }
 
-    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer(startTime).delta}` });
+    await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
     await closeEnvironment(options, envsId);
 
     console.log(JSON.stringify(results, null, 2));
