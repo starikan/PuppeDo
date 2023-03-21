@@ -174,7 +174,7 @@ export const checkIf = async (
   if (!exprResult && ifType === 'if') {
     if (logShowFlag && !continueOnError) {
       await log({
-        text: `Skip with IF expr '${expr}' === '${exprResult}${textAddition}`,
+        text: `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`,
         level: 'info',
         levelIndent,
         logOptions: {

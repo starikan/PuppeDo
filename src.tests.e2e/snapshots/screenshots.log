@@ -53,14 +53,14 @@ screenshots (screenshots)
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
                       |    [36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   [32m(goTo) Going on page http://localhost:3000/[0m
                       |    [36m👣[screenshots -> beforeTest[1].goTo][0m
 00:00:00.000 - raw    |   |   Go to: http://localhost:3000/
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (goTo)
 00:00:00.000 - test   |   [47m[30m(case) No screenshot[0m[0m
                       |    [36m👣[screenshots -> runTest[0].case][0m

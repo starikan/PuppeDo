@@ -20,16 +20,16 @@ continueOnError (continueOnError)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
                       |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Second level loop: 2[0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
                       |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Second level loop: 1[0m
 00:00:00.000 - warn   |   |   [33mContinue: Test stopped with expr errorIfResult = '$loop < 2'[0m
-                      |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [47m[30m(case) I am without errors[0m[0m
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [47m[30m(case) Error me if I broken[0m[0m
