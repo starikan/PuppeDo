@@ -26,6 +26,7 @@ const argsModify: ArgumentsType = {
   PPD_LOG_TIMER_SHOW: false,
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
+  PPD_LOG_STEPID: false,
   PPD_CONTINUE_ON_ERROR_ENABLED: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
@@ -54,6 +55,7 @@ const argsENV: Record<ArgumentsKeysType, string> = {
   PPD_LOG_TIMER_SHOW: 'false',
   PPD_LOG_TIMESTAMP_SHOW: 'true',
   PPD_LOG_INDENT_LENGTH: '4',
+  PPD_LOG_STEPID: 'false',
   PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
   PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
 };

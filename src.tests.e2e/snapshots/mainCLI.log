@@ -56,8 +56,8 @@ Main test (main)
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
                       |    [36m👣[main -> beforeTest[0].runnerSwitch][0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
                       |    [36m👣[main -> runTest[0].initData][0m
@@ -67,8 +67,8 @@ Main test (main)
 00:00:00.000 - test   |   |   [32m(goTo) Going on page http://localhost:3000/[0m
                       |   |    [36m👣[main -> runTest[1].case -> runTest[0].goTo][0m
 00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
-                      |   |   |   ⌛: 00.000 s.
                       |   |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
+                      |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (goTo)
 00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
                       |   |    [36m👣[main -> runTest[1].case -> runTest[1].checkSelector][0m
@@ -78,9 +78,9 @@ Main test (main)
 00:00:00.000 - test   |   [32m(blank) Input some text in field INPUT[0m
                       |    [36m👣[main -> runTest[2].blank][0m
 00:00:00.000 - raw    |   |   Type in selector: '#main-input', text: 'myDataBinded'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📋 (data): {"text":"myDataBinded"}[0m
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [47m[30m(blank) Nested click #main-input[0m[0m
                       |    [36m👣[main -> runTest[3].blank][0m
@@ -97,26 +97,26 @@ Main test (main)
 00:00:00.000 - test   |   [32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
                       |    [36m👣[main -> runTest[7].typeInput][0m
                       |    [36m🔆 repeats left: 1[0m
+                      |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - test   |   [32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
                       |    [36m👣[main -> runTest[7].typeInput][0m
-                      |   🕝: 00.000 s. (typeInput)
                       |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - raw    |   [34mSkip with disable: (typeInput) TODO: Fill description[0m
 00:00:00.000 - test   |   [32m(getText) Get text from selector: '#main-input'[0m
                       |    [36m👣[main -> runTest[9].getText][0m
 00:00:00.000 - raw    |   |   Get text: '01' from selector: '#main-input'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
                       |   |   [36m↩️ (results): {"result":"text"}[0m
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
                       |    [36m👣[main -> runTest[10].clickWithNestedWait][0m
 00:00:00.000 - test   |   |   [32m(waitForSelector) Wait for: '#main-input'[0m
                       |   |    [36m👣[main -> runTest[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
 00:00:00.000 - raw    |   |   |   Wait for selector: '#main-input'
-                      |   |   |   ⌛: 00.000 s.
                       |   |   |   [36m📌☸️ (bS): {"selector":"mainInputInside"}[0m
                       |   |   |   [36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
+                      |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (waitForSelector)
 00:00:00.000 - test   |   |   [41m[32m(clickSelector) TODO: Fill description[0m[0m
                       |   |    [36m👣[main -> runTest[10].clickWithNestedWait -> runTest[1].clickSelector][0m
@@ -128,26 +128,26 @@ Main test (main)
                       |    [36m👣[main -> runTest[12].getText][0m
                       |    [36m🔆 repeats left: 2[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m☸️ (selectors): {"selector":"title"}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
+                      |   |   ⌛: 00.000 s.
+                      |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
                       |    [36m👣[main -> runTest[12].getText][0m
                       |    [36m🔆 repeats left: 1[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
+                      |   |   ⌛: 00.000 s.
+                      |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
                       |    [36m👣[main -> runTest[12].getText][0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   ⌛: 00.000 s.
                       |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
-                      |   🕝: 00.000 s. (getText)
-                      |   🕝: 00.000 s. (getText)
+                      |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(blank) Some data function[0m
                       |    [36m👣[main -> runTest[13].blank][0m

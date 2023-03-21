@@ -153,12 +153,13 @@ export default class Atom {
 
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
-        const logOptions = { ...logOptionsDefault, ...(this.logOptions || {}), ...(customLog.logOptions || {}) };
+        const logOptions = { ...logOptionsDefault, ...(args.logOptions ?? {}), ...(customLog.logOptions ?? {}) };
+        const logMeta = { ...{ breadcrumbs: args.breadcrumbs ?? [] }, ...(customLog.logMeta ?? {}) };
         const logData = {
           level: 'raw' as ColorsType,
-          levelIndent: this.levelIndent + 1,
+          levelIndent: (args.levelIndent ?? 0) + 1,
           logOptions,
-          logMeta: { breadcrumbs: args.breadcrumbs },
+          logMeta,
           ...customLog,
         };
         logData.logOptions.logThis = logData.level === 'error' ? true : logData.logOptions.logThis;
@@ -169,14 +170,16 @@ export default class Atom {
     try {
       await this.updateFrame();
       const result = await this.atomRun();
-      await logTimer(this.log, startTime, this.levelIndent);
-      await logExtend(this.log, this.levelIndent, args);
+
+      await logExtend(this.log, args);
+
+      const endTime = process.hrtime.bigint();
+      await logTimer(this.log, startTime, endTime, args);
       return result;
     } catch (error) {
-      await logTimer(this.log, startTime, this.levelIndent);
       await logError(this.log, error);
-      await logExtend(this.log, 0, args, true);
-      await logArgs(this.log, 0);
+      await logExtend(this.log, args, true);
+      await logArgs(this.log);
       await logDebug(this.log, args);
       await logExtendFileInfo(this.log, args);
 

@@ -97,6 +97,7 @@ Test all Atoms (atoms)
 00:00:00.000 - test   |   [32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
 00:00:00.000 - raw    |   |   Runner 'mainRunner' closed.
                       |   🕝: 00.000 s. (runnerClose)
+                      🕝: 00.000 s. (atoms)
 00:00:00.000 - test   [32m(atoms) Test all Atoms[0m
 00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
                       |   🕝: 00.000 s. (initData)
@@ -153,7 +154,6 @@ Test all Atoms (atoms)
 00:00:00.000 - test   |   [32m(runnerClose) [RUNNER_CLOSE] Close runner[0m
 00:00:00.000 - raw    |   |   Runner 'mainRunnerPuppeteer' closed.
                       |   🕝: 00.000 s. (runnerClose)
-                      🕝: 00.000 s. (atoms)
                       🕝: 00.000 s. (atoms)
 00:00:00.000 - timer  Test 'atoms' time 🕝: 00.000 s.
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.

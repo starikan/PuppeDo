@@ -167,13 +167,14 @@ export const checkIf = async (
   logShowFlag = true,
   continueOnError = false,
   breadcrumbs = [],
+  textAddition = '',
 ): Promise<boolean> => {
   const exprResult = runScriptInContext(expr, allData);
 
   if (!exprResult && ifType === 'if') {
     if (logShowFlag && !continueOnError) {
       await log({
-        text: `Skip with IF expr '${expr}' === '${exprResult}'`,
+        text: `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`,
         level: 'info',
         levelIndent,
         logOptions: {
@@ -444,7 +445,7 @@ export class Test implements TestExtendType {
       inputs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
       this.plugins.hook('runLogic', { inputs });
-      const startTime = getTimer().now;
+      const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
       const { allRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
@@ -462,6 +463,7 @@ export class Test implements TestExtendType {
         PPD_LOG_DOCUMENTATION_MODE,
         PPD_LOG_NAMES_ONLY,
         PPD_LOG_TIMER_SHOW,
+        PPD_LOG_STEPID,
       } = { ...new Arguments().args, ...argsRedefine };
 
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
@@ -476,7 +478,9 @@ export class Test implements TestExtendType {
 
       if (disable) {
         await logger.log({
-          text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}`,
+          text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}${
+            PPD_LOG_STEPID ? `[${this.stepId}]` : ''
+          }`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logOptions: {
@@ -502,7 +506,7 @@ export class Test implements TestExtendType {
             this.description,
             this.name,
             PPD_LOG_TEST_NAME,
-          )}`,
+          )}${PPD_LOG_STEPID ? `[${this.stepId}]` : ''}`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logOptions: {
@@ -660,6 +664,7 @@ export class Test implements TestExtendType {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
+            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -677,6 +682,7 @@ export class Test implements TestExtendType {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
+            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
           );
         }
 
@@ -684,6 +690,7 @@ export class Test implements TestExtendType {
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
+            // Create Atom for get elements only
             const atom = new Atom({ page: pageCurrent, runner: this.runner });
             const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];
             for (const selector of selectors) {
@@ -697,12 +704,16 @@ export class Test implements TestExtendType {
 
           for (const element of elements) {
             await logger.log({
-              text: getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME),
+              text: `${getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME)}${
+                PPD_LOG_STEPID ? ` [${this.stepId}]` : ''
+              }`,
               level: 'test',
               levelIndent: this.levelIndent,
               element,
+              stepId: this.stepId,
               logOptions: { ...this.logOptions, logShowFlag },
-              logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
+              logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+              args,
             });
           }
 
@@ -712,11 +723,13 @@ export class Test implements TestExtendType {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
+                stepId: this.stepId,
                 logOptions: {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
-                logMeta: { breadcrumbs: this.breadcrumbs, testArgs: args },
+                logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+                args,
               });
             }
           }
@@ -773,6 +786,7 @@ export class Test implements TestExtendType {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
+            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
           );
         }
 
@@ -784,6 +798,22 @@ export class Test implements TestExtendType {
           }
         }
 
+        // TIMER IN CONSOLE
+        const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
+        await logger.log({
+          text: `🕝: ${deltaStr} (${this.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
+          level: 'timer',
+          levelIndent: this.levelIndent,
+          stepId: this.stepId,
+          logOptions: {
+            logShowFlag:
+              logShowFlag &&
+              (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
+              (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)),
+          },
+          logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
+        });
+
         // REPEAT
         if (this.repeat > 1) {
           const repeatArgs = { ...inputs };
@@ -793,20 +823,6 @@ export class Test implements TestExtendType {
           repeatArgs.stepId = generateId();
           const repeatResult = await this.run(repeatArgs);
           localResults = { ...localResults, ...repeatResult };
-        }
-
-        // TIMER IN CONSOLE
-        if (
-          (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
-          (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name))
-        ) {
-          await logger.log({
-            text: `🕝: ${getTimer(startTime).delta} (${this.name})`,
-            level: 'timer',
-            levelIndent: this.levelIndent,
-            logOptions: { logShowFlag },
-            logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, testArgs: args },
-          });
         }
 
         if (this.breakParentIfResult) {

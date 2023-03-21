@@ -53,6 +53,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_TIMESTAMP_SHOW: true,
   PPD_LOG_TIMER_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
+  PPD_LOG_STEPID: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 

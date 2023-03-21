@@ -65,6 +65,7 @@ export type ArgumentsType = {
   PPD_LOG_TIMER_SHOW: boolean;
   PPD_LOG_TIMESTAMP_SHOW: boolean;
   PPD_LOG_INDENT_LENGTH: number;
+  PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
 };
@@ -90,6 +91,7 @@ export type LogEntry = {
   backgroundColor?: ColorsType;
   breadcrumbs?: string[];
   repeat?: number;
+  logMeta?: LogMetaInfoType;
 };
 
 export type LogMetaInfoType = {
@@ -97,7 +99,9 @@ export type LogMetaInfoType = {
   testFile?: string;
   extendInfo?: boolean;
   breadcrumbs?: string[];
-  testArgs?: TestArgsType;
+  repeat?: number;
+  timeStart?: Date;
+  timeEnd?: Date;
 };
 
 export type LogOptionsType = {
@@ -129,6 +133,7 @@ export type LogInputType = {
   page?: PagePuppeteer | PagePlaywright;
   logMeta?: LogMetaInfoType;
   logOptions?: LogOptionsType;
+  args?: TestArgsType;
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;
@@ -407,3 +412,15 @@ export type RunOptions = {
   socket: SocketType;
   debug: boolean;
 };
+
+export type TreeEntryDataType = TestExtendType & {
+  timeStart: Date;
+  timeEnd: Date;
+};
+
+export type TreeEntryType = Partial<TreeEntryDataType> & {
+  stepId: string;
+  steps?: TreeType;
+};
+
+export type TreeType = TreeEntryType[];

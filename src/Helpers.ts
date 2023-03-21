@@ -104,14 +104,41 @@ export const blankSocket: SocketType = {
   },
 };
 
-export const getTimer = (timeStart: bigint = process.hrtime.bigint()): { now: bigint; delta: string } => {
-  const seconds = Number(process.hrtime.bigint() - timeStart) / 1e9;
-  let delta = `${seconds.toFixed(3)} s.`;
-  if (seconds > 60) {
-    delta = `${Math.floor(seconds / 60)} min. ${(seconds % 60).toFixed(3)} s.`;
+export const getTimer = ({
+  timeStartBigInt,
+  timeEndBigInt,
+  timeStart,
+  timeEnd,
+}: {
+  timeStartBigInt?: bigint;
+  timeEndBigInt?: bigint;
+  timeStart?: Date;
+  timeEnd?: Date;
+} = {}): {
+  timeStart: Date;
+  timeEnd: Date;
+  timeStartBigInt: bigint;
+  timeEndBigInt: bigint;
+  deltaStr: string;
+  delta: number;
+} => {
+  const timeStartBigIntResolved = timeStartBigInt ?? process.hrtime.bigint();
+  const timeEndBigIntResolved = timeEndBigInt ?? process.hrtime.bigint();
+  const timeStartResolved = timeStart ?? new Date();
+  const timeEndResolved = timeEnd ?? new Date();
+
+  const delta = Number(timeEndBigIntResolved - timeStartBigIntResolved) / 1e9;
+
+  let deltaStr = `${delta.toFixed(3)} s.`;
+  if (delta > 60) {
+    deltaStr = `${Math.floor(delta / 60)} min. ${(delta % 60).toFixed(3)} s.`;
   }
   return {
-    now: process.hrtime.bigint(),
+    timeStart: timeStartResolved,
+    timeEnd: timeEndResolved,
+    timeStartBigInt: timeStartBigIntResolved,
+    timeEndBigInt: timeEndBigIntResolved,
+    deltaStr,
     delta,
   };
 };
