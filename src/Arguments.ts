@@ -80,10 +80,15 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
   return newVal;
 };
 
-const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
+/**
+ * It takes an object of arguments and returns an object of arguments
+ * @param args - Partial<ArgumentsType> = {}: This is the object that we're going to parse.
+ * @returns Resolved object.
+ */
+export const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   const params: ArgumentsKeysType[] = Object.keys(argsDefault) as ArgumentsKeysType[];
   const result = params.reduce<Partial<ArgumentsType>>(
-    (acc: Partial<ArgumentsType>, key: keyof ArgumentsType): Partial<ArgumentsType> => {
+    (acc: Partial<ArgumentsType>, key: ArgumentsKeysType): Partial<ArgumentsType> => {
       let newVal = args[key];
       if (newVal === undefined) {
         return acc;
@@ -100,6 +105,10 @@ const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
   return result;
 };
 
+/**
+ * It takes the command line arguments, filters out the ones that are not in the default arguments, and then parses them
+ * @returns parsed arguments
+ */
 const parseCLI = (): Partial<ArgumentsType> => {
   const params = Object.keys(argsDefault);
   const argsRaw = process.argv
@@ -112,6 +121,7 @@ const parseCLI = (): Partial<ArgumentsType> => {
   return parser(Object.fromEntries(argsRaw));
 };
 
+/* Class of a bunch of arguments. All global arguments of app */
 export class Arguments extends Singleton {
   args!: ArgumentsType;
 
