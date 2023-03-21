@@ -172,6 +172,7 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
                       |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
                       |   |   🕝: 00.000 s. (blank)
@@ -179,6 +180,7 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)
 00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
                       |   |   🕝: 00.000 s. (blank)
@@ -188,8 +190,6 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) If true with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) Skip after me
@@ -283,16 +283,16 @@ continueOnError (continueOnError)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next
                       |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) TODO: Fill description
 00:00:00.000 - test   |   |   (blank) Second level loop: 2
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next
                       |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) TODO: Fill description
 00:00:00.000 - test   |   |   (blank) Second level loop: 1
 00:00:00.000 - warn   |   |   Continue: Test stopped with expr errorIfResult = '$loop < 2'
-                      |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) I am without errors
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Error me if I broken
