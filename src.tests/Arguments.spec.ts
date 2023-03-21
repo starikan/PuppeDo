@@ -1,4 +1,4 @@
-import { Arguments } from '../src/Arguments';
+import { Arguments, parser } from '../src/Arguments';
 import { argsDefault } from '../src/Defaults';
 import { ArgumentsKeysType, ArgumentsType, ArgumentsValuesType } from '../src/global.d';
 
@@ -232,4 +232,24 @@ test('Arguments ENV', () => {
   const { args } = new Arguments({}, {}, true);
   expect(argsModify).toEqual(args);
   Object.keys(argsModify).forEach((v) => delete process.env[v]);
+});
+
+describe('parser', () => {
+  it('returns an object with no values when called with no arguments', () => {
+    const parsedArgs = parser();
+    expect(parsedArgs).toEqual({});
+  });
+
+  it('returns an object with same values when called with arguments', () => {
+    const newArgs = {
+      PPD_ROOT: '/path/to/root',
+      PPD_TESTS: ['test1.js', 'test2.js'],
+      PPD_DATA: {
+        foo: 'bar',
+        baz: 123,
+      },
+    };
+    const parsedArgs = parser(newArgs);
+    expect(parsedArgs).toEqual(newArgs);
+  });
 });
