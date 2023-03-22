@@ -135,7 +135,6 @@ export class Runner {
 
   async runEngine(envsId: string): Promise<void> {
     const browserSettings = Engines.resolveBrowser({ ...DEFAULT_BROWSER, ...this.runnerData.browser });
-    const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
 
@@ -161,7 +160,7 @@ export class Runner {
         newState = { browser, pages };
       }
       if (runtime === 'run') {
-        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, outputs);
+        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, envsId);
         newState = { browser, pages, pid };
       }
     }
@@ -276,9 +275,13 @@ export class Environment extends Singleton {
     return this.instances[envsId];
   }
 
-  getOutput(envsId: string): Outputs {
+  getLogger(envsId: string): Log {
     this.checkId(envsId);
-    return this.instances[envsId].logger.output;
+    return this.instances[envsId].logger;
+  }
+
+  getOutput(envsId: string): Outputs {
+    return this.getLogger(envsId).output;
   }
 
   getSocket(envsId: string): SocketType {

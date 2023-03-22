@@ -27,13 +27,17 @@ export class LogExports {
     this.envsId = envsId;
   }
 
-  // saveToFile(): void {
-  //   //
-  // }
+  saveToFile(fileName: string, text: string): void {
+    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
+    fs.writeFileSync(path.join(folder, fileName), text);
+    fs.writeFileSync(path.join(folderLatest, fileName), text);
+  }
 
-  // appendToFile(): void {
-  //   //
-  // }
+  appendToFile(fileName: string, text: string): void {
+    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
+    fs.appendFileSync(path.join(folder, fileName), text);
+    fs.appendFileSync(path.join(folderLatest, fileName), text);
+  }
 
   static resolveOutputHtmlFile(): string {
     const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
