@@ -1,6 +1,6 @@
 import os from 'os';
 import { execSync, spawnSync } from 'child_process';
-import { blankSocket, generateId, initOutput } from './Helpers';
+import { blankSocket, generateId } from './Helpers';
 import TestsContent from './TestContent';
 import { Log, LogOptions } from './Log';
 import {
@@ -27,7 +27,6 @@ type EnvsInstanceType = {
   envsId: string;
   logger: Log;
   log: Array<LogEntry>;
-  output: Outputs;
   current: RunnerCurrentType;
   testsStruct: Record<string, TestExtendType>;
   testTree: TestTree;
@@ -220,17 +219,15 @@ export class Environment extends Singleton {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     if (!this.instances[envsId]) {
-      const output = initOutput(envsId);
-      const allRunners = new Runners(envsId);
-
       // eslint-disable-next-line no-new
       new LogOptions(loggerOptions);
       const logger = new Log(envsId);
 
+      const allRunners = new Runners(envsId);
+
       const current: RunnerCurrentType = {};
 
       this.instances[envsId] = {
-        output,
         allRunners,
         socket,
         envsId,
@@ -281,7 +278,7 @@ export class Environment extends Singleton {
 
   getOutput(envsId: string): Outputs {
     this.checkId(envsId);
-    return this.instances[envsId].output;
+    return this.instances[envsId].logger.output;
   }
 
   getSocket(envsId: string): SocketType {

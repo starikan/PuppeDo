@@ -7,8 +7,7 @@ import deepmergeJs from 'deepmerge';
 // import { deepmerge } from 'deepmerge-ts';
 import dayjs from 'dayjs';
 
-import { ColorsType, Outputs, SocketType, TestFunctionsBlockNames } from './global.d';
-import { Arguments } from './Arguments';
+import { ColorsType, SocketType, TestFunctionsBlockNames } from './global.d';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -178,51 +177,3 @@ export const walkSync = (
 export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
-
-export const resolveOutputHtmlFile = (): string => {
-  const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
-  const outputSourceModule = path.resolve(
-    path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
-  );
-  const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
-  return outputSource;
-};
-
-export const initOutput = (envsId: string): Outputs => {
-  const { PPD_OUTPUT: output } = new Arguments().args;
-
-  const now = getNowDateTime();
-
-  if (!fs.existsSync(output)) {
-    fs.mkdirSync(output);
-  }
-
-  const folder = path.join(output, `${now}_${envsId}`);
-  const folderLatest = path.join(output, 'latest');
-
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
-  }
-
-  // Create latest log path
-  if (!fs.existsSync(folderLatest)) {
-    fs.mkdirSync(folderLatest);
-  } else {
-    const filesExists = fs.readdirSync(folderLatest);
-    for (const fileExists of filesExists) {
-      fs.unlinkSync(path.join(folderLatest, fileExists));
-    }
-  }
-
-  fs.copyFileSync(resolveOutputHtmlFile(), path.join(folderLatest, 'output.html'));
-  fs.copyFileSync(resolveOutputHtmlFile(), path.join(folder, 'output.html'));
-
-  return {
-    output,
-    name: envsId,
-    folder,
-    folderFull: path.resolve(folder),
-    folderLatest,
-    folderLatestFull: path.resolve(folderLatest),
-  };
-};
