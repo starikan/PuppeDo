@@ -7,7 +7,7 @@ import deepmergeJs from 'deepmerge';
 // import { deepmerge } from 'deepmerge-ts';
 import dayjs from 'dayjs';
 
-import { ColorsType, Outputs, OutputsLatest, SocketType, TestFunctionsBlockNames } from './global.d';
+import { ColorsType, Outputs, SocketType, TestFunctionsBlockNames } from './global.d';
 import { Arguments } from './Arguments';
 
 /*
@@ -188,13 +188,20 @@ export const resolveOutputHtmlFile = (): string => {
   return outputSource;
 };
 
-export const initOutputLatest = (): OutputsLatest => {
+export const initOutput = (envsId: string): Outputs => {
   const { PPD_OUTPUT: output } = new Arguments().args;
 
-  const folderLatest = path.join(output, 'latest');
+  const now = getNowDateTime();
 
   if (!fs.existsSync(output)) {
     fs.mkdirSync(output);
+  }
+
+  const folder = path.join(output, `${now}_${envsId}`);
+  const folderLatest = path.join(output, 'latest');
+
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
   }
 
   // Create latest log path
@@ -208,34 +215,14 @@ export const initOutputLatest = (): OutputsLatest => {
   }
 
   fs.copyFileSync(resolveOutputHtmlFile(), path.join(folderLatest, 'output.html'));
-
-  return {
-    folderLatest,
-    folderLatestFull: path.resolve(folderLatest),
-    output,
-  };
-};
-
-export const initOutput = (envsId: string): Partial<Outputs> => {
-  const { PPD_OUTPUT: output } = new Arguments().args;
-
-  if (!fs.existsSync(output)) {
-    fs.mkdirSync(output);
-  }
-  const now = getNowDateTime();
-
-  const folder = path.join(output, `${now}_${envsId}`);
-  fs.mkdirSync(folder);
-
   fs.copyFileSync(resolveOutputHtmlFile(), path.join(folder, 'output.html'));
-
-  // Cleanup latest folder
-  initOutputLatest();
 
   return {
     output,
     name: envsId,
     folder,
     folderFull: path.resolve(folder),
+    folderLatest,
+    folderLatestFull: path.resolve(folderLatest),
   };
 };

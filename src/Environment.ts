@@ -1,6 +1,6 @@
 import os from 'os';
 import { execSync, spawnSync } from 'child_process';
-import { blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
+import { blankSocket, generateId, initOutput } from './Helpers';
 import TestsContent from './TestContent';
 import { Log, LogOptions } from './Log';
 import {
@@ -12,7 +12,6 @@ import {
   SocketType,
   RunnerYamlType,
   Outputs,
-  OutputsLatest,
   RunnerCurrentType,
   LogPipe,
   TestExtendType,
@@ -208,13 +207,10 @@ export class Runner {
 export class Environment extends Singleton {
   private instances!: Record<string, EnvsInstanceType>;
 
-  private output!: OutputsLatest;
-
   constructor(reInit = false) {
     super();
     if (reInit || !this.instances) {
       this.instances = {};
-      this.output = initOutputLatest();
     }
   }
 
@@ -240,12 +236,13 @@ export class Environment extends Singleton {
         envsId,
         logger,
         current,
+        // TODO: 2023-03-22 S.Starodubov move this log info into testTree
         log: [],
         testsStruct: {},
         testTree: new TestTree(),
       };
     }
-    return this.getEnvAllInstance(envsId);
+    return this.getEnvInstance(envsId);
   }
 
   private checkId(envsId: string): void {
@@ -261,7 +258,7 @@ export class Environment extends Singleton {
    * @returns The fullStruct is being returned.
    */
   getStruct(envsId: string, name: string): TestExtendType {
-    const existsStruct = this.getEnvAllInstance(envsId).testsStruct[name];
+    const existsStruct = this.getEnvInstance(envsId).testsStruct[name];
     if (existsStruct) {
       return existsStruct;
     }
@@ -277,17 +274,14 @@ export class Environment extends Singleton {
     return this.instances[envsId].allRunners;
   }
 
-  getEnvAllInstance(envsId: string): EnvsInstanceType {
+  getEnvInstance(envsId: string): EnvsInstanceType {
     this.checkId(envsId);
     return this.instances[envsId];
   }
 
-  getOutput(envsId?: string): OutputsLatest & Outputs {
-    if (!envsId) {
-      return this.output;
-    }
+  getOutput(envsId: string): Outputs {
     this.checkId(envsId);
-    return { ...this.output, ...this.instances[envsId].output };
+    return this.instances[envsId].output;
   }
 
   getSocket(envsId: string): SocketType {

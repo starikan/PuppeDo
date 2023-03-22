@@ -24,8 +24,8 @@ export default class Screenshot {
     }
   }
 
-  static async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
-    const { folderLatest = '.' } = new Environment().getOutput();
+  async copyScreenshotToLatest(pathScreenshot: string): Promise<void> {
+    const { folderLatest = '.' } = new Environment().getOutput(this.envsId);
     await Screenshot.copyScreenshotToFolder(pathScreenshot, folderLatest);
   }
 
@@ -43,7 +43,7 @@ export default class Screenshot {
       if (element) {
         await element.screenshot({ path: pathScreenshot });
         if (copyToLatest) {
-          await Screenshot.copyScreenshotToLatest(pathScreenshot);
+          await this.copyScreenshotToLatest(pathScreenshot);
         }
         return pathScreenshot;
       }
@@ -63,7 +63,7 @@ export default class Screenshot {
       if (page) {
         await page.screenshot({ path: pathScreenshot, fullPage: true });
         if (copyToLatest) {
-          await Screenshot.copyScreenshotToLatest(pathScreenshot);
+          await this.copyScreenshotToLatest(pathScreenshot);
         }
         return pathScreenshot;
       }

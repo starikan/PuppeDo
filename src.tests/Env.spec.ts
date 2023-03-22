@@ -15,7 +15,7 @@ describe('Environment', () => {
     const environment = new Environment();
     const { envsId } = environment.createEnv();
 
-    expect(environment.getEnvAllInstance(envsId)).toBeDefined();
+    expect(environment.getEnvInstance(envsId)).toBeDefined();
     expect(environment.getOutput(envsId)).toBeDefined();
     expect(environment.getSocket(envsId)).toBeDefined();
   });

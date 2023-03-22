@@ -85,6 +85,6 @@ export const exporterLogInMemory: LogExporter = async (
   logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
-  const { log } = new Environment().getEnvAllInstance(options.envsId);
+  const { log } = new Environment().getEnvInstance(options.envsId);
   log.push(logEntry);
 };

@@ -236,16 +236,12 @@ export type RunnerCurrentType = {
 };
 
 export type Outputs = {
-  output?: string;
-  name?: string;
-  folder?: string;
-  folderFull?: string;
-};
-
-export type OutputsLatest = {
-  folderLatest?: string;
-  folderLatestFull?: string;
-  output?: string;
+  output: string;
+  name: string;
+  folder: string;
+  folderFull: string;
+  folderLatest: string;
+  folderLatestFull: string;
 };
 
 // ================ DATA / SELECTORS ====================

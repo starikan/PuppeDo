@@ -15,7 +15,6 @@ import {
   BrowserTypeType,
   EnvBrowserType,
   Outputs,
-  OutputsLatest,
   RunnerStateType,
   RunnerType,
 } from './global.d';
@@ -140,7 +139,7 @@ export class Engines {
   static async runElectron(
     browserSettings: EnvBrowserType,
     envName: string,
-    outputs: Outputs & OutputsLatest,
+    outputs: Outputs,
   ): Promise<RunnerStateType> {
     const { runtimeEnv = {} } = browserSettings;
     const {

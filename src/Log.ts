@@ -16,6 +16,21 @@ import Singleton from './Singleton';
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 
+export class LogExports extends Singleton {
+  output!: any;
+
+  // constructor(options: Partial<{ stdOut?: boolean; loggerPipes?: LogPipe[] }> = {}, reInit = false) {
+  //   super();
+  //   if (reInit || !this.options) {
+  //     this.options = options;
+
+  //     if (!this.options.loggerPipes) {
+  //       this.options.loggerPipes = [];
+  //     }
+  //   }
+  // }
+}
+
 export class LogOptions extends Singleton {
   options!: { stdOut?: boolean; loggerPipes?: LogPipe[] };
 
@@ -121,7 +136,7 @@ export class Log {
   }
 
   private updateTree(logEntries: LogEntry[]): void {
-    const { testTree } = new Environment().getEnvAllInstance(this.envsId);
+    const { testTree } = new Environment().getEnvInstance(this.envsId);
     for (const logEntry of logEntries) {
       const payload: Partial<TreeEntryDataType> = {};
       if (logEntry.level === 'timer') {

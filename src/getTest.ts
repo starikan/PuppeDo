@@ -166,7 +166,7 @@ const getTest = ({
     const { stepId, name } = testJson;
     const { stepId: stepIdParent } = args ?? {};
 
-    const { testTree } = new Environment().getEnvAllInstance(testJson.envsId);
+    const { testTree } = new Environment().getEnvInstance(testJson.envsId);
     testTree.createStep({ stepIdParent: stepIdParent ?? null, stepId, payload: { ...fromPrevSublingSimple, name } });
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
