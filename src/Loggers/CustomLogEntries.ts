@@ -8,7 +8,7 @@ import { getTimer } from '../Helpers';
 
 export const logExtendFileInfo = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
   if (args?.envsId) {
-    const output = new Environment().getOutput(args?.envsId);
+    const output = new Environment().getOutput(args.envsId);
     const outputFile = path.join(output.folderFull || '.', 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
     await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });

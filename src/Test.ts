@@ -447,7 +447,7 @@ export class Test implements TestExtendType {
       this.plugins.hook('runLogic', { inputs });
       const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
-      const { allRunners, logger } = new Environment().getEnvAllInstance(this.envsId);
+      const { allRunners, logger } = new Environment().getEnvInstance(this.envsId);
       const current = new Environment().getCurrent(this.envsId);
 
       this.runner = allRunners.getRunnerByName(current.name || '');

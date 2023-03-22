@@ -31,7 +31,7 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
 const runTest = async (testName: string, envsId: string): Promise<Record<string, unknown>> => {
   const { timeStartBigInt } = getTimer();
 
-  const { logger } = new Environment().getEnvAllInstance(envsId);
+  const { logger } = new Environment().getEnvInstance(envsId);
 
   await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
 
@@ -57,7 +57,7 @@ const runTest = async (testName: string, envsId: string): Promise<Record<string,
 
 const closeEnvironment = async (options: RunOptions, envsId: string): Promise<void> => {
   const { closeProcess, closeAllEnvs } = options;
-  const { allRunners } = new Environment().getEnvAllInstance(envsId);
+  const { allRunners } = new Environment().getEnvInstance(envsId);
 
   if (closeAllEnvs) {
     await allRunners.closeAllRunners();
@@ -80,7 +80,7 @@ export default async function run(
   const options = resolveOptions(optionsInit);
   const envsId = initEnvironment(options, argsInput);
 
-  const { logger, log } = new Environment().getEnvAllInstance(envsId);
+  const { logger, log } = new Environment().getEnvInstance(envsId);
   const { PPD_TESTS } = new Arguments().args;
 
   if (options.debug) {

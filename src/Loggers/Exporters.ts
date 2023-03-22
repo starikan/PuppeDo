@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import { Environment } from '../Environment';
 import { LogEntrieType, LogEntry, LogExporter, LogExporterOptions } from '../global.d';
 import { paintString } from '../Helpers';
@@ -20,8 +18,6 @@ export const consoleLog = (entries: LogEntrieType[][]): void => {
 };
 
 export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], fileName = 'output.log'): void => {
-  const { folderLatest = '.', folder = '.' } = new Environment().getOutput(envsId);
-
   let textsJoin = '';
   if (Array.isArray(texts)) {
     textsJoin = texts.map((text) => text.map((log) => log.text || '').join('')).join('\n');
@@ -32,8 +28,7 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
   // eslint-disable-next-line no-control-regex
   textsJoin = textsJoin.replace(/\[\d+m/gi, '');
 
-  fs.appendFileSync(path.join(folder, fileName), `${textsJoin}\n`);
-  fs.appendFileSync(path.join(folderLatest, fileName), `${textsJoin}\n`);
+  new Environment().getLogger(envsId).exporter.appendToFile(fileName, `${textsJoin}\n`);
 };
 
 export const exporterConsole: LogExporter = async (
@@ -85,6 +80,6 @@ export const exporterLogInMemory: LogExporter = async (
   logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
-  const { log } = new Environment().getEnvAllInstance(options.envsId);
+  const { log } = new Environment().getEnvInstance(options.envsId);
   log.push(logEntry);
 };

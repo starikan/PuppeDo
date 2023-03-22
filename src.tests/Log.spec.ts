@@ -6,16 +6,19 @@ import { Log } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
-import { Outputs, OutputsLatest } from '../src/global.d';
+import { Outputs } from '../src/global.d';
 import { consoleLog, fileLog } from '../src/Loggers/Exporters';
 import { formatterEntry } from '../src/Loggers/Formatters';
 
 const outputFolder = '.temp';
 const [folder, folderLatest] = [path.join(outputFolder, 'folder'), path.join(outputFolder, 'folderLatest')];
 const { envsId } = new Environment().createEnv();
-new Environment().getOutput = (): OutputsLatest & Outputs => ({
+new Environment().getOutput = (): Outputs => ({
+  name: 'name',
   folder,
   folderLatest,
+  folderFull: path.resolve(folder),
+  folderLatestFull: path.resolve(folderLatest),
   output: outputFolder,
 });
 

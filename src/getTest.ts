@@ -166,7 +166,7 @@ const getTest = ({
     const { stepId, name, description } = testJson;
     const { stepId: stepIdParent } = args ?? {};
 
-    const { testTree } = new Environment().getEnvAllInstance(testJson.envsId);
+    const { testTree } = new Environment().getEnvInstance(testJson.envsId);
     testTree.createStep({
       stepIdParent: stepIdParent ?? null,
       stepId,

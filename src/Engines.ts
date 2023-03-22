@@ -1,6 +1,4 @@
 import { spawn } from 'child_process';
-import path from 'path';
-import fs from 'fs';
 
 import { Browser as BrowserPuppeteer } from 'puppeteer';
 import { Browser as BrowserPlaywright } from 'playwright';
@@ -14,12 +12,11 @@ import {
   BrowserPageType,
   BrowserTypeType,
   EnvBrowserType,
-  Outputs,
-  OutputsLatest,
   RunnerStateType,
   RunnerType,
 } from './global.d';
 import { sleep } from './Helpers';
+import { Environment } from './Environment';
 
 export const DEFAULT_BROWSER: EnvBrowserType = {
   type: 'browser',
@@ -137,11 +134,7 @@ export class Engines {
     return { browser, pages };
   }
 
-  static async runElectron(
-    browserSettings: EnvBrowserType,
-    envName: string,
-    outputs: Outputs & OutputsLatest,
-  ): Promise<RunnerStateType> {
+  static async runElectron(browserSettings: EnvBrowserType, envName: string, envsId: string): Promise<RunnerStateType> {
     const { runtimeEnv = {} } = browserSettings;
     const {
       runtimeExecutable,
@@ -155,20 +148,16 @@ export class Engines {
 
     const runArgs = [program, ...browserArgs];
 
-    const { folderLatest, folder } = outputs;
-
-    if (runtimeExecutable && folder && folderLatest) {
+    if (runtimeExecutable) {
       process.env = { ...process.env, ...browserEnv };
 
       const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env });
 
       if (prc) {
-        fs.writeFileSync(path.join(folder, `${envName}.log`), '');
-        fs.writeFileSync(path.join(folderLatest, `${envName}.log`), '');
+        new Environment().getLogger(envsId).exporter.saveToFile(`${envName}.log`, '');
 
         prc.stdout.on('data', (data) => {
-          fs.appendFileSync(path.join(folder, `${envName}.log`), String(data));
-          fs.appendFileSync(path.join(folderLatest, `${envName}.log`), String(data));
+          new Environment().getLogger(envsId).exporter.appendToFile(`${envName}.log`, String(data));
         });
       }
 

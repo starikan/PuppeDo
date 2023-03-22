@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
 
@@ -9,17 +11,89 @@ import {
   LogInputType,
   LogOptionsType,
   LogPipe,
+  Outputs,
   TreeEntryDataType,
 } from './global.d';
 import { Environment } from './Environment';
 import Singleton from './Singleton';
+import { getNowDateTime } from './Helpers';
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 
-export class LogOptions extends Singleton {
-  options!: { stdOut?: boolean; loggerPipes?: LogPipe[] };
+export class LogExports {
+  envsId!: string;
 
-  constructor(options: Partial<{ stdOut?: boolean; loggerPipes?: LogPipe[] }> = {}, reInit = false) {
+  constructor(envsId: string) {
+    this.envsId = envsId;
+  }
+
+  saveToFile(fileName: string, text: string): void {
+    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
+    fs.writeFileSync(path.join(folder, fileName), text);
+    fs.writeFileSync(path.join(folderLatest, fileName), text);
+  }
+
+  appendToFile(fileName: string, text: string): void {
+    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
+    fs.appendFileSync(path.join(folder, fileName), text);
+    fs.appendFileSync(path.join(folderLatest, fileName), text);
+  }
+
+  static resolveOutputHtmlFile(): string {
+    const outputSourceRaw = path.resolve(path.join('dist', 'output.html'));
+    const outputSourceModule = path.resolve(
+      path.join(__dirname, '..', 'node_modules', '@puppedo', 'core', 'dist', 'output.html'),
+    );
+    const outputSource = fs.existsSync(outputSourceRaw) ? outputSourceRaw : outputSourceModule;
+    return outputSource;
+  }
+
+  static initOutput(envsId: string): Outputs {
+    const { PPD_OUTPUT: output } = new Arguments().args;
+
+    const now = getNowDateTime();
+
+    if (!fs.existsSync(output)) {
+      fs.mkdirSync(output);
+    }
+
+    const folder = path.join(output, `${now}_${envsId}`);
+    const folderLatest = path.join(output, 'latest');
+
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder);
+    }
+
+    // Create latest log path
+    if (!fs.existsSync(folderLatest)) {
+      fs.mkdirSync(folderLatest);
+    } else {
+      const filesExists = fs.readdirSync(folderLatest);
+      for (const fileExists of filesExists) {
+        fs.unlinkSync(path.join(folderLatest, fileExists));
+      }
+    }
+
+    fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folderLatest, 'output.html'));
+    fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folder, 'output.html'));
+
+    return {
+      output,
+      name: envsId,
+      folder,
+      folderFull: path.resolve(folder),
+      folderLatest,
+      folderLatestFull: path.resolve(folderLatest),
+    };
+  }
+}
+
+type LogOptionsOptionsType = { stdOut?: boolean; loggerPipes?: LogPipe[] };
+
+export class LogOptions extends Singleton {
+  options!: LogOptionsOptionsType;
+
+  constructor(options: LogOptionsOptionsType = {}, reInit = false) {
     super();
     if (reInit || !this.options) {
       this.options = options;
@@ -42,8 +116,14 @@ export class LogOptions extends Singleton {
 export class Log {
   private envsId: string;
 
+  exporter!: LogExports;
+
+  output!: Outputs;
+
   constructor(envsId: string) {
     this.envsId = envsId;
+    this.output = LogExports.initOutput(envsId);
+    this.exporter = new LogExports(envsId);
   }
 
   static checkLevel(level: ColorsType): boolean {
@@ -121,7 +201,7 @@ export class Log {
   }
 
   private updateTree(logEntries: LogEntry[]): void {
-    const { testTree } = new Environment().getEnvAllInstance(this.envsId);
+    const { testTree } = new Environment().getEnvInstance(this.envsId);
     for (const logEntry of logEntries) {
       const payload: Partial<TreeEntryDataType> = {};
       if (logEntry.level === 'timer') {

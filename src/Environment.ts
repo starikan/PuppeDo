@@ -1,6 +1,6 @@
 import os from 'os';
 import { execSync, spawnSync } from 'child_process';
-import { blankSocket, generateId, initOutputLatest, initOutput } from './Helpers';
+import { blankSocket, generateId } from './Helpers';
 import TestsContent from './TestContent';
 import { Log, LogOptions } from './Log';
 import {
@@ -12,7 +12,6 @@ import {
   SocketType,
   RunnerYamlType,
   Outputs,
-  OutputsLatest,
   RunnerCurrentType,
   LogPipe,
   TestExtendType,
@@ -28,7 +27,6 @@ type EnvsInstanceType = {
   envsId: string;
   logger: Log;
   log: Array<LogEntry>;
-  output: Outputs;
   current: RunnerCurrentType;
   testsStruct: Record<string, TestExtendType>;
   testTree: TestTree;
@@ -137,7 +135,6 @@ export class Runner {
 
   async runEngine(envsId: string): Promise<void> {
     const browserSettings = Engines.resolveBrowser({ ...DEFAULT_BROWSER, ...this.runnerData.browser });
-    const outputs = new Environment().getOutput(envsId);
     // TODO: 2021-02-22 S.Starodubov resolve executablePath if exec script out of project as standalone app
     const { type, engine, runtime } = browserSettings;
 
@@ -163,7 +160,7 @@ export class Runner {
         newState = { browser, pages };
       }
       if (runtime === 'run') {
-        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, outputs);
+        const { browser, pages, pid } = await Engines.runElectron(browserSettings, this.name, envsId);
         newState = { browser, pages, pid };
       }
     }
@@ -208,13 +205,10 @@ export class Runner {
 export class Environment extends Singleton {
   private instances!: Record<string, EnvsInstanceType>;
 
-  private output!: OutputsLatest;
-
   constructor(reInit = false) {
     super();
     if (reInit || !this.instances) {
       this.instances = {};
-      this.output = initOutputLatest();
     }
   }
 
@@ -224,28 +218,27 @@ export class Environment extends Singleton {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     if (!this.instances[envsId]) {
-      const output = initOutput(envsId);
-      const allRunners = new Runners(envsId);
-
       // eslint-disable-next-line no-new
       new LogOptions(loggerOptions);
       const logger = new Log(envsId);
 
+      const allRunners = new Runners(envsId);
+
       const current: RunnerCurrentType = {};
 
       this.instances[envsId] = {
-        output,
         allRunners,
         socket,
         envsId,
         logger,
         current,
+        // TODO: 2023-03-22 S.Starodubov move this log info into testTree
         log: [],
         testsStruct: {},
         testTree: new TestTree(),
       };
     }
-    return this.getEnvAllInstance(envsId);
+    return this.getEnvInstance(envsId);
   }
 
   private checkId(envsId: string): void {
@@ -261,7 +254,7 @@ export class Environment extends Singleton {
    * @returns The fullStruct is being returned.
    */
   getStruct(envsId: string, name: string): TestExtendType {
-    const existsStruct = this.getEnvAllInstance(envsId).testsStruct[name];
+    const existsStruct = this.getEnvInstance(envsId).testsStruct[name];
     if (existsStruct) {
       return existsStruct;
     }
@@ -277,17 +270,18 @@ export class Environment extends Singleton {
     return this.instances[envsId].allRunners;
   }
 
-  getEnvAllInstance(envsId: string): EnvsInstanceType {
+  getEnvInstance(envsId: string): EnvsInstanceType {
     this.checkId(envsId);
     return this.instances[envsId];
   }
 
-  getOutput(envsId?: string): OutputsLatest & Outputs {
-    if (!envsId) {
-      return this.output;
-    }
+  getLogger(envsId: string): Log {
     this.checkId(envsId);
-    return { ...this.output, ...this.instances[envsId].output };
+    return this.instances[envsId].logger;
+  }
+
+  getOutput(envsId: string): Outputs {
+    return this.getLogger(envsId).output;
   }
 
   getSocket(envsId: string): SocketType {
