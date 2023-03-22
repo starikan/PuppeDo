@@ -109,15 +109,15 @@ export class PluginsFabric extends Singleton {
 export class Plugins {
   private plugins: PluginType<unknown>[] = [];
 
-  originTest: Test;
+  originTest: Test | null = null;
 
   blankHook: () => {
     // Blank
   };
 
-  constructor(originTest: Test) {
+  constructor(originTest?: Test) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
-    this.originTest = originTest;
+    this.originTest = originTest ?? null;
 
     for (const plugin of Object.values(plugins)) {
       this.plugins.push(plugin(this));

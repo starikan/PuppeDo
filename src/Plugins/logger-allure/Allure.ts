@@ -1,19 +1,6 @@
-// import {
-//   Allure,
-//   AllureConfig,
-//   AllureGroup,
-//   AllureRuntime,
-//   AllureStep,
-//   AllureTest,
-//   AttachmentOptions,
-//   ContentType,
-//   ExecutableItemWrapper,
-//   isPromise,
-//   Label,
-//   Status,
-//   StepInterface,
-// } from 'allure-js-commons';
-
+import fs from 'fs';
+import path from 'path';
+import { Environment } from '../../Environment';
 import { LogEntry, LogExporter } from '../../global.d';
 import { PluginAllureSuit } from './allureSuite';
 
@@ -228,21 +215,63 @@ import { PluginAllureSuit } from './allureSuite';
 //   },
 // ]);
 
-const COLLECTOR: any = {};
+type AllureEntry = {
+  name: string;
+  start: number;
+  stop: number;
+  stage: 'finished';
+  description?: string | null;
+  descriptionHtml?: string | null;
+  status: 'passed';
+  statusDetails?: string | null;
+  steps: AllureEntry[];
+  attachments?: unknown[];
+  parameters?: unknown[];
+};
 
-// // logEntryFormated: LogEntrieType[][],
-// // logString: string,
-// // options: LogExporterOptions,
+const resolveStep = (envsId: string, stepId: string): AllureEntry => {
+  const { testTree } = new Environment().getEnvAllInstance(envsId);
+  const node = testTree.getNode(stepId);
+  const { description, timeStart, timeEnd, steps = [] } = node;
+
+  const allureResult: AllureEntry = {
+    name: description,
+    start: timeStart?.getTime() ?? 0,
+    stop: timeEnd?.getTime() ?? 0,
+    stage: 'finished',
+    description: null,
+    descriptionHtml: null,
+    status: 'passed',
+    statusDetails: null,
+    steps: steps.map((v) => resolveStep(envsId, v.stepId)),
+  };
+
+  return allureResult;
+};
+
+const ALLURE_RESULTS_FOLDER = 'allure-results';
+
 export const exporterAllure: LogExporter = async (logEntry: LogEntry): Promise<void> => {
-  const { args } = logEntry;
+  const { args, stepId } = logEntry;
   if (!args) {
     return;
   }
   const { plugins } = args;
+  const { allureSuite } = plugins.getValue<PluginAllureSuit>('allureSuite');
 
-  const name = plugins.getValue<PluginAllureSuit>('allureSuite').allureSuite;
+  if (allureSuite && logEntry.level === 'timer') {
+    const { output } = new Environment().getEnvAllInstance(args.envsId);
+    const allureResult = resolveStep(args.envsId, stepId);
 
-  debugger;
-  //   allure.suite('TestSuite');
+    if (!fs.existsSync(path.join(output.folderFull, ALLURE_RESULTS_FOLDER))) {
+      fs.mkdirSync(path.join(output.folderFull, ALLURE_RESULTS_FOLDER));
+    }
+
+    fs.writeFileSync(
+      path.join(output.folderFull, ALLURE_RESULTS_FOLDER, `${stepId}-result.json`),
+      JSON.stringify(allureResult, null, 2),
+    );
+    // debugger;
+  }
   //   allure.runtime.writeResult({ uuid: logEntry.stepId ?? generateId(), historyId: '555', labels: [], links: [] });
 };

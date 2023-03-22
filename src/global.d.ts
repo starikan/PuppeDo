@@ -138,7 +138,6 @@ export type LogInputType = {
   page?: PagePuppeteer | PagePlaywright;
   logMeta?: LogMetaInfoType;
   logOptions?: LogOptionsType;
-  args?: TestArgsType;
 };
 
 export type LogFunctionType = (options: LogInputType) => Promise<void>;
@@ -425,7 +424,5 @@ export type TreeEntryDataType = TestExtendType & {
 
 export type TreeEntryType = Partial<TreeEntryDataType> & {
   stepId: string;
-  steps?: TreeType;
+  steps?: TreeEntryType[];
 };
-
-export type TreeType = TreeEntryType[];

@@ -1,4 +1,4 @@
-import { TreeEntryDataType, TreeEntryType, TreeType } from './global.d';
+import { TreeEntryDataType, TreeEntryType } from './global.d';
 
 type CreateStepParams = {
   stepIdParent?: string | null;
@@ -21,14 +21,18 @@ is no stepIdParent, or it finds the stepIdParent and pushes a new step to its st
 * `updateStep`: It takes a stepId and a payload, finds the node in the tree with that stepId, and updates it with the
 payload */
 export class TestTree {
-  private tree: TreeType = [];
+  private tree: TreeEntryType[] = [];
 
   /**
    * It returns the tree
    * @returns The tree property of the class.
    */
-  getTree(): TreeType {
+  getTree(): TreeEntryType[] {
     return this.tree;
+  }
+
+  getNode(stepId: string): TreeEntryType | null {
+    return this.findNode(this.tree, stepId);
   }
 
   /**
@@ -38,11 +42,11 @@ export class TestTree {
    *
    * * `tree`: The tree to search.
    * * `stepId`: The stepId to search for
-   * @param {TreeType} tree - The tree to search
+   * @param {TreeEntryType[]} tree - The tree to search
    * @param {string} stepId - The stepId of the step you want to find.
    * @returns the first node that matches the stepId.
    */
-  private findNode(tree: TreeType, stepId: string): TreeEntryType | null {
+  private findNode(tree: TreeEntryType[], stepId: string): TreeEntryType | null {
     for (const entry of tree) {
       if (entry.stepId === stepId) {
         return entry;
@@ -66,7 +70,7 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  createStep({ stepIdParent, stepId, payload }: CreateStepParams): TreeType {
+  createStep({ stepIdParent, stepId, payload }: CreateStepParams): TreeEntryType[] {
     // Top step
     if (!stepIdParent && stepId) {
       this.tree.push({ stepId, ...payload });
@@ -87,7 +91,7 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  updateStep({ stepId, payload }: UpdateStepParams): TreeType {
+  updateStep({ stepId, payload }: UpdateStepParams): TreeEntryType[] {
     const entry = this.findNode(this.tree, stepId);
     if (entry) {
       for (const [key, value] of Object.entries(payload)) {

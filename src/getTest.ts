@@ -163,11 +163,15 @@ const getTest = ({
     updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
     updatetTestJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
 
-    const { stepId, name } = testJson;
+    const { stepId, name, description } = testJson;
     const { stepId: stepIdParent } = args ?? {};
 
     const { testTree } = new Environment().getEnvAllInstance(testJson.envsId);
-    testTree.createStep({ stepIdParent: stepIdParent ?? null, stepId, payload: { ...fromPrevSublingSimple, name } });
+    testTree.createStep({
+      stepIdParent: stepIdParent ?? null,
+      stepId,
+      payload: { ...fromPrevSublingSimple, name, description },
+    });
 
     const { result = {}, meta = {} } = await test.run(updatetTestJson);
 

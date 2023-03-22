@@ -713,7 +713,6 @@ export class Test implements TestExtendType {
               stepId: this.stepId,
               logOptions: { ...this.logOptions, logShowFlag, args },
               logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
-              args,
             });
           }
 
@@ -727,9 +726,9 @@ export class Test implements TestExtendType {
                 logOptions: {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
+                  args,
                 },
                 logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
-                args,
               });
             }
           }
@@ -810,6 +809,7 @@ export class Test implements TestExtendType {
               logShowFlag &&
               (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
               (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)),
+            args,
           },
           logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
         });
