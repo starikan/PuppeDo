@@ -17,8 +17,8 @@ import {
   exporterYamlLog,
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
-import { exporterAllure } from './Plugins/logger-allure/Allure';
-import allureSuite from './Plugins/logger-allure/allureSuite';
+import { exporterAllure } from './Plugins/allureSuite/Allure';
+import allureSuite from './Plugins/allureSuite/allureSuite';
 
 export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine, allureSuite];
 

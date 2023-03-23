@@ -1,0 +1,15 @@
+00:00:00.000 - timer  Test 'allureSuite' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Allure Suite integration (allureSuite)
+   Simple case description (case)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(allureSuite) Allure Suite integration[0m
+00:00:00.000 - test   |   [47m[30m(case) Simple case description[0m[0m
+                      |   🕝: 00.000 s. (case)
+                      🕝: 00.000 s. (allureSuite)
+00:00:00.000 - timer  Test 'allureSuite' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "allureSuite": {}
+}

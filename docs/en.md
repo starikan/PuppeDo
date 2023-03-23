@@ -552,6 +552,37 @@ argsRedefine check (argsRedefine)
 }
 
 ```
+## allureSuite
+TODO
+
+```yaml
+name: allureSuite
+allureSuite: Full Test from Header
+description: Allure Suite integration
+runTest:
+  - case:
+      description: Simple case description
+      allureSuite: Simple case allureSuite
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'allureSuite' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+Allure Suite integration (allureSuite)
+   Simple case description (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (allureSuite) Allure Suite integration
+00:00:00.000 - test   |   (case) Simple case description
+                      |   🕝: 00.000 s. (case)
+                      🕝: 00.000 s. (allureSuite)
+00:00:00.000 - timer  Test 'allureSuite' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "allureSuite": {}
+}
+
+```
 
 # Runner file
 

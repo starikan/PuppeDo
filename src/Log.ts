@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import { Arguments } from './Arguments';
 import Screenshot from './Screenshot';
-
 import {
   ColorsType,
   Element,
@@ -27,16 +26,51 @@ export class LogExports {
     this.envsId = envsId;
   }
 
-  saveToFile(fileName: string, text: string): void {
-    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
-    fs.writeFileSync(path.join(folder, fileName), text);
-    fs.writeFileSync(path.join(folderLatest, fileName), text);
+  private static makeNestedFolders(start: string, nestedFolders: string[] = []): void {
+    let currentPath = start;
+
+    if (nestedFolders.length) {
+      nestedFolders.forEach((folderName) => {
+        currentPath = path.join(currentPath, folderName);
+        if (!fs.existsSync(currentPath)) {
+          fs.mkdirSync(currentPath);
+        }
+      });
+    }
   }
 
-  appendToFile(fileName: string, text: string): void {
-    const { folderLatest, folder } = new Environment().getOutput(this.envsId);
-    fs.appendFileSync(path.join(folder, fileName), text);
-    fs.appendFileSync(path.join(folderLatest, fileName), text);
+  static deleteFolderRecursive(pathFolder: string): void {
+    if (fs.existsSync(pathFolder)) {
+      fs.readdirSync(pathFolder).forEach((file) => {
+        const curPath = `${pathFolder}/${file}`;
+        if (fs.lstatSync(curPath).isDirectory()) {
+          LogExports.deleteFolderRecursive(curPath);
+        } else {
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(pathFolder);
+    }
+  }
+
+  saveToFile(fileName: string, text: string, nestedFolders: string[] = []): void {
+    const { folderFull, folderLatestFull } = new Environment().getOutput(this.envsId);
+
+    LogExports.makeNestedFolders(folderFull, nestedFolders);
+    LogExports.makeNestedFolders(folderLatestFull, nestedFolders);
+
+    fs.writeFileSync(path.join(folderFull, ...nestedFolders, fileName), text);
+    fs.writeFileSync(path.join(folderLatestFull, ...nestedFolders, fileName), text);
+  }
+
+  appendToFile(fileName: string, text: string, nestedFolders: string[] = []): void {
+    const { folderFull, folderLatestFull } = new Environment().getOutput(this.envsId);
+
+    LogExports.makeNestedFolders(folderFull, nestedFolders);
+    LogExports.makeNestedFolders(folderLatestFull, nestedFolders);
+
+    fs.appendFileSync(path.join(folderFull, ...nestedFolders, fileName), text);
+    fs.appendFileSync(path.join(folderLatestFull, ...nestedFolders, fileName), text);
   }
 
   static resolveOutputHtmlFile(): string {
@@ -70,7 +104,7 @@ export class LogExports {
     } else {
       const filesExists = fs.readdirSync(folderLatest);
       for (const fileExists of filesExists) {
-        fs.unlinkSync(path.join(folderLatest, fileExists));
+        LogExports.deleteFolderRecursive(fileExists);
       }
     }
 

@@ -95,7 +95,7 @@ export type LogEntry = {
   breadcrumbs?: string[];
   repeat?: number;
   logMeta?: LogMetaInfoType;
-  args: TestArgsType;
+  args?: TestArgsType;
 };
 
 export type LogMetaInfoType = {

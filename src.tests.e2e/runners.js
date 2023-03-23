@@ -126,6 +126,9 @@ const testsE2E = {
   skipSublingIfResult: {
     params: { PPD_TESTS: 'skipSublingIfResult' },
   },
+  allureSuite: {
+    params: { PPD_TESTS: 'allureSuite' },
+  },
 };
 
 module.exports = testsE2E;
