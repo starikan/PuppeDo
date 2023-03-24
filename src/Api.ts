@@ -12,7 +12,7 @@ import { resolveOptions } from './Defaults';
 const initEnvironment = (options: RunOptions, argsInput): string => {
   const { loggerPipes, pluginsList, argsConfig, stdOut, socket } = options;
 
-  const { PPD_TESTS } = new Arguments(argsInput, argsConfig, true).args;
+  const { PPD_TESTS, PPD_DEBUG_MODE } = new Arguments(argsInput, argsConfig, true).args;
 
   if (!PPD_TESTS.length) {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
@@ -21,6 +21,10 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
   const allPlugins = new PluginsFabric(pluginsList);
   for (const plugin of pluginsList) {
     allPlugins.addPlugin(plugin);
+  }
+
+  if (PPD_DEBUG_MODE) {
+    console.log(JSON.stringify(allPlugins.getPluginsOrder(), null, 2));
   }
 
   const { envsId } = new Environment().createEnv({ socket, loggerOptions: { stdOut, loggerPipes } });

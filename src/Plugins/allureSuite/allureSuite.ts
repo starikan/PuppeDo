@@ -4,9 +4,11 @@ import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 
 export type PluginAllureSuit = { allureSuite: boolean };
 
+export type PluginAllureSuitArgs = { PPD_ALLURE_TAG_ON: string[] };
+
 const name = 'allureSuite';
 
-const argsPlugin = {
+const argumentsPlugin = {
   PPD_ALLURE_TAG_ON: [],
 };
 
@@ -61,4 +63,4 @@ const documentation: PluginDocumentation = {
 
 const order = 500;
 
-export default { name, documentation, plugin, order, argsPlugin } as PluginModule<PluginAllureSuit>;
+export default { name, documentation, plugin, order, argumentsPlugin } as PluginModule<PluginAllureSuit>;

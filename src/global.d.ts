@@ -12,10 +12,9 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
-import { PliginsFields } from './Plugins';
+import { PliginsArguments, PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
-import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
 
 // ================ BROWSERS ====================
@@ -68,14 +67,11 @@ export type ArgumentsType = {
   PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
-};
+} & Partial<PliginsArguments>;
 
 export type ArgumentsKeysType = keyof ArgumentsType;
 
-// Fix conflict prettier in package.json with vscode plugin
-type ArgumentsValuesType_UtilityType = typeof argsDefault;
-
-export type ArgumentsValuesType = ArgumentsValuesType_UtilityType[ArgumentsKeysType];
+export type ArgumentsValuesType = ArgumentsType[ArgumentsKeysType];
 
 // ================ LOGGER ====================
 

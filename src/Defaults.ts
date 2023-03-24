@@ -60,8 +60,6 @@ export const argsDefault: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
-export const getArgsDefault = (): ArgumentsType => argsDefault;
-
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
   const configGlobal = __non_webpack_require__(
     path.join(process.cwd(), options.globalConfigFile ?? 'puppedo.config.js'),

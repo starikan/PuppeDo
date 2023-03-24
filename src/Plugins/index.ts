@@ -2,13 +2,15 @@ import { PluginContinueOnError } from './continueOnError/continueOnError';
 import { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
 import { PluginArgsRedefine } from './argsRedefine/argsRedefine';
 import { PluginDescriptionError } from './descriptionError/descriptionError';
-import { PluginAllureSuit } from './allureSuite/allureSuite';
+import { PluginAllureSuit, PluginAllureSuitArgs } from './allureSuite/allureSuite';
 
 export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginArgsRedefine> &
   Partial<PluginDescriptionError> &
   Partial<PluginAllureSuit> &
   Partial<PluginContinueOnError>;
+
+export type PliginsArguments = Partial<PluginAllureSuitArgs>;
 
 export type { PluginContinueOnError };
 export type { PluginSkipSublingIfResult };

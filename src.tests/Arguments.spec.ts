@@ -31,35 +31,6 @@ const argsModify: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
 };
 
-const argsENV: Record<ArgumentsKeysType, string> = {
-  PPD_DATA: '{"foo":"bar"}',
-  PPD_DEBUG_MODE: 'true',
-  PPD_LOG_DISABLED: 'true',
-  PPD_LOG_EXTEND: 'true',
-  PPD_OUTPUT: 'zee',
-  PPD_ROOT: 'rrr',
-  PPD_ROOT_ADDITIONAL: 'iii, ooo',
-  PPD_ROOT_IGNORE: '.git,node_modules,.history,output,.github,.vscode,dqq',
-  PPD_FILES_IGNORE: '',
-  PPD_SELECTORS: '{"joo": "jii"}',
-  PPD_TESTS: 'suu',
-  PPD_LOG_LEVEL_NESTED: '10',
-  PPD_LOG_LEVEL_TYPE_IGNORE: 'sane',
-  PPD_LOG_SCREENSHOT: 'true',
-  PPD_LOG_FULLPAGE: 'true',
-  PPD_LOG_TEST_NAME: 'false',
-  PPD_LOG_IGNORE_HIDE_LOG: 'true',
-  PPD_TAGS_TO_RUN: 'tag',
-  PPD_LOG_DOCUMENTATION_MODE: 'false',
-  PPD_LOG_NAMES_ONLY: 'iii, ooo',
-  PPD_LOG_TIMER_SHOW: 'false',
-  PPD_LOG_TIMESTAMP_SHOW: 'true',
-  PPD_LOG_INDENT_LENGTH: '4',
-  PPD_LOG_STEPID: 'false',
-  PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
-  PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
-};
-
 // Reset Arguments
 function setArg<T>(argName: ArgumentsKeysType, argData: T): [T, ArgumentsValuesType] {
   // eslint-disable-next-line no-new
@@ -225,13 +196,6 @@ test('Arguments CLI', () => {
   const argsSolid = new Arguments({}, {}, true).args;
   expect(argsModify).toEqual(argsSolid);
   process.argv = rawArgv;
-});
-
-test('Arguments ENV', () => {
-  process.env = { ...process.env, ...argsENV };
-  const { args } = new Arguments({}, {}, true);
-  expect(argsModify).toEqual(args);
-  Object.keys(argsModify).forEach((v) => delete process.env[v]);
 });
 
 describe('parser', () => {

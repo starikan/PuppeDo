@@ -1,8 +1,8 @@
 /* eslint-disable max-classes-per-file */
 import crypto, { randomUUID } from 'crypto';
-import { Arguments } from './Arguments';
 import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
+import { PliginsArguments } from './Plugins';
 import Singleton from './Singleton';
 import { Test } from './Test';
 
@@ -33,7 +33,7 @@ export type PluginModule<T> = {
   name: string;
   plugin: PluginFunction<T>;
   documentation: PluginDocumentation;
-  argsPlugin?: Record<string, unknown>;
+  argumentsPlugin?: Record<string, unknown>;
   order?: number;
 };
 
@@ -45,21 +45,18 @@ export class PluginsFabric extends Singleton {
 
   private orders: Record<string, number | null>;
 
+  private arguments: Partial<PliginsArguments> = {};
+
   constructor(plugins: PluginModule<unknown>[] = [], reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
       this.documentation = {};
       this.orders = {};
+      this.arguments = {};
 
       for (const plugin of plugins) {
         this.addPlugin(plugin);
-      }
-
-      const { PPD_DEBUG_MODE } = new Arguments().args;
-
-      if (PPD_DEBUG_MODE) {
-        console.log(JSON.stringify(this.getPluginsOrder(), null, 2));
       }
     }
   }
@@ -83,7 +80,8 @@ export class PluginsFabric extends Singleton {
   addPlugin(plugin: PluginModule<unknown>): void {
     this.plugins[plugin.name] = plugin.plugin;
     this.documentation[plugin.name] = plugin.documentation;
-    this.orders[plugin.name] = plugin.order || null;
+    this.orders[plugin.name] = plugin.order ?? null;
+    this.arguments = { ...this.arguments, ...plugin.argumentsPlugin };
   }
 
   getPluginsOrder(): Record<string, number | null> {
@@ -105,6 +103,10 @@ export class PluginsFabric extends Singleton {
       .filter((v) => !!v[1])
       .map((v) => v[0]);
     return [...valuesOrdered, ...valuesNull];
+  }
+
+  getPluginsArguments(): Partial<PliginsArguments> {
+    return this.arguments;
   }
 }
 
