@@ -9,3 +9,8 @@ runTest:
   - case:
       bindDescription: "`Simple case bindDescription ${1+1}`"
       allureSuite: true
+
+  - case:
+      description: Case with allure enabled on tag name. Should in allure report
+      argsRedefine: { PPD_ALLURE_TAG_ON: ["case"] }
+

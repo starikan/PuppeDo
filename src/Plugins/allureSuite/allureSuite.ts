@@ -1,4 +1,3 @@
-import { Environment } from '../../Environment';
 import { PluginDocumentation } from '../../global.d';
 import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 
@@ -32,12 +31,20 @@ const plugin: PluginFunction<PluginAllureSuit> = () => {
       },
 
       resolveArgs: ({ args }): void => {
-        const { envsId, stepId, name: nameTest, description } = args;
-        const { testTree } = new Environment().getEnvInstance(envsId);
+        const { envsId, stepId, name: nameTest, description, environment, argsEnv } = args;
+        const { testTree } = environment.getEnvInstance(envsId);
         testTree.updateStep({
           stepId,
           payload: { name: nameTest, description },
         });
+
+        const { PPD_ALLURE_TAG_ON = argumentsPlugin.PPD_ALLURE_TAG_ON } = argsEnv;
+        if (PPD_ALLURE_TAG_ON.includes(nameTest)) {
+          const values: PluginAllureSuit = {
+            allureSuite: true,
+          };
+          pluginInstance.setValues(values);
+        }
       },
     },
   });

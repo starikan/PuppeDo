@@ -284,7 +284,7 @@ export type TestArgsType = {
   ppd: {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
   };
-  argsEnv: Record<string, unknown>;
+  argsEnv: ArgumentsType;
   runner: Runner;
   allRunners: Runners;
   browser?: BrowserType;
