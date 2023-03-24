@@ -41,15 +41,19 @@ export class LogExports {
 
   static deleteFolderRecursive(pathFolder: string): void {
     if (fs.existsSync(pathFolder)) {
-      fs.readdirSync(pathFolder).forEach((file) => {
-        const curPath = `${pathFolder}/${file}`;
-        if (fs.lstatSync(curPath).isDirectory()) {
-          LogExports.deleteFolderRecursive(curPath);
-        } else {
-          fs.unlinkSync(curPath);
-        }
-      });
-      fs.rmdirSync(pathFolder);
+      if (fs.lstatSync(pathFolder).isDirectory()) {
+        fs.readdirSync(pathFolder).forEach((file) => {
+          const curPath = `${pathFolder}/${file}`;
+          if (fs.lstatSync(curPath).isDirectory()) {
+            LogExports.deleteFolderRecursive(curPath);
+          } else {
+            fs.unlinkSync(curPath);
+          }
+        });
+        fs.rmdirSync(pathFolder);
+      } else {
+        fs.unlinkSync(pathFolder);
+      }
     }
   }
 
@@ -104,7 +108,7 @@ export class LogExports {
     } else {
       const filesExists = fs.readdirSync(folderLatest);
       for (const fileExists of filesExists) {
-        LogExports.deleteFolderRecursive(fileExists);
+        LogExports.deleteFolderRecursive(path.resolve(path.join(folderLatest, fileExists)));
       }
     }
 
