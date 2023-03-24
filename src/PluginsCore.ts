@@ -9,7 +9,8 @@ import { Test } from './Test';
 type Hooks = {
   initValues?: ({ initValues }: { initValues: TestExtendType }) => void;
   runLogic?: ({ inputs }: { inputs: TestExtendType }) => void;
-  resolveValues?: ({ inputs }: { inputs: TestExtendType }) => void;
+  resolveInputs?: ({ inputs }: { inputs: TestExtendType }) => void;
+  resolveArgs?: ({ args }: { args: TestArgsType }) => void;
   beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
@@ -176,7 +177,10 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     runLogic: () => {
       // Blank
     },
-    resolveValues: () => {
+    resolveInputs: () => {
+      // Blank
+    },
+    resolveArgs: () => {
       // Blank
     },
     beforeFunctions: () => {

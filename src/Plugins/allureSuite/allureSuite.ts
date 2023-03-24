@@ -1,21 +1,21 @@
+import { Environment } from '../../Environment';
 import { PluginDocumentation } from '../../global.d';
 import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
-import { runScriptInContext } from '../../Test';
 
-export type PluginAllureSuit = { allureSuite: string };
+export type PluginAllureSuit = { allureSuite: boolean };
 
 const name = 'allureSuite';
 
 const plugin: PluginFunction<PluginAllureSuit> = () => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { allureSuite: '' },
+    defaultValues: { allureSuite: false },
     propogationsAndShares: {
       fromPrevSublingSimple: ['allureSuite'],
     },
     hooks: {
       initValues: ({ initValues }): void => {
-        pluginInstance.defaultValues.allureSuite = initValues.allureSuite ?? '';
+        pluginInstance.defaultValues.allureSuite = initValues.allureSuite ?? false;
       },
 
       runLogic: ({ inputs }): void => {
@@ -25,38 +25,13 @@ const plugin: PluginFunction<PluginAllureSuit> = () => {
         pluginInstance.setValues(values);
       },
 
-      beforeFunctions: ({ args }): void => {
-        let newValue;
-        try {
-          newValue = runScriptInContext(
-            pluginInstance.defaultValues.allureSuite,
-            args.allData,
-            pluginInstance.defaultValues.allureSuite,
-          );
-        } catch (error) {
-          // Nothng t do
-        }
-        if (newValue) {
-          const values: PluginAllureSuit = { allureSuite: newValue };
-          pluginInstance.setValues(values);
-        }
-      },
-
-      afterResults: ({ results }): void => {
-        let newValue;
-        try {
-          newValue = runScriptInContext(
-            pluginInstance.defaultValues.allureSuite,
-            results,
-            pluginInstance.defaultValues.allureSuite,
-          );
-        } catch (error) {
-          // Nothng t do
-        }
-        if (newValue) {
-          const values: PluginAllureSuit = { allureSuite: newValue };
-          pluginInstance.setValues(values);
-        }
+      resolveArgs: ({ args }): void => {
+        const { envsId, stepId, name: nameTest, description } = args;
+        const { testTree } = new Environment().getEnvInstance(envsId);
+        testTree.updateStep({
+          stepId,
+          payload: { name: nameTest, description },
+        });
       },
     },
   });

@@ -550,7 +550,7 @@ export class Test implements TestExtendType {
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
       try {
-        this.plugins.hook('resolveValues', { inputs });
+        this.plugins.hook('resolveInputs', { inputs });
 
         if (this.engineSupports.length) {
           const { engine } = this.runner.getRunnerData().browser || {};
@@ -652,6 +652,8 @@ export class Test implements TestExtendType {
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
         };
+
+        this.plugins.hook('resolveArgs', { args });
 
         // IF
         if (this.if) {

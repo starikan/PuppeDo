@@ -16,7 +16,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (allPlugins) => {
       fromPrevSublingSimple: ['continueOnError'],
     },
     hooks: {
-      resolveValues: ({ inputs }): void => {
+      resolveInputs: ({ inputs }): void => {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
           ...new Arguments().args,
           ...allPlugins.getValue<PluginArgsRedefine>('argsRedefine').argsRedefine,
