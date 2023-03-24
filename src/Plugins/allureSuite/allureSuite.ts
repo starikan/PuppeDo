@@ -31,14 +31,14 @@ const plugin: PluginFunction<PluginAllureSuit> = () => {
       },
 
       resolveArgs: ({ args }): void => {
-        const { envsId, stepId, name: nameTest, description, environment, argsEnv } = args;
+        const { envsId, stepId, name: nameTest, description, environment, argsTest } = args;
         const { testTree } = environment.getEnvInstance(envsId);
         testTree.updateStep({
           stepId,
           payload: { name: nameTest, description },
         });
 
-        const { PPD_ALLURE_TAG_ON = argumentsPlugin.PPD_ALLURE_TAG_ON } = argsEnv;
+        const { PPD_ALLURE_TAG_ON = argumentsPlugin.PPD_ALLURE_TAG_ON } = argsTest;
         if (PPD_ALLURE_TAG_ON.includes(nameTest)) {
           const values: PluginAllureSuit = {
             allureSuite: true,

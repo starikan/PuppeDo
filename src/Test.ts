@@ -549,6 +549,7 @@ export class Test implements TestExtendType {
       this.logOptions = logForChild;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
+      const argsTest = { ...new Arguments().args, ...argsRedefine };
       try {
         this.plugins.hook('resolveInputs', { inputs });
 
@@ -639,7 +640,7 @@ export class Test implements TestExtendType {
           frame: this.frame,
           tags: this.tags,
           ppd: globalExportPPD,
-          argsEnv: { ...new Arguments().args, ...argsRedefine },
+          argsTest,
           browser: this.runner && this.runner.getState().browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
