@@ -6,6 +6,10 @@ export type PluginAllureSuit = { allureSuite: boolean };
 
 const name = 'allureSuite';
 
+const argsPlugin = {
+  PPD_ALLURE_TAG_ON: [],
+};
+
 const plugin: PluginFunction<PluginAllureSuit> = () => {
   const pluginInstance = new Plugin({
     name,
@@ -57,4 +61,4 @@ const documentation: PluginDocumentation = {
 
 const order = 500;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginAllureSuit>;
+export default { name, documentation, plugin, order, argsPlugin } as PluginModule<PluginAllureSuit>;

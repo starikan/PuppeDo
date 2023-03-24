@@ -1,10 +1,10 @@
 import { deepmerge } from 'deepmerge-ts';
 import Singleton from './Singleton';
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
-import { argsDefault } from './Defaults';
+import { getArgsDefault } from './Defaults';
 
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
-  if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
+  if (typeof getArgsDefault()[key] !== 'boolean' || typeof val === 'boolean') {
     return val;
   }
   const newVal = typeof val === 'string' && ['true', 'false'].includes(val) ? val === 'true' : val;
@@ -15,7 +15,7 @@ const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
 };
 
 const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
-  if (!Array.isArray(argsDefault[key])) {
+  if (!Array.isArray(getArgsDefault()[key])) {
     return val;
   }
 
@@ -42,8 +42,8 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
 
 const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknown> | T => {
   if (
-    typeof argsDefault[key] !== 'object' ||
-    Array.isArray(argsDefault[key]) ||
+    typeof getArgsDefault()[key] !== 'object' ||
+    Array.isArray(getArgsDefault()[key]) ||
     (typeof val === 'object' && !Array.isArray(val))
   ) {
     return val;
@@ -63,14 +63,17 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknow
 };
 
 const resolveString = <T>(key: ArgumentsKeysType, val: T): string | T => {
-  if (typeof argsDefault[key] !== 'string' || (typeof argsDefault[key] === 'string' && typeof val === 'string')) {
+  if (
+    typeof getArgsDefault()[key] !== 'string' ||
+    (typeof getArgsDefault()[key] === 'string' && typeof val === 'string')
+  ) {
     return val;
   }
   throw new Error(`Invalid argument type '${key}', 'string' required.`);
 };
 
 const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
-  if (typeof argsDefault[key] !== 'number' || typeof val === 'number') {
+  if (typeof getArgsDefault()[key] !== 'number' || typeof val === 'number') {
     return val;
   }
   const newVal = typeof val === 'string' && parseInt(val, 10);
@@ -86,7 +89,7 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
  * @returns Resolved object.
  */
 export const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType> => {
-  const params: ArgumentsKeysType[] = Object.keys(argsDefault) as ArgumentsKeysType[];
+  const params: ArgumentsKeysType[] = Object.keys(getArgsDefault()) as ArgumentsKeysType[];
   const result = params.reduce<Partial<ArgumentsType>>(
     (acc: Partial<ArgumentsType>, key: ArgumentsKeysType): Partial<ArgumentsType> => {
       let newVal = args[key];
@@ -110,7 +113,7 @@ export const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType
  * @returns parsed arguments
  */
 const parseCLI = (): Partial<ArgumentsType> => {
-  const params = Object.keys(argsDefault);
+  const params = Object.keys(getArgsDefault());
   const argsRaw = process.argv
     .map((v: string) => v.split(/\s+/))
     .flat()
@@ -132,7 +135,7 @@ export class Arguments extends Singleton {
       const argsEnv = parser(process.env as Record<string, string>);
       const argsCLI = parseCLI();
 
-      this.args = parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
+      this.args = parser(deepmerge(getArgsDefault(), parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
     }
   }
 }

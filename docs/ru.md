@@ -575,12 +575,17 @@ argsRedefine check (argsRedefine)
 
 ```yaml
 name: allureSuite
-allureSuite: Full Test from Header
+allureSuite: true
 description: Allure Suite integration
 runTest:
   - case:
       description: Simple case description
-      allureSuite: Simple case allureSuite
+      allureSuite: true
+
+  - case:
+      bindDescription: "`Simple case bindDescription ${1+1}`"
+      allureSuite: true
+
 ```
 #### Output:
 ```

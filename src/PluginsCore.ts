@@ -33,6 +33,7 @@ export type PluginModule<T> = {
   name: string;
   plugin: PluginFunction<T>;
   documentation: PluginDocumentation;
+  argsPlugin?: Record<string, unknown>;
   order?: number;
 };
 
