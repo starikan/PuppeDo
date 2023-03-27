@@ -586,6 +586,11 @@ runTest:
       bindDescription: "`Simple case bindDescription ${1+1}`"
       allureSuite: true
 
+  - case:
+      description: Case with allure enabled on tag name. Should in allure report
+      argsRedefine: { PPD_ALLURE_TAG_ON: ["case"] }
+
+
 ```
 #### Output:
 ```
@@ -594,12 +599,15 @@ runTest:
 Allure Suite integration (allureSuite)
    Simple case description (case)
    (case)
+   Case with allure enabled on tag name. Should in allure report (case)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (allureSuite) Allure Suite integration
 00:00:00.000 - test   |   (case) Simple case description
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Simple case bindDescription 2
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) Case with allure enabled on tag name. Should in allure report
                       |   🕝: 00.000 s. (case)
                       🕝: 00.000 s. (allureSuite)
 00:00:00.000 - timer  Test 'allureSuite' time 🕝: 00.000 s.
