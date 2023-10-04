@@ -7,17 +7,14 @@ export type PluginAllureSuitArgs = { PPD_ALLURE_TAG_ON: string[] };
 
 const name = 'allureSuite';
 
-const argumentsPlugin = {
-  PPD_ALLURE_TAG_ON: [],
-};
+const argumentsPlugin: PluginAllureSuitArgs = { PPD_ALLURE_TAG_ON: [] };
+
+const defaultValues: PluginAllureSuit = { allureSuite: false };
 
 const plugin: PluginFunction<PluginAllureSuit> = () => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { allureSuite: false },
-    propogationsAndShares: {
-      fromPrevSublingSimple: ['allureSuite'],
-    },
+    defaultValues,
     hooks: {
       initValues: ({ initValues }): void => {
         pluginInstance.defaultValues.allureSuite = initValues.allureSuite ?? false;
@@ -54,7 +51,9 @@ const plugin: PluginFunction<PluginAllureSuit> = () => {
 
 const documentation: PluginDocumentation = {
   description: {
-    ru: ['Плагин для генерации логов для Allure'],
+    ru: [
+      'Плагин генерации отчёта для Allure. Отчёт создается для конкретного тега, шагами являются все вложенные теги',
+    ],
     en: ['TODO'],
   },
   examples: [

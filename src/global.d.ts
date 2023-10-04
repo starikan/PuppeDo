@@ -395,6 +395,8 @@ export type PluginDocumentation = {
   name: string;
   type: string;
   propogation: boolean;
+  parametres?: any;
+  arguments?: any;
 };
 
 export type RunOptions = {
