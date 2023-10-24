@@ -195,7 +195,7 @@ export class Engines {
       const jsonPages = await jsonPagesResponse.data;
       const jsonBrowser = (await jsonBrowserResponse.data) as { webSocketDebuggerUrl: string };
 
-      if (!jsonBrowser || !jsonPages) {
+      if (!jsonBrowser || !jsonPages || jsonPages.length < 1) {
         throw new Error(`Can't connect to ${urlDevtoolsJson}`);
       }
 
