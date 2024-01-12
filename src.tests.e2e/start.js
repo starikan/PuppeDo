@@ -11,21 +11,19 @@ const testsResolved = tests ? tests.split(',').map((v) => v.trim()) : Object.key
 const createResolved = create ? create === 'true' : false;
 
 const logClean = (text) => {
-  let newText = text;
-  newText = newText.replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000');
-  newText = newText.replace(/: \d+\.\d+ s./g, ': 00.000 s.');
-  newText = newText.replace(
-    /start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g,
-    "start on '0000-00-00_00-00-00.000'",
-  );
-  newText = newText.replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]');
-  newText = newText.replace(/file:\/\/\/.+?node_modules/g, 'file:///');
-  newText = newText.replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log');
-  newText = newText.replace(/file:\/\/\/.+?tests/g, 'file:///');
-  newText = newText.replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins');
-  newText = newText.replace(/\(.+?webpack:/g, '(');
-  newText = newText.replace(/\.[jt]s.+?\)/g, ')');
-  newText = newText.replace(/\(.+?src\.tests\.e2e/g, '(');
+  const newText = text
+    .replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000')
+    .replace(/: \d+\.\d+ s./g, ': 00.000 s.')
+    .replace(/start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g, "start on '0000-00-00_00-00-00.000'")
+    .replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]')
+    .replace(/\([^f].+?PuppeDo\\node_modules/g, '(')
+    .replace(/file:\/\/\/.+?node_modules/g, 'file:///')
+    .replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log')
+    .replace(/file:\/\/\/.+?tests/g, 'file:///')
+    .replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins')
+    .replace(/\(.+?webpack:/g, '(')
+    .replace(/\.[jt]s.+?\)/g, ')')
+    .replace(/\(.+?src\.tests\.e2e/g, '(');
 
   const splitedText = newText.split('\n');
   const startIndex = splitedText.indexOf(

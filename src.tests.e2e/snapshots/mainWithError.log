@@ -28,7 +28,7 @@
 [31m00:00:00.000 - error  [0m[31m=========================== logs ===========================[0m
 [31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
 [31m00:00:00.000 - error  [0m[31m============================================================[0m
-[31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (C:\DEV\PPD\PuppeDo\node_modules\@puppedo\atoms\src\main\waitForSelector)[0m
+[31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (\@puppedo\atoms\src\main\waitForSelector)[0m
 [31m00:00:00.000 - error  [0m[31m    at Atom.runTest (\@puppedo\core\src\AtomCore)[0m
 [31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
 [31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getTest)[0m
