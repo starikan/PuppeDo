@@ -11,7 +11,8 @@
     "lint": "eslint src/**/*.[jt]s src.tests/**/*.[jt]s",
     "test": "jest",
     "docs": "ts-node --project ./tsconfig.scripts.json ./src.docs/createDocs.ts",
-    "e2e": "node src.tests.e2e/start.js"
+    "e2e": "node src.tests.e2e/start.js",
+    "postinstall": "playwright install chrome firefox || exit 0"
   },
   "author": "Starodubov Sergey <4analit@gmail.com>",
   "license": "ISC",
@@ -57,7 +58,7 @@
     "@puppedo/atoms": "6.0.0",
     "@types/jest": "29.5.0",
     "@types/js-yaml": "4.0.5",
-    "@types/node": "18.15.5",
+    "@types/node": "^18.15.5",
     "@types/require-from-string": "1.2.1",
     "@types/webpack-env": "1.18.0",
     "@typescript-eslint/eslint-plugin": "5.56.0",

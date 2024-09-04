@@ -15,10 +15,10 @@
       "request": "launch",
       "name": "RunAllE2E",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      // "env": {
-      //   "PWDEBUG": "console",
-      //   "DEBUG": "pw:api"
-      // },
+      "env": {
+        // "PWDEBUG": "console",
+        // "DEBUG": "pw:browser"
+      },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {
