@@ -23,6 +23,7 @@ const logClean = (text) => {
     .replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins')
     .replace(/\(.+?webpack:/g, '(')
     .replace(/\.[jt]s.+?\)/g, ')')
+    .replace(/:\d+:\d+\)/g, ')')
     .replace(/\(.+?src\.tests\.e2e/g, '(');
 
   const splitedText = newText.split('\n');
@@ -66,6 +67,8 @@ for (const testName of testsResolved) {
       const snapshotData = fs.readFileSync(filePath).toString();
 
       if (snapshotData !== logClean(outData)) {
+        console.log(snapshotData);
+        console.log(logClean(outData));
         throw new Error(`E2E test error: ${testName}`);
       }
     }

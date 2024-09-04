@@ -19,15 +19,15 @@
 00:00:00.000 - test   |   [32m(clickSelector) Click some fake Text[0m
 [31m00:00:00.000 - error  [0m[31m============== ERROR MESSAGE ==============[0m
 [31m00:00:00.000 - error  [0m[31mpage.waitForSelector: Timeout 1000ms exceeded.[0m
-[31m00:00:00.000 - error  [0m[31m=========================== logs ===========================[0m
-[31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
-[31m00:00:00.000 - error  [0m[31m============================================================[0m
+[31m00:00:00.000 - error  [0m[31mCall log:[0m
+[31m00:00:00.000 - error  [0m[31m  [2m- waiting for locator('.mainInputFake') to be visible[22m[0m
+[31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m============== ERROR STACK ==============[0m
 [31m00:00:00.000 - error  [0m[31mpage.waitForSelector: Timeout 1000ms exceeded.[0m
-[31m00:00:00.000 - error  [0m[31m=========================== logs ===========================[0m
-[31m00:00:00.000 - error  [0m[31mwaiting for locator('.mainInputFake') to be visible[0m
-[31m00:00:00.000 - error  [0m[31m============================================================[0m
+[31m00:00:00.000 - error  [0m[31mCall log:[0m
+[31m00:00:00.000 - error  [0m[31m  [2m- waiting for locator('.mainInputFake') to be visible[22m[0m
+[31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (\@puppedo\atoms\src\main\waitForSelector)[0m
 [31m00:00:00.000 - error  [0m[31m    at Atom.runTest (\@puppedo\core\src\AtomCore)[0m
 [31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m

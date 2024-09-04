@@ -34,7 +34,7 @@ descriptionErrorNested (descriptionErrorNested)
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Test stopped with expr errorIf = 'true'[0m
 [31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues:96:5)[0m
+[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
 [31m                      [0m[31mat testResolver (\@puppedo\core\src\getTest)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m

@@ -12,6 +12,7 @@ Puppeteer tests flow with node.js
       * you can use [Nodist](https://github.com/nullivex/nodist/)
 
   1. Fetch node modules with `npm install` or `yarn`
+  1. Install Playwright browsers with `npx playwright install` if you want to run tests on playwright browsers
   1. Run tests
 
 ## Generate project
@@ -359,7 +360,7 @@ descriptionError (descriptionError)
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
                       at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at processTicksAndRejections (node:internal/process/task_queues)
                       at Test.runLogic (\@puppedo\core\src\Test)
                       at testResolver (\@puppedo\core\src\getTest)
                       at Test.runLogic (\@puppedo\core\src\Test)
@@ -428,7 +429,7 @@ descriptionErrorNested (descriptionErrorNested)
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
                       at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at processTicksAndRejections (node:internal/process/task_queues)
                       at Test.runLogic (\@puppedo\core\src\Test)
                       at testResolver (\@puppedo\core\src\getTest)
                       at Test.runLogic (\@puppedo\core\src\Test)
@@ -489,7 +490,7 @@ descriptionErrorDynamic (descriptionErrorDynamic)
                       ================================================================================================
                       Error: Test stopped with expr errorIfResult = 'apples < 5'
                       at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues:96:5)
+                      at processTicksAndRejections (node:internal/process/task_queues)
                       at Test.runLogic (\@puppedo\core\src\Test)
                       at testResolver (\@puppedo\core\src\getTest)
                       at Test.runLogic (\@puppedo\core\src\Test)
