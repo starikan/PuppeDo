@@ -3,6 +3,8 @@ import Singleton from './Singleton';
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
 import { argsDefault } from './Defaults';
 
+const DELIMITER = ',';
+
 const resolveBoolean = <T>(key: ArgumentsKeysType, val: T): boolean | T => {
   if (typeof argsDefault[key] !== 'boolean' || typeof val === 'boolean') {
     return val;
@@ -29,7 +31,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
     try {
       newVal = JSON.parse(val);
     } catch (error) {
-      newVal = val.split(',').map((v: string) => v.trim());
+      newVal = val.split(DELIMITER).map((v: string) => v.trim());
     }
   }
 
@@ -73,7 +75,7 @@ const resolveNumber = <T>(key: ArgumentsKeysType, val: T): number | T => {
   if (typeof argsDefault[key] !== 'number' || typeof val === 'number') {
     return val;
   }
-  const newVal = typeof val === 'string' && parseInt(val, 10);
+  const newVal = typeof val === 'string' && parseFloat(val);
   if (typeof newVal !== 'number' || Number.isNaN(newVal)) {
     throw new Error(`Invalid argument type '${key}', 'number' required.`);
   }
@@ -121,9 +123,33 @@ const parseCLI = (): Partial<ArgumentsType> => {
   return parser(Object.fromEntries(argsRaw));
 };
 
-/* Class of a bunch of arguments. All global arguments of app */
+/**
+ * Class representing a collection of global arguments for the application.
+ * This class extends the Singleton pattern to ensure a single instance of arguments across the app.
+ * It handles parsing and merging of arguments from various sources including default values,
+ * configuration files, environment variables, command-line inputs, and programmatically passed arguments.
+ * The class provides a centralized way to manage and access all global settings and parameters
+ * used throughout the application, ensuring consistency and ease of configuration.
+ *
+ * Usage examples:
+ *
+ * 1. Creating an instance with default arguments:
+ *    const args = new Arguments();
+ *
+ * 2. Creating an instance with custom arguments:
+ *    const customArgs = { PPD_DEBUG_MODE: true, PPD_OUTPUT: 'custom_output' };
+ *    const args = new Arguments(customArgs);
+ *
+ * 3. Accessing arguments:
+ *    const debugMode = args.args.PPD_DEBUG_MODE;
+ *    const outputFolder = args.args.PPD_OUTPUT;
+ *
+ * 4. Reinitializing with new arguments:
+ *    const newArgs = { PPD_LOG_SCREENSHOT: true, PPD_LOG_LEVEL_NESTED: 2 };
+ *    const args = new Arguments(newArgs, {}, true);
+ */
 export class Arguments extends Singleton {
-  args!: ArgumentsType;
+  public args!: ArgumentsType;
 
   constructor(args: Partial<ArgumentsType> = {}, argsConfig: Partial<ArgumentsType> = {}, reInit = false) {
     super();
