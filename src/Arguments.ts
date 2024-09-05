@@ -163,7 +163,14 @@ export class Arguments extends Singleton {
   ): ArgumentsType {
     if (reInit || !this._args) {
       const argsInput = parser(args);
-      const argsEnv = parser(process.env as Record<string, string>);
+
+      const argsEnv = parser(
+        Object.entries(process.env).reduce<Record<string, string>>((acc, [key, value]) => {
+          acc[key] = value?.toString() ?? '';
+          return acc;
+        }, {}),
+      );
+
       const argsCLI = parseCLI();
 
       return parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
