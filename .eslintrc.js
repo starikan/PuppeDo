@@ -77,5 +77,7 @@ module.exports = {
         ignorePropertyModificationsFor: ['acc'],
       },
     ],
+
+    'no-underscore-dangle': ['error', { allowAfterThis: true }],
   },
 };

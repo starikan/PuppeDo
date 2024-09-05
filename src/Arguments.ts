@@ -149,16 +149,29 @@ const parseCLI = (): Partial<ArgumentsType> => {
  *    const args = new Arguments(newArgs, {}, true);
  */
 export class Arguments extends Singleton {
-  public args!: ArgumentsType;
+  private _args: ArgumentsType;
 
   constructor(args: Partial<ArgumentsType> = {}, argsConfig: Partial<ArgumentsType> = {}, reInit = false) {
     super();
-    if (reInit || !this.args) {
+    this._args = this.initializeArgs(args, argsConfig, reInit);
+  }
+
+  private initializeArgs(
+    args: Partial<ArgumentsType>,
+    argsConfig: Partial<ArgumentsType>,
+    reInit: boolean,
+  ): ArgumentsType {
+    if (reInit || !this._args) {
       const argsInput = parser(args);
       const argsEnv = parser(process.env as Record<string, string>);
       const argsCLI = parseCLI();
 
-      this.args = parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
+      return parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
     }
+    return this._args;
+  }
+
+  public get args(): ArgumentsType {
+    return this._args;
   }
 }
