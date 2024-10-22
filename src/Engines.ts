@@ -167,7 +167,7 @@ export class Engines {
           const { browser, pages } = await Engines.connectElectron(browserSettings);
           await sleep(secondsDelayAfterStartApp * 1000);
           return { browser, pages, pid: prc.pid };
-        } catch (error) {
+        } catch {
           await sleep(1000);
           connectionTryes += 1;
         }

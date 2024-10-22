@@ -30,7 +30,7 @@ const resolveArray = <T>(key: ArgumentsKeysType, val: T): string[] | T => {
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
-    } catch (error) {
+    } catch {
       newVal = val.split(DELIMITER).map((v: string) => v.trim());
     }
   }
@@ -54,7 +54,7 @@ const resolveObject = <T>(key: ArgumentsKeysType, val: T): Record<string, unknow
   if (typeof val === 'string') {
     try {
       newVal = JSON.parse(val);
-    } catch (error) {
+    } catch {
       throw new Error(`Invalid argument type '${key}', 'object' required.`);
     }
   }

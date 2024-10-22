@@ -132,7 +132,7 @@ export default class TestsContent extends Singleton {
             if (!Array.isArray(testData)) {
               testData = [testData];
             }
-          } catch (e) {
+          } catch {
             console.log(
               `\u001B[41mError JSON read. File: '${filePath}'. Try to check it on https://jsonlint.com/
               or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
@@ -141,7 +141,7 @@ export default class TestsContent extends Singleton {
         } else {
           try {
             testData = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
-          } catch (e) {
+          } catch {
             console.log(
               `\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/
               or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,

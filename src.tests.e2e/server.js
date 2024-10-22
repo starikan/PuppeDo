@@ -18,6 +18,7 @@ const runServer = () => {
     if (err) {
       return console.log('something bad happened', err);
     }
+    return null;
   });
 };
 

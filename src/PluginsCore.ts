@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
 import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
@@ -221,6 +220,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       }
       return this.blankHook;
     } catch (error) {
+      console.log(error);
       // eslint-disable-next-line no-debugger
       debugger;
     }

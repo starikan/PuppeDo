@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Page as PagePuppeteer, Frame as FramePuppeteer } from 'puppeteer';
 import { Page as PagePlaywright, Frame as FramePlaywright } from 'playwright';
 
@@ -61,10 +60,6 @@ export default class Atom {
     elementPatent: BrowserPageType | BrowserFrame = this.page,
   ): Promise<Element[] | Element | boolean> {
     if (selector && typeof selector === 'string') {
-      const selectorClean = selector
-        .replace(/^css[:=]/, '')
-        .replace(/^xpath[:=]/, '')
-        .replace(/^text[:=]/, '');
       const isXPath = selector.match(/^xpath[:=]/);
       const isText = selector.match(/^text[:=]/);
       const isCSS = (!isXPath && !isText) || selector.match(/^css[:=]/);
@@ -72,12 +67,16 @@ export default class Atom {
       let elements: Array<Element> = [];
 
       if (this.getEngine('puppeteer')) {
+        const selectorClean = selector
+          .replace(/^css[:=]/, '')
+          .replace(/^xpath[:=]/, 'xpath/.')
+          .replace(/^text[:=]/, '');
         const elementParentPuppeteer = elementPatent as PagePuppeteer;
         if (isXPath) {
-          elements = await elementParentPuppeteer.$x(selectorClean);
+          elements = await elementParentPuppeteer.$$(selectorClean);
         }
         if (isText) {
-          elements = await elementParentPuppeteer.$x(`//*[text()[contains(.,"${selectorClean}")]]`);
+          elements = await elementParentPuppeteer.$$(`//*[text()[contains(.,"${selectorClean}")]]`);
         }
         if (isCSS) {
           elements = await elementParentPuppeteer.$$(selectorClean);
@@ -85,6 +84,10 @@ export default class Atom {
       }
 
       if (this.getEngine('playwright')) {
+        const selectorClean = selector
+          .replace(/^css[:=]/, '')
+          .replace(/^xpath[:=]/, '')
+          .replace(/^text[:=]/, '');
         const elementParentPlaywright = elementPatent as PagePlaywright;
         if (isXPath) {
           elements = await elementParentPlaywright.$$(`xpath=${selectorClean}`);

@@ -30,7 +30,7 @@ const plugin: PluginFunction<PluginDescriptionError> = () => {
             args.allData,
             pluginInstance.defaultValues.descriptionError,
           );
-        } catch (error) {
+        } catch {
           // Nothng t do
         }
         if (newValue) {
@@ -47,7 +47,7 @@ const plugin: PluginFunction<PluginDescriptionError> = () => {
             results,
             pluginInstance.defaultValues.descriptionError,
           );
-        } catch (error) {
+        } catch {
           // Nothng t do
         }
         if (newValue) {

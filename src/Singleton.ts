@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 // https://gist.github.com/ilfroloff/76fa55d041b6a1cd2dbe
 
 const singleton = Symbol('singleton');

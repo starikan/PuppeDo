@@ -4,6 +4,7 @@ const runServer = require('./server');
 
 const testsE2E = require('./runners');
 
+// eslint-disable-next-line global-require
 const runBeforeTest = () => require('@puppedo/atoms');
 
 const runTest = async (runner, options = {}) => {
@@ -22,10 +23,12 @@ const runTest = async (runner, options = {}) => {
   if (runner.runAfterTest) {
     await runner.runAfterTest();
   }
+
+  return null;
 };
 
 const start = async () => {
-  const LOCAL_RUN_TEST = process.env.LOCAL_RUN_TEST;
+  const { LOCAL_RUN_TEST } = process.env;
   const runners = LOCAL_RUN_TEST ? [LOCAL_RUN_TEST] : Object.keys(testsE2E);
   try {
     runServer();

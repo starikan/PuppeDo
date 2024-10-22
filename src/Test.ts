@@ -141,7 +141,7 @@ const resolveDataFunctions = (
     let evalData: unknown = data;
     try {
       evalData = runScriptInContext(data, allData);
-    } catch (error) {
+    } catch {
       // Nothing to do
     }
     const collector = { ...s, ...{ [key]: evalData } };

@@ -171,7 +171,7 @@ export class Runner {
   async stopEngine(): Promise<void> {
     try {
       await this.state?.browser?.close();
-    } catch (error) {
+    } catch {
       // Nothing to do.
     }
     try {
@@ -190,7 +190,7 @@ export class Runner {
           console.error(`Quitting a process is not supported on '${platform}' platform.`);
         }
       }
-    } catch (error) {
+    } catch {
       // Nothing to do.
     }
 

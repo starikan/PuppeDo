@@ -1,4 +1,3 @@
-/* eslint-disable prefer-arrow-callback */
 import { PluginDocumentation } from '../../global.d';
 import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 

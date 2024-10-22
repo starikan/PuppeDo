@@ -61,16 +61,14 @@ for (const testName of testsResolved) {
   if (createResolved) {
     const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
     fs.writeFileSync(filePath, logClean(outData));
-  } else {
-    if (!tests) {
-      const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
-      const snapshotData = fs.readFileSync(filePath).toString();
+  } else if (!tests) {
+    const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
+    const snapshotData = fs.readFileSync(filePath).toString();
 
-      if (snapshotData !== logClean(outData)) {
-        console.log(snapshotData);
-        console.log(logClean(outData));
-        throw new Error(`E2E test error: ${testName}`);
-      }
+    if (snapshotData !== logClean(outData)) {
+      console.log(snapshotData);
+      console.log(logClean(outData));
+      throw new Error(`E2E test error: ${testName}`);
     }
   }
 }

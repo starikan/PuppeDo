@@ -47,7 +47,7 @@ export default class Screenshot {
         }
         return pathScreenshot;
       }
-    } catch (error) {
+    } catch {
       // Nothing to do
     }
 
@@ -67,7 +67,7 @@ export default class Screenshot {
         }
         return pathScreenshot;
       }
-    } catch (error) {
+    } catch {
       // Nothing to do
     }
 
