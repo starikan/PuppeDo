@@ -41,10 +41,25 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 export type ColorsType = keyof typeof colors;
 
-export type ArgumentsType = {
+export interface ArgumentsType {
+  /**
+   * Корневая папка с тестами. Это основная директория, в которой хранятся все тесты и связанные с ними файлы. Система будет искать тесты и другие необходимые файлы, начиная с этой папки.
+   */
   PPD_ROOT: string;
+
+  /**
+   * Дополнительные папки с тестами. Позволяет указать дополнительные директории, в которых также будут искаться тесты и связанные файлы. Это полезно, если тесты распределены по нескольким местам в проекте.
+   */
   PPD_ROOT_ADDITIONAL: string[];
+
+  /**
+   * Папки, которые будут игнорироваться при поиске тестов. Это позволяет исключить определенные директории из процесса сканирования, такие как системные папки или папки с зависимостями. По умолчанию игнорируются '.git', 'node_modules', '.history', 'output', '.github' и '.vscode'.
+   */
   PPD_ROOT_IGNORE: string[];
+
+  /**
+   * Файлы, которые будут игнорироваться при поиске тестов. Это позволяет исключить определенные файлы из процесса сканирования, например, временные файлы или файлы с резервными копиями. Указывается как массив строк с именами файлов или шаблонами имен файлов. Задается относительно PPD_ROOT.
+   */
   PPD_FILES_IGNORE: string[];
   PPD_TESTS: string[];
   PPD_OUTPUT: string;
@@ -68,7 +83,7 @@ export type ArgumentsType = {
   PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
-};
+}
 
 export type ArgumentsKeysType = keyof ArgumentsType;
 

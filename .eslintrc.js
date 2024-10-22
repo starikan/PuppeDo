@@ -35,7 +35,7 @@ module.exports = {
       'error',
       {
         code: 120,
-        comments: 200,
+        ignoreComments: true,
         ignoreUrls: true,
         ignorePattern: '^import .*',
         ignoreTrailingComments: true,

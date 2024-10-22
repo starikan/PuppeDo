@@ -4,6 +4,7 @@ import fs from 'fs';
 import { pluginsListDefault } from '../src/Defaults';
 import { DocumentationLanguages } from '../src/global.d';
 import { PluginsFabric } from '../src/PluginsCore';
+import { generateDocumentationArguments } from './createDocs.arguments';
 
 const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];
@@ -12,6 +13,9 @@ const index = fs.readFileSync(path.join(__dirname, './index.md'), 'utf-8');
 const parts = [...index.matchAll(/%(\w+?)%/g)].map((v) => v[1]).filter((v) => !['plugins'].includes(v));
 
 const allPlugins = new PluginsFabric(pluginsListDefault);
+
+const documentationArguments = generateDocumentationArguments();
+console.log(documentationArguments);
 
 languages.forEach((lang) => {
   const replaces: Record<string, string> = {};
