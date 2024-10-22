@@ -151,7 +151,7 @@ export class Engines {
     if (runtimeExecutable) {
       process.env = { ...process.env, ...browserEnv };
 
-      const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env });
+      const prc = spawn(runtimeExecutable, runArgs, { cwd, env: process.env, shell: true });
 
       if (prc) {
         new Environment().getLogger(envsId).exporter.saveToFile(`${envName}.log`, '');
