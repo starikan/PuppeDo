@@ -209,35 +209,35 @@ export default class TestsContent extends Singleton {
       } = runner;
 
       runnersExt.forEach((runnersExtName: string) => {
-        const runnersResolved: RunnerType | undefined = runnersAll.find((g: RunnerType) => g.name === runnersExtName);
+        const runnersResolved = runnersAll.find((r) => r.name === runnersExtName);
         if (runnersResolved) {
           if (runnersResolved.browser) {
             runnerUpdated.browser = merge(runnerUpdated.browser, runnersResolved.browser);
           }
-          runnerUpdated.log = { ...(runnerUpdated.log || {}), ...(runnersResolved.log || {}) };
-          runnerUpdated.data = { ...(runnerUpdated.data || {}), ...(runnersResolved.data || {}) };
-          runnerUpdated.selectors = { ...(runnerUpdated.selectors || {}), ...(runnersResolved.selectors || {}) };
-          runnerUpdated.description = `${runnerUpdated.description || ''} -> ${runnersResolved.description || ''}`;
+          runnerUpdated.log = { ...(runnerUpdated.log ?? {}), ...(runnersResolved.log ?? {}) };
+          runnerUpdated.data = { ...(runnerUpdated.data ?? {}), ...(runnersResolved.data ?? {}) };
+          runnerUpdated.selectors = { ...(runnerUpdated.selectors ?? {}), ...(runnersResolved.selectors ?? {}) };
+          runnerUpdated.description = `${runnerUpdated.description ?? ''} -> ${runnersResolved.description ?? ''}`;
         } else {
           throw new Error(`PuppeDo can't resolve extended runner '${runnersExtName}' in runner '${runner.name}'`);
         }
       });
 
       dataExt.forEach((dataExtName: string) => {
-        const dataResolved: DataType | undefined = dataAll.find((g: DataType) => g.name === dataExtName);
+        const dataResolved = dataAll.find((d) => d.name === dataExtName);
         if (dataResolved) {
-          runnerUpdated.data = { ...(runnerUpdated.data || {}), ...(dataResolved.data || {}), ...dataEnv };
+          runnerUpdated.data = { ...(runnerUpdated.data ?? {}), ...(dataResolved.data ?? {}), ...dataEnv };
         } else {
           throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in runner '${runner.name}'`);
         }
       });
 
       selectorsExt.forEach((selectorsExtName: string) => {
-        const selectorsResolved: DataType | undefined = selectorsAll.find((g: DataType) => g.name === selectorsExtName);
+        const selectorsResolved = selectorsAll.find((s) => s.name === selectorsExtName);
         if (selectorsResolved) {
           runnerUpdated.selectors = {
-            ...(runnerUpdated.selectors || {}),
-            ...(selectorsResolved.data || {}),
+            ...(runnerUpdated.selectors ?? {}),
+            ...(selectorsResolved.data ?? {}),
             ...selectorsEnv,
           };
         } else {

@@ -219,7 +219,7 @@ export type RunnerYamlType = {
   selectorsExt?: Array<string>;
   runnersExt?: Array<string>;
   log?: {
-    level?: string;
+    level?: ColorsType;
     screenshot?: boolean;
     fullpage?: boolean;
   };
