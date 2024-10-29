@@ -641,4 +641,107 @@ describe('TestsContent.resolveRunners', () => {
     const result = TestsContent.resolveRunners(runners, [], []);
     expect(result).toEqual(runners);
   });
+
+  it('должен корректно объединять описания раннеров и обрабатывать отсутствующие описания', () => {
+    const runners: RunnerType[] = [
+      {
+        name: 'baseRunner',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        description: 'Base runner',
+      },
+      {
+        name: 'extendedRunner',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        description: 'Extended runner',
+        runnersExt: ['baseRunner'],
+      },
+      {
+        name: 'baseRunnerNoDesc',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        // без description
+      },
+      {
+        name: 'extendedRunnerNoDesc',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        runnersExt: ['baseRunnerNoDesc'],
+        // без description
+      },
+      {
+        name: 'extendedRunnerWithDesc',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        description: 'Extended runner with desc',
+        runnersExt: ['baseRunnerNoDesc'],
+      },
+    ];
+
+    const result = TestsContent.resolveRunners(runners, [], []);
+
+    expect(result.find((r) => r.name === 'extendedRunner')?.description).toBe('Extended runner -> Base runner');
+    expect(result.find((r) => r.name === 'extendedRunnerNoDesc')?.description).toBe(' -> ');
+    expect(result.find((r) => r.name === 'extendedRunnerWithDesc')?.description).toBe('Extended runner with desc -> ');
+  });
+
+  it('должен корректно обрабатывать отсутствующие data при объединении', () => {
+    const runners: RunnerType[] = [
+      {
+        name: 'runner1',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        dataExt: ['data1', 'data2', 'data3', 'data4'],
+        // data отсутствует
+      },
+      {
+        name: 'runner2',
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+        dataExt: ['data1', 'data2', 'data3', 'data4'],
+        data: { runnerData: 'value' },
+      },
+    ];
+
+    const data: DataType[] = [
+      {
+        name: 'data1',
+        type: 'data',
+        testFile: 'test.yaml',
+        data: {},
+      },
+      {
+        name: 'data2',
+        type: 'data',
+        testFile: 'test.yaml',
+        data: { extendedData: 'value' },
+      },
+      {
+        name: 'data3',
+        type: 'data',
+        testFile: 'test.yaml',
+        data: null,
+      },
+      {
+        name: 'data4',
+        type: 'data',
+        testFile: 'test.yaml',
+        data: undefined,
+      },
+    ];
+
+    const result = TestsContent.resolveRunners(runners, data, []);
+
+    // Проверяем случай когда нет data в раннере
+    expect(result.find((r) => r.name === 'runner1')?.data).toEqual({
+      extendedData: 'value',
+    });
+
+    // Проверяем случай когда есть data в раннере
+    expect(result.find((r) => r.name === 'runner2')?.data).toEqual({
+      runnerData: 'value',
+      extendedData: 'value',
+    });
+  });
 });
