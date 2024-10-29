@@ -204,8 +204,8 @@ export default class TestsContent extends Singleton {
         dataExt = [],
         selectorsExt = [],
         runnersExt = [],
-        data: dataEnv = {},
-        selectors: selectorsEnv = {},
+        data: dataRunner = {},
+        selectors: selectorsRunner = {},
       } = runner;
 
       runnersExt.forEach((runnersExtName: string) => {
@@ -223,27 +223,26 @@ export default class TestsContent extends Singleton {
         }
       });
 
-      dataExt.forEach((dataExtName: string) => {
-        const dataResolved = dataAll.find((d) => d.name === dataExtName);
-        if (dataResolved) {
-          runnerUpdated.data = { ...(runnerUpdated.data ?? {}), ...(dataResolved.data ?? {}), ...dataEnv };
-        } else {
-          throw new Error(`PuppeDo can't resolve extended data '${dataExtName}' in runner '${runner.name}'`);
-        }
-      });
+      const resolveExtensions = (
+        extNames: string[],
+        collection: DataType[],
+        type: 'data' | 'selectors',
+        runnerValues: Record<string, unknown>,
+      ): void => {
+        extNames.forEach((extName) => {
+          const resolved = collection.find((item) => item.name === extName);
+          if (!resolved) {
+            throw new Error(`PuppeDo can't resolve extended ${type} '${extName}' in runner '${runner.name}'`);
+          }
 
-      selectorsExt.forEach((selectorsExtName: string) => {
-        const selectorsResolved = selectorsAll.find((s) => s.name === selectorsExtName);
-        if (selectorsResolved) {
-          runnerUpdated.selectors = {
-            ...(runnerUpdated.selectors ?? {}),
-            ...(selectorsResolved.data ?? {}),
-            ...selectorsEnv,
-          };
-        } else {
-          throw new Error(`PuppeDo can't resolve extended selectors '${selectorsExtName}' in runner '${runner.name}'`);
-        }
-      });
+          Object.assign(runnerUpdated, {
+            [type]: { ...(runnerUpdated[type] ?? {}), ...(resolved.data ?? {}), ...runnerValues },
+          });
+        });
+      };
+
+      resolveExtensions(dataExt, dataAll, 'data', dataRunner);
+      resolveExtensions(selectorsExt, selectorsAll, 'selectors', selectorsRunner);
 
       return runnerUpdated;
     });
