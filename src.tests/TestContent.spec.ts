@@ -260,7 +260,7 @@ describe('TestContent', () => {
   });
 });
 
-describe('TestsContent.resolveRunners', () => {
+describe('TestsContent.resolveRunners (AI generated)', () => {
   const DEFAULT_BROWSER: EnvBrowserType = {
     type: 'browser',
     engine: 'playwright',
@@ -270,7 +270,7 @@ describe('TestsContent.resolveRunners', () => {
     slowMo: 0,
   };
 
-  it('должен объединять данные из расширенных раннеров', () => {
+  it('should merge data from extended runners', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner',
@@ -308,7 +308,7 @@ describe('TestsContent.resolveRunners', () => {
     });
   });
 
-  it('должен расширять данные из dataExt', () => {
+  it('should extend data from dataExt', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -335,7 +335,7 @@ describe('TestsContent.resolveRunners', () => {
     });
   });
 
-  it('должен расширять селекторы из selectorsExt', () => {
+  it('should extend selectors from selectorsExt', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -362,7 +362,7 @@ describe('TestsContent.resolveRunners', () => {
     });
   });
 
-  it('должен выбрасывать ошибку при отсутствии расширяемого раннера', () => {
+  it('should throw error when extended runner is missing', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -377,7 +377,7 @@ describe('TestsContent.resolveRunners', () => {
     }).toThrow("PuppeDo can't resolve extended runner 'nonExistentRunner' in runner 'runner'");
   });
 
-  it('должен выбрасывать ошибку при отсутствии расширяемых данных', () => {
+  it('should throw error when extended data is missing', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -392,7 +392,7 @@ describe('TestsContent.resolveRunners', () => {
     }).toThrow("PuppeDo can't resolve extended data 'nonExistentData' in runner 'runner'");
   });
 
-  it('должен выбрасывать ошибку при отсутствии расширяемых селекторов', () => {
+  it('should throw error when extended selectors are missing', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -407,7 +407,7 @@ describe('TestsContent.resolveRunners', () => {
     }).toThrow("PuppeDo can't resolve extended selectors 'nonExistentSelectors' in runner 'runner'");
   });
 
-  it('должен корректно обрабатывать пустые расширения', () => {
+  it('should handle empty extensions correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -423,7 +423,7 @@ describe('TestsContent.resolveRunners', () => {
     expect(result).toEqual(runners);
   });
 
-  it('должен корректно объединять log, data, selectors и description при наследовании', () => {
+  it('should correctly merge log, data, selectors and description during inheritance', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner',
@@ -490,27 +490,27 @@ describe('TestsContent.resolveRunners', () => {
       browser: DEFAULT_BROWSER,
       runnersExt: ['middleRunner'],
       log: {
-        level: 'info', // из baseRunner
-        screenshot: true, // из baseRunner
-        fullpage: true, // из middleRunner
+        level: 'info', // from baseRunner
+        screenshot: true, // from baseRunner
+        fullpage: true, // from middleRunner
       },
       data: {
-        key1: 'base1', // из baseRunner
-        key2: 'middle2', // из middleRunner
-        key3: 'final3', // из finalRunner
-        shared: 'base', // из baseRunner, не перезаписывается
+        key1: 'base1', // from baseRunner
+        key2: 'middle2', // from middleRunner
+        key3: 'final3', // from finalRunner
+        shared: 'base', // from baseRunner, not overwritten
       },
       selectors: {
-        sel1: '#base1', // из baseRunner
-        sel2: '#middle2', // из middleRunner
-        sel3: '#final3', // из finalRunner
-        sharedSel: '#base', // из baseRunner, не перезаписывается
+        sel1: '#base1', // from baseRunner
+        sel2: '#middle2', // from middleRunner
+        sel3: '#final3', // from finalRunner
+        sharedSel: '#base', // from baseRunner, not overwritten
       },
       description: 'Final runner -> Middle runner -> Base runner',
     });
   });
 
-  it('должен корректно обрабатывать отсутствующие опциональные поля', () => {
+  it('should handle missing optional fields correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner',
@@ -530,7 +530,7 @@ describe('TestsContent.resolveRunners', () => {
     const result = TestsContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
-    // Проверяем, что отсутствующие поля инициализируются пустыми объектами
+    // Check that missing fields are initialized with empty objects
     expect(extendedRunner).toEqual({
       name: 'extendedRunner',
       type: 'runner',
@@ -543,7 +543,7 @@ describe('TestsContent.resolveRunners', () => {
     });
   });
 
-  it('должен корректно обрабатывать множественные расширения раннеров', () => {
+  it('should handle multiple runner extensions correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner1',
@@ -580,7 +580,7 @@ describe('TestsContent.resolveRunners', () => {
     expect(extendedRunner?.description).toBe('Extended runner -> Base runner 2 -> Base runner 1');
   });
 
-  it('должен корректно обрабатывать browser из расширяемых раннеров', () => {
+  it('should handle browser from extended runners correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner',
@@ -611,7 +611,7 @@ describe('TestsContent.resolveRunners', () => {
     });
   });
 
-  it('должен обрабатывать отсутствующий testFile', () => {
+  it('should handle missing testFile', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -625,7 +625,7 @@ describe('TestsContent.resolveRunners', () => {
     expect(result).toEqual(runners);
   });
 
-  it('должен корректно обрабатывать пустые массивы расширений', () => {
+  it('should handle empty extension arrays correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner',
@@ -642,7 +642,7 @@ describe('TestsContent.resolveRunners', () => {
     expect(result).toEqual(runners);
   });
 
-  it('должен корректно объединять описания раннеров и обрабатывать отсутствующие описания', () => {
+  it('should merge runner descriptions correctly and handle missing descriptions', () => {
     const runners: RunnerType[] = [
       {
         name: 'baseRunner',
@@ -661,14 +661,14 @@ describe('TestsContent.resolveRunners', () => {
         name: 'baseRunnerNoDesc',
         type: 'runner',
         browser: DEFAULT_BROWSER,
-        // без description
+        // no description
       },
       {
         name: 'extendedRunnerNoDesc',
         type: 'runner',
         browser: DEFAULT_BROWSER,
         runnersExt: ['baseRunnerNoDesc'],
-        // без description
+        // no description
       },
       {
         name: 'extendedRunnerWithDesc',
@@ -686,14 +686,14 @@ describe('TestsContent.resolveRunners', () => {
     expect(result.find((r) => r.name === 'extendedRunnerWithDesc')?.description).toBe('Extended runner with desc -> ');
   });
 
-  it('должен корректно обрабатывать отсутствующие data при объединении', () => {
+  it('should handle missing data during merge correctly', () => {
     const runners: RunnerType[] = [
       {
         name: 'runner1',
         type: 'runner',
         browser: DEFAULT_BROWSER,
         dataExt: ['data1', 'data2', 'data3', 'data4'],
-        // data отсутствует
+        // data is missing
       },
       {
         name: 'runner2',
@@ -733,12 +733,12 @@ describe('TestsContent.resolveRunners', () => {
 
     const result = TestsContent.resolveRunners(runners, data, []);
 
-    // Проверяем случай когда нет data в раннере
+    // Check case when runner has no data
     expect(result.find((r) => r.name === 'runner1')?.data).toEqual({
       extendedData: 'value',
     });
 
-    // Проверяем случай когда есть data в раннере
+    // Check case when runner has data
     expect(result.find((r) => r.name === 'runner2')?.data).toEqual({
       runnerData: 'value',
       extendedData: 'value',
