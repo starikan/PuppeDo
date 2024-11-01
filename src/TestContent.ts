@@ -98,22 +98,19 @@ export default class TestsContent extends Singleton {
       throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
     }
 
-    const dubs = tests.reduce((s: Record<string, string[]>, v: T) => {
-      const collector = { ...s };
-      if (!v.testFile) {
-        return collector;
+    const dubs: Record<string, string[]> = {};
+    tests.forEach((test) => {
+      if (test.testFile) {
+        (dubs[test.name] = dubs[test.name] || []).push(test.testFile);
       }
-      collector[v.name] = !s[v.name] ? [v.testFile] : [...s[v.name], v.testFile];
-      return collector;
-    }, {});
+    });
 
     const isThrow = Object.values(dubs).some((v) => v.length > 1);
 
-    if (Object.keys(dubs).length && isThrow) {
+    if (isThrow) {
       const key = tests[0].type;
       let message = `There is duplicates of '${key}':\n`;
-      Object.entries(dubs).forEach((dub) => {
-        const [keyDub, valueDub] = dub;
+      Object.entries(dubs).forEach(([keyDub, valueDub]) => {
         if (valueDub.length > 1) {
           message += ` - Name: '${keyDub}'.\n`;
           message += valueDub.map((v) => `    * '${v}'\n`).join('');
@@ -121,6 +118,7 @@ export default class TestsContent extends Singleton {
       });
       throw new Error(message);
     }
+
     return tests;
   }
 
