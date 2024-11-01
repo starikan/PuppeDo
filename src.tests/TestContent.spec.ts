@@ -59,205 +59,6 @@ describe('TestContent', () => {
     expect(allData.data).toEqual([]);
     expect(allData.selectors).toEqual([]);
   });
-
-  test('checkDuplicates', () => {
-    const CD = TestsContent.checkDuplicates;
-
-    const data: Array<TestExtendType> = [
-      {
-        type: 'atom',
-        name: 'bar',
-        testFile: 'lee',
-        needData: [],
-        needSelectors: [],
-        needEnvParams: [],
-        options: {},
-        dataExt: [],
-        selectorsExt: [],
-        allowResults: [],
-        allowOptions: [],
-        debug: false,
-        debugInfo: false,
-        disable: false,
-        logOptions: {},
-        frame: '',
-        data: {},
-        bindData: {},
-        selectors: {},
-        bindSelectors: {},
-        bindResults: {},
-        description: '',
-        descriptionExtend: [],
-        bindDescription: '',
-        repeat: 1,
-        while: '',
-        if: '',
-        errorIf: '',
-        errorIfResult: '',
-        tags: [],
-        engineSupports: [],
-        todo: '',
-        beforeTest: [],
-        runTest: [],
-        afterTest: [],
-        inlineJS: '',
-        breakParentIfResult: '',
-      },
-      {
-        type: 'atom',
-        name: 'goo',
-        testFile: 'bar',
-        needData: [],
-        needSelectors: [],
-        needEnvParams: [],
-        options: {},
-        dataExt: [],
-        selectorsExt: [],
-        allowResults: [],
-        allowOptions: [],
-        debug: false,
-        debugInfo: false,
-        disable: false,
-        logOptions: {},
-        frame: '',
-        data: {},
-        bindData: {},
-        selectors: {},
-        bindSelectors: {},
-        bindResults: {},
-        description: '',
-        descriptionExtend: [],
-        bindDescription: '',
-        repeat: 1,
-        while: '',
-        if: '',
-        errorIf: '',
-        errorIfResult: '',
-        tags: [],
-        engineSupports: [],
-        todo: '',
-        beforeTest: [],
-        runTest: [],
-        afterTest: [],
-        inlineJS: '',
-        breakParentIfResult: '',
-      },
-      {
-        type: 'atom',
-        name: 'zoo',
-        testFile: 'tyy',
-        needData: [],
-        needSelectors: [],
-        needEnvParams: [],
-        options: {},
-        dataExt: [],
-        selectorsExt: [],
-        allowResults: [],
-        allowOptions: [],
-        debug: false,
-        debugInfo: false,
-        disable: false,
-        logOptions: {},
-        frame: '',
-        data: {},
-        bindData: {},
-        selectors: {},
-        bindSelectors: {},
-        bindResults: {},
-        description: '',
-        descriptionExtend: [],
-        bindDescription: '',
-        repeat: 1,
-        while: '',
-        if: '',
-        errorIf: '',
-        errorIfResult: '',
-        tags: [],
-        engineSupports: [],
-        todo: '',
-        beforeTest: [],
-        runTest: [],
-        afterTest: [],
-        inlineJS: '',
-        breakParentIfResult: '',
-      },
-      {
-        type: 'atom',
-        name: 'daa',
-        testFile: 'tee',
-        needData: [],
-        needSelectors: [],
-        needEnvParams: [],
-        options: {},
-        dataExt: [],
-        selectorsExt: [],
-        allowResults: [],
-        allowOptions: [],
-        debug: false,
-        debugInfo: false,
-        disable: false,
-        logOptions: {},
-        frame: '',
-        data: {},
-        bindData: {},
-        selectors: {},
-        bindSelectors: {},
-        bindResults: {},
-        description: '',
-        descriptionExtend: [],
-        bindDescription: '',
-        repeat: 1,
-        while: '',
-        if: '',
-        errorIf: '',
-        errorIfResult: '',
-        tags: [],
-        engineSupports: [],
-        todo: '',
-        beforeTest: [],
-        runTest: [],
-        afterTest: [],
-        inlineJS: '',
-        breakParentIfResult: '',
-      },
-    ];
-
-    expect(CD(data)).toEqual(data);
-
-    const DEFAULT_BROWSER: EnvBrowserType = {
-      type: 'browser',
-      engine: 'playwright',
-      browserName: 'chromium',
-      runtime: 'run',
-      headless: false,
-      slowMo: 1,
-    };
-    expect(() => CD([{ name: '', testFile: 'bar', type: 'runner', browser: DEFAULT_BROWSER }])).toThrow(
-      new Error("There is blank 'name' value in files:\nbar"),
-    );
-
-    const testsObjects1: Array<DataType> = [
-      { name: '', testFile: 'bar', type: 'data', data: {} },
-      { name: '', testFile: 'tyy', type: 'data', data: {} },
-    ];
-    expect(() => CD(testsObjects1)).toThrow(new Error("There is blank 'name' value in files:\nbar\ntyy"));
-
-    const testsObjects2: Array<DataType> = [
-      { name: 'puu', testFile: 'lee', type: 'selectors', data: {} },
-      { name: 'dee', testFile: 'bar', type: 'selectors', data: {} },
-      { name: 'dee', testFile: 'tyy', type: 'selectors', data: {} },
-    ];
-    // TODO: ПОчему этот тест проходит хотя message вобще то нет
-    expect(() => CD(testsObjects2)).toThrow(
-      new Error(
-        `There is duplicates of 'selectors':
- - Name: 'dee'.
-    * 'bar'
-    * 'tyy'
-`,
-      ),
-    );
-  });
 });
 
 describe('TestsContent.resolveRunners (AI generated)', () => {
@@ -739,5 +540,127 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       runnerData: 'value',
       extendedData: 'value',
     });
+  });
+});
+
+describe('TestsContent.checkDuplicates (AI generated)', () => {
+  // Base test object
+  const createTestObject = (name: string, testFile: string): TestExtendType => ({
+    type: 'atom',
+    name,
+    testFile,
+    needData: [],
+    needSelectors: [],
+    needEnvParams: [],
+    options: {},
+    dataExt: [],
+    selectorsExt: [],
+    allowResults: [],
+    allowOptions: [],
+    debug: false,
+    debugInfo: false,
+    disable: false,
+    logOptions: {},
+    frame: '',
+    data: {},
+    bindData: {},
+    selectors: {},
+    bindSelectors: {},
+    bindResults: {},
+    description: '',
+    descriptionExtend: [],
+    bindDescription: '',
+    repeat: 1,
+    while: '',
+    if: '',
+    errorIf: '',
+    errorIfResult: '',
+    tags: [],
+    engineSupports: [],
+    todo: '',
+    beforeTest: [],
+    runTest: [],
+    afterTest: [],
+    inlineJS: '',
+    breakParentIfResult: '',
+  });
+
+  it('should pass array without duplicates', () => {
+    const tests = [
+      createTestObject('test1', 'file1.yaml'),
+      createTestObject('test2', 'file2.yaml'),
+      createTestObject('test3', 'file3.yaml'),
+    ];
+
+    const result = TestsContent.checkDuplicates(tests);
+    expect(result).toEqual(tests);
+  });
+
+  it('should throw error on empty names', () => {
+    const tests = [
+      createTestObject('', 'file1.yaml'),
+      createTestObject('test2', 'file2.yaml'),
+      createTestObject('', 'file3.yaml'),
+    ];
+
+    expect(() => TestsContent.checkDuplicates(tests)).toThrow(
+      "There is blank 'name' value in files:\nfile1.yaml\nfile3.yaml",
+    );
+  });
+
+  it('should pass objects without testFile', () => {
+    const tests = [
+      { ...createTestObject('test1', ''), testFile: undefined },
+      { ...createTestObject('test1', ''), testFile: undefined },
+    ];
+
+    const result = TestsContent.checkDuplicates(tests);
+    expect(result).toEqual(tests);
+  });
+
+  it('should throw error on duplicates', () => {
+    const tests = [
+      createTestObject('test1', 'file1.yaml'),
+      createTestObject('test1', 'file2.yaml'),
+      createTestObject('test2', 'file3.yaml'),
+      createTestObject('test2', 'file4.yaml'),
+    ];
+
+    expect(() => TestsContent.checkDuplicates(tests)).toThrow(
+      `There is duplicates of 'atom':
+ - Name: 'test1'.
+    * 'file1.yaml'
+    * 'file2.yaml'
+ - Name: 'test2'.
+    * 'file3.yaml'
+    * 'file4.yaml'
+`,
+    );
+  });
+
+  it('should handle different object types correctly', () => {
+    const runnerTests: RunnerType[] = [
+      { name: 'runner1', type: 'runner', testFile: 'file1.yaml', browser: {} as any },
+      { name: 'runner2', type: 'runner', testFile: 'file2.yaml', browser: {} as any },
+    ];
+
+    const dataTests: DataType[] = [
+      { name: 'data1', type: 'data', testFile: 'file1.yaml', data: {} },
+      { name: 'data2', type: 'data', testFile: 'file2.yaml', data: {} },
+    ];
+
+    expect(TestsContent.checkDuplicates(runnerTests)).toEqual(runnerTests);
+    expect(TestsContent.checkDuplicates(dataTests)).toEqual(dataTests);
+  });
+
+  it('should pass empty array', () => {
+    const result = TestsContent.checkDuplicates([]);
+    expect(result).toEqual([]);
+  });
+
+  it('should handle single element correctly', () => {
+    const tests = [createTestObject('test1', 'file1.yaml')];
+    const result = TestsContent.checkDuplicates(tests);
+    expect(result).toEqual(tests);
   });
 });

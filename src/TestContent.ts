@@ -85,6 +85,13 @@ export default class TestsContent extends Singleton {
     return paths;
   }
 
+  /**
+   * Checks array of tests for duplicates and empty names
+   *
+   * @param tests Array of tests to check
+   * @returns Original array of tests if no duplicates found
+   * @throws {Error} If empty names or duplicates are found
+   */
   static checkDuplicates<T extends TestExtendType | RunnerType | DataType>(tests: Array<T>): Array<T> {
     const blankNames = tests.filter((v) => !v.name);
     if (blankNames.length) {
