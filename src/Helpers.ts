@@ -69,7 +69,6 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export function merge<T>(...objects: T[]): T {
-  // return deepmerge(...objects) as T;
   return deepmergeJs.all(objects, { arrayMerge: (_, source) => source });
 }
 
