@@ -218,7 +218,7 @@ export default class TestsContent extends Singleton {
     selectorsAll: Array<DataType>,
   ): Array<RunnerType> {
     return runnersAll.map((runner: RunnerType) => {
-      const runnerUpdated = runner;
+      const runnerResult = runner;
       const {
         dataExt = [],
         selectorsExt = [],
@@ -227,18 +227,18 @@ export default class TestsContent extends Singleton {
         selectors: selectorsRunner = {},
       } = runner;
 
-      runnersExt.forEach((runnersExtName: string) => {
-        const runnersResolved = runnersAll.find((r) => r.name === runnersExtName);
-        if (runnersResolved) {
-          if (runnersResolved.browser) {
-            runnerUpdated.browser = merge(runnerUpdated.browser, runnersResolved.browser);
+      runnersExt.forEach((runnerExtName: string) => {
+        const runnerExt = runnersAll.find((r) => r.name === runnerExtName);
+        if (runnerExt) {
+          if (runnerExt.browser) {
+            runnerResult.browser = merge(runnerResult.browser, runnerExt?.browser);
           }
-          runnerUpdated.log = { ...(runnerUpdated.log ?? {}), ...(runnersResolved.log ?? {}) };
-          runnerUpdated.data = { ...(runnerUpdated.data ?? {}), ...(runnersResolved.data ?? {}) };
-          runnerUpdated.selectors = { ...(runnerUpdated.selectors ?? {}), ...(runnersResolved.selectors ?? {}) };
-          runnerUpdated.description = `${runnerUpdated.description ?? ''} -> ${runnersResolved.description ?? ''}`;
+          ['log', 'data', 'selectors'].forEach((key) => {
+            runnerResult[key] = { ...(runnerResult[key] ?? {}), ...(runnerExt[key] ?? {}) };
+          });
+          runnerResult.description = `${runnerResult.description ?? ''} -> ${runnerExt.description ?? ''}`;
         } else {
-          throw new Error(`PuppeDo can't resolve extended runner '${runnersExtName}' in runner '${runner.name}'`);
+          throw new Error(`PuppeDo can't resolve extended runner '${runnerExtName}' in runner '${runnerResult.name}'`);
         }
       });
 
@@ -254,8 +254,8 @@ export default class TestsContent extends Singleton {
             throw new Error(`PuppeDo can't resolve extended ${type} '${extName}' in runner '${runner.name}'`);
           }
 
-          Object.assign(runnerUpdated, {
-            [type]: { ...(runnerUpdated[type] ?? {}), ...(resolved.data ?? {}), ...runnerValues },
+          Object.assign(runnerResult, {
+            [type]: { ...(runnerResult[type] ?? {}), ...(resolved.data ?? {}), ...runnerValues },
           });
         });
       };
@@ -263,7 +263,7 @@ export default class TestsContent extends Singleton {
       resolveExtensions(dataExt, dataAll, 'data', dataRunner);
       resolveExtensions(selectorsExt, selectorsAll, 'selectors', selectorsRunner);
 
-      return runnerUpdated;
+      return runnerResult;
     });
   }
 }
