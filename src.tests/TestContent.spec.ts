@@ -362,8 +362,8 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     });
   });
 
-  it('should throw error when extended runner is missing', () => {
-    const runners: RunnerType[] = [
+  it('should throw error when extended resources are missing', () => {
+    const runnersMissing: RunnerType[] = [
       {
         name: 'runner',
         type: 'runner',
@@ -373,12 +373,10 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(runners, [], []);
+      TestsContent.resolveRunners(runnersMissing, [], []);
     }).toThrow("PuppeDo can't resolve extended runner 'nonExistentRunner' in runner 'runner'");
-  });
 
-  it('should throw error when extended data is missing', () => {
-    const runners: RunnerType[] = [
+    const dataExt: RunnerType[] = [
       {
         name: 'runner',
         type: 'runner',
@@ -388,12 +386,10 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(runners, [], []);
+      TestsContent.resolveRunners(dataExt, [], []);
     }).toThrow("PuppeDo can't resolve extended data 'nonExistentData' in runner 'runner'");
-  });
 
-  it('should throw error when extended selectors are missing', () => {
-    const runners: RunnerType[] = [
+    const selectorsExt: RunnerType[] = [
       {
         name: 'runner',
         type: 'runner',
@@ -403,7 +399,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(runners, [], []);
+      TestsContent.resolveRunners(selectorsExt, [], []);
     }).toThrow("PuppeDo can't resolve extended selectors 'nonExistentSelectors' in runner 'runner'");
   });
 

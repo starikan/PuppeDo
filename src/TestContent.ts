@@ -193,6 +193,25 @@ export default class TestsContent extends Singleton {
     return this.allData;
   }
 
+  /**
+   * Resolves and merges extensions for runners.
+   *
+   * @param runnersAll - Array of all runners
+   * @param dataAll - Array of all data
+   * @param selectorsAll - Array of all selectors
+   * @returns Array of resolved runners with merged extensions
+   *
+   * Function handles three types of extensions:
+   * 1. runnersExt - Extension from other runners (inherits browser, log, data, selectors, description)
+   * 2. dataExt - Extension of data from external files
+   * 3. selectorsExt - Extension of selectors from external files
+   *
+   * When resolving extensions:
+   * - Checks existence of extended resources
+   * - Merges properties considering priorities
+   * - Updates description to reflect inheritance chain
+   * - Throws error if extended resource is not found
+   */
   static resolveRunners(
     runnersAll: Array<RunnerType>,
     dataAll: Array<DataType>,
