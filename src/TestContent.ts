@@ -249,13 +249,13 @@ export default class TestsContent extends Singleton {
         runnerValues: Record<string, unknown>,
       ): void => {
         extNames.forEach((extName) => {
-          const resolved = collection.find((item) => item.name === extName);
-          if (!resolved) {
+          const collectionExt = collection.find((item) => item.name === extName);
+          if (!collectionExt) {
             throw new Error(`PuppeDo can't resolve extended ${type} '${extName}' in runner '${runner.name}'`);
           }
 
           Object.assign(runnerResult, {
-            [type]: { ...(runnerResult[type] ?? {}), ...(resolved.data ?? {}), ...runnerValues },
+            [type]: { ...(runnerResult[type] ?? {}), ...(collectionExt.data ?? {}), ...runnerValues },
           });
         });
       };
