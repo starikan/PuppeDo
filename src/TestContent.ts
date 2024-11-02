@@ -105,17 +105,13 @@ export default class TestsContent extends Singleton {
       }
     });
 
-    const isThrow = Object.values(dubs).some((v) => v.length > 1);
-
-    if (isThrow) {
+    if (Object.values(dubs).some((v) => v.length > 1)) {
       const key = tests[0].type;
-      let message = `There is duplicates of '${key}':\n`;
-      Object.entries(dubs).forEach(([keyDub, valueDub]) => {
-        if (valueDub.length > 1) {
-          message += ` - Name: '${keyDub}'.\n`;
-          message += valueDub.map((v) => `    * '${v}'\n`).join('');
-        }
-      });
+      const files = Object.entries(dubs)
+        .filter(([, valueDub]) => valueDub.length > 1)
+        .map(([keyDub, valueDub]) => `- Name: '${keyDub}'.\n${valueDub.map((v) => `    * '${v}'\n`).join('')}`)
+        .join('\n');
+      const message = `There is duplicates of '${key}':\n${files}`;
       throw new Error(message);
     }
 

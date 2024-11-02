@@ -627,14 +627,7 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
     ];
 
     expect(() => TestsContent.checkDuplicates(tests)).toThrow(
-      `There is duplicates of 'atom':
- - Name: 'test1'.
-    * 'file1.yaml'
-    * 'file2.yaml'
- - Name: 'test2'.
-    * 'file3.yaml'
-    * 'file4.yaml'
-`,
+      "There is duplicates of 'atom':\n- Name: 'test1'.\n    * 'file1.yaml'\n    * 'file2.yaml'\n\n- Name: 'test2'.\n    * 'file3.yaml'\n    * 'file4.yaml'\n",
     );
   });
 
