@@ -541,6 +541,48 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       extendedData: 'value',
     });
   });
+
+  it('should merge browser properties correctly', () => {
+    const runners: RunnerType[] = [
+      {
+        name: 'baseRunner',
+        type: 'runner',
+        browser: {
+          type: 'browser',
+          engine: 'playwright',
+          browserName: 'chromium',
+          headless: true,
+          runtime: 'run',
+          slowMo: 0,
+        },
+      },
+      {
+        name: 'extendedRunner',
+        type: 'runner',
+        runnersExt: ['baseRunner'],
+        browser: {
+          headless: false,
+          slowMo: 100,
+          type: 'browser',
+          engine: 'playwright',
+          browserName: 'chromium',
+          runtime: 'run',
+        },
+      },
+    ];
+
+    const result = TestsContent.resolveRunners(runners, [], []);
+    const extendedRunner = result.find((r) => r.name === 'extendedRunner');
+
+    expect(extendedRunner?.browser).toEqual({
+      type: 'browser',
+      engine: 'playwright',
+      browserName: 'chromium',
+      runtime: 'run',
+      headless: true, // from baseRunner
+      slowMo: 0, // from baseRunner
+    });
+  });
 });
 
 describe('TestsContent.checkDuplicates (AI generated)', () => {

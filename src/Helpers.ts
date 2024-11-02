@@ -4,7 +4,6 @@ import path from 'path';
 import crypto from 'crypto';
 
 import deepmergeJs from 'deepmerge';
-// import { deepmerge } from 'deepmerge-ts';
 import dayjs from 'dayjs';
 
 import { ColorsType, SocketType, TestFunctionsBlockNames } from './global.d';
