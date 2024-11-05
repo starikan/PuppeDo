@@ -423,3 +423,7 @@ export type TreeEntryType = Partial<TreeEntryDataType> & {
 };
 
 export type TreeType = TreeEntryType[];
+
+export type DeepMergeable = {
+  [key: string]: DeepMergeable | DeepMergeable[] | number | string | boolean | null | unknown;
+};

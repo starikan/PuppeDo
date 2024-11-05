@@ -1,12 +1,10 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable implicit-arrow-linebreak */
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-
-import deepmergeJs from 'deepmerge';
 import dayjs from 'dayjs';
-
-import { ColorsType, SocketType, TestFunctionsBlockNames } from './global.d';
+import { ColorsType, DeepMergeable, SocketType, TestFunctionsBlockNames } from './global.d';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -67,8 +65,49 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
-export function merge<T>(...objects: T[]): T {
-  return deepmergeJs.all(objects, { arrayMerge: (_, source) => source });
+/**
+ * Merges multiple objects into one.
+ *
+ * @param objects - Objects for merging.
+ * @returns - The result of the merge.
+ */
+export function mergeObjects<T extends DeepMergeable>(...objects: T[]): T {
+  /**
+   * Recursive function for merging objects.
+   *
+   * @param target - The target object.
+   * @param source - The source for merging.
+   */
+  function deepMerge(target: DeepMergeable, source: DeepMergeable): void {
+    for (const key of Object.keys(source)) {
+      if (key in source) {
+        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+          // If the field is an object, recursively merge
+          if (!target[key]) {
+            target[key] = {} as DeepMergeable;
+          }
+          deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
+        } else if (Array.isArray(source[key])) {
+          // If the field is an array, merge arrays
+          target[key] = target[key]
+            ? (target[key] as DeepMergeable[]).concat(source[key] as DeepMergeable[])
+            : source[key];
+        } else if (source[key] !== undefined) {
+          target[key] = source[key];
+        }
+      }
+    }
+  }
+
+  // Initialize the resulting object
+  const result: DeepMergeable = {};
+
+  // Merge all passed objects
+  for (const obj of objects) {
+    deepMerge(result, obj);
+  }
+
+  return result as T;
 }
 
 export const deepMergeField = <T extends Record<string, unknown>>(

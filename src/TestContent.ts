@@ -5,7 +5,7 @@ import yaml from 'js-yaml';
 
 import Singleton from './Singleton';
 import { Arguments } from './Arguments';
-import { merge, walkSync } from './Helpers';
+import { mergeObjects, walkSync } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
 
@@ -232,7 +232,7 @@ export default class TestsContent extends Singleton {
         const runnerExt = runnersAll.find((r) => r.name === runnerExtName);
         if (runnerExt) {
           if (runnerExt.browser) {
-            runnerResult.browser = merge(runnerResult.browser, runnerExt?.browser);
+            runnerResult.browser = mergeObjects(runnerResult.browser, runnerExt?.browser);
           }
           ['log', 'data', 'selectors'].forEach((key) => {
             runnerResult[key] = { ...(runnerResult[key] ?? {}), ...(runnerExt[key] ?? {}) };

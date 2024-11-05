@@ -1,5 +1,5 @@
 import vm from 'vm';
-import { blankSocket, getTimer, merge, pick, generateId } from './Helpers';
+import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -153,7 +153,7 @@ const resolveDataFunctions = (
 const resolveAliases = (alias: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
   const variants = [...(ALIASES[alias] || []), alias];
   const values = (Object.values(pick(inputs, variants)) as Record<string, unknown>[]).map((v) => v || {});
-  const result = merge(...values);
+  const result = mergeObjects(...values);
   return result;
 };
 

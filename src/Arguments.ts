@@ -1,7 +1,7 @@
-import { deepmerge } from 'deepmerge-ts';
 import Singleton from './Singleton';
 import { ArgumentsKeysType, ArgumentsType } from './global.d';
 import { argsDefault } from './Defaults';
+import { mergeObjects } from './Helpers';
 
 const DELIMITER = ',';
 
@@ -173,7 +173,7 @@ export class Arguments extends Singleton {
 
       const argsCLI = parseCLI();
 
-      return parser(deepmerge(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
+      return parser(mergeObjects(argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput)) as ArgumentsType;
     }
     return this._args;
   }

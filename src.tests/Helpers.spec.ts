@@ -1,11 +1,4 @@
-import { merge, sleep, paintString, blankSocket } from '../src/Helpers';
-
-test('Helpers -> merge', () => {
-  const foobar: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { foo: { bar: 3 } };
-  const foobaz: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { foo: { baz: 4 } };
-  const bar: { foo?: { bar?: unknown; baz?: unknown }; bar?: unknown } = { bar: 'yay!' };
-  expect(merge(foobar, foobaz, bar)).toEqual({ foo: { bar: 3, baz: 4 }, bar: 'yay!' });
-});
+import { sleep, paintString, blankSocket, mergeObjects } from '../src/Helpers';
 
 test('Helpers -> sleep', async () => {
   const start = process.hrtime.bigint();
@@ -44,4 +37,49 @@ test('Helpers -> blankSocket', () => {
   expect(typeof blankSocket.sendYAML === 'function').toBe(true);
   expect(blankSocket.send()).toBeFalsy();
   // expect(blankSocket.sendYAML({ type: 'string', data: {}, envsId: 'string' })).toBeFalsy();
+});
+
+describe('mergeObjects', () => {
+  test('should merge simple objects', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { a: 0, b: 3, c: 4 };
+    const result = mergeObjects(obj1, obj2);
+    expect(result).toEqual({ a: 0, b: 3, c: 4 });
+  });
+
+  test('should merge nested objects', () => {
+    const obj1 = { a: { x: 1 }, b: 2 };
+    const obj2 = { a: { x: 0, y: 2 }, b: 2, c: 3 };
+    const result = mergeObjects(obj1, obj2);
+    expect(result).toEqual({ a: { x: 0, y: 2 }, b: 2, c: 3 });
+  });
+
+  test('should merge arrays', () => {
+    const obj1 = { a: [1, 2] };
+    const obj2 = { a: [3, 4], b: 5 };
+    const result = mergeObjects(obj1, obj2);
+    expect(result).toEqual({ a: [1, 2, 3, 4], b: 5 });
+  });
+
+  test('should handle null and undefined values', () => {
+    const obj1 = { a: null, b: 2 };
+    const obj2 = { a: 3, b: undefined };
+    const result = mergeObjects(obj1, obj2);
+    expect(result).toEqual({ a: 3, b: 2 });
+  });
+
+  test('should handle empty objects', () => {
+    const obj1 = {};
+    const obj2 = { a: 1 };
+    const result = mergeObjects(obj1, obj2);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('should merge multiple objects', () => {
+    const obj1: { a?: number; b?: number; c?: number } = { a: 1 };
+    const obj2: { a?: number; b?: number; c?: number } = { a: 2, b: 2 };
+    const obj3: { a?: number; b?: number; c?: number } = { c: 3 };
+    const result = mergeObjects(obj1, obj2, obj3);
+    expect(result).toEqual({ a: 2, b: 2, c: 3 });
+  });
 });
