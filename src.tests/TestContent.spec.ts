@@ -728,6 +728,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
     PPD_LOG_INDENT_LENGTH: 2,
     PPD_LOG_STEPID: false,
     PPD_CONTINUE_ON_ERROR_ENABLED: false,
+    PPD_FILES_EXTENSIONS_AVAILABLE: ['.json', '.yaml'],
   };
 
   beforeEach(() => {

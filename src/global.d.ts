@@ -68,6 +68,7 @@ export type ArgumentsType = {
   PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
+  PPD_FILES_EXTENSIONS_AVAILABLE: string[];
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;

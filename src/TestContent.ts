@@ -52,6 +52,7 @@ export const BLANK_TEST: TestType = {
 const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
 
 export default class TestsContent extends Singleton {
+  // TODO: Сделать геттер а это поле приватным
   public allData!: AllDataType;
 
   constructor(reInit = false) {
@@ -63,15 +64,14 @@ export default class TestsContent extends Singleton {
   }
 
   static getPaths(): string[] {
-    const { PPD_ROOT, PPD_ROOT_ADDITIONAL, PPD_ROOT_IGNORE, PPD_FILES_IGNORE } = new Arguments().args;
+    const { PPD_ROOT, PPD_ROOT_ADDITIONAL, PPD_ROOT_IGNORE, PPD_FILES_IGNORE, PPD_FILES_EXTENSIONS_AVAILABLE } =
+      new Arguments().args;
 
     const rootFolder = path.normalize(PPD_ROOT);
     const additionalFolders = PPD_ROOT_ADDITIONAL.map((v: string) => path.normalize(v));
     const ignoreFolders = PPD_ROOT_IGNORE.map((v: string) => path.normalize(v));
     const ignoreFiles = PPD_FILES_IGNORE.map((v: string) => path.join(rootFolder, path.normalize(v)));
 
-    // TODO: 2022-11-07 S.Starodubov move to Arguments
-    const PPD_FILES_EXTENSIONS_AVAILABLE = ['.yaml', '.yml', '.ppd', '.json'];
     const folders = [rootFolder, ...additionalFolders].map((v) => path.normalize(v));
 
     const paths = folders
@@ -119,31 +119,35 @@ export default class TestsContent extends Singleton {
     return tests;
   }
 
+  /**
+   * Reads the file and returns its content as an array of partially typed tests.
+   *
+   * @param filePath - The path to the file.
+   * @returns An array of partially typed tests.
+   */
   static readFile = (filePath: string): Partial<TestTypeYaml>[] => {
     let testData: Partial<TestTypeYaml>[] = [];
 
-    if (filePath.endsWith('.json')) {
-      try {
-        testData = JSON.parse(fs.readFileSync(filePath).toString());
-        if (!Array.isArray(testData)) {
-          testData = [testData];
-        }
-      } catch {
-        console.log(
-          `\u001B[41mError JSON read. File: '${filePath}'. Try to check it on https://jsonlint.com/
-            or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
-        );
+    try {
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      if (filePath.endsWith('.json')) {
+        testData = JSON.parse(fileContent);
+      } else {
+        testData = yaml.loadAll(fileContent) as Partial<TestTypeYaml>[];
       }
-    } else {
-      try {
-        testData = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
-      } catch {
-        console.log(
-          `\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/
-            or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
-        );
-      }
+    } catch {
+      const errorType = filePath.endsWith('.json') ? 'JSON' : 'YAML';
+      const errorLink = filePath.endsWith('.json') ? 'https://jsonlint.com/' : 'https://yamlchecker.com/';
+      console.log(
+        `\u001B[41mError ${errorType} read. File: '${filePath}'. Try to check it on ${errorLink}
+          or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
+      );
     }
+
+    if (!Array.isArray(testData)) {
+      return [testData];
+    }
+
     return testData;
   };
 

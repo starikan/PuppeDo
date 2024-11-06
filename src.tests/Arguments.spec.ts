@@ -29,6 +29,7 @@ const argsModify: ArgumentsType = {
   PPD_LOG_STEPID: false,
   PPD_CONTINUE_ON_ERROR_ENABLED: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
+  PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
 };
 
 const argsENV: Record<ArgumentsKeysType, string> = {
@@ -58,6 +59,7 @@ const argsENV: Record<ArgumentsKeysType, string> = {
   PPD_LOG_STEPID: 'false',
   PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
   PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
+  PPD_FILES_EXTENSIONS_AVAILABLE: '.yaml,.yml,.ppd,.json',
 };
 
 // Reset Arguments

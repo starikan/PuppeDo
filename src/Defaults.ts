@@ -55,6 +55,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_INDENT_LENGTH: 4,
   PPD_LOG_STEPID: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
+  PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
 };
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
