@@ -1,9 +1,16 @@
-// import path from 'path';
-
+import fs from 'fs';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
-
 import { DataType, EnvBrowserType, RunnerType, TestExtendType } from '../src/global.d';
+
+const DEFAULT_BROWSER: EnvBrowserType = {
+  type: 'browser',
+  engine: 'playwright',
+  browserName: 'chromium',
+  runtime: 'run',
+  headless: true,
+  slowMo: 0,
+};
 
 describe('TestContent', () => {
   beforeAll(() => {
@@ -62,15 +69,6 @@ describe('TestContent', () => {
 });
 
 describe('TestsContent.resolveRunners (AI generated)', () => {
-  const DEFAULT_BROWSER: EnvBrowserType = {
-    type: 'browser',
-    engine: 'playwright',
-    browserName: 'chromium',
-    runtime: 'run',
-    headless: true,
-    slowMo: 0,
-  };
-
   it('should merge data from extended runners', () => {
     const runners: RunnerType[] = [
       {
@@ -697,5 +695,103 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
     const tests = [createTestObject('test1', 'file1.yaml')];
     const result = TestsContent.checkDuplicates(tests);
     expect(result).toEqual(tests);
+  });
+});
+
+describe('TestsContent.getAllData (AI generated)', () => {
+  let testsContent: TestsContent;
+
+  const DEFAULT_ARGS = {
+    PPD_IGNORE_TESTS_WITHOUT_NAME: false,
+    PPD_ROOT: 'tests',
+    PPD_ROOT_ADDITIONAL: ['bar'],
+    PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
+    PPD_FILES_IGNORE: ['tests\\broken.yaml'],
+    PPD_TESTS: ['testName'],
+    PPD_OUTPUT: 'output',
+    PPD_DATA: {},
+    PPD_SELECTORS: {},
+    PPD_DEBUG_MODE: false,
+    PPD_LOG_DISABLED: false,
+    PPD_LOG_EXTEND: false,
+    PPD_LOG_LEVEL_NESTED: 0,
+    PPD_LOG_LEVEL_TYPE_IGNORE: [],
+    PPD_LOG_SCREENSHOT: false,
+    PPD_LOG_FULLPAGE: false,
+    PPD_LOG_TEST_NAME: false,
+    PPD_LOG_IGNORE_HIDE_LOG: false,
+    PPD_TAGS_TO_RUN: [],
+    PPD_LOG_DOCUMENTATION_MODE: false,
+    PPD_LOG_NAMES_ONLY: [],
+    PPD_LOG_TIMER_SHOW: false,
+    PPD_LOG_TIMESTAMP_SHOW: false,
+    PPD_LOG_INDENT_LENGTH: 2,
+    PPD_LOG_STEPID: false,
+    PPD_CONTINUE_ON_ERROR_ENABLED: false,
+  };
+
+  beforeEach(() => {
+    testsContent = new TestsContent();
+    jest.clearAllMocks();
+  });
+
+  test('should initialize allData when reInit is true', () => {
+    const allData = testsContent.getAllData(true);
+    expect(allData).toBeDefined();
+  });
+
+  test('should not reinitialize allData if it already exists', () => {
+    testsContent.getAllData(true);
+    const allData = testsContent.getAllData();
+    expect(allData).toBeDefined();
+  });
+
+  test('should not throw error if test has no name and PPD_IGNORE_TESTS_WITHOUT_NAME is true', () => {
+    jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({
+      ...DEFAULT_ARGS,
+      PPD_IGNORE_TESTS_WITHOUT_NAME: true,
+    });
+    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+    jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ name: '' }]));
+
+    expect(() => testsContent.getAllData()).not.toThrow();
+  });
+
+  test('should resolve runners correctly', () => {
+    // Mock data for runners
+    const runners: RunnerType[] = [
+      {
+        name: 'runner1',
+        dataExt: ['data1'],
+        selectorsExt: ['selector1'],
+        type: 'runner',
+        browser: DEFAULT_BROWSER,
+      },
+    ];
+    const data: Array<DataType> = [{ name: 'data1', type: 'data', testFile: 'test.yaml', data: { key: 'value' } }];
+    const selectors: Array<DataType> = [
+      { name: 'selector1', type: 'selectors', testFile: 'test.yaml', data: { key: 'value' } },
+    ];
+
+    const resolvedRunners = TestsContent.resolveRunners(runners, data, selectors);
+    expect(resolvedRunners).toHaveLength(1);
+    expect(resolvedRunners[0].data).toEqual({ key: 'value' });
+    expect(resolvedRunners[0].selectors).toEqual({ key: 'value' });
+  });
+
+  it('should not read file if it does not exist', () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+
+    const result = testsContent.getAllData(); // Вызовите вашу функцию
+
+    expect(result).toEqual({
+      allContent: [],
+      allFiles: [],
+      atoms: [],
+      data: [],
+      runners: [],
+      selectors: [],
+      tests: [],
+    }); // Ожидаем, что результат будет пустым
   });
 });

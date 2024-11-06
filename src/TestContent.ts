@@ -118,58 +118,71 @@ export default class TestsContent extends Singleton {
     return tests;
   }
 
-  getAllData(force = false): AllDataType {
+  static resolveFiles = (): { allContent: (Required<TestTypeYaml> | RunnerType | DataType)[]; allFiles: string[] } => {
     const { PPD_IGNORE_TESTS_WITHOUT_NAME } = new Arguments().args;
 
-    if (force || !this.allData) {
-      const allContent: Array<TestType | RunnerType | DataType> = [];
+    const allContent: Array<TestType | RunnerType | DataType> = [];
 
-      const paths = TestsContent.getPaths();
-      paths.forEach((filePath) => {
-        let testData: Partial<TestTypeYaml>[] = [];
-        if (filePath.endsWith('.json')) {
-          try {
-            testData = __non_webpack_require__(filePath);
-            if (!Array.isArray(testData)) {
-              testData = [testData];
-            }
-          } catch {
-            console.log(
-              `\u001B[41mError JSON read. File: '${filePath}'. Try to check it on https://jsonlint.com/
-              or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
-            );
+    const allFiles = TestsContent.getPaths();
+    allFiles.forEach((filePath) => {
+      let testData: Partial<TestTypeYaml>[] = [];
+      if (filePath.endsWith('.json')) {
+        try {
+          testData = JSON.parse(fs.readFileSync(filePath).toString());
+          if (!Array.isArray(testData)) {
+            testData = [testData];
           }
-        } else {
-          try {
-            testData = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
-          } catch {
-            console.log(
-              `\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/
+        } catch {
+          console.log(
+            `\u001B[41mError JSON read. File: '${filePath}'. Try to check it on https://jsonlint.com/
               or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
-            );
-          }
+          );
         }
+      } else {
+        try {
+          testData = yaml.loadAll(fs.readFileSync(filePath, 'utf8')) as Partial<TestTypeYaml>[];
+        } catch {
+          console.log(
+            `\u001B[41mError YAML read. File: '${filePath}'. Try to check it on https://yamlchecker.com/
+              or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
+          );
+        }
+      }
 
-        testData.forEach((v) => {
-          const { name } = v;
-          if (!name && !PPD_IGNORE_TESTS_WITHOUT_NAME) {
-            throw new Error('Every test need name');
-          }
-          if (!name) {
-            return;
-          }
-          const collect = {
-            ...{ type: 'test', name },
-            ...v,
-            ...{ testFile: filePath },
-          };
-          if (['test'].includes(collect.type)) {
-            allContent.push(resolveTest(collect as TestTypeYaml));
-          } else {
-            allContent.push(collect as RunnerType | DataType);
-          }
-        });
+      testData.forEach((v) => {
+        const { name } = v;
+        if (!name && !PPD_IGNORE_TESTS_WITHOUT_NAME) {
+          throw new Error('Every test need name');
+        }
+        if (!name) {
+          return;
+        }
+        const collect = {
+          ...{ type: 'test', name },
+          ...v,
+          ...{ testFile: filePath },
+        };
+        if (['test'].includes(collect.type)) {
+          allContent.push(resolveTest(collect as TestTypeYaml));
+        } else {
+          allContent.push(collect as RunnerType | DataType);
+        }
       });
+    });
+
+    return { allContent, allFiles };
+  };
+
+  /**
+   * Retrieves all data, including files, content, atoms, tests, runners, data, and selectors.
+   * If force is true, the data will be retrieved anew; otherwise, it will be returned from the cache.
+   *
+   * @param force - A flag indicating whether to retrieve the data anew.
+   * @returns An object containing all retrieved data.
+   */
+  getAllData(force = false): AllDataType {
+    if (force || !this.allData) {
+      const { allContent, allFiles } = TestsContent.resolveFiles();
 
       const atoms: Array<TestType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is TestType => v.type === 'atom'),
@@ -188,7 +201,7 @@ export default class TestsContent extends Singleton {
       );
       const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
 
-      this.allData = { allFiles: paths, allContent, atoms, tests, runners: runnersResolved, data, selectors };
+      this.allData = { allFiles, allContent, atoms, tests, runners: runnersResolved, data, selectors };
     }
 
     return this.allData;
