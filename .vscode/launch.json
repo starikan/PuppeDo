@@ -62,7 +62,21 @@
       "request": "launch",
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
-      "args": ["scripts\\exportRepositoryToTxt.ts"],
+      "args": ["scripts\\exportRepositoryToTxt.ts", "./tests", ".yaml,.yml"],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json"
+      }
+    },
+    {
+      "name": "Export all code",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "args": ["scripts\\exportRepositoryToTxt.ts", "./src", "./src.docs", "./src.tests","./src.tests.e2e", ".", ".ts,.js"],
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
