@@ -41,7 +41,7 @@ test('Helpers -> blankSocket', () => {
   // expect(blankSocket.sendYAML({ type: 'string', data: {}, envsId: 'string' })).toBeFalsy();
 });
 
-describe('mergeObjects', () => {
+describe('Helpers.mergeObjects', () => {
   test('should merge simple objects', () => {
     const obj1 = { a: 1, b: 2 };
     const obj2 = { a: 0, b: 3, c: 4 };
