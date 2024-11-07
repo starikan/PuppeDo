@@ -8,7 +8,7 @@ export function createTextFile(directoryPaths: string[], extensions: string[]) {
     ...directoryPaths
       .map((v) =>
         walkSync(v, {
-          extensions: extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`)),
+          includeExtensions: extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`)),
           ignoreFolders: [],
           ignoreFiles: [],
           depth: 1,

@@ -77,7 +77,7 @@ export default class TestsContent extends Singleton {
     const paths = folders
       .map((folder) => {
         if (fs.existsSync(folder)) {
-          return walkSync(folder, { ignoreFolders, ignoreFiles, extensions: PPD_FILES_EXTENSIONS_AVAILABLE });
+          return walkSync(folder, { ignoreFolders, ignoreFiles, includeExtensions: PPD_FILES_EXTENSIONS_AVAILABLE });
         }
         return [];
       })
