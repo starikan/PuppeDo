@@ -1,17 +1,23 @@
 import * as fs from 'fs';
 import { walkSync } from '../src/Helpers';
 
-export function createTextFile(directoryPaths: string[], extensions: string[]) {
+interface CreateTextFileOptions {
+  directoryPaths: string[];
+  extensions: string[];
+  depth?: number;
+}
+
+export function createTextFile(options: CreateTextFileOptions) {
   const outputPath = './output/output.txt'; // Путь для сохранения результирующего
 
   const filePaths = [
-    ...directoryPaths
+    ...options.directoryPaths
       .map((v) =>
         walkSync(v, {
-          includeExtensions: extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`)),
+          includeExtensions: options.extensions.map((ext) => (ext.startsWith('.') ? ext : `.${ext}`)),
           ignoreFolders: [],
           ignoreFiles: [],
-          depth: 1,
+          depth: options.depth,
         }),
       )
       .flat(),
@@ -27,20 +33,18 @@ export function createTextFile(directoryPaths: string[], extensions: string[]) {
   console.log(`Text file created: ${outputPath}`);
 }
 
-// Получаем аргументы командной строки
-const args = process.argv.slice(2);
+// Читаем параметры из переменных окружения
+const options: CreateTextFileOptions = {
+  directoryPaths: process.env.DIRECTORY_PATHS?.split(',') || [],
+  extensions: process.env.EXTENSIONS?.split(',') || [],
+  depth: process.env.DEPTH ? parseInt(process.env.DEPTH, 10) : undefined,
+};
 
-// Проверяем, что переданы аргументы
-if (args.length < 2) {
-  console.error('Please provide directory paths and file extensions as arguments.');
+// Проверяем, что переданы необходимые параметры
+if (!options.directoryPaths.length || !options.extensions.length) {
+  console.error('Please provide directory paths and file extensions as environment variables.');
   process.exit(1);
 }
 
-// Первые аргументы - пути к директориям
-const directoryPaths = args.slice(0, args.length - 1);
-
-// Последний аргумент - расширения файлов
-const extensions = args[args.length - 1].split(',');
-
-// Вызываем функцию createTextFile с переданными аргументами
-createTextFile(directoryPaths, extensions);
+// Вызываем функцию createTextFile с объектом параметров
+createTextFile(options);

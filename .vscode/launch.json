@@ -62,12 +62,14 @@
       "request": "launch",
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
-      "args": ["scripts\\exportRepositoryToTxt.ts", "./tests", ".yaml,.yml"],
+      "args": ["scripts\\exportRepositoryToTxt.ts"],
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
       "env": {
-        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json"
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json",
+        "DIRECTORY_PATHS": "./tests,./src",
+        "EXTENSIONS": ".yaml,.yml"
       }
     },
     {
@@ -76,12 +78,15 @@
       "request": "launch",
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
-      "args": ["scripts\\exportRepositoryToTxt.ts", "./src", "./src.docs", "./src.tests","./src.tests.e2e", ".", ".ts,.js"],
+      "args": ["scripts\\exportRepositoryToTxt.ts"],
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": ["<node_internals>/**", "node_modules/**"],
       "env": {
-        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json"
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json",
+        "DIRECTORY_PATHS": "./src,./src.docs,./src.tests,./src.tests.e2e,.",
+        "EXTENSIONS": ".ts,.js",
+        "DEPTH": "1"
       }
     },
     {
