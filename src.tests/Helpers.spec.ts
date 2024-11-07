@@ -1,4 +1,6 @@
-import { sleep, paintString, blankSocket, mergeObjects } from '../src/Helpers';
+import fs from 'fs';
+import path from 'path';
+import { sleep, paintString, blankSocket, mergeObjects, walkSync } from '../src/Helpers';
 
 test('Helpers -> sleep', async () => {
   const start = process.hrtime.bigint();
@@ -83,10 +85,6 @@ describe('mergeObjects', () => {
     expect(result).toEqual({ a: 2, b: 2, c: 3 });
   });
 });
-
-import fs from 'fs';
-import path from 'path';
-import { walkSync } from '../src/Helpers';
 
 describe('Helpers.walkSync', () => {
   const testDir = path.join(__dirname, 'testDir');
