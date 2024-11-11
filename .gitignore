@@ -15,3 +15,4 @@ yarn.lock
 /.temp
 /dist/**/*.js
 /dist/**/*.map
+/atoms

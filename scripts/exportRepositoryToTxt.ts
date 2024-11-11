@@ -26,7 +26,7 @@ export function createTextFile(options: CreateTextFileOptions) {
 
   for (const filePath of filePaths) {
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    fileContents += `File: ${filePath}\n\n${fileContent}\n\n`;
+    fileContents += `=================================\nFile: ${filePath}\n\n${fileContent}\n\n`;
   }
 
   fs.writeFileSync(outputPath, fileContents);
