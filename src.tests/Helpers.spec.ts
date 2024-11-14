@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import { sleep, paintString, blankSocket, mergeObjects } from '../src/Helpers';
 
 test('Helpers -> sleep', async () => {
