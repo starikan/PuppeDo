@@ -3,10 +3,11 @@ import path from 'path';
 import fs from 'fs';
 
 import yaml from 'js-yaml';
+import { walkSync } from '@puppedo/walk-sync';
 
 import Singleton from './Singleton';
 import { Arguments } from './Arguments';
-import { mergeObjects, walkSync } from './Helpers';
+import { mergeObjects } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
 

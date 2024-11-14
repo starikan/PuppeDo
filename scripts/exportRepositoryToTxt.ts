@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { walkSync } from '../src/Helpers';
+import { walkSync } from '@puppedo/walk-sync';
 
 interface CreateTextFileOptions {
   directoryPaths: string[];
