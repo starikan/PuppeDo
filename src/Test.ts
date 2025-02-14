@@ -1,5 +1,5 @@
 import vm from 'vm';
-import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers';
+import { blankSocket, getTimer, pick, generateId, resolveAliases } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -22,76 +22,6 @@ import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
 import globalExportPPD from './index';
-
-const ALIASES = {
-  data: ['d', '📋'],
-  bindData: [
-    'bD',
-    'bd',
-    '📌📋',
-    'dataBind',
-    'db',
-    'dB',
-    'dataFunction',
-    'dF',
-    'df',
-    '🔑📋',
-    'functionData',
-    'fd',
-    'fD',
-  ],
-  selectors: ['selector', 's', '💠'],
-  bindSelectors: [
-    'bindSelector',
-    'bS',
-    'bs',
-    '📌💠',
-    'selectorBind',
-    'selectorsBind',
-    'sb',
-    'sB',
-    'selectorsFunction',
-    'selectorFunction',
-    'sF',
-    'sf',
-    '🔑💠',
-    'functionSelector',
-    'functionSelectors',
-    'fs',
-    'fS',
-  ],
-  bindResults: [
-    'bindResult',
-    'bR',
-    'br',
-    'result',
-    'results',
-    'r',
-    '↩️',
-    'R',
-    'rb',
-    'rB',
-    'resultBind',
-    'resultsBind',
-    'rF',
-    'rf',
-    '🔑↩️',
-    'functionResult',
-    'fr',
-    'fR',
-    'resultFunction',
-    'values',
-    'value',
-    'v',
-    'var',
-    'vars',
-    'const',
-    'c',
-    'let',
-    'set',
-  ],
-  options: ['option', 'opt', 'o', '⚙️'],
-};
 
 export const runScriptInContext = (
   source: string,
@@ -148,13 +78,6 @@ const resolveDataFunctions = (
     return collector;
   }, {});
   return funcEval;
-};
-
-const resolveAliases = (alias: keyof typeof ALIASES, inputs: TestExtendType): Record<string, unknown> => {
-  const variants = [...(ALIASES[alias] || []), alias];
-  const values = (Object.values(pick(inputs, variants)) as Record<string, unknown>[]).map((v) => v || {});
-  const result = mergeObjects(...values);
-  return result;
 };
 
 // TODO: 2021-12-07 S.Starodubov move to class and improve with ${getLogText(text, this.name, PPD_LOG_TEST_NAME)}

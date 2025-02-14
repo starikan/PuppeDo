@@ -2,7 +2,15 @@
 /* eslint-disable implicit-arrow-linebreak */
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import { ColorsType, DeepMergeable, SocketType, TestFunctionsBlockNames } from './global.d';
+import {
+  AliasesKeysType,
+  ColorsType,
+  DeepMergeable,
+  SocketType,
+  TestExtendType,
+  TestFunctionsBlockNames,
+} from './global.d';
+import { PPD_ALIASES } from './Defaults';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -69,7 +77,26 @@ export function sleep(ms: number): Promise<void> {
  * @param objects - Objects for merging.
  * @returns - The result of the merge.
  */
-export function mergeObjects<T extends DeepMergeable>(...objects: T[]): T {
+export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray = false): T {
+  // Remove duplicates
+  function dedupArray(mergedArray: DeepMergeable[]): DeepMergeable[] {
+    const seen = new Set();
+    const dedupedArray = [];
+    for (const item of mergedArray) {
+      if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
+        // If primitive (or null)
+        if (!seen.has(item)) {
+          seen.add(item);
+          dedupedArray.push(item);
+        }
+      } else {
+        dedupedArray.push(item);
+      }
+    }
+
+    return dedupedArray;
+  }
+
   /**
    * Recursive function for merging objects.
    *
@@ -87,9 +114,11 @@ export function mergeObjects<T extends DeepMergeable>(...objects: T[]): T {
           deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
         } else if (Array.isArray(source[key])) {
           // If the field is an array, merge arrays
-          target[key] = target[key]
+          const mergedArray = target[key]
             ? (target[key] as DeepMergeable[]).concat(source[key] as DeepMergeable[])
-            : source[key];
+            : (source[key] as DeepMergeable[]);
+
+          target[key] = uniqueArray ? dedupArray(mergedArray) : mergedArray;
         } else if (source[key] !== undefined) {
           target[key] = source[key];
         }
@@ -189,3 +218,10 @@ export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-m
 export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
+
+export const resolveAliases = (alias: AliasesKeysType, inputs: TestExtendType): Record<string, unknown> => {
+  const variants = [...(PPD_ALIASES[alias] || []), alias];
+  const values = (Object.values(pick(inputs, variants)) as Record<string, unknown>[]).map((v) => v || {});
+  const result = mergeObjects(values);
+  return result;
+};

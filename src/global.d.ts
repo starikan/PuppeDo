@@ -15,7 +15,7 @@ import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
-import { argsDefault } from './Defaults';
+import { argsDefault, PPD_ALIASES } from './Defaults';
 import { colors } from './Helpers';
 
 // ================ BROWSERS ====================
@@ -40,6 +40,8 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 // ================ HELPERS ====================
 
 export type ColorsType = keyof typeof colors;
+
+export type AliasesKeysType = keyof typeof PPD_ALIASES;
 
 export type ArgumentsType = {
   PPD_ROOT: string;
@@ -69,6 +71,7 @@ export type ArgumentsType = {
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
   PPD_FILES_EXTENSIONS_AVAILABLE: string[];
+  PPD_ALIASES: Record<AliasesKeysType, string[]>;
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;

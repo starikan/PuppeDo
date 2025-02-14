@@ -43,35 +43,35 @@ describe('Helpers.mergeObjects', () => {
   test('should merge simple objects', () => {
     const obj1 = { a: 1, b: 2 };
     const obj2 = { a: 0, b: 3, c: 4 };
-    const result = mergeObjects(obj1, obj2);
+    const result = mergeObjects([obj1, obj2]);
     expect(result).toEqual({ a: 0, b: 3, c: 4 });
   });
 
   test('should merge nested objects', () => {
     const obj1 = { a: { x: 1 }, b: 2 };
     const obj2 = { a: { x: 0, y: 2 }, b: 2, c: 3 };
-    const result = mergeObjects(obj1, obj2);
+    const result = mergeObjects([obj1, obj2]);
     expect(result).toEqual({ a: { x: 0, y: 2 }, b: 2, c: 3 });
   });
 
   test('should merge arrays', () => {
     const obj1 = { a: [1, 2] };
     const obj2 = { a: [3, 4], b: 5 };
-    const result = mergeObjects(obj1, obj2);
+    const result = mergeObjects([obj1, obj2]);
     expect(result).toEqual({ a: [1, 2, 3, 4], b: 5 });
   });
 
   test('should handle null and undefined values', () => {
     const obj1 = { a: null, b: 2 };
     const obj2 = { a: 3, b: undefined };
-    const result = mergeObjects(obj1, obj2);
+    const result = mergeObjects([obj1, obj2]);
     expect(result).toEqual({ a: 3, b: 2 });
   });
 
   test('should handle empty objects', () => {
     const obj1 = {};
     const obj2 = { a: 1 };
-    const result = mergeObjects(obj1, obj2);
+    const result = mergeObjects([obj1, obj2]);
     expect(result).toEqual({ a: 1 });
   });
 
@@ -79,7 +79,7 @@ describe('Helpers.mergeObjects', () => {
     const obj1: { a?: number; b?: number; c?: number } = { a: 1 };
     const obj2: { a?: number; b?: number; c?: number } = { a: 2, b: 2 };
     const obj3: { a?: number; b?: number; c?: number } = { c: 3 };
-    const result = mergeObjects(obj1, obj2, obj3);
+    const result = mergeObjects([obj1, obj2, obj3]);
     expect(result).toEqual({ a: 2, b: 2, c: 3 });
   });
 });
