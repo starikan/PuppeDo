@@ -1,14 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import {
-  AliasesKeysType,
-  ColorsType,
-  DeepMergeable,
-  SocketType,
-  TestExtendType,
-  TestFunctionsBlockNames,
-} from './global.d';
+import { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './global.d';
 import { PPD_ALIASES } from './Defaults';
 
 /*
@@ -247,8 +240,6 @@ export const omit = (obj: Record<string, unknown>, fields: string[]): Record<str
 
 export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
   dayjs(now).format(format);
-
-export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'runTest', 'afterTest'];
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
 

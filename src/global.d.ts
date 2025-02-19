@@ -41,16 +41,7 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 export type ColorsType = keyof typeof colors;
 
-export type AliasesKeysType =
-  | 'data'
-  | 'bindData'
-  | 'selectors'
-  | 'bindSelectors'
-  | 'bindResults'
-  | 'options'
-  | 'beforeTest'
-  | 'runTest'
-  | 'afterTest';
+export type AliasesKeysType = 'data' | 'bindData' | 'selectors' | 'bindSelectors' | 'bindResults' | 'options';
 
 export type ArgumentsType = {
   PPD_ROOT: string;
@@ -81,6 +72,7 @@ export type ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
   PPD_FILES_EXTENSIONS_AVAILABLE: string[];
   PPD_ALIASES: Record<AliasesKeysType, string[]>;
+  PPD_LIFE_CYCLE_FUNCTIONS: string[];
 };
 
 export type ArgumentsKeysType = keyof ArgumentsType;
@@ -318,6 +310,12 @@ export type TestArgsType = {
 
 export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
+type RunFunctions = {
+  beforeTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  runTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+  afterTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
+};
+
 /**
  * YAML test file structure
  */
@@ -355,11 +353,7 @@ export type TestTypeYaml = {
   engineSupports?: BrowserEngineType[];
   inlineJS?: string;
   breakParentIfResult?: string;
-  // TODO: 2023-01-18 S.Starodubov split this in separate types
-  beforeTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-  runTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-  afterTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-};
+} & RunFunctions;
 
 export type TestType = Required<TestTypeYaml>;
 
@@ -383,8 +377,6 @@ export type TestExtendType = {
   PliginsFields;
 
 export type TestExtendTypeKeys = keyof TestExtendType;
-
-export type TestFunctionsBlockNames = 'beforeTest' | 'runTest' | 'afterTest';
 
 export type AllDataType = {
   allFiles: Array<string>;

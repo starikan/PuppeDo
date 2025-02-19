@@ -347,9 +347,6 @@ export class Test implements TestExtendType {
     this.description = initValues.description || '';
     this.descriptionExtend = initValues.descriptionExtend || [];
     this.bindDescription = initValues.bindDescription || '';
-    this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
-    this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
-    this.afterTest = (initValues.afterTest || []) as TestLifecycleFunctionType[];
     this.levelIndent = initValues.levelIndent || 0;
     this.repeat = initValues.repeat || 1;
     this.source = initValues.source || '';
@@ -367,6 +364,10 @@ export class Test implements TestExtendType {
     this.tags = initValues.tags || [];
     this.engineSupports = initValues.engineSupports || [];
     this.breakParentIfResult = initValues.breakParentIfResult || '';
+
+    this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
+    this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
+    this.afterTest = (initValues.afterTest || []) as TestLifecycleFunctionType[];
 
     this.runLogic = async (
       inputs: TestExtendType,
@@ -475,10 +476,6 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logForChild;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
-
-      this.beforeTest = resolveAliases<TestLifecycleFunctionType[]>('beforeTest', inputs);
-      this.runTest = resolveAliases<TestLifecycleFunctionType[]>('runTest', inputs);
-      this.afterTest = resolveAliases<TestLifecycleFunctionType[]>('afterTest', inputs);
 
       try {
         this.plugins.hook('resolveValues', { inputs });

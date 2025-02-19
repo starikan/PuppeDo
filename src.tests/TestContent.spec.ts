@@ -731,6 +731,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
     PPD_CONTINUE_ON_ERROR_ENABLED: false,
     PPD_FILES_EXTENSIONS_AVAILABLE: ['.json', '.yaml'],
     PPD_ALIASES,
+    PPD_LIFE_CYCLE_FUNCTIONS: ['beforeTest', 'runTest', 'afterTest'],
   };
 
   beforeEach(() => {

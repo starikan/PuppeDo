@@ -4,26 +4,21 @@ import path from 'path';
 import requireFromString from 'require-from-string';
 
 import Blocker from './Blocker';
-import { pick, RUNNER_BLOCK_NAMES } from './Helpers';
+import { pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import {
-  TestArgsType,
-  TestExtendType,
-  TestExtendTypeKeys,
-  TestFunctionsBlockNames,
-  TestLifecycleFunctionType,
-  TestType,
-} from './global.d';
+import { TestArgsType, TestExtendType, TestExtendTypeKeys, TestLifecycleFunctionType, TestType } from './global.d';
 import { Environment } from './Environment';
+import { Arguments } from './Arguments';
 
 const atoms: Record<string, TestLifecycleFunctionType> = {};
 
 const resolveJS = (testJson: TestExtendType): TestExtendType => {
+  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   const testJsonNew = testJson;
 
-  const functions = pick(testJsonNew, RUNNER_BLOCK_NAMES);
+  const functions = pick(testJsonNew, PPD_LIFE_CYCLE_FUNCTIONS);
   if (Object.keys(functions).length && !testJsonNew.inlineJS) {
     return testJson;
   }
@@ -93,15 +88,16 @@ const getTest = ({
   envsId: string;
   parentTestMetaCollector?: Partial<TestExtendType>;
 }): TestLifecycleFunctionType => {
+  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   let testJson = testJsonIncome;
 
-  RUNNER_BLOCK_NAMES.forEach((funcBlock) => {
+  PPD_LIFE_CYCLE_FUNCTIONS.forEach((funcBlock) => {
     if (testJson[funcBlock] && !Array.isArray(testJson[funcBlock])) {
       throw new Error(`Block ${funcBlock} must be array. Path: '${(testJson.breadcrumbs || []).join(' -> ')}'`);
     }
   });
 
-  const functionsBeforeResolve: [TestFunctionsBlockNames, TestExtendType[]][] = RUNNER_BLOCK_NAMES.map((v) => [
+  const functionsBeforeResolve: [string, TestExtendType[]][] = PPD_LIFE_CYCLE_FUNCTIONS.map((v) => [
     v,
     testJson[v] as TestExtendType[],
   ]);

@@ -1,7 +1,8 @@
 import TestsContent, { BLANK_TEST } from './TestContent';
 
 import { TestExtendType, TestType } from './global.d';
-import { RUNNER_BLOCK_NAMES, generateId, deepMergeField } from './Helpers';
+import { generateId, deepMergeField } from './Helpers';
+import { Arguments } from './Arguments';
 
 export default class TestStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
@@ -33,6 +34,7 @@ export default class TestStructure {
   }
 
   static generateDescription(fullJSON: TestExtendType, indentLength = 3): string {
+    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     const { description, name, todo, levelIndent = 0 } = fullJSON;
 
     const descriptionString = [
@@ -42,7 +44,7 @@ export default class TestStructure {
       name ? `(${name})` : '',
     ].join('');
 
-    const blocks = RUNNER_BLOCK_NAMES.map((v) => fullJSON[v] || [])
+    const blocks = PPD_LIFE_CYCLE_FUNCTIONS.map((v) => fullJSON[v] || [])
       .flat()
       .filter((v) => typeof v !== 'function')
       .map((v) => TestStructure.generateDescription(v as TestExtendType))
@@ -64,6 +66,7 @@ export default class TestStructure {
   }
 
   static getFullDepthJSON(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
+    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     const rawTest = TestStructure.getTestRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
 
@@ -73,7 +76,7 @@ export default class TestStructure {
     fullJSON.stepId = generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
-    RUNNER_BLOCK_NAMES.forEach((runnerBlockName) => {
+    PPD_LIFE_CYCLE_FUNCTIONS.forEach((runnerBlockName) => {
       const runnerBlockValue = (fullJSON[runnerBlockName] || []) as { string: TestExtendType }[];
       if (!Array.isArray(runnerBlockValue)) {
         const errorString = `Running block '${runnerBlockName}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'

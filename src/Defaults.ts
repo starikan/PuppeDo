@@ -97,9 +97,6 @@ export const PPD_ALIASES: Record<AliasesKeysType, string[]> = {
     'set',
   ],
   options: ['option', 'opt', 'o', '⚙️'],
-  beforeTest: ['agentBefore', 'actionBefore'],
-  runTest: ['agent', 'action'],
-  afterTest: ['agentAfter', 'actionAfter'],
 };
 
 export const argsDefault: ArgumentsType = {
@@ -131,6 +128,7 @@ export const argsDefault: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
   PPD_ALIASES,
+  PPD_LIFE_CYCLE_FUNCTIONS: ['beforeTest', 'runTest', 'afterTest'],
 };
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {

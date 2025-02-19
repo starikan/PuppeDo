@@ -31,6 +31,7 @@ const argsModify: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
   PPD_ALIASES,
+  PPD_LIFE_CYCLE_FUNCTIONS: ['beforeTest', 'runTest', 'afterTest'],
 };
 
 const argsENV: Record<ArgumentsKeysType, string> = {
@@ -62,6 +63,7 @@ const argsENV: Record<ArgumentsKeysType, string> = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
   PPD_FILES_EXTENSIONS_AVAILABLE: '.yaml,.yml,.ppd,.json',
   PPD_ALIASES: JSON.stringify(PPD_ALIASES).replace(/\n/g, ''),
+  PPD_LIFE_CYCLE_FUNCTIONS: 'beforeTest,runTest,afterTest',
 };
 
 // Reset Arguments
