@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable implicit-arrow-linebreak */
 import crypto from 'crypto';
 import dayjs from 'dayjs';
@@ -92,7 +91,6 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
         const seen = new Set();
         const deduped = [];
         for (const item of merged) {
-          // Primitives and null are deduplicated.
           if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
             if (!seen.has(item)) {
               seen.add(item);
@@ -109,33 +107,22 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
 
     // If source is an object (but not an array)
     if (typeof source === 'object' && source !== null) {
-      // If target is not an object or is null or is an array,
-      // then redefine target as an empty object.
-      if (typeof target !== 'object' || target === null || Array.isArray(target)) {
-        target = {};
-      }
+      const result = typeof target !== 'object' || target === null || Array.isArray(target) ? {} : { ...target };
+
       for (const key of Object.keys(source)) {
         if (source[key] !== undefined) {
-          // If the value of source by key is an array:
           if (Array.isArray(source[key])) {
-            if (!Array.isArray(target[key])) {
-              target[key] = [];
-            }
-            target[key] = deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
+            result[key] = deepMerge(result[key] ?? [], source[key] as DeepMergeable);
           } else if (typeof source[key] === 'object' && source[key] !== null) {
-            if (typeof target[key] !== 'object' || target[key] === null || Array.isArray(target[key])) {
-              target[key] = {};
-            }
-            target[key] = deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
+            result[key] = deepMerge(result[key] ?? {}, source[key] as DeepMergeable);
           } else {
-            target[key] = source[key] as DeepMergeable;
+            result[key] = source[key] as DeepMergeable;
           }
         }
       }
-      return target;
+      return result;
     }
 
-    // For primitives, return the source value
     return source;
   }
 

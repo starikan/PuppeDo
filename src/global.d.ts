@@ -446,4 +446,5 @@ export type DeepMergeable =
   | null
   | undefined
   | Function
-  | Record<string, unknown>;
+  | Record<string, unknown>
+  | unknown;
