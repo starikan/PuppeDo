@@ -85,14 +85,14 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
    * @param source - The source for merging.
    */
   function deepMerge(target: DeepMergeable, source: DeepMergeable): DeepMergeable {
-    // Если оба значения являются массивами, объединяем их:
+    // If both values are arrays, merge them:
     if (Array.isArray(target) && Array.isArray(source)) {
       const merged = target.concat(source);
       if (uniqueArray) {
         const seen = new Set();
         const deduped = [];
         for (const item of merged) {
-          // Примитивы и null подвергаются дедупликации.
+          // Primitives and null are deduplicated.
           if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
             if (!seen.has(item)) {
               seen.add(item);
@@ -107,8 +107,8 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
       return merged;
     }
 
-    // Если source является массивом, а target – нет,
-    // то перезаписываем target массивом из source (с опциональной дедупликацией).
+    // If source is an array, but target is not,
+    // then overwrite target with an array from source (with optional deduplication).
     if (Array.isArray(source)) {
       if (uniqueArray) {
         const seen = new Set();
@@ -128,16 +128,16 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
       return source;
     }
 
-    // Если source – объект (но не массив)
+    // If source is an object (but not an array)
     if (typeof source === 'object' && source !== null) {
-      // Если target не объект или равен null или является массивом,
-      // то переопределяем target как пустой объект.
+      // If target is not an object or is null or is an array,
+      // then redefine target as an empty object.
       if (typeof target !== 'object' || target === null || Array.isArray(target)) {
         target = {};
       }
       for (const key of Object.keys(source)) {
         if (source[key] !== undefined) {
-          // Если значение source по ключу является массивом:
+          // If the value of source by key is an array:
           if (Array.isArray(source[key])) {
             if (!Array.isArray(target[key])) {
               target[key] = [];
@@ -156,11 +156,11 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
       return target;
     }
 
-    // Для примитивов возвращаем значение source
+    // For primitives, return the source value
     return source;
   }
 
-  // Инициализируем результат в зависимости от типа первого элемента входного массива
+  // Initialize the result based on the type of the first element of the input array
   let result!: DeepMergeable;
   if (objects.length > 0) {
     result = Array.isArray(objects[0]) ? [] : {};
@@ -258,6 +258,13 @@ export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'run
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
 
+/**
+ * Resolves aliases for a given key in the inputs object.
+ *
+ * @param alias The alias key to resolve.
+ * @param inputs The inputs object to search for alias values.
+ * @returns The resolved alias value.
+ */
 export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
   alias: AliasesKeysType,
   inputs: TestExtendType,
