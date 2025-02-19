@@ -85,9 +85,9 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
    * @param source - The source for merging.
    */
   function deepMerge(target: DeepMergeable, source: DeepMergeable): DeepMergeable {
-    // If both values are arrays, merge them:
-    if (Array.isArray(target) && Array.isArray(source)) {
-      const merged = target.concat(source);
+    // If source is arrays, merge with target:
+    if (Array.isArray(source)) {
+      const merged = Array.isArray(target) ? target.concat(source) : source;
       if (uniqueArray) {
         const seen = new Set();
         const deduped = [];
@@ -105,27 +105,6 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
         return deduped;
       }
       return merged;
-    }
-
-    // If source is an array, but target is not,
-    // then overwrite target with an array from source (with optional deduplication).
-    if (Array.isArray(source)) {
-      if (uniqueArray) {
-        const seen = new Set();
-        const deduped = [];
-        for (const item of source) {
-          if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
-            if (!seen.has(item)) {
-              seen.add(item);
-              deduped.push(item);
-            }
-          } else {
-            deduped.push(item);
-          }
-        }
-        return deduped;
-      }
-      return source;
     }
 
     // If source is an object (but not an array)
@@ -162,6 +141,7 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
 
   // Initialize the result based on the type of the first element of the input array
   let result!: DeepMergeable;
+
   if (objects.length > 0) {
     result = Array.isArray(objects[0]) ? [] : {};
   } else {

@@ -174,4 +174,156 @@ describe('Helpers.mergeObjects', () => {
     const resultTrue = mergeObjects([obj1, obj2], true);
     expect(resultTrue.arr).toEqual([f1, f1, f2]);
   });
+
+  test('merging primitives – if primitives are passed, the last one is returned', () => {
+    // The first element is not an array, so the result is initialized as {},
+    // then deepMerge({}, 1) will return 1, and deepMerge(1, 2) will return 2.
+    const result = mergeObjects([1, 2]);
+    expect(result).toEqual(2);
+  });
+
+  test('merging when target is not an array, but source is an array', () => {
+    // The first element is an object, so the result is initialized as {},
+    // then deepMerge({}, [10, 20, 20]) will execute the "if (Array.isArray(source))"
+    // branch with deduplication if uniqueArray = true.
+    const result = mergeObjects([{ a: 'initial' }, [10, 20, 20]], true);
+    expect(result).toEqual([10, 20]);
+  });
+
+  test('merging when target is an array, but source is an object', () => {
+    // The first element is an array, so the result is initialized as [].
+    // When merging deepMerge([], { a: 'value', b: undefined }) will hit the branch,
+    // where target is overwritten with an empty object, since Array.isArray(target) === true.
+    // The key 'b' with value undefined is skipped.
+    const result = mergeObjects([[1, 2], { a: 'value', b: undefined }]);
+    expect(result).toEqual({ a: 'value' });
+  });
+
+  test('merging when source has a key with undefined – it is skipped', () => {
+    const result = mergeObjects([{ a: 1 }, { a: undefined, b: 2 }]);
+    expect(result).toEqual({ a: 1, b: 2 });
+  });
+
+  test('merging nested arrays with deduplication of primitives', () => {
+    // We check the case where two top-level arrays consisting of primitives are merged.
+    const result = mergeObjects(
+      [
+        [1, 2, 2],
+        [2, 3, 1],
+      ],
+      true,
+    );
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  test('merging nested objects when the target value has an incorrect type', () => {
+    // If the target value has a "falsey" type (e.g., 0) and the source provides an object,
+    // the target is replaced with an empty object and recursive merging is performed.
+    const result = mergeObjects([{ a: 0 }, { a: { nested: 'x' } }]);
+    expect(result).toEqual({ a: { nested: 'x' } });
+  });
+
+  test('merging nested structures – property that in target has an object value, but in source has an array value', () => {
+    // When merging {a: 1} and {a: [2, 3]} should return the array from source, as source has a different type,
+    // and in the "if (Array.isArray(source))" branch for target, which is not an array,
+    // simply returns the array with merging and deduplication (if enabled).
+    const result = mergeObjects([{ a: 1 }, { a: [2, 3] }]);
+    expect(result).toEqual({ a: [2, 3] });
+  });
+
+  test('merging nested structures – property that in target has an array value, but in source has an object value', () => {
+    // The first element is an array, so the result is initialized as [].
+    // When attempting to merge deepMerge([], { key: 'value' }) hits the branch,
+    // where target is redefined as an empty object, and ultimately returns an object.
+    const result = mergeObjects([[1, 2, 3], { key: 'value' }]);
+    expect(result).toEqual({ key: 'value' });
+  });
+
+  test('Empty array of objects – returns {}', () => {
+    expect(mergeObjects([])).toEqual({});
+  });
+
+  test('Merging primitives – result of the last element', () => {
+    expect(mergeObjects([1, 2])).toEqual(2);
+  });
+
+  test('Merging arrays (both values are arrays), uniqueArray = false', () => {
+    const result = mergeObjects([
+      [1, 2],
+      [3, 4],
+    ]);
+    expect(result).toEqual([1, 2, 3, 4]);
+  });
+
+  test('Merging arrays (both values are arrays), uniqueArray = true – primitive duplicates are removed', () => {
+    const result = mergeObjects(
+      [
+        [1, 2],
+        [2, 3, 1],
+      ],
+      true,
+    );
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  test('If source is an array, but target is not an array – target is overwritten with the source value', () => {
+    // The first element is an object, so the result is initialized as {},
+    // then deepMerge({}, [10, 20, 10]) will return the deduped array at uniqueArray = true.
+    const result = mergeObjects([{ a: 1 }, [10, 20, 10]], true);
+    expect(result).toEqual([10, 20]);
+  });
+
+  test('Merging objects – skipping keys if source[key] === undefined', () => {
+    const result = mergeObjects([{ a: 1 }, { a: undefined, b: 2 }]);
+    expect(result).toEqual({ a: 1, b: 2 });
+  });
+
+  test('Merging nested arrays within objects (without deduplication)', () => {
+    const result = mergeObjects([{ a: [1, 2] }, { a: [2, 3] }]);
+    // When merging arrays within objects, simply concatenation
+    expect(result).toEqual({ a: [1, 2, 2, 3] });
+  });
+
+  test('Merging nested arrays within objects (with deduplication)', () => {
+    const result = mergeObjects([{ a: [1, 2] }, { a: [2, 1, 3] }], true);
+    expect(result).toEqual({ a: [1, 2, 3] });
+  });
+
+  test('Merging nested objects', () => {
+    const result = mergeObjects([{ a: { b: 1 } }, { a: { c: 2 } }]);
+    expect(result).toEqual({ a: { b: 1, c: 2 } });
+  });
+
+  test('Merging objects – overwriting with primitives', () => {
+    const result = mergeObjects([{ a: 1 }, { a: 2 }]);
+    expect(result).toEqual({ a: 2 });
+  });
+
+  test('Merging, when source is null – returns null', () => {
+    // When calling deepMerge({}, null) the condition "source !== null" does not pass,
+    // so the source is returned, i.e., null.
+    const result = mergeObjects([{}, null]);
+    expect(result).toEqual(null);
+  });
+
+  test('Merging with a function – if source is a function, returns the function', () => {
+    const fn = () => 42;
+    const result = mergeObjects([{}, fn]);
+    expect(result).toEqual(fn);
+  });
+
+  test('Merging, when target is initially an array, and source is an object with an undefined key', () => {
+    // The first element is an array, so the result is initialized as [].
+    // When merging deepMerge([], { a: undefined, b: 3 })
+    // target is redefined as an empty object, and the key "a" is skipped.
+    const result = mergeObjects([[1, 2], { a: undefined, b: 3 }]);
+    expect(result).toEqual({ b: 3 });
+  });
+
+  test('Merging, when target value is an array, but source is an object', () => {
+    // If the target contains an array, but the source for the same key is an object,
+    // then the target is replaced with an empty object and deep merging is performed.
+    const result = mergeObjects([{ a: [1, 2, { b: 10 }] }, { a: { c: 20 } }]);
+    expect(result).toEqual({ a: { c: 20 } });
+  });
 });
