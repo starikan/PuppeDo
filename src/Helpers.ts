@@ -64,6 +64,12 @@ export enum colors {
   env = colors.blue,
 }
 
+/**
+ * This function creates a pause in the execution of the program for the specified number of milliseconds.
+ *
+ * @param ms - The number of milliseconds for which the program will pause.
+ * @returns A promise that will be resolved after the specified number of milliseconds.
+ */
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

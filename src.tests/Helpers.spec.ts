@@ -1,13 +1,13 @@
 import { sleep, paintString, blankSocket, mergeObjects, deepMergeField } from '../src/Helpers';
 
-test('Helpers -> sleep', async () => {
+test('Helpers.sleep', async () => {
   const start = process.hrtime.bigint();
   await sleep(20);
   const delay = process.hrtime.bigint() - start;
   expect(delay).toBeGreaterThanOrEqual(20);
 });
 
-test('Helpers -> paintString', () => {
+test('Helpers.paintString', () => {
   expect(paintString('*******')).toEqual('*******');
 
   expect(paintString('*******', 'sane')).toEqual('*******');
@@ -31,7 +31,7 @@ test('Helpers -> paintString', () => {
   expect(paintString('*******', 'env')).toEqual('\u001b[34m*******\u001b[0m');
 });
 
-test('Helpers -> blankSocket', () => {
+test('Helpers.blankSocket', () => {
   expect(Object.keys(blankSocket)).toEqual(['send', 'sendYAML']);
   expect(typeof blankSocket.send === 'function').toBe(true);
   expect(typeof blankSocket.sendYAML === 'function').toBe(true);
@@ -328,7 +328,7 @@ describe('Helpers.mergeObjects', () => {
   });
 });
 
-describe('deepMergeField function', () => {
+describe('Helpers.deepMergeField', () => {
   test('Merging objects without specifying fields for merging', () => {
     interface TestType {
       [key: string]: unknown;
