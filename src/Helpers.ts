@@ -143,6 +143,16 @@ export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray 
   return result as T;
 }
 
+/**
+ * Deeply merges two objects, obj1 and obj2, based on the specified fieldsMerge.
+ * The function returns a new object that combines the properties of obj1 and obj2.
+ * If a property is present in both objects, the values are merged recursively.
+ *
+ * @param obj1 The first object to merge.
+ * @param obj2 The second object to merge.
+ * @param fieldsMerge An array of keys to merge recursively.
+ * @returns A new object that combines the properties of obj1 and obj2.
+ */
 export const deepMergeField = <T extends Record<string, unknown>>(
   obj1: T,
   obj2: Partial<T>,

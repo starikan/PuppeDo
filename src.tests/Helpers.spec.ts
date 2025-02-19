@@ -1,4 +1,4 @@
-import { sleep, paintString, blankSocket, mergeObjects } from '../src/Helpers';
+import { sleep, paintString, blankSocket, mergeObjects, deepMergeField } from '../src/Helpers';
 
 test('Helpers -> sleep', async () => {
   const start = process.hrtime.bigint();
@@ -325,5 +325,76 @@ describe('Helpers.mergeObjects', () => {
     // then the target is replaced with an empty object and deep merging is performed.
     const result = mergeObjects([{ a: [1, 2, { b: 10 }] }, { a: { c: 20 } }]);
     expect(result).toEqual({ a: { c: 20 } });
+  });
+});
+
+describe('deepMergeField function', () => {
+  test('Merging objects without specifying fields for merging', () => {
+    interface TestType {
+      [key: string]: unknown;
+      a?: number;
+      b?: { x?: number; y?: number };
+      c?: string;
+    }
+    const obj1: TestType = { a: 1, b: { x: 1 } };
+    const obj2: TestType = { b: { y: 2 }, c: 'test' };
+    const result = deepMergeField(obj1, obj2, []);
+    expect(result).toEqual({ a: 1, b: { y: 2 }, c: 'test' });
+  });
+
+  test('Merging objects with specified fields for merging', () => {
+    interface TestType {
+      [key: string]: unknown;
+      a?: number;
+      b?: { x?: number; y?: number };
+      c?: string;
+      d?: { m?: number; n?: number };
+    }
+    const obj1: TestType = { a: 1, b: { x: 1 }, d: { m: 1 } };
+    const obj2: TestType = { a: 10, b: { y: 2 }, c: 'test', d: { n: 2 } };
+    const result = deepMergeField(obj1, obj2, ['b', 'd']);
+    expect(result).toEqual({ a: 10, b: { x: 1, y: 2 }, c: 'test', d: { m: 1, n: 2 } });
+  });
+
+  test('Merging when a field is missing in obj2', () => {
+    const obj1 = { a: { x: 1 } };
+    const obj2 = {} as { a?: { x: number } };
+    // If a property is present only in obj1, its value remains.
+    const result = deepMergeField(obj1, obj2, ['a']);
+    expect(result).toEqual({ a: { x: 1 } });
+  });
+
+  test('Merging when a field is missing in obj1', () => {
+    const obj1 = {} as { a?: { y: number } };
+    const obj2 = { a: { y: 2 } };
+    // If a property is present only in obj2, the merge gives the value from obj2.
+    const result = deepMergeField(obj1, obj2, ['a']);
+    expect(result).toEqual({ a: { y: 2 } });
+  });
+
+  test('Merging fields containing primitives', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { a: 2 };
+    // When attempting to merge primitives, the default value (nullish) => {} is triggered.
+    // The spread operator converts the number into a wrapper, which lacks its own enumerable properties,
+    // so mergedFields.a will be an empty object.
+    const result = deepMergeField(obj1, obj2, ['a']);
+    expect(result).toEqual({ a: {} });
+  });
+
+  test('Merging when the value is undefined in obj1', () => {
+    const obj1 = { a: undefined };
+    const obj2 = { a: { b: 2 } };
+    // If the value in obj1 is undefined, the default empty value is used.
+    const result = deepMergeField(obj1, obj2, ['a']);
+    expect(result).toEqual({ a: { b: 2 } });
+  });
+
+  test('Merging when the value is undefined in obj2', () => {
+    const obj1 = { a: { x: 1 } };
+    const obj2 = { a: undefined };
+    // If the value in obj2 is undefined, the value from obj1 remains.
+    const result = deepMergeField(obj1, obj2, ['a']);
+    expect(result).toEqual({ a: { x: 1 } });
   });
 });
