@@ -15,7 +15,7 @@ import { ErrorType } from './Error';
 import { PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
-import { argsDefault, PPD_ALIASES } from './Defaults';
+import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
 
 // ================ BROWSERS ====================
@@ -41,7 +41,16 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 export type ColorsType = keyof typeof colors;
 
-export type AliasesKeysType = keyof typeof PPD_ALIASES;
+export type AliasesKeysType =
+  | 'data'
+  | 'bindData'
+  | 'selectors'
+  | 'bindSelectors'
+  | 'bindResults'
+  | 'options'
+  | 'beforeTest'
+  | 'runTest'
+  | 'afterTest';
 
 export type ArgumentsType = {
   PPD_ROOT: string;
@@ -428,6 +437,13 @@ export type TreeEntryType = Partial<TreeEntryDataType> & {
 
 export type TreeType = TreeEntryType[];
 
-export type DeepMergeable = {
-  [key: string]: DeepMergeable | DeepMergeable[] | number | string | boolean | null | unknown;
-};
+export type DeepMergeable =
+  | { [key: string]: DeepMergeable }
+  | DeepMergeable[]
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Function
+  | Record<string, unknown>;

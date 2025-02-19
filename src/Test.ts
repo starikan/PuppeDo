@@ -249,7 +249,11 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   const intersectionKeys = Object.keys(dataLocal).filter((v) => Object.keys(selectorsLocal).includes(v));
   if (intersectionKeys.length) {
     intersectionKeys.forEach((v) => {
-      if (!Number.isNaN(dataLocal[v]) && !Number.isNaN(selectorsLocal[v]) && dataLocal[v] !== selectorsLocal[v]) {
+      if (
+        !Number.isNaN(dataLocal[v]) &&
+        !Number.isNaN(selectorsLocal[v]) &&
+        JSON.stringify(dataLocal[v]) !== JSON.stringify(selectorsLocal[v])
+      ) {
         throw new Error(`Some keys in data and selectors intersect. It can corrupt data: '${v}'`);
       }
     });
@@ -442,21 +446,21 @@ export class Test implements TestExtendType {
       }
 
       // Get Data from parent test and merge it with current test
-      this.data = resolveAliases('data', inputs);
+      this.data = resolveAliases<Record<string, string>>('data', inputs);
       this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
-      this.bindData = resolveAliases('bindData', inputs) as Record<string, string>;
+      this.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
       this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
-      this.selectors = resolveAliases('selectors', inputs);
+      this.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
       this.selectorsParent = { ...(this.selectorsParent || {}), ...inputs.selectorsParent };
-      this.bindSelectors = resolveAliases('bindSelectors', inputs) as Record<string, string>;
+      this.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
       this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
-      this.bindResults = resolveAliases('bindResults', inputs) as Record<string, string>;
+      this.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
 
       this.options = {
         ...this.options,
-        ...resolveAliases('options', inputs),
+        ...resolveAliases<Record<string, string>>('options', inputs),
         ...inputs.optionsParent,
       } as Record<string, string | number>;
       this.description = inputs.description || this.description;
@@ -471,6 +475,10 @@ export class Test implements TestExtendType {
       this.frame = this.frame || inputs.frame;
       this.logOptions = logForChild;
       this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
+
+      this.beforeTest = resolveAliases<TestLifecycleFunctionType[]>('beforeTest', inputs);
+      this.runTest = resolveAliases<TestLifecycleFunctionType[]>('runTest', inputs);
+      this.afterTest = resolveAliases<TestLifecycleFunctionType[]>('afterTest', inputs);
 
       try {
         this.plugins.hook('resolveValues', { inputs });

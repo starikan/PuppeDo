@@ -174,7 +174,7 @@ export class Arguments extends Singleton {
       const argsCLI = parseCLI();
 
       return parser(
-        mergeObjects([argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput], true),
+        mergeObjects<Partial<ArgumentsType>>([argsDefault, parser(argsConfig), argsEnv, argsCLI, argsInput], true),
       ) as ArgumentsType;
     }
     return this._args;

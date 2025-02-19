@@ -78,60 +78,99 @@ export function sleep(ms: number): Promise<void> {
  * @returns - The result of the merge.
  */
 export function mergeObjects<T extends DeepMergeable>(objects: T[], uniqueArray = false): T {
-  // Remove duplicates
-  function dedupArray(mergedArray: DeepMergeable[]): DeepMergeable[] {
-    const seen = new Set();
-    const dedupedArray = [];
-    for (const item of mergedArray) {
-      if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
-        // If primitive (or null)
-        if (!seen.has(item)) {
-          seen.add(item);
-          dedupedArray.push(item);
-        }
-      } else {
-        dedupedArray.push(item);
-      }
-    }
-
-    return dedupedArray;
-  }
-
   /**
    * Recursive function for merging objects.
    *
    * @param target - The target object.
    * @param source - The source for merging.
    */
-  function deepMerge(target: DeepMergeable, source: DeepMergeable): void {
-    for (const key of Object.keys(source)) {
-      if (key in source) {
-        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
-          // If the field is an object, recursively merge
-          if (!target[key]) {
-            target[key] = {} as DeepMergeable;
+  function deepMerge(target: DeepMergeable, source: DeepMergeable): DeepMergeable {
+    // Если оба значения являются массивами, объединяем их:
+    if (Array.isArray(target) && Array.isArray(source)) {
+      const merged = target.concat(source);
+      if (uniqueArray) {
+        const seen = new Set();
+        const deduped = [];
+        for (const item of merged) {
+          // Примитивы и null подвергаются дедупликации.
+          if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
+            if (!seen.has(item)) {
+              seen.add(item);
+              deduped.push(item);
+            }
+          } else {
+            deduped.push(item);
           }
-          deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
-        } else if (Array.isArray(source[key])) {
-          // If the field is an array, merge arrays
-          const mergedArray = target[key]
-            ? (target[key] as DeepMergeable[]).concat(source[key] as DeepMergeable[])
-            : (source[key] as DeepMergeable[]);
+        }
+        return deduped;
+      }
+      return merged;
+    }
 
-          target[key] = uniqueArray ? dedupArray(mergedArray) : mergedArray;
-        } else if (source[key] !== undefined) {
-          target[key] = source[key];
+    // Если source является массивом, а target – нет,
+    // то перезаписываем target массивом из source (с опциональной дедупликацией).
+    if (Array.isArray(source)) {
+      if (uniqueArray) {
+        const seen = new Set();
+        const deduped = [];
+        for (const item of source) {
+          if (item === null || (typeof item !== 'object' && typeof item !== 'function')) {
+            if (!seen.has(item)) {
+              seen.add(item);
+              deduped.push(item);
+            }
+          } else {
+            deduped.push(item);
+          }
+        }
+        return deduped;
+      }
+      return source;
+    }
+
+    // Если source – объект (но не массив)
+    if (typeof source === 'object' && source !== null) {
+      // Если target не объект или равен null или является массивом,
+      // то переопределяем target как пустой объект.
+      if (typeof target !== 'object' || target === null || Array.isArray(target)) {
+        target = {};
+      }
+      for (const key of Object.keys(source)) {
+        if (source[key] !== undefined) {
+          // Если значение source по ключу является массивом:
+          if (Array.isArray(source[key])) {
+            if (!Array.isArray(target[key])) {
+              target[key] = [];
+            }
+            target[key] = deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
+          } else if (typeof source[key] === 'object' && source[key] !== null) {
+            if (typeof target[key] !== 'object' || target[key] === null || Array.isArray(target[key])) {
+              target[key] = {};
+            }
+            target[key] = deepMerge(target[key] as DeepMergeable, source[key] as DeepMergeable);
+          } else {
+            target[key] = source[key] as DeepMergeable;
+          }
         }
       }
+      return target;
     }
+
+    // Для примитивов возвращаем значение source
+    return source;
   }
 
-  // Initialize the resulting object
-  const result: DeepMergeable = {};
+  // Инициализируем результат в зависимости от типа первого элемента входного массива
+  let result!: DeepMergeable;
+  if (objects.length > 0) {
+    result = Array.isArray(objects[0]) ? [] : {};
+  } else {
+    result = {};
+  }
 
   // Merge all passed objects
   for (const obj of objects) {
-    deepMerge(result, obj);
+    result = deepMerge(result, obj);
   }
 
   return result as T;
@@ -219,9 +258,12 @@ export const RUNNER_BLOCK_NAMES: TestFunctionsBlockNames[] = ['beforeTest', 'run
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
 
-export const resolveAliases = (alias: AliasesKeysType, inputs: TestExtendType): Record<string, unknown> => {
-  const variants = [...(PPD_ALIASES[alias] || []), alias];
-  const values = (Object.values(pick(inputs, variants)) as Record<string, unknown>[]).map((v) => v || {});
-  const result = mergeObjects(values);
-  return result;
+export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
+  alias: AliasesKeysType,
+  inputs: TestExtendType,
+): T => {
+  const variants = [...(PPD_ALIASES[alias] ?? []), alias];
+  const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
+  const result = values.length ? mergeObjects<T>(values) : [];
+  return result as T;
 };

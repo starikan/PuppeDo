@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { ArgumentsType, LogPipe, RunOptions } from './global.d';
+import { AliasesKeysType, ArgumentsType, LogPipe, RunOptions } from './global.d';
 
 import continueOnError from './Plugins/continueOnError/continueOnError';
 import skipSublingIfResult from './Plugins/skipSublingIfResult/skipSublingIfResult';
@@ -28,7 +28,8 @@ export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
 ];
 
-export const PPD_ALIASES = {
+// todo: error when conflict names
+export const PPD_ALIASES: Record<AliasesKeysType, string[]> = {
   data: ['d', '📋'],
   bindData: [
     'bD',
@@ -96,6 +97,9 @@ export const PPD_ALIASES = {
     'set',
   ],
   options: ['option', 'opt', 'o', '⚙️'],
+  beforeTest: ['agentBefore', 'actionBefore'],
+  runTest: ['agent', 'action'],
+  afterTest: ['agentAfter', 'actionAfter'],
 };
 
 export const argsDefault: ArgumentsType = {
