@@ -28,16 +28,16 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
   return envsId;
 };
 
-const runTest = async (testName: string, envsId: string): Promise<Record<string, unknown>> => {
+const runAgent = async (agentName: string, envsId: string): Promise<Record<string, unknown>> => {
   const { timeStartBigInt } = getTimer();
 
   const { logger } = new Environment().getEnvInstance(envsId);
 
-  await logger.log({ level: 'timer', text: `Test '${testName}' start on '${getNowDateTime()}'` });
+  await logger.log({ level: 'timer', text: `Test '${agentName}' start on '${getNowDateTime()}'` });
 
-  const fullJSON = new Environment().getStruct(envsId, testName);
+  const fullJSON = new Environment().getStruct(envsId, agentName);
   const textDescription = TestStructure.generateDescription(fullJSON);
-  new Environment().setCurrent(envsId, { name: testName });
+  new Environment().setCurrent(envsId, { name: agentName });
 
   new Blocker().reset();
 
@@ -50,7 +50,7 @@ const runTest = async (testName: string, envsId: string): Promise<Record<string,
 
   const testResults = await test();
 
-  await logger.log({ level: 'timer', text: `Test '${testName}' time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
+  await logger.log({ level: 'timer', text: `Test '${agentName}' time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
 
   return testResults;
 };
@@ -90,15 +90,15 @@ export default async function run(
   try {
     const { timeStartBigInt } = getTimer();
 
-    for (const testName of PPD_TESTS) {
-      const testResults = await runTest(testName, envsId);
+    for (const agentName of PPD_TESTS) {
+      const testResults = await runAgent(agentName, envsId);
 
       // TODO: 2022-10-24 S.Starodubov Refactor this? It`s only for self tests
       const stepIds = Object.values(logs)
         .flat()
         .map((s: LogEntry) => s.stepId);
-      logs[testName] = log.filter((v) => !stepIds.includes(v.stepId));
-      results[testName] = testResults;
+      logs[agentName] = log.filter((v) => !stepIds.includes(v.stepId));
+      results[agentName] = testResults;
     }
 
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
