@@ -189,6 +189,17 @@ export const blankSocket: SocketType = {
   },
 };
 
+/**
+ * Returns an object with time information, including start and end times as a date and BigInt,
+ * the difference between them in seconds, and a string representation of this difference.
+ *
+ * @param {Object} [options] - Optional parameters.
+ * @param {bigint} [options.timeStartBigInt] - BigInt for the start of the time count.
+ * @param {bigint} [options.timeEndBigInt] - BigInt for the end of the time count.
+ * @param {Date} [options.timeStart] - Start date of the time count.
+ * @param {Date} [options.timeEnd] - End date of the time count.
+ * @returns {Object} - Object with time information.
+ */
 export const getTimer = ({
   timeStartBigInt,
   timeEndBigInt,

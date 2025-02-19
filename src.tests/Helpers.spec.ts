@@ -1,4 +1,4 @@
-import { sleep, paintString, blankSocket, mergeObjects, deepMergeField } from '../src/Helpers';
+import { sleep, paintString, blankSocket, mergeObjects, deepMergeField, getTimer } from '../src/Helpers';
 
 test('Helpers.sleep', async () => {
   const start = process.hrtime.bigint();
@@ -396,5 +396,81 @@ describe('Helpers.deepMergeField', () => {
     // If the value in obj2 is undefined, the value from obj1 remains.
     const result = deepMergeField(obj1, obj2, ['a']);
     expect(result).toEqual({ a: { x: 1 } });
+  });
+});
+
+describe('Helpers.getTimer', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('Возвращает корректные данные при передаче явных параметров (delta ≤ 60)', () => {
+    const timeStartBigInt = BigInt(1_000_000_000); // 1 секунда
+    const timeEndBigInt = BigInt(3_000_000_000); // 3 секунды → delta = 2 сек.
+
+    const timeStart = new Date('2021-01-01T00:00:00.000Z');
+    const timeEnd = new Date('2021-01-01T00:00:02.000Z');
+
+    const result = getTimer({
+      timeStartBigInt,
+      timeEndBigInt,
+      timeStart,
+      timeEnd,
+    });
+
+    expect(result.timeStart).toEqual(timeStart);
+    expect(result.timeEnd).toEqual(timeEnd);
+    expect(result.timeStartBigInt).toBe(timeStartBigInt);
+    expect(result.timeEndBigInt).toBe(timeEndBigInt);
+    expect(result.delta).toBeCloseTo(2, 3);
+    expect(result.deltaStr).toBe('2.000 s.');
+  });
+
+  test('Возвращает корректные данные при передаче явных параметров (delta > 60)', () => {
+    const timeStartBigInt = BigInt(0);
+    const timeEndBigInt = BigInt(61_000_000_000); // 61 секунда → delta = 61 сек.
+
+    const timeStart = new Date('2021-01-01T00:00:00.000Z');
+    const timeEnd = new Date('2021-01-01T00:01:01.000Z');
+
+    const result = getTimer({
+      timeStartBigInt,
+      timeEndBigInt,
+      timeStart,
+      timeEnd,
+    });
+
+    expect(result.timeStart).toEqual(timeStart);
+    expect(result.timeEnd).toEqual(timeEnd);
+    expect(result.timeStartBigInt).toBe(timeStartBigInt);
+    expect(result.timeEndBigInt).toBe(timeEndBigInt);
+    expect(result.delta).toBeCloseTo(61, 3);
+    // 61 секунда = 1 минута и 1 секунда
+    expect(result.deltaStr).toBe('1 min. 1.000 s.');
+  });
+
+  test('Работает корректно с дефолтными параметрами (используем замоканные значения)', () => {
+    // Замокаем process.hrtime.bigint, чтобы вернуть предсказуемые значения
+    const hrtimeBigIntMock = jest
+      .spyOn(process.hrtime, 'bigint')
+      .mockReturnValueOnce(BigInt(5_000_000_000))
+      .mockReturnValueOnce(BigInt(8_000_000_000)); // Разница = 3 сек.
+
+    // Фиксируем текущее время до вызова функции
+    const now = new Date();
+
+    const result = getTimer();
+
+    expect(result.timeStartBigInt).toBe(BigInt(5_000_000_000));
+    expect(result.timeEndBigInt).toBe(BigInt(8_000_000_000));
+    expect(result.delta).toBeCloseTo(3, 3);
+    expect(result.deltaStr).toBe('3.000 s.');
+    expect(result.timeStart).toBeInstanceOf(Date);
+    expect(result.timeEnd).toBeInstanceOf(Date);
+
+    // Проверяем, что timeStart и timeEnd примерно равны текущему времени
+    const nowAfter = new Date();
+    expect(result.timeStart.getTime()).toBeGreaterThanOrEqual(now.getTime());
+    expect(result.timeEnd.getTime()).toBeLessThanOrEqual(nowAfter.getTime() + 10);
   });
 });
