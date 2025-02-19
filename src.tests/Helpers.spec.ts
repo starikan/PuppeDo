@@ -82,4 +82,96 @@ describe('Helpers.mergeObjects', () => {
     const result = mergeObjects([obj1, obj2, obj3]);
     expect(result).toEqual({ a: 2, b: 2, c: 3 });
   });
+  test('should return an empty object if an empty array is passed', () => {
+    const result = mergeObjects([]);
+    expect(result).toEqual({});
+  });
+
+  test('should correctly merge simple objects', () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 3, c: 4 };
+    const result = mergeObjects([obj1, obj2]);
+    expect(result).toEqual({ a: 1, b: 3, c: 4 });
+  });
+
+  test('should correctly merge nested objects', () => {
+    const obj1 = { a: { b: 1 } };
+    const obj2 = { a: { c: 2 } };
+    const result = mergeObjects([obj1, obj2]);
+    expect(result).toEqual({ a: { b: 1, c: 2 } });
+  });
+
+  test('should merge arrays without deduplication when uniqueArray = false', () => {
+    const obj1 = { arr: [1, 2, 3] };
+    const obj2 = { arr: [3, 4, 1] };
+    const result = mergeObjects([obj1, obj2], false);
+    expect(result).toEqual({ arr: [1, 2, 3, 3, 4, 1] });
+  });
+
+  test('should merge arrays with deduplication when uniqueArray = true', () => {
+    const obj1 = { arr: [1, 2, 3, 2] };
+    const obj2 = { arr: [3, 4, 1] };
+    const result = mergeObjects([obj1, obj2], true);
+    expect(result).toEqual({ arr: [1, 2, 3, 4] });
+  });
+
+  test('should merge arrays containing primitives and objects without deduplication for objects', () => {
+    const sharedObj = { key: 'value' };
+    const obj1 = { arr: [1, sharedObj] };
+    const obj2 = { arr: [1, { key: 'value' }, sharedObj] };
+
+    // When uniqueArray = false – all elements are concatenated
+    const resultUniqueFalse = mergeObjects([obj1, obj2], false);
+    expect(resultUniqueFalse.arr).toEqual([1, sharedObj, 1, { key: 'value' }, sharedObj]);
+
+    // When uniqueArray = true – primitives are deduplicated, objects remain
+    const resultUniqueTrue = mergeObjects([obj1, obj2], true);
+    expect(resultUniqueTrue.arr.length).toBe(4);
+    expect(resultUniqueTrue.arr).toEqual([1, sharedObj, { key: 'value' }, sharedObj]);
+  });
+
+  test('should replace false (falsy) values of the target object with objects from the source for recursive merge', () => {
+    const obj1 = { a: 0, b: false, c: '' };
+    const obj2 = { a: { nested: 123 }, b: { nested: 456 }, c: { nested: 789 } };
+    const result = mergeObjects([obj1, obj2]);
+    expect(result).toEqual({
+      a: { nested: 123 },
+      b: { nested: 456 },
+      c: { nested: 789 },
+    });
+  });
+
+  test('should not overwrite a value if the source value is undefined', () => {
+    const obj1 = { a: 1 };
+    const obj2 = { a: undefined };
+    const result = mergeObjects([obj1, obj2]);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('should correctly merge arrays containing null with deduplication', () => {
+    const obj1 = { arr: [null, 1, null] };
+    const obj2 = { arr: [null, 1, 2] };
+    const result = mergeObjects([obj1, obj2], true);
+    expect(result).toEqual({ arr: [null, 1, 2] });
+  });
+
+  test('should correctly merge arrays with nested objects and primitives', () => {
+    const obj1 = { a: { arr: [1, { b: 1 }] } };
+    const obj2 = { a: { arr: [2, { b: 2 }] } };
+    const result = mergeObjects([obj1, obj2], true);
+    expect(result).toEqual({ a: { arr: [1, { b: 1 }, 2, { b: 2 }] } });
+  });
+
+  test('should preserve functions in arrays without deduplication', () => {
+    const f1 = () => {};
+    const f2 = () => {};
+    const obj1 = { arr: [f1] };
+    const obj2 = { arr: [f1, f2] };
+
+    const resultFalse = mergeObjects([obj1, obj2], false);
+    expect(resultFalse.arr).toEqual([f1, f1, f2]);
+
+    const resultTrue = mergeObjects([obj1, obj2], true);
+    expect(resultTrue.arr).toEqual([f1, f1, f2]);
+  });
 });
