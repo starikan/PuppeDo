@@ -70,7 +70,7 @@ export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
   return result;
 };
 
-export default class TestsContent extends Singleton {
+export default class AgentContent extends Singleton {
   // TODO: Сделать геттер а это поле приватным
   public allData!: AllDataType;
 
@@ -171,19 +171,19 @@ export default class TestsContent extends Singleton {
   };
 
   /**
-   * Resolving the test file, checking for the presence of a name and test type.
+   * Resolving the agent file, checking for the presence of a name and test type.
    *
-   * @param testContent - Partial YAML test type.
-   * @param filePath - Path to the test file.
-   * @returns Returns the full YAML test type, Runner type, or Data type.
+   * @param agentContent - Partial YAML agent type.
+   * @param filePath - Path to the agent file.
+   * @returns Returns the full YAML agent type, Runner type, or Data type.
    */
   static fileResolver = (
-    testContent: Partial<TestTypeYaml>,
+    agentContent: Partial<TestTypeYaml>,
     filePath: string,
   ): Required<TestTypeYaml> | RunnerType | DataType => {
     const { PPD_IGNORE_TESTS_WITHOUT_NAME } = new Arguments().args;
 
-    const { name } = testContent;
+    const { name } = agentContent;
 
     if (!name && !PPD_IGNORE_TESTS_WITHOUT_NAME) {
       throw new Error('Every test need name');
@@ -195,7 +195,7 @@ export default class TestsContent extends Singleton {
 
     const collect = {
       ...{ name },
-      ...testContent,
+      ...agentContent,
       ...{ testFile: filePath },
     };
 
@@ -215,25 +215,25 @@ export default class TestsContent extends Singleton {
    */
   getAllData(force = false): AllDataType {
     if (force || !this.allData) {
-      const allFiles = TestsContent.getPaths();
+      const allFiles = AgentContent.getPaths();
 
       const allContent: Array<TestType | RunnerType | DataType> = allFiles
-        .map((filePath) => TestsContent.readFile(filePath).map((v) => TestsContent.fileResolver(v, filePath)))
+        .map((filePath) => AgentContent.readFile(filePath).map((v) => AgentContent.fileResolver(v, filePath)))
         .flat();
 
-      const agents: Array<TestType> = TestsContent.checkDuplicates(
+      const agents: Array<TestType> = AgentContent.checkDuplicates(
         allContent.filter((v): v is TestType => !['data', 'selectors', 'runner'].includes(v.type)),
       );
-      const data: Array<DataType> = TestsContent.checkDuplicates(
+      const data: Array<DataType> = AgentContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'data'),
       );
-      const selectors: Array<DataType> = TestsContent.checkDuplicates(
+      const selectors: Array<DataType> = AgentContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'selectors'),
       );
-      const runners: Array<RunnerType> = TestsContent.checkDuplicates(
+      const runners: Array<RunnerType> = AgentContent.checkDuplicates(
         allContent.filter((v): v is RunnerType => v.type === 'runner'),
       );
-      const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
+      const runnersResolved = AgentContent.resolveRunners(runners, data, selectors);
 
       this.allData = { allFiles, allContent, agents, runners: runnersResolved, data, selectors };
     }

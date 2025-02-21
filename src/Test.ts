@@ -3,7 +3,7 @@ import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
-import TestsContent from './TestContent';
+import AgentContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
 import {
@@ -225,7 +225,7 @@ const fetchData = (
   runner: Runner,
 ): { dataLocal: Record<string, unknown>; selectorsLocal: Record<string, unknown> } => {
   const { PPD_DATA, PPD_SELECTORS } = new Arguments().args;
-  const { data: allData, selectors: allSelectors } = new TestsContent().allData;
+  const { data: allData, selectors: allSelectors } = new AgentContent().allData;
 
   const dataExtResolved = dataExt.reduce((collect, v) => {
     const extData = allData.find((d) => v === d.name);
@@ -613,7 +613,7 @@ export class Test implements TestExtendType {
           description: descriptionResolved,
           descriptionExtend: this.descriptionExtend,
           socket: this.socket,
-          allData: new TestsContent().allData,
+          allData: new AgentContent().allData,
           plugins: this.plugins,
           breadcrumbs: this.breadcrumbs,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно

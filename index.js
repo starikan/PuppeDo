@@ -5,7 +5,7 @@ const {
   errorHandler,
   TestStructure,
   getTest,
-  TestsContent,
+  AgentContent,
   Environment,
   Arguments,
   Blocker,
@@ -31,7 +31,12 @@ if (!module.parent) {
     errorHandler,
     TestStructure,
     getTest,
-    TestsContent,
+    AgentContent,
+
+    /**
+     * @deprecated
+     */
+    TestsContent: AgentContent,
     Environment,
     Arguments,
     Blocker,

@@ -2,7 +2,7 @@ import run from './Api';
 import { errorHandler } from './Error';
 import TestStructure from './TestStructure';
 import getTest from './getTest';
-import TestsContent from './TestContent';
+import AgentContent from './TestContent';
 import { Arguments } from './Arguments';
 import { argsDefault } from './Defaults';
 import Blocker from './Blocker';
@@ -19,7 +19,12 @@ export default {
   errorHandler,
   TestStructure,
   getTest,
-  TestsContent,
+  AgentContent,
+
+  /**
+   * @deprecated
+   */
+  TestsContent: AgentContent,
   Environment,
   Arguments,
   Blocker,

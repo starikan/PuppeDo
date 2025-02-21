@@ -1,5 +1,5 @@
 import fs from 'fs';
-import TestsContent from '../src/TestContent';
+import AgentContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 import { DataType, EnvBrowserType, RunnerType, TestExtendType } from '../src/global.d';
 
@@ -28,14 +28,14 @@ describe('TestContent', () => {
   });
 
   test('Getting data', () => {
-    const { allData } = new TestsContent();
-    const { allData: allData2 } = new TestsContent();
+    const { allData } = new AgentContent();
+    const { allData: allData2 } = new AgentContent();
     expect(allData).toBeDefined();
     expect(allData).toEqual(allData2);
   });
 
   test('getAllData', () => {
-    const allData = new TestsContent().getAllData();
+    const allData = new AgentContent().getAllData();
     expect(allData).toBeDefined();
     expect(allData.allFiles).toBeDefined();
     expect(allData.allContent).toBeDefined();
@@ -56,7 +56,7 @@ describe('TestContent', () => {
       true,
     );
 
-    const allData = new TestsContent(true).getAllData(true);
+    const allData = new AgentContent(true).getAllData(true);
     expect(allData.allFiles).toEqual([]);
     expect(allData.allContent).toEqual([]);
     expect(allData.agents).toEqual([]);
@@ -66,7 +66,7 @@ describe('TestContent', () => {
   });
 });
 
-describe('TestsContent.resolveRunners (AI generated)', () => {
+describe('AgentContent.resolveRunners (AI generated)', () => {
   it('should merge data from extended runners', () => {
     const runners: RunnerType[] = [
       {
@@ -90,7 +90,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
     expect(extendedRunner).toEqual({
@@ -125,7 +125,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, data, []);
+    const result = AgentContent.resolveRunners(runners, data, []);
     expect(result[0].data).toEqual({
       original: 'value',
       extended: 'value',
@@ -152,7 +152,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], selectors);
+    const result = AgentContent.resolveRunners(runners, [], selectors);
     expect(result[0].selectors).toEqual({
       original: '#selector1',
       extended: '#selector2',
@@ -170,7 +170,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(runnersMissing, [], []);
+      AgentContent.resolveRunners(runnersMissing, [], []);
     }).toThrow("PuppeDo can't resolve extended runner 'nonExistentRunner' in runner 'runner'");
 
     const dataExt: RunnerType[] = [
@@ -183,7 +183,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(dataExt, [], []);
+      AgentContent.resolveRunners(dataExt, [], []);
     }).toThrow("PuppeDo can't resolve extended data 'nonExistentData' in runner 'runner'");
 
     const selectorsExt: RunnerType[] = [
@@ -196,7 +196,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
     ];
 
     expect(() => {
-      TestsContent.resolveRunners(selectorsExt, [], []);
+      AgentContent.resolveRunners(selectorsExt, [], []);
     }).toThrow("PuppeDo can't resolve extended selectors 'nonExistentSelectors' in runner 'runner'");
   });
 
@@ -212,7 +212,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     expect(result).toEqual(runners);
   });
 
@@ -274,7 +274,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const finalRunner = result.find((r) => r.name === 'finalRunner');
 
     expect(finalRunner).toEqual({
@@ -320,7 +320,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
     // Check that missing fields are initialized with empty objects
@@ -362,7 +362,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
     expect(extendedRunner?.data).toEqual({
@@ -395,7 +395,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
     expect(extendedRunner?.browser).toEqual({
@@ -414,7 +414,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     expect(result).toEqual(runners);
   });
 
@@ -431,7 +431,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     expect(result).toEqual(runners);
   });
 
@@ -472,7 +472,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
 
     expect(result.find((r) => r.name === 'extendedRunner')?.description).toBe('Extended runner -> Base runner');
     expect(result.find((r) => r.name === 'extendedRunnerNoDesc')?.description).toBe(' -> ');
@@ -524,7 +524,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, data, []);
+    const result = AgentContent.resolveRunners(runners, data, []);
 
     // Check case when runner has no data
     expect(result.find((r) => r.name === 'runner1')?.data).toEqual({
@@ -567,7 +567,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
       },
     ];
 
-    const result = TestsContent.resolveRunners(runners, [], []);
+    const result = AgentContent.resolveRunners(runners, [], []);
     const extendedRunner = result.find((r) => r.name === 'extendedRunner');
 
     expect(extendedRunner?.browser).toEqual({
@@ -581,7 +581,7 @@ describe('TestsContent.resolveRunners (AI generated)', () => {
   });
 });
 
-describe('TestsContent.checkDuplicates (AI generated)', () => {
+describe('AgentContent.checkDuplicates (AI generated)', () => {
   // Base test object
   const createTestObject = (name: string, testFile: string): TestExtendType => ({
     type: 'atom',
@@ -631,7 +631,7 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
       createTestObject('test3', 'file3.yaml'),
     ];
 
-    const result = TestsContent.checkDuplicates(tests);
+    const result = AgentContent.checkDuplicates(tests);
     expect(result).toEqual(tests);
   });
 
@@ -642,7 +642,7 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
       createTestObject('', 'file3.yaml'),
     ];
 
-    expect(() => TestsContent.checkDuplicates(tests)).toThrow(
+    expect(() => AgentContent.checkDuplicates(tests)).toThrow(
       "There is blank 'name' value in files:\nfile1.yaml\nfile3.yaml",
     );
   });
@@ -653,7 +653,7 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
       { ...createTestObject('test1', ''), testFile: undefined },
     ];
 
-    const result = TestsContent.checkDuplicates(tests);
+    const result = AgentContent.checkDuplicates(tests);
     expect(result).toEqual(tests);
   });
 
@@ -665,7 +665,7 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
       createTestObject('test2', 'file4.yaml'),
     ];
 
-    expect(() => TestsContent.checkDuplicates(tests)).toThrow(
+    expect(() => AgentContent.checkDuplicates(tests)).toThrow(
       "There is duplicates of 'atom':\n- Name: 'test1'.\n    * 'file1.yaml'\n    * 'file2.yaml'\n\n- Name: 'test2'.\n    * 'file3.yaml'\n    * 'file4.yaml'\n",
     );
   });
@@ -681,24 +681,24 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
       { name: 'data2', type: 'data', testFile: 'file2.yaml', data: {} },
     ];
 
-    expect(TestsContent.checkDuplicates(runnerTests)).toEqual(runnerTests);
-    expect(TestsContent.checkDuplicates(dataTests)).toEqual(dataTests);
+    expect(AgentContent.checkDuplicates(runnerTests)).toEqual(runnerTests);
+    expect(AgentContent.checkDuplicates(dataTests)).toEqual(dataTests);
   });
 
   it('should pass empty array', () => {
-    const result = TestsContent.checkDuplicates([]);
+    const result = AgentContent.checkDuplicates([]);
     expect(result).toEqual([]);
   });
 
   it('should handle single element correctly', () => {
     const tests = [createTestObject('test1', 'file1.yaml')];
-    const result = TestsContent.checkDuplicates(tests);
+    const result = AgentContent.checkDuplicates(tests);
     expect(result).toEqual(tests);
   });
 });
 
-describe('TestsContent.getAllData (AI generated)', () => {
-  let testsContent: TestsContent;
+describe('AgentContent.getAllData (AI generated)', () => {
+  let agentContent: AgentContent;
 
   const DEFAULT_ARGS = {
     PPD_IGNORE_TESTS_WITHOUT_NAME: false,
@@ -733,18 +733,18 @@ describe('TestsContent.getAllData (AI generated)', () => {
   };
 
   beforeEach(() => {
-    testsContent = new TestsContent();
+    agentContent = new AgentContent();
     jest.clearAllMocks();
   });
 
   test('should initialize allData when reInit is true', () => {
-    const allData = testsContent.getAllData(true);
+    const allData = agentContent.getAllData(true);
     expect(allData).toBeDefined();
   });
 
   test('should not reinitialize allData if it already exists', () => {
-    testsContent.getAllData(true);
-    const allData = testsContent.getAllData();
+    agentContent.getAllData(true);
+    const allData = agentContent.getAllData();
     expect(allData).toBeDefined();
   });
 
@@ -756,7 +756,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ name: '' }]));
 
-    expect(() => testsContent.getAllData()).not.toThrow();
+    expect(() => agentContent.getAllData()).not.toThrow();
   });
 
   test('should resolve runners correctly', () => {
@@ -775,7 +775,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
       { name: 'selector1', type: 'selectors', testFile: 'test.yaml', data: { key: 'value' } },
     ];
 
-    const resolvedRunners = TestsContent.resolveRunners(runners, data, selectors);
+    const resolvedRunners = AgentContent.resolveRunners(runners, data, selectors);
     expect(resolvedRunners).toHaveLength(1);
     expect(resolvedRunners[0].data).toEqual({ key: 'value' });
     expect(resolvedRunners[0].selectors).toEqual({ key: 'value' });
@@ -784,7 +784,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
   it('should not read file if it does not exist', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
 
-    const result = testsContent.getAllData();
+    const result = agentContent.getAllData();
 
     expect(result).toEqual({
       allContent: [],

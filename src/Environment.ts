@@ -1,7 +1,7 @@
 import os from 'os';
 import { execSync, spawnSync } from 'child_process';
 import { blankSocket, generateId } from './Helpers';
-import TestsContent from './TestContent';
+import AgentContent from './TestContent';
 import { Log, LogOptions } from './Log';
 import {
   BrowserFrame,
@@ -60,7 +60,7 @@ export class Runners {
 
     if (name) {
       if (!this.runners[name]) {
-        const { runners } = new TestsContent().allData;
+        const { runners } = new AgentContent().allData;
         const runnerFromFile = runners.find((v) => v.name === name);
         if (runnerFromFile) {
           this.runners[name] = new Runner(JSON.parse(JSON.stringify(runnerFromFile)));

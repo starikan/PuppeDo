@@ -1,4 +1,4 @@
-import TestsContent, { BLANK_TEST, resolveTest } from './TestContent';
+import AgentContent, { BLANK_TEST, resolveTest } from './TestContent';
 
 import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './global.d';
 import { generateId, deepMergeField } from './Helpers';
@@ -60,7 +60,7 @@ export default class TestStructure {
   }
 
   static getAgentRaw(name: string): Required<TestTypeYaml> {
-    const { agents } = new TestsContent().allData;
+    const { agents } = new AgentContent().allData;
     const agentSource = agents.find((v) => v.name === name);
 
     if (!agentSource) {
