@@ -49,6 +49,15 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+
+  // todo: e2e test
+  const duplicateKeys = PPD_LIFE_CYCLE_FUNCTIONS.filter((key) => Object.keys(BLANK_TEST).includes(key));
+  if (duplicateKeys.length) {
+    throw new Error(
+      `PPD_LIFE_CYCLE_FUNCTIONS contains keys that duplicate BLANK_TEST keys: ${duplicateKeys.join(', ')}`,
+    );
+  }
+
   const result = {
     ...BLANK_TEST,
     ...PPD_LIFE_CYCLE_FUNCTIONS.reduce((s, v) => ({ ...s, [v]: [] as TestExtendType[] }), {}),

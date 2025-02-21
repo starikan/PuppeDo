@@ -6,7 +6,7 @@ data:
 dataExt:
   - dataExtMain
 
-beforeTest:
+beforeRun:
   - runnerSwitch:
       bindData: { runnerName: myEnv }
 
@@ -14,7 +14,7 @@ beforeTest:
 #   - runnerClose:
 #       bindData: { runnerName: myEnv }
 
-runTest:
+run:
   - initData:
       const:
         directValue: direct
@@ -22,7 +22,7 @@ runTest:
 
   - case:
       description: Colored Case atom
-      runTest:
+      run:
         - goTo:
             bindDescription: "'Going on page ' + url"
             bD: { url: baseUrl }
@@ -91,7 +91,7 @@ runTest:
       logOptions:
         textColor: black
         backgroundColor: white
-      runTest:
+      run:
         - clickSelector:
             bS: { selector: nested.mainInput }
 

@@ -128,7 +128,7 @@ export const argsDefault: ArgumentsType = {
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
   PPD_ALIASES,
-  PPD_LIFE_CYCLE_FUNCTIONS: ['beforeTest', 'runTest', 'afterTest'],
+  PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
 };
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {

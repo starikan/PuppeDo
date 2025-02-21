@@ -55,78 +55,78 @@ Main test (main)
 00:00:00.000 - test   [32m(main) Main test[0m
                        [36m👣[main][0m
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
-                      |    [36m👣[main -> beforeTest[0].runnerSwitch][0m
+                      |    [36m👣[main -> beforeRun[0].runnerSwitch][0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
                       |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
-                      |    [36m👣[main -> runTest[0].initData][0m
+                      |    [36m👣[main -> run[0].initData][0m
                       |   🕝: 00.000 s. (initData)
 00:00:00.000 - test   |   [47m[30m(case) Colored Case atom[0m[0m
-                      |    [36m👣[main -> runTest[1].case][0m
+                      |    [36m👣[main -> run[1].case][0m
 00:00:00.000 - test   |   |   [32m(goTo) Going on page http://localhost:3000/[0m
-                      |   |    [36m👣[main -> runTest[1].case -> runTest[0].goTo][0m
+                      |   |    [36m👣[main -> run[1].case -> run[0].goTo][0m
 00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
                       |   |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
                       |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (goTo)
 00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> runTest[1].case -> runTest[1].checkSelector][0m
+                      |   |    [36m👣[main -> run[1].case -> run[1].checkSelector][0m
 00:00:00.000 - test   |   |    [36m🖼 screenshot: [screenshot_path][0m
                       |   |   🕝: 00.000 s. (checkSelector)
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [32m(blank) Input some text in field INPUT[0m
-                      |    [36m👣[main -> runTest[2].blank][0m
+                      |    [36m👣[main -> run[2].blank][0m
 00:00:00.000 - raw    |   |   Type in selector: '#main-input', text: 'myDataBinded'
                       |   |   [36m📋 (data): {"text":"myDataBinded"}[0m
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [47m[30m(blank) Nested click #main-input[0m[0m
-                      |    [36m👣[main -> runTest[3].blank][0m
+                      |    [36m👣[main -> run[3].blank][0m
 00:00:00.000 - test   |   |   [41m[32m(clickSelector) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> runTest[3].blank -> runTest[0].clickSelector][0m
+                      |   |    [36m👣[main -> run[3].blank -> run[0].clickSelector][0m
                       |   |   🕝: 00.000 s. (clickSelector)
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [0m(blank) Set result with colors[0m
-                      |    [36m👣[main -> runTest[5].blank][0m
+                      |    [36m👣[main -> run[5].blank][0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(typeInput) Wait selector: '#main-input' and type text: '' in input[0m
-                      |    [36m👣[main -> runTest[6].typeInput][0m
+                      |    [36m👣[main -> run[6].typeInput][0m
                       |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - test   |   [32m(typeInput) Wait selector: '#main-input' and type text: '0' in input[0m
-                      |    [36m👣[main -> runTest[7].typeInput][0m
+                      |    [36m👣[main -> run[7].typeInput][0m
                       |    [36m🔆 repeats left: 1[0m
                       |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - test   |   [32m(typeInput) Wait selector: '#main-input' and type text: '1' in input[0m
-                      |    [36m👣[main -> runTest[7].typeInput][0m
+                      |    [36m👣[main -> run[7].typeInput][0m
                       |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - raw    |   [34mSkip with disable: (typeInput) TODO: Fill description[0m
 00:00:00.000 - test   |   [32m(getText) Get text from selector: '#main-input'[0m
-                      |    [36m👣[main -> runTest[9].getText][0m
+                      |    [36m👣[main -> run[9].getText][0m
 00:00:00.000 - raw    |   |   Get text: '01' from selector: '#main-input'
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
                       |   |   [36m↩️ (results): {"result":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
-                      |    [36m👣[main -> runTest[10].clickWithNestedWait][0m
+                      |    [36m👣[main -> run[10].clickWithNestedWait][0m
 00:00:00.000 - test   |   |   [32m(waitForSelector) Wait for: '#main-input'[0m
-                      |   |    [36m👣[main -> runTest[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
+                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
 00:00:00.000 - raw    |   |   |   Wait for selector: '#main-input'
                       |   |   |   [36m📌☸️ (bS): {"selector":"mainInputInside"}[0m
                       |   |   |   [36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
                       |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (waitForSelector)
 00:00:00.000 - test   |   |   [41m[32m(clickSelector) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> runTest[10].clickWithNestedWait -> runTest[1].clickSelector][0m
+                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> runTest[1].clickSelector][0m
                       |   |   🕝: 00.000 s. (clickSelector)
                       |   🕝: 00.000 s. (clickWithNestedWait)
 00:00:00.000 - info   |   [36mSkip with IF expr '1 !== 1' === 'false'[0m
-                      |    [36m👣[main -> runTest[11].waitTime][0m
+                      |    [36m👣[main -> run[11].waitTime][0m
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
-                      |    [36m👣[main -> runTest[12].getText][0m
+                      |    [36m👣[main -> run[12].getText][0m
                       |    [36m🔆 repeats left: 2[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
                       |   |   [36m☸️ (selectors): {"selector":"title"}[0m
@@ -134,7 +134,7 @@ Main test (main)
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
-                      |    [36m👣[main -> runTest[12].getText][0m
+                      |    [36m👣[main -> run[12].getText][0m
                       |    [36m🔆 repeats left: 1[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
                       |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
@@ -143,7 +143,7 @@ Main test (main)
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
-                      |    [36m👣[main -> runTest[12].getText][0m
+                      |    [36m👣[main -> run[12].getText][0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
                       |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
@@ -151,46 +151,46 @@ Main test (main)
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(blank) Some data function[0m
-                      |    [36m👣[main -> runTest[13].blank][0m
+                      |    [36m👣[main -> run[13].blank][0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(blank) Bind data from function[0m
-                      |    [36m👣[main -> runTest[14].blank][0m
+                      |    [36m👣[main -> run[14].blank][0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(typeInput) Input some text in field INPUT[0m
-                      |    [36m👣[main -> runTest[15].typeInput][0m
+                      |    [36m👣[main -> run[15].typeInput][0m
 00:00:00.000 - test   |    [36m🖼 screenshot: [screenshot_path][0m
 00:00:00.000 - test   |    [36m🖼 screenshot: [screenshot_path][0m
                       |   🕝: 00.000 s. (typeInput)
 00:00:00.000 - test   |   [41m[37m(todo) Make awesome test[0m[0m
-                      |    [36m👣[main -> runTest[16].todo][0m
+                      |    [36m👣[main -> run[16].todo][0m
                       |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   [32m(subTest) Ignor this inlineJS. Because subTest have run section[0m
-                      |    [36m👣[main -> runTest[17].subTest][0m
+                      |    [36m👣[main -> run[17].subTest][0m
 00:00:00.000 - test   |   |   [41m[32m(loop) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop][0m
+                      |   |    [36m👣[main -> run[17].subTest -> runTest[0].loop][0m
 00:00:00.000 - test   |   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
-                      |   |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop -> runTest[0].todo][0m
+                      |   |   |    [36m👣[main -> run[17].subTest -> runTest[0].loop -> runTest[0].todo][0m
                       |   |   |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
-                      |   |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop -> runTest[1].todo][0m
+                      |   |   |    [36m👣[main -> run[17].subTest -> runTest[0].loop -> runTest[1].todo][0m
                       |   |   |   🕝: 00.000 s. (todo)
                       |   |   🕝: 00.000 s. (loop)
 00:00:00.000 - test   |   |   [41m[37m(todo) Make awesome sub test[0m[0m
-                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[1].todo][0m
+                      |   |    [36m👣[main -> run[17].subTest -> runTest[1].todo][0m
                       |   |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[2].todo][0m
+                      |   |    [36m👣[main -> run[17].subTest -> runTest[2].todo][0m
                       |   |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   |   [32m(test) Make awesome sub test 2[0m
-                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[3].test][0m
+                      |   |    [36m👣[main -> run[17].subTest -> runTest[3].test][0m
                       |   |   🕝: 00.000 s. (test)
                       |   🕝: 00.000 s. (subTest)
 00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
-                      |    [36m👣[main -> runTest[18].blank][0m
+                      |    [36m👣[main -> run[18].blank][0m
                       |   |   [41m⌛: 00.000 s.[0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
-                      |    [36m👣[main -> runTest[19].blank][0m
+                      |    [36m👣[main -> run[19].blank][0m
                       |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (main)
 00:00:00.000 - timer  Test 'main' time 🕝: 00.000 s.
