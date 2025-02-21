@@ -300,7 +300,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 export class Test {
   name: string;
   envsId: string;
-  type: string;
   needData: string[];
   needSelectors: string[];
   needEnvParams: string[];
@@ -354,15 +353,18 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
-  agent!: TestExtendType;
+  agent: Partial<TestExtendType> = {
+    type: '',
+  };
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
     this.plugins.hook('initValues', { initValues });
 
+    this.agent.type = initValues.type ?? this.agent.type;
+
     this.name = initValues.name ?? '';
     this.envsId = initValues.envsId ?? '';
-    this.type = initValues.type ?? '';
     this.needData = initValues.needData ?? [];
     this.needSelectors = initValues.needSelectors ?? [];
     this.needEnvParams = initValues.needEnvParams ?? [];
@@ -424,8 +426,7 @@ export class Test {
         PPD_LOG_STEPID,
       } = { ...new Arguments().args, ...argsRedefine };
 
-      // TODO: Выяснить в чем туту дело this.agent.type === 'atom'
-      this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
+      this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
       if (this.debug) {
         console.log(this);
         // eslint-disable-next-line no-debugger
