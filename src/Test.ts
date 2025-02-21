@@ -76,7 +76,7 @@ export const runScriptInContext = (
   return result;
 };
 
-const checkNeeds = (needs: string[], data: Record<string, unknown>, testName: string): boolean => {
+const checkNeeds = (needs: string[], data: Record<string, unknown>, agentName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
   needs.forEach((d) => {
@@ -84,7 +84,7 @@ const checkNeeds = (needs: string[], data: Record<string, unknown>, testName: st
     const keysDataIncome = new Set(typeof d === 'string' ? [d] : d);
     const intersectionData = new Set([...keysData].filter((x) => keysDataIncome.has(x)));
     if (!intersectionData.size) {
-      throw new Error(`Error: can't find data parameter "${d}" in ${testName} test`);
+      throw new Error(`Error: can't find data parameter "${d}" in ${agentName} test`);
     }
   });
   return true;
@@ -299,9 +299,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test {
-  needData: string[];
-  needSelectors: string[];
-  needEnvParams: string[];
   dataParent!: Record<string, unknown>;
   selectorsParent!: Record<string, unknown>;
   options: Record<string, string | number>;
@@ -356,6 +353,9 @@ export class Test {
     type: 'agent',
     envsId: '',
     stepId: '',
+    needData: [],
+    needSelectors: [],
+    needEnvParams: [],
   };
 
   constructor(initValues: TestExtendType) {
@@ -364,14 +364,10 @@ export class Test {
 
     // TODO: Нужна какая то проверка тут initValues
 
-    this.agent.name = initValues.name ?? this.agent.name;
-    this.agent.type = initValues.type ?? this.agent.type;
-    this.agent.envsId = initValues.envsId ?? this.agent.envsId;
-    this.agent.stepId = initValues.stepId ?? this.agent.stepId;
+    for (const key of Object.keys(this.agent)) {
+      this.agent[key] = initValues[key] ?? this.agent[key];
+    }
 
-    this.needData = initValues.needData ?? [];
-    this.needSelectors = initValues.needSelectors ?? [];
-    this.needEnvParams = initValues.needEnvParams ?? [];
     this.data = initValues.data ?? {};
     this.selectors = initValues.selectors ?? {};
     this.options = initValues.options ?? {};
@@ -523,8 +519,8 @@ export class Test {
           }
         }
 
-        if (this.needEnvParams.length) {
-          for (const envParam of this.needEnvParams) {
+        if (this.agent.needEnvParams.length) {
+          for (const envParam of this.agent.needEnvParams) {
             if (!envParam.endsWith('?') && !Object.keys(process.env).includes(envParam)) {
               throw new Error(`You need set environment parametr: ${envParam}`);
             }
@@ -546,12 +542,12 @@ export class Test {
           this.runner,
         );
 
-        checkNeeds(this.needData, dataLocal, this.agent.name);
-        checkNeeds(this.needSelectors, selectorsLocal, this.agent.name);
+        checkNeeds(this.agent.needData, dataLocal, this.agent.name);
+        checkNeeds(this.agent.needSelectors, selectorsLocal, this.agent.name);
 
         ({ dataLocal, selectorsLocal } = updateDataWithNeeds(
-          this.needData,
-          this.needSelectors,
+          this.agent.needData,
+          this.agent.needSelectors,
           dataLocal,
           selectorsLocal,
         ));
@@ -656,7 +652,7 @@ export class Test {
           if (this.logOptions.screenshot) {
             // Create Atom for get elements only
             const atom = new Atom({ page: pageCurrent, runner: this.runner });
-            const selectors = this.needSelectors.map((v) => selectorsLocal[v]) as string[];
+            const selectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
             for (const selector of selectors) {
               elements.push(await atom.getElement(selector));
             }

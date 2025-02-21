@@ -27,7 +27,7 @@ export type BrowserFrame = FramePuppeteer | FramePlaywright;
 export type BrouserLaunchOptions = {
   headless: boolean;
   slowMo: number;
-  args: Array<string>;
+  args: string[];
   devtools?: boolean;
   executablePath?: string;
   timeout?: number;
@@ -193,7 +193,7 @@ export type EnvBrowserType = {
   executablePath?: string;
   headless: boolean;
   slowMo: number;
-  args?: Array<string>;
+  args?: string[];
   urlDevtoolsJson?: string;
   windowSize?: {
     width?: number;
@@ -205,7 +205,7 @@ export type EnvBrowserType = {
     runtimeExecutable?: string;
     program?: string;
     cwd?: string;
-    args?: Array<string>;
+    args?: string[];
     env?: Record<string, string>;
     secondsToStartApp?: number;
     secondsDelayAfterStartApp?: number;
@@ -220,9 +220,9 @@ export type RunnerYamlType = {
   description?: string;
   data?: Record<string, unknown>;
   selectors?: Record<string, unknown>;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  runnersExt?: Array<string>;
+  dataExt?: string[];
+  selectorsExt?: string[];
+  runnersExt?: string[];
   log?: {
     level?: ColorsType;
     screenshot?: boolean;
@@ -276,7 +276,7 @@ export type TestArgsType = {
   dataTest: Record<string, unknown>;
   selectorsTest: Record<string, unknown>;
   options: Record<string, string | number>;
-  allowResults: Array<string>;
+  allowResults: string[];
   bindResults: Record<string, string>;
   bindSelectors: Record<string, string>;
   bindData: Record<string, string>;
@@ -319,14 +319,14 @@ export type LifeCycleFunction = Record<string, TestTypeYaml>;
 export type TestTypeYaml = {
   name: string;
   type?: 'runners' | 'data' | 'selectors' | string;
-  needData?: Array<string>;
-  needSelectors?: Array<string>;
+  needData?: string[];
+  needSelectors?: string[];
   needEnvParams?: string[];
   options?: Record<string, string | number>;
-  dataExt?: Array<string>;
-  selectorsExt?: Array<string>;
-  allowResults?: Array<string>;
-  allowOptions?: Array<string>;
+  dataExt?: string[];
+  selectorsExt?: string[];
+  allowResults?: string[];
+  allowOptions?: string[];
   todo?: string;
   debug?: boolean;
   debugInfo?: boolean | 'data' | 'selectors';
@@ -339,14 +339,14 @@ export type TestTypeYaml = {
   bindSelectors?: Record<string, string>;
   bindResults?: Record<string, string>;
   description?: string;
-  descriptionExtend?: Array<string>;
+  descriptionExtend?: string[];
   bindDescription?: string;
   repeat?: number;
   while?: string;
   if?: string;
   errorIf?: string;
   errorIfResult?: string;
-  tags?: Array<string>;
+  tags?: string[];
   engineSupports?: BrowserEngineType[];
   inlineJS?: string;
   breakParentIfResult?: string;
@@ -360,6 +360,9 @@ export type AgentData = {
   type: 'runners' | 'data' | 'selectors' | string;
   envsId: string;
   stepId: string;
+  needData: string[];
+  needSelectors: string[];
+  needEnvParams: string[];
 } & Partial<TestExtendType>;
 
 export type TestExtendType = {
@@ -382,7 +385,7 @@ export type TestExtendType = {
 } & Required<TestTypeYaml>;
 
 export type AllDataType = {
-  allFiles: Array<string>;
+  allFiles: string[];
   allContent: Array<TestType | RunnerType | DataType>;
   agents: Array<TestType>;
   runners: Array<RunnerType>;
