@@ -13,7 +13,6 @@ import {
   TestArgsType,
   LogFunctionType,
   TestLifeCycleFunctionType,
-  BrowserEngineType,
   TestExtendType,
   TestMetaSublingExchangeData,
   Element,
@@ -323,9 +322,6 @@ export class Test {
   selectors: Record<string, unknown>;
   bindSelectors!: Record<string, string>;
   bindResults!: Record<string, string>;
-  description: string;
-  descriptionExtend: string[];
-  bindDescription: string;
   while!: string;
   if!: string;
   errorIf!: string;
@@ -333,7 +329,6 @@ export class Test {
   resultsFromPrevSubling!: Record<string, unknown>;
   metaFromPrevSubling!: TestMetaSublingExchangeData;
   tags: string[];
-  engineSupports: BrowserEngineType[];
   allowOptions!: string[];
   todo!: string;
   inlineJS!: string;
@@ -356,6 +351,10 @@ export class Test {
     needData: [],
     needSelectors: [],
     needEnvParams: [],
+    engineSupports: [],
+    description: '',
+    descriptionExtend: [],
+    bindDescription: '',
   };
 
   constructor(initValues: TestExtendType) {
@@ -374,9 +373,6 @@ export class Test {
     this.dataExt = initValues.dataExt ?? [];
     this.selectorsExt = initValues.selectorsExt ?? [];
     this.allowResults = initValues.allowResults ?? [];
-    this.description = initValues.description ?? '';
-    this.descriptionExtend = initValues.descriptionExtend ?? [];
-    this.bindDescription = initValues.bindDescription ?? '';
     this.levelIndent = initValues.levelIndent ?? 0;
     this.repeat = initValues.repeat ?? 1;
     this.source = initValues.source ?? '';
@@ -391,7 +387,6 @@ export class Test {
     this.logOptions = initValues.logOptions ?? {};
     this.frame = initValues.frame ?? '';
     this.tags = initValues.tags ?? [];
-    this.engineSupports = initValues.engineSupports ?? [];
     this.breakParentIfResult = initValues.breakParentIfResult ?? '';
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
@@ -437,7 +432,7 @@ export class Test {
 
       if (disable) {
         await logger.log({
-          text: `Skip with ${disable}: ${getLogText(this.description, this.agent.name, PPD_LOG_TEST_NAME)}${
+          text: `Skip with ${disable}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
             PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
           }`,
           level: 'raw',
@@ -462,7 +457,7 @@ export class Test {
       if (PPD_TAGS_TO_RUN.length && this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
         await logger.log({
           text: `Skip with tags: ${JSON.stringify(this.tags)} => ${getLogText(
-            this.description,
+            this.agent.description,
             this.agent.name,
             PPD_LOG_TEST_NAME,
           )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
@@ -478,7 +473,10 @@ export class Test {
       }
 
       // Get Data from parent test and merge it with current test
-      this.agent.stepId = inputs.stepId || this.agent.stepId;
+      this.agent.stepId = inputs.stepId ?? this.agent.stepId;
+      this.agent.description = inputs.description ?? this.agent.description;
+      this.agent.descriptionExtend = inputs.descriptionExtend ?? this.agent.descriptionExtend ?? [];
+      this.agent.bindDescription = inputs.bindDescription ?? this.agent.bindDescription;
 
       this.data = resolveAliases<Record<string, string>>('data', inputs);
       this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
@@ -497,9 +495,6 @@ export class Test {
         ...resolveAliases<Record<string, string>>('options', inputs),
         ...inputs.optionsParent,
       } as Record<string, string | number>;
-      this.description = inputs.description || this.description;
-      this.descriptionExtend = inputs.descriptionExtend || this.descriptionExtend || [];
-      this.bindDescription = inputs.bindDescription || this.bindDescription;
       this.repeat = inputs.repeat || this.repeat;
       this.while = inputs.while || this.while;
       this.if = inputs.if || this.if;
@@ -512,9 +507,9 @@ export class Test {
       try {
         this.plugins.hook('resolveValues', { inputs });
 
-        if (this.engineSupports.length) {
+        if (this.agent.engineSupports.length) {
           const { engine } = this.runner.getRunnerData().browser || {};
-          if (engine && !this.engineSupports.includes(engine)) {
+          if (engine && !this.agent.engineSupports.includes(engine)) {
             throw new Error(`Current engine: '${engine}' not supported in this test`);
           }
         }
@@ -564,9 +559,9 @@ export class Test {
         dataLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
         selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
 
-        let descriptionResolved = this.description;
-        if (this.bindDescription) {
-          descriptionResolved = descriptionResolved || String(runScriptInContext(this.bindDescription, allData));
+        let descriptionResolved = this.agent.description;
+        if (this.agent.bindDescription) {
+          descriptionResolved = descriptionResolved || String(runScriptInContext(this.agent.bindDescription, allData));
         }
         if (!descriptionResolved) {
           this.logOptions.backgroundColor = 'red';
@@ -589,7 +584,6 @@ export class Test {
           bindResults: this.bindResults,
           bindSelectors: this.bindSelectors,
           bindData: this.bindData,
-          bindDescription: this.bindDescription,
           levelIndent: this.levelIndent,
           repeat: this.repeat,
           debug: this.debug,
@@ -602,8 +596,6 @@ export class Test {
           browser: this.runner && this.runner.getState().browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
-          description: descriptionResolved,
-          descriptionExtend: this.descriptionExtend,
           socket: this.socket,
           allData: new AgentContent().allData,
           plugins: this.plugins,
@@ -611,6 +603,7 @@ export class Test {
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           ...this.agent,
+          description: descriptionResolved,
         };
 
         // IF
@@ -678,9 +671,9 @@ export class Test {
           }
 
           if (PPD_LOG_DOCUMENTATION_MODE) {
-            for (let step = 0; step < this.descriptionExtend.length; step += 1) {
+            for (let step = 0; step < this.agent.descriptionExtend.length; step += 1) {
               await logger.log({
-                text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
+                text: `${step + 1}. => ${getLogText(this.agent.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
                 stepId: this.agent.stepId,

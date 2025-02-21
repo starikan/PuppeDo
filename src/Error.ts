@@ -68,7 +68,7 @@ export class TestError extends AbstractError {
     this.runners = parentError?.runners || test.runner;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.agent.stepId;
-    this.testDescription = parentError?.testDescription || test.description;
+    this.testDescription = parentError?.testDescription || test.agent.description;
     this.message = `${parentError?.message} || error in test = ${this.agent.name}`;
     this.stack = parentError?.stack;
     this.breadcrumbs = parentError?.breadcrumbs || test.breadcrumbs;
@@ -96,7 +96,7 @@ export class TestError extends AbstractError {
     if (!continueOnError) {
       let text = this.getDescriptionError() ? `${this.getDescriptionError()} | ` : '';
       // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
-      text += `Description: ${this.test.description || 'No test description'} (${this.agent.name})`;
+      text += `Description: ${this.agent.description || 'No test description'} (${this.agent.name})`;
       await this.logger.log({
         level: 'error',
         text,

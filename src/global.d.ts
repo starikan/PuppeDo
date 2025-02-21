@@ -363,6 +363,10 @@ export type AgentData = {
   needData: string[];
   needSelectors: string[];
   needEnvParams: string[];
+  engineSupports: BrowserEngineType[];
+  description: string;
+  descriptionExtend: string[];
+  bindDescription: string;
 } & Partial<TestExtendType>;
 
 export type TestExtendType = {
