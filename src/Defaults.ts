@@ -68,11 +68,11 @@ export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
   const config: RunOptions = {
     pluginsList: [...pluginsListDefault, ...(configGlobal.pluginsList ?? []), ...(options.pluginsList ?? [])],
     loggerPipes: [...loggerPipesDefault, ...(configGlobal.loggerPipes ?? []), ...(options.loggerPipes ?? [])],
-    argsConfig: configGlobal.args || {},
+    argsConfig: configGlobal.args ?? {},
     closeAllEnvs: options.closeAllEnvs ?? true,
     closeProcess: options.closeProcess ?? true,
     stdOut: options.stdOut ?? true,
-    globalConfigFile: options.globalConfigFile || 'puppedo.config.js',
+    globalConfigFile: options.globalConfigFile ?? 'puppedo.config.js',
     socket: blankSocket,
     debug: !!options.debug,
   };

@@ -77,4 +77,6 @@ module.exports = {
     },
     // PPD_LOG_STEPID: true,
   },
+  pluginsList: [],
+  loggerPipes: [],
 };
