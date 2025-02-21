@@ -305,7 +305,7 @@ export class Test implements TestExtendType {
 
   name: string;
   envsId: string;
-  type: 'atom' | 'test';
+  type: string;
   needData: string[];
   needSelectors: string[];
   needEnvParams: string[];
@@ -370,7 +370,7 @@ export class Test implements TestExtendType {
 
     this.name = initValues.name ?? '';
     this.envsId = initValues.envsId ?? '';
-    this.type = initValues.type ?? ('type' as 'atom' | 'test');
+    this.type = initValues.type ?? '';
     this.needData = initValues.needData ?? [];
     this.needSelectors = initValues.needSelectors ?? [];
     this.needEnvParams = initValues.needEnvParams ?? [];

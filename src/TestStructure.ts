@@ -59,19 +59,19 @@ export default class TestStructure {
     return result;
   }
 
-  static getTestRaw(name: string): Required<TestTypeYaml> {
-    const { tests, atoms } = new TestsContent().allData;
-    const testSource = [...tests, ...atoms].find((v) => v.name === name);
+  static getAgentRaw(name: string): Required<TestTypeYaml> {
+    const { agents } = new TestsContent().allData;
+    const agentSource = agents.find((v) => v.name === name);
 
-    if (!testSource) {
-      throw new Error(`Test with name '${name}' not found in root folder and additional folders`);
+    if (!agentSource) {
+      throw new Error(`Agent with name '${name}' not found in root folder and additional folders`);
     }
 
-    return JSON.parse(JSON.stringify(testSource));
+    return JSON.parse(JSON.stringify(agentSource));
   }
 
   static getFullDepthJSON(testName: string, testBody: TestTypeYaml | null = null, levelIndent = 0): TestExtendType {
-    const rawTest = TestStructure.getTestRaw(testName);
+    const rawTest = TestStructure.getAgentRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody ?? {}, ['logOptions']);
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];

@@ -39,8 +39,7 @@ describe('TestContent', () => {
     expect(allData).toBeDefined();
     expect(allData.allFiles).toBeDefined();
     expect(allData.allContent).toBeDefined();
-    expect(allData.atoms).toBeDefined();
-    expect(allData.tests).toBeDefined();
+    expect(allData.agents).toBeDefined();
     expect(allData.runners).toBeDefined();
     expect(allData.data).toBeDefined();
     expect(allData.selectors).toBeDefined();
@@ -60,8 +59,7 @@ describe('TestContent', () => {
     const allData = new TestsContent(true).getAllData(true);
     expect(allData.allFiles).toEqual([]);
     expect(allData.allContent).toEqual([]);
-    expect(allData.atoms).toEqual([]);
-    expect(allData.tests).toEqual([]);
+    expect(allData.agents).toEqual([]);
     expect(allData.runners).toEqual([]);
     expect(allData.data).toEqual([]);
     expect(allData.selectors).toEqual([]);
@@ -786,16 +784,15 @@ describe('TestsContent.getAllData (AI generated)', () => {
   it('should not read file if it does not exist', () => {
     (fs.existsSync as jest.Mock).mockReturnValue(false);
 
-    const result = testsContent.getAllData(); // Вызовите вашу функцию
+    const result = testsContent.getAllData();
 
     expect(result).toEqual({
       allContent: [],
       allFiles: [],
-      atoms: [],
+      agents: [],
       data: [],
       runners: [],
       selectors: [],
-      tests: [],
-    }); // Ожидаем, что результат будет пустым
+    });
   });
 });

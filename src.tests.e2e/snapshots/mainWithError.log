@@ -83,5 +83,5 @@
                       █ Error:       This is click error
                       █ Path:        mainWithError -> runTest[1].clickSelector -> runTest[0].waitForSelector
                       █ Description:
-                      █    
+                      █    undefined
                       █       Click some fake Text[0m

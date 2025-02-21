@@ -317,7 +317,7 @@ export type LifeCycleFunction = Record<string, TestTypeYaml>;
  */
 export type TestTypeYaml = {
   name: string;
-  type?: 'atom' | 'test';
+  type?: 'runners' | 'data' | 'selectors' | string;
   needData?: Array<string>;
   needSelectors?: Array<string>;
   needEnvParams?: string[];
@@ -376,8 +376,7 @@ export type TestExtendType = {
 export type AllDataType = {
   allFiles: Array<string>;
   allContent: Array<TestType | RunnerType | DataType>;
-  atoms: Array<TestType>;
-  tests: Array<TestType>;
+  agents: Array<TestType>;
   runners: Array<RunnerType>;
   data: Array<DataType>;
   selectors: Array<DataType>;

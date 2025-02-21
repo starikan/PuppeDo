@@ -42,7 +42,7 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   selectorsExt: [],
   tags: [],
   todo: '',
-  type: 'test',
+  type: 'agent',
   while: '',
   breakParentIfResult: '',
   argsRedefine: {},
@@ -194,12 +194,12 @@ export default class TestsContent extends Singleton {
     }
 
     const collect = {
-      ...{ type: 'test', name },
+      ...{ name },
       ...testContent,
       ...{ testFile: filePath },
     };
 
-    if (['test'].includes(collect.type)) {
+    if (!(collect.testFile || collect.inlineJS)) {
       return resolveTest(collect as TestTypeYaml);
     }
 
@@ -221,11 +221,8 @@ export default class TestsContent extends Singleton {
         .map((filePath) => TestsContent.readFile(filePath).map((v) => TestsContent.fileResolver(v, filePath)))
         .flat();
 
-      const atoms: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestType => v.type === 'atom'),
-      );
-      const tests: Array<TestType> = TestsContent.checkDuplicates(
-        allContent.filter((v): v is TestType => v.type === 'test'),
+      const agents: Array<TestType> = TestsContent.checkDuplicates(
+        allContent.filter((v): v is TestType => !['data', 'selectors', 'runner'].includes(v.type)),
       );
       const data: Array<DataType> = TestsContent.checkDuplicates(
         allContent.filter((v): v is DataType => v.type === 'data'),
@@ -238,7 +235,7 @@ export default class TestsContent extends Singleton {
       );
       const runnersResolved = TestsContent.resolveRunners(runners, data, selectors);
 
-      this.allData = { allFiles, allContent, atoms, tests, runners: runnersResolved, data, selectors };
+      this.allData = { allFiles, allContent, agents, runners: runnersResolved, data, selectors };
     }
 
     return this.allData;
