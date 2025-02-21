@@ -298,7 +298,6 @@ export type TestArgsType = {
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
-  name: string;
   description: string;
   socket: SocketType;
   descriptionExtend: string[];
@@ -355,6 +354,8 @@ export type TestTypeYaml = {
 } & PliginsFields;
 
 export type TestType = Required<TestTypeYaml>;
+
+export type AgentData = Partial<TestExtendType>;
 
 export type TestExtendType = {
   levelIndent?: number;

@@ -3,7 +3,7 @@ import { Test } from './Test';
 import { Log } from './Log';
 import { Environment, Runner } from './Environment';
 
-import { SocketType } from './global.d';
+import { AgentData, SocketType } from './global.d';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 
 export interface ErrorType extends Error {
@@ -24,6 +24,7 @@ type ErrorTestConstructor = {
   logger: Log;
   parentError?: ErrorType;
   test: Test;
+  agent: AgentData;
 };
 
 type ErrorContinueParentConstructor = {
@@ -51,19 +52,23 @@ export class TestError extends AbstractError {
   stack: string;
   logger: Log;
   test: Test;
+  agent: AgentData;
   parentTest: Test;
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
 
-  constructor({ logger, parentError, test }: ErrorTestConstructor) {
+  // TODO: избавиться от test тут
+  constructor({ logger, parentError, test, agent }: ErrorTestConstructor) {
     super();
+
+    this.agent = agent;
 
     this.envsId = parentError?.envsId || test.envsId;
     this.runners = parentError?.runners || test.runner;
     this.socket = parentError?.socket || test.socket;
     this.stepId = parentError?.stepId || test.stepId;
     this.testDescription = parentError?.testDescription || test.description;
-    this.message = `${parentError?.message} || error in test = ${test.name}`;
+    this.message = `${parentError?.message} || error in test = ${this.agent.name}`;
     this.stack = parentError?.stack;
     this.breadcrumbs = parentError?.breadcrumbs || test.breadcrumbs;
     this.breadcrumbsDescriptions = parentError?.breadcrumbsDescriptions || test.breadcrumbsDescriptions;
@@ -89,7 +94,7 @@ export class TestError extends AbstractError {
     if (!continueOnError) {
       let text = this.getDescriptionError() ? `${this.getDescriptionError()} | ` : '';
       // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
-      text += `Description: ${this.test.description || 'No test description'} (${this.test.name})`;
+      text += `Description: ${this.test.description || 'No test description'} (${this.agent.name})`;
       await this.logger.log({
         level: 'error',
         text,

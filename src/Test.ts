@@ -19,6 +19,7 @@ import {
   Element,
   AliasesKeysType,
   DeepMergeable,
+  AgentData,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
@@ -298,7 +299,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test {
-  name: string;
   envsId: string;
   needData: string[];
   needSelectors: string[];
@@ -353,7 +353,8 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
-  agent: Partial<TestExtendType> = {
+  agent: AgentData = {
+    name: '',
     type: '',
   };
 
@@ -361,9 +362,9 @@ export class Test {
     this.plugins = new Plugins(this);
     this.plugins.hook('initValues', { initValues });
 
+    this.agent.name = initValues.name ?? this.agent.name;
     this.agent.type = initValues.type ?? this.agent.type;
 
-    this.name = initValues.name ?? '';
     this.envsId = initValues.envsId ?? '';
     this.needData = initValues.needData ?? [];
     this.needSelectors = initValues.needSelectors ?? [];
@@ -438,7 +439,7 @@ export class Test {
 
       if (disable) {
         await logger.log({
-          text: `Skip with ${disable}: ${getLogText(this.description, this.name, PPD_LOG_TEST_NAME)}${
+          text: `Skip with ${disable}: ${getLogText(this.description, this.agent.name, PPD_LOG_TEST_NAME)}${
             PPD_LOG_STEPID ? `[${this.stepId}]` : ''
           }`,
           level: 'raw',
@@ -464,7 +465,7 @@ export class Test {
         await logger.log({
           text: `Skip with tags: ${JSON.stringify(this.tags)} => ${getLogText(
             this.description,
-            this.name,
+            this.agent.name,
             PPD_LOG_TEST_NAME,
           )}${PPD_LOG_STEPID ? `[${this.stepId}]` : ''}`,
           level: 'raw',
@@ -542,8 +543,8 @@ export class Test {
           this.runner,
         );
 
-        checkNeeds(this.needData, dataLocal, this.name);
-        checkNeeds(this.needSelectors, selectorsLocal, this.name);
+        checkNeeds(this.needData, dataLocal, this.agent.name);
+        checkNeeds(this.needSelectors, selectorsLocal, this.agent.name);
 
         ({ dataLocal, selectorsLocal } = updateDataWithNeeds(
           this.needData,
@@ -574,12 +575,13 @@ export class Test {
 
         // Extend with data passed to functions
         const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
-        const args: TestArgsType = {
+
+        // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
+        const args: TestArgsType & AgentData = {
           envsId: this.envsId,
           environment: new Environment(),
           runner: this.runner,
           allRunners,
-          name: this.name,
           data: dataLocal,
           selectors: selectorsLocal,
           dataTest: this.data,
@@ -611,6 +613,7 @@ export class Test {
           breadcrumbs: this.breadcrumbs,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          ...this.agent,
         };
 
         // IF
@@ -647,7 +650,7 @@ export class Test {
         }
 
         // LOG TEST
-        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)) {
+        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)) {
           const elements: Element = [];
           if (this.logOptions.screenshot) {
             // Create Atom for get elements only
@@ -664,7 +667,7 @@ export class Test {
 
           for (const element of elements) {
             await logger.log({
-              text: `${getLogText(descriptionResolved, this.name, PPD_LOG_TEST_NAME)}${
+              text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
                 PPD_LOG_STEPID ? ` [${this.stepId}]` : ''
               }`,
               level: 'test',
@@ -760,7 +763,7 @@ export class Test {
         // TIMER IN CONSOLE
         const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
         await logger.log({
-          text: `🕝: ${deltaStr} (${this.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
+          text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
           level: 'timer',
           levelIndent: this.levelIndent,
           stepId: this.stepId,
@@ -768,7 +771,7 @@ export class Test {
             logShowFlag:
               logShowFlag &&
               (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
-              (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.name)),
+              (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)),
           },
           logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
         });
@@ -833,7 +836,8 @@ export class Test {
             parentError: error,
           });
         } else {
-          newError = new TestError({ logger, parentError: error, test: this });
+          // TODO: избавиться от test тут
+          newError = new TestError({ logger, parentError: error, test: this, agent: this.agent });
         }
         await newError.log();
         throw newError;
