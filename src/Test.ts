@@ -17,8 +17,6 @@ import {
   TestExtendType,
   TestMetaSublingExchangeData,
   Element,
-  LifeCycleFunction,
-  ArgumentsType,
   AliasesKeysType,
   DeepMergeable,
 } from './global.d';
@@ -299,10 +297,7 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
   return '';
 };
 
-export class Test implements TestExtendType {
-  // todo: убрать эти ключи в отдельный объект из this
-  [key: string]: LifeCycleFunction | unknown;
-
+export class Test {
   name: string;
   envsId: string;
   type: string;
@@ -349,10 +344,6 @@ export class Test implements TestExtendType {
   todo!: string;
   inlineJS!: string;
   breakParentIfResult: string;
-  argsRedefine!: Partial<ArgumentsType>;
-  continueOnError!: boolean;
-  descriptionError!: '';
-  skipSublingIfResult!: '';
 
   runner!: Runner;
 
@@ -361,8 +352,9 @@ export class Test implements TestExtendType {
 
   plugins: Plugins;
 
-  atomRun: TestLifeCycleFunctionType[];
   lifeCycleFunctions: TestLifeCycleFunctionType[];
+
+  agent!: TestExtendType;
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
@@ -401,10 +393,9 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports ?? [];
     this.breakParentIfResult = initValues.breakParentIfResult ?? '';
 
-    this.atomRun = initValues.atomRun ?? [];
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [
-      this.atomRun,
+      initValues.atomRun ?? [],
       ...PPD_LIFE_CYCLE_FUNCTIONS.map((v) => (initValues[v] ?? []) as TestLifeCycleFunctionType[]),
     ].flat();
 
@@ -433,6 +424,7 @@ export class Test implements TestExtendType {
         PPD_LOG_STEPID,
       } = { ...new Arguments().args, ...argsRedefine };
 
+      // TODO: Выяснить в чем туту дело this.agent.type === 'atom'
       this.debug = PPD_DEBUG_MODE && ((this.type === 'atom' && inputs.debug) || this.debug);
       if (this.debug) {
         console.log(this);

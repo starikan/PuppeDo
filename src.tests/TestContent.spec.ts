@@ -584,7 +584,7 @@ describe('AgentContent.resolveRunners (AI generated)', () => {
 describe('AgentContent.checkDuplicates (AI generated)', () => {
   // Base test object
   const createTestObject = (name: string, testFile: string): TestExtendType => ({
-    type: 'atom',
+    type: 'agent',
     name,
     testFile,
     needData: [],
@@ -666,7 +666,7 @@ describe('AgentContent.checkDuplicates (AI generated)', () => {
     ];
 
     expect(() => AgentContent.checkDuplicates(tests)).toThrow(
-      "There is duplicates of 'atom':\n- Name: 'test1'.\n    * 'file1.yaml'\n    * 'file2.yaml'\n\n- Name: 'test2'.\n    * 'file3.yaml'\n    * 'file4.yaml'\n",
+      "There is duplicates of 'agent':\n- Name: 'test1'.\n    * 'file1.yaml'\n    * 'file2.yaml'\n\n- Name: 'test2'.\n    * 'file3.yaml'\n    * 'file4.yaml'\n",
     );
   });
 

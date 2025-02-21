@@ -313,7 +313,9 @@ export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<
 export type LifeCycleFunction = Record<string, TestTypeYaml>;
 
 /**
- * YAML test file structure
+ * YAML agent file structure
+ * This is the main structure of the agent. All fields present here are processed and used in the operation of the agent.
+ * Some fields can be overridden using PPD_ALIASES
  */
 export type TestTypeYaml = {
   name: string;

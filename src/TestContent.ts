@@ -207,7 +207,7 @@ export default class AgentContent extends Singleton {
   };
 
   /**
-   * Retrieves all data, including files, content, atoms, tests, runners, data, and selectors.
+   * Retrieves all data, including files, content, agents, runners, data, and selectors.
    * If force is true, the data will be retrieved anew; otherwise, it will be returned from the cache.
    *
    * @param force - A flag indicating whether to retrieve the data anew.
