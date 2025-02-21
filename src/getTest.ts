@@ -8,18 +8,21 @@ import { pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { TestArgsType, TestExtendType, TestExtendTypeKeys, TestLifecycleFunctionType, TestType } from './global.d';
+import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType, TestType } from './global.d';
 import { Environment } from './Environment';
 import { Arguments } from './Arguments';
 
-const atoms: Record<string, TestLifecycleFunctionType> = {};
+const atoms: Record<string, TestLifeCycleFunctionType> = {};
 
 const resolveJS = (testJson: TestExtendType): TestExtendType => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   const testJsonNew = testJson;
 
-  const functions = pick(testJsonNew, PPD_LIFE_CYCLE_FUNCTIONS);
-  if (Object.keys(functions).length && !testJsonNew.inlineJS) {
+  const functions = pick<Record<string, LifeCycleFunction[] | unknown>>(
+    testJsonNew,
+    PPD_LIFE_CYCLE_FUNCTIONS,
+  ) as Record<string, LifeCycleFunction[]>;
+  if (Object.values(functions).flat().length) {
     return testJson;
   }
 
@@ -47,7 +50,7 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     instance.atomRun = atoms[testJsonNew.inlineJS] || atoms[testJsonNew.name];
 
     if (typeof instance.atomRun === 'function') {
-      testJsonNew.runTest = [instance.runTest.bind(instance)];
+      testJsonNew.atomRun = [instance.runAtom.bind(instance)];
     }
   } catch (error) {
     if (error.name === 'SyntaxError') {
@@ -55,15 +58,16 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     }
 
     // If there is no JS file it`s fine.
-    testJsonNew.runTest = [];
+    testJsonNew.atomRun = [];
   }
   return testJsonNew;
 };
 
+// todo навести порядок в этих типах
 const propagateArgumentsObjectsOnAir = (
   source: TestExtendType,
   args: TestArgsType | undefined,
-  list: TestExtendTypeKeys[] = [],
+  list: string[] = [],
 ): TestExtendType => {
   const sourceValues = pick(source || {}, list);
   const argsValues = pick(args || {}, list);
@@ -76,7 +80,7 @@ const propagateArgumentsObjectsOnAir = (
 const propagateArgumentsSimpleOnAir = (
   source: TestExtendType,
   args: TestArgsType | undefined,
-  list: (TestExtendTypeKeys | string)[] = [],
+  list: string[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
 const getTest = ({
@@ -87,13 +91,13 @@ const getTest = ({
   testJsonIncome: TestExtendType;
   envsId: string;
   parentTestMetaCollector?: Partial<TestExtendType>;
-}): TestLifecycleFunctionType => {
-  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+}): TestLifeCycleFunctionType => {
   let testJson = testJsonIncome;
 
-  PPD_LIFE_CYCLE_FUNCTIONS.forEach((funcBlock) => {
-    if (testJson[funcBlock] && !Array.isArray(testJson[funcBlock])) {
-      throw new Error(`Block ${funcBlock} must be array. Path: '${(testJson.breadcrumbs || []).join(' -> ')}'`);
+  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+  PPD_LIFE_CYCLE_FUNCTIONS.forEach((lcf) => {
+    if (testJson[lcf] && !Array.isArray(testJson[lcf])) {
+      throw new Error(`Block ${lcf} must be array. Path: '${(testJson.breadcrumbs || []).join(' -> ')}'`);
     }
   });
 
@@ -117,13 +121,11 @@ const getTest = ({
 
   functionsBeforeResolve.forEach((value) => {
     const [funcKey, funcVal] = value;
-    if (funcVal && !testJson.inlineJS) {
-      const newFunctions = [] as TestLifecycleFunctionType[];
+    if (funcVal) {
+      const newFunctions = [] as TestLifeCycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
-        if (['test', 'atom'].includes(testItem.type)) {
-          const newFunction = getTest({ testJsonIncome: testItem, envsId, parentTestMetaCollector: testJson });
-          newFunctions.push(newFunction);
-        }
+        const newFunction = getTest({ testJsonIncome: testItem, envsId, parentTestMetaCollector: testJson });
+        newFunctions.push(newFunction);
       });
       testJson[funcKey] = newFunctions;
     }
@@ -131,7 +133,7 @@ const getTest = ({
 
   const test = new Test(testJson);
 
-  const testResolver: TestLifecycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
+  const testResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
     if (parentTestMetaCollector?.stepId !== args?.stepId) {
       // it`s a magic and I don`t know why is this works, but it fix steps Id hierarchy
       if (parentTestMetaCollector?.repeat !== args?.repeat) {

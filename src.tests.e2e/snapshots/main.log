@@ -41,13 +41,14 @@ Main test (main)
       Wait selector (waitForSelector)
       Type in selector (typeInputRaw)
    Make awesome test (todo)
-   SubTest (subTest)
+   Ignor this inlineJS. Because subTest have run section (subTest)
       (loop)
          (todo)
          (todo)
       Make awesome sub test (todo)
       (todo)
       Make awesome sub test 2 (test)
+   (blank)
    (blank)
 [0m
 Prepare time 🕝: 00.000 s.
@@ -88,7 +89,14 @@ Prepare time 🕝: 00.000 s.
 |    [36m🖼 screenshot: [screenshot_path][0m
 |    [36m🖼 screenshot: [screenshot_path][0m
 |   [41m[37m(todo) Make awesome test[0m[0m
-|   [32m(subTest) SubTest[0m
+|   [32m(subTest) Ignor this inlineJS. Because subTest have run section[0m
+|   |   [41m[32m(loop) TODO: Fill description[0m[0m
+|   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
+|   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
+|   |   [41m[37m(todo) Make awesome sub test[0m[0m
+|   |   [41m[37m(todo) TODO: Fill description[0m[0m
+|   |   [32m(test) Make awesome sub test 2[0m
+|   [41m[32m(blank) TODO: Fill description[0m[0m
 |   [41m[32m(blank) TODO: Fill description[0m[0m
 Test 'main' time 🕝: 00.000 s.
 Test 'subTest' start on '0000-00-00_00-00-00.000'

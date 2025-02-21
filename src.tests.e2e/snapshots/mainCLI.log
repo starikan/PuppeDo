@@ -41,13 +41,14 @@ Main test (main)
       Wait selector (waitForSelector)
       Type in selector (typeInputRaw)
    Make awesome test (todo)
-   SubTest (subTest)
+   Ignor this inlineJS. Because subTest have run section (subTest)
       (loop)
          (todo)
          (todo)
       Make awesome sub test (todo)
       (todo)
       Make awesome sub test 2 (test)
+   (blank)
    (blank)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
@@ -163,12 +164,33 @@ Main test (main)
 00:00:00.000 - test   |   [41m[37m(todo) Make awesome test[0m[0m
                       |    [36m👣[main -> runTest[16].todo][0m
                       |   🕝: 00.000 s. (todo)
-00:00:00.000 - test   |   [32m(subTest) SubTest[0m
+00:00:00.000 - test   |   [32m(subTest) Ignor this inlineJS. Because subTest have run section[0m
                       |    [36m👣[main -> runTest[17].subTest][0m
-                      |   |   ⌛: 00.000 s.
+00:00:00.000 - test   |   |   [41m[32m(loop) TODO: Fill description[0m[0m
+                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop][0m
+00:00:00.000 - test   |   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
+                      |   |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop -> runTest[0].todo][0m
+                      |   |   |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
+                      |   |   |    [36m👣[main -> runTest[17].subTest -> runTest[0].loop -> runTest[1].todo][0m
+                      |   |   |   🕝: 00.000 s. (todo)
+                      |   |   🕝: 00.000 s. (loop)
+00:00:00.000 - test   |   |   [41m[37m(todo) Make awesome sub test[0m[0m
+                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[1].todo][0m
+                      |   |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   |   [41m[37m(todo) TODO: Fill description[0m[0m
+                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[2].todo][0m
+                      |   |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   |   [32m(test) Make awesome sub test 2[0m
+                      |   |    [36m👣[main -> runTest[17].subTest -> runTest[3].test][0m
+                      |   |   🕝: 00.000 s. (test)
                       |   🕝: 00.000 s. (subTest)
 00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
                       |    [36m👣[main -> runTest[18].blank][0m
+                      |   |   [41m⌛: 00.000 s.[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
+                      |    [36m👣[main -> runTest[19].blank][0m
                       |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (main)
 00:00:00.000 - timer  Test 'main' time 🕝: 00.000 s.

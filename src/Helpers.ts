@@ -232,11 +232,11 @@ export const getTimer = ({
   };
 };
 
-export const pick = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key)));
+export const pick = <T extends Record<string, unknown>>(obj: T, fields: string[]): Partial<T> =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => fields.includes(key))) as Partial<T>;
 
-export const omit = (obj: Record<string, unknown>, fields: string[]): Record<string, unknown> =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key)));
+export const omit = <T extends Record<string, unknown>>(obj: T, fields: string[]): Partial<T> =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key))) as Partial<T>;
 
 export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
   dayjs(now).format(format);

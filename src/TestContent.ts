@@ -11,11 +11,9 @@ import { mergeObjects } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
 
-export const BLANK_TEST: TestType = {
-  afterTest: [],
+export const BLANK_TEST: Required<TestTypeYaml> = {
   allowOptions: [],
   allowResults: [],
-  beforeTest: [],
   bindData: {},
   bindDescription: '',
   bindResults: {},
@@ -40,7 +38,6 @@ export const BLANK_TEST: TestType = {
   needEnvParams: [],
   options: {},
   repeat: 1,
-  runTest: [],
   selectors: {},
   selectorsExt: [],
   tags: [],
@@ -50,7 +47,15 @@ export const BLANK_TEST: TestType = {
   breakParentIfResult: '',
 };
 
-const resolveTest = (test: TestTypeYaml): TestType => ({ ...BLANK_TEST, ...test });
+export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
+  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+  const result = {
+    ...BLANK_TEST,
+    ...PPD_LIFE_CYCLE_FUNCTIONS.reduce((s, v) => ({ ...s, [v]: [] as TestExtendType[] }), {}),
+    ...test,
+  };
+  return result;
+};
 
 export default class TestsContent extends Singleton {
   // TODO: Сделать геттер а это поле приватным

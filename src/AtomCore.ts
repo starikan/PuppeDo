@@ -138,7 +138,7 @@ export default class Atom {
     }
   }
 
-  async runTest(args?: TestArgsType): Promise<Record<string, unknown>> {
+  async runAtom(args?: TestArgsType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
     const testArgs = Object.entries(args || {});

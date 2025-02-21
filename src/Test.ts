@@ -12,11 +12,12 @@ import {
   SocketType,
   TestArgsType,
   LogFunctionType,
-  TestLifecycleFunctionType,
+  TestLifeCycleFunctionType,
   BrowserEngineType,
   TestExtendType,
   TestMetaSublingExchangeData,
   Element,
+  LifeCycleFunction,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
@@ -271,6 +272,8 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test implements TestExtendType {
+  [key: string]: LifeCycleFunction | unknown;
+
   name: string;
   envsId: string;
   type: 'atom' | 'test';
@@ -283,9 +286,6 @@ export class Test implements TestExtendType {
   dataExt: string[];
   selectorsExt: string[];
   allowResults: string[];
-  beforeTest: TestLifecycleFunctionType[];
-  runTest: TestLifecycleFunctionType[];
-  afterTest: TestLifecycleFunctionType[];
   levelIndent: number;
   repeat: number;
   source: string;
@@ -328,6 +328,9 @@ export class Test implements TestExtendType {
 
   plugins: Plugins;
 
+  atomRun: TestLifeCycleFunctionType[];
+  lifeCycleFunctions: TestLifeCycleFunctionType[];
+
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
     this.plugins.hook('initValues', { initValues });
@@ -365,9 +368,12 @@ export class Test implements TestExtendType {
     this.engineSupports = initValues.engineSupports || [];
     this.breakParentIfResult = initValues.breakParentIfResult || '';
 
-    this.beforeTest = (initValues.beforeTest || []) as TestLifecycleFunctionType[];
-    this.runTest = (initValues.runTest || []) as TestLifecycleFunctionType[];
-    this.afterTest = (initValues.afterTest || []) as TestLifecycleFunctionType[];
+    this.atomRun = initValues.atomRun || [];
+    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+    this.lifeCycleFunctions = [
+      this.atomRun,
+      ...PPD_LIFE_CYCLE_FUNCTIONS.map((v) => (initValues[v] || []) as TestLifeCycleFunctionType[]),
+    ].flat();
 
     this.runLogic = async (
       inputs: TestExtendType,
@@ -674,20 +680,19 @@ export class Test implements TestExtendType {
 
         this.plugins.hook('beforeFunctions', { args });
 
-        // RUN FUNCTIONS
-        let resultFromTest = {};
+        // LIFE CYCLE
+        let resultFromLifeCycle = {};
 
-        const FUNCTIONS = [this.beforeTest, this.runTest, this.afterTest];
-        for (const funcs of FUNCTIONS) {
+        for (const funcs of this.lifeCycleFunctions) {
           const funcsArray = [funcs].flat();
           for (const func of funcsArray) {
             const funResult = (await func(args)) || {};
-            resultFromTest = { ...resultFromTest, ...funResult };
+            resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
           }
         }
 
         // RESULTS
-        const results = this.allowResults.length ? pick(resultFromTest, this.allowResults) : resultFromTest;
+        const results = this.allowResults.length ? pick(resultFromLifeCycle, this.allowResults) : resultFromLifeCycle;
         if (
           this.allowResults.length &&
           Object.keys(results).length &&

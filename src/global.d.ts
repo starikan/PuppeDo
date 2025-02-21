@@ -308,13 +308,9 @@ export type TestArgsType = {
   continueOnError: boolean;
 };
 
-export type TestLifecycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
+export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
-type RunFunctions = {
-  beforeTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-  runTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-  afterTest?: TestLifecycleFunctionType[] | { string: TestExtendType }[] | TestExtendType[];
-};
+export type LifeCycleFunction = Record<string, TestExtendType>;
 
 /**
  * YAML test file structure
@@ -353,7 +349,8 @@ export type TestTypeYaml = {
   engineSupports?: BrowserEngineType[];
   inlineJS?: string;
   breakParentIfResult?: string;
-} & RunFunctions;
+  [key: string]: LifeCycleFunction[] | unknown;
+};
 
 export type TestType = Required<TestTypeYaml>;
 
@@ -373,10 +370,10 @@ export type TestExtendType = {
   metaFromPrevSubling?: TestMetaSublingExchangeData;
   funcFile?: string;
   testFile?: string;
-} & TestType &
+  atomRun?: TestLifeCycleFunctionType[];
+} & Required<TestTypeYaml> &
+  // todo: перенести в TestTypeYaml
   PliginsFields;
-
-export type TestExtendTypeKeys = keyof TestExtendType;
 
 export type AllDataType = {
   allFiles: Array<string>;

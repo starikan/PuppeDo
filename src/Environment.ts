@@ -248,9 +248,9 @@ export class Environment extends Singleton {
   }
 
   /**
-   * It returns the full structure of a test.
+   * It returns the full structure of a agent.
    * @param {string} envsId - The id of the environment instance.
-   * @param {string} name - The name of the test.
+   * @param {string} name - The name of the agent.
    * @returns The fullStruct is being returned.
    */
   getStruct(envsId: string, name: string): TestExtendType {

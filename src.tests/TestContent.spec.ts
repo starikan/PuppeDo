@@ -619,9 +619,6 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
     tags: [],
     engineSupports: [],
     todo: '',
-    beforeTest: [],
-    runTest: [],
-    afterTest: [],
     inlineJS: '',
     breakParentIfResult: '',
   });

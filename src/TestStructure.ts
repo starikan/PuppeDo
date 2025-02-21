@@ -1,11 +1,12 @@
-import TestsContent, { BLANK_TEST } from './TestContent';
+import TestsContent, { BLANK_TEST, resolveTest } from './TestContent';
 
-import { TestExtendType, TestType } from './global.d';
+import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './global.d';
 import { generateId, deepMergeField } from './Helpers';
 import { Arguments } from './Arguments';
 
 export default class TestStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
+    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     const keys = Object.keys(BLANK_TEST);
     const fullJSONFiltered: Partial<TestExtendType> = {};
     keys.forEach((v) => {
@@ -23,11 +24,15 @@ export default class TestStructure {
       }
     });
 
-    if (fullJSONFiltered.runTest && fullJSONFiltered.runTest.length) {
-      fullJSONFiltered.runTest = (fullJSONFiltered.runTest as TestExtendType[]).map((v: TestExtendType) => {
-        const result = TestStructure.filteredFullJSON(v);
-        return result;
-      });
+    for (const lifeCycleFunction of PPD_LIFE_CYCLE_FUNCTIONS) {
+      if ((fullJSONFiltered[lifeCycleFunction] as LifeCycleFunction[])?.length) {
+        fullJSONFiltered[lifeCycleFunction] = (fullJSONFiltered[lifeCycleFunction] as TestExtendType[]).map(
+          (v: TestExtendType) => {
+            const result = TestStructure.filteredFullJSON(v);
+            return result;
+          },
+        );
+      }
     }
 
     return fullJSONFiltered as TestExtendType;
@@ -54,7 +59,7 @@ export default class TestStructure {
     return result;
   }
 
-  static getTestRaw(name: string): TestType {
+  static getTestRaw(name: string): Required<TestTypeYaml> {
     const { tests, atoms } = new TestsContent().allData;
     const testSource = [...tests, ...atoms].find((v) => v.name === name);
 
@@ -65,10 +70,9 @@ export default class TestStructure {
     return JSON.parse(JSON.stringify(testSource));
   }
 
-  static getFullDepthJSON(testName: string, testBody: Partial<TestExtendType> = {}, levelIndent = 0): TestExtendType {
-    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+  static getFullDepthJSON(testName: string, testBody: TestExtendType | null = null, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
-    const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody, ['logOptions']);
+    const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody ?? {}, ['logOptions']);
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];
@@ -76,24 +80,30 @@ export default class TestStructure {
     fullJSON.stepId = generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
-    PPD_LIFE_CYCLE_FUNCTIONS.forEach((runnerBlockName) => {
-      const runnerBlockValue = (fullJSON[runnerBlockName] || []) as { string: TestExtendType }[];
-      if (!Array.isArray(runnerBlockValue)) {
-        const errorString = `Running block '${runnerBlockName}' in test '${fullJSON.name}' in file '${fullJSON.testFile}'
-        must be array of tests`;
+    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+    PPD_LIFE_CYCLE_FUNCTIONS.forEach((lifeCycleFunctionName) => {
+      const lifeCycleFunctionValue = (fullJSON[lifeCycleFunctionName] || []) as LifeCycleFunction[];
+
+      if (!Array.isArray(lifeCycleFunctionValue)) {
+        const errorString = `Block '${lifeCycleFunctionName}' in agent '${fullJSON.name}' in file '${fullJSON.testFile}' must be array of agents`;
         throw new Error(errorString);
       }
-      runnerBlockValue.forEach((runnerValue: { string: TestExtendType }, runnerNum: number) => {
-        const runner: [string, TestExtendType] = Object.entries(runnerValue)[0];
-        const name = runner[0];
-        const newRunner = runner[1] ?? ({ name } as TestExtendType);
 
-        newRunner.name = name;
-        newRunner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${runnerBlockName}[${runnerNum}].${name}`];
-        newRunner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
+      lifeCycleFunctionValue.forEach((runnerValue: LifeCycleFunction, runnerNum: number) => {
+        if (Object.keys(runnerValue).length !== 1) {
+          const errorString = `Block '${lifeCycleFunctionName}' in agent '${fullJSON.name}' in file '${fullJSON.testFile}' must be array of agents with one key each`;
+          throw new Error(errorString);
+        }
 
-        const fullJSONResponce = TestStructure.getFullDepthJSON(name, newRunner, levelIndent + 1);
-        fullJSON[runnerBlockName][runnerNum] = fullJSONResponce;
+        const name = Object.keys(runnerValue)[0];
+        const runner = Object.values(runnerValue)[0] ?? resolveTest({ name });
+
+        runner.name = name;
+        runner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${lifeCycleFunctionName}[${runnerNum}].${name}`];
+        runner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
+
+        const fullJSONResponce = TestStructure.getFullDepthJSON(name, runner, levelIndent + 1);
+        fullJSON[lifeCycleFunctionName][runnerNum] = fullJSONResponce;
       });
     });
 
