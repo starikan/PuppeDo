@@ -621,6 +621,10 @@ describe('TestsContent.checkDuplicates (AI generated)', () => {
     todo: '',
     inlineJS: '',
     breakParentIfResult: '',
+    argsRedefine: {},
+    continueOnError: false,
+    descriptionError: '',
+    skipSublingIfResult: '',
   });
 
   it('should pass array without duplicates', () => {

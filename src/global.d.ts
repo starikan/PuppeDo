@@ -310,7 +310,7 @@ export type TestArgsType = {
 
 export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
-export type LifeCycleFunction = Record<string, TestExtendType>;
+export type LifeCycleFunction = Record<string, TestTypeYaml>;
 
 /**
  * YAML test file structure
@@ -350,7 +350,7 @@ export type TestTypeYaml = {
   inlineJS?: string;
   breakParentIfResult?: string;
   [key: string]: LifeCycleFunction[] | unknown;
-};
+} & PliginsFields;
 
 export type TestType = Required<TestTypeYaml>;
 
@@ -371,9 +371,7 @@ export type TestExtendType = {
   funcFile?: string;
   testFile?: string;
   atomRun?: TestLifeCycleFunctionType[];
-} & Required<TestTypeYaml> &
-  // todo: перенести в TestTypeYaml
-  PliginsFields;
+} & Required<TestTypeYaml>;
 
 export type AllDataType = {
   allFiles: Array<string>;

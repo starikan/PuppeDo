@@ -45,6 +45,10 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   type: 'test',
   while: '',
   breakParentIfResult: '',
+  argsRedefine: {},
+  continueOnError: false,
+  descriptionError: '',
+  skipSublingIfResult: '',
 };
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {

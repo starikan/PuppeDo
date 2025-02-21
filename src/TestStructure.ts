@@ -70,7 +70,7 @@ export default class TestStructure {
     return JSON.parse(JSON.stringify(testSource));
   }
 
-  static getFullDepthJSON(testName: string, testBody: TestExtendType | null = null, levelIndent = 0): TestExtendType {
+  static getFullDepthJSON(testName: string, testBody: TestTypeYaml | null = null, levelIndent = 0): TestExtendType {
     const rawTest = TestStructure.getTestRaw(testName);
     const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody ?? {}, ['logOptions']);
 

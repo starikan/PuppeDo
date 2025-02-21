@@ -18,6 +18,7 @@ import {
   TestMetaSublingExchangeData,
   Element,
   LifeCycleFunction,
+  ArgumentsType,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
@@ -272,6 +273,7 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test implements TestExtendType {
+  // todo: убрать эти ключи в отдельный объект из this
   [key: string]: LifeCycleFunction | unknown;
 
   name: string;
@@ -320,6 +322,10 @@ export class Test implements TestExtendType {
   todo!: string;
   inlineJS!: string;
   breakParentIfResult: string;
+  argsRedefine!: Partial<ArgumentsType>;
+  continueOnError!: boolean;
+  descriptionError!: '';
+  skipSublingIfResult!: '';
 
   runner!: Runner;
 
