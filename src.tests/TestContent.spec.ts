@@ -2,7 +2,6 @@ import fs from 'fs';
 import TestsContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
 import { DataType, EnvBrowserType, RunnerType, TestExtendType } from '../src/global.d';
-import { PPD_ALIASES } from '../src/Defaults';
 
 const DEFAULT_BROWSER: EnvBrowserType = {
   type: 'browser',
@@ -731,7 +730,7 @@ describe('TestsContent.getAllData (AI generated)', () => {
     PPD_LOG_STEPID: false,
     PPD_CONTINUE_ON_ERROR_ENABLED: false,
     PPD_FILES_EXTENSIONS_AVAILABLE: ['.json', '.yaml'],
-    PPD_ALIASES,
+    PPD_ALIASES: {},
     PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
   };
 

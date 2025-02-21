@@ -1,5 +1,5 @@
 import vm from 'vm';
-import { blankSocket, getTimer, pick, generateId, resolveAliases } from './Helpers';
+import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -19,11 +19,38 @@ import {
   Element,
   LifeCycleFunction,
   ArgumentsType,
+  AliasesKeysType,
+  DeepMergeable,
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
 import globalExportPPD from './index';
+
+/**
+ * Resolves aliases for a given key in the inputs object.
+ *
+ * @param alias The alias key to resolve.
+ * @param inputs The inputs object to search for alias values.
+ * @returns The resolved alias value.
+ */
+export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
+  alias: AliasesKeysType,
+  inputs: TestExtendType,
+): T => {
+  const { PPD_ALIASES } = new Arguments().args;
+  const allValues = [...Object.keys(PPD_ALIASES), ...Object.values(PPD_ALIASES)].flat();
+  const duplicateValues = allValues.filter((value, index) => allValues.indexOf(value) !== index);
+
+  if (duplicateValues.length) {
+    throw new Error(`PPD_ALIASES contains duplicate keys: ${duplicateValues.join(', ')}`);
+  }
+
+  const variants = [...(PPD_ALIASES[alias] ?? []), alias];
+  const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
+  const result = values.length ? mergeObjects<T>(values) : [];
+  return result as T;
+};
 
 export const runScriptInContext = (
   source: string,

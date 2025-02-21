@@ -41,7 +41,7 @@ export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 export type ColorsType = keyof typeof colors;
 
-export type AliasesKeysType = 'data' | 'bindData' | 'selectors' | 'bindSelectors' | 'bindResults' | 'options';
+export type AliasesKeysType = 'data' | 'bindData' | 'selectors' | 'bindSelectors' | 'bindResults' | 'options' | string; // Adding string to support any keys
 
 export type ArgumentsType = {
   PPD_ROOT: string;
@@ -71,7 +71,7 @@ export type ArgumentsType = {
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
   PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
   PPD_FILES_EXTENSIONS_AVAILABLE: string[];
-  PPD_ALIASES: Record<AliasesKeysType, string[]>;
+  PPD_ALIASES: Record<Partial<AliasesKeysType>, string[]>;
   PPD_LIFE_CYCLE_FUNCTIONS: string[];
 };
 

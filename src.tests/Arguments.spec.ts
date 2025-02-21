@@ -1,5 +1,5 @@
 import { Arguments, parser } from '../src/Arguments';
-import { argsDefault, PPD_ALIASES } from '../src/Defaults';
+import { argsDefault } from '../src/Defaults';
 import { ArgumentsKeysType, ArgumentsType, ArgumentsValuesType } from '../src/global.d';
 
 const argsModify: ArgumentsType = {
@@ -30,7 +30,7 @@ const argsModify: ArgumentsType = {
   PPD_CONTINUE_ON_ERROR_ENABLED: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
-  PPD_ALIASES,
+  PPD_ALIASES: {},
   PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
 };
 
@@ -62,7 +62,7 @@ const argsENV: Record<ArgumentsKeysType, string> = {
   PPD_CONTINUE_ON_ERROR_ENABLED: 'false',
   PPD_IGNORE_TESTS_WITHOUT_NAME: 'true',
   PPD_FILES_EXTENSIONS_AVAILABLE: '.yaml,.yml,.ppd,.json',
-  PPD_ALIASES: JSON.stringify(PPD_ALIASES).replace(/\n/g, ''),
+  PPD_ALIASES: '{}',
   PPD_LIFE_CYCLE_FUNCTIONS: 'beforeRun,run,afterRun',
 };
 

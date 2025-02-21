@@ -1,8 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './global.d';
-import { PPD_ALIASES } from './Defaults';
+import { ColorsType, DeepMergeable, SocketType } from './global.d';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -242,20 +241,3 @@ export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-m
   dayjs(now).format(format);
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
-
-/**
- * Resolves aliases for a given key in the inputs object.
- *
- * @param alias The alias key to resolve.
- * @param inputs The inputs object to search for alias values.
- * @returns The resolved alias value.
- */
-export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
-  alias: AliasesKeysType,
-  inputs: TestExtendType,
-): T => {
-  const variants = [...(PPD_ALIASES[alias] ?? []), alias];
-  const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
-  const result = values.length ? mergeObjects<T>(values) : [];
-  return result as T;
-};

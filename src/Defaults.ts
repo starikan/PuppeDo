@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AliasesKeysType, ArgumentsType, LogPipe, RunOptions } from './global.d';
+import { ArgumentsType, LogPipe, RunOptions } from './global.d';
 
 import continueOnError from './Plugins/continueOnError/continueOnError';
 import skipSublingIfResult from './Plugins/skipSublingIfResult/skipSublingIfResult';
@@ -27,77 +27,6 @@ export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEntry, exporter: exporterSocket },
   { transformer: transformerYamlLog, formatter: formatterYamlToString, exporter: exporterYamlLog },
 ];
-
-// todo: error when conflict names
-export const PPD_ALIASES: Record<AliasesKeysType, string[]> = {
-  data: ['d', '📋'],
-  bindData: [
-    'bD',
-    'bd',
-    '📌📋',
-    'dataBind',
-    'db',
-    'dB',
-    'dataFunction',
-    'dF',
-    'df',
-    '🔑📋',
-    'functionData',
-    'fd',
-    'fD',
-  ],
-  selectors: ['selector', 's', '💠'],
-  bindSelectors: [
-    'bindSelector',
-    'bS',
-    'bs',
-    '📌💠',
-    'selectorBind',
-    'selectorsBind',
-    'sb',
-    'sB',
-    'selectorsFunction',
-    'selectorFunction',
-    'sF',
-    'sf',
-    '🔑💠',
-    'functionSelector',
-    'functionSelectors',
-    'fs',
-    'fS',
-  ],
-  bindResults: [
-    'bindResult',
-    'bR',
-    'br',
-    'result',
-    'results',
-    'r',
-    '↩️',
-    'R',
-    'rb',
-    'rB',
-    'resultBind',
-    'resultsBind',
-    'rF',
-    'rf',
-    '🔑↩️',
-    'functionResult',
-    'fr',
-    'fR',
-    'resultFunction',
-    'values',
-    'value',
-    'v',
-    'var',
-    'vars',
-    'const',
-    'c',
-    'let',
-    'set',
-  ],
-  options: ['option', 'opt', 'o', '⚙️'],
-};
 
 export const argsDefault: ArgumentsType = {
   PPD_ROOT: process.cwd(),
@@ -127,7 +56,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_STEPID: false,
   PPD_IGNORE_TESTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
-  PPD_ALIASES,
+  PPD_ALIASES: {},
   PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
 };
 
