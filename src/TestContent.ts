@@ -12,6 +12,8 @@ import { mergeObjects } from './Helpers';
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
 
 export const BLANK_TEST: Required<TestTypeYaml> = {
+  name: '',
+  type: 'agent',
   allowOptions: [],
   allowResults: [],
   bindData: {},
@@ -32,7 +34,6 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   if: '',
   inlineJS: '',
   logOptions: {},
-  name: '',
   needData: [],
   needSelectors: [],
   needEnvParams: [],
@@ -42,7 +43,6 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   selectorsExt: [],
   tags: [],
   todo: '',
-  type: 'agent',
   while: '',
   breakParentIfResult: '',
   argsRedefine: {},

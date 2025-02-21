@@ -355,7 +355,12 @@ export type TestTypeYaml = {
 
 export type TestType = Required<TestTypeYaml>;
 
-export type AgentData = Partial<TestExtendType>;
+export type AgentData = {
+  name: string;
+  type: 'runners' | 'data' | 'selectors' | string;
+  envsId: string;
+  stepId: string;
+} & Partial<TestExtendType>;
 
 export type TestExtendType = {
   levelIndent?: number;

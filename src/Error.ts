@@ -33,6 +33,7 @@ type ErrorContinueParentConstructor = {
   logger: Log;
   test: Test;
   parentError?: ErrorType;
+  agent: AgentData;
 };
 
 export class AbstractError extends Error {
@@ -63,10 +64,10 @@ export class TestError extends AbstractError {
 
     this.agent = agent;
 
-    this.envsId = parentError?.envsId || test.envsId;
+    this.envsId = parentError?.envsId || this.agent.envsId;
     this.runners = parentError?.runners || test.runner;
     this.socket = parentError?.socket || test.socket;
-    this.stepId = parentError?.stepId || test.stepId;
+    this.stepId = parentError?.stepId || test.agent.stepId;
     this.testDescription = parentError?.testDescription || test.description;
     this.message = `${parentError?.message} || error in test = ${this.agent.name}`;
     this.stack = parentError?.stack;
@@ -88,7 +89,8 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId, funcFile, testFile, levelIndent, breadcrumbs } = this.test;
+    const { stepId } = this.agent;
+    const { funcFile, testFile, levelIndent, breadcrumbs } = this.test;
     const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
@@ -132,9 +134,12 @@ export class ContinueParentError extends AbstractError {
   errorLevel: number;
   localResults: Record<string, unknown>;
   parentError?: ErrorType;
+  agent: AgentData;
 
-  constructor({ localResults, errorLevel, logger, test, parentError }: ErrorContinueParentConstructor) {
+  constructor({ localResults, errorLevel, logger, test, parentError, agent }: ErrorContinueParentConstructor) {
     super();
+
+    this.agent = agent;
 
     this.localResults = localResults;
     this.errorLevel = errorLevel;
@@ -144,7 +149,8 @@ export class ContinueParentError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { levelIndent, breakParentIfResult, breadcrumbs, stepId } = this.test;
+    const { stepId } = this.agent;
+    const { levelIndent, breakParentIfResult, breadcrumbs } = this.test;
     const { PPD_LOG_STEPID } = new Arguments().args;
     await this.logger.log({
       level: 'warn',

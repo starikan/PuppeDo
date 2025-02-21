@@ -299,7 +299,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test {
-  envsId: string;
   needData: string[];
   needSelectors: string[];
   needEnvParams: string[];
@@ -313,7 +312,6 @@ export class Test {
   repeat: number;
   source: string;
   socket: SocketType;
-  stepId: string;
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
   funcFile: string;
@@ -355,17 +353,22 @@ export class Test {
 
   agent: AgentData = {
     name: '',
-    type: '',
+    type: 'agent',
+    envsId: '',
+    stepId: '',
   };
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
     this.plugins.hook('initValues', { initValues });
 
+    // TODO: Нужна какая то проверка тут initValues
+
     this.agent.name = initValues.name ?? this.agent.name;
     this.agent.type = initValues.type ?? this.agent.type;
+    this.agent.envsId = initValues.envsId ?? this.agent.envsId;
+    this.agent.stepId = initValues.stepId ?? this.agent.stepId;
 
-    this.envsId = initValues.envsId ?? '';
     this.needData = initValues.needData ?? [];
     this.needSelectors = initValues.needSelectors ?? [];
     this.needEnvParams = initValues.needEnvParams ?? [];
@@ -382,7 +385,6 @@ export class Test {
     this.repeat = initValues.repeat ?? 1;
     this.source = initValues.source ?? '';
     this.socket = initValues.socket ?? blankSocket;
-    this.stepId = initValues.stepId ?? '';
     this.breadcrumbs = initValues.breadcrumbs ?? [];
     this.breadcrumbsDescriptions = initValues.breadcrumbsDescriptions ?? [];
     this.funcFile = initValues.funcFile ?? '';
@@ -408,8 +410,8 @@ export class Test {
       this.plugins.hook('runLogic', { inputs });
       const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
-      const { allRunners, logger } = new Environment().getEnvInstance(this.envsId);
-      const current = new Environment().getCurrent(this.envsId);
+      const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
+      const current = new Environment().getCurrent(this.agent.envsId);
 
       this.runner = allRunners.getRunnerByName(current.name || '');
 
@@ -440,7 +442,7 @@ export class Test {
       if (disable) {
         await logger.log({
           text: `Skip with ${disable}: ${getLogText(this.description, this.agent.name, PPD_LOG_TEST_NAME)}${
-            PPD_LOG_STEPID ? `[${this.stepId}]` : ''
+            PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
           }`,
           level: 'raw',
           levelIndent: this.levelIndent,
@@ -467,7 +469,7 @@ export class Test {
             this.description,
             this.agent.name,
             PPD_LOG_TEST_NAME,
-          )}${PPD_LOG_STEPID ? `[${this.stepId}]` : ''}`,
+          )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
           level: 'raw',
           levelIndent: this.levelIndent,
           logOptions: {
@@ -480,6 +482,8 @@ export class Test {
       }
 
       // Get Data from parent test and merge it with current test
+      this.agent.stepId = inputs.stepId || this.agent.stepId;
+
       this.data = resolveAliases<Record<string, string>>('data', inputs);
       this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
       this.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
@@ -504,7 +508,6 @@ export class Test {
       this.while = inputs.while || this.while;
       this.if = inputs.if || this.if;
       this.errorIf = inputs.errorIf || this.errorIf;
-      this.stepId = inputs.stepId || this.stepId;
       this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
       this.frame = this.frame || inputs.frame;
       this.logOptions = logForChild;
@@ -578,7 +581,6 @@ export class Test {
 
         // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
         const args: TestArgsType & AgentData = {
-          envsId: this.envsId,
           environment: new Environment(),
           runner: this.runner,
           allRunners,
@@ -594,7 +596,6 @@ export class Test {
           bindDescription: this.bindDescription,
           levelIndent: this.levelIndent,
           repeat: this.repeat,
-          stepId: this.stepId,
           debug: this.debug,
           disable: this.disable,
           logOptions: logForChild,
@@ -627,7 +628,7 @@ export class Test {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
+            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
           if (skipIf) {
             return { result: {}, meta: {} };
@@ -645,7 +646,7 @@ export class Test {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
+            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
         }
 
@@ -668,12 +669,12 @@ export class Test {
           for (const element of elements) {
             await logger.log({
               text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
-                PPD_LOG_STEPID ? ` [${this.stepId}]` : ''
+                PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
               }`,
               level: 'test',
               levelIndent: this.levelIndent,
               element,
-              stepId: this.stepId,
+              stepId: this.agent.stepId,
               logOptions: { ...this.logOptions, logShowFlag },
               logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
               args,
@@ -686,7 +687,7 @@ export class Test {
                 text: `${step + 1}. => ${getLogText(this.descriptionExtend[step])}`,
                 level: 'test',
                 levelIndent: this.levelIndent + 1,
-                stepId: this.stepId,
+                stepId: this.agent.stepId,
                 logOptions: {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
@@ -748,7 +749,7 @@ export class Test {
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
             this.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.stepId}]` : '',
+            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
         }
 
@@ -763,10 +764,10 @@ export class Test {
         // TIMER IN CONSOLE
         const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
         await logger.log({
-          text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.stepId}]` : ''}`,
+          text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''}`,
           level: 'timer',
           levelIndent: this.levelIndent,
-          stepId: this.stepId,
+          stepId: this.agent.stepId,
           logOptions: {
             logShowFlag:
               logShowFlag &&
@@ -798,6 +799,7 @@ export class Test {
               errorLevel: 1,
               logger,
               test: this,
+              agent: this.agent,
             });
           }
         }
@@ -834,6 +836,7 @@ export class Test {
             logger,
             test: this,
             parentError: error,
+            agent: this.agent,
           });
         } else {
           // TODO: избавиться от test тут
@@ -848,7 +851,7 @@ export class Test {
       inputArgs: TestExtendType,
     ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
       const blocker = new Blocker();
-      const block = blocker.getBlock(this.stepId);
+      const block = blocker.getBlock(this.agent.stepId);
       const { blockEmitter } = blocker;
       if (block && blockEmitter) {
         // Test
@@ -857,7 +860,7 @@ export class Test {
         // }, 2000);
         return new Promise((resolve) => {
           blockEmitter.on('updateBlock', async (newBlock) => {
-            if (newBlock.stepId === this.stepId && !newBlock.block) {
+            if (newBlock.stepId === this.agent.stepId && !newBlock.block) {
               resolve(await this.runLogic(inputArgs));
             }
           });
