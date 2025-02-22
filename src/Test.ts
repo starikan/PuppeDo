@@ -300,9 +300,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 export class Test {
   runner!: Runner;
 
-  runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
-  run: (inputArgs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
-
   plugins: Plugins;
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
@@ -314,7 +311,6 @@ export class Test {
     this.plugins.hook('initValues', { initValues });
 
     // TODO: Нужна какая то проверка тут initValues
-
     for (const key of Object.keys(this.agent)) {
       this.agent[key] = initValues[key] ?? this.agent[key];
     }
@@ -324,467 +320,467 @@ export class Test {
       initValues.atomRun ?? [],
       ...PPD_LIFE_CYCLE_FUNCTIONS.map((v) => (initValues[v] ?? []) as TestLifeCycleFunctionType[]),
     ].flat();
+  }
 
-    this.runLogic = async (
-      inputs: TestExtendType,
-    ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      this.plugins.hook('runLogic', { inputs });
-      const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
+  runLogic = async (
+    inputs: TestExtendType,
+  ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+    this.plugins.hook('runLogic', { inputs });
+    const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
-      const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
-      const current = new Environment().getCurrent(this.agent.envsId);
+    const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
+    const current = new Environment().getCurrent(this.agent.envsId);
 
-      this.runner = allRunners.getRunnerByName(current.name || '');
+    this.runner = allRunners.getRunnerByName(current.name || '');
 
-      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
+    const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
 
-      const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
-      const {
-        PPD_DEBUG_MODE,
-        PPD_LOG_EXTEND,
-        PPD_LOG_TEST_NAME,
-        PPD_TAGS_TO_RUN,
-        PPD_LOG_DOCUMENTATION_MODE,
-        PPD_LOG_NAMES_ONLY,
-        PPD_LOG_TIMER_SHOW,
-        PPD_LOG_STEPID,
-      } = { ...new Arguments().args, ...argsRedefine };
+    const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
+    const {
+      PPD_DEBUG_MODE,
+      PPD_LOG_EXTEND,
+      PPD_LOG_TEST_NAME,
+      PPD_TAGS_TO_RUN,
+      PPD_LOG_DOCUMENTATION_MODE,
+      PPD_LOG_NAMES_ONLY,
+      PPD_LOG_TIMER_SHOW,
+      PPD_LOG_STEPID,
+    } = { ...new Arguments().args, ...argsRedefine };
 
-      this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
-      if (this.agent.debug) {
-        console.log(this);
-        // eslint-disable-next-line no-debugger
-        debugger;
+    this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
+    if (this.agent.debug) {
+      console.log(this);
+      // eslint-disable-next-line no-debugger
+      debugger;
+    }
+
+    this.agent.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
+    const disable = resolveDisable(this.agent.disable, this.agent.metaFromPrevSubling);
+
+    if (disable) {
+      await logger.log({
+        text: `Skip with ${disable}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
+          PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
+        }`,
+        level: 'raw',
+        levelIndent: this.agent.levelIndent,
+        logOptions: {
+          logShowFlag,
+          textColor: 'blue',
+        },
+        logMeta: { breadcrumbs: this.agent.breadcrumbs },
+      });
+      // Drop disable for loops nested tests
+      this.agent.disable = false;
+      return {
+        result: {},
+        meta: {
+          skipBecausePrevSubling: this.agent.metaFromPrevSubling.skipBecausePrevSubling,
+          disable: Boolean(disable),
+        },
+      };
+    }
+
+    if (
+      PPD_TAGS_TO_RUN.length &&
+      this.agent.tags.length &&
+      !this.agent.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length
+    ) {
+      await logger.log({
+        text: `Skip with tags: ${JSON.stringify(this.agent.tags)} => ${getLogText(
+          this.agent.description,
+          this.agent.name,
+          PPD_LOG_TEST_NAME,
+        )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
+        level: 'raw',
+        levelIndent: this.agent.levelIndent,
+        logOptions: {
+          logShowFlag,
+          textColor: 'blue',
+        },
+        logMeta: { breadcrumbs: this.agent.breadcrumbs },
+      });
+      return { result: {}, meta: {} };
+    }
+
+    // Get Data from parent test and merge it with current test
+    this.agent.stepId = inputs.stepId ?? this.agent.stepId;
+    this.agent.description = inputs.description ?? this.agent.description;
+    this.agent.descriptionExtend = inputs.descriptionExtend ?? this.agent.descriptionExtend ?? [];
+    this.agent.bindDescription = inputs.bindDescription ?? this.agent.bindDescription;
+    this.agent.while = inputs.while || this.agent.while;
+    this.agent.if = inputs.if || this.agent.if;
+    this.agent.errorIf = inputs.errorIf || this.agent.errorIf;
+    this.agent.errorIfResult = inputs.errorIfResult || this.agent.errorIfResult;
+    this.agent.frame = inputs.frame || this.agent.frame;
+    this.agent.resultsFromPrevSubling = inputs.resultsFromPrevSubling || this.agent.resultsFromPrevSubling;
+    this.agent.dataExt = [...new Set([...this.agent.dataExt, ...(inputs.dataExt || [])])];
+    this.agent.selectorsExt = [...new Set([...this.agent.selectorsExt, ...(inputs.selectorsExt || [])])];
+    this.agent.repeat = inputs.repeat || this.agent.repeat;
+
+    this.agent.data = resolveAliases<Record<string, string>>('data', inputs);
+    this.agent.dataParent = { ...(this.agent.dataParent || {}), ...inputs.dataParent };
+    this.agent.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
+
+    this.agent.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
+    this.agent.selectorsParent = { ...(this.agent.selectorsParent || {}), ...inputs.selectorsParent };
+    this.agent.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
+
+    this.agent.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
+
+    this.agent.options = {
+      ...this.agent.options,
+      ...resolveAliases<Record<string, string>>('options', inputs),
+      ...inputs.optionsParent,
+    } as Record<string, string | number>;
+
+    this.agent.logOptions = logForChild;
+
+    try {
+      this.plugins.hook('resolveValues', { inputs });
+
+      if (this.agent.engineSupports.length) {
+        const { engine } = this.runner.getRunnerData().browser || {};
+        if (engine && !this.agent.engineSupports.includes(engine)) {
+          throw new Error(`Current engine: '${engine}' not supported in this test`);
+        }
       }
 
-      this.agent.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
-      const disable = resolveDisable(this.agent.disable, this.agent.metaFromPrevSubling);
-
-      if (disable) {
-        await logger.log({
-          text: `Skip with ${disable}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
-            PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
-          }`,
-          level: 'raw',
-          levelIndent: this.agent.levelIndent,
-          logOptions: {
-            logShowFlag,
-            textColor: 'blue',
-          },
-          logMeta: { breadcrumbs: this.agent.breadcrumbs },
-        });
-        // Drop disable for loops nested tests
-        this.agent.disable = false;
-        return {
-          result: {},
-          meta: {
-            skipBecausePrevSubling: this.agent.metaFromPrevSubling.skipBecausePrevSubling,
-            disable: Boolean(disable),
-          },
-        };
-      }
-
-      if (
-        PPD_TAGS_TO_RUN.length &&
-        this.agent.tags.length &&
-        !this.agent.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length
-      ) {
-        await logger.log({
-          text: `Skip with tags: ${JSON.stringify(this.agent.tags)} => ${getLogText(
-            this.agent.description,
-            this.agent.name,
-            PPD_LOG_TEST_NAME,
-          )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
-          level: 'raw',
-          levelIndent: this.agent.levelIndent,
-          logOptions: {
-            logShowFlag,
-            textColor: 'blue',
-          },
-          logMeta: { breadcrumbs: this.agent.breadcrumbs },
-        });
-        return { result: {}, meta: {} };
-      }
-
-      // Get Data from parent test and merge it with current test
-      this.agent.stepId = inputs.stepId ?? this.agent.stepId;
-      this.agent.description = inputs.description ?? this.agent.description;
-      this.agent.descriptionExtend = inputs.descriptionExtend ?? this.agent.descriptionExtend ?? [];
-      this.agent.bindDescription = inputs.bindDescription ?? this.agent.bindDescription;
-      this.agent.while = inputs.while || this.agent.while;
-      this.agent.if = inputs.if || this.agent.if;
-      this.agent.errorIf = inputs.errorIf || this.agent.errorIf;
-      this.agent.errorIfResult = inputs.errorIfResult || this.agent.errorIfResult;
-      this.agent.frame = inputs.frame || this.agent.frame;
-      this.agent.resultsFromPrevSubling = inputs.resultsFromPrevSubling || this.agent.resultsFromPrevSubling;
-      this.agent.dataExt = [...new Set([...this.agent.dataExt, ...(inputs.dataExt || [])])];
-      this.agent.selectorsExt = [...new Set([...this.agent.selectorsExt, ...(inputs.selectorsExt || [])])];
-      this.agent.repeat = inputs.repeat || this.agent.repeat;
-
-      this.agent.data = resolveAliases<Record<string, string>>('data', inputs);
-      this.agent.dataParent = { ...(this.agent.dataParent || {}), ...inputs.dataParent };
-      this.agent.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
-
-      this.agent.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
-      this.agent.selectorsParent = { ...(this.agent.selectorsParent || {}), ...inputs.selectorsParent };
-      this.agent.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
-
-      this.agent.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
-
-      this.agent.options = {
-        ...this.agent.options,
-        ...resolveAliases<Record<string, string>>('options', inputs),
-        ...inputs.optionsParent,
-      } as Record<string, string | number>;
-
-      this.agent.logOptions = logForChild;
-
-      try {
-        this.plugins.hook('resolveValues', { inputs });
-
-        if (this.agent.engineSupports.length) {
-          const { engine } = this.runner.getRunnerData().browser || {};
-          if (engine && !this.agent.engineSupports.includes(engine)) {
-            throw new Error(`Current engine: '${engine}' not supported in this test`);
+      if (this.agent.needEnvParams.length) {
+        for (const envParam of this.agent.needEnvParams) {
+          if (!envParam.endsWith('?') && !Object.keys(process.env).includes(envParam)) {
+            throw new Error(`You need set environment parametr: ${envParam}`);
           }
         }
+      }
 
-        if (this.agent.needEnvParams.length) {
-          for (const envParam of this.agent.needEnvParams) {
-            if (!envParam.endsWith('?') && !Object.keys(process.env).includes(envParam)) {
-              throw new Error(`You need set environment parametr: ${envParam}`);
-            }
-          }
-        }
+      checkIntersection(this.agent.data, this.agent.selectors);
 
-        checkIntersection(this.agent.data, this.agent.selectors);
+      let { dataLocal, selectorsLocal } = fetchData(
+        this.agent.dataExt,
+        this.agent.selectorsExt,
+        this.agent.resultsFromPrevSubling,
+        this.agent.dataParent,
+        this.agent.data,
+        this.agent.bindData,
+        this.agent.selectorsParent,
+        this.agent.selectors,
+        this.agent.bindSelectors,
+        this.runner,
+      );
 
-        let { dataLocal, selectorsLocal } = fetchData(
-          this.agent.dataExt,
-          this.agent.selectorsExt,
-          this.agent.resultsFromPrevSubling,
-          this.agent.dataParent,
-          this.agent.data,
-          this.agent.bindData,
-          this.agent.selectorsParent,
-          this.agent.selectors,
-          this.agent.bindSelectors,
-          this.runner,
+      checkNeeds(this.agent.needData, dataLocal, this.agent.name);
+      checkNeeds(this.agent.needSelectors, selectorsLocal, this.agent.name);
+
+      ({ dataLocal, selectorsLocal } = updateDataWithNeeds(
+        this.agent.needData,
+        this.agent.needSelectors,
+        dataLocal,
+        selectorsLocal,
+      ));
+
+      checkIntersection(dataLocal, selectorsLocal);
+
+      const allData = { ...selectorsLocal, ...dataLocal };
+
+      this.agent.repeat = parseInt(runScriptInContext(String(this.agent.repeat), allData, '1') as string, 10);
+      allData.repeat = this.agent.repeat;
+      dataLocal.repeat = this.agent.repeat;
+      selectorsLocal.repeat = this.agent.repeat;
+      allData.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+      dataLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+      selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+
+      const descriptionResolved = this.agent.bindDescription
+        ? this.agent.description || String(runScriptInContext(this.agent.bindDescription, allData))
+        : this.agent.description;
+
+      if (!descriptionResolved) {
+        this.agent.logOptions.backgroundColor = 'red';
+      }
+
+      // Extend with data passed to functions
+      const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
+
+      // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
+      const args: TestArgsType & AgentData = {
+        ...this.agent,
+        environment: new Environment(),
+        runner: this.runner,
+        allRunners,
+        data: dataLocal,
+        selectors: selectorsLocal,
+        dataTest: this.agent.data,
+        selectorsTest: this.agent.selectors,
+        logOptions: logForChild,
+        ppd: globalExportPPD,
+        argsEnv: { ...new Arguments().args, ...argsRedefine },
+        browser: this.runner && this.runner.getState().browser,
+        page: pageCurrent, // If there is no page it`s might be API
+        log: logger.log.bind(logger),
+        allData: new AgentContent().allData,
+        plugins: this.plugins,
+        // TODO: 2022-10-06 S.Starodubov Это тут не нужно
+        continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+      };
+
+      // IF
+      if (this.agent.if) {
+        const skipIf = await checkIf(
+          this.agent.if,
+          'if',
+          logger.log.bind(logger),
+          this.agent.levelIndent,
+          allData,
+          logShowFlag,
+          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.agent.breadcrumbs,
+          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
-
-        checkNeeds(this.agent.needData, dataLocal, this.agent.name);
-        checkNeeds(this.agent.needSelectors, selectorsLocal, this.agent.name);
-
-        ({ dataLocal, selectorsLocal } = updateDataWithNeeds(
-          this.agent.needData,
-          this.agent.needSelectors,
-          dataLocal,
-          selectorsLocal,
-        ));
-
-        checkIntersection(dataLocal, selectorsLocal);
-
-        const allData = { ...selectorsLocal, ...dataLocal };
-
-        this.agent.repeat = parseInt(runScriptInContext(String(this.agent.repeat), allData, '1') as string, 10);
-        allData.repeat = this.agent.repeat;
-        dataLocal.repeat = this.agent.repeat;
-        selectorsLocal.repeat = this.agent.repeat;
-        allData.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
-        dataLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
-        selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
-
-        const descriptionResolved = this.agent.bindDescription
-          ? this.agent.description || String(runScriptInContext(this.agent.bindDescription, allData))
-          : this.agent.description;
-
-        if (!descriptionResolved) {
-          this.agent.logOptions.backgroundColor = 'red';
+        if (skipIf) {
+          return { result: {}, meta: {} };
         }
+      }
 
-        // Extend with data passed to functions
-        const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
+      // ERROR IF
+      if (this.agent.errorIf) {
+        await checkIf(
+          this.agent.errorIf,
+          'errorIf',
+          logger.log.bind(logger),
+          this.agent.levelIndent,
+          allData,
+          logShowFlag,
+          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.agent.breadcrumbs,
+          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
+        );
+      }
 
-        // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
-        const args: TestArgsType & AgentData = {
-          ...this.agent,
-          environment: new Environment(),
-          runner: this.runner,
-          allRunners,
-          data: dataLocal,
-          selectors: selectorsLocal,
-          dataTest: this.agent.data,
-          selectorsTest: this.agent.selectors,
-          logOptions: logForChild,
-          ppd: globalExportPPD,
-          argsEnv: { ...new Arguments().args, ...argsRedefine },
-          browser: this.runner && this.runner.getState().browser,
-          page: pageCurrent, // If there is no page it`s might be API
-          log: logger.log.bind(logger),
-          allData: new AgentContent().allData,
-          plugins: this.plugins,
-          // TODO: 2022-10-06 S.Starodubov Это тут не нужно
-          continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-        };
-
-        // IF
-        if (this.agent.if) {
-          const skipIf = await checkIf(
-            this.agent.if,
-            'if',
-            logger.log.bind(logger),
-            this.agent.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.agent.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
-          );
-          if (skipIf) {
-            return { result: {}, meta: {} };
+      // LOG TEST
+      if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)) {
+        const elements: Element = [];
+        if (this.agent.logOptions.screenshot) {
+          // Create Atom for get elements only
+          const atom = new Atom({ page: pageCurrent, runner: this.runner });
+          const selectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
+          for (const selector of selectors) {
+            elements.push(await atom.getElement(selector));
           }
         }
 
-        // ERROR IF
-        if (this.agent.errorIf) {
-          await checkIf(
-            this.agent.errorIf,
-            'errorIf',
-            logger.log.bind(logger),
-            this.agent.levelIndent,
-            allData,
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.agent.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
-          );
+        if (!elements.length) {
+          elements.push(null);
         }
 
-        // LOG TEST
-        if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)) {
-          const elements: Element = [];
-          if (this.agent.logOptions.screenshot) {
-            // Create Atom for get elements only
-            const atom = new Atom({ page: pageCurrent, runner: this.runner });
-            const selectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
-            for (const selector of selectors) {
-              elements.push(await atom.getElement(selector));
-            }
-          }
+        for (const element of elements) {
+          await logger.log({
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
+              PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
+            }`,
+            level: 'test',
+            levelIndent: this.agent.levelIndent,
+            element,
+            stepId: this.agent.stepId,
+            logOptions: { ...this.agent.logOptions, logShowFlag },
+            logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
+            args,
+          });
+        }
 
-          if (!elements.length) {
-            elements.push(null);
-          }
-
-          for (const element of elements) {
+        if (PPD_LOG_DOCUMENTATION_MODE) {
+          for (let step = 0; step < this.agent.descriptionExtend.length; step += 1) {
             await logger.log({
-              text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
-                PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
-              }`,
+              text: `${step + 1}. => ${getLogText(this.agent.descriptionExtend[step])}`,
               level: 'test',
-              levelIndent: this.agent.levelIndent,
-              element,
+              levelIndent: this.agent.levelIndent + 1,
               stepId: this.agent.stepId,
-              logOptions: { ...this.agent.logOptions, logShowFlag },
+              logOptions: {
+                logShowFlag,
+                textColor: 'cyan' as ColorsType,
+              },
               logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
               args,
             });
           }
-
-          if (PPD_LOG_DOCUMENTATION_MODE) {
-            for (let step = 0; step < this.agent.descriptionExtend.length; step += 1) {
-              await logger.log({
-                text: `${step + 1}. => ${getLogText(this.agent.descriptionExtend[step])}`,
-                level: 'test',
-                levelIndent: this.agent.levelIndent + 1,
-                stepId: this.agent.stepId,
-                logOptions: {
-                  logShowFlag,
-                  textColor: 'cyan' as ColorsType,
-                },
-                logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
-                args,
-              });
-            }
-          }
         }
+      }
 
-        if (this.agent.debugInfo) {
-          logDebug(logger.log.bind(logger), args);
-          if (this.agent.debug) {
-            console.log(this);
-            // eslint-disable-next-line no-debugger
-            debugger;
-          }
+      if (this.agent.debugInfo) {
+        logDebug(logger.log.bind(logger), args);
+        if (this.agent.debug) {
+          console.log(this);
+          // eslint-disable-next-line no-debugger
+          debugger;
         }
+      }
 
-        this.plugins.hook('beforeFunctions', { args });
+      this.plugins.hook('beforeFunctions', { args });
 
-        // LIFE CYCLE
-        let resultFromLifeCycle = {};
+      // LIFE CYCLE
+      let resultFromLifeCycle = {};
 
-        for (const funcs of this.lifeCycleFunctions) {
-          const funcsArray = [funcs].flat();
-          for (const func of funcsArray) {
-            const funResult = (await func(args)) || {};
-            resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
-          }
+      for (const funcs of this.lifeCycleFunctions) {
+        const funcsArray = [funcs].flat();
+        for (const func of funcsArray) {
+          const funResult = (await func(args)) || {};
+          resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
         }
+      }
 
-        // RESULTS
-        const results = this.agent.allowResults.length
-          ? pick(resultFromLifeCycle, this.agent.allowResults)
-          : resultFromLifeCycle;
-        if (
-          this.agent.allowResults.length &&
-          Object.keys(results).length &&
-          Object.keys(results).length !== [...new Set(this.agent.allowResults)].length
-        ) {
-          throw new Error('Can`t get results from test');
-        }
-        const allowResultsObject = this.agent.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
-        let localResults = resolveDataFunctions(
-          { ...this.agent.bindResults, ...allowResultsObject },
-          { ...selectorsLocal, ...dataLocal, ...results },
+      // RESULTS
+      const results = this.agent.allowResults.length
+        ? pick(resultFromLifeCycle, this.agent.allowResults)
+        : resultFromLifeCycle;
+      if (
+        this.agent.allowResults.length &&
+        Object.keys(results).length &&
+        Object.keys(results).length !== [...new Set(this.agent.allowResults)].length
+      ) {
+        throw new Error('Can`t get results from test');
+      }
+      const allowResultsObject = this.agent.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+      let localResults = resolveDataFunctions(
+        { ...this.agent.bindResults, ...allowResultsObject },
+        { ...selectorsLocal, ...dataLocal, ...results },
+      );
+
+      this.plugins.hook('afterResults', { args, results: localResults });
+
+      // ERROR
+      if (this.agent.errorIfResult) {
+        await checkIf(
+          this.agent.errorIfResult,
+          'errorIfResult',
+          logger.log.bind(logger),
+          this.agent.levelIndent + 1,
+          { ...allData, ...localResults },
+          logShowFlag,
+          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.agent.breadcrumbs,
+          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
+      }
 
-        this.plugins.hook('afterResults', { args, results: localResults });
-
-        // ERROR
-        if (this.agent.errorIfResult) {
-          await checkIf(
-            this.agent.errorIfResult,
-            'errorIfResult',
-            logger.log.bind(logger),
-            this.agent.levelIndent + 1,
-            { ...allData, ...localResults },
-            logShowFlag,
-            this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.agent.breadcrumbs,
-            PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
-          );
+      // WHILE
+      if (this.agent.while) {
+        const whileEval = runScriptInContext(this.agent.while, { ...allData, ...localResults });
+        if (whileEval) {
+          this.agent.repeat += 1;
         }
+      }
 
-        // WHILE
-        if (this.agent.while) {
-          const whileEval = runScriptInContext(this.agent.while, { ...allData, ...localResults });
-          if (whileEval) {
-            this.agent.repeat += 1;
-          }
-        }
+      // TIMER IN CONSOLE
+      const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
+      await logger.log({
+        text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''}`,
+        level: 'timer',
+        levelIndent: this.agent.levelIndent,
+        stepId: this.agent.stepId,
+        logOptions: {
+          logShowFlag:
+            logShowFlag &&
+            (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
+            (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)),
+        },
+        logMeta: {
+          extendInfo: true,
+          breadcrumbs: this.agent.breadcrumbs,
+          repeat: this.agent.repeat,
+          timeStart,
+          timeEnd,
+        },
+      });
 
-        // TIMER IN CONSOLE
-        const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
-        await logger.log({
-          text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''}`,
-          level: 'timer',
-          levelIndent: this.agent.levelIndent,
-          stepId: this.agent.stepId,
-          logOptions: {
-            logShowFlag:
-              logShowFlag &&
-              (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
-              (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)),
-          },
-          logMeta: {
-            extendInfo: true,
-            breadcrumbs: this.agent.breadcrumbs,
-            repeat: this.agent.repeat,
-            timeStart,
-            timeEnd,
-          },
+      // REPEAT
+      if (this.agent.repeat > 1) {
+        const repeatArgs = { ...inputs };
+        repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
+        repeatArgs.data = { ...repeatArgs.data, ...localResults };
+        repeatArgs.repeat = this.agent.repeat - 1;
+        repeatArgs.stepId = generateId();
+        const repeatResult = await this.run(repeatArgs);
+        localResults = { ...localResults, ...repeatResult };
+      }
+
+      if (this.agent.breakParentIfResult) {
+        const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {
+          ...allData,
+          ...localResults,
         });
-
-        // REPEAT
-        if (this.agent.repeat > 1) {
-          const repeatArgs = { ...inputs };
-          repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
-          repeatArgs.data = { ...repeatArgs.data, ...localResults };
-          repeatArgs.repeat = this.agent.repeat - 1;
-          repeatArgs.stepId = generateId();
-          const repeatResult = await this.run(repeatArgs);
-          localResults = { ...localResults, ...repeatResult };
-        }
-
-        if (this.agent.breakParentIfResult) {
-          const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {
-            ...allData,
-            ...localResults,
-          });
-          if (breakParentIfResult) {
-            throw new ContinueParentError({
-              localResults,
-              errorLevel: 1,
-              logger,
-              test: this,
-              agent: this.agent,
-            });
-          }
-        }
-
-        const metaForNextSubling: TestMetaSublingExchangeData = {};
-        const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
-        if (skipSublingIfResult) {
-          const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {
-            ...allData,
-            ...localResults,
-          });
-          if (skipSublingIfResultResolved) {
-            metaForNextSubling.disable = true;
-            metaForNextSubling.skipBecausePrevSubling = true;
-          }
-        }
-
-        return { result: localResults, meta: metaForNextSubling };
-      } catch (error) {
-        if (error instanceof ContinueParentError) {
-          if (error.errorLevel) {
-            await error.log();
-            error.errorLevel -= 1;
-            throw error;
-          }
-          return { result: error.localResults, meta: {} };
-        }
-
-        let newError;
-        if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
-          newError = new ContinueParentError({
-            localResults: error.localResults || {},
-            errorLevel: 0,
+        if (breakParentIfResult) {
+          throw new ContinueParentError({
+            localResults,
+            errorLevel: 1,
             logger,
             test: this,
-            parentError: error,
             agent: this.agent,
           });
-        } else {
-          // TODO: избавиться от test тут
-          newError = new TestError({ logger, parentError: error, test: this, agent: this.agent });
         }
-        await newError.log();
-        throw newError;
       }
-    };
 
-    this.run = async (
-      inputArgs: TestExtendType,
-    ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-      const blocker = new Blocker();
-      const block = blocker.getBlock(this.agent.stepId);
-      const { blockEmitter } = blocker;
-      if (block && blockEmitter) {
-        // Test
-        // setTimeout(() => {
-        //   blocker.setBlock(this.stepId, false);
-        // }, 2000);
-        return new Promise((resolve) => {
-          blockEmitter.on('updateBlock', async (newBlock) => {
-            if (newBlock.stepId === this.agent.stepId && !newBlock.block) {
-              resolve(await this.runLogic(inputArgs));
-            }
-          });
+      const metaForNextSubling: TestMetaSublingExchangeData = {};
+      const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
+      if (skipSublingIfResult) {
+        const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {
+          ...allData,
+          ...localResults,
         });
+        if (skipSublingIfResultResolved) {
+          metaForNextSubling.disable = true;
+          metaForNextSubling.skipBecausePrevSubling = true;
+        }
       }
-      return this.runLogic(inputArgs);
-    };
-  }
+
+      return { result: localResults, meta: metaForNextSubling };
+    } catch (error) {
+      if (error instanceof ContinueParentError) {
+        if (error.errorLevel) {
+          await error.log();
+          error.errorLevel -= 1;
+          throw error;
+        }
+        return { result: error.localResults, meta: {} };
+      }
+
+      let newError;
+      if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
+        newError = new ContinueParentError({
+          localResults: error.localResults || {},
+          errorLevel: 0,
+          logger,
+          test: this,
+          parentError: error,
+          agent: this.agent,
+        });
+      } else {
+        // TODO: избавиться от test тут
+        newError = new TestError({ logger, parentError: error, test: this, agent: this.agent });
+      }
+      await newError.log();
+      throw newError;
+    }
+  };
+
+  run = async (
+    inputArgs: TestExtendType,
+  ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+    const blocker = new Blocker();
+    const block = blocker.getBlock(this.agent.stepId);
+    const { blockEmitter } = blocker;
+    if (block && blockEmitter) {
+      // Test
+      // setTimeout(() => {
+      //   blocker.setBlock(this.stepId, false);
+      // }, 2000);
+      return new Promise((resolve) => {
+        blockEmitter.on('updateBlock', async (newBlock) => {
+          if (newBlock.stepId === this.agent.stepId && !newBlock.block) {
+            resolve(await this.runLogic(inputArgs));
+          }
+        });
+      });
+    }
+    return this.runLogic(inputArgs);
+  };
 }
