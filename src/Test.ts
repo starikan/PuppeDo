@@ -559,10 +559,10 @@ export class Test {
         dataLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
         selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
 
-        let descriptionResolved = this.agent.description;
-        if (this.agent.bindDescription) {
-          descriptionResolved = descriptionResolved || String(runScriptInContext(this.agent.bindDescription, allData));
-        }
+        const descriptionResolved = this.agent.bindDescription
+          ? this.agent.description || String(runScriptInContext(this.agent.bindDescription, allData))
+          : this.agent.description;
+
         if (!descriptionResolved) {
           this.logOptions.backgroundColor = 'red';
         }
@@ -603,7 +603,6 @@ export class Test {
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           ...this.agent,
-          description: descriptionResolved,
         };
 
         // IF
