@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { ArgumentsType, LogPipe, RunOptions } from './global.d';
+import { AgentData, ArgumentsType, LogPipe, RunOptions, TestTypeYaml } from './global.d';
 
 import continueOnError from './Plugins/continueOnError/continueOnError';
 import skipSublingIfResult from './Plugins/skipSublingIfResult/skipSublingIfResult';
@@ -58,6 +58,63 @@ export const argsDefault: ArgumentsType = {
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
   PPD_ALIASES: {},
   PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
+};
+
+export const BLANK_AGENT: Required<TestTypeYaml> = {
+  allowOptions: [],
+  allowResults: [],
+  bindData: {},
+  bindDescription: '',
+  bindResults: {},
+  bindSelectors: {},
+  data: {},
+  dataExt: [],
+  debug: false,
+  debugInfo: false,
+  description: '',
+  descriptionExtend: [],
+  disable: false,
+  engineSupports: [],
+  errorIf: '',
+  errorIfResult: '',
+  frame: '',
+  if: '',
+  inlineJS: '',
+  logOptions: {},
+  name: '',
+  needData: [],
+  needSelectors: [],
+  needEnvParams: [],
+  options: {},
+  repeat: 1,
+  selectors: {},
+  selectorsExt: [],
+  tags: [],
+  todo: '',
+  type: 'agent',
+  while: '',
+  breakParentIfResult: '',
+  argsRedefine: {},
+  continueOnError: false,
+  descriptionError: '',
+  skipSublingIfResult: '',
+};
+
+export const EXTEND_BLANK_AGENT: AgentData = {
+  ...BLANK_AGENT,
+  envsId: '',
+  stepId: '',
+  breadcrumbs: [],
+  breadcrumbsDescriptions: [],
+  resultsFromPrevSubling: {},
+  source: '',
+  socket: blankSocket,
+  funcFile: '',
+  testFile: '',
+  levelIndent: 0,
+  dataParent: {},
+  selectorsParent: {},
+  metaFromPrevSubling: {},
 };
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {

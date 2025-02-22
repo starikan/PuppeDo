@@ -1,9 +1,9 @@
 import vm from 'vm';
-import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers';
+import { getTimer, pick, generateId, mergeObjects } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
-import AgentContent, { BLANK_AGENT } from './TestContent';
+import AgentContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
 import {
@@ -22,6 +22,7 @@ import {
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
+import { EXTEND_BLANK_AGENT } from './Defaults';
 import globalExportPPD from './index';
 
 /**
@@ -306,22 +307,7 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
-  agent: AgentData = {
-    ...BLANK_AGENT,
-    envsId: '',
-    stepId: '',
-    breadcrumbs: [],
-    breadcrumbsDescriptions: [],
-    resultsFromPrevSubling: {},
-    source: '',
-    socket: blankSocket,
-    funcFile: '',
-    testFile: '',
-    levelIndent: 0,
-    dataParent: {},
-    selectorsParent: {},
-    metaFromPrevSubling: {},
-  };
+  agent: AgentData = { ...EXTEND_BLANK_AGENT };
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);

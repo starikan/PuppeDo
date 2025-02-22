@@ -402,7 +402,7 @@ export type AgentData = {
   bindSelectors: Record<string, string>;
   bindResults: Record<string, string>;
   metaFromPrevSubling: TestMetaSublingExchangeData;
-} & Partial<TestExtendType>;
+};
 
 export type TestExtendType = {
   levelIndent?: number;

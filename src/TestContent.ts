@@ -10,46 +10,7 @@ import { Arguments } from './Arguments';
 import { mergeObjects } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
-
-export const BLANK_AGENT: Required<TestTypeYaml> = {
-  allowOptions: [],
-  allowResults: [],
-  bindData: {},
-  bindDescription: '',
-  bindResults: {},
-  bindSelectors: {},
-  data: {},
-  dataExt: [],
-  debug: false,
-  debugInfo: false,
-  description: '',
-  descriptionExtend: [],
-  disable: false,
-  engineSupports: [],
-  errorIf: '',
-  errorIfResult: '',
-  frame: '',
-  if: '',
-  inlineJS: '',
-  logOptions: {},
-  name: '',
-  needData: [],
-  needSelectors: [],
-  needEnvParams: [],
-  options: {},
-  repeat: 1,
-  selectors: {},
-  selectorsExt: [],
-  tags: [],
-  todo: '',
-  type: 'agent',
-  while: '',
-  breakParentIfResult: '',
-  argsRedefine: {},
-  continueOnError: false,
-  descriptionError: '',
-  skipSublingIfResult: '',
-};
+import { BLANK_AGENT } from './Defaults';
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;

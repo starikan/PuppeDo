@@ -1,8 +1,9 @@
-import AgentContent, { BLANK_AGENT, resolveTest } from './TestContent';
+import AgentContent, { resolveTest } from './TestContent';
 
 import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './global.d';
 import { generateId, deepMergeField } from './Helpers';
 import { Arguments } from './Arguments';
+import { BLANK_AGENT } from './Defaults';
 
 export default class TestStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
