@@ -3,7 +3,7 @@ import { blankSocket, getTimer, pick, generateId, mergeObjects } from './Helpers
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
-import AgentContent from './TestContent';
+import AgentContent, { BLANK_AGENT } from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
 import {
@@ -306,53 +306,20 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
-  // TODO BLANK_TEST разбивлять тут
   agent: AgentData = {
-    name: '',
-    type: 'agent',
+    ...BLANK_AGENT,
     envsId: '',
     stepId: '',
-    needData: [],
-    needSelectors: [],
-    needEnvParams: [],
-    engineSupports: [],
-    description: '',
-    descriptionExtend: [],
-    bindDescription: '',
     breadcrumbs: [],
     breadcrumbsDescriptions: [],
-    while: '',
-    if: '',
-    errorIf: '',
-    errorIfResult: '',
-    frame: '',
     resultsFromPrevSubling: {},
-    tags: [],
-    allowOptions: [],
-    todo: '',
-    inlineJS: '',
-    breakParentIfResult: '',
     source: '',
     socket: blankSocket,
     funcFile: '',
     testFile: '',
-    dataExt: [],
-    selectorsExt: [],
-    allowResults: [],
     levelIndent: 0,
-    repeat: 1,
     dataParent: {},
     selectorsParent: {},
-    options: {},
-    debug: false,
-    debugInfo: false,
-    disable: false,
-    logOptions: {},
-    data: {},
-    bindData: {},
-    selectors: {},
-    bindSelectors: {},
-    bindResults: {},
     metaFromPrevSubling: {},
   };
 

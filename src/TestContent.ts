@@ -11,9 +11,7 @@ import { mergeObjects } from './Helpers';
 
 import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
 
-export const BLANK_TEST: Required<TestTypeYaml> = {
-  name: '',
-  type: 'agent',
+export const BLANK_AGENT: Required<TestTypeYaml> = {
   allowOptions: [],
   allowResults: [],
   bindData: {},
@@ -34,6 +32,7 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   if: '',
   inlineJS: '',
   logOptions: {},
+  name: '',
   needData: [],
   needSelectors: [],
   needEnvParams: [],
@@ -43,6 +42,7 @@ export const BLANK_TEST: Required<TestTypeYaml> = {
   selectorsExt: [],
   tags: [],
   todo: '',
+  type: 'agent',
   while: '',
   breakParentIfResult: '',
   argsRedefine: {},
@@ -55,15 +55,15 @@ export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
 
   // todo: e2e test
-  const duplicateKeys = PPD_LIFE_CYCLE_FUNCTIONS.filter((key) => Object.keys(BLANK_TEST).includes(key));
+  const duplicateKeys = PPD_LIFE_CYCLE_FUNCTIONS.filter((key) => Object.keys(BLANK_AGENT).includes(key));
   if (duplicateKeys.length) {
     throw new Error(
-      `PPD_LIFE_CYCLE_FUNCTIONS contains keys that duplicate BLANK_TEST keys: ${duplicateKeys.join(', ')}`,
+      `PPD_LIFE_CYCLE_FUNCTIONS contains keys that duplicate BLANK_AGENT keys: ${duplicateKeys.join(', ')}`,
     );
   }
 
   const result = {
-    ...BLANK_TEST,
+    ...BLANK_AGENT,
     ...PPD_LIFE_CYCLE_FUNCTIONS.reduce((s, v) => ({ ...s, [v]: [] as TestExtendType[] }), {}),
     ...test,
   };

@@ -1,4 +1,4 @@
-import AgentContent, { BLANK_TEST, resolveTest } from './TestContent';
+import AgentContent, { BLANK_AGENT, resolveTest } from './TestContent';
 
 import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './global.d';
 import { generateId, deepMergeField } from './Helpers';
@@ -7,12 +7,12 @@ import { Arguments } from './Arguments';
 export default class TestStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
-    const keys = Object.keys(BLANK_TEST);
+    const keys = Object.keys(BLANK_AGENT);
     const fullJSONFiltered: Partial<TestExtendType> = {};
     keys.forEach((v) => {
       const value = fullJSON[v];
 
-      if (['string', 'boolean', 'number'].includes(typeof value) && value !== null && value !== BLANK_TEST[v]) {
+      if (['string', 'boolean', 'number'].includes(typeof value) && value !== null && value !== BLANK_AGENT[v]) {
         fullJSONFiltered[v] = fullJSON[v];
       }
       if (
