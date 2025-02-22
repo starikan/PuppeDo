@@ -297,20 +297,6 @@ const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSubli
 };
 
 export class Test {
-  dataParent!: Record<string, unknown>;
-  selectorsParent!: Record<string, unknown>;
-  options: Record<string, string | number>;
-  debug: boolean;
-  debugInfo: boolean | 'data' | 'selectors';
-  disable: boolean;
-  logOptions: LogOptionsType;
-  data: Record<string, unknown>;
-  bindData!: Record<string, string>;
-  selectors: Record<string, unknown>;
-  bindSelectors!: Record<string, string>;
-  bindResults!: Record<string, string>;
-  metaFromPrevSubling!: TestMetaSublingExchangeData;
-
   runner!: Runner;
 
   runLogic: (inputs: TestExtendType) => Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }>;
@@ -355,6 +341,19 @@ export class Test {
     allowResults: [],
     levelIndent: 0,
     repeat: 1,
+    dataParent: {},
+    selectorsParent: {},
+    options: {},
+    debug: false,
+    debugInfo: false,
+    disable: false,
+    logOptions: {},
+    data: {},
+    bindData: {},
+    selectors: {},
+    bindSelectors: {},
+    bindResults: {},
+    metaFromPrevSubling: {},
   };
 
   constructor(initValues: TestExtendType) {
@@ -366,14 +365,6 @@ export class Test {
     for (const key of Object.keys(this.agent)) {
       this.agent[key] = initValues[key] ?? this.agent[key];
     }
-
-    this.data = initValues.data ?? {};
-    this.selectors = initValues.selectors ?? {};
-    this.options = initValues.options ?? {};
-    this.debug = initValues.debug ?? false;
-    this.debugInfo = initValues.debugInfo ?? false;
-    this.disable = initValues.disable ?? false;
-    this.logOptions = initValues.logOptions ?? {};
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [
@@ -392,7 +383,7 @@ export class Test {
 
       this.runner = allRunners.getRunnerByName(current.name || '');
 
-      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.logOptions);
+      const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
 
       const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
       const {
@@ -406,15 +397,15 @@ export class Test {
         PPD_LOG_STEPID,
       } = { ...new Arguments().args, ...argsRedefine };
 
-      this.debug = PPD_DEBUG_MODE && (inputs.debug || this.debug);
-      if (this.debug) {
+      this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
+      if (this.agent.debug) {
         console.log(this);
         // eslint-disable-next-line no-debugger
         debugger;
       }
 
-      this.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
-      const disable = resolveDisable(this.disable, this.metaFromPrevSubling);
+      this.agent.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
+      const disable = resolveDisable(this.agent.disable, this.agent.metaFromPrevSubling);
 
       if (disable) {
         await logger.log({
@@ -430,11 +421,11 @@ export class Test {
           logMeta: { breadcrumbs: this.agent.breadcrumbs },
         });
         // Drop disable for loops nested tests
-        this.disable = false;
+        this.agent.disable = false;
         return {
           result: {},
           meta: {
-            skipBecausePrevSubling: this.metaFromPrevSubling.skipBecausePrevSubling,
+            skipBecausePrevSubling: this.agent.metaFromPrevSubling.skipBecausePrevSubling,
             disable: Boolean(disable),
           },
         };
@@ -477,23 +468,23 @@ export class Test {
       this.agent.selectorsExt = [...new Set([...this.agent.selectorsExt, ...(inputs.selectorsExt || [])])];
       this.agent.repeat = inputs.repeat || this.agent.repeat;
 
-      this.data = resolveAliases<Record<string, string>>('data', inputs);
-      this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
-      this.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
+      this.agent.data = resolveAliases<Record<string, string>>('data', inputs);
+      this.agent.dataParent = { ...(this.agent.dataParent || {}), ...inputs.dataParent };
+      this.agent.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
 
-      this.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
-      this.selectorsParent = { ...(this.selectorsParent || {}), ...inputs.selectorsParent };
-      this.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
+      this.agent.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
+      this.agent.selectorsParent = { ...(this.agent.selectorsParent || {}), ...inputs.selectorsParent };
+      this.agent.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
 
-      this.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
+      this.agent.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
 
-      this.options = {
-        ...this.options,
+      this.agent.options = {
+        ...this.agent.options,
         ...resolveAliases<Record<string, string>>('options', inputs),
         ...inputs.optionsParent,
       } as Record<string, string | number>;
 
-      this.logOptions = logForChild;
+      this.agent.logOptions = logForChild;
 
       try {
         this.plugins.hook('resolveValues', { inputs });
@@ -513,18 +504,18 @@ export class Test {
           }
         }
 
-        checkIntersection(this.data, this.selectors);
+        checkIntersection(this.agent.data, this.agent.selectors);
 
         let { dataLocal, selectorsLocal } = fetchData(
           this.agent.dataExt,
           this.agent.selectorsExt,
           this.agent.resultsFromPrevSubling,
-          this.dataParent,
-          this.data,
-          this.bindData,
-          this.selectorsParent,
-          this.selectors,
-          this.bindSelectors,
+          this.agent.dataParent,
+          this.agent.data,
+          this.agent.bindData,
+          this.agent.selectorsParent,
+          this.agent.selectors,
+          this.agent.bindSelectors,
           this.runner,
         );
 
@@ -555,7 +546,7 @@ export class Test {
           : this.agent.description;
 
         if (!descriptionResolved) {
-          this.logOptions.backgroundColor = 'red';
+          this.agent.logOptions.backgroundColor = 'red';
         }
 
         // Extend with data passed to functions
@@ -563,19 +554,14 @@ export class Test {
 
         // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
         const args: TestArgsType & AgentData = {
+          ...this.agent,
           environment: new Environment(),
           runner: this.runner,
           allRunners,
           data: dataLocal,
           selectors: selectorsLocal,
-          dataTest: this.data,
-          selectorsTest: this.selectors,
-          options: this.options,
-          bindResults: this.bindResults,
-          bindSelectors: this.bindSelectors,
-          bindData: this.bindData,
-          debug: this.debug,
-          disable: this.disable,
+          dataTest: this.agent.data,
+          selectorsTest: this.agent.selectors,
           logOptions: logForChild,
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
@@ -586,7 +572,6 @@ export class Test {
           plugins: this.plugins,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-          ...this.agent,
         };
 
         // IF
@@ -625,7 +610,7 @@ export class Test {
         // LOG TEST
         if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)) {
           const elements: Element = [];
-          if (this.logOptions.screenshot) {
+          if (this.agent.logOptions.screenshot) {
             // Create Atom for get elements only
             const atom = new Atom({ page: pageCurrent, runner: this.runner });
             const selectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
@@ -647,7 +632,7 @@ export class Test {
               levelIndent: this.agent.levelIndent,
               element,
               stepId: this.agent.stepId,
-              logOptions: { ...this.logOptions, logShowFlag },
+              logOptions: { ...this.agent.logOptions, logShowFlag },
               logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
               args,
             });
@@ -671,9 +656,9 @@ export class Test {
           }
         }
 
-        if (this.debugInfo) {
+        if (this.agent.debugInfo) {
           logDebug(logger.log.bind(logger), args);
-          if (this.debug) {
+          if (this.agent.debug) {
             console.log(this);
             // eslint-disable-next-line no-debugger
             debugger;
@@ -706,7 +691,7 @@ export class Test {
         }
         const allowResultsObject = this.agent.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
         let localResults = resolveDataFunctions(
-          { ...this.bindResults, ...allowResultsObject },
+          { ...this.agent.bindResults, ...allowResultsObject },
           { ...selectorsLocal, ...dataLocal, ...results },
         );
 

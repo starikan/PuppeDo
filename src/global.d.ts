@@ -389,6 +389,19 @@ export type AgentData = {
   allowResults: string[];
   levelIndent: number;
   repeat: number;
+  dataParent: Record<string, unknown>;
+  selectorsParent: Record<string, unknown>;
+  options: Record<string, string | number>;
+  debug: boolean;
+  debugInfo: boolean | 'data' | 'selectors';
+  disable: boolean;
+  logOptions: LogOptionsType;
+  data: Record<string, unknown>;
+  bindData: Record<string, string>;
+  selectors: Record<string, unknown>;
+  bindSelectors: Record<string, string>;
+  bindResults: Record<string, string>;
+  metaFromPrevSubling: TestMetaSublingExchangeData;
 } & Partial<TestExtendType>;
 
 export type TestExtendType = {
