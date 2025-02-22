@@ -367,6 +367,8 @@ export type AgentData = {
   description: string;
   descriptionExtend: string[];
   bindDescription: string;
+  breadcrumbs: string[];
+  breadcrumbsDescriptions: string[];
 } & Partial<TestExtendType>;
 
 export type TestExtendType = {

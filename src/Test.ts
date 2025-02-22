@@ -308,8 +308,6 @@ export class Test {
   repeat: number;
   source: string;
   socket: SocketType;
-  breadcrumbs: string[];
-  breadcrumbsDescriptions: string[];
   funcFile: string;
   testFile: string;
   debug: boolean;
@@ -343,6 +341,7 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
+  // TODO BLANK_TEST разбивлять тут
   agent: AgentData = {
     name: '',
     type: 'agent',
@@ -355,6 +354,8 @@ export class Test {
     description: '',
     descriptionExtend: [],
     bindDescription: '',
+    breadcrumbs: [],
+    breadcrumbsDescriptions: [],
   };
 
   constructor(initValues: TestExtendType) {
@@ -377,8 +378,6 @@ export class Test {
     this.repeat = initValues.repeat ?? 1;
     this.source = initValues.source ?? '';
     this.socket = initValues.socket ?? blankSocket;
-    this.breadcrumbs = initValues.breadcrumbs ?? [];
-    this.breadcrumbsDescriptions = initValues.breadcrumbsDescriptions ?? [];
     this.funcFile = initValues.funcFile ?? '';
     this.testFile = initValues.testFile ?? '';
     this.debug = initValues.debug ?? false;
@@ -441,7 +440,7 @@ export class Test {
             logShowFlag,
             textColor: 'blue',
           },
-          logMeta: { breadcrumbs: this.breadcrumbs },
+          logMeta: { breadcrumbs: this.agent.breadcrumbs },
         });
         // Drop disable for loops nested tests
         this.disable = false;
@@ -467,7 +466,7 @@ export class Test {
             logShowFlag,
             textColor: 'blue',
           },
-          logMeta: { breadcrumbs: this.breadcrumbs },
+          logMeta: { breadcrumbs: this.agent.breadcrumbs },
         });
         return { result: {}, meta: {} };
       }
@@ -599,7 +598,6 @@ export class Test {
           socket: this.socket,
           allData: new AgentContent().allData,
           plugins: this.plugins,
-          breadcrumbs: this.breadcrumbs,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
           continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
           ...this.agent,
@@ -615,7 +613,7 @@ export class Test {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.breadcrumbs,
+            this.agent.breadcrumbs,
             PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
           if (skipIf) {
@@ -633,7 +631,7 @@ export class Test {
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.breadcrumbs,
+            this.agent.breadcrumbs,
             PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
         }
@@ -664,7 +662,7 @@ export class Test {
               element,
               stepId: this.agent.stepId,
               logOptions: { ...this.logOptions, logShowFlag },
-              logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+              logMeta: { repeat: this.repeat, breadcrumbs: this.agent.breadcrumbs },
               args,
             });
           }
@@ -680,7 +678,7 @@ export class Test {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
-                logMeta: { repeat: this.repeat, breadcrumbs: this.breadcrumbs },
+                logMeta: { repeat: this.repeat, breadcrumbs: this.agent.breadcrumbs },
                 args,
               });
             }
@@ -736,7 +734,7 @@ export class Test {
             { ...allData, ...localResults },
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
-            this.breadcrumbs,
+            this.agent.breadcrumbs,
             PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
           );
         }
@@ -762,7 +760,7 @@ export class Test {
               (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
               (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)),
           },
-          logMeta: { extendInfo: true, breadcrumbs: this.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
+          logMeta: { extendInfo: true, breadcrumbs: this.agent.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
         });
 
         // REPEAT

@@ -71,8 +71,8 @@ export class TestError extends AbstractError {
     this.testDescription = parentError?.testDescription || test.agent.description;
     this.message = `${parentError?.message} || error in test = ${this.agent.name}`;
     this.stack = parentError?.stack;
-    this.breadcrumbs = parentError?.breadcrumbs || test.breadcrumbs;
-    this.breadcrumbsDescriptions = parentError?.breadcrumbsDescriptions || test.breadcrumbsDescriptions;
+    this.breadcrumbs = parentError?.breadcrumbs || test.agent.breadcrumbs;
+    this.breadcrumbsDescriptions = parentError?.breadcrumbsDescriptions || test.agent.breadcrumbsDescriptions;
 
     this.logger = logger;
     this.test = test;
@@ -89,8 +89,8 @@ export class TestError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId } = this.agent;
-    const { funcFile, testFile, levelIndent, breadcrumbs } = this.test;
+    const { stepId, breadcrumbs } = this.agent;
+    const { funcFile, testFile, levelIndent } = this.test;
     const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
 
     if (!continueOnError) {
@@ -149,8 +149,8 @@ export class ContinueParentError extends AbstractError {
   }
 
   async log(): Promise<void> {
-    const { stepId } = this.agent;
-    const { levelIndent, breakParentIfResult, breadcrumbs } = this.test;
+    const { stepId, breadcrumbs } = this.agent;
+    const { levelIndent, breakParentIfResult } = this.test;
     const { PPD_LOG_STEPID } = new Arguments().args;
     await this.logger.log({
       level: 'warn',
