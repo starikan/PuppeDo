@@ -407,7 +407,7 @@ export type RunOptions = {
   stdOut: boolean;
   closeAllEnvs: boolean;
   globalConfigFile: string;
-  pluginsList: PluginModule<unknown>[];
+  pluginsList: Array<PluginModule<unknown> | string>;
   loggerPipes: LogPipe[];
   argsConfig: Partial<ArgumentsType>;
   socket: SocketType;

@@ -4,6 +4,7 @@ import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
+import DefaultPlugins from './Plugins';
 
 type Hooks = {
   initValues?: ({ initValues }: { initValues: TestExtendType }) => void;
@@ -42,7 +43,7 @@ export class PluginsFabric extends Singleton {
 
   private orders: Record<string, number | null>;
 
-  constructor(plugins: PluginModule<unknown>[] = [], reInit = false) {
+  constructor(plugins: Array<PluginModule<unknown> | string> = [], reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
@@ -77,10 +78,11 @@ export class PluginsFabric extends Singleton {
     // do nothing
   }
 
-  addPlugin(plugin: PluginModule<unknown>): void {
-    this.plugins[plugin.name] = plugin.plugin;
-    this.documentation[plugin.name] = plugin.documentation;
-    this.orders[plugin.name] = plugin.order || null;
+  addPlugin(plugin: PluginModule<unknown> | string): void {
+    const resolvPlugin = typeof plugin === 'string' ? DefaultPlugins[plugin] : plugin;
+    this.plugins[resolvPlugin.name] = resolvPlugin.plugin;
+    this.documentation[resolvPlugin.name] = resolvPlugin.documentation;
+    this.orders[resolvPlugin.name] = resolvPlugin.order || null;
   }
 
   getPluginsOrder(): Record<string, number | null> {

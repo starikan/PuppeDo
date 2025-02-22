@@ -1,7 +1,7 @@
-import { PluginContinueOnError } from './continueOnError/continueOnError';
-import { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
-import { PluginArgsRedefine } from './argsRedefine/argsRedefine';
-import { PluginDescriptionError } from './descriptionError/descriptionError';
+import continueOnError, { PluginContinueOnError } from './continueOnError/continueOnError';
+import skipSublingIfResult, { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
+import argsRedefine, { PluginArgsRedefine } from './argsRedefine/argsRedefine';
+import descriptionError, { PluginDescriptionError } from './descriptionError/descriptionError';
 
 export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginArgsRedefine> &
@@ -12,3 +12,10 @@ export type { PluginContinueOnError };
 export type { PluginSkipSublingIfResult };
 export type { PluginDescriptionError };
 export type { PluginArgsRedefine };
+
+export default {
+  continueOnError,
+  skipSublingIfResult,
+  argsRedefine,
+  descriptionError,
+};

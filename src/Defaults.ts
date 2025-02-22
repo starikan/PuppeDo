@@ -2,11 +2,6 @@ import path from 'path';
 
 import { AgentData, ArgumentsType, LogPipe, RunOptions, TestTypeYaml } from './global.d';
 
-import continueOnError from './Plugins/continueOnError/continueOnError';
-import skipSublingIfResult from './Plugins/skipSublingIfResult/skipSublingIfResult';
-import argsRedefine from './Plugins/argsRedefine/argsRedefine';
-import descriptionError from './Plugins/descriptionError/descriptionError';
-
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
 import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
 import {
@@ -18,7 +13,7 @@ import {
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
 
-export const pluginsListDefault = [skipSublingIfResult, continueOnError, descriptionError, argsRedefine];
+export const pluginsListDefault = ['skipSublingIfResult', 'continueOnError', 'descriptionError', 'argsRedefine'];
 
 export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },
