@@ -353,57 +353,6 @@ export type TestTypeYaml = {
   [key: string]: LifeCycleFunction[] | unknown;
 } & PliginsFields;
 
-export type TestType = Required<TestTypeYaml>;
-
-export type AgentData = {
-  name: string;
-  type: 'runners' | 'data' | 'selectors' | string;
-  envsId: string;
-  stepId: string;
-  needData: string[];
-  needSelectors: string[];
-  needEnvParams: string[];
-  engineSupports: BrowserEngineType[];
-  description: string;
-  descriptionExtend: string[];
-  bindDescription: string;
-  breadcrumbs: string[];
-  breadcrumbsDescriptions: string[];
-  while: string;
-  if: string;
-  errorIf: string;
-  errorIfResult: string;
-  frame: string;
-  resultsFromPrevSubling: Record<string, unknown>;
-  tags: string[];
-  allowOptions: string[];
-  todo: string;
-  inlineJS: string;
-  breakParentIfResult: string;
-  source: string;
-  socket: SocketType;
-  funcFile: string;
-  testFile: string;
-  dataExt: string[];
-  selectorsExt: string[];
-  allowResults: string[];
-  levelIndent: number;
-  repeat: number;
-  dataParent: Record<string, unknown>;
-  selectorsParent: Record<string, unknown>;
-  options: Record<string, string | number>;
-  debug: boolean;
-  debugInfo: boolean | 'data' | 'selectors';
-  disable: boolean;
-  logOptions: LogOptionsType;
-  data: Record<string, unknown>;
-  bindData: Record<string, string>;
-  selectors: Record<string, unknown>;
-  bindSelectors: Record<string, string>;
-  bindResults: Record<string, string>;
-  metaFromPrevSubling: TestMetaSublingExchangeData;
-};
-
 export type TestExtendType = {
   levelIndent?: number;
   breadcrumbs?: string[];
@@ -415,13 +364,17 @@ export type TestExtendType = {
   resultsFromPrevSubling?: Record<string, unknown>;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
-  optionsParent?: Record<string, string | number>;
-  logOptionsParent?: LogOptionsType;
   metaFromPrevSubling?: TestMetaSublingExchangeData;
   funcFile?: string;
   testFile?: string;
+  optionsParent?: Record<string, string | number>;
+  logOptionsParent?: LogOptionsType;
   atomRun?: TestLifeCycleFunctionType[];
 } & Required<TestTypeYaml>;
+
+export type TestType = Required<TestTypeYaml>;
+
+export type AgentData = Required<TestExtendType>;
 
 export type AllDataType = {
   allFiles: string[];

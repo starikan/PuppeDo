@@ -307,7 +307,7 @@ export class Test {
 
   lifeCycleFunctions: TestLifeCycleFunctionType[];
 
-  agent: AgentData = { ...EXTEND_BLANK_AGENT };
+  agent: AgentData = EXTEND_BLANK_AGENT();
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);

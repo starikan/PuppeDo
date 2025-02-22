@@ -100,21 +100,29 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   skipSublingIfResult: '',
 };
 
-export const EXTEND_BLANK_AGENT: AgentData = {
-  ...BLANK_AGENT,
-  envsId: '',
-  stepId: '',
-  breadcrumbs: [],
-  breadcrumbsDescriptions: [],
-  resultsFromPrevSubling: {},
-  source: '',
-  socket: blankSocket,
-  funcFile: '',
-  testFile: '',
-  levelIndent: 0,
-  dataParent: {},
-  selectorsParent: {},
-  metaFromPrevSubling: {},
+export const EXTEND_BLANK_AGENT = (): AgentData => {
+  const result: AgentData = {
+    ...JSON.parse(JSON.stringify(BLANK_AGENT)),
+    envsId: '',
+    stepId: '',
+    breadcrumbs: [],
+    breadcrumbsDescriptions: [],
+    resultsFromPrevSubling: {},
+    source: '',
+    funcFile: '',
+    testFile: '',
+    levelIndent: 0,
+    dataParent: {},
+    selectorsParent: {},
+    metaFromPrevSubling: {},
+    optionsParent: {},
+    logOptionsParent: {},
+    socket: blankSocket,
+    // atomRun: () => {},
+  } as AgentData;
+  // TODO: Несогласованая типизация
+
+  return result;
 };
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
