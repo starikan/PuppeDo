@@ -369,6 +369,26 @@ export type AgentData = {
   bindDescription: string;
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
+  while: string;
+  if: string;
+  errorIf: string;
+  errorIfResult: string;
+  frame: string;
+  resultsFromPrevSubling: Record<string, unknown>;
+  tags: string[];
+  allowOptions: string[];
+  todo: string;
+  inlineJS: string;
+  breakParentIfResult: string;
+  source: string;
+  socket: SocketType;
+  funcFile: string;
+  testFile: string;
+  dataExt: string[];
+  selectorsExt: string[];
+  allowResults: string[];
+  levelIndent: number;
+  repeat: number;
 } & Partial<TestExtendType>;
 
 export type TestExtendType = {

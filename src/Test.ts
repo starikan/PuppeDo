@@ -9,7 +9,6 @@ import { logDebug } from './Loggers/CustomLogEntries';
 import {
   LogOptionsType,
   ColorsType,
-  SocketType,
   TestArgsType,
   LogFunctionType,
   TestLifeCycleFunctionType,
@@ -301,36 +300,16 @@ export class Test {
   dataParent!: Record<string, unknown>;
   selectorsParent!: Record<string, unknown>;
   options: Record<string, string | number>;
-  dataExt: string[];
-  selectorsExt: string[];
-  allowResults: string[];
-  levelIndent: number;
-  repeat: number;
-  source: string;
-  socket: SocketType;
-  funcFile: string;
-  testFile: string;
   debug: boolean;
   debugInfo: boolean | 'data' | 'selectors';
   disable: boolean;
   logOptions: LogOptionsType;
-  frame: string;
   data: Record<string, unknown>;
   bindData!: Record<string, string>;
   selectors: Record<string, unknown>;
   bindSelectors!: Record<string, string>;
   bindResults!: Record<string, string>;
-  while!: string;
-  if!: string;
-  errorIf!: string;
-  errorIfResult!: string;
-  resultsFromPrevSubling!: Record<string, unknown>;
   metaFromPrevSubling!: TestMetaSublingExchangeData;
-  tags: string[];
-  allowOptions!: string[];
-  todo!: string;
-  inlineJS!: string;
-  breakParentIfResult: string;
 
   runner!: Runner;
 
@@ -356,6 +335,26 @@ export class Test {
     bindDescription: '',
     breadcrumbs: [],
     breadcrumbsDescriptions: [],
+    while: '',
+    if: '',
+    errorIf: '',
+    errorIfResult: '',
+    frame: '',
+    resultsFromPrevSubling: {},
+    tags: [],
+    allowOptions: [],
+    todo: '',
+    inlineJS: '',
+    breakParentIfResult: '',
+    source: '',
+    socket: blankSocket,
+    funcFile: '',
+    testFile: '',
+    dataExt: [],
+    selectorsExt: [],
+    allowResults: [],
+    levelIndent: 0,
+    repeat: 1,
   };
 
   constructor(initValues: TestExtendType) {
@@ -371,22 +370,10 @@ export class Test {
     this.data = initValues.data ?? {};
     this.selectors = initValues.selectors ?? {};
     this.options = initValues.options ?? {};
-    this.dataExt = initValues.dataExt ?? [];
-    this.selectorsExt = initValues.selectorsExt ?? [];
-    this.allowResults = initValues.allowResults ?? [];
-    this.levelIndent = initValues.levelIndent ?? 0;
-    this.repeat = initValues.repeat ?? 1;
-    this.source = initValues.source ?? '';
-    this.socket = initValues.socket ?? blankSocket;
-    this.funcFile = initValues.funcFile ?? '';
-    this.testFile = initValues.testFile ?? '';
     this.debug = initValues.debug ?? false;
     this.debugInfo = initValues.debugInfo ?? false;
     this.disable = initValues.disable ?? false;
     this.logOptions = initValues.logOptions ?? {};
-    this.frame = initValues.frame ?? '';
-    this.tags = initValues.tags ?? [];
-    this.breakParentIfResult = initValues.breakParentIfResult ?? '';
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [
@@ -435,7 +422,7 @@ export class Test {
             PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
           }`,
           level: 'raw',
-          levelIndent: this.levelIndent,
+          levelIndent: this.agent.levelIndent,
           logOptions: {
             logShowFlag,
             textColor: 'blue',
@@ -453,15 +440,19 @@ export class Test {
         };
       }
 
-      if (PPD_TAGS_TO_RUN.length && this.tags.length && !this.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length) {
+      if (
+        PPD_TAGS_TO_RUN.length &&
+        this.agent.tags.length &&
+        !this.agent.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length
+      ) {
         await logger.log({
-          text: `Skip with tags: ${JSON.stringify(this.tags)} => ${getLogText(
+          text: `Skip with tags: ${JSON.stringify(this.agent.tags)} => ${getLogText(
             this.agent.description,
             this.agent.name,
             PPD_LOG_TEST_NAME,
           )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
           level: 'raw',
-          levelIndent: this.levelIndent,
+          levelIndent: this.agent.levelIndent,
           logOptions: {
             logShowFlag,
             textColor: 'blue',
@@ -476,16 +467,23 @@ export class Test {
       this.agent.description = inputs.description ?? this.agent.description;
       this.agent.descriptionExtend = inputs.descriptionExtend ?? this.agent.descriptionExtend ?? [];
       this.agent.bindDescription = inputs.bindDescription ?? this.agent.bindDescription;
+      this.agent.while = inputs.while || this.agent.while;
+      this.agent.if = inputs.if || this.agent.if;
+      this.agent.errorIf = inputs.errorIf || this.agent.errorIf;
+      this.agent.errorIfResult = inputs.errorIfResult || this.agent.errorIfResult;
+      this.agent.frame = inputs.frame || this.agent.frame;
+      this.agent.resultsFromPrevSubling = inputs.resultsFromPrevSubling || this.agent.resultsFromPrevSubling;
+      this.agent.dataExt = [...new Set([...this.agent.dataExt, ...(inputs.dataExt || [])])];
+      this.agent.selectorsExt = [...new Set([...this.agent.selectorsExt, ...(inputs.selectorsExt || [])])];
+      this.agent.repeat = inputs.repeat || this.agent.repeat;
 
       this.data = resolveAliases<Record<string, string>>('data', inputs);
       this.dataParent = { ...(this.dataParent || {}), ...inputs.dataParent };
       this.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
-      this.dataExt = [...new Set([...this.dataExt, ...(inputs.dataExt || [])])];
 
       this.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
       this.selectorsParent = { ...(this.selectorsParent || {}), ...inputs.selectorsParent };
       this.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
-      this.selectorsExt = [...new Set([...this.selectorsExt, ...(inputs.selectorsExt || [])])];
 
       this.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
 
@@ -494,14 +492,8 @@ export class Test {
         ...resolveAliases<Record<string, string>>('options', inputs),
         ...inputs.optionsParent,
       } as Record<string, string | number>;
-      this.repeat = inputs.repeat || this.repeat;
-      this.while = inputs.while || this.while;
-      this.if = inputs.if || this.if;
-      this.errorIf = inputs.errorIf || this.errorIf;
-      this.errorIfResult = inputs.errorIfResult || this.errorIfResult;
-      this.frame = this.frame || inputs.frame;
+
       this.logOptions = logForChild;
-      this.resultsFromPrevSubling = inputs.resultsFromPrevSubling || {};
 
       try {
         this.plugins.hook('resolveValues', { inputs });
@@ -524,9 +516,9 @@ export class Test {
         checkIntersection(this.data, this.selectors);
 
         let { dataLocal, selectorsLocal } = fetchData(
-          this.dataExt,
-          this.selectorsExt,
-          this.resultsFromPrevSubling,
+          this.agent.dataExt,
+          this.agent.selectorsExt,
+          this.agent.resultsFromPrevSubling,
           this.dataParent,
           this.data,
           this.bindData,
@@ -550,13 +542,13 @@ export class Test {
 
         const allData = { ...selectorsLocal, ...dataLocal };
 
-        this.repeat = parseInt(runScriptInContext(String(this.repeat), allData, '1') as string, 10);
-        allData.repeat = this.repeat;
-        dataLocal.repeat = this.repeat;
-        selectorsLocal.repeat = this.repeat;
-        allData.$loop = (inputs.dataParent || {}).repeat || this.repeat;
-        dataLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
-        selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.repeat;
+        this.agent.repeat = parseInt(runScriptInContext(String(this.agent.repeat), allData, '1') as string, 10);
+        allData.repeat = this.agent.repeat;
+        dataLocal.repeat = this.agent.repeat;
+        selectorsLocal.repeat = this.agent.repeat;
+        allData.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+        dataLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+        selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
 
         const descriptionResolved = this.agent.bindDescription
           ? this.agent.description || String(runScriptInContext(this.agent.bindDescription, allData))
@@ -579,23 +571,17 @@ export class Test {
           dataTest: this.data,
           selectorsTest: this.selectors,
           options: this.options,
-          allowResults: this.allowResults,
           bindResults: this.bindResults,
           bindSelectors: this.bindSelectors,
           bindData: this.bindData,
-          levelIndent: this.levelIndent,
-          repeat: this.repeat,
           debug: this.debug,
           disable: this.disable,
           logOptions: logForChild,
-          frame: this.frame,
-          tags: this.tags,
           ppd: globalExportPPD,
           argsEnv: { ...new Arguments().args, ...argsRedefine },
           browser: this.runner && this.runner.getState().browser,
           page: pageCurrent, // If there is no page it`s might be API
           log: logger.log.bind(logger),
-          socket: this.socket,
           allData: new AgentContent().allData,
           plugins: this.plugins,
           // TODO: 2022-10-06 S.Starodubov Это тут не нужно
@@ -604,12 +590,12 @@ export class Test {
         };
 
         // IF
-        if (this.if) {
+        if (this.agent.if) {
           const skipIf = await checkIf(
-            this.if,
+            this.agent.if,
             'if',
             logger.log.bind(logger),
-            this.levelIndent,
+            this.agent.levelIndent,
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
@@ -622,12 +608,12 @@ export class Test {
         }
 
         // ERROR IF
-        if (this.errorIf) {
+        if (this.agent.errorIf) {
           await checkIf(
-            this.errorIf,
+            this.agent.errorIf,
             'errorIf',
             logger.log.bind(logger),
-            this.levelIndent,
+            this.agent.levelIndent,
             allData,
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
@@ -658,11 +644,11 @@ export class Test {
                 PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
               }`,
               level: 'test',
-              levelIndent: this.levelIndent,
+              levelIndent: this.agent.levelIndent,
               element,
               stepId: this.agent.stepId,
               logOptions: { ...this.logOptions, logShowFlag },
-              logMeta: { repeat: this.repeat, breadcrumbs: this.agent.breadcrumbs },
+              logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
               args,
             });
           }
@@ -672,13 +658,13 @@ export class Test {
               await logger.log({
                 text: `${step + 1}. => ${getLogText(this.agent.descriptionExtend[step])}`,
                 level: 'test',
-                levelIndent: this.levelIndent + 1,
+                levelIndent: this.agent.levelIndent + 1,
                 stepId: this.agent.stepId,
                 logOptions: {
                   logShowFlag,
                   textColor: 'cyan' as ColorsType,
                 },
-                logMeta: { repeat: this.repeat, breadcrumbs: this.agent.breadcrumbs },
+                logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
                 args,
               });
             }
@@ -708,15 +694,17 @@ export class Test {
         }
 
         // RESULTS
-        const results = this.allowResults.length ? pick(resultFromLifeCycle, this.allowResults) : resultFromLifeCycle;
+        const results = this.agent.allowResults.length
+          ? pick(resultFromLifeCycle, this.agent.allowResults)
+          : resultFromLifeCycle;
         if (
-          this.allowResults.length &&
+          this.agent.allowResults.length &&
           Object.keys(results).length &&
-          Object.keys(results).length !== [...new Set(this.allowResults)].length
+          Object.keys(results).length !== [...new Set(this.agent.allowResults)].length
         ) {
           throw new Error('Can`t get results from test');
         }
-        const allowResultsObject = this.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+        const allowResultsObject = this.agent.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
         let localResults = resolveDataFunctions(
           { ...this.bindResults, ...allowResultsObject },
           { ...selectorsLocal, ...dataLocal, ...results },
@@ -725,12 +713,12 @@ export class Test {
         this.plugins.hook('afterResults', { args, results: localResults });
 
         // ERROR
-        if (this.errorIfResult) {
+        if (this.agent.errorIfResult) {
           await checkIf(
-            this.errorIfResult,
+            this.agent.errorIfResult,
             'errorIfResult',
             logger.log.bind(logger),
-            this.levelIndent + 1,
+            this.agent.levelIndent + 1,
             { ...allData, ...localResults },
             logShowFlag,
             this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
@@ -740,10 +728,10 @@ export class Test {
         }
 
         // WHILE
-        if (this.while) {
-          const whileEval = runScriptInContext(this.while, { ...allData, ...localResults });
+        if (this.agent.while) {
+          const whileEval = runScriptInContext(this.agent.while, { ...allData, ...localResults });
           if (whileEval) {
-            this.repeat += 1;
+            this.agent.repeat += 1;
           }
         }
 
@@ -752,7 +740,7 @@ export class Test {
         await logger.log({
           text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''}`,
           level: 'timer',
-          levelIndent: this.levelIndent,
+          levelIndent: this.agent.levelIndent,
           stepId: this.agent.stepId,
           logOptions: {
             logShowFlag:
@@ -760,22 +748,28 @@ export class Test {
               (PPD_LOG_EXTEND || PPD_LOG_TIMER_SHOW) &&
               (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)),
           },
-          logMeta: { extendInfo: true, breadcrumbs: this.agent.breadcrumbs, repeat: this.repeat, timeStart, timeEnd },
+          logMeta: {
+            extendInfo: true,
+            breadcrumbs: this.agent.breadcrumbs,
+            repeat: this.agent.repeat,
+            timeStart,
+            timeEnd,
+          },
         });
 
         // REPEAT
-        if (this.repeat > 1) {
+        if (this.agent.repeat > 1) {
           const repeatArgs = { ...inputs };
           repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
           repeatArgs.data = { ...repeatArgs.data, ...localResults };
-          repeatArgs.repeat = this.repeat - 1;
+          repeatArgs.repeat = this.agent.repeat - 1;
           repeatArgs.stepId = generateId();
           const repeatResult = await this.run(repeatArgs);
           localResults = { ...localResults, ...repeatResult };
         }
 
-        if (this.breakParentIfResult) {
-          const breakParentIfResult = runScriptInContext(this.breakParentIfResult, {
+        if (this.agent.breakParentIfResult) {
+          const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {
             ...allData,
             ...localResults,
           });
