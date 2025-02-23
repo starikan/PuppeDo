@@ -24,6 +24,8 @@ export interface PluginType<TValues> {
   hooks: Hooks;
   propogationsAndShares?: PropogationsAndShares;
   values: TValues;
+  getValue?: (value?: keyof TValues) => TValues[keyof TValues];
+  setValues?: (values?: Partial<TValues>) => void;
 }
 
 export type PluginFunction<T> = (allPlugins: Plugins) => PluginType<T>;
@@ -140,6 +142,14 @@ export class Plugins {
     return values;
   }
 
+  get<TPlugin = unknown>(pluginName: string): PluginType<TPlugin> {
+    const plugin = this.plugins.find((v) => v.name === pluginName) as PluginType<TPlugin>;
+    if (!plugin) {
+      throw new Error(`Can't find plugin ${pluginName}`);
+    }
+    return plugin;
+  }
+
   getAllPropogatesAndSublings(type: keyof PropogationsAndShares): Record<string, unknown> {
     const propogationsAndShares = this.plugins.filter((v) => v.propogationsAndShares);
     const result = {};
@@ -200,12 +210,16 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     propogationsAndShares,
     allPlugins,
     hooks = {},
+    getValue,
+    setValues,
   }: {
     name: string;
     defaultValues: T;
     propogationsAndShares?: PropogationsAndShares;
     allPlugins?: Plugins;
     hooks?: Hooks;
+    getValue?: (value?: keyof T) => T[keyof T];
+    setValues?: (values?: Partial<T>) => void;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
@@ -213,6 +227,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.propogationsAndShares = propogationsAndShares;
     this.allPlugins = allPlugins;
     this.hooks = { ...this.hooks, ...hooks };
+    this.getValue = getValue ?? this.getValue;
+    this.setValues = setValues ?? this.setValues;
   }
 
   hook(name: keyof Hooks): (unknown) => void {

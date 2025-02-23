@@ -335,7 +335,6 @@ export class Test {
 
     const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
 
-    const { argsRedefine } = this.plugins.getValue<PluginArgsRedefine>('argsRedefine');
     const {
       PPD_DEBUG_MODE,
       PPD_LOG_EXTEND,
@@ -345,7 +344,7 @@ export class Test {
       PPD_LOG_NAMES_ONLY,
       PPD_LOG_TIMER_SHOW,
       PPD_LOG_STEPID,
-    } = { ...new Arguments().args, ...argsRedefine };
+    } = this.plugins.get<PluginArgsRedefine>('argsRedefine').getValue();
 
     this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
     if (this.agent.debug) {
@@ -514,7 +513,7 @@ export class Test {
         selectorsTest: this.agent.selectors,
         logOptions: logForChild,
         ppd: globalExportPPD,
-        argsEnv: { ...new Arguments().args, ...argsRedefine },
+        argsEnv: this.plugins.get<PluginArgsRedefine>('argsRedefine').getValue(),
         browser: this.runner && this.runner.getState().browser,
         page: pageCurrent, // If there is no page it`s might be API
         log: logger.log.bind(logger),

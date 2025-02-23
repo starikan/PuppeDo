@@ -1,3 +1,4 @@
+import { Arguments } from '../../Arguments';
 import { ArgumentsType, PluginDocumentation } from '../../global.d';
 import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 
@@ -9,6 +10,9 @@ const plugin: PluginFunction<PluginArgsRedefine> = () => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: {} },
+    getValue(): ArgumentsType {
+      return { ...new Arguments().args, ...this.values.argsRedefine };
+    },
   });
   return pluginInstance;
 };
