@@ -138,7 +138,7 @@ export class Plugins {
   // TODO: 2022-10-03 S.Starodubov async hook
 
   getValue<TValues>(pluginName: string): TValues {
-    const { values } = this.plugins.find((v) => v.name === pluginName) as { values: TValues };
+    const { values } = this.get<TValues>(pluginName);
     return values;
   }
 
