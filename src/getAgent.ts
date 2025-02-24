@@ -122,7 +122,14 @@ const getAgent = ({
     }
   });
 
-  const stepResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
+  return stepResolver(agentJson, parentStepMetaCollector);
+};
+
+const stepResolver = (
+  agentJson: TestExtendType,
+  parentStepMetaCollector: Partial<TestExtendType>,
+): TestLifeCycleFunctionType => {
+  const stepFunction = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
     const step = new Test(agentJson);
 
     if (parentStepMetaCollector?.stepId !== args?.stepId) {
@@ -172,7 +179,7 @@ const getAgent = ({
     return result;
   };
 
-  return stepResolver;
+  return stepFunction;
 };
 
 export default getAgent;
