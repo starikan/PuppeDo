@@ -31,11 +31,11 @@
 [31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (\@puppedo\atoms\src\main\waitForSelector)[0m
 [31m00:00:00.000 - error  [0m[31m    at Atom.runAtom (\@puppedo\core\src\AtomCore)[0m
 [31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getAgent)[0m
+[31m00:00:00.000 - error  [0m[31m    at stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getAgent)[0m
+[31m00:00:00.000 - error  [0m[31m    at stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m00:00:00.000 - error  [0m[31m    at Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m00:00:00.000 - error  [0m[31m    at testResolver (\@puppedo\core\src\getAgent)[0m
+[31m00:00:00.000 - error  [0m[31m    at stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m00:00:00.000 - error  [0m[31m    at runAgent (\@puppedo\core\src\Api)[0m
 [31m00:00:00.000 - error  [0m[31m    at Object.run (\@puppedo\core\src\Api)[0m
 [31m00:00:00.000 - error  [0m[31m    at runTest (\runAllTests)[0m
@@ -69,11 +69,11 @@
 [31m                      [0m[31mAtomError: Error in Atom[0m
 [31m                      [0m[31mat Atom.runAtom (\@puppedo\core\src\AtomCore)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat testResolver (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat testResolver (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat testResolver (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat stepResolver (\@puppedo\core\src\getAgent)[0m
 [31m                      [0m[31mat runAgent (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat runTest (\runAllTests)[0m

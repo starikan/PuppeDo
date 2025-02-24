@@ -86,18 +86,18 @@ const propagateArgumentsSimpleOnAir = (
 const getAgent = ({
   agentJsonIncome,
   envsId,
-  parentTestMetaCollector, // object for share data with sublings
+  parentStepMetaCollector, // object for share data with sublings
 }: {
   agentJsonIncome: TestExtendType;
   envsId: string;
-  parentTestMetaCollector?: Partial<TestExtendType>;
+  parentStepMetaCollector?: Partial<TestExtendType>;
 }): TestLifeCycleFunctionType => {
   let agentJson = agentJsonIncome;
 
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   PPD_LIFE_CYCLE_FUNCTIONS.forEach((lcf) => {
     if (agentJson[lcf] && !Array.isArray(agentJson[lcf])) {
-      throw new Error(`Block ${lcf} must be array. Path: '${(agentJson.breadcrumbs || []).join(' -> ')}'`);
+      throw new Error(`Block ${lcf} must be array. Path: '${(agentJson.breadcrumbs ?? []).join(' -> ')}'`);
     }
   });
 
@@ -124,42 +124,43 @@ const getAgent = ({
     if (funcVal) {
       const newFunctions = [] as TestLifeCycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
-        const newFunction = getAgent({ agentJsonIncome: testItem, envsId, parentTestMetaCollector: agentJson });
+        const newFunction = getAgent({ agentJsonIncome: testItem, envsId, parentStepMetaCollector: agentJson });
         newFunctions.push(newFunction);
       });
       agentJson[funcKey] = newFunctions;
     }
   });
 
-  const test = new Test(agentJson);
+  const step = new Test(agentJson);
 
-  const testResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
-    if (parentTestMetaCollector?.stepId !== args?.stepId) {
+  const stepResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
+    if (parentStepMetaCollector?.stepId !== args?.stepId) {
       // it`s a magic and I don`t know why is this works, but it fix steps Id hierarchy
-      if (parentTestMetaCollector?.repeat !== args?.repeat) {
-        parentTestMetaCollector.stepId = args.stepId;
+      if (parentStepMetaCollector?.repeat !== args?.repeat) {
+        parentStepMetaCollector.stepId = args.stepId;
       }
-      parentTestMetaCollector.resultsFromPrevSubling = {};
-      parentTestMetaCollector.metaFromPrevSubling = {};
+      parentStepMetaCollector.resultsFromPrevSubling = {};
+      parentStepMetaCollector.metaFromPrevSubling = {};
     }
-
-    let updatetagentJson: TestExtendType = propagateArgumentsObjectsOnAir(
-      agentJson,
-      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
-      ['options', 'data', 'selectors', 'logOptions'],
-    );
 
     // TODO: 2022-10-06 S.Starodubov переделать получание этих вещей из значений плагина через хук, чтобы хук возвращал то что надо
     // TODO: 2023-03-20 S.Starodubov нормальную типизацию
-    const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
-    updatetagentJson = propagateArgumentsSimpleOnAir(
-      updatetagentJson,
-      { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
+    const fromPrevSublingSimple = step.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
+
+    let updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(
+      agentJson,
+      { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
+      ['options', 'data', 'selectors', 'logOptions'],
+    );
+
+    updatedAgentJson = propagateArgumentsSimpleOnAir(
+      updatedAgentJson,
+      { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
       ['debug', 'frame', ...Object.keys(fromPrevSublingSimple)],
     );
 
-    updatetagentJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
-    updatetagentJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
+    updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
+    updatedAgentJson.metaFromPrevSubling = parentStepMetaCollector?.metaFromPrevSubling ?? {};
 
     const { stepId, name } = agentJson;
     const { stepId: stepIdParent } = args ?? {};
@@ -167,20 +168,20 @@ const getAgent = ({
     const { testTree } = new Environment().getEnvInstance(agentJson.envsId);
     testTree.createStep({ stepIdParent: stepIdParent ?? null, stepId, payload: { ...fromPrevSublingSimple, name } });
 
-    const { result = {}, meta = {} } = await test.run(updatetagentJson);
+    const { result = {}, meta = {} } = await step.run(updatedAgentJson);
 
-    if (parentTestMetaCollector) {
-      parentTestMetaCollector.resultsFromPrevSubling = {
-        ...(parentTestMetaCollector?.resultsFromPrevSubling || {}),
+    if (parentStepMetaCollector) {
+      parentStepMetaCollector.resultsFromPrevSubling = {
+        ...(parentStepMetaCollector?.resultsFromPrevSubling ?? {}),
         ...result,
       };
-      parentTestMetaCollector.metaFromPrevSubling = meta;
+      parentStepMetaCollector.metaFromPrevSubling = meta;
     }
 
     return result;
   };
 
-  return testResolver;
+  return stepResolver;
 };
 
 export default getAgent;
