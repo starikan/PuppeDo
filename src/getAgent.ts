@@ -1,3 +1,5 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-param-reassign */
 import path from 'path';
 
@@ -8,7 +10,7 @@ import { pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType, TestType } from './global';
+import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType } from './global';
 import { Environment } from './Environment';
 import { Arguments } from './Arguments';
 
@@ -93,19 +95,16 @@ const getAgent = ({
   parentStepMetaCollector?: Partial<TestExtendType>;
 }): TestLifeCycleFunctionType => {
   let agentJson = agentJsonIncome;
-
-  const socket = new Environment().getSocket(envsId);
-
   agentJson = resolveJS(agentJson);
   agentJson.envsId = envsId;
-  agentJson.socket = socket;
+  agentJson.socket = new Environment().getSocket(envsId);
 
-  const blocker = new Blocker();
   if (agentJson.stepId) {
+    const blocker = new Blocker();
     blocker.push({ stepId: agentJson.stepId, block: false, breadcrumbs: agentJson.breadcrumbs });
+    // Test
+    // blocker.push({ stepId: agentJson.stepId, block: true, breadcrumbs: agentJson.breadcrumbs });
   }
-  // Test
-  // blocker.push({ stepId: agentJson.stepId, block: true, breadcrumbs: agentJson.breadcrumbs });
 
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   PPD_LIFE_CYCLE_FUNCTIONS.forEach((funcKey) => {
@@ -113,11 +112,9 @@ const getAgent = ({
       throw new Error(`Block ${funcKey} must be array. Path: '${(agentJson.breadcrumbs ?? []).join(' -> ')}'`);
     }
     if (agentJson[funcKey]) {
-      const newFunctions = [] as TestLifeCycleFunctionType[];
-      (agentJson[funcKey] as TestExtendType[]).forEach((testItem: TestType) => {
-        const newFunction = getAgent({ agentJsonIncome: testItem, envsId, parentStepMetaCollector: agentJson });
-        newFunctions.push(newFunction);
-      });
+      const newFunctions = (agentJson[funcKey] as TestExtendType[]).map((item) =>
+        getAgent({ agentJsonIncome: item, envsId, parentStepMetaCollector: agentJson }),
+      );
       agentJson[funcKey] = newFunctions;
     }
   });
