@@ -1,0 +1,43 @@
+00:00:00.000 - timer  Test 'engineSupportsFakeEngine' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+(engineSupportsFakeEngine)
+   (runnerSwitch)
+   Error when use fake engine (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [41m[32m(engineSupportsFakeEngine) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   🕝: 00.000 s. (runnerSwitch)
+[31m00:00:00.000 - error  |   [0m[31mDescription: Error when use fake engine (blank)[0m
+[31m00:00:00.000 - error  |    engineSupportsFakeEngine[0m
+[31m00:00:00.000 - error  |       run[0].blank[0m
+[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
+[31m00:00:00.000 - error  [0m[31mDescription: No test description (engineSupportsFakeEngine)[0m
+[31m00:00:00.000 - error   engineSupportsFakeEngine[0m
+[31m00:00:00.000 - error   (file:///Plugins\engineSupports\engineSupports.yaml)[0m
+[31m00:00:00.000 - error   [0m[31m🖼 screenshot: [screenshot_path][0m
+[31m00:00:00.000 - error   [0m[31m================================================================================================[0m
+[31m                      [0m[31mCurrent engine: 'playwright' not supported with this agent. You need to use: fakeEngine[0m
+[31m                      [0m[31merror in test = blank[0m
+[31m                      [0m[31merror in test = engineSupportsFakeEngine[0m
+[31m                      [0m[31m================================================================================================[0m
+[31m                      [0m[31mError: Current engine: 'playwright' not supported with this agent. You need to use: fakeEngine[0m
+[31m                      [0m[31mat Plugin.resolveValues (\@puppedo\core\src\Plugins\engineSupports\engineSupports)[0m
+[31m                      [0m[31mat PluginsCore_Plugins.hook (\@puppedo\core\src\PluginsCore)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat Test.run (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat func (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat runAgent (\@puppedo\core\src\Api)[0m
+[31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
+[31m                      [0m[31mat runTest (\runAllTests)[0m
+[31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Current engine: 'playwright' not supported with this agent. You need to use: fakeEngine
+                      █ Error:       
+                      █ Path:        engineSupportsFakeEngine -> run[0].blank
+                      █ Description:
+                      █    undefined[0m

@@ -1,0 +1,25 @@
+00:00:00.000 - timer  Test 'engineSupports' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+(engineSupports)
+   (runnerSwitch)
+   Do not use engineSupports (blank)
+   Use variouse engines (blank)
+   Use one engine (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [41m[32m(engineSupports) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   [32m(blank) Do not use engineSupports[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Use variouse engines[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Use one engine[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (engineSupports)
+00:00:00.000 - timer  Test 'engineSupports' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "engineSupports": {}
+}

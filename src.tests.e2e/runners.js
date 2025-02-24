@@ -126,6 +126,17 @@ const testsE2E = {
   skipSublingIfResult: {
     params: { PPD_TESTS: 'skipSublingIfResult' },
   },
+  engineSupports: {
+    params: { PPD_TESTS: 'engineSupports' },
+  },
+  engineSupportsExistsButError: {
+    params: { PPD_TESTS: 'engineSupportsExistsButError' },
+    isError: true,
+  },
+  engineSupportsFakeEngine: {
+    params: { PPD_TESTS: 'engineSupportsFakeEngine' },
+    isError: true,
+  },
 };
 
 module.exports = testsE2E;

@@ -18,6 +18,7 @@ export const pluginsListDefault: PluginList = {
   continueOnError: { plugin: 'continueOnError', order: 200 },
   descriptionError: { plugin: 'descriptionError', order: 300 },
   argsRedefine: { plugin: 'argsRedefine', order: 400 },
+  engineSupports: { plugin: 'engineSupports', order: 500 },
 };
 
 export const loggerPipesDefault: LogPipe[] = [

@@ -1,0 +1,47 @@
+name: engineSupports
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Do not use engineSupports
+
+  - blank:
+      description: Use variouse engines
+      engineSupports: ['puppeteer', 'playwright']
+
+  - blank:
+      description: Use one engine
+      engineSupports: ['playwright']
+
+---
+name: engineSupportsExistsButError
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Error when use not supported engine
+      engineSupports: ['puppeteer']
+
+---
+name: engineSupportsFakeEngine
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Error when use fake engine
+      engineSupports: ['fakeEngine']

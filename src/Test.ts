@@ -438,13 +438,6 @@ export class Test {
     try {
       this.plugins.hook('resolveValues', { inputs });
 
-      if (this.agent.engineSupports.length) {
-        const { engine } = this.runner.getRunnerData().browser || {};
-        if (engine && !this.agent.engineSupports.includes(engine)) {
-          throw new Error(`Current engine: '${engine}' not supported in this test`);
-        }
-      }
-
       if (this.agent.needEnvParams.length) {
         for (const envParam of this.agent.needEnvParams) {
           if (!envParam.endsWith('?') && !Object.keys(process.env).includes(envParam)) {

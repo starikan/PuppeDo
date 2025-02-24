@@ -347,7 +347,6 @@ export type TestTypeYaml = {
   errorIf?: string;
   errorIfResult?: string;
   tags?: string[];
-  engineSupports?: BrowserEngineType[];
   inlineJS?: string;
   breakParentIfResult?: string;
   [key: string]: LifeCycleFunction[] | unknown;

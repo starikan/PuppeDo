@@ -112,15 +112,15 @@ export class PluginsFabric extends Singleton {
 export class Plugins {
   private plugins: PluginType<unknown>[] = [];
 
-  originTest: Test;
+  originAgent: Test;
 
   blankHook: () => {
     // Blank
   };
 
-  constructor(originTest: Test) {
+  constructor(originAgent: Test) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
-    this.originTest = originTest;
+    this.originAgent = originAgent;
 
     for (const plugin of Object.values(plugins)) {
       this.plugins.push(plugin(this));
@@ -177,7 +177,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   values: T;
 
-  allPlugins?: Plugins;
+  plugins?: Plugins;
+
+  originAgent?: Test;
 
   hooks: Required<Hooks> = {
     initValues: ({ initValues }) => {
@@ -208,7 +210,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     name,
     defaultValues,
     propogationsAndShares,
-    allPlugins,
+    originAgent,
+    plugins,
     hooks = {},
     getValue,
     setValues,
@@ -220,12 +223,15 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     hooks?: Hooks;
     getValue?: (value?: keyof T) => T[keyof T];
     setValues?: (values?: Partial<T>) => void;
+    plugins?: Plugins;
+    originAgent?: Test;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
     this.values = { ...defaultValues };
     this.propogationsAndShares = propogationsAndShares;
-    this.allPlugins = allPlugins;
+    this.plugins = plugins;
+    this.originAgent = originAgent;
     this.hooks = { ...this.hooks, ...hooks };
     this.getValue = getValue ?? this.getValue;
     this.setValues = setValues ?? this.setValues;
