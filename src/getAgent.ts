@@ -94,18 +94,6 @@ const getAgent = ({
 }): TestLifeCycleFunctionType => {
   let agentJson = agentJsonIncome;
 
-  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
-  PPD_LIFE_CYCLE_FUNCTIONS.forEach((lcf) => {
-    if (agentJson[lcf] && !Array.isArray(agentJson[lcf])) {
-      throw new Error(`Block ${lcf} must be array. Path: '${(agentJson.breadcrumbs ?? []).join(' -> ')}'`);
-    }
-  });
-
-  const functionsBeforeResolve: [string, TestExtendType[]][] = PPD_LIFE_CYCLE_FUNCTIONS.map((v) => [
-    v,
-    agentJson[v] as TestExtendType[],
-  ]);
-
   const socket = new Environment().getSocket(envsId);
 
   agentJson = resolveJS(agentJson);
@@ -119,11 +107,14 @@ const getAgent = ({
   // Test
   // blocker.push({ stepId: agentJson.stepId, block: true, breadcrumbs: agentJson.breadcrumbs });
 
-  functionsBeforeResolve.forEach((value) => {
-    const [funcKey, funcVal] = value;
-    if (funcVal) {
+  const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
+  PPD_LIFE_CYCLE_FUNCTIONS.forEach((funcKey) => {
+    if (agentJson[funcKey] && !Array.isArray(agentJson[funcKey])) {
+      throw new Error(`Block ${funcKey} must be array. Path: '${(agentJson.breadcrumbs ?? []).join(' -> ')}'`);
+    }
+    if (agentJson[funcKey]) {
       const newFunctions = [] as TestLifeCycleFunctionType[];
-      funcVal.forEach((testItem: TestType) => {
+      (agentJson[funcKey] as TestExtendType[]).forEach((testItem: TestType) => {
         const newFunction = getAgent({ agentJsonIncome: testItem, envsId, parentStepMetaCollector: agentJson });
         newFunctions.push(newFunction);
       });
@@ -131,9 +122,9 @@ const getAgent = ({
     }
   });
 
-  const step = new Test(agentJson);
-
   const stepResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
+    const step = new Test(agentJson);
+
     if (parentStepMetaCollector?.stepId !== args?.stepId) {
       // it`s a magic and I don`t know why is this works, but it fix steps Id hierarchy
       if (parentStepMetaCollector?.repeat !== args?.repeat) {
