@@ -23,6 +23,7 @@ import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
+import { Log } from './Log';
 import globalExportPPD from './index';
 
 /**
@@ -306,6 +307,8 @@ export class Test {
 
   agent: AgentData = EXTEND_BLANK_AGENT();
 
+  logger: Log;
+
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
     this.plugins.hook('initValues', { initValues });
@@ -314,6 +317,12 @@ export class Test {
     for (const key of Object.keys(this.agent)) {
       this.agent[key] = initValues[key] ?? this.agent[key];
     }
+
+    const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
+    const current = new Environment().getCurrent(this.agent.envsId);
+
+    this.runner = allRunners.getRunnerByName(current.name || '');
+    this.logger = logger;
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [
@@ -327,11 +336,6 @@ export class Test {
   ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
     this.plugins.hook('runLogic', { inputs });
     const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
-
-    const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
-    const current = new Environment().getCurrent(this.agent.envsId);
-
-    this.runner = allRunners.getRunnerByName(current.name || '');
 
     const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
 
@@ -357,7 +361,7 @@ export class Test {
     const disable = resolveDisable(this.agent.disable, this.agent.metaFromPrevSubling);
 
     if (disable) {
-      await logger.log({
+      await this.logger.log({
         text: `Skip with ${disable}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
           PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
         }`,
@@ -385,7 +389,7 @@ export class Test {
       this.agent.tags.length &&
       !this.agent.tags.filter((v) => PPD_TAGS_TO_RUN.includes(v)).length
     ) {
-      await logger.log({
+      await this.logger.log({
         text: `Skip with tags: ${JSON.stringify(this.agent.tags)} => ${getLogText(
           this.agent.description,
           this.agent.name,
@@ -492,6 +496,8 @@ export class Test {
       }
 
       // Extend with data passed to functions
+      const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
+      const current = new Environment().getCurrent(this.agent.envsId);
       const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
 
       // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
@@ -509,11 +515,9 @@ export class Test {
         argsEnv: this.plugins.get<PluginArgsRedefine>('argsRedefine').getValue(),
         browser: this.runner && this.runner.getState().browser,
         page: pageCurrent, // If there is no page it`s might be API
-        log: logger.log.bind(logger),
+        log: this.logger.log.bind(this.logger),
         allData: new AgentContent().allData,
         plugins: this.plugins,
-        // TODO: 2022-10-06 S.Starodubov Это тут не нужно
-        continueOnError: this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
       };
 
       // IF
@@ -521,7 +525,7 @@ export class Test {
         const skipIf = await checkIf(
           this.agent.if,
           'if',
-          logger.log.bind(logger),
+          this.logger.log.bind(this.logger),
           this.agent.levelIndent,
           allData,
           logShowFlag,
@@ -539,7 +543,7 @@ export class Test {
         await checkIf(
           this.agent.errorIf,
           'errorIf',
-          logger.log.bind(logger),
+          this.logger.log.bind(this.logger),
           this.agent.levelIndent,
           allData,
           logShowFlag,
@@ -566,7 +570,7 @@ export class Test {
         }
 
         for (const element of elements) {
-          await logger.log({
+          await this.logger.log({
             text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
               PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
             }`,
@@ -582,7 +586,7 @@ export class Test {
 
         if (PPD_LOG_DOCUMENTATION_MODE) {
           for (let step = 0; step < this.agent.descriptionExtend.length; step += 1) {
-            await logger.log({
+            await this.logger.log({
               text: `${step + 1}. => ${getLogText(this.agent.descriptionExtend[step])}`,
               level: 'test',
               levelIndent: this.agent.levelIndent + 1,
@@ -599,7 +603,7 @@ export class Test {
       }
 
       if (this.agent.debugInfo) {
-        logDebug(logger.log.bind(logger), args);
+        logDebug(this.logger.log.bind(this.logger), args);
         if (this.agent.debug) {
           console.log(this);
           // eslint-disable-next-line no-debugger
@@ -644,7 +648,7 @@ export class Test {
         await checkIf(
           this.agent.errorIfResult,
           'errorIfResult',
-          logger.log.bind(logger),
+          this.logger.log.bind(this.logger),
           this.agent.levelIndent + 1,
           { ...allData, ...localResults },
           logShowFlag,
@@ -664,7 +668,7 @@ export class Test {
 
       // TIMER IN CONSOLE
       const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt, timeStart: timeStartDate });
-      await logger.log({
+      await this.logger.log({
         text: `🕝: ${deltaStr} (${this.agent.name})${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''}`,
         level: 'timer',
         levelIndent: this.agent.levelIndent,
@@ -704,7 +708,7 @@ export class Test {
           throw new ContinueParentError({
             localResults,
             errorLevel: 1,
-            logger,
+            logger: this.logger,
             test: this,
             agent: this.agent,
           });
@@ -740,14 +744,14 @@ export class Test {
         newError = new ContinueParentError({
           localResults: error.localResults || {},
           errorLevel: 0,
-          logger,
+          logger: this.logger,
           test: this,
           parentError: error,
           agent: this.agent,
         });
       } else {
         // TODO: избавиться от test тут
-        newError = new TestError({ logger, parentError: error, test: this, agent: this.agent });
+        newError = new TestError({ logger: this.logger, parentError: error, test: this, agent: this.agent });
       }
       await newError.log();
       throw newError;

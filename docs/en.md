@@ -553,6 +553,87 @@ argsRedefine check (argsRedefine)
 }
 
 ```
+## engineSupports
+Plugin for checking browser engine support, with which agents work
+
+```yaml
+name: engineSupports
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Do not use engineSupports
+
+  - blank:
+      description: Use variouse engines
+      engineSupports: ['puppeteer', 'playwright']
+
+  - blank:
+      description: Use one engine
+      engineSupports: ['playwright']
+
+---
+name: engineSupportsExistsButError
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Error when use not supported engine
+      engineSupports: ['puppeteer']
+
+---
+name: engineSupportsFakeEngine
+dataExt:
+  - dataExtMain
+
+beforeRun:
+  - runnerSwitch:
+      data: { runnerName: mainRunner }
+
+run:
+  - blank:
+      description: Error when use fake engine
+      engineSupports: ['fakeEngine']
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'engineSupports' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+(engineSupports)
+   (runnerSwitch)
+   Do not use engineSupports (blank)
+   Use variouse engines (blank)
+   Use one engine (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (engineSupports) TODO: Fill description
+00:00:00.000 - test   |   (runnerSwitch) Switch on runner: 'mainRunner'
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   (blank) Do not use engineSupports
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Use variouse engines
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Use one engine
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (engineSupports)
+00:00:00.000 - timer  Test 'engineSupports' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "engineSupports": {}
+}
+
+```
 
 # Runner file
 
