@@ -1,5 +1,5 @@
 import TestStructure from './TestStructure';
-import getTest from './getTest';
+import getAgent from './getAgent';
 import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { Environment } from './Environment';
@@ -41,7 +41,7 @@ const runAgent = async (agentName: string, envsId: string): Promise<Record<strin
 
   new Blocker().reset();
 
-  const test = getTest({ testJsonIncome: fullJSON, envsId });
+  const test = getAgent({ agentJsonIncome: fullJSON, envsId });
 
   await logger.bulkLog([
     { level: 'env', text: `\n${textDescription}` },

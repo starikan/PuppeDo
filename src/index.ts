@@ -1,7 +1,7 @@
 import run from './Api';
 import { errorHandler } from './Error';
 import TestStructure from './TestStructure';
-import getTest from './getTest';
+import getAgent from './getAgent';
 import AgentContent from './TestContent';
 import { Arguments } from './Arguments';
 import { argsDefault } from './Defaults';
@@ -18,7 +18,12 @@ export default {
   run,
   errorHandler,
   TestStructure,
-  getTest,
+  getAgent,
+
+  /**
+   * @deprecated
+   */
+  getTest: getAgent,
   AgentContent,
 
   /**

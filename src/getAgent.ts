@@ -8,49 +8,49 @@ import { pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType, TestType } from './global.d';
+import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType, TestType } from './global';
 import { Environment } from './Environment';
 import { Arguments } from './Arguments';
 
 const atoms: Record<string, TestLifeCycleFunctionType> = {};
 
-const resolveJS = (testJson: TestExtendType): TestExtendType => {
+const resolveJS = (agentJson: TestExtendType): TestExtendType => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
-  const testJsonNew = testJson;
+  const agentJsonNew = agentJson;
 
   const functions = pick<Record<string, LifeCycleFunction[] | unknown>>(
-    testJsonNew,
+    agentJsonNew,
     PPD_LIFE_CYCLE_FUNCTIONS,
   ) as Record<string, LifeCycleFunction[]>;
   if (Object.values(functions).flat().length) {
-    return testJson;
+    return agentJson;
   }
 
   try {
-    if (testJsonNew.inlineJS && typeof testJsonNew.inlineJS === 'string') {
+    if (agentJsonNew.inlineJS && typeof agentJsonNew.inlineJS === 'string') {
       try {
-        atoms[testJsonNew.inlineJS] = requireFromString(
-          `module.exports = async function atomRun() {\n${testJsonNew.inlineJS}};`,
+        atoms[agentJsonNew.inlineJS] = requireFromString(
+          `module.exports = async function atomRun() {\n${agentJsonNew.inlineJS}};`,
         );
       } catch (error) {
-        error.message = `Some errors in inlineJS: ${testJsonNew.inlineJS}`;
+        error.message = `Some errors in inlineJS: ${agentJsonNew.inlineJS}`;
         throw error;
       }
     } else {
-      const testFileExt = path.parse(testJsonNew.testFile).ext;
-      const funcFile = path.resolve(testJsonNew.testFile.replace(testFileExt, '.js'));
-      atoms[testJsonNew.name] =
-        atoms[testJsonNew.name] ||
-        __non_webpack_require__(funcFile)[testJsonNew.name] ||
+      const testFileExt = path.parse(agentJsonNew.testFile).ext;
+      const funcFile = path.resolve(agentJsonNew.testFile.replace(testFileExt, '.js'));
+      atoms[agentJsonNew.name] =
+        atoms[agentJsonNew.name] ||
+        __non_webpack_require__(funcFile)[agentJsonNew.name] ||
         __non_webpack_require__(funcFile);
-      testJsonNew.funcFile = path.resolve(funcFile);
+      agentJsonNew.funcFile = path.resolve(funcFile);
     }
 
     const instance = new Atom();
-    instance.atomRun = atoms[testJsonNew.inlineJS] || atoms[testJsonNew.name];
+    instance.atomRun = atoms[agentJsonNew.inlineJS] || atoms[agentJsonNew.name];
 
     if (typeof instance.atomRun === 'function') {
-      testJsonNew.atomRun = [instance.runAtom.bind(instance)];
+      agentJsonNew.atomRun = [instance.runAtom.bind(instance)];
     }
   } catch (error) {
     if (error.name === 'SyntaxError') {
@@ -58,9 +58,9 @@ const resolveJS = (testJson: TestExtendType): TestExtendType => {
     }
 
     // If there is no JS file it`s fine.
-    testJsonNew.atomRun = [];
+    agentJsonNew.atomRun = [];
   }
-  return testJsonNew;
+  return agentJsonNew;
 };
 
 // todo навести порядок в этих типах
@@ -83,55 +83,55 @@ const propagateArgumentsSimpleOnAir = (
   list: string[] = [],
 ): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
-const getTest = ({
-  testJsonIncome,
+const getAgent = ({
+  agentJsonIncome,
   envsId,
   parentTestMetaCollector, // object for share data with sublings
 }: {
-  testJsonIncome: TestExtendType;
+  agentJsonIncome: TestExtendType;
   envsId: string;
   parentTestMetaCollector?: Partial<TestExtendType>;
 }): TestLifeCycleFunctionType => {
-  let testJson = testJsonIncome;
+  let agentJson = agentJsonIncome;
 
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   PPD_LIFE_CYCLE_FUNCTIONS.forEach((lcf) => {
-    if (testJson[lcf] && !Array.isArray(testJson[lcf])) {
-      throw new Error(`Block ${lcf} must be array. Path: '${(testJson.breadcrumbs || []).join(' -> ')}'`);
+    if (agentJson[lcf] && !Array.isArray(agentJson[lcf])) {
+      throw new Error(`Block ${lcf} must be array. Path: '${(agentJson.breadcrumbs || []).join(' -> ')}'`);
     }
   });
 
   const functionsBeforeResolve: [string, TestExtendType[]][] = PPD_LIFE_CYCLE_FUNCTIONS.map((v) => [
     v,
-    testJson[v] as TestExtendType[],
+    agentJson[v] as TestExtendType[],
   ]);
 
   const socket = new Environment().getSocket(envsId);
 
-  testJson = resolveJS(testJson);
-  testJson.envsId = envsId;
-  testJson.socket = socket;
+  agentJson = resolveJS(agentJson);
+  agentJson.envsId = envsId;
+  agentJson.socket = socket;
 
   const blocker = new Blocker();
-  if (testJson.stepId) {
-    blocker.push({ stepId: testJson.stepId, block: false, breadcrumbs: testJson.breadcrumbs });
+  if (agentJson.stepId) {
+    blocker.push({ stepId: agentJson.stepId, block: false, breadcrumbs: agentJson.breadcrumbs });
   }
   // Test
-  // blocker.push({ stepId: testJson.stepId, block: true, breadcrumbs: testJson.breadcrumbs });
+  // blocker.push({ stepId: agentJson.stepId, block: true, breadcrumbs: agentJson.breadcrumbs });
 
   functionsBeforeResolve.forEach((value) => {
     const [funcKey, funcVal] = value;
     if (funcVal) {
       const newFunctions = [] as TestLifeCycleFunctionType[];
       funcVal.forEach((testItem: TestType) => {
-        const newFunction = getTest({ testJsonIncome: testItem, envsId, parentTestMetaCollector: testJson });
+        const newFunction = getAgent({ agentJsonIncome: testItem, envsId, parentTestMetaCollector: agentJson });
         newFunctions.push(newFunction);
       });
-      testJson[funcKey] = newFunctions;
+      agentJson[funcKey] = newFunctions;
     }
   });
 
-  const test = new Test(testJson);
+  const test = new Test(agentJson);
 
   const testResolver: TestLifeCycleFunctionType = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
     if (parentTestMetaCollector?.stepId !== args?.stepId) {
@@ -143,8 +143,8 @@ const getTest = ({
       parentTestMetaCollector.metaFromPrevSubling = {};
     }
 
-    let updatetTestJson: TestExtendType = propagateArgumentsObjectsOnAir(
-      testJson,
+    let updatetagentJson: TestExtendType = propagateArgumentsObjectsOnAir(
+      agentJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
       ['options', 'data', 'selectors', 'logOptions'],
     );
@@ -152,22 +152,22 @@ const getTest = ({
     // TODO: 2022-10-06 S.Starodubov переделать получание этих вещей из значений плагина через хук, чтобы хук возвращал то что надо
     // TODO: 2023-03-20 S.Starodubov нормальную типизацию
     const fromPrevSublingSimple = test.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
-    updatetTestJson = propagateArgumentsSimpleOnAir(
-      updatetTestJson,
+    updatetagentJson = propagateArgumentsSimpleOnAir(
+      updatetagentJson,
       { ...args, ...(parentTestMetaCollector?.metaFromPrevSubling || {}) },
       ['debug', 'frame', ...Object.keys(fromPrevSublingSimple)],
     );
 
-    updatetTestJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
-    updatetTestJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
+    updatetagentJson.resultsFromPrevSubling = parentTestMetaCollector?.resultsFromPrevSubling || {};
+    updatetagentJson.metaFromPrevSubling = parentTestMetaCollector?.metaFromPrevSubling || {};
 
-    const { stepId, name } = testJson;
+    const { stepId, name } = agentJson;
     const { stepId: stepIdParent } = args ?? {};
 
-    const { testTree } = new Environment().getEnvInstance(testJson.envsId);
+    const { testTree } = new Environment().getEnvInstance(agentJson.envsId);
     testTree.createStep({ stepIdParent: stepIdParent ?? null, stepId, payload: { ...fromPrevSublingSimple, name } });
 
-    const { result = {}, meta = {} } = await test.run(updatetTestJson);
+    const { result = {}, meta = {} } = await test.run(updatetagentJson);
 
     if (parentTestMetaCollector) {
       parentTestMetaCollector.resultsFromPrevSubling = {
@@ -183,4 +183,4 @@ const getTest = ({
   return testResolver;
 };
 
-export default getTest;
+export default getAgent;
