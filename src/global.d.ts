@@ -402,12 +402,14 @@ export type PluginDocumentation = {
   propogation: boolean;
 };
 
+export type PluginList = Record<string, { plugin: PluginModule<unknown> | string; order?: number }>;
+
 export type RunOptions = {
   closeProcess: boolean;
   stdOut: boolean;
   closeAllEnvs: boolean;
   globalConfigFile: string;
-  pluginsList: Array<PluginModule<unknown> | string>;
+  pluginsList: PluginList;
   loggerPipes: LogPipe[];
   argsConfig: Partial<ArgumentsType>;
   socket: SocketType;

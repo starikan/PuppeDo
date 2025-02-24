@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AgentData, ArgumentsType, LogPipe, RunOptions, TestTypeYaml } from './global.d';
+import { AgentData, ArgumentsType, LogPipe, PluginList, RunOptions, TestTypeYaml } from './global.d';
 
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
 import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
@@ -13,7 +13,12 @@ import {
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
 
-export const pluginsListDefault = ['skipSublingIfResult', 'continueOnError', 'descriptionError', 'argsRedefine'];
+export const pluginsListDefault: PluginList = {
+  skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 100 },
+  continueOnError: { plugin: 'continueOnError', order: 200 },
+  descriptionError: { plugin: 'descriptionError', order: 300 },
+  argsRedefine: { plugin: 'argsRedefine', order: 400 },
+};
 
 export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },
@@ -126,7 +131,7 @@ export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
   );
 
   const config: RunOptions = {
-    pluginsList: [...pluginsListDefault, ...(configGlobal.pluginsList ?? []), ...(options.pluginsList ?? [])],
+    pluginsList: { ...pluginsListDefault, ...(configGlobal.pluginsList ?? {}), ...(options.pluginsList ?? {}) },
     loggerPipes: [...loggerPipesDefault, ...(configGlobal.loggerPipes ?? []), ...(options.loggerPipes ?? [])],
     argsConfig: configGlobal.args ?? {},
     closeAllEnvs: options.closeAllEnvs ?? true,

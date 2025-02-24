@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 import TestStructure from './TestStructure';
 import getAgent from './getAgent';
 import { Arguments } from './Arguments';
@@ -18,10 +19,7 @@ const initEnvironment = (options: RunOptions, argsInput): string => {
     throw new Error('There is no tests to run. Pass any test in PPD_TESTS argument');
   }
 
-  const allPlugins = new PluginsFabric(pluginsList);
-  for (const plugin of pluginsList) {
-    allPlugins.addPlugin(plugin);
-  }
+  new PluginsFabric(pluginsList, true);
 
   const { envsId } = new Environment().createEnv({ socket, loggerOptions: { stdOut, loggerPipes } });
 

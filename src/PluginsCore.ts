@@ -1,6 +1,6 @@
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
-import { PluginDocumentation, TestArgsType, TestExtendType } from './global.d';
+import { PluginDocumentation, PluginList, TestArgsType, TestExtendType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
@@ -45,15 +45,15 @@ export class PluginsFabric extends Singleton {
 
   private orders: Record<string, number | null>;
 
-  constructor(plugins: Array<PluginModule<unknown> | string> = [], reInit = false) {
+  constructor(plugins: PluginList = {}, reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
       this.documentation = {};
       this.orders = {};
 
-      for (const plugin of plugins) {
-        this.addPlugin(plugin);
+      for (const plugin of Object.values(plugins)) {
+        this.addPlugin(plugin.plugin, plugin.order);
       }
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
@@ -80,11 +80,11 @@ export class PluginsFabric extends Singleton {
     // do nothing
   }
 
-  addPlugin(plugin: PluginModule<unknown> | string): void {
+  addPlugin(plugin: PluginModule<unknown> | string, order?: number): void {
     const resolvPlugin = typeof plugin === 'string' ? DefaultPlugins[plugin] : plugin;
     this.plugins[resolvPlugin.name] = resolvPlugin.plugin;
     this.documentation[resolvPlugin.name] = resolvPlugin.documentation;
-    this.orders[resolvPlugin.name] = resolvPlugin.order || null;
+    this.orders[resolvPlugin.name] = order ?? resolvPlugin.order ?? null;
   }
 
   getPluginsOrder(): Record<string, number | null> {
