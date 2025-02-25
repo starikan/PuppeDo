@@ -1,15 +1,15 @@
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
-import { PluginDocumentation, PluginList, TestArgsType, TestExtendType } from './global.d';
+import { PluginDocumentation, PluginList, TestArgsType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
 import DefaultPlugins from './Plugins';
 
 type Hooks = {
-  initValues?: ({ initValues }: { initValues: TestExtendType }) => void;
-  runLogic?: ({ inputs }: { inputs: TestExtendType }) => void;
-  resolveValues?: ({ inputs }: { inputs: TestExtendType }) => void;
+  initValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
+  runLogic?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
+  resolveValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
   beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
@@ -25,10 +25,11 @@ export interface PluginType<TValues> {
   propogationsAndShares?: PropogationsAndShares;
   values: TValues;
   getValue?: (value?: keyof TValues) => TValues[keyof TValues];
-  setValues?: (values?: Partial<TValues>) => void;
+  setValues?: (values?: Partial<TValues>) => TValues;
+  originAgent?: Test;
 }
 
-export type PluginFunction<T> = (allPlugins: Plugins) => PluginType<T>;
+export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
 
 export type PluginModule<T> = {
   name: string;
@@ -182,9 +183,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   originAgent?: Test;
 
   hooks: Required<Hooks> = {
-    initValues: ({ initValues }) => {
-      const newValues = { ...this.defaultValues, ...pick(initValues, Object.keys(this.defaultValues)) };
-      this.values = newValues as T;
+    initValues: ({ inputs }) => {
+      this.setValues(inputs as Partial<T>);
     },
     runLogic: () => {
       // Blank
@@ -219,12 +219,11 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     name: string;
     defaultValues: T;
     propogationsAndShares?: PropogationsAndShares;
-    allPlugins?: Plugins;
+    originAgent?: Test;
+    plugins?: Plugins;
     hooks?: Hooks;
     getValue?: (value?: keyof T) => T[keyof T];
-    setValues?: (values?: Partial<T>) => void;
-    plugins?: Plugins;
-    originAgent?: Test;
+    setValues?: (values?: Partial<T>) => T;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
@@ -255,7 +254,13 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     return this.values[value];
   }
 
-  setValues(values: Partial<T>): void {
-    this.values = { ...this.values, ...values };
+  getValues(): T {
+    return this.values;
+  }
+
+  setValues(values: Partial<T>): T {
+    const newValues = { ...this.defaultValues, ...this.values, ...pick(values, Object.keys(this.defaultValues)) };
+    this.values = newValues as T;
+    return this.values;
   }
 }

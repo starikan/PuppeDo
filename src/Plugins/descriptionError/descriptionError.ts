@@ -11,48 +11,37 @@ const plugin: PluginFunction<PluginDescriptionError> = () => {
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
-      initValues: ({ initValues }): void => {
-        pluginInstance.defaultValues.descriptionError = initValues.descriptionError ?? '';
-      },
-
       runLogic: ({ inputs }): void => {
-        const values: PluginDescriptionError = {
-          descriptionError: inputs.descriptionError || pluginInstance.getValue('descriptionError'),
-        };
-        pluginInstance.setValues(values);
+        pluginInstance.setValues(inputs);
       },
 
       beforeFunctions: ({ args }): void => {
-        let newValue;
         try {
-          newValue = runScriptInContext(
-            pluginInstance.defaultValues.descriptionError,
+          const newValue = runScriptInContext(
+            pluginInstance.getValue('descriptionError'),
             args.allData,
-            pluginInstance.defaultValues.descriptionError,
+            pluginInstance.getValue('descriptionError'),
           );
+          if (newValue) {
+            pluginInstance.setValues({ descriptionError: String(newValue) });
+          }
         } catch {
-          // Nothng t do
-        }
-        if (newValue) {
-          const values: PluginDescriptionError = { descriptionError: newValue };
-          pluginInstance.setValues(values);
+          // Nothng to do
         }
       },
 
       afterResults: ({ results }): void => {
-        let newValue;
         try {
-          newValue = runScriptInContext(
-            pluginInstance.defaultValues.descriptionError,
+          const newValue = runScriptInContext(
+            pluginInstance.getValue('descriptionError'),
             results,
-            pluginInstance.defaultValues.descriptionError,
+            pluginInstance.getValue('descriptionError'),
           );
+          if (newValue) {
+            pluginInstance.setValues({ descriptionError: String(newValue) });
+          }
         } catch {
-          // Nothng t do
-        }
-        if (newValue) {
-          const values: PluginDescriptionError = { descriptionError: newValue };
-          pluginInstance.setValues(values);
+          // Nothng to do
         }
       },
     },

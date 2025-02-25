@@ -6,17 +6,17 @@ export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
 const name = 'engineSupports';
 
 const plugin: PluginFunction<PluginEngineSupports> = ({ originAgent }) => {
-  const pluginInstance = new Plugin({
+  const pluginInstance = new Plugin<PluginEngineSupports>({
     name,
     defaultValues: { engineSupports: [] },
-    originAgent,
     hooks: {
-      resolveValues(): void {
-        if (originAgent.agent.engineSupports.length) {
+      resolveValues: ({ inputs }): void => {
+        const { engineSupports } = pluginInstance.setValues(inputs);
+        if (engineSupports.length) {
           const { engine } = originAgent.runner?.getRunnerData()?.browser || {};
-          if (engine && !originAgent.agent.engineSupports.includes(engine)) {
+          if (engine && !engineSupports.includes(engine)) {
             throw new Error(
-              `Current engine: '${engine}' not supported with this agent. You need to use: ${originAgent.agent.engineSupports}`,
+              `Current engine: '${engine}' not supported with this agent. You need to use: ${engineSupports}`,
             );
           }
         }

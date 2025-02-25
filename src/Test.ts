@@ -311,7 +311,7 @@ export class Test {
 
   constructor(initValues: TestExtendType) {
     this.plugins = new Plugins(this);
-    this.plugins.hook('initValues', { initValues });
+    this.plugins.hook('initValues', { inputs: initValues });
 
     // TODO: Нужна какая то проверка тут initValues
     for (const key of Object.keys(this.agent)) {
@@ -500,8 +500,7 @@ export class Test {
       const current = new Environment().getCurrent(this.agent.envsId);
       const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
 
-      // TODO: заменить Partial<TestExtendType> на строгий тип TestExtendType прямо в TestArgsType
-      const args: TestArgsType & AgentData = {
+      const args: TestArgsType = {
         ...this.agent,
         environment: new Environment(),
         runner: this.runner,

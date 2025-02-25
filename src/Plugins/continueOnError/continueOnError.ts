@@ -1,5 +1,4 @@
 import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
-import { Arguments } from '../../Arguments';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
 import { PluginDocumentation } from '../../global.d';
@@ -8,7 +7,7 @@ export type PluginContinueOnError = { continueOnError: boolean };
 
 const name = 'continueOnError';
 
-const plugin: PluginFunction<PluginContinueOnError> = (allPlugins) => {
+const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
@@ -17,17 +16,18 @@ const plugin: PluginFunction<PluginContinueOnError> = (allPlugins) => {
     },
     hooks: {
       resolveValues: ({ inputs }): void => {
-        const { PPD_CONTINUE_ON_ERROR_ENABLED } = {
-          ...new Arguments().args,
-          ...allPlugins.getValue<PluginArgsRedefine>('argsRedefine').argsRedefine,
-        };
+        const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
+          .get<PluginArgsRedefine>('argsRedefine')
+          .getValue('argsRedefine');
 
-        pluginInstance.values.continueOnError = PPD_CONTINUE_ON_ERROR_ENABLED
-          ? inputs.continueOnError || pluginInstance.values.continueOnError
-          : false;
+        pluginInstance.setValues({
+          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
+            ? ((inputs.continueOnError as boolean) ?? pluginInstance.values.continueOnError)
+            : false,
+        });
       },
     },
-    allPlugins,
+    plugins,
   });
 
   return pluginInstance;

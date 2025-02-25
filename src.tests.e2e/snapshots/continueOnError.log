@@ -45,9 +45,36 @@ continueOnError (continueOnError)
 [31m00:00:00.000 - error  |   |          runTest[0].blank[0m
 [31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
-00:00:00.000 - warn   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank[0m
-00:00:00.000 - timer  Test 'continueOnError' time 🕝: 00.000 s.
-00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
-{
-  "continueOnError": {}
-}
+[31m00:00:00.000 - error  |   [0m[31mThis is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: Error me if I broken (case)[0m
+[31m00:00:00.000 - error  |    continueOnError[0m
+[31m00:00:00.000 - error  |       runTest[3].case[0m
+[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
+[31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
+[31m00:00:00.000 - error  [0m[31mDescription: continueOnError (continueOnError)[0m
+[31m00:00:00.000 - error   continueOnError[0m
+[31m00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)[0m
+[31m00:00:00.000 - error   [0m[31m================================================================================================[0m
+[31m                      [0m[31mTest stopped with expr errorIfResult = '1 === 1'[0m
+[31m                      [0m[31merror in test = blank[0m
+[31m                      [0m[31merror in test = case[0m
+[31m                      [0m[31merror in test = continueOnError[0m
+[31m                      [0m[31m================================================================================================[0m
+[31m                      [0m[31mError: Test stopped with expr errorIfResult = '1 === 1'[0m
+[31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
+[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
+[31m                      [0m[31mat runAgent (\@puppedo\core\src\Api)[0m
+[31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
+[31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIfResult = '1 === 1'
+                      █ Error:       
+                      █ Path:        continueOnError -> runTest[3].case -> runTest[0].blank
+                      █ Description:
+                      █    continueOnError
+                      █       Error me if I broken[0m

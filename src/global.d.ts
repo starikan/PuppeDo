@@ -12,7 +12,6 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
-import { PliginsFields } from './Plugins';
 import { PluginModule, Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
@@ -304,8 +303,7 @@ export type TestArgsType = {
   allData: AllDataType;
   plugins: Plugins;
   breadcrumbs: string[];
-  continueOnError: boolean;
-};
+} & AgentData;
 
 export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 
@@ -350,7 +348,7 @@ export type TestTypeYaml = {
   inlineJS?: string;
   breakParentIfResult?: string;
   [key: string]: LifeCycleFunction[] | unknown;
-} & PliginsFields;
+};
 
 export type TestExtendType = {
   levelIndent?: number;

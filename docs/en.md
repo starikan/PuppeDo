@@ -295,12 +295,39 @@ continueOnError (continueOnError)
 00:00:00.000 - error  |   |          runTest[0].blank
 00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - warn   |   Continue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank
-00:00:00.000 - timer  Test 'continueOnError' time 🕝: 00.000 s.
-00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
-{
-  "continueOnError": {}
-}
+00:00:00.000 - error  |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: Error me if I broken (case)
+00:00:00.000 - error  |    continueOnError
+00:00:00.000 - error  |       runTest[3].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  Description: continueOnError (continueOnError)
+00:00:00.000 - error   continueOnError
+00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIfResult = '1 === 1'
+                      error in test = blank
+                      error in test = case
+                      error in test = continueOnError
+                      ================================================================================================
+                      Error: Test stopped with expr errorIfResult = '1 === 1'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at runAgent (\@puppedo\core\src\Api)
+                      at Object.run (\@puppedo\core\src\Api)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIfResult = '1 === 1'
+                      █ Error:       
+                      █ Path:        continueOnError -> runTest[3].case -> runTest[0].blank
+                      █ Description:
+                      █    continueOnError
+                      █       Error me if I broken
 
 ```
 ## descriptionError
