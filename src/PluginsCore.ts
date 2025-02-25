@@ -5,17 +5,34 @@ import { pick } from './Helpers';
 import Singleton from './Singleton';
 import { Test } from './Test';
 import DefaultPlugins from './Plugins';
+import { Environment } from './Environment';
 
 type Hooks = {
-  initValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
-  runLogic?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
+  initValues?: ({
+    inputs,
+    envsId,
+    stepId,
+  }: {
+    inputs: Record<string, unknown>;
+    envsId?: string;
+    stepId?: string;
+  }) => void;
+  runLogic?: ({
+    inputs,
+    envsId,
+    stepId,
+  }: {
+    inputs: Record<string, unknown>;
+    envsId?: string;
+    stepId?: string;
+  }) => void;
   resolveValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
   beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
 
 type PropogationsAndShares = {
-  fromPrevSublingSimple: string[];
+  fromPrevSublingSimple?: string[];
 };
 
 export interface PluginType<TValues> {
@@ -23,6 +40,7 @@ export interface PluginType<TValues> {
   hook: (name: keyof Hooks) => (_: unknown) => void;
   hooks: Hooks;
   propogationsAndShares?: PropogationsAndShares;
+  propogation: 'lastParent' | 'lastSubling';
   values: TValues;
   getValue?: (value?: keyof TValues) => TValues[keyof TValues];
   setValues?: (values?: Partial<TValues>) => TValues;
@@ -206,10 +224,13 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   propogationsAndShares?: PropogationsAndShares;
 
+  propogation: 'lastParent' | 'lastSubling';
+
   constructor({
     name,
     defaultValues,
     propogationsAndShares,
+    propogation,
     originAgent,
     plugins,
     hooks = {},
@@ -219,6 +240,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     name: string;
     defaultValues: T;
     propogationsAndShares?: PropogationsAndShares;
+    propogation?: 'lastParent' | 'lastSubling';
     originAgent?: Test;
     plugins?: Plugins;
     hooks?: Hooks;
@@ -229,6 +251,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.defaultValues = { ...defaultValues };
     this.values = { ...defaultValues };
     this.propogationsAndShares = propogationsAndShares;
+    this.propogation = propogation;
     this.plugins = plugins;
     this.originAgent = originAgent;
     this.hooks = { ...this.hooks, ...hooks };
@@ -251,16 +274,39 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }
 
   getValue(value: keyof T): T[keyof T] {
-    return this.values[value];
+    return { ...this.defaultValues, ...(this.values ?? {}) }[value];
   }
 
   getValues(): T {
-    return this.values;
+    return { ...this.defaultValues, ...(this.values ?? {}) };
   }
 
-  setValues(values: Partial<T>): T {
-    const newValues = { ...this.defaultValues, ...this.values, ...pick(values, Object.keys(this.defaultValues)) };
+  setValues(values: Partial<T> = {}): T {
+    const newValues = {
+      ...this.defaultValues,
+      ...(this.values ?? {}),
+      ...pick(values, Object.keys(this.defaultValues)),
+    };
     this.values = newValues as T;
+
+    try {
+      // todo: несерьезно
+      // @ts-ignore
+      const { envsId, stepId } = values;
+      const { testTree } = new Environment().getEnvInstance(envsId);
+
+      // Если нет ключей на фходе смотрим на родителя, если это нужно
+      if (this.propogation === 'lastParent' && !Object.keys(pick(values, Object.keys(this.defaultValues))).length) {
+        const stepParent = testTree.findParent(stepId);
+        const valuesParent = stepParent ? (pick(stepParent, Object.keys(this.defaultValues)) as T) : {};
+        this.values = { ...this.values, ...valuesParent };
+      }
+
+      testTree.updateStep({ stepId, payload: this.values });
+    } catch (error) {
+      // debugger;
+    }
+
     return this.values;
   }
 }

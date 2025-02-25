@@ -420,6 +420,7 @@ export type TreeEntryDataType = TestExtendType & {
 
 export type TreeEntryType = Partial<TreeEntryDataType> & {
   stepId: string;
+  stepIdParent: string;
   steps?: TreeType;
 };
 

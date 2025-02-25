@@ -1,5 +1,6 @@
 name: continueOnError
 description: continueOnError
+argsRedefine: { PPD_CONTINUE_ON_ERROR_ENABLED: true }
 runTest:
   - case:
       description: Skip me if I broken

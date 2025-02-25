@@ -614,14 +614,9 @@ describe('AgentContent.checkDuplicates (AI generated)', () => {
     errorIf: '',
     errorIfResult: '',
     tags: [],
-    engineSupports: [],
     todo: '',
     inlineJS: '',
     breakParentIfResult: '',
-    argsRedefine: {},
-    continueOnError: false,
-    descriptionError: '',
-    skipSublingIfResult: '',
   });
 
   it('should pass array without duplicates', () => {

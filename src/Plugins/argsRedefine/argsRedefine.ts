@@ -10,6 +10,7 @@ const plugin: PluginFunction<PluginArgsRedefine> = () => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: {} },
+    propogation: 'lastParent',
     getValue(): ArgumentsType {
       return { ...new Arguments().args, ...this.values.argsRedefine };
     },

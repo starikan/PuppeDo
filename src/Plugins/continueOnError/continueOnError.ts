@@ -11,18 +11,30 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
-    propogationsAndShares: {
-      fromPrevSublingSimple: ['continueOnError'],
-    },
+    propogation: 'lastParent',
     hooks: {
+      initValues({ inputs }): void {
+        const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
+          .get<PluginArgsRedefine>('argsRedefine')
+          .getValue('argsRedefine');
+
+        pluginInstance.setValues({
+          ...inputs,
+          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
+            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))
+            : false,
+        });
+      },
+
       resolveValues: ({ inputs }): void => {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
           .get<PluginArgsRedefine>('argsRedefine')
           .getValue('argsRedefine');
 
         pluginInstance.setValues({
+          ...inputs,
           continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
-            ? ((inputs.continueOnError as boolean) ?? pluginInstance.values.continueOnError)
+            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))
             : false,
         });
       },

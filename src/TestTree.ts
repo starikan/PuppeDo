@@ -6,11 +6,6 @@ type CreateStepParams = {
   payload: Partial<TreeEntryDataType>;
 };
 
-type UpdateStepParams = {
-  stepId: string;
-  payload: Partial<TreeEntryDataType>;
-};
-
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."
 
@@ -42,7 +37,7 @@ export class TestTree {
    * @param {string} stepId - The stepId of the step you want to find.
    * @returns the first node that matches the stepId.
    */
-  private findNode(tree: TreeType, stepId: string): TreeEntryType | null {
+  findNode(tree: TreeType, stepId: string): TreeEntryType | null {
     for (const entry of tree) {
       if (entry.stepId === stepId) {
         return entry;
@@ -57,6 +52,14 @@ export class TestTree {
     return null;
   }
 
+  findParent(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
+    const node = this.findNode(tree, stepId);
+    if (node) {
+      return this.findNode(tree, node.stepIdParent);
+    }
+    return null;
+  }
+
   /**
    * It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
    * stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array
@@ -67,14 +70,18 @@ export class TestTree {
    * @returns The tree
    */
   createStep({ stepIdParent, stepId, payload }: CreateStepParams): TreeType {
+    if (this.findNode(this.tree, stepId)) {
+      return this.updateStep({ stepId, stepIdParent, payload });
+    }
+
     // Top step
     if (!stepIdParent && stepId) {
-      this.tree.push({ stepId, ...payload });
+      this.tree.push({ stepId, stepIdParent, ...payload });
     } else {
       const entry = this.findNode(this.tree, stepIdParent);
       if (entry) {
         entry.steps ??= [];
-        entry.steps.push({ stepId, ...payload });
+        entry.steps.push({ stepIdParent, stepId, ...payload });
       }
     }
 
@@ -87,14 +94,16 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  updateStep({ stepId, payload }: UpdateStepParams): TreeType {
+  updateStep({ stepId, stepIdParent, payload }: CreateStepParams): TreeType {
     const entry = this.findNode(this.tree, stepId);
     if (entry) {
       for (const [key, value] of Object.entries(payload)) {
         entry[key] = value;
       }
+
+      entry.stepIdParent ??= stepIdParent;
     } else {
-      this.createStep({ stepIdParent: null, stepId, payload });
+      this.createStep({ stepIdParent, stepId, payload });
     }
 
     return this.getTree();
