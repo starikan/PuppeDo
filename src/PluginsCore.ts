@@ -186,8 +186,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     initValues: ({ inputs }) => {
       this.setValues(inputs as Partial<T>);
     },
-    runLogic: () => {
-      // Blank
+    runLogic: ({ inputs }) => {
+      this.setValues(inputs as Partial<T>);
     },
     resolveValues: () => {
       // Blank

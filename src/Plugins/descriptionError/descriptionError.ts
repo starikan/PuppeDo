@@ -11,10 +11,6 @@ const plugin: PluginFunction<PluginDescriptionError> = () => {
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
-      runLogic: ({ inputs }): void => {
-        pluginInstance.setValues(inputs);
-      },
-
       beforeFunctions: ({ args }): void => {
         try {
           const newValue = runScriptInContext(
