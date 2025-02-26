@@ -19,6 +19,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
           .getValue('argsRedefine');
 
         pluginInstance.setValues({
+          // TODO: решить вопрос с прокидыванием stepId и удалить эти input
           ...inputs,
           continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
             ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))
@@ -32,6 +33,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
           .getValue('argsRedefine');
 
         pluginInstance.setValues({
+          // TODO: решить вопрос с прокидыванием stepId и удалить эти input
           ...inputs,
           continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
             ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))

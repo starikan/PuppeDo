@@ -4,6 +4,7 @@ import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
+// todo: переименовать в args
 const name = 'argsRedefine';
 
 const plugin: PluginFunction<PluginArgsRedefine> = () => {

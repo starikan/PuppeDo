@@ -295,7 +295,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       const { envsId, stepId } = values;
       const { testTree } = new Environment().getEnvInstance(envsId);
 
-      // Если нет ключей на фходе смотрим на родителя, если это нужно
+      // Если нет ключей на входе смотрим на родителя, если это нужно
       if (this.propogation === 'lastParent' && !Object.keys(pick(values, Object.keys(this.defaultValues))).length) {
         const stepParent = testTree.findParent(stepId);
         const valuesParent = stepParent ? (pick(stepParent, Object.keys(this.defaultValues)) as T) : {};
