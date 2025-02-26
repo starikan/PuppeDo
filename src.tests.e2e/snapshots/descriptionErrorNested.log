@@ -18,12 +18,12 @@ descriptionErrorNested (descriptionErrorNested)
 [31m00:00:00.000 - error  |   |          runTest[0].blank[0m
 [31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
-[31m00:00:00.000 - error  |   [0m[31mdescriptionError 0 | Description: description 0 (case)[0m
+[31m00:00:00.000 - error  |   [0m[31mdescriptionError 1 | Description: description 0 (case)[0m
 [31m00:00:00.000 - error  |    descriptionErrorNested[0m
 [31m00:00:00.000 - error  |       runTest[0].case[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mdescriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)[0m
+[31m00:00:00.000 - error  [0m[31mdescriptionError 1 | Description: descriptionErrorNested (descriptionErrorNested)[0m
 [31m00:00:00.000 - error   descriptionErrorNested[0m
 [31m00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorNested.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m
@@ -46,7 +46,7 @@ descriptionErrorNested (descriptionErrorNested)
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
-                      █ Error:       descriptionError 0
+                      █ Error:       descriptionError 1
                       █ Path:        descriptionErrorNested -> runTest[0].case -> runTest[0].blank
                       █ Description:
                       █    descriptionErrorNested
