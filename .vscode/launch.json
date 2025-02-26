@@ -106,6 +106,23 @@
       }
     },
     {
+      "name": "Export all TS only",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "args": ["scripts\\exportRepositoryToTxt.ts"],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "env": {
+        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.scripts.json",
+        "DIRECTORY_PATHS": "./src,.",
+        "EXTENSIONS": ".ts,.js",
+        "DEPTH": "1"
+      }
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Custom run",

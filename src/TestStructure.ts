@@ -78,7 +78,7 @@ export default class TestStructure {
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];
     fullJSON.levelIndent = levelIndent;
-    fullJSON.stepId = generateId();
+    fullJSON.stepId = fullJSON.stepId ?? generateId();
     fullJSON.source = JSON.stringify(fullJSON, null, 2);
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
