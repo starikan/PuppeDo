@@ -127,12 +127,7 @@ const stepResolver = (
   parentStepMetaCollector: Partial<TestExtendType>,
 ): TestLifeCycleFunctionType => {
   const stepFunction = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
-    const { testTree } = new Environment().getEnvInstance(agentJson.envsId);
-
-    const { stepId, name } = agentJson;
-    const { stepId: stepIdParent } = args ?? {};
-
-    testTree.createStep({ stepIdParent, stepId, payload: { name } });
+    agentJson.stepIdParent = args?.stepId;
 
     const step = new Test(agentJson);
 
@@ -145,10 +140,6 @@ const stepResolver = (
       parentStepMetaCollector.metaFromPrevSubling = {};
     }
 
-    // TODO: 2022-10-06 S.Starodubov переделать получание этих вещей из значений плагина через хук, чтобы хук возвращал то что надо
-    // TODO: 2023-03-20 S.Starodubov нормальную типизацию
-    const fromPrevSublingSimple = step.plugins.getAllPropogatesAndSublings('fromPrevSublingSimple');
-
     let updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(
       agentJson,
       { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
@@ -158,7 +149,7 @@ const stepResolver = (
     updatedAgentJson = propagateArgumentsSimpleOnAir(
       updatedAgentJson,
       { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
-      ['debug', 'frame', ...Object.keys(fromPrevSublingSimple)],
+      ['debug', 'frame'],
     );
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};

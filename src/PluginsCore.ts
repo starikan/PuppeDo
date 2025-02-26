@@ -30,15 +30,10 @@ type Hooks = {
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
 };
 
-type PropogationsAndShares = {
-  fromPrevSublingSimple?: string[];
-};
-
 export interface PluginType<TValues> {
   name: string;
   hook: (name: keyof Hooks) => (_: unknown) => void;
   hooks: Hooks;
-  propogationsAndShares?: PropogationsAndShares;
   propogation: 'lastParent' | 'lastSubling';
   values: TValues;
   getValue?: (value?: keyof TValues) => TValues[keyof TValues];
@@ -167,22 +162,6 @@ export class Plugins {
     }
     return plugin;
   }
-
-  getAllPropogatesAndSublings(type: keyof PropogationsAndShares): Record<string, unknown> {
-    const propogationsAndShares = this.plugins.filter((v) => v.propogationsAndShares);
-    const result = {};
-
-    if (type === 'fromPrevSublingSimple') {
-      const fromPrevSublingPlugins = propogationsAndShares.filter((v) => v.propogationsAndShares.fromPrevSublingSimple);
-      fromPrevSublingPlugins.forEach((fromPrevSublingPlugin) => {
-        fromPrevSublingPlugin.propogationsAndShares.fromPrevSublingSimple.forEach((v) => {
-          result[v] = this.getValue(fromPrevSublingPlugin.name)[v];
-        });
-      });
-    }
-
-    return result;
-  }
 }
 
 export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType<T> {
@@ -219,14 +198,11 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     // Blank
   };
 
-  propogationsAndShares?: PropogationsAndShares;
-
   propogation: 'lastParent' | 'lastSubling';
 
   constructor({
     name,
     defaultValues,
-    propogationsAndShares,
     propogation,
     plugins,
     hooks = {},
@@ -235,7 +211,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }: {
     name: string;
     defaultValues: T;
-    propogationsAndShares?: PropogationsAndShares;
     propogation?: 'lastParent' | 'lastSubling';
     plugins?: Plugins;
     hooks?: Hooks;
@@ -245,7 +220,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.name = name;
     this.defaultValues = { ...defaultValues };
     this.values = { ...defaultValues };
-    this.propogationsAndShares = propogationsAndShares;
     this.propogation = propogation;
     this.plugins = plugins;
     this.hooks = { ...this.hooks, ...hooks };
@@ -286,8 +260,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     try {
       // todo: несерьезно
       // @ts-ignore
-      const { envsId, stepId } = values;
-      const { testTree } = new Environment().getEnvInstance(envsId);
+      const { stepId } = values;
+      // todo: как то кэшировать в плагинс
+      const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
 
       // Если нет ключей на входе смотрим на родителя, если это нужно
       if (this.propogation === 'lastParent' && !Object.keys(pick(values, Object.keys(this.defaultValues))).length) {
