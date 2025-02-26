@@ -3,7 +3,6 @@ import { Arguments } from './Arguments';
 import { PluginDocumentation, PluginList, TestArgsType } from './global.d';
 import { pick } from './Helpers';
 import Singleton from './Singleton';
-import { Test } from './Test';
 import DefaultPlugins from './Plugins';
 import { Environment } from './Environment';
 

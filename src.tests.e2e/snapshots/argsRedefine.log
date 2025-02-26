@@ -1,24 +1,28 @@
 00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
-argsRedefine check (argsRedefine)
-   Check PPD_LOG_EXTEND true globaly (case)
-      (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false (case)
-      (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child) (case)
-      (blank)
+argsRedefine (argsRedefine)
+   Because PPD_LOG_EXTEND true globaly - show timer ✔️ (case)
+      Because PPD_LOG_EXTEND true globaly - show timer ✔️ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌ (blank)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   [32m(argsRedefine) argsRedefine check[0m
-00:00:00.000 - test   |   [47m[30m(case) Check PPD_LOG_EXTEND true globaly[0m[0m
-00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+00:00:00.000 - test   [32m(argsRedefine) argsRedefine[0m
+00:00:00.000 - test   |   [47m[30m(case) Because PPD_LOG_EXTEND true globaly - show timer ✔️[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Because PPD_LOG_EXTEND true globaly - show timer ✔️[0m
                       |   |   🕝: 00.000 s. (blank)
                       |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false[0m[0m
-00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
-00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)[0m[0m
-00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌[0m
+00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️[0m
                       |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [47m[30m(case) Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌[0m
                       🕝: 00.000 s. (argsRedefine)
 00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
