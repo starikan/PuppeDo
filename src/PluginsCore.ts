@@ -44,7 +44,6 @@ export interface PluginType<TValues> {
   values: TValues;
   getValue?: (value?: keyof TValues) => TValues[keyof TValues];
   setValues?: (values?: Partial<TValues>) => TValues;
-  originAgent?: Test;
 }
 
 export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
@@ -131,15 +130,16 @@ export class PluginsFabric extends Singleton {
 export class Plugins {
   private plugins: PluginType<unknown>[] = [];
 
-  originAgent: Test;
+  envsId: string;
 
   blankHook: () => {
     // Blank
   };
 
-  constructor(originAgent: Test) {
+  constructor(envsId: string) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
-    this.originAgent = originAgent;
+
+    this.envsId = envsId;
 
     for (const plugin of Object.values(plugins)) {
       this.plugins.push(plugin(this));
@@ -198,8 +198,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   plugins?: Plugins;
 
-  originAgent?: Test;
-
   hooks: Required<Hooks> = {
     initValues: ({ inputs }) => {
       this.setValues(inputs as Partial<T>);
@@ -231,7 +229,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     defaultValues,
     propogationsAndShares,
     propogation,
-    originAgent,
     plugins,
     hooks = {},
     getValue,
@@ -241,7 +238,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     defaultValues: T;
     propogationsAndShares?: PropogationsAndShares;
     propogation?: 'lastParent' | 'lastSubling';
-    originAgent?: Test;
     plugins?: Plugins;
     hooks?: Hooks;
     getValue?: (value?: keyof T) => T[keyof T];
@@ -253,7 +249,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.propogationsAndShares = propogationsAndShares;
     this.propogation = propogation;
     this.plugins = plugins;
-    this.originAgent = originAgent;
     this.hooks = { ...this.hooks, ...hooks };
     this.getValue = getValue ?? this.getValue;
     this.setValues = setValues ?? this.setValues;
@@ -303,7 +298,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       }
 
       testTree.updateStep({ stepId, payload: this.values });
-    } catch (error) {
+    } catch {
       // debugger;
     }
 

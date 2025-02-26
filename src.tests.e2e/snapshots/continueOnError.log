@@ -50,7 +50,7 @@ continueOnError (continueOnError)
 [31m00:00:00.000 - error  |       runTest[3].case[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mDescription: continueOnError (continueOnError)[0m
+[31m00:00:00.000 - error  [0m[31mThis is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: continueOnError (continueOnError)[0m
 [31m00:00:00.000 - error   continueOnError[0m
 [31m00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m
@@ -73,7 +73,7 @@ continueOnError (continueOnError)
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = '1 === 1'
-                      █ Error:       
+                      █ Error:       This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
                       █ Path:        continueOnError -> runTest[3].case -> runTest[0].blank
                       █ Description:
                       █    continueOnError

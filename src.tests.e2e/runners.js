@@ -89,7 +89,7 @@ const testsE2E = {
     params: { PPD_TESTS: 'logOptions' },
   },
   continueOnError: {
-    params: { PPD_TESTS: 'continueOnError', PPD_CONTINUE_ON_ERROR_ENABLED: true },
+    params: { PPD_TESTS: 'continueOnError' },
     isError: true,
   },
   descriptionError: {

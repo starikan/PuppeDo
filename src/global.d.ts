@@ -354,6 +354,7 @@ export type TestExtendType = {
   levelIndent?: number;
   breadcrumbs?: string[];
   breadcrumbsDescriptions?: string[];
+  stepIdParent?: string;
   stepId?: string;
   source?: string;
   socket?: SocketType;

@@ -69,7 +69,7 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  createStep({ stepIdParent, stepId, payload }: CreateStepParams): TreeType {
+  createStep({ stepIdParent = null, stepId, payload }: CreateStepParams): TreeType {
     if (this.findNode(this.tree, stepId)) {
       return this.updateStep({ stepId, stepIdParent, payload });
     }
@@ -94,14 +94,16 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  updateStep({ stepId, stepIdParent, payload }: CreateStepParams): TreeType {
+  updateStep({ stepId, stepIdParent = null, payload }: CreateStepParams): TreeType {
     const entry = this.findNode(this.tree, stepId);
     if (entry) {
       for (const [key, value] of Object.entries(payload)) {
         entry[key] = value;
       }
 
-      entry.stepIdParent ??= stepIdParent;
+      if (stepIdParent) {
+        entry.stepIdParent ??= stepIdParent;
+      }
     } else {
       this.createStep({ stepIdParent, stepId, payload });
     }

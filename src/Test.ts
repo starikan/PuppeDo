@@ -1,5 +1,5 @@
 import vm from 'vm';
-import { getTimer, pick, generateId, mergeObjects } from './Helpers';
+import { getTimer, pick, mergeObjects } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -310,7 +310,10 @@ export class Test {
   logger: Log;
 
   constructor(initValues: TestExtendType) {
-    this.plugins = new Plugins(this);
+    const { testTree, plugins } = new Environment().getEnvInstance(initValues.envsId);
+    testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
+
+    this.plugins = plugins;
     this.plugins.hook('initValues', { inputs: initValues });
 
     // TODO: Нужна какая то проверка тут initValues
@@ -693,7 +696,7 @@ export class Test {
         repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
         repeatArgs.data = { ...repeatArgs.data, ...localResults };
         repeatArgs.repeat = this.agent.repeat - 1;
-        repeatArgs.stepId = generateId();
+        repeatArgs.stepId = `${inputs.stepId}-repeat-${repeatArgs.repeat}`;
         const repeatResult = await this.run(repeatArgs);
         localResults = { ...localResults, ...repeatResult };
       }
@@ -729,6 +732,7 @@ export class Test {
 
       return { result: localResults, meta: metaForNextSubling };
     } catch (error) {
+      const { continueOnError } = this.plugins.getValue<PluginContinueOnError>('continueOnError');
       if (error instanceof ContinueParentError) {
         if (error.errorLevel) {
           await error.log();
@@ -739,7 +743,7 @@ export class Test {
       }
 
       let newError;
-      if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
+      if (continueOnError) {
         newError = new ContinueParentError({
           localResults: error.localResults || {},
           errorLevel: 0,
@@ -760,6 +764,9 @@ export class Test {
   run = async (
     inputArgs: TestExtendType,
   ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+    const { testTree } = new Environment().getEnvInstance(inputArgs.envsId);
+    testTree.createStep({ stepIdParent: inputArgs.stepIdParent, stepId: inputArgs.stepId, payload: {} });
+
     const blocker = new Blocker();
     const block = blocker.getBlock(this.agent.stepId);
     const { blockEmitter } = blocker;
