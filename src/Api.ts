@@ -50,6 +50,9 @@ const runAgent = async (agentName: string, envsId: string): Promise<Record<strin
 
   await logger.log({ level: 'timer', text: `Test '${agentName}' time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
 
+  // const { testTree } = new Environment().getEnvInstance(envsId);
+  // console.log(JSON.stringify(testTree.getTree(), null, 2));
+
   return testResults;
 };
 

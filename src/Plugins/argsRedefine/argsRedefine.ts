@@ -12,6 +12,7 @@ const plugin: PluginFunction<PluginArgsRedefine> = () => {
     name,
     defaultValues: { argsRedefine: {} },
     propogation: { argsRedefine: 'lastParent' },
+    // TODO: убрать, оставить только getValues
     getValue(): ArgumentsType {
       return { ...new Arguments().args, ...this.values.argsRedefine };
     },

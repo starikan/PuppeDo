@@ -60,6 +60,18 @@ export class TestTree {
     return null;
   }
 
+  findPreviousSibling(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
+    const node = this.findNode(tree, stepId);
+    if (!node) {
+      return null;
+    }
+    const index = (node.steps ?? []).findIndex((step) => step.stepId === stepId);
+    if (index !== -1 && index > 0) {
+      return node.steps[index - 1];
+    }
+    return null;
+  }
+
   /**
    * It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
    * stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array
