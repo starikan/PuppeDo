@@ -730,6 +730,8 @@ export class Test {
         }
       }
 
+      this.plugins.hook('afterRepeat', { allData, results: localResults });
+
       return { result: localResults, meta: metaForNextSubling };
     } catch (error) {
       const { continueOnError } = this.plugins.getValue<PluginContinueOnError>('continueOnError');

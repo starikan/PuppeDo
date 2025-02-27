@@ -28,16 +28,17 @@ type Hooks = {
   resolveValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
   beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
   afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
+  afterRepeat?: ({ allData, results }: { allData: Record<string, unknown>; results: Record<string, unknown> }) => void;
 };
 
-export interface PluginType<TValues> {
+export interface PluginType<T> {
   name: string;
   hook: (name: keyof Hooks) => (_: unknown) => void;
   hooks: Hooks;
-  propogation: 'lastParent' | 'lastSubling';
-  values: TValues;
-  getValue?: (value?: keyof TValues) => TValues[keyof TValues];
-  setValues?: (values?: Partial<TValues>) => TValues;
+  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
+  values: T;
+  getValue?: (value?: keyof T) => T[keyof T];
+  setValues?: (values?: Partial<T>) => T;
 }
 
 export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
@@ -192,13 +193,16 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     afterResults: () => {
       // Blank
     },
+    afterRepeat: () => {
+      // Blank
+    },
   };
 
   blankHook: () => {
     // Blank
   };
 
-  propogation: 'lastParent' | 'lastSubling';
+  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
 
   constructor({
     name,
@@ -211,7 +215,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }: {
     name: string;
     defaultValues: T;
-    propogation?: 'lastParent' | 'lastSubling';
+    propogation?: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
     plugins?: Plugins;
     hooks?: Hooks;
     getValue?: (value?: keyof T) => T[keyof T];
@@ -265,9 +269,12 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
 
       // Если нет ключей на входе смотрим на родителя, если это нужно
-      if (this.propogation === 'lastParent' && !Object.keys(pick(values, Object.keys(this.defaultValues))).length) {
+      const lastParent = Object.values(this.propogation)
+        .filter((v) => v[1] === 'lastParent')
+        .map((v) => v[0]);
+      if (lastParent.length && !Object.keys(pick(values, lastParent)).length) {
         const stepParent = testTree.findParent(stepId);
-        const valuesParent = stepParent ? (pick(stepParent, Object.keys(this.defaultValues)) as T) : {};
+        const valuesParent = stepParent ? (pick(stepParent, lastParent) as T) : {};
         this.values = { ...this.values, ...valuesParent };
       }
 

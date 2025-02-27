@@ -11,7 +11,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
-    propogation: 'lastParent',
+    propogation: { continueOnError: 'lastParent' },
     hooks: {
       initValues({ inputs }): void {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins

@@ -11,7 +11,7 @@ const plugin: PluginFunction<PluginArgsRedefine> = () => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: {} },
-    propogation: 'lastParent',
+    propogation: { argsRedefine: 'lastParent' },
     getValue(): ArgumentsType {
       return { ...new Arguments().args, ...this.values.argsRedefine };
     },
