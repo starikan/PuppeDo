@@ -1,7 +1,7 @@
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
 import { PluginDocumentation, PluginList, TestArgsType } from './global.d';
-import { pick } from './Helpers';
+import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
 import { Environment } from './Environment';
@@ -25,10 +25,28 @@ type Hooks = {
     envsId?: string;
     stepId?: string;
   }) => void;
-  resolveValues?: ({ inputs }: { inputs: Record<string, unknown> }) => void;
-  beforeFunctions?: ({ args }: { args: TestArgsType }) => void;
-  afterResults?: ({ args, results }: { args: TestArgsType; results: Record<string, unknown> }) => void;
-  afterRepeat?: ({ allData, results }: { allData: Record<string, unknown>; results: Record<string, unknown> }) => void;
+  resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
+  beforeFunctions?: ({ args, stepId }: { args: TestArgsType; stepId?: string }) => void;
+  afterResults?: ({
+    args,
+    results,
+    stepId,
+  }: {
+    args: TestArgsType;
+    results: Record<string, unknown>;
+    stepId?: string;
+  }) => void;
+  afterRepeat?: ({
+    args,
+    allData,
+    results,
+    stepId,
+  }: {
+    args: TestArgsType;
+    allData: Record<string, unknown>;
+    results: Record<string, unknown>;
+    stepId?: string;
+  }) => void;
 };
 
 export interface PluginType<T> {
@@ -36,9 +54,9 @@ export interface PluginType<T> {
   hook: (name: keyof Hooks) => (_: unknown) => void;
   hooks: Hooks;
   propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
-  values: T;
-  getValue?: (value?: keyof T) => T[keyof T];
-  setValues?: (values?: Partial<T>) => T;
+  getValue?: (stepId: string, value?: keyof T) => T[keyof T];
+  getValues?: (stepId: string) => T;
+  setValues?: (stepId: string, values?: Partial<T>) => T;
 }
 
 export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
@@ -142,6 +160,7 @@ export class Plugins {
   }
 
   // TODO: 2022-10-18 S.Starodubov сделать так чтобы хук мог возвращать данные
+  // TODO: 2022-10-03 S.Starodubov async hook
   hook<T>(name: keyof Hooks, args: T): void {
     const pluginsNames = new PluginsFabric().getPluginsOrderedNames();
     for (const pluginName of pluginsNames) {
@@ -149,14 +168,7 @@ export class Plugins {
     }
   }
 
-  // TODO: 2022-10-03 S.Starodubov async hook
-
-  getValue<TValues>(pluginName: string): TValues {
-    const { values } = this.get<TValues>(pluginName);
-    return values;
-  }
-
-  get<TPlugin = unknown>(pluginName: string): PluginType<TPlugin> {
+  getPlugins<TPlugin = unknown>(pluginName: string): PluginType<TPlugin> {
     const plugin = this.plugins.find((v) => v.name === pluginName) as PluginType<TPlugin>;
     if (!plugin) {
       throw new Error(`Can't find plugin ${pluginName}`);
@@ -173,16 +185,14 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   defaultValues: T;
 
-  values: T;
-
-  plugins?: Plugins;
+  plugins: Plugins;
 
   hooks: Required<Hooks> = {
-    initValues: ({ inputs }) => {
-      this.setValues(inputs as Partial<T>);
+    initValues: ({ inputs, stepId }) => {
+      this.setValues(stepId, inputs as Partial<T>);
     },
-    runLogic: ({ inputs }) => {
-      this.setValues(inputs as Partial<T>);
+    runLogic: ({ inputs, stepId }) => {
+      this.setValues(stepId, inputs as Partial<T>);
     },
     resolveValues: () => {
       // Blank
@@ -210,25 +220,18 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     propogation,
     plugins,
     hooks = {},
-    getValue,
-    setValues,
   }: {
     name: string;
     defaultValues: T;
     propogation?: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
-    plugins?: Plugins;
+    plugins: Plugins;
     hooks?: Hooks;
-    getValue?: (value?: keyof T) => T[keyof T];
-    setValues?: (values?: Partial<T>) => T;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
-    this.values = { ...defaultValues };
     this.propogation = propogation;
     this.plugins = plugins;
     this.hooks = { ...this.hooks, ...hooks };
-    this.getValue = getValue ?? this.getValue;
-    this.setValues = setValues ?? this.setValues;
   }
 
   hook(name: keyof Hooks): (unknown) => void {
@@ -245,44 +248,57 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     return this.blankHook;
   }
 
-  getValue(value: keyof T): T[keyof T] {
-    return { ...this.defaultValues, ...(this.values ?? {}) }[value];
+  getValue(stepId: string, value: keyof T): T[keyof T] {
+    return this.getValues(stepId)[value];
   }
 
-  getValues(): T {
-    return { ...this.defaultValues, ...(this.values ?? {}) };
+  getValues(stepId: string): T {
+    const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
+    const step = testTree.findNode(stepId);
+
+    return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
   }
 
-  setValues(values: Partial<T> = {}): T {
-    const newValues = {
-      ...this.defaultValues,
-      ...(this.values ?? {}),
-      ...pick(values, Object.keys(this.defaultValues)),
-    };
-    this.values = newValues as T;
+  setValues(stepId: string, values: Partial<T> = {}): T {
+    let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
+
+    // if (this.name === 'descriptionError') {
+    // debugger;
+    // }
 
     try {
-      // todo: несерьезно
-      // @ts-ignore
-      const { stepId } = values;
       // todo: как то кэшировать в плагинс
       const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
 
       // Если нет ключей на входе смотрим на родителя, если это нужно
-      const lastParent = Object.values(this.propogation)
+      const lastParent = Object.entries(this.propogation ?? {})
         .filter((v) => v[1] === 'lastParent')
         .map((v) => v[0]);
       if (lastParent.length && !Object.keys(pick(values, lastParent)).length) {
         const stepParent = testTree.findParent(stepId);
         const valuesParent = stepParent ? (pick(stepParent, lastParent) as T) : {};
-        this.values = { ...this.values, ...valuesParent };
+        newValues = { ...newValues, ...valuesParent };
       }
 
-      testTree.updateStep({ stepId, payload: this.values });
+      const lastSubling = Object.entries(this.propogation ?? {})
+        .filter((v) => v[1] === 'lastSubling')
+        .map((v) => v[0]);
+      if (lastSubling.length && !Object.keys(pick(values, lastSubling)).length) {
+        const stepPrevSubling = testTree.findPreviousSibling(stepId);
+        // if (this.name === 'descriptionError') console.log('stepPrevSubling', stepPrevSubling.stepId);
+        const valuesPrevSubling = stepPrevSubling ? (pick(stepPrevSubling, lastSubling) as T) : {};
+        newValues = { ...newValues, ...valuesPrevSubling };
+      }
+
+      // if (this.name === 'descriptionError') {
+      // debugger;
+      // console.log('update tree', JSON.stringify({ stepId, payload: newValues }));
+      // }
+      testTree.updateStep({ stepId, payload: newValues });
     } catch {
       // debugger;
     }
 
-    return this.values;
+    return newValues as T;
   }
 }

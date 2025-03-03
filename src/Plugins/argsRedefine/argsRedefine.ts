@@ -7,15 +7,12 @@ export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 // todo: переименовать в args
 const name = 'argsRedefine';
 
-const plugin: PluginFunction<PluginArgsRedefine> = () => {
+const plugin: PluginFunction<PluginArgsRedefine> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { argsRedefine: {} },
+    defaultValues: { argsRedefine: new Arguments().args },
     propogation: { argsRedefine: 'lastParent' },
-    // TODO: убрать, оставить только getValues
-    getValue(): ArgumentsType {
-      return { ...new Arguments().args, ...this.values.argsRedefine };
-    },
+    plugins,
   });
   return pluginInstance;
 };

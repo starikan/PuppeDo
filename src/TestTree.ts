@@ -37,13 +37,13 @@ export class TestTree {
    * @param {string} stepId - The stepId of the step you want to find.
    * @returns the first node that matches the stepId.
    */
-  findNode(tree: TreeType, stepId: string): TreeEntryType | null {
+  findNode(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
     for (const entry of tree) {
       if (entry.stepId === stepId) {
         return entry;
       }
 
-      const found = this.findNode(entry.steps ?? [], stepId);
+      const found = this.findNode(stepId, entry.steps ?? []);
       if (found) {
         return found;
       }
@@ -53,21 +53,24 @@ export class TestTree {
   }
 
   findParent(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
-    const node = this.findNode(tree, stepId);
+    const node = this.findNode(stepId, tree);
     if (node) {
-      return this.findNode(tree, node.stepIdParent);
+      return this.findNode(node.stepIdParent, tree);
     }
     return null;
   }
 
   findPreviousSibling(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
-    const node = this.findNode(tree, stepId);
+    const node = this.findParent(stepId, tree);
+    let steps = [];
     if (!node) {
-      return null;
+      steps = this.tree;
+    } else {
+      steps = node.steps ?? [];
     }
-    const index = (node.steps ?? []).findIndex((step) => step.stepId === stepId);
+    const index = steps.findIndex((step) => step.stepId === stepId);
     if (index !== -1 && index > 0) {
-      return node.steps[index - 1];
+      return steps[index - 1];
     }
     return null;
   }
@@ -82,7 +85,7 @@ export class TestTree {
    * @returns The tree
    */
   createStep({ stepIdParent = null, stepId, payload }: CreateStepParams): TreeType {
-    if (this.findNode(this.tree, stepId)) {
+    if (this.findNode(stepId, this.tree)) {
       return this.updateStep({ stepId, stepIdParent, payload });
     }
 
@@ -90,7 +93,7 @@ export class TestTree {
     if (!stepIdParent && stepId) {
       this.tree.push({ stepId, stepIdParent, ...payload });
     } else {
-      const entry = this.findNode(this.tree, stepIdParent);
+      const entry = this.findNode(stepIdParent, this.tree);
       if (entry) {
         entry.steps ??= [];
         entry.steps.push({ stepIdParent, stepId, ...payload });
@@ -107,7 +110,7 @@ export class TestTree {
    * @returns The tree
    */
   updateStep({ stepId, stepIdParent = null, payload }: CreateStepParams): TreeType {
-    const entry = this.findNode(this.tree, stepId);
+    const entry = this.findNode(stepId, this.tree);
     if (entry) {
       for (const [key, value] of Object.entries(payload)) {
         entry[key] = value;

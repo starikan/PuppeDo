@@ -6,17 +6,17 @@ export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
 
 const name = 'engineSupports';
 
-const plugin: PluginFunction<PluginEngineSupports> = ({ envsId }) => {
+const plugin: PluginFunction<PluginEngineSupports> = (plugins) => {
   const pluginInstance = new Plugin<PluginEngineSupports>({
     name,
     defaultValues: { engineSupports: [] },
     hooks: {
-      resolveValues: ({ inputs }): void => {
-        const { allRunners } = new Environment().getEnvInstance(envsId);
-        const current = new Environment().getCurrent(envsId);
+      resolveValues: ({ inputs, stepId }): void => {
+        const { allRunners } = new Environment().getEnvInstance(plugins.envsId);
+        const current = new Environment().getCurrent(plugins.envsId);
         const runner = allRunners.getRunnerByName(current.name || '');
 
-        const { engineSupports } = pluginInstance.setValues(inputs);
+        const { engineSupports } = pluginInstance.setValues(stepId, inputs);
         if (engineSupports.length) {
           const { engine } = runner?.getRunnerData()?.browser || {};
           if (engine && !engineSupports.includes(engine)) {
@@ -27,6 +27,7 @@ const plugin: PluginFunction<PluginEngineSupports> = ({ envsId }) => {
         }
       },
     },
+    plugins,
   });
   return pluginInstance;
 };

@@ -13,30 +13,26 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
     defaultValues: { continueOnError: false },
     propogation: { continueOnError: 'lastParent' },
     hooks: {
-      initValues({ inputs }): void {
+      initValues({ inputs, stepId }): void {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
-          .get<PluginArgsRedefine>('argsRedefine')
-          .getValue('argsRedefine');
+          .getPlugins<PluginArgsRedefine>('argsRedefine')
+          .getValue(stepId, 'argsRedefine');
 
-        pluginInstance.setValues({
-          // TODO: решить вопрос с прокидыванием stepId и удалить эти input
-          ...inputs,
+        pluginInstance.setValues(stepId, {
           continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
-            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))
+            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue(stepId, 'continueOnError'))
             : false,
         });
       },
 
-      resolveValues: ({ inputs }): void => {
+      resolveValues: ({ inputs, stepId }): void => {
         const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
-          .get<PluginArgsRedefine>('argsRedefine')
-          .getValue('argsRedefine');
+          .getPlugins<PluginArgsRedefine>('argsRedefine')
+          .getValue(stepId, 'argsRedefine');
 
-        pluginInstance.setValues({
-          // TODO: решить вопрос с прокидыванием stepId и удалить эти input
-          ...inputs,
+        pluginInstance.setValues(stepId, {
           continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
-            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue('continueOnError'))
+            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue(stepId, 'continueOnError'))
             : false,
         });
       },

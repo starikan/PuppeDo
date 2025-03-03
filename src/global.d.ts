@@ -264,7 +264,6 @@ export interface DataType extends DataYamlType {
 
 export type TestMetaSublingExchangeData = {
   disable?: boolean;
-  skipBecausePrevSubling?: boolean;
 };
 
 export type TestArgsType = {
@@ -423,7 +422,7 @@ export type TreeEntryType = Partial<TreeEntryDataType> & {
   stepId: string;
   stepIdParent: string;
   steps?: TreeType;
-};
+} & Record<string, unknown>;
 
 export type TreeType = TreeEntryType[];
 

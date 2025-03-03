@@ -80,17 +80,21 @@ export class TestError extends AbstractError {
   }
 
   getDescriptionError(): string {
-    const parentDescriptionError =
-      this.parentTest?.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError ?? '';
-    const currentDescriptionError =
-      this.test.plugins.getValue<PluginDescriptionError>('descriptionError').descriptionError;
-    const result = currentDescriptionError || parentDescriptionError;
+    const parentDescriptionError = this.parentTest?.plugins
+      .getPlugins<PluginDescriptionError>('descriptionError')
+      .getValues(this.stepId).descriptionError;
+    const currentDescriptionError = this.test.plugins
+      .getPlugins<PluginDescriptionError>('descriptionError')
+      .getValues(this.stepId).descriptionError;
+    const result = (currentDescriptionError || parentDescriptionError) ?? '';
     return result;
   }
 
   async log(): Promise<void> {
     const { stepId, breadcrumbs, funcFile, testFile, levelIndent } = this.agent;
-    const { continueOnError } = this.test.plugins.getValue<PluginContinueOnError>('continueOnError');
+    const { continueOnError } = this.test.plugins
+      .getPlugins<PluginContinueOnError>('continueOnError')
+      .getValues(stepId);
 
     if (!continueOnError) {
       let text = this.getDescriptionError() ? `${this.getDescriptionError()} | ` : '';
