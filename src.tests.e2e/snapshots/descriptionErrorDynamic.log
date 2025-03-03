@@ -15,7 +15,7 @@ descriptionErrorDynamic (descriptionErrorDynamic)
 [31m00:00:00.000 - error  |       runTest[0].case[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mNow I get only 1 apples | Description: descriptionErrorDynamic (descriptionErrorDynamic)[0m
+[31m00:00:00.000 - error  [0m[31m Description: descriptionErrorDynamic (descriptionErrorDynamic)[0m
 [31m00:00:00.000 - error   descriptionErrorDynamic[0m
 [31m00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m

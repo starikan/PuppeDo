@@ -734,6 +734,7 @@ export class Test {
       const { continueOnError } = this.plugins
         .getPlugins<PluginContinueOnError>('continueOnError')
         .getValues(this.agent.stepId);
+
       if (error instanceof ContinueParentError) {
         if (error.errorLevel) {
           await error.log();
@@ -743,9 +744,8 @@ export class Test {
         return { result: error.localResults, meta: {} };
       }
 
-      let newError;
       if (continueOnError) {
-        newError = new ContinueParentError({
+        const continueError = new ContinueParentError({
           localResults: error.localResults || {},
           errorLevel: 0,
           logger: this.logger,
@@ -753,10 +753,16 @@ export class Test {
           parentError: error,
           agent: this.agent,
         });
-      } else {
-        // TODO: избавиться от test тут
-        newError = new TestError({ logger: this.logger, parentError: error, test: this, agent: this.agent });
+        await continueError.log();
+        throw continueError;
       }
+
+      const newError = new TestError({
+        logger: this.logger,
+        parentError: error,
+        agent: this.agent,
+        plugins: this.plugins,
+      });
       await newError.log();
       throw newError;
     }

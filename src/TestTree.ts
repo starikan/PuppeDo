@@ -134,4 +134,18 @@ export class TestTree {
 
     return this.getTree();
   }
+
+  addError({ stepId, payload }: CreateStepParams): TreeEntryType[] {
+    this.errorRoute.push({ stepId, stepIdParent: null, ...payload });
+
+    return this.errorRoute;
+  }
+
+  clearErrors(): void {
+    this.errorRoute = [];
+  }
+
+  getErrors(): TreeEntryType[] {
+    return this.errorRoute;
+  }
 }
