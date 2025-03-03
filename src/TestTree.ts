@@ -1,10 +1,4 @@
-import { TreeEntryDataType, TreeEntryType, TreeType } from './global.d';
-
-type CreateStepParams = {
-  stepIdParent?: string | null;
-  stepId: string;
-  payload: Partial<TreeEntryDataType>;
-};
+import { CreateStepParams, TreeEntryType } from './global.d';
 
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."
@@ -16,13 +10,28 @@ is no stepIdParent, or it finds the stepIdParent and pushes a new step to its st
 * `updateStep`: It takes a stepId and a payload, finds the node in the tree with that stepId, and updates it with the
 payload */
 export class TestTree {
-  private tree: TreeType = [];
+  private tree: TreeEntryType[] = [];
+
+  private errorRoute: TreeEntryType[] = [];
 
   /**
    * It returns the tree
    * @returns The tree property of the class.
    */
-  getTree(): TreeType {
+  getTree(plane = false): TreeEntryType[] {
+    if (plane) {
+      const flattenTree = (tree: TreeEntryType[]): TreeEntryType[] => {
+        let flatSteps: TreeEntryType[] = [];
+        tree.forEach((node) => {
+          flatSteps.push(node);
+          if (node.steps) {
+            flatSteps = flatSteps.concat(flattenTree(node.steps));
+          }
+        });
+        return flatSteps;
+      };
+      return flattenTree(this.tree);
+    }
     return this.tree;
   }
 
@@ -33,11 +42,11 @@ export class TestTree {
    *
    * * `tree`: The tree to search.
    * * `stepId`: The stepId to search for
-   * @param {TreeType} tree - The tree to search
+   * @param {TreeEntryType[]} tree - The tree to search
    * @param {string} stepId - The stepId of the step you want to find.
    * @returns the first node that matches the stepId.
    */
-  findNode(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
+  findNode(stepId: string, tree: TreeEntryType[] = this.tree): TreeEntryType | null {
     for (const entry of tree) {
       if (entry.stepId === stepId) {
         return entry;
@@ -52,7 +61,7 @@ export class TestTree {
     return null;
   }
 
-  findParent(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
+  findParent(stepId: string, tree: TreeEntryType[] = this.tree): TreeEntryType | null {
     const node = this.findNode(stepId, tree);
     if (node) {
       return this.findNode(node.stepIdParent, tree);
@@ -60,7 +69,7 @@ export class TestTree {
     return null;
   }
 
-  findPreviousSibling(stepId: string, tree: TreeType = this.tree): TreeEntryType | null {
+  findPreviousSibling(stepId: string, tree: TreeEntryType[] = this.tree): TreeEntryType | null {
     const node = this.findParent(stepId, tree);
     let steps = [];
     if (!node) {
@@ -84,7 +93,7 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  createStep({ stepIdParent = null, stepId, payload }: CreateStepParams): TreeType {
+  createStep({ stepIdParent = null, stepId, payload }: CreateStepParams): TreeEntryType[] {
     if (this.findNode(stepId, this.tree)) {
       return this.updateStep({ stepId, stepIdParent, payload });
     }
@@ -109,7 +118,7 @@ export class TestTree {
    * @param payload - Partial<TreeEntryDataType>
    * @returns The tree
    */
-  updateStep({ stepId, stepIdParent = null, payload }: CreateStepParams): TreeType {
+  updateStep({ stepId, stepIdParent = null, payload }: CreateStepParams): TreeEntryType[] {
     const entry = this.findNode(stepId, this.tree);
     if (entry) {
       for (const [key, value] of Object.entries(payload)) {

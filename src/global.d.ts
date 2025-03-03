@@ -418,13 +418,19 @@ export type TreeEntryDataType = TestExtendType & {
   timeEnd: Date;
 };
 
-export type TreeEntryType = Partial<TreeEntryDataType> & {
+export type TreeEntryType = Partial<TestExtendType> & {
   stepId: string;
   stepIdParent: string;
-  steps?: TreeType;
+  steps?: TreeEntryType[];
+  timeStart?: Date;
+  timeEnd?: Date;
 } & Record<string, unknown>;
 
-export type TreeType = TreeEntryType[];
+export type CreateStepParams = {
+  stepIdParent?: string | null;
+  stepId: string;
+  payload: Partial<TreeEntryDataType>;
+};
 
 export type DeepMergeable =
   | { [key: string]: DeepMergeable }
