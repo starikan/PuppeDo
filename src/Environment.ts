@@ -228,6 +228,7 @@ export class Environment extends Singleton {
 
       const current: RunnerCurrentType = {};
 
+      const testTree = new TestTree();
       this.instances[envsId] = {
         allRunners,
         socket,
@@ -237,8 +238,8 @@ export class Environment extends Singleton {
         // TODO: 2023-03-22 S.Starodubov move this log info into testTree
         log: [],
         testsStruct: {},
-        testTree: new TestTree(),
-        plugins: new Plugins(envsId),
+        testTree,
+        plugins: new Plugins(envsId, testTree),
       };
     }
     return this.getEnvInstance(envsId);

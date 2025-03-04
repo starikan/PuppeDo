@@ -4,7 +4,7 @@ import { PluginDocumentation, PluginList, TestArgsType } from './global.d';
 import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
-import { Environment } from './Environment';
+import { TestTree } from './TestTree';
 
 type Hooks = {
   initValues?: ({
@@ -145,14 +145,17 @@ export class Plugins {
 
   envsId: string;
 
+  agentTree: TestTree;
+
   blankHook: () => {
     // Blank
   };
 
-  constructor(envsId: string) {
+  constructor(envsId: string, agentTree: TestTree) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
 
     this.envsId = envsId;
+    this.agentTree = agentTree;
 
     for (const plugin of Object.values(plugins)) {
       this.plugins.push(plugin(this));
@@ -186,6 +189,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   defaultValues: T;
 
   plugins: Plugins;
+
+  agentTree: TestTree;
 
   hooks: Required<Hooks> = {
     initValues: ({ inputs, stepId }) => {
@@ -232,6 +237,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.propogation = propogation;
     this.plugins = plugins;
     this.hooks = { ...this.hooks, ...hooks };
+
+    this.agentTree = plugins.agentTree;
   }
 
   hook(name: keyof Hooks): (unknown) => void {
@@ -253,8 +260,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }
 
   getValues(stepId: string): T {
-    const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
-    const step = testTree.findNode(stepId);
+    const step = this.agentTree.findNode(stepId);
 
     return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
   }
@@ -263,15 +269,12 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
 
     try {
-      // todo: как то кэшировать в плагинс
-      const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
-
       // Если нет ключей на входе смотрим на родителя, если это нужно
       const lastParent = Object.entries(this.propogation ?? {})
         .filter((v) => v[1] === 'lastParent')
         .map((v) => v[0]);
       if (lastParent.length && !Object.keys(pick(values, lastParent)).length) {
-        const stepParent = testTree.findParent(stepId);
+        const stepParent = this.agentTree.findParent(stepId);
         const valuesParent = stepParent ? (pick(stepParent, lastParent) as T) : {};
         newValues = { ...newValues, ...valuesParent };
       }
@@ -280,13 +283,12 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
         .filter((v) => v[1] === 'lastSubling')
         .map((v) => v[0]);
       if (lastSubling.length && !Object.keys(pick(values, lastSubling)).length) {
-        const stepPrevSubling = testTree.findPreviousSibling(stepId);
-        // if (this.name === 'descriptionError') console.log('stepPrevSubling', stepPrevSubling.stepId);
+        const stepPrevSubling = this.agentTree.findPreviousSibling(stepId);
         const valuesPrevSubling = stepPrevSubling ? (pick(stepPrevSubling, lastSubling) as T) : {};
         newValues = { ...newValues, ...valuesPrevSubling };
       }
 
-      testTree.updateStep({ stepId, payload: newValues });
+      this.agentTree.updateStep({ stepId, payload: newValues });
     } catch {
       //
     }
