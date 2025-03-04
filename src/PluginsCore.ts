@@ -14,16 +14,40 @@ import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
 import { TestTree } from './TestTree';
 
-// Storage of all scratch of plugins
+/**
+ * A class for managing plugins.
+ * Extends Singleton.
+ */
 export class PluginsFabric extends Singleton {
+  /**
+   * An object to store plugin functions.
+   * Key - plugin name, value - plugin function.
+   */
   private plugins: Record<string, PluginFunction<unknown>>;
 
+  /**
+   * An object to store plugin documentation.
+   * Key - plugin name, value - plugin documentation.
+   */
   private documentation: Record<string, PluginDocumentation>;
 
+  /**
+   * An object to store the order of plugin execution.
+   * Key - plugin name, value - order of execution or null.
+   */
   private orders: Record<string, number | null>;
 
+  /**
+   * An object to store plugin dependencies.
+   * Key - plugin name, value - array of dependent plugin names.
+   */
   private depends: Record<string, string[]>;
 
+  /**
+   * Constructor.
+   * @param plugins List of plugins for initialization.
+   * @param reInit Flag for reinitialization.
+   */
   constructor(plugins: PluginList = {}, reInit = false) {
     super();
     if (!this.plugins || reInit) {
@@ -46,22 +70,38 @@ export class PluginsFabric extends Singleton {
     }
   }
 
+  /**
+   * Returns all registered plugins.
+   * @returns Object with functions of all registered plugins.
+   */
   getAllPluginsScratch(): Record<string, PluginFunction<unknown>> {
     return this.plugins;
   }
 
+  /**
+   * Returns documentation for all registered plugins.
+   * @returns Array of documentation for all registered plugins.
+   */
   getDocs(): PluginDocumentation[] {
     return Object.values(this.documentation);
   }
 
+  /**
+   * Returns the function of a specific plugin.
+   * @param name Plugin name.
+   * @returns Plugin function.
+   */
   getPlugin(name: string): PluginFunction<unknown> {
     return this.plugins[name];
   }
 
-  static registerPlugin(): void {
-    // do nothing
-  }
-
+  /**
+   * Registers a plugin.
+   * If the plugin is passed as a string, it will be found in DefaultPlugins.
+   * If the order is not passed, the order from the plugin will be used.
+   * @param plugin Plugin or plugin name.
+   * @param order Order of plugin execution.
+   */
   addPlugin(plugin: PluginModule<unknown> | string, order?: number): void {
     const resolvPlugin = typeof plugin === 'string' ? DefaultPlugins[plugin] : plugin;
     this.plugins[resolvPlugin.name] = resolvPlugin.plugin;
@@ -70,6 +110,10 @@ export class PluginsFabric extends Singleton {
     this.orders[resolvPlugin.name] = order ?? resolvPlugin.order ?? null;
   }
 
+  /**
+   * Returns an object with the order of plugin execution.
+   * @returns Object with plugin names as keys and their orders as values.
+   */
   getPluginsOrder(): Record<string, number | null> {
     const newOrders = {};
     const orders = this.getPluginsOrderedNames();
@@ -79,6 +123,10 @@ export class PluginsFabric extends Singleton {
     return newOrders;
   }
 
+  /**
+   * Returns the names of plugins in the order of their execution.
+   * @returns Array of plugin names in the order of their execution.
+   */
   getPluginsOrderedNames(): string[] {
     const valuesNull = Object.entries(this.orders)
       .filter((v) => !v[1])
@@ -93,7 +141,7 @@ export class PluginsFabric extends Singleton {
 
   /**
    * Checks plugin dependencies.
-   * Throws an error if the plugin execution order is not followed.
+   * Throws an error if the order of plugin execution is not followed.
    */
   checkDepends(): void {
     const { depends, orders } = this;
