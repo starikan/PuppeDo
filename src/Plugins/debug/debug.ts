@@ -2,9 +2,12 @@ import { PluginDocumentation, PluginFunction, PluginModule } from '../../global'
 import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
-export type PluginDebug = { debug: boolean };
-
-const name = 'debug';
+function setDebugValue(this: Plugin<PluginDebug>, { inputs, stepId }): void {
+  const { PPD_DEBUG_MODE } = this.plugins
+    .getPlugins<PluginArgsRedefine>('argsRedefine')
+    .getValue(stepId, 'argsRedefine');
+  this.setValues(stepId, { debug: PPD_DEBUG_MODE && (inputs.debug || false) });
+}
 
 const plugin: PluginFunction<PluginDebug> = (plugins) => {
   const pluginInstance = new Plugin({
@@ -13,28 +16,16 @@ const plugin: PluginFunction<PluginDebug> = (plugins) => {
     propogation: { debug: 'lastParent' },
     plugins,
     hooks: {
-      initValues({ inputs, stepId }): void {
-        const { PPD_DEBUG_MODE } = plugins
-          .getPlugins<PluginArgsRedefine>('argsRedefine')
-          .getValue(stepId, 'argsRedefine');
-
-        pluginInstance.setValues(stepId, {
-          debug: PPD_DEBUG_MODE ? ((inputs.debug as boolean) ?? false) : false,
-        });
-      },
-      runLogic: ({ inputs, stepId }): void => {
-        const { PPD_DEBUG_MODE } = plugins
-          .getPlugins<PluginArgsRedefine>('argsRedefine')
-          .getValue(stepId, 'argsRedefine');
-
-        pluginInstance.setValues(stepId, {
-          debug: PPD_DEBUG_MODE ? ((inputs.debug as boolean) ?? false) : false,
-        });
-      },
+      initValues: setDebugValue,
+      runLogic: setDebugValue,
     },
   });
   return pluginInstance;
 };
+
+export type PluginDebug = { debug: boolean };
+
+const name = 'debug';
 
 const documentation: PluginDocumentation = {
   description: {
