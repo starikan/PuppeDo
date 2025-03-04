@@ -286,13 +286,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
         newValues = { ...newValues, ...valuesPrevSubling };
       }
 
-      // if (this.name === 'descriptionError') {
-      // debugger;
-      // console.log('update tree', JSON.stringify({ stepId, payload: newValues }));
-      // }
       testTree.updateStep({ stepId, payload: newValues });
     } catch {
-      // debugger;
+      //
     }
 
     return newValues as T;

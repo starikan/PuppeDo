@@ -59,6 +59,458 @@ Arguments applying order. From minor to major:
 
 # Test block settings
 
+## argsRedefine
+Переопределение агрументов ENV для конкретного кейса.
+
+Все аргументы описаны в ArgumentsType
+
+```yaml
+name: argsRedefine
+description: argsRedefine
+argsRedefine:
+  PPD_LOG_EXTEND: false
+
+runTest:
+  - case:
+      description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
+      runTest:
+        - blank:
+            description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+            argsRedefine:
+              PPD_LOG_TIMER_SHOW: false
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            description: Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️
+            argsRedefine:
+              PPD_LOG_TIMER_SHOW: true
+
+  - case:
+      description: Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
+      argsRedefine:
+        PPD_LOG_TIMER_SHOW: false
+      runTest:
+        - blank:
+            description: Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+argsRedefine (argsRedefine)
+   Because PPD_LOG_EXTEND true globaly - show timer ✔️ (case)
+      Because PPD_LOG_EXTEND true globaly - show timer ✔️ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️ (blank)
+   Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌ (case)
+      Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌ (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (argsRedefine) argsRedefine
+00:00:00.000 - test   |   (case) Because PPD_LOG_EXTEND true globaly - show timer ✔️
+00:00:00.000 - test   |   |   (blank) Because PPD_LOG_EXTEND true globaly - show timer ✔️
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (case)
+00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
+00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌
+                      🕝: 00.000 s. (argsRedefine)
+00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "argsRedefine": {}
+}
+
+```
+## descriptionError
+При падении тестов в логи выводится информация из этого поля
+
+Поле является исполняемым в контексте данных
+
+```yaml
+name: descriptionError
+description: descriptionError
+runTest:
+  - case:
+      description: "Simple descriptionError"
+      errorIf: true
+      descriptionError: "Simple descriptionError"
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionError (descriptionError)
+   Simple descriptionError (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionError) descriptionError
+00:00:00.000 - error  |   Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (case)
+00:00:00.000 - error  |    descriptionError
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error   Description: descriptionError (descriptionError)
+00:00:00.000 - error   descriptionError
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIf = 'true'
+                      error in test = case
+                      error in test = descriptionError
+                      ================================================================================================
+                      Error: Test stopped with expr errorIf = 'true'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at runAgent (\@puppedo\core\src\Api)
+                      at Object.run (\@puppedo\core\src\Api)
+                      at runTest (\runAllTests)
+                      at start (\runAllTests)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = 'true'
+                      █ Error:       Simple descriptionError
+                      █ Path:        descriptionError -> runTest[0].case
+                      █ Description:
+                      █    descriptionError
+
+```
+```yaml
+name: descriptionErrorNested
+description: descriptionErrorNested
+runTest:
+  - case:
+      description: "description 0"
+      descriptionError: "descriptionError 0"
+      runTest:
+        - blank:
+            description: "description 1"
+            errorIf: true
+            descriptionError: "descriptionError 1"
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionErrorNested (descriptionErrorNested)
+   description 0 (case)
+      description 1 (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionErrorNested) descriptionErrorNested
+00:00:00.000 - test   |   (case) description 0
+00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
+00:00:00.000 - error  |   |    descriptionErrorNested
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |          runTest[0].blank
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   |   descriptionError 1 | Description: description 1 (blank)
+00:00:00.000 - error  |   |    descriptionErrorNested
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |          runTest[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (case)
+00:00:00.000 - error  |    descriptionErrorNested
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error   Description: descriptionErrorNested (descriptionErrorNested)
+00:00:00.000 - error   descriptionErrorNested
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorNested.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIf = 'true'
+                      error in test = blank
+                      error in test = case
+                      error in test = descriptionErrorNested
+                      ================================================================================================
+                      Error: Test stopped with expr errorIf = 'true'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at runAgent (\@puppedo\core\src\Api)
+                      at Object.run (\@puppedo\core\src\Api)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIf = 'true'
+                      █ Error:       descriptionError 1 | descriptionError 0
+                      █ Path:        descriptionErrorNested -> runTest[0].case -> runTest[0].blank
+                      █ Description:
+                      █    descriptionErrorNested
+                      █       description 0
+
+```
+```yaml
+name: descriptionErrorDynamic
+description: descriptionErrorDynamic
+allowResults: ["apples"]
+data: { apples: 5 }
+runTest:
+  - case:
+      bindDescription: "`I get ${apples} apples`"
+      descriptionError: "`Now I get only ${apples} apples`"
+      result: { apples: 1 }
+      errorIfResult: apples < 5
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'descriptionErrorDynamic' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+descriptionErrorDynamic (descriptionErrorDynamic)
+   (case)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (descriptionErrorDynamic) descriptionErrorDynamic
+00:00:00.000 - test   |   (case) I get 5 apples
+00:00:00.000 - error  |   |   Test stopped with expr errorIfResult = 'apples < 5'
+00:00:00.000 - error  |   |    descriptionErrorDynamic
+00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |   Now I get only 1 apples | Description: No test description (case)
+00:00:00.000 - error  |    descriptionErrorDynamic
+00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error   Description: descriptionErrorDynamic (descriptionErrorDynamic)
+00:00:00.000 - error   descriptionErrorDynamic
+00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIfResult = 'apples < 5'
+                      error in test = case
+                      error in test = descriptionErrorDynamic
+                      ================================================================================================
+                      Error: Test stopped with expr errorIfResult = 'apples < 5'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at runAgent (\@puppedo\core\src\Api)
+                      at Object.run (\@puppedo\core\src\Api)
+                      at runTest (\runAllTests)
+                      at start (\runAllTests)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIfResult = 'apples < 5'
+                      █ Error:       Now I get only 1 apples
+                      █ Path:        descriptionErrorDynamic -> runTest[0].case
+                      █ Description:
+                      █    descriptionErrorDynamic
+
+```
+## continueOnError
+Булевое значение. Отвечает за поведение блока при ошибке.
+
+Управление происходит с помощью глобальной переменной [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) уоторая включает и выключает данную функцию.
+
+При [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) === false "continueOnError" игнорируется.
+
+Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий
+
+Если continueOnError === false, то при ошибке в блоке он выдаст ошибку
+
+```yaml
+name: continueOnError
+description: continueOnError
+argsRedefine: { PPD_CONTINUE_ON_ERROR_ENABLED: true }
+run:
+  - blank:
+      description: Skip me if I broken
+      continueOnError: true
+      run:
+        - blank:
+            errorIfResult: 1 === 1
+            descriptionError: This is error description
+
+  - blank:
+      repeat: 3
+      continueOnError: true
+      run:
+        - blank:
+            bindDescription: "`Second level loop: ${$loop}`"
+            errorIfResult: "$loop < 2"
+
+        - blank:
+            description: "I`m next"
+
+  - blank:
+      description: I am without errors
+
+  - blank:
+      description: Continue even if my child is broken
+      continueOnError: true
+      run:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 1 === 1
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+
+  - blank:
+      description: Error me if I broken
+      run:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 2 === 2
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+continueOnError (continueOnError)
+   Skip me if I broken (blank)
+      (blank)
+   (blank)
+      (blank)
+      I`m next (blank)
+   I am without errors (blank)
+   Continue even if my child is broken (blank)
+      (blank)
+   Error me if I broken (blank)
+      (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (continueOnError) continueOnError
+00:00:00.000 - test   |   (blank) Skip me if I broken
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '1 === 1'
+00:00:00.000 - error  |   |   |    continueOnError
+00:00:00.000 - error  |   |   |       run[0].blank
+00:00:00.000 - error  |   |   |          run[0].blank
+00:00:00.000 - error  |   |   |    =======================================================================================
+00:00:00.000 - error  |   |   This is error description | Description: No test description (blank)
+00:00:00.000 - error  |   |    continueOnError
+00:00:00.000 - error  |   |       run[0].blank
+00:00:00.000 - error  |   |          run[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - warn   |   Continue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank
+00:00:00.000 - test   |   (blank) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 3
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 2
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   (blank) I`m next
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) TODO: Fill description
+00:00:00.000 - test   |   |   (blank) Second level loop: 1
+00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '$loop < 2'
+00:00:00.000 - error  |   |   |    continueOnError
+00:00:00.000 - error  |   |   |       run[1].blank
+00:00:00.000 - error  |   |   |          run[0].blank
+00:00:00.000 - error  |   |   |    =======================================================================================
+00:00:00.000 - error  |   |    Description: No test description (blank)
+00:00:00.000 - error  |   |    continueOnError
+00:00:00.000 - error  |   |       run[1].blank
+00:00:00.000 - error  |   |          run[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - warn   |   Continue: Test stopped with expr errorIfResult = '$loop < 2' || error in test = blank
+00:00:00.000 - test   |   (blank) I am without errors
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Continue even if my child is broken
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '1 === 1'
+00:00:00.000 - error  |   |   |    continueOnError
+00:00:00.000 - error  |   |   |       run[3].blank
+00:00:00.000 - error  |   |   |          run[0].blank
+00:00:00.000 - error  |   |   |    =======================================================================================
+00:00:00.000 - error  |   |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)
+00:00:00.000 - error  |   |    continueOnError
+00:00:00.000 - error  |   |       run[3].blank
+00:00:00.000 - error  |   |          run[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - warn   |   Continue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank
+00:00:00.000 - test   |   (blank) Error me if I broken
+00:00:00.000 - test   |   |   (blank) TODO: Fill description
+00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '2 === 2'
+00:00:00.000 - error  |   |   |    continueOnError
+00:00:00.000 - error  |   |   |       run[4].blank
+00:00:00.000 - error  |   |   |          run[0].blank
+00:00:00.000 - error  |   |   |    =======================================================================================
+00:00:00.000 - error  |   |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)
+00:00:00.000 - error  |   |    continueOnError
+00:00:00.000 - error  |   |       run[4].blank
+00:00:00.000 - error  |   |          run[0].blank
+00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |   |    ==========================================================================================
+00:00:00.000 - error  |    Description: Error me if I broken (blank)
+00:00:00.000 - error  |    continueOnError
+00:00:00.000 - error  |       run[4].blank
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
+00:00:00.000 - error  |    =============================================================================================
+00:00:00.000 - error   Description: continueOnError (continueOnError)
+00:00:00.000 - error   continueOnError
+00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)
+00:00:00.000 - error   ================================================================================================
+                      Test stopped with expr errorIfResult = '2 === 2'
+                      error in test = blank
+                      error in test = blank
+                      error in test = continueOnError
+                      ================================================================================================
+                      Error: Test stopped with expr errorIfResult = '2 === 2'
+                      at checkIf (\@puppedo\core\src\Test)
+                      at processTicksAndRejections (node:internal/process/task_queues)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at Test.runLogic (\@puppedo\core\src\Test)
+                      at stepFunction (\@puppedo\core\src\getAgent)
+                      at runAgent (\@puppedo\core\src\Api)
+                      at Object.run (\@puppedo\core\src\Api)
+00:00:00.000 - error  █ SUMMARY ERROR INFO:
+                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+                      █ Message:     Test stopped with expr errorIfResult = '2 === 2'
+                      █ Error:       This is error description | This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+                      █ Path:        continueOnError -> run[4].blank -> run[0].blank
+                      █ Description:
+                      █    continueOnError
+                      █       Error me if I broken
+
+```
 ## skipSublingIfResult
 Валидное JS выражение. Которое переводится в контексте конкретного блока в Boolean.
 
@@ -161,8 +613,8 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Skip after me
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped
-00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped too
+00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped
+00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped too
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
@@ -179,8 +631,8 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 2
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)
-00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)
+00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)
+00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
@@ -195,7 +647,7 @@ skipSublingIfResult (skipSublingIfResult)
 00:00:00.000 - test   |   (case) If true with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) Skip after me
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   Skip with skipSublingIfResult: (blank) ❌ I`m skiped
+00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   (case) If false with skipSublingIfResult
 00:00:00.000 - info   |   |   Skip with IF expr '1 !== 1' === 'false'
@@ -209,392 +661,6 @@ skipSublingIfResult (skipSublingIfResult)
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "skipSublingIfResult": {}
-}
-
-```
-## continueOnError
-Булевое значение. Отвечает за поведение блока при ошибке.
-
-Управление происходит с помощью глобальной переменной [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) уоторая включает и выключает данную функцию.
-
-При [PPD_CONTINUE_ON_ERROR_ENABLED](#PPD_CONTINUE_ON_ERROR_ENABLED) === false "continueOnError" игнорируется.
-
-Если continueOnError === true, то при ошибке в блоке он пропустится и пойдет следующий
-
-Если continueOnError === false, то при ошибке в блоке он выдаст ошибку
-
-```yaml
-name: continueOnError
-description: continueOnError
-runTest:
-  - case:
-      description: Skip me if I broken
-      continueOnError: true
-      runTest:
-        - blank:
-            errorIfResult: 1 === 1
-            descriptionError: This is error description
-
-  - case:
-      repeat: 3
-      continueOnError: true
-      runTest:
-        - blank:
-            bindDescription: "`Second level loop: ${$loop}`"
-            errorIfResult: "$loop < 2"
-
-        - blank:
-            description: "I`m next"
-
-  - case:
-      description: I am without errors
-
-  - case:
-      description: Error me if I broken
-      continueOnError: true
-      runTest:
-        - blank:
-            argsRedefine:
-              PPD_CONTINUE_ON_ERROR_ENABLED: false
-            errorIfResult: 1 === 1
-            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
-
-```
-#### Output:
-```
-00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
-continueOnError (continueOnError)
-   Skip me if I broken (case)
-      (blank)
-   (case)
-      (blank)
-      I`m next (blank)
-   I am without errors (case)
-   Error me if I broken (case)
-      (blank)
-
-00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   (continueOnError) continueOnError
-00:00:00.000 - test   |   (case) Skip me if I broken
-00:00:00.000 - test   |   |   (blank) TODO: Fill description
-00:00:00.000 - warn   |   |   Continue: Test stopped with expr errorIfResult = '1 === 1'
-00:00:00.000 - test   |   (case) TODO: Fill description
-00:00:00.000 - test   |   |   (blank) Second level loop: 3
-                      |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   |   (blank) I`m next
-                      |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) TODO: Fill description
-00:00:00.000 - test   |   |   (blank) Second level loop: 2
-                      |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   |   (blank) I`m next
-                      |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) TODO: Fill description
-00:00:00.000 - test   |   |   (blank) Second level loop: 1
-00:00:00.000 - warn   |   |   Continue: Test stopped with expr errorIfResult = '$loop < 2'
-00:00:00.000 - test   |   (case) I am without errors
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Error me if I broken
-00:00:00.000 - test   |   |   (blank) TODO: Fill description
-00:00:00.000 - error  |   |   |   Test stopped with expr errorIfResult = '1 === 1'
-00:00:00.000 - error  |   |   |    continueOnError
-00:00:00.000 - error  |   |   |       runTest[3].case
-00:00:00.000 - error  |   |   |          runTest[0].blank
-00:00:00.000 - error  |   |   |    =======================================================================================
-00:00:00.000 - error  |   |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)
-00:00:00.000 - error  |   |    continueOnError
-00:00:00.000 - error  |   |       runTest[3].case
-00:00:00.000 - error  |   |          runTest[0].blank
-00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
-00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: Error me if I broken (case)
-00:00:00.000 - error  |    continueOnError
-00:00:00.000 - error  |       runTest[3].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
-00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  Description: continueOnError (continueOnError)
-00:00:00.000 - error   continueOnError
-00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)
-00:00:00.000 - error   ================================================================================================
-                      Test stopped with expr errorIfResult = '1 === 1'
-                      error in test = blank
-                      error in test = case
-                      error in test = continueOnError
-                      ================================================================================================
-                      Error: Test stopped with expr errorIfResult = '1 === 1'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
-00:00:00.000 - error  █ SUMMARY ERROR INFO:
-                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                      █ Message:     Test stopped with expr errorIfResult = '1 === 1'
-                      █ Error:       
-                      █ Path:        continueOnError -> runTest[3].case -> runTest[0].blank
-                      █ Description:
-                      █    continueOnError
-                      █       Error me if I broken
-
-```
-## descriptionError
-При падении тестов в логи выводится информация из этого поля
-
-Поле является исполняемым в контексте данных
-
-```yaml
-name: descriptionError
-description: descriptionError
-runTest:
-  - case:
-      description: "Simple descriptionError"
-      errorIf: true
-      descriptionError: "Simple descriptionError"
-
-```
-#### Output:
-```
-00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
-descriptionError (descriptionError)
-   Simple descriptionError (case)
-
-00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   (descriptionError) descriptionError
-00:00:00.000 - error  |   Test stopped with expr errorIf = 'true'
-00:00:00.000 - error  |    descriptionError
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (case)
-00:00:00.000 - error  |    descriptionError
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
-00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  Simple descriptionError | Description: descriptionError (descriptionError)
-00:00:00.000 - error   descriptionError
-00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
-00:00:00.000 - error   ================================================================================================
-                      Test stopped with expr errorIf = 'true'
-                      error in test = case
-                      error in test = descriptionError
-                      ================================================================================================
-                      Error: Test stopped with expr errorIf = 'true'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
-                      at runTest (\runAllTests)
-                      at start (\runAllTests)
-00:00:00.000 - error  █ SUMMARY ERROR INFO:
-                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                      █ Message:     Test stopped with expr errorIf = 'true'
-                      █ Error:       Simple descriptionError
-                      █ Path:        descriptionError -> runTest[0].case
-                      █ Description:
-                      █    descriptionError
-
-```
-```yaml
-name: descriptionErrorNested
-description: descriptionErrorNested
-runTest:
-  - case:
-      description: "description 0"
-      descriptionError: "descriptionError 0"
-      runTest:
-        - blank:
-            description: "description 1"
-            errorIf: true
-            descriptionError: "descriptionError 1"
-```
-#### Output:
-```
-00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
-descriptionErrorNested (descriptionErrorNested)
-   description 0 (case)
-      description 1 (blank)
-
-00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   (descriptionErrorNested) descriptionErrorNested
-00:00:00.000 - test   |   (case) description 0
-00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
-00:00:00.000 - error  |   |    descriptionErrorNested
-00:00:00.000 - error  |   |       runTest[0].case
-00:00:00.000 - error  |   |          runTest[0].blank
-00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   |   descriptionError 1 | Description: description 1 (blank)
-00:00:00.000 - error  |   |    descriptionErrorNested
-00:00:00.000 - error  |   |       runTest[0].case
-00:00:00.000 - error  |   |          runTest[0].blank
-00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
-00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (case)
-00:00:00.000 - error  |    descriptionErrorNested
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
-00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  descriptionError 0 | Description: descriptionErrorNested (descriptionErrorNested)
-00:00:00.000 - error   descriptionErrorNested
-00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorNested.yaml)
-00:00:00.000 - error   ================================================================================================
-                      Test stopped with expr errorIf = 'true'
-                      error in test = blank
-                      error in test = case
-                      error in test = descriptionErrorNested
-                      ================================================================================================
-                      Error: Test stopped with expr errorIf = 'true'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
-00:00:00.000 - error  █ SUMMARY ERROR INFO:
-                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                      █ Message:     Test stopped with expr errorIf = 'true'
-                      █ Error:       descriptionError 0
-                      █ Path:        descriptionErrorNested -> runTest[0].case -> runTest[0].blank
-                      █ Description:
-                      █    descriptionErrorNested
-                      █       description 0
-
-```
-```yaml
-name: descriptionErrorDynamic
-description: descriptionErrorDynamic
-allowResults: ["apples"]
-data: { apples: 5 }
-runTest:
-  - case:
-      bindDescription: "`I get ${apples} apples`"
-      descriptionError: "`Now I get only ${apples} apples`"
-      result: { apples: 1 }
-      errorIfResult: apples < 5
-
-```
-#### Output:
-```
-00:00:00.000 - timer  Test 'descriptionErrorDynamic' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
-descriptionErrorDynamic (descriptionErrorDynamic)
-   (case)
-
-00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   (descriptionErrorDynamic) descriptionErrorDynamic
-00:00:00.000 - test   |   (case) I get 5 apples
-00:00:00.000 - error  |   |   Test stopped with expr errorIfResult = 'apples < 5'
-00:00:00.000 - error  |   |    descriptionErrorDynamic
-00:00:00.000 - error  |   |       runTest[0].case
-00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   Now I get only 1 apples | Description: No test description (case)
-00:00:00.000 - error  |    descriptionErrorDynamic
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
-00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  Now I get only 1 apples | Description: descriptionErrorDynamic (descriptionErrorDynamic)
-00:00:00.000 - error   descriptionErrorDynamic
-00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)
-00:00:00.000 - error   ================================================================================================
-                      Test stopped with expr errorIfResult = 'apples < 5'
-                      error in test = case
-                      error in test = descriptionErrorDynamic
-                      ================================================================================================
-                      Error: Test stopped with expr errorIfResult = 'apples < 5'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
-                      at runTest (\runAllTests)
-                      at start (\runAllTests)
-00:00:00.000 - error  █ SUMMARY ERROR INFO:
-                      █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                      █ Message:     Test stopped with expr errorIfResult = 'apples < 5'
-                      █ Error:       Now I get only 1 apples
-                      █ Path:        descriptionErrorDynamic -> runTest[0].case
-                      █ Description:
-                      █    descriptionErrorDynamic
-
-```
-## argsRedefine
-Переопределение агрументов ENV для конкретного кейса.
-
-Все аргументы описаны в ArgumentsType
-
-```yaml
-name: argsRedefine
-description: argsRedefine check
-
-runTest:
-  - case:
-      description: Check PPD_LOG_EXTEND true globaly
-      runTest:
-        - blank:
-
-  - case:
-      description: Redefine PPD_LOG_TIMER_SHOW to false
-      argsRedefine:
-        PPD_LOG_TIMER_SHOW: false
-      runTest:
-        - blank:
-            argsRedefine:
-              PPD_LOG_TIMER_SHOW: false
-
-  - case:
-      description: Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
-      argsRedefine:
-        PPD_LOG_TIMER_SHOW: false
-      runTest:
-        - blank:
-
-```
-#### Output:
-```
-00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
-00:00:00.000 - env    
-argsRedefine check (argsRedefine)
-   Check PPD_LOG_EXTEND true globaly (case)
-      (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false (case)
-      (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child) (case)
-      (blank)
-
-00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   (argsRedefine) argsRedefine check
-00:00:00.000 - test   |   (case) Check PPD_LOG_EXTEND true globaly
-00:00:00.000 - test   |   |   (blank) TODO: Fill description
-                      |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false
-00:00:00.000 - test   |   |   (blank) TODO: Fill description
-00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false for parent only (not propogate to child)
-00:00:00.000 - test   |   |   (blank) TODO: Fill description
-                      |   |   🕝: 00.000 s. (blank)
-                      🕝: 00.000 s. (argsRedefine)
-00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
-00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
-{
-  "argsRedefine": {}
 }
 
 ```
