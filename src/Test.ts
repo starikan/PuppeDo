@@ -13,7 +13,6 @@ import {
   LogFunctionType,
   TestLifeCycleFunctionType,
   TestExtendType,
-  TestMetaSublingExchangeData,
   Element,
   AliasesKeysType,
   DeepMergeable,
@@ -324,9 +323,7 @@ export class Test {
     ].flat();
   }
 
-  runLogic = async (
-    inputs: TestExtendType,
-  ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+  runLogic = async (inputs: TestExtendType): Promise<{ result: Record<string, unknown> }> => {
     this.plugins.hook('runLogic', { inputs, stepId: inputs.stepId });
     const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
@@ -376,12 +373,7 @@ export class Test {
       });
       // Drop disable for loops nested tests
       this.agent.disable = false;
-      return {
-        result: {},
-        meta: {
-          disable: Boolean(this.agent.disable),
-        },
-      };
+      return { result: {} };
     }
 
     if (
@@ -403,7 +395,7 @@ export class Test {
         },
         logMeta: { breadcrumbs: this.agent.breadcrumbs },
       });
-      return { result: {}, meta: {} };
+      return { result: {} };
     }
 
     // Get Data from parent test and merge it with current test
@@ -536,7 +528,7 @@ export class Test {
           PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
         if (skipIf) {
-          return { result: {}, meta: {} };
+          return { result: {} };
         }
       }
 
@@ -721,15 +713,7 @@ export class Test {
         }
       }
 
-      const metaForNextSubling: TestMetaSublingExchangeData = {};
-      const { skipSublingIfResult } = this.plugins
-        .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
-        .getValues(this.agent.stepId);
-      if (skipSublingIfResult) {
-        metaForNextSubling.disable = true;
-      }
-
-      return { result: localResults, meta: metaForNextSubling };
+      return { result: localResults };
     } catch (error) {
       const { continueOnError } = this.plugins
         .getPlugins<PluginContinueOnError>('continueOnError')
@@ -741,7 +725,7 @@ export class Test {
           error.errorLevel -= 1;
           throw error;
         }
-        return { result: error.localResults, meta: {} };
+        return { result: error.localResults };
       }
 
       if (continueOnError) {
@@ -754,7 +738,7 @@ export class Test {
           agent: this.agent,
         });
         await continueError.log();
-        return { result: error.localResults, meta: {} };
+        return { result: error.localResults };
       }
 
       const newError = new TestError({
@@ -768,9 +752,7 @@ export class Test {
     }
   };
 
-  run = async (
-    inputArgs: TestExtendType,
-  ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+  run = async (inputArgs: TestExtendType): Promise<{ result: Record<string, unknown> }> => {
     const { testTree } = new Environment().getEnvInstance(inputArgs.envsId);
     testTree.createStep({ stepIdParent: inputArgs.stepIdParent, stepId: inputArgs.stepId, payload: {} });
 

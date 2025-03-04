@@ -137,32 +137,26 @@ const stepResolver = (
         parentStepMetaCollector.stepId = args.stepId;
       }
       parentStepMetaCollector.resultsFromPrevSubling = {};
-      parentStepMetaCollector.metaFromPrevSubling = {};
     }
 
-    let updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(
-      agentJson,
-      { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
-      ['options', 'data', 'selectors', 'logOptions'],
-    );
+    let updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
+      'options',
+      'data',
+      'selectors',
+      'logOptions',
+    ]);
 
-    updatedAgentJson = propagateArgumentsSimpleOnAir(
-      updatedAgentJson,
-      { ...args, ...(parentStepMetaCollector?.metaFromPrevSubling ?? {}) },
-      ['debug', 'frame'],
-    );
+    updatedAgentJson = propagateArgumentsSimpleOnAir(updatedAgentJson, { ...args }, ['debug', 'frame']);
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
-    updatedAgentJson.metaFromPrevSubling = parentStepMetaCollector?.metaFromPrevSubling ?? {};
 
-    const { result = {}, meta = {} } = await step.run(updatedAgentJson);
+    const { result = {} } = await step.run(updatedAgentJson);
 
     if (parentStepMetaCollector) {
       parentStepMetaCollector.resultsFromPrevSubling = {
         ...(parentStepMetaCollector?.resultsFromPrevSubling ?? {}),
         ...result,
       };
-      parentStepMetaCollector.metaFromPrevSubling = meta;
     }
 
     return result;

@@ -262,10 +262,6 @@ export interface DataType extends DataYamlType {
 
 // ================ TESTS / ATOMS ====================
 
-export type TestMetaSublingExchangeData = {
-  disable?: boolean;
-};
-
 export type TestArgsType = {
   envsId: string;
   environment: Environment;
@@ -361,7 +357,6 @@ export type TestExtendType = {
   resultsFromPrevSubling?: Record<string, unknown>;
   dataParent?: Record<string, unknown>;
   selectorsParent?: Record<string, unknown>;
-  metaFromPrevSubling?: TestMetaSublingExchangeData;
   funcFile?: string;
   testFile?: string;
   optionsParent?: Record<string, string | number>;
