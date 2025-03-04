@@ -63,4 +63,8 @@ const documentation: PluginDocumentation = {
 
 const order = 200;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginContinueOnError>;
+const depends = ['argsRedefine'];
+
+const pluginModule: PluginModule<PluginContinueOnError> = { name, documentation, plugin, order, depends };
+
+export default pluginModule;

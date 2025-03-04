@@ -76,4 +76,8 @@ const documentation: PluginDocumentation = {
 
 const order = 300;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginDescriptionError>;
+const depends = [];
+
+const pluginModule: PluginModule<PluginDescriptionError> = { name, documentation, plugin, order, depends };
+
+export default pluginModule;

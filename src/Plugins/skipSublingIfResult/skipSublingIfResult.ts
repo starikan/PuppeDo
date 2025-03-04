@@ -53,4 +53,8 @@ const documentation: PluginDocumentation = {
 
 const order = 400;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginSkipSublingIfResult>;
+const depends = [];
+
+const pluginModule: PluginModule<PluginSkipSublingIfResult> = { name, documentation, plugin, order, depends };
+
+export default pluginModule;

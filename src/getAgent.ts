@@ -79,12 +79,6 @@ const propagateArgumentsObjectsOnAir = (
   return { ...source, ...renamedKeys };
 };
 
-const propagateArgumentsSimpleOnAir = (
-  source: TestExtendType,
-  args: TestArgsType | undefined,
-  list: string[] = [],
-): TestExtendType => ({ ...source, ...pick(args || {}, list) });
-
 const getAgent = ({
   agentJsonIncome,
   envsId,
@@ -121,6 +115,12 @@ const getAgent = ({
 
   return stepResolver(agentJson, parentStepMetaCollector);
 };
+
+const propagateArgumentsSimpleOnAir = (
+  source: TestExtendType,
+  args: TestArgsType | undefined,
+  list: string[] = [],
+): TestExtendType => ({ ...source, ...pick(args || {}, list) });
 
 const stepResolver = (
   agentJson: TestExtendType,

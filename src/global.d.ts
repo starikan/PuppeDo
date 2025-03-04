@@ -455,6 +455,7 @@ export type PluginModule<T> = {
   name: string;
   plugin: PluginFunction<T>;
   documentation: PluginDocumentation;
+  depends: string[];
   order?: number;
 };
 

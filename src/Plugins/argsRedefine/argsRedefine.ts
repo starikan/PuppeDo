@@ -35,4 +35,8 @@ const documentation: PluginDocumentation = {
 
 const order = 100;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginArgsRedefine>;
+const depends = [];
+
+const pluginModule: PluginModule<PluginArgsRedefine> = { name, documentation, plugin, order, depends };
+
+export default pluginModule;

@@ -22,16 +22,21 @@ export class PluginsFabric extends Singleton {
 
   private orders: Record<string, number | null>;
 
+  private depends: Record<string, string[]>;
+
   constructor(plugins: PluginList = {}, reInit = false) {
     super();
     if (!this.plugins || reInit) {
       this.plugins = {};
       this.documentation = {};
       this.orders = {};
+      this.depends = {};
 
       for (const plugin of Object.values(plugins)) {
         this.addPlugin(plugin.plugin, plugin.order);
       }
+
+      this.checkDepends();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
 
@@ -61,6 +66,7 @@ export class PluginsFabric extends Singleton {
     const resolvPlugin = typeof plugin === 'string' ? DefaultPlugins[plugin] : plugin;
     this.plugins[resolvPlugin.name] = resolvPlugin.plugin;
     this.documentation[resolvPlugin.name] = resolvPlugin.documentation;
+    this.depends[resolvPlugin.name] = resolvPlugin.depends;
     this.orders[resolvPlugin.name] = order ?? resolvPlugin.order ?? null;
   }
 
@@ -83,6 +89,24 @@ export class PluginsFabric extends Singleton {
       .filter((v) => !!v[1])
       .map((v) => v[0]);
     return [...valuesOrdered, ...valuesNull];
+  }
+
+  /**
+   * Checks plugin dependencies.
+   * Throws an error if the plugin execution order is not followed.
+   */
+  checkDepends(): void {
+    const { depends, orders } = this;
+    Object.keys(depends).forEach((plugin) => {
+      if (!orders[plugin]) {
+        throw new Error(`Plugin ${plugin} not found in the execution order`);
+      }
+      for (const dependency of depends[plugin]) {
+        if (!orders[dependency] || orders[dependency] > orders[plugin]) {
+          throw new Error(`Plugin ${dependency}, required for ${plugin}, not found or loaded after`);
+        }
+      }
+    });
   }
 }
 

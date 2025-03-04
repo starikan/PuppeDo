@@ -50,4 +50,8 @@ const documentation: PluginDocumentation = {
 
 const order = 500;
 
-export default { name, documentation, plugin, order } as PluginModule<PluginEngineSupports>;
+const depends = [];
+
+const pluginModule: PluginModule<PluginEngineSupports> = { name, documentation, plugin, order, depends };
+
+export default pluginModule;
