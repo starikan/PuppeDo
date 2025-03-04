@@ -1,7 +1,7 @@
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
-import { PluginDocumentation } from '../../global.d';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
 
 export type PluginContinueOnError = { continueOnError: boolean };
 

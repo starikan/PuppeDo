@@ -1,6 +1,6 @@
 import { Environment } from '../../Environment';
-import { BrowserEngineType, PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { BrowserEngineType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
 
 export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
 

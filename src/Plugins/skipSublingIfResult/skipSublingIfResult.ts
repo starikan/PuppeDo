@@ -1,5 +1,5 @@
-import { PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
 export type PluginSkipSublingIfResult = { skipSublingIfResult: string; skipMeBecausePrevSublingResults: boolean };

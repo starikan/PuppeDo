@@ -1,6 +1,6 @@
 import { Arguments } from '../../Arguments';
-import { ArgumentsType, PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { ArgumentsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
 
 export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
 
