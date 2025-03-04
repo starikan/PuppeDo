@@ -1,72 +1,10 @@
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
-import { PluginDocumentation, PluginList, TestArgsType } from './global.d';
+import { PluginDocumentation, PluginFunction, PluginHooks, PluginList, PluginModule, PluginType } from './global.d';
 import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
 import { TestTree } from './TestTree';
-
-type Hooks = {
-  initValues?: ({
-    inputs,
-    envsId,
-    stepId,
-  }: {
-    inputs: Record<string, unknown>;
-    envsId?: string;
-    stepId?: string;
-  }) => void;
-  runLogic?: ({
-    inputs,
-    envsId,
-    stepId,
-  }: {
-    inputs: Record<string, unknown>;
-    envsId?: string;
-    stepId?: string;
-  }) => void;
-  resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
-  beforeFunctions?: ({ args, stepId }: { args: TestArgsType; stepId?: string }) => void;
-  afterResults?: ({
-    args,
-    results,
-    stepId,
-  }: {
-    args: TestArgsType;
-    results: Record<string, unknown>;
-    stepId?: string;
-  }) => void;
-  afterRepeat?: ({
-    args,
-    allData,
-    results,
-    stepId,
-  }: {
-    args: TestArgsType;
-    allData: Record<string, unknown>;
-    results: Record<string, unknown>;
-    stepId?: string;
-  }) => void;
-};
-
-export interface PluginType<T> {
-  name: string;
-  hook: (name: keyof Hooks) => (_: unknown) => void;
-  hooks: Hooks;
-  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
-  getValue?: (stepId: string, value?: keyof T) => T[keyof T];
-  getValues?: (stepId: string) => T;
-  setValues?: (stepId: string, values?: Partial<T>) => T;
-}
-
-export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
-
-export type PluginModule<T> = {
-  name: string;
-  plugin: PluginFunction<T>;
-  documentation: PluginDocumentation;
-  order?: number;
-};
 
 // Storage of all scratch of plugins
 export class PluginsFabric extends Singleton {
@@ -164,7 +102,7 @@ export class Plugins {
 
   // TODO: 2022-10-18 S.Starodubov сделать так чтобы хук мог возвращать данные
   // TODO: 2022-10-03 S.Starodubov async hook
-  hook<T>(name: keyof Hooks, args: T): void {
+  hook<T>(name: keyof PluginHooks, args: T): void {
     const pluginsNames = new PluginsFabric().getPluginsOrderedNames();
     for (const pluginName of pluginsNames) {
       this.plugins.find((v) => v.name === pluginName).hook(name)(args);
@@ -192,7 +130,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   agentTree: TestTree;
 
-  hooks: Required<Hooks> = {
+  hooks: Required<PluginHooks> = {
     initValues: ({ inputs, stepId }) => {
       this.setValues(stepId, inputs as Partial<T>);
     },
@@ -230,7 +168,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     defaultValues: T;
     propogation?: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
     plugins: Plugins;
-    hooks?: Hooks;
+    hooks?: PluginHooks;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
@@ -241,7 +179,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.agentTree = plugins.agentTree;
   }
 
-  hook(name: keyof Hooks): (unknown) => void {
+  hook(name: keyof PluginHooks): (unknown) => void {
     try {
       if (Object.keys(this.hooks).includes(name)) {
         return this.hooks[name].bind(this);
