@@ -12,6 +12,14 @@ const plugin: PluginFunction<PluginArgsRedefine> = (plugins) => {
     name,
     defaultValues: { argsRedefine: new Arguments().args },
     propogation: { argsRedefine: 'lastParent' },
+    hooks: {
+      initValues: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
+      runLogic: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
+    },
     plugins,
   });
   return pluginInstance;

@@ -226,29 +226,15 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   agentTree: TestTree;
 
   hooks: Required<PluginHooks> = {
-    initValues: ({ inputs, stepId }) => {
-      this.setValues(stepId, inputs as Partial<T>);
-    },
-    runLogic: ({ inputs, stepId }) => {
-      this.setValues(stepId, inputs as Partial<T>);
-    },
-    resolveValues: () => {
-      // Blank
-    },
-    beforeFunctions: () => {
-      // Blank
-    },
-    afterResults: () => {
-      // Blank
-    },
-    afterRepeat: () => {
-      // Blank
-    },
+    initValues: () => {},
+    runLogic: () => {},
+    resolveValues: () => {},
+    beforeFunctions: () => {},
+    afterResults: () => {},
+    afterRepeat: () => {},
   };
 
-  blankHook: () => {
-    // Blank
-  };
+  blankHook: () => {};
 
   propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
 

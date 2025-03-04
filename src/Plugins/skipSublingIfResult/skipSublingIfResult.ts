@@ -12,6 +12,12 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
     defaultValues: { skipSublingIfResult: '', skipMeBecausePrevSublingResults: false },
     propogation: { skipMeBecausePrevSublingResults: 'lastSubling' },
     hooks: {
+      initValues: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
+      runLogic: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
       afterRepeat({ allData, results, stepId }): void {
         const { skipSublingIfResult, skipMeBecausePrevSublingResults } = pluginInstance.getValues(stepId);
 

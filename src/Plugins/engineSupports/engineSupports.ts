@@ -11,6 +11,12 @@ const plugin: PluginFunction<PluginEngineSupports> = (plugins) => {
     name,
     defaultValues: { engineSupports: [] },
     hooks: {
+      initValues: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
+      runLogic: ({ inputs, stepId }): void => {
+        pluginInstance.setValues(stepId, inputs);
+      },
       resolveValues: ({ inputs, stepId }): void => {
         const { allRunners } = new Environment().getEnvInstance(plugins.envsId);
         const current = new Environment().getCurrent(plugins.envsId);
