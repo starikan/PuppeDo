@@ -18,20 +18,7 @@ export class TestTree {
    * It returns the tree
    * @returns The tree property of the class.
    */
-  getTree(plane = false): TreeEntryType[] {
-    if (plane) {
-      const flattenTree = (tree: TreeEntryType[]): TreeEntryType[] => {
-        let flatSteps: TreeEntryType[] = [];
-        tree.forEach((node) => {
-          flatSteps.push(node);
-          if (node.steps) {
-            flatSteps = flatSteps.concat(flattenTree(node.steps));
-          }
-        });
-        return flatSteps;
-      };
-      return flattenTree(this.tree);
-    }
+  getTree(): TreeEntryType[] {
     return this.tree;
   }
 
@@ -61,6 +48,13 @@ export class TestTree {
     return null;
   }
 
+  /**
+   * Finds the parent node of a given stepId in the tree.
+   *
+   * @param {string} stepId - The stepId to find the parent for.
+   * @param {TreeEntryType[]} tree - The tree to search in. Defaults to the class's tree property.
+   * @returns {(TreeEntryType | null)} The parent node if found, otherwise null.
+   */
   findParent(stepId: string, tree: TreeEntryType[] = this.tree): TreeEntryType | null {
     const node = this.findNode(stepId, tree);
     if (node) {
@@ -69,6 +63,13 @@ export class TestTree {
     return null;
   }
 
+  /**
+   * Finds the previous sibling of a node with the given stepId in the tree.
+   *
+   * @param {string} stepId - The stepId of the node to find the previous sibling for.
+   * @param {TreeEntryType[]} tree - The tree to search in. Defaults to the class's tree property.
+   * @returns {(TreeEntryType | null)} The previous sibling node if found, otherwise null.
+   */
   findPreviousSibling(stepId: string, tree: TreeEntryType[] = this.tree): TreeEntryType | null {
     const node = this.findParent(stepId, tree);
     let steps = [];
@@ -135,16 +136,28 @@ export class TestTree {
     return this.getTree();
   }
 
+  /**
+   * Adds an error to the error route.
+   * @param {CreateStepParams} params - The parameters for creating a step.
+   * @returns {TreeEntryType[]} The updated error route.
+   */
   addError({ stepId, payload }: CreateStepParams): TreeEntryType[] {
     this.errorRoute.push({ stepId, stepIdParent: null, ...payload });
 
     return this.errorRoute;
   }
 
+  /**
+   * Clears all errors from the error route.
+   */
   clearErrors(): void {
     this.errorRoute = [];
   }
 
+  /**
+   * Gets all errors from the error route.
+   * @returns {TreeEntryType[]} The current error route.
+   */
   getErrors(): TreeEntryType[] {
     return this.errorRoute;
   }

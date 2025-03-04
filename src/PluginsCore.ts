@@ -1,6 +1,14 @@
 import crypto, { randomUUID } from 'crypto';
 import { Arguments } from './Arguments';
-import { PluginDocumentation, PluginFunction, PluginHooks, PluginList, PluginModule, PluginType } from './global.d';
+import {
+  PluginDocumentation,
+  PluginFunction,
+  PluginHooks,
+  PluginList,
+  PluginModule,
+  PluginType,
+  TreeEntryType,
+} from './global.d';
 import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
@@ -207,24 +215,20 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
 
     try {
-      // Если нет ключей на входе смотрим на родителя, если это нужно
-      const lastParent = Object.entries(this.propogation ?? {})
-        .filter((v) => v[1] === 'lastParent')
-        .map((v) => v[0]);
-      if (lastParent.length && !Object.keys(pick(values, lastParent)).length) {
-        const stepParent = this.agentTree.findParent(stepId);
-        const valuesParent = stepParent ? (pick(stepParent, lastParent) as T) : {};
-        newValues = { ...newValues, ...valuesParent };
-      }
+      const propagationSources = {
+        lastParent: (): TreeEntryType => this.agentTree.findParent(stepId),
+        lastSubling: (): TreeEntryType => this.agentTree.findPreviousSibling(stepId),
+      };
 
-      const lastSubling = Object.entries(this.propogation ?? {})
-        .filter((v) => v[1] === 'lastSubling')
-        .map((v) => v[0]);
-      if (lastSubling.length && !Object.keys(pick(values, lastSubling)).length) {
-        const stepPrevSubling = this.agentTree.findPreviousSibling(stepId);
-        const valuesPrevSubling = stepPrevSubling ? (pick(stepPrevSubling, lastSubling) as T) : {};
-        newValues = { ...newValues, ...valuesPrevSubling };
-      }
+      Object.entries(this.propogation ?? {}).forEach(([key, source]) => {
+        if (!Object.keys(pick(values, [key])).length) {
+          const sourceNode = propagationSources[source as keyof typeof propagationSources]();
+          if (sourceNode) {
+            const sourceValues = pick(sourceNode, [key]) as Partial<T>;
+            newValues = { ...newValues, ...sourceValues };
+          }
+        }
+      });
 
       this.agentTree.updateStep({ stepId, payload: newValues });
     } catch {

@@ -355,12 +355,12 @@ export class Test {
       .getValues(this.agent.stepId);
 
     if (this.agent.disable || skipMeBecausePrevSublingResults) {
-      // eslint-disable-next-line no-nested-ternary
-      const disableText = this.agent.disable
-        ? 'disable'
-        : skipMeBecausePrevSublingResults
-          ? 'skipMeBecausePrevSublingResults or skipSublingIfResult'
-          : '';
+      let disableText = '';
+      if (this.agent.disable) {
+        disableText = 'disable';
+      } else if (skipMeBecausePrevSublingResults) {
+        disableText = 'skipMeBecausePrevSublingResults or skipSublingIfResult';
+      }
 
       await this.logger.log({
         text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
