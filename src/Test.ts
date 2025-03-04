@@ -754,7 +754,7 @@ export class Test {
           agent: this.agent,
         });
         await continueError.log();
-        throw continueError;
+        return { result: error.localResults, meta: {} };
       }
 
       const newError = new TestError({

@@ -19,9 +19,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
           .getValue(stepId, 'argsRedefine');
 
         pluginInstance.setValues(stepId, {
-          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
-            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue(stepId, 'continueOnError'))
-            : false,
+          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED ? ((inputs.continueOnError as boolean) ?? false) : false,
         });
       },
 
@@ -31,9 +29,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
           .getValue(stepId, 'argsRedefine');
 
         pluginInstance.setValues(stepId, {
-          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED
-            ? ((inputs.continueOnError as boolean) ?? pluginInstance.getValue(stepId, 'continueOnError'))
-            : false,
+          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED ? ((inputs.continueOnError as boolean) ?? false) : false,
         });
       },
     },

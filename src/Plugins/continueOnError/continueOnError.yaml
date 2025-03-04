@@ -1,19 +1,19 @@
 name: continueOnError
 description: continueOnError
 argsRedefine: { PPD_CONTINUE_ON_ERROR_ENABLED: true }
-runTest:
-  - case:
+run:
+  - blank:
       description: Skip me if I broken
       continueOnError: true
-      runTest:
+      run:
         - blank:
             errorIfResult: 1 === 1
             descriptionError: This is error description
 
-  - case:
+  - blank:
       repeat: 3
       continueOnError: true
-      runTest:
+      run:
         - blank:
             bindDescription: "`Second level loop: ${$loop}`"
             errorIfResult: "$loop < 2"
@@ -21,15 +21,24 @@ runTest:
         - blank:
             description: "I`m next"
 
-  - case:
+  - blank:
       description: I am without errors
 
-  - case:
-      description: Error me if I broken
+  - blank:
+      description: Continue even if my child is broken
       continueOnError: true
-      runTest:
+      run:
         - blank:
             argsRedefine:
               PPD_CONTINUE_ON_ERROR_ENABLED: false
             errorIfResult: 1 === 1
+            descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+
+  - blank:
+      description: Error me if I broken
+      run:
+        - blank:
+            argsRedefine:
+              PPD_CONTINUE_ON_ERROR_ENABLED: false
+            errorIfResult: 2 === 2
             descriptionError: This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False

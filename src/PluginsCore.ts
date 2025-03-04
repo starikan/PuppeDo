@@ -262,10 +262,6 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   setValues(stepId: string, values: Partial<T> = {}): T {
     let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
 
-    // if (this.name === 'descriptionError') {
-    // debugger;
-    // }
-
     try {
       // todo: как то кэшировать в плагинс
       const { testTree } = new Environment().getEnvInstance(this.plugins.envsId);
