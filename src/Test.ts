@@ -20,9 +20,10 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
-import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine } from './Plugins';
+import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine, PluginDebug } from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
+import { TestTree } from './TestTree';
 import globalExportPPD from './index';
 
 /**
@@ -298,12 +299,16 @@ export class Test {
 
   logger: Log;
 
+  agentTree: TestTree;
+
   constructor(initValues: TestExtendType) {
     const { testTree, plugins } = new Environment().getEnvInstance(initValues.envsId);
     testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
 
     this.plugins = plugins;
     this.plugins.hook('initValues', { inputs: initValues, stepId: initValues.stepId });
+
+    this.agentTree = testTree;
 
     // TODO: Нужна какая то проверка тут initValues
     for (const key of Object.keys(this.agent)) {
@@ -330,7 +335,6 @@ export class Test {
     const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
 
     const {
-      PPD_DEBUG_MODE,
       PPD_LOG_EXTEND,
       PPD_LOG_TEST_NAME,
       PPD_TAGS_TO_RUN,
@@ -340,8 +344,9 @@ export class Test {
       PPD_LOG_STEPID,
     } = this.plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValue(this.agent.stepId, 'argsRedefine');
 
-    this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
-    if (this.agent.debug) {
+    const { debug } = this.plugins.getPlugins<PluginDebug>('debug').getValues(this.agent.stepId);
+
+    if (debug) {
       console.log(this);
       // eslint-disable-next-line no-debugger
       debugger;

@@ -1,0 +1,15 @@
+00:00:00.000 - timer  Test 'debug' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+debug (debug)
+   Simple debug (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(debug) debug[0m
+00:00:00.000 - test   |   [32m(blank) Simple debug[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (debug)
+00:00:00.000 - timer  Test 'debug' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "debug": {}
+}

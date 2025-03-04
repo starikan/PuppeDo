@@ -146,7 +146,7 @@ const stepResolver = (
       'logOptions',
     ]);
 
-    updatedAgentJson = propagateArgumentsSimpleOnAir(updatedAgentJson, { ...args }, ['debug', 'frame']);
+    updatedAgentJson = propagateArgumentsSimpleOnAir(updatedAgentJson, { ...args }, ['frame']);
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
 

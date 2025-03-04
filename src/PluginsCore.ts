@@ -60,6 +60,8 @@ export class PluginsFabric extends Singleton {
         this.addPlugin(plugin.plugin, plugin.order);
       }
 
+      this.normalizeOrders();
+
       this.checkDepends();
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
@@ -153,6 +155,19 @@ export class PluginsFabric extends Singleton {
         if (!orders[dependency] || orders[dependency] > orders[plugin]) {
           throw new Error(`Plugin ${dependency}, required for ${plugin}, not found or loaded after`);
         }
+      }
+    });
+  }
+
+  /**
+   * Normalizes the order of plugin execution by assigning sequential numbers to plugins with undefined order.
+   */
+  normalizeOrders(): void {
+    let maxOrder = Math.max(...Object.values(this.orders).filter((order) => order !== null));
+    Object.keys(this.orders).forEach((plugin) => {
+      if (this.orders[plugin] === null) {
+        this.orders[plugin] = maxOrder + 1;
+        maxOrder += 1;
       }
     });
   }

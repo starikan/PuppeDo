@@ -137,6 +137,9 @@ const testsE2E = {
     params: { PPD_TESTS: 'engineSupportsFakeEngine' },
     isError: true,
   },
+  debug: {
+    params: { PPD_TESTS: 'debug' },
+  },
 };
 
 module.exports = testsE2E;

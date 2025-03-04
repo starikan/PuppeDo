@@ -69,13 +69,13 @@ argsRedefine:
   PPD_LOG_EXTEND: false
 
 runTest:
-  - case:
+  - blank:
       description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
       runTest:
         - blank:
             description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
 
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false
@@ -84,7 +84,7 @@ runTest:
             description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
             argsRedefine:
               PPD_LOG_TIMER_SHOW: false
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false
@@ -94,7 +94,7 @@ runTest:
             argsRedefine:
               PPD_LOG_TIMER_SHOW: true
 
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false
@@ -108,27 +108,27 @@ runTest:
 00:00:00.000 - timer  Test 'argsRedefine' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 argsRedefine (argsRedefine)
-   Because PPD_LOG_EXTEND true globaly - show timer ✔️ (case)
+   Because PPD_LOG_EXTEND true globaly - show timer ✔️ (blank)
       Because PPD_LOG_EXTEND true globaly - show timer ✔️ (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (blank)
       Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (case)
+   Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌ (blank)
       Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️ (blank)
-   Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌ (case)
+   Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌ (blank)
       Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌ (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (argsRedefine) argsRedefine
-00:00:00.000 - test   |   (case) Because PPD_LOG_EXTEND true globaly - show timer ✔️
+00:00:00.000 - test   |   (blank) Because PPD_LOG_EXTEND true globaly - show timer ✔️
 00:00:00.000 - test   |   |   (blank) Because PPD_LOG_EXTEND true globaly - show timer ✔️
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
 00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
-00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
+00:00:00.000 - test   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
 00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to true - show timer ✔️
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   (case) Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
+00:00:00.000 - test   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
 00:00:00.000 - test   |   |   (blank) Redefine PPD_LOG_TIMER_SHOW to false with parent - hide timer ❌
                       🕝: 00.000 s. (argsRedefine)
 00:00:00.000 - timer  Test 'argsRedefine' time 🕝: 00.000 s.
@@ -145,7 +145,7 @@ TODO
 name: descriptionError
 description: descriptionError
 runTest:
-  - case:
+  - blank:
       description: "Simple descriptionError"
       errorIf: true
       descriptionError: "Simple descriptionError"
@@ -156,25 +156,25 @@ runTest:
 00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 descriptionError (descriptionError)
-   Simple descriptionError (case)
+   Simple descriptionError (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (descriptionError) descriptionError
 00:00:00.000 - error  |   Test stopped with expr errorIf = 'true'
 00:00:00.000 - error  |    descriptionError
-00:00:00.000 - error  |       runTest[0].case
+00:00:00.000 - error  |       runTest[0].blank
 00:00:00.000 - error  |    =============================================================================================
-00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (case)
+00:00:00.000 - error  |   Simple descriptionError | Description: Simple descriptionError (blank)
 00:00:00.000 - error  |    descriptionError
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |       runTest[0].blank
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error   Description: descriptionError (descriptionError)
 00:00:00.000 - error   descriptionError
 00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIf = 'true'
-                      error in test = case
+                      error in test = blank
                       error in test = descriptionError
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
@@ -192,7 +192,7 @@ descriptionError (descriptionError)
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
                       █ Error:       Simple descriptionError
-                      █ Path:        descriptionError -> runTest[0].case
+                      █ Path:        descriptionError -> runTest[0].blank
                       █ Description:
                       █    descriptionError
 
@@ -201,7 +201,7 @@ descriptionError (descriptionError)
 name: descriptionErrorNested
 description: descriptionErrorNested
 runTest:
-  - case:
+  - blank:
       description: "description 0"
       descriptionError: "descriptionError 0"
       runTest:
@@ -215,27 +215,27 @@ runTest:
 00:00:00.000 - timer  Test 'descriptionErrorNested' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 descriptionErrorNested (descriptionErrorNested)
-   description 0 (case)
+   description 0 (blank)
       description 1 (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (descriptionErrorNested) descriptionErrorNested
-00:00:00.000 - test   |   (case) description 0
+00:00:00.000 - test   |   (blank) description 0
 00:00:00.000 - error  |   |   Test stopped with expr errorIf = 'true'
 00:00:00.000 - error  |   |    descriptionErrorNested
-00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |       runTest[0].blank
 00:00:00.000 - error  |   |          runTest[0].blank
 00:00:00.000 - error  |   |    ==========================================================================================
 00:00:00.000 - error  |   |   descriptionError 1 | Description: description 1 (blank)
 00:00:00.000 - error  |   |    descriptionErrorNested
-00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |       runTest[0].blank
 00:00:00.000 - error  |   |          runTest[0].blank
 00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (case)
+00:00:00.000 - error  |   descriptionError 0 | Description: description 0 (blank)
 00:00:00.000 - error  |    descriptionErrorNested
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |       runTest[0].blank
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error   Description: descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error   descriptionErrorNested
@@ -243,7 +243,7 @@ descriptionErrorNested (descriptionErrorNested)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIf = 'true'
                       error in test = blank
-                      error in test = case
+                      error in test = blank
                       error in test = descriptionErrorNested
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
@@ -261,7 +261,7 @@ descriptionErrorNested (descriptionErrorNested)
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
                       █ Error:       descriptionError 1 | descriptionError 0
-                      █ Path:        descriptionErrorNested -> runTest[0].case -> runTest[0].blank
+                      █ Path:        descriptionErrorNested -> runTest[0].blank -> runTest[0].blank
                       █ Description:
                       █    descriptionErrorNested
                       █       description 0
@@ -273,7 +273,7 @@ description: descriptionErrorDynamic
 allowResults: ["apples"]
 data: { apples: 5 }
 runTest:
-  - case:
+  - blank:
       bindDescription: "`I get ${apples} apples`"
       descriptionError: "`Now I get only ${apples} apples`"
       result: { apples: 1 }
@@ -285,26 +285,26 @@ runTest:
 00:00:00.000 - timer  Test 'descriptionErrorDynamic' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 descriptionErrorDynamic (descriptionErrorDynamic)
-   (case)
+   (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (descriptionErrorDynamic) descriptionErrorDynamic
-00:00:00.000 - test   |   (case) I get 5 apples
+00:00:00.000 - test   |   (blank) I get 5 apples
 00:00:00.000 - error  |   |   Test stopped with expr errorIfResult = 'apples < 5'
 00:00:00.000 - error  |   |    descriptionErrorDynamic
-00:00:00.000 - error  |   |       runTest[0].case
+00:00:00.000 - error  |   |       runTest[0].blank
 00:00:00.000 - error  |   |    ==========================================================================================
-00:00:00.000 - error  |   Now I get only 1 apples | Description: No test description (case)
+00:00:00.000 - error  |   Now I get only 1 apples | Description: No test description (blank)
 00:00:00.000 - error  |    descriptionErrorDynamic
-00:00:00.000 - error  |       runTest[0].case
-00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)
+00:00:00.000 - error  |       runTest[0].blank
+00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)
 00:00:00.000 - error  |    =============================================================================================
 00:00:00.000 - error   Description: descriptionErrorDynamic (descriptionErrorDynamic)
 00:00:00.000 - error   descriptionErrorDynamic
 00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionErrorDynamic.yaml)
 00:00:00.000 - error   ================================================================================================
                       Test stopped with expr errorIfResult = 'apples < 5'
-                      error in test = case
+                      error in test = blank
                       error in test = descriptionErrorDynamic
                       ================================================================================================
                       Error: Test stopped with expr errorIfResult = 'apples < 5'
@@ -322,7 +322,7 @@ descriptionErrorDynamic (descriptionErrorDynamic)
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = 'apples < 5'
                       █ Error:       Now I get only 1 apples
-                      █ Path:        descriptionErrorDynamic -> runTest[0].case
+                      █ Path:        descriptionErrorDynamic -> runTest[0].blank
                       █ Description:
                       █    descriptionErrorDynamic
 
@@ -506,7 +506,7 @@ TODO
 name: skipSublingIfResult
 description: "skipSublingIfResult"
 runTest:
-  - case:
+  - blank:
       description: "Simple skipSublingIfResult"
       runTest:
         - blank:
@@ -522,7 +522,7 @@ runTest:
         - blank:
             description: "❌ I`m skiped too"
 
-  - case:
+  - blank:
       description: "Loop with skipSublingIfResult"
       repeat: 3
       runTest:
@@ -539,7 +539,7 @@ runTest:
         - blank:
             description: "I`m next too (skiped in #2 repeate)"
 
-  - case:
+  - blank:
       description: "If true with skipSublingIfResult"
       runTest:
         - blank:
@@ -550,7 +550,7 @@ runTest:
         - blank:
             description: "❌ I`m skiped"
 
-  - case:
+  - blank:
       description: "If false with skipSublingIfResult"
       runTest:
         - blank:
@@ -561,7 +561,7 @@ runTest:
         - blank:
             description: "✔️ I`m not skiped"
 
-  - case:
+  - blank:
       description: ✔️ I`m not skiped. On higher level.
 
 ```
@@ -570,35 +570,35 @@ runTest:
 00:00:00.000 - timer  Test 'skipSublingIfResult' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 skipSublingIfResult (skipSublingIfResult)
-   Simple skipSublingIfResult (case)
+   Simple skipSublingIfResult (blank)
       ✔️ I`m not skiped (blank)
       Skip after me (blank)
       ❌ I`m skiped (blank)
       ❌ I`m skiped too (blank)
-   Loop with skipSublingIfResult (case)
+   Loop with skipSublingIfResult (blank)
       I`m first (blank)
       (blank)
       I`m next (skiped in #2 repeate) (blank)
       I`m next too (skiped in #2 repeate) (blank)
-   If true with skipSublingIfResult (case)
+   If true with skipSublingIfResult (blank)
       Skip after me (blank)
       ❌ I`m skiped (blank)
-   If false with skipSublingIfResult (case)
+   If false with skipSublingIfResult (blank)
       Skip after me (blank)
       ✔️ I`m not skiped (blank)
-   ✔️ I`m not skiped. On higher level. (case)
+   ✔️ I`m not skiped. On higher level. (blank)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (skipSublingIfResult) skipSublingIfResult
-00:00:00.000 - test   |   (case) Simple skipSublingIfResult
+00:00:00.000 - test   |   (blank) Simple skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) ✔️ I`m not skiped
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Skip after me
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped
 00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped too
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 3
@@ -607,16 +607,16 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 2
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)
 00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) Loop with skipSublingIfResult
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Loop with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) I`m first
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) Only repeat #2 Skip Subling. Loop: 1
@@ -625,19 +625,19 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   (blank) I`m next too (skiped in #2 repeate)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) If true with skipSublingIfResult
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) If true with skipSublingIfResult
 00:00:00.000 - test   |   |   (blank) Skip after me
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - raw    |   |   Skip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) If false with skipSublingIfResult
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) If false with skipSublingIfResult
 00:00:00.000 - info   |   |   Skip with IF expr '1 !== 1' === 'false'
 00:00:00.000 - test   |   |   (blank) ✔️ I`m not skiped
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   (case) ✔️ I`m not skiped. On higher level.
-                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) ✔️ I`m not skiped. On higher level.
+                      |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (skipSublingIfResult)
 00:00:00.000 - timer  Test 'skipSublingIfResult' time 🕝: 00.000 s.
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
@@ -724,6 +724,36 @@ run:
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
 {
   "engineSupports": {}
+}
+
+```
+## debug
+Debugger for stopping the agent at the desired location
+
+```yaml
+name: debug
+description: debug
+run:
+  - blank:
+      description: "Simple debug"
+      debug: true
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'debug' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+debug (debug)
+   Simple debug (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (debug) debug
+00:00:00.000 - test   |   (blank) Simple debug
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (debug)
+00:00:00.000 - timer  Test 'debug' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "debug": {}
 }
 
 ```

@@ -1,0 +1,6 @@
+name: debug
+description: debug
+run:
+  - blank:
+      description: "Simple debug"
+      debug: true

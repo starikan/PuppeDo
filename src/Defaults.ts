@@ -19,6 +19,7 @@ export const pluginsListDefault: PluginList = {
   continueOnError: { plugin: 'continueOnError', order: 300 },
   skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },
   engineSupports: { plugin: 'engineSupports', order: 500 },
+  debug: { plugin: 'debug' },
 };
 
 export const loggerPipesDefault: LogPipe[] = [
