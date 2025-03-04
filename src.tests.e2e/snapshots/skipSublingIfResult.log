@@ -26,8 +26,8 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) Skip after me[0m
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   [34mSkip with skipSublingIfResult: (blank) ❌ I`m skiped[0m
-00:00:00.000 - raw    |   |   [34mSkip with skipSublingIfResult: (blank) ❌ I`m skiped too[0m
+00:00:00.000 - raw    |   |   [34mSkip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped[0m
+00:00:00.000 - raw    |   |   [34mSkip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped too[0m
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [47m[30m(case) Loop with skipSublingIfResult[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) I`m first[0m
@@ -44,8 +44,8 @@ skipSublingIfResult (skipSublingIfResult)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) Only repeat #2 Skip Subling. Loop: 2[0m
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   [34mSkip with skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)[0m
-00:00:00.000 - raw    |   |   [34mSkip with skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)[0m
+00:00:00.000 - raw    |   |   [34mSkip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next (skiped in #2 repeate)[0m
+00:00:00.000 - raw    |   |   [34mSkip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) I`m next too (skiped in #2 repeate)[0m
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [47m[30m(case) Loop with skipSublingIfResult[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) I`m first[0m
@@ -60,7 +60,7 @@ skipSublingIfResult (skipSublingIfResult)
 00:00:00.000 - test   |   [47m[30m(case) If true with skipSublingIfResult[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Skip after me[0m
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - raw    |   |   [34mSkip with skipSublingIfResult: (blank) ❌ I`m skiped[0m
+00:00:00.000 - raw    |   |   [34mSkip with skipMeBecausePrevSublingResults or skipSublingIfResult: (blank) ❌ I`m skiped[0m
                       |   🕝: 00.000 s. (case)
 00:00:00.000 - test   |   [47m[30m(case) If false with skipSublingIfResult[0m[0m
 00:00:00.000 - info   |   |   [36mSkip with IF expr '1 !== 1' === 'false'[0m

@@ -14,7 +14,7 @@ descriptionError (descriptionError)
 [31m00:00:00.000 - error  |       runTest[0].case[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mSimple descriptionError | Description: descriptionError (descriptionError)[0m
+[31m00:00:00.000 - error  [0m[31m Description: descriptionError (descriptionError)[0m
 [31m00:00:00.000 - error   descriptionError[0m
 [31m00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m

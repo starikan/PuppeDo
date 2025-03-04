@@ -20,6 +20,7 @@ import Singleton from './Singleton';
 import { DEFAULT_BROWSER, Engines } from './Engines';
 import TestStructure from './TestStructure';
 import { TestTree } from './TestTree';
+import { Plugins } from './PluginsCore';
 
 type EnvsInstanceType = {
   allRunners: Runners;
@@ -30,6 +31,7 @@ type EnvsInstanceType = {
   current: RunnerCurrentType;
   testsStruct: Record<string, TestExtendType>;
   testTree: TestTree;
+  plugins: Plugins;
 };
 
 export class Runners {
@@ -226,6 +228,7 @@ export class Environment extends Singleton {
 
       const current: RunnerCurrentType = {};
 
+      const testTree = new TestTree();
       this.instances[envsId] = {
         allRunners,
         socket,
@@ -235,7 +238,8 @@ export class Environment extends Singleton {
         // TODO: 2023-03-22 S.Starodubov move this log info into testTree
         log: [],
         testsStruct: {},
-        testTree: new TestTree(),
+        testTree,
+        plugins: new Plugins(envsId, testTree),
       };
     }
     return this.getEnvInstance(envsId);

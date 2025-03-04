@@ -1,5 +1,5 @@
 import vm from 'vm';
-import { getTimer, pick, generateId, mergeObjects } from './Helpers';
+import { getTimer, pick, mergeObjects } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -288,16 +288,6 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
-const resolveDisable = (thisDisable: boolean, metaFromPrevSubling: TestMetaSublingExchangeData): string => {
-  if (thisDisable) {
-    return 'disable';
-  }
-  if (metaFromPrevSubling.skipBecausePrevSubling) {
-    return 'skipSublingIfResult';
-  }
-  return '';
-};
-
 export class Test {
   runner!: Runner;
 
@@ -310,8 +300,11 @@ export class Test {
   logger: Log;
 
   constructor(initValues: TestExtendType) {
-    this.plugins = new Plugins(this);
-    this.plugins.hook('initValues', { inputs: initValues });
+    const { testTree, plugins } = new Environment().getEnvInstance(initValues.envsId);
+    testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
+
+    this.plugins = plugins;
+    this.plugins.hook('initValues', { inputs: initValues, stepId: initValues.stepId });
 
     // TODO: Нужна какая то проверка тут initValues
     for (const key of Object.keys(this.agent)) {
@@ -334,7 +327,7 @@ export class Test {
   runLogic = async (
     inputs: TestExtendType,
   ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
-    this.plugins.hook('runLogic', { inputs });
+    this.plugins.hook('runLogic', { inputs, stepId: inputs.stepId });
     const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
     const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
@@ -348,7 +341,7 @@ export class Test {
       PPD_LOG_NAMES_ONLY,
       PPD_LOG_TIMER_SHOW,
       PPD_LOG_STEPID,
-    } = this.plugins.get<PluginArgsRedefine>('argsRedefine').getValue();
+    } = this.plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValue(this.agent.stepId, 'argsRedefine');
 
     this.agent.debug = PPD_DEBUG_MODE && (inputs.debug || this.agent.debug);
     if (this.agent.debug) {
@@ -357,12 +350,20 @@ export class Test {
       debugger;
     }
 
-    this.agent.metaFromPrevSubling = inputs.metaFromPrevSubling || {};
-    const disable = resolveDisable(this.agent.disable, this.agent.metaFromPrevSubling);
+    const { skipMeBecausePrevSublingResults } = this.plugins
+      .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
+      .getValues(this.agent.stepId);
 
-    if (disable) {
+    if (this.agent.disable || skipMeBecausePrevSublingResults) {
+      let disableText = '';
+      if (this.agent.disable) {
+        disableText = 'disable';
+      } else if (skipMeBecausePrevSublingResults) {
+        disableText = 'skipMeBecausePrevSublingResults or skipSublingIfResult';
+      }
+
       await this.logger.log({
-        text: `Skip with ${disable}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
           PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
         }`,
         level: 'raw',
@@ -378,8 +379,7 @@ export class Test {
       return {
         result: {},
         meta: {
-          skipBecausePrevSubling: this.agent.metaFromPrevSubling.skipBecausePrevSubling,
-          disable: Boolean(disable),
+          disable: Boolean(this.agent.disable),
         },
       };
     }
@@ -440,7 +440,7 @@ export class Test {
     this.agent.logOptions = logForChild;
 
     try {
-      this.plugins.hook('resolveValues', { inputs });
+      this.plugins.hook('resolveValues', { inputs, stepId: this.agent.stepId });
 
       if (this.agent.needEnvParams.length) {
         for (const envParam of this.agent.needEnvParams) {
@@ -511,7 +511,9 @@ export class Test {
         selectorsTest: this.agent.selectors,
         logOptions: logForChild,
         ppd: globalExportPPD,
-        argsEnv: this.plugins.get<PluginArgsRedefine>('argsRedefine').getValue(),
+        argsEnv: this.plugins
+          .getPlugins<PluginArgsRedefine>('argsRedefine')
+          .getValue(this.agent.stepId, 'argsRedefine'),
         browser: this.runner && this.runner.getState().browser,
         page: pageCurrent, // If there is no page it`s might be API
         log: this.logger.log.bind(this.logger),
@@ -528,7 +530,8 @@ export class Test {
           this.agent.levelIndent,
           allData,
           logShowFlag,
-          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
+            .continueOnError,
           this.agent.breadcrumbs,
           PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
@@ -546,7 +549,8 @@ export class Test {
           this.agent.levelIndent,
           allData,
           logShowFlag,
-          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
+            .continueOnError,
           this.agent.breadcrumbs,
           PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
@@ -610,7 +614,7 @@ export class Test {
         }
       }
 
-      this.plugins.hook('beforeFunctions', { args });
+      this.plugins.hook('beforeFunctions', { args, stepId: this.agent.stepId });
 
       // LIFE CYCLE
       let resultFromLifeCycle = {};
@@ -640,7 +644,7 @@ export class Test {
         { ...selectorsLocal, ...dataLocal, ...results },
       );
 
-      this.plugins.hook('afterResults', { args, results: localResults });
+      this.plugins.hook('afterResults', { args, results: localResults, stepId: this.agent.stepId });
 
       // ERROR
       if (this.agent.errorIfResult) {
@@ -651,7 +655,8 @@ export class Test {
           this.agent.levelIndent + 1,
           { ...allData, ...localResults },
           logShowFlag,
-          this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError,
+          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
+            .continueOnError,
           this.agent.breadcrumbs,
           PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
@@ -693,10 +698,12 @@ export class Test {
         repeatArgs.selectors = { ...repeatArgs.selectors, ...localResults };
         repeatArgs.data = { ...repeatArgs.data, ...localResults };
         repeatArgs.repeat = this.agent.repeat - 1;
-        repeatArgs.stepId = generateId();
+        repeatArgs.stepId = `${inputs.stepId}-repeat-${repeatArgs.repeat}`;
         const repeatResult = await this.run(repeatArgs);
         localResults = { ...localResults, ...repeatResult };
       }
+
+      this.plugins.hook('afterRepeat', { args, allData, results: localResults, stepId: this.agent.stepId });
 
       if (this.agent.breakParentIfResult) {
         const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {
@@ -715,20 +722,19 @@ export class Test {
       }
 
       const metaForNextSubling: TestMetaSublingExchangeData = {};
-      const { skipSublingIfResult } = this.plugins.getValue<PluginSkipSublingIfResult>('skipSublingIfResult');
+      const { skipSublingIfResult } = this.plugins
+        .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
+        .getValues(this.agent.stepId);
       if (skipSublingIfResult) {
-        const skipSublingIfResultResolved = runScriptInContext(skipSublingIfResult, {
-          ...allData,
-          ...localResults,
-        });
-        if (skipSublingIfResultResolved) {
-          metaForNextSubling.disable = true;
-          metaForNextSubling.skipBecausePrevSubling = true;
-        }
+        metaForNextSubling.disable = true;
       }
 
       return { result: localResults, meta: metaForNextSubling };
     } catch (error) {
+      const { continueOnError } = this.plugins
+        .getPlugins<PluginContinueOnError>('continueOnError')
+        .getValues(this.agent.stepId);
+
       if (error instanceof ContinueParentError) {
         if (error.errorLevel) {
           await error.log();
@@ -738,9 +744,8 @@ export class Test {
         return { result: error.localResults, meta: {} };
       }
 
-      let newError;
-      if (this.plugins.getValue<PluginContinueOnError>('continueOnError').continueOnError) {
-        newError = new ContinueParentError({
+      if (continueOnError) {
+        const continueError = new ContinueParentError({
           localResults: error.localResults || {},
           errorLevel: 0,
           logger: this.logger,
@@ -748,10 +753,16 @@ export class Test {
           parentError: error,
           agent: this.agent,
         });
-      } else {
-        // TODO: избавиться от test тут
-        newError = new TestError({ logger: this.logger, parentError: error, test: this, agent: this.agent });
+        await continueError.log();
+        return { result: error.localResults, meta: {} };
       }
+
+      const newError = new TestError({
+        logger: this.logger,
+        parentError: error,
+        agent: this.agent,
+        plugins: this.plugins,
+      });
       await newError.log();
       throw newError;
     }
@@ -760,6 +771,9 @@ export class Test {
   run = async (
     inputArgs: TestExtendType,
   ): Promise<{ result: Record<string, unknown>; meta: Record<string, unknown> }> => {
+    const { testTree } = new Environment().getEnvInstance(inputArgs.envsId);
+    testTree.createStep({ stepIdParent: inputArgs.stepIdParent, stepId: inputArgs.stepId, payload: {} });
+
     const blocker = new Blocker();
     const block = blocker.getBlock(this.agent.stepId);
     const { blockEmitter } = blocker;

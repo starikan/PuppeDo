@@ -1,19 +1,24 @@
-import { BrowserEngineType, PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { Environment } from '../../Environment';
+import { BrowserEngineType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
 
 export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
 
 const name = 'engineSupports';
 
-const plugin: PluginFunction<PluginEngineSupports> = ({ originAgent }) => {
+const plugin: PluginFunction<PluginEngineSupports> = (plugins) => {
   const pluginInstance = new Plugin<PluginEngineSupports>({
     name,
     defaultValues: { engineSupports: [] },
     hooks: {
-      resolveValues: ({ inputs }): void => {
-        const { engineSupports } = pluginInstance.setValues(inputs);
+      resolveValues: ({ inputs, stepId }): void => {
+        const { allRunners } = new Environment().getEnvInstance(plugins.envsId);
+        const current = new Environment().getCurrent(plugins.envsId);
+        const runner = allRunners.getRunnerByName(current.name || '');
+
+        const { engineSupports } = pluginInstance.setValues(stepId, inputs);
         if (engineSupports.length) {
-          const { engine } = originAgent.runner?.getRunnerData()?.browser || {};
+          const { engine } = runner?.getRunnerData()?.browser || {};
           if (engine && !engineSupports.includes(engine)) {
             throw new Error(
               `Current engine: '${engine}' not supported with this agent. You need to use: ${engineSupports}`,
@@ -22,6 +27,7 @@ const plugin: PluginFunction<PluginEngineSupports> = ({ originAgent }) => {
         }
       },
     },
+    plugins,
   });
   return pluginInstance;
 };

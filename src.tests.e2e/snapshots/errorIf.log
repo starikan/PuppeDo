@@ -14,7 +14,7 @@ Error with IF (errorIf)
 [31m00:00:00.000 - error  |       runTest[0].blank[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mThis is error description | Description: Error with IF (errorIf)[0m
+[31m00:00:00.000 - error  [0m[31m Description: Error with IF (errorIf)[0m
 [31m00:00:00.000 - error   errorIf[0m
 [31m00:00:00.000 - error   (file:///\tests\errorIf.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m

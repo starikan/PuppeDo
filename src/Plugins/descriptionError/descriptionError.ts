@@ -1,46 +1,47 @@
-import { PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
 export type PluginDescriptionError = { descriptionError: string };
 
 const name = 'descriptionError';
 
-const plugin: PluginFunction<PluginDescriptionError> = () => {
+const plugin: PluginFunction<PluginDescriptionError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
-      beforeFunctions: ({ args }): void => {
+      beforeFunctions: ({ args, stepId }): void => {
         try {
           const newValue = runScriptInContext(
-            pluginInstance.getValue('descriptionError'),
+            pluginInstance.getValue(stepId, 'descriptionError'),
             args.allData,
-            pluginInstance.getValue('descriptionError'),
+            pluginInstance.getValue(stepId, 'descriptionError'),
           );
           if (newValue) {
-            pluginInstance.setValues({ descriptionError: String(newValue) });
+            pluginInstance.setValues(stepId, { descriptionError: String(newValue) });
           }
         } catch {
           // Nothng to do
         }
       },
 
-      afterResults: ({ results }): void => {
+      afterResults: ({ results, stepId }): void => {
         try {
           const newValue = runScriptInContext(
-            pluginInstance.getValue('descriptionError'),
+            pluginInstance.getValue(stepId, 'descriptionError'),
             results,
-            pluginInstance.getValue('descriptionError'),
+            pluginInstance.getValue(stepId, 'descriptionError'),
           );
           if (newValue) {
-            pluginInstance.setValues({ descriptionError: String(newValue) });
+            pluginInstance.setValues(stepId, { descriptionError: String(newValue) });
           }
         } catch {
           // Nothng to do
         }
       },
     },
+    plugins,
   });
 
   return pluginInstance;

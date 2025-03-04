@@ -9,12 +9,12 @@
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
                       |   🕝: 00.000 s. (runnerSwitch)
-[31m00:00:00.000 - error  |   [0m[31mDescription: Error when use not supported engine (blank)[0m
+[31m00:00:00.000 - error  |   [0m[31m Description: Error when use not supported engine (blank)[0m
 [31m00:00:00.000 - error  |    engineSupportsExistsButError[0m
 [31m00:00:00.000 - error  |       run[0].blank[0m
 [31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mDescription: No test description (engineSupportsExistsButError)[0m
+[31m00:00:00.000 - error  [0m[31m Description: No test description (engineSupportsExistsButError)[0m
 [31m00:00:00.000 - error   engineSupportsExistsButError[0m
 [31m00:00:00.000 - error   (file:///Plugins\engineSupports\engineSupports.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m🖼 screenshot: [screenshot_path][0m

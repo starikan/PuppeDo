@@ -12,7 +12,7 @@ import {
 } from 'playwright';
 
 import { ErrorType } from './Error';
-import { PluginModule, Plugins } from './PluginsCore';
+import { Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
@@ -264,7 +264,6 @@ export interface DataType extends DataYamlType {
 
 export type TestMetaSublingExchangeData = {
   disable?: boolean;
-  skipBecausePrevSubling?: boolean;
 };
 
 export type TestArgsType = {
@@ -354,6 +353,7 @@ export type TestExtendType = {
   levelIndent?: number;
   breadcrumbs?: string[];
   breadcrumbsDescriptions?: string[];
+  stepIdParent?: string;
   stepId?: string;
   source?: string;
   socket?: SocketType;
@@ -401,6 +401,68 @@ export type PluginDocumentation = {
 
 export type PluginList = Record<string, { plugin: PluginModule<unknown> | string; order?: number }>;
 
+export type PluginHooks = {
+  initValues?: ({
+    inputs,
+    envsId,
+    stepId,
+  }: {
+    inputs: Record<string, unknown>;
+    envsId?: string;
+    stepId?: string;
+  }) => void;
+  runLogic?: ({
+    inputs,
+    envsId,
+    stepId,
+  }: {
+    inputs: Record<string, unknown>;
+    envsId?: string;
+    stepId?: string;
+  }) => void;
+  resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
+  beforeFunctions?: ({ args, stepId }: { args: TestArgsType; stepId?: string }) => void;
+  afterResults?: ({
+    args,
+    results,
+    stepId,
+  }: {
+    args: TestArgsType;
+    results: Record<string, unknown>;
+    stepId?: string;
+  }) => void;
+  afterRepeat?: ({
+    args,
+    allData,
+    results,
+    stepId,
+  }: {
+    args: TestArgsType;
+    allData: Record<string, unknown>;
+    results: Record<string, unknown>;
+    stepId?: string;
+  }) => void;
+};
+
+export interface PluginType<T> {
+  name: string;
+  hook: (name: keyof PluginHooks) => (_: unknown) => void;
+  hooks: PluginHooks;
+  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
+  getValue?: (stepId: string, value?: keyof T) => T[keyof T];
+  getValues?: (stepId: string) => T;
+  setValues?: (stepId: string, values?: Partial<T>) => T;
+}
+
+export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
+
+export type PluginModule<T> = {
+  name: string;
+  plugin: PluginFunction<T>;
+  documentation: PluginDocumentation;
+  order?: number;
+};
+
 export type RunOptions = {
   closeProcess: boolean;
   stdOut: boolean;
@@ -418,12 +480,19 @@ export type TreeEntryDataType = TestExtendType & {
   timeEnd: Date;
 };
 
-export type TreeEntryType = Partial<TreeEntryDataType> & {
+export type TreeEntryType = Partial<TestExtendType> & {
   stepId: string;
-  steps?: TreeType;
-};
+  stepIdParent: string;
+  steps?: TreeEntryType[];
+  timeStart?: Date;
+  timeEnd?: Date;
+} & Record<string, unknown>;
 
-export type TreeType = TreeEntryType[];
+export type CreateStepParams = {
+  stepIdParent?: string | null;
+  stepId: string;
+  payload: Partial<TreeEntryDataType>;
+};
 
 export type DeepMergeable =
   | { [key: string]: DeepMergeable }

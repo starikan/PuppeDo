@@ -14,10 +14,10 @@ import {
 import { blankSocket } from './Helpers';
 
 export const pluginsListDefault: PluginList = {
-  skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 100 },
-  continueOnError: { plugin: 'continueOnError', order: 200 },
-  descriptionError: { plugin: 'descriptionError', order: 300 },
-  argsRedefine: { plugin: 'argsRedefine', order: 400 },
+  argsRedefine: { plugin: 'argsRedefine', order: 100 },
+  descriptionError: { plugin: 'descriptionError', order: 200 },
+  continueOnError: { plugin: 'continueOnError', order: 300 },
+  skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },
   engineSupports: { plugin: 'engineSupports', order: 500 },
 };
 
@@ -75,7 +75,6 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   description: '',
   descriptionExtend: [],
   disable: false,
-  engineSupports: [],
   errorIf: '',
   errorIfResult: '',
   frame: '',
@@ -95,10 +94,6 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   type: 'agent',
   while: '',
   breakParentIfResult: '',
-  argsRedefine: {},
-  continueOnError: false,
-  descriptionError: '',
-  skipSublingIfResult: '',
 };
 
 export const EXTEND_BLANK_AGENT = (): AgentData => {

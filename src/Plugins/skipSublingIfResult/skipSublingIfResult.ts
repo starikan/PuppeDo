@@ -1,14 +1,31 @@
-import { PluginDocumentation } from '../../global.d';
-import { Plugin, PluginFunction, PluginModule } from '../../PluginsCore';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { Plugin } from '../../PluginsCore';
+import { runScriptInContext } from '../../Test';
 
-export type PluginSkipSublingIfResult = { skipSublingIfResult: string };
+export type PluginSkipSublingIfResult = { skipSublingIfResult: string; skipMeBecausePrevSublingResults: boolean };
 
 const name = 'skipSublingIfResult';
 
-const plugin: PluginFunction<PluginSkipSublingIfResult> = () => {
+const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { skipSublingIfResult: '' },
+    defaultValues: { skipSublingIfResult: '', skipMeBecausePrevSublingResults: false },
+    propogation: { skipMeBecausePrevSublingResults: 'lastSubling' },
+    hooks: {
+      afterRepeat({ allData, results, stepId }): void {
+        const { skipSublingIfResult, skipMeBecausePrevSublingResults } = pluginInstance.getValues(stepId);
+
+        const skipMeBecausePrevSublingResultsResolved = skipSublingIfResult
+          ? runScriptInContext(skipSublingIfResult, { ...allData, ...results })
+          : skipMeBecausePrevSublingResults;
+
+        pluginInstance.setValues(stepId, {
+          skipSublingIfResult,
+          skipMeBecausePrevSublingResults: Boolean(skipMeBecausePrevSublingResultsResolved),
+        });
+      },
+    },
+    plugins,
   });
   return pluginInstance;
 };

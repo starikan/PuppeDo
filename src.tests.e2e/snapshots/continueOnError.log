@@ -1,65 +1,103 @@
 00:00:00.000 - timer  Test 'continueOnError' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
 continueOnError (continueOnError)
-   Skip me if I broken (case)
+   Skip me if I broken (blank)
       (blank)
-   (case)
+   (blank)
       (blank)
       I`m next (blank)
-   I am without errors (case)
-   Error me if I broken (case)
+   I am without errors (blank)
+   Continue even if my child is broken (blank)
+      (blank)
+   Error me if I broken (blank)
       (blank)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   [32m(continueOnError) continueOnError[0m
-00:00:00.000 - test   |   [47m[30m(case) Skip me if I broken[0m[0m
+00:00:00.000 - test   |   [32m(blank) Skip me if I broken[0m
 00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
-00:00:00.000 - warn   |   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1'[0m
-00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+[31m00:00:00.000 - error  |   |   |   [0m[31mTest stopped with expr errorIfResult = '1 === 1'[0m
+[31m00:00:00.000 - error  |   |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |   |       run[0].blank[0m
+[31m00:00:00.000 - error  |   |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |   |    [0m[31m=======================================================================================[0m
+[31m00:00:00.000 - error  |   |   [0m[31mThis is error description | Description: No test description (blank)[0m
+[31m00:00:00.000 - error  |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |       run[0].blank[0m
+[31m00:00:00.000 - error  |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
+00:00:00.000 - warn   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank[0m
+00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Second level loop: 3[0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Second level loop: 2[0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) I`m next[0m
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [41m[30m(case) TODO: Fill description[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
 00:00:00.000 - test   |   |   [32m(blank) Second level loop: 1[0m
-00:00:00.000 - warn   |   |   [33mContinue: Test stopped with expr errorIfResult = '$loop < 2'[0m
-00:00:00.000 - test   |   [47m[30m(case) I am without errors[0m[0m
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Error me if I broken[0m[0m
+[31m00:00:00.000 - error  |   |   |   [0m[31mTest stopped with expr errorIfResult = '$loop < 2'[0m
+[31m00:00:00.000 - error  |   |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |   |       run[1].blank[0m
+[31m00:00:00.000 - error  |   |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |   |    [0m[31m=======================================================================================[0m
+[31m00:00:00.000 - error  |   |   [0m[31m Description: No test description (blank)[0m
+[31m00:00:00.000 - error  |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |       run[1].blank[0m
+[31m00:00:00.000 - error  |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
+00:00:00.000 - warn   |   [33mContinue: Test stopped with expr errorIfResult = '$loop < 2' || error in test = blank[0m
+00:00:00.000 - test   |   [32m(blank) I am without errors[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Continue even if my child is broken[0m
 00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
 [31m00:00:00.000 - error  |   |   |   [0m[31mTest stopped with expr errorIfResult = '1 === 1'[0m
 [31m00:00:00.000 - error  |   |   |    continueOnError[0m
-[31m00:00:00.000 - error  |   |   |       runTest[3].case[0m
-[31m00:00:00.000 - error  |   |   |          runTest[0].blank[0m
+[31m00:00:00.000 - error  |   |   |       run[3].blank[0m
+[31m00:00:00.000 - error  |   |   |          run[0].blank[0m
 [31m00:00:00.000 - error  |   |   |    [0m[31m=======================================================================================[0m
 [31m00:00:00.000 - error  |   |   [0m[31mThis is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)[0m
 [31m00:00:00.000 - error  |   |    continueOnError[0m
-[31m00:00:00.000 - error  |   |       runTest[3].case[0m
-[31m00:00:00.000 - error  |   |          runTest[0].blank[0m
+[31m00:00:00.000 - error  |   |       run[3].blank[0m
+[31m00:00:00.000 - error  |   |          run[0].blank[0m
 [31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
-[31m00:00:00.000 - error  |   [0m[31mThis is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: Error me if I broken (case)[0m
+00:00:00.000 - warn   |   [33mContinue: Test stopped with expr errorIfResult = '1 === 1' || error in test = blank[0m
+00:00:00.000 - test   |   [32m(blank) Error me if I broken[0m
+00:00:00.000 - test   |   |   [41m[32m(blank) TODO: Fill description[0m[0m
+[31m00:00:00.000 - error  |   |   |   [0m[31mTest stopped with expr errorIfResult = '2 === 2'[0m
+[31m00:00:00.000 - error  |   |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |   |       run[4].blank[0m
+[31m00:00:00.000 - error  |   |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |   |    [0m[31m=======================================================================================[0m
+[31m00:00:00.000 - error  |   |   [0m[31mThis is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | Description: No test description (blank)[0m
+[31m00:00:00.000 - error  |   |    continueOnError[0m
+[31m00:00:00.000 - error  |   |       run[4].blank[0m
+[31m00:00:00.000 - error  |   |          run[0].blank[0m
+[31m00:00:00.000 - error  |   |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
+[31m00:00:00.000 - error  |   |    [0m[31m==========================================================================================[0m
+[31m00:00:00.000 - error  |   [0m[31m Description: Error me if I broken (blank)[0m
 [31m00:00:00.000 - error  |    continueOnError[0m
-[31m00:00:00.000 - error  |       runTest[3].case[0m
-[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
+[31m00:00:00.000 - error  |       run[4].blank[0m
+[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  [0m[31mDescription: continueOnError (continueOnError)[0m
+[31m00:00:00.000 - error  [0m[31m Description: continueOnError (continueOnError)[0m
 [31m00:00:00.000 - error   continueOnError[0m
 [31m00:00:00.000 - error   (file:///Plugins\continueOnError\continueOnError.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m
-[31m                      [0m[31mTest stopped with expr errorIfResult = '1 === 1'[0m
+[31m                      [0m[31mTest stopped with expr errorIfResult = '2 === 2'[0m
 [31m                      [0m[31merror in test = blank[0m
-[31m                      [0m[31merror in test = case[0m
+[31m                      [0m[31merror in test = blank[0m
 [31m                      [0m[31merror in test = continueOnError[0m
 [31m                      [0m[31m================================================================================================[0m
-[31m                      [0m[31mError: Test stopped with expr errorIfResult = '1 === 1'[0m
+[31m                      [0m[31mError: Test stopped with expr errorIfResult = '2 === 2'[0m
 [31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
 [31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues)[0m
 [31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
@@ -72,9 +110,9 @@ continueOnError (continueOnError)
 [31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-                      █ Message:     Test stopped with expr errorIfResult = '1 === 1'
-                      █ Error:       
-                      █ Path:        continueOnError -> runTest[3].case -> runTest[0].blank
+                      █ Message:     Test stopped with expr errorIfResult = '2 === 2'
+                      █ Error:       This is error description | This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False | This is error because PPD_CONTINUE_ON_ERROR_ENABLED is False
+                      █ Path:        continueOnError -> run[4].blank -> run[0].blank
                       █ Description:
                       █    continueOnError
                       █       Error me if I broken[0m
