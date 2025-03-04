@@ -3,7 +3,7 @@ description: descriptionErrorDynamic
 allowResults: ["apples"]
 data: { apples: 5 }
 runTest:
-  - case:
+  - blank:
       bindDescription: "`I get ${apples} apples`"
       descriptionError: "`Now I get only ${apples} apples`"
       result: { apples: 1 }

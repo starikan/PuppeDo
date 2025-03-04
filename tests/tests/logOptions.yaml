@@ -5,7 +5,7 @@ runTest:
   - blank:
       description: 'Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦'
 
-  - case:
+  - blank:
       description: Check logOptions.logThis and logOptions.logChildren
       runTest:
         - blank:
@@ -121,7 +121,7 @@ runTest:
                   description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
                   logOptions: { logThis: false, logChildren: true, backgroundColor: red }
 
-  - case:
+  - blank:
       description: Check logOptions visible into loop with nested blocks
       runTest:
         - blank:
@@ -158,7 +158,7 @@ runTest:
                               description: 'I am no logOptions visible block and I am NOT🔴 visible'
                               logOptions: { backgroundColor: red }
 
-  - case:
+  - blank:
       description: "logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white"
       runTest:
         - blank:
@@ -520,7 +520,7 @@ runTest:
             description: 'Text: white + Background: cyan'
             logOptions: { textColor: white, backgroundColor: cyan }
 
-        - case:
+        - blank:
             description: You can add to backgroundColor 'Background' word like 'whiteBackground'
             runTest:
               - blank:
@@ -556,7 +556,7 @@ runTest:
                   logOptions: { textColor: black, backgroundColor: whiteBackground }
 
 
-  - case:
+  - blank:
       description: Redefine colors in nested blocks
       runTest:
         - blank:

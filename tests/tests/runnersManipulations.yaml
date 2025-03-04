@@ -1,7 +1,7 @@
 name: runnersManipulations
 description: Some runners manipulations
 runTest:
-  - case:
+  - blank:
       description: Open 2 runners and close them
       runTest:
         - runnerSwitch:
@@ -31,7 +31,7 @@ runTest:
         - runnerClose:
             data: { runnerName: mainRunner }
 
-  - case:
+  - blank:
       description: Blank Runner
       runTest:
         - runnerSwitch:

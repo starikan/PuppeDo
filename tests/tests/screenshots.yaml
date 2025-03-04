@@ -11,13 +11,13 @@ beforeTest:
       bD: { url: baseUrl }
 
 runTest:
-  - case:
+  - blank:
       description: No screenshot
       runTest:
         - checkSelector:
             bindSelectors: { selector: mainButton }
 
-  - case:
+  - blank:
       description: Only one element
       runTest:
         - checkSelector:
@@ -25,7 +25,7 @@ runTest:
             logOptions:
               screenshot: true
 
-  - case:
+  - blank:
       description: Named element screenshot
       runTest:
         - checkSelector:
@@ -34,7 +34,7 @@ runTest:
               screenshot: true
               screenshotName: Screenshot name
 
-  - case:
+  - blank:
       description: 3 elements
       runTest:
         - checkSelector:
@@ -52,7 +52,7 @@ runTest:
             logOptions:
               screenshot: true
 
-  - case:
+  - blank:
       description: Fullscreen
       runTest:
         - checkSelector:
@@ -60,7 +60,7 @@ runTest:
             logOptions:
               fullpage: true
 
-  - case:
+  - blank:
       description: Fullscreen named screenshot
       runTest:
         - checkSelector:
@@ -69,7 +69,7 @@ runTest:
               fullpage: true
               fullpageName: Full name
 
-  - case:
+  - blank:
       description: Fullscreen + Element
       runTest:
         - checkSelector:

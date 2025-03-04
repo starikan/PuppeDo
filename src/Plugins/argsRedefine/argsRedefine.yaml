@@ -4,13 +4,13 @@ argsRedefine:
   PPD_LOG_EXTEND: false
 
 runTest:
-  - case:
+  - blank:
       description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
       runTest:
         - blank:
             description: Because PPD_LOG_EXTEND true globaly - show timer ✔️
 
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false
@@ -19,7 +19,7 @@ runTest:
             description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
             argsRedefine:
               PPD_LOG_TIMER_SHOW: false
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false
@@ -29,7 +29,7 @@ runTest:
             argsRedefine:
               PPD_LOG_TIMER_SHOW: true
 
-  - case:
+  - blank:
       description: Redefine PPD_LOG_TIMER_SHOW to false for parent and child - hide timer ❌
       argsRedefine:
         PPD_LOG_TIMER_SHOW: false

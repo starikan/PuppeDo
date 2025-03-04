@@ -2,7 +2,7 @@
 00:00:00.000 - env    [34m
 logOptions test (logOptions)
    Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦 (blank)
-   Check logOptions.logThis and logOptions.logChildren (case)
+   Check logOptions.logThis and logOptions.logChildren (blank)
       [1] I am no logOptions block and I am visible (blank)
       [2] I am '🧑 = ✔️' and I am visible (blank)
       [3] I am '👨‍👦‍👦 = ✔️' and I am visible (blank)
@@ -32,7 +32,7 @@ logOptions test (logOptions)
          [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible (blank)
          [3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
          [-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible (blank)
-   Check logOptions visible into loop with nested blocks (case)
+   Check logOptions visible into loop with nested blocks (blank)
       I am '👨‍👦‍👦 = ❌' parent block and I am visible (blank)
          I am no logOptions visible block and I am NOT🔴 visible (loop)
             I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible (blank)
@@ -41,7 +41,7 @@ logOptions test (logOptions)
          I am no logOptions visible block and I am NOT🔴 visible (loop)
             I am '🧑 = ✔️' and I am visible (blank)
                I am no logOptions visible block and I am NOT🔴 visible (blank)
-   logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white (case)
+   logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white (blank)
       Text: none + Background: none (blank)
       Text: sane + Background: none (blank)
       Text: black + Background: none (blank)
@@ -132,7 +132,7 @@ logOptions test (logOptions)
       Text: magenta + Background: cyan (blank)
       Text: cyan + Background: cyan (blank)
       Text: white + Background: cyan (blank)
-      You can add to backgroundColor 'Background' word like 'whiteBackground' (case)
+      You can add to backgroundColor 'Background' word like 'whiteBackground' (blank)
          Background: blackBackground (blank)
          Background: redBackground (blank)
          Background: greenBackground (blank)
@@ -141,7 +141,7 @@ logOptions test (logOptions)
          Background: magentaBackground (blank)
          Background: cyanBackground (blank)
          Background: whiteBackground (blank)
-   Redefine colors in nested blocks (case)
+   Redefine colors in nested blocks (blank)
       Text: white + Background: green (blank)
          I am not colored (blank)
          Text: red + Background: white (loop)
@@ -152,7 +152,7 @@ logOptions test (logOptions)
 00:00:00.000 - test   [32m(logOptions) logOptions test[0m
 00:00:00.000 - test   |   [32m(blank) Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦[0m
                       |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   [47m[30m(case) Check logOptions.logThis and logOptions.logChildren[0m[0m
+00:00:00.000 - test   |   [32m(blank) Check logOptions.logThis and logOptions.logChildren[0m
 00:00:00.000 - test   |   |   [32m(blank) [1] I am no logOptions block and I am visible[0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) [2] I am '🧑 = ✔️' and I am visible[0m
@@ -187,8 +187,8 @@ logOptions test (logOptions)
 00:00:00.000 - test   |   |   |   [32m(blank) [3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
                       |   |   |   🕝: 00.000 s. (blank)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Check logOptions visible into loop with nested blocks[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Check logOptions visible into loop with nested blocks[0m
 00:00:00.000 - test   |   |   [32m(blank) I am '👨‍👦‍👦 = ❌' parent block and I am visible[0m
 00:00:00.000 - test   |   |   |   |   [32m(blank) I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible[0m
                       |   |   |   |   🕝: 00.000 s. (blank)
@@ -201,8 +201,8 @@ logOptions test (logOptions)
 00:00:00.000 - test   |   |   |   |   [32m(blank) I am '🧑 = ✔️' and I am visible[0m
                       |   |   |   |   🕝: 00.000 s. (blank)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white[0m
 00:00:00.000 - test   |   |   [32m(blank) Text: none + Background: none[0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [32m(blank) Text: sane + Background: none[0m
@@ -383,7 +383,7 @@ logOptions test (logOptions)
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [46m[37m(blank) Text: white + Background: cyan[0m[0m
                       |   |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   |   [47m[30m(case) You can add to backgroundColor 'Background' word like 'whiteBackground'[0m[0m
+00:00:00.000 - test   |   |   [32m(blank) You can add to backgroundColor 'Background' word like 'whiteBackground'[0m
 00:00:00.000 - test   |   |   |   [40m[32m(blank) Background: blackBackground[0m[0m
                       |   |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   |   [41m[30m(blank) Background: redBackground[0m[0m
@@ -400,9 +400,9 @@ logOptions test (logOptions)
                       |   |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   |   [47m[30m(blank) Background: whiteBackground[0m[0m
                       |   |   |   🕝: 00.000 s. (blank)
-                      |   |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Redefine colors in nested blocks[0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Redefine colors in nested blocks[0m
 00:00:00.000 - test   |   |   [42m[37m(blank) Text: white + Background: green[0m[0m
 00:00:00.000 - test   |   |   |   [32m(blank) I am not colored[0m
                       |   |   |   🕝: 00.000 s. (blank)
@@ -419,7 +419,7 @@ logOptions test (logOptions)
                       |   |   |   |   🕝: 00.000 s. (blank)
                       |   |   |   🕝: 00.000 s. (loop)
                       |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (logOptions)
 00:00:00.000 - timer  Test 'logOptions' time 🕝: 00.000 s.
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.

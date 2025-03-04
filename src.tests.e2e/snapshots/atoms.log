@@ -3,7 +3,7 @@
 Test all Atoms (atoms)
    (initData)
    [ENV_SWITCH] First of all you need chose environment. (runnerSwitch)
-   Blank Atoms (case)
+   Blank Atoms (blank)
       [BLANK] (blank)
       [CASE] (case)
       [IF] (if)
@@ -11,9 +11,9 @@ Test all Atoms (atoms)
       [LOOP] (loop)
       [TEST] (test)
       [TODO] (todo)
-   Main Atoms (case)
+   Main Atoms (blank)
       [GO_TO] (goTo)
-      TODO: Puppeteer click NB!== [CLICK_SELECTOR] (case)
+      TODO: Puppeteer click NB!== [CLICK_SELECTOR] (blank)
          Simple Click on link (clickSelector)
             Wait selector (waitForSelector)
             (blank)
@@ -22,9 +22,9 @@ Test all Atoms (atoms)
             Wait selector (waitForSelector)
             (blank)
             Click (clickSelectorRaw)
-      [GET_ATTRIBUTES] (case)
+      [GET_ATTRIBUTES] (blank)
          Simple geting atribute from selector (getAttribute)
-      [GET_TEXT] (case)
+      [GET_TEXT] (blank)
          Simple geting text from selector (getText)
          Simple geting blank text from selector (getText)
    CDP Atoms (todo)
@@ -42,7 +42,7 @@ Test all Atoms (atoms)
 00:00:00.000 - test   |   [32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
                       |   🕝: 00.000 s. (runnerSwitch)
-00:00:00.000 - test   |   [47m[30m(case) Blank Atoms[0m[0m
+00:00:00.000 - test   |   [32m(blank) Blank Atoms[0m
 00:00:00.000 - test   |   |   [32m(blank) [BLANK][0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [47m[30m(case) [CASE][0m[0m
@@ -57,31 +57,31 @@ Test all Atoms (atoms)
                       |   |   🕝: 00.000 s. (test)
 00:00:00.000 - test   |   |   [41m[37m(todo) [TODO][0m[0m
                       |   |   🕝: 00.000 s. (todo)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Main Atoms[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Main Atoms[0m
 00:00:00.000 - test   |   |   [32m(goTo) [GO_TO][0m
 00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
                       |   |   🕝: 00.000 s. (goTo)
-00:00:00.000 - test   |   |   [47m[30m(case) [CLICK_SELECTOR][0m[0m
+00:00:00.000 - test   |   |   [32m(blank) [CLICK_SELECTOR][0m
 00:00:00.000 - test   |   |   |   [32m(clickSelector) Simple Click on link[0m
                       |   |   |   🕝: 00.000 s. (clickSelector)
 00:00:00.000 - test   |   |   |   [32m(clickSelector) Link Click after wait it (auto waitForSelector include)[0m
                       |   |   |   🕝: 00.000 s. (clickSelector)
-                      |   |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   |   [47m[30m(case) [GET_ATTRIBUTES][0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) [GET_ATTRIBUTES][0m
 00:00:00.000 - test   |   |   |   [32m(getAttribute) Simple geting atribute from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'
                       |   |   |   🕝: 00.000 s. (getAttribute)
-                      |   |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   |   [47m[30m(case) [GET_TEXT][0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) [GET_TEXT][0m
 00:00:00.000 - test   |   |   |   [32m(getText) Simple geting text from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get text: 'Text' from selector: '#tag-with-text'
                       |   |   |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   |   |   [32m(getText) Simple geting blank text from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get text: '' from selector: '#span-with-attr'
                       |   |   |   🕝: 00.000 s. (getText)
-                      |   |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [41m[37m(todo) CDP Atoms[0m[0m
                       |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   [41m[37m(todo) Checks Atoms[0m[0m
@@ -104,7 +104,7 @@ Test all Atoms (atoms)
 00:00:00.000 - test   |   [32m(runnerSwitch) [ENV_SWITCH] First of all you need chose environment.[0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunnerPuppeteer'
                       |   🕝: 00.000 s. (runnerSwitch)
-00:00:00.000 - test   |   [47m[30m(case) Blank Atoms[0m[0m
+00:00:00.000 - test   |   [32m(blank) Blank Atoms[0m
 00:00:00.000 - test   |   |   [32m(blank) [BLANK][0m
                       |   |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   |   [47m[30m(case) [CASE][0m[0m
@@ -119,26 +119,26 @@ Test all Atoms (atoms)
                       |   |   🕝: 00.000 s. (test)
 00:00:00.000 - test   |   |   [41m[37m(todo) [TODO][0m[0m
                       |   |   🕝: 00.000 s. (todo)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Main Atoms[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Main Atoms[0m
 00:00:00.000 - test   |   |   [32m(goTo) [GO_TO][0m
 00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
                       |   |   🕝: 00.000 s. (goTo)
 00:00:00.000 - info   |   |   [36mSkip with IF expr 'currentRunner !== 'mainRunnerPuppeteer'' === 'false'[0m
-00:00:00.000 - test   |   |   [47m[30m(case) [GET_ATTRIBUTES][0m[0m
+00:00:00.000 - test   |   |   [32m(blank) [GET_ATTRIBUTES][0m
 00:00:00.000 - test   |   |   |   [32m(getAttribute) Simple geting atribute from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get attribute: 'data-test' from selector: '#span-with-attr' with result: 'attribute'
                       |   |   |   🕝: 00.000 s. (getAttribute)
-                      |   |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   |   [47m[30m(case) [GET_TEXT][0m[0m
+                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   |   [32m(blank) [GET_TEXT][0m
 00:00:00.000 - test   |   |   |   [32m(getText) Simple geting text from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get text: 'Text' from selector: '#tag-with-text'
                       |   |   |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   |   |   [32m(getText) Simple geting blank text from selector[0m
 00:00:00.000 - raw    |   |   |   |   Get text: '' from selector: '#span-with-attr'
                       |   |   |   🕝: 00.000 s. (getText)
-                      |   |   🕝: 00.000 s. (case)
-                      |   🕝: 00.000 s. (case)
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [41m[37m(todo) CDP Atoms[0m[0m
                       |   🕝: 00.000 s. (todo)
 00:00:00.000 - test   |   [41m[37m(todo) Checks Atoms[0m[0m

@@ -1,7 +1,7 @@
 name: runnerRunClose
 description: Some runners manipulations
 runTest:
-  - case:
+  - blank:
       description: Open 2 env and close them
       runTest:
         - runnerSwitch:

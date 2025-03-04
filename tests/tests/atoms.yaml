@@ -10,7 +10,7 @@ runTest:
       description: '[ENV_SWITCH] First of all you need chose environment.'
       bindData: { runnerName: currentRunner }
 
-  - case:
+  - blank:
       description: Blank Atoms
       runTest:
         - blank:
@@ -34,14 +34,14 @@ runTest:
         - todo:
             description: '[TODO]'
 
-  - case:
+  - blank:
       description: Main Atoms
       runTest:
         - goTo:
             description: '[GO_TO]'
             bindData: { url: baseUrl }
 
-        - case:
+        - blank:
             description: '[CLICK_SELECTOR]'
             todo: Puppeteer click NB!
             if: "currentRunner !== 'mainRunnerPuppeteer'"
@@ -54,7 +54,7 @@ runTest:
                   description: Link Click after wait it (auto waitForSelector include)
                   bindSelectors: { selector: mainLinkChild }
 
-        - case:
+        - blank:
             description: '[GET_ATTRIBUTES]'
             runTest:
               - getAttribute:
@@ -63,7 +63,7 @@ runTest:
                   selectors: { selector: '#span-with-attr' }
                   errorIfResult: attributeValue !== 'attribute'
 
-        - case:
+        - blank:
             description: '[GET_TEXT]'
             runTest:
               - getText:

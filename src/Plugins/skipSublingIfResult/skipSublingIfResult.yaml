@@ -1,7 +1,7 @@
 name: skipSublingIfResult
 description: "skipSublingIfResult"
 runTest:
-  - case:
+  - blank:
       description: "Simple skipSublingIfResult"
       runTest:
         - blank:
@@ -17,7 +17,7 @@ runTest:
         - blank:
             description: "❌ I`m skiped too"
 
-  - case:
+  - blank:
       description: "Loop with skipSublingIfResult"
       repeat: 3
       runTest:
@@ -34,7 +34,7 @@ runTest:
         - blank:
             description: "I`m next too (skiped in #2 repeate)"
 
-  - case:
+  - blank:
       description: "If true with skipSublingIfResult"
       runTest:
         - blank:
@@ -45,7 +45,7 @@ runTest:
         - blank:
             description: "❌ I`m skiped"
 
-  - case:
+  - blank:
       description: "If false with skipSublingIfResult"
       runTest:
         - blank:
@@ -56,5 +56,5 @@ runTest:
         - blank:
             description: "✔️ I`m not skiped"
 
-  - case:
+  - blank:
       description: ✔️ I`m not skiped. On higher level.

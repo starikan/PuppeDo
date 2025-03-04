@@ -1,7 +1,7 @@
 name: descriptionErrorNested
 description: descriptionErrorNested
 runTest:
-  - case:
+  - blank:
       description: "description 0"
       descriptionError: "descriptionError 0"
       runTest:

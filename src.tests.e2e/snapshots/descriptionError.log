@@ -1,25 +1,25 @@
 00:00:00.000 - timer  Test 'descriptionError' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
 descriptionError (descriptionError)
-   Simple descriptionError (case)
+   Simple descriptionError (blank)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   [32m(descriptionError) descriptionError[0m
 [31m00:00:00.000 - error  |   [0m[31mTest stopped with expr errorIf = 'true'[0m
 [31m00:00:00.000 - error  |    descriptionError[0m
-[31m00:00:00.000 - error  |       runTest[0].case[0m
+[31m00:00:00.000 - error  |       runTest[0].blank[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
-[31m00:00:00.000 - error  |   [0m[31mSimple descriptionError | Description: Simple descriptionError (case)[0m
+[31m00:00:00.000 - error  |   [0m[31mSimple descriptionError | Description: Simple descriptionError (blank)[0m
 [31m00:00:00.000 - error  |    descriptionError[0m
-[31m00:00:00.000 - error  |       runTest[0].case[0m
-[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\case.yaml)[0m
+[31m00:00:00.000 - error  |       runTest[0].blank[0m
+[31m00:00:00.000 - error  |    (file:///\@puppedo\atoms\src\blank\blank.yaml)[0m
 [31m00:00:00.000 - error  |    [0m[31m=============================================================================================[0m
 [31m00:00:00.000 - error  [0m[31m Description: descriptionError (descriptionError)[0m
 [31m00:00:00.000 - error   descriptionError[0m
 [31m00:00:00.000 - error   (file:///Plugins\descriptionError\descriptionError.yaml)[0m
 [31m00:00:00.000 - error   [0m[31m================================================================================================[0m
 [31m                      [0m[31mTest stopped with expr errorIf = 'true'[0m
-[31m                      [0m[31merror in test = case[0m
+[31m                      [0m[31merror in test = blank[0m
 [31m                      [0m[31merror in test = descriptionError[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Test stopped with expr errorIf = 'true'[0m
@@ -37,6 +37,6 @@ descriptionError (descriptionError)
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
                       █ Error:       Simple descriptionError
-                      █ Path:        descriptionError -> runTest[0].case
+                      █ Path:        descriptionError -> runTest[0].blank
                       █ Description:
                       █    descriptionError[0m

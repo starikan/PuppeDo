@@ -1,7 +1,7 @@
 00:00:00.000 - timer  Test 'runnersManipulations' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
 Some runners manipulations (runnersManipulations)
-   Open 2 runners and close them (case)
+   Open 2 runners and close them (blank)
       (runnerSwitch)
       (runnerSwitch)
       (runnerSwitch)
@@ -11,13 +11,13 @@ Some runners manipulations (runnersManipulations)
       (runnerSwitch)
       (runnerClose)
       (runnerClose)
-   Blank Runner (case)
+   Blank Runner (blank)
       (runnerSwitch)
       (runnerClose)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   [32m(runnersManipulations) Some runners manipulations[0m
-00:00:00.000 - test   |   [47m[30m(case) Open 2 runners and close them[0m[0m
+00:00:00.000 - test   |   [32m(blank) Open 2 runners and close them[0m
 00:00:00.000 - test   |   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
 00:00:00.000 - raw    |   |   |   Runner switch on 'mainRunner'
                       |   |   🕝: 00.000 s. (runnerSwitch)
@@ -45,13 +45,13 @@ Some runners manipulations (runnersManipulations)
 00:00:00.000 - test   |   |   [32m(runnerClose) Close runner: 'mainRunner'[0m
 00:00:00.000 - raw    |   |   |   Runner 'mainRunner' closed.
                       |   |   🕝: 00.000 s. (runnerClose)
-                      |   🕝: 00.000 s. (case)
-00:00:00.000 - test   |   [47m[30m(case) Blank Runner[0m[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Blank Runner[0m
 00:00:00.000 - test   |   |   [41m[32m(runnerSwitch) TODO: Fill description[0m[0m
                       |   |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   |   [41m[32m(runnerClose) TODO: Fill description[0m[0m
                       |   |   🕝: 00.000 s. (runnerClose)
-                      |   🕝: 00.000 s. (case)
+                      |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (runnersManipulations)
 00:00:00.000 - timer  Test 'runnersManipulations' time 🕝: 00.000 s.
 00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
