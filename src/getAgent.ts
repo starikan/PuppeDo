@@ -125,14 +125,6 @@ const stepResolver = (
 
     const step = new Test(agentJson);
 
-    if (parentStepMetaCollector?.stepId !== args?.stepId) {
-      // it`s a magic and I don`t know why is this works, but it fix steps Id hierarchy
-      if (parentStepMetaCollector?.repeat !== args?.repeat) {
-        parentStepMetaCollector.stepId = args.stepId;
-      }
-      parentStepMetaCollector.resultsFromPrevSubling = {};
-    }
-
     const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
       'options',
       'data',
