@@ -642,7 +642,7 @@ export class Test {
         { ...selectorsLocal, ...dataLocal, ...results },
       );
 
-      this.plugins.hook('afterResults', { args, results: localResults, stepId: this.agent.stepId });
+      this.plugins.hook('afterResults', { inputs: localResults, stepId: this.agent.stepId });
 
       // ERROR
       if (this.agent.errorIfResult) {
@@ -701,7 +701,7 @@ export class Test {
         localResults = { ...localResults, ...repeatResult };
       }
 
-      this.plugins.hook('afterRepeat', { args, allData, results: localResults, stepId: this.agent.stepId });
+      this.plugins.hook('afterRepeat', { inputs: { ...allData, ...localResults }, stepId: this.agent.stepId });
 
       if (this.agent.breakParentIfResult) {
         const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {

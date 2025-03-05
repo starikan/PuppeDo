@@ -16,26 +16,11 @@ const plugin: PluginFunction<PluginDescriptionError> = (plugins) => {
     hooks: {
       initValues: setValue,
       runLogic: setValue,
-      beforeFunctions: ({ args, stepId }): void => {
+      afterResults: ({ inputs, stepId }): void => {
         try {
           const newValue = runScriptInContext(
             pluginInstance.getValue(stepId, 'descriptionError'),
-            args.allData,
-            pluginInstance.getValue(stepId, 'descriptionError'),
-          );
-          if (newValue) {
-            pluginInstance.setValues(stepId, { descriptionError: String(newValue) });
-          }
-        } catch {
-          // Nothng to do
-        }
-      },
-
-      afterResults: ({ results, stepId }): void => {
-        try {
-          const newValue = runScriptInContext(
-            pluginInstance.getValue(stepId, 'descriptionError'),
-            results,
+            inputs,
             pluginInstance.getValue(stepId, 'descriptionError'),
           );
           if (newValue) {

@@ -17,11 +17,11 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
     hooks: {
       initValues: setValue,
       runLogic: setValue,
-      afterRepeat({ allData, results, stepId }): void {
+      afterRepeat({ inputs, stepId }): void {
         const { skipSublingIfResult, skipMeBecausePrevSublingResults } = pluginInstance.getValues(stepId);
 
         const skipMeBecausePrevSublingResultsResolved = skipSublingIfResult
-          ? runScriptInContext(skipSublingIfResult, { ...allData, ...results })
+          ? runScriptInContext(skipSublingIfResult, inputs)
           : skipMeBecausePrevSublingResults;
 
         pluginInstance.setValues(stepId, {

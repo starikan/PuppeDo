@@ -397,46 +397,12 @@ export type PluginDocumentation = {
 export type PluginList = Record<string, { plugin: PluginModule<unknown> | string; order?: number }>;
 
 export type PluginHooks = {
-  initValues?: ({
-    inputs,
-    envsId,
-    stepId,
-  }: {
-    inputs: Record<string, unknown>;
-    envsId?: string;
-    stepId?: string;
-  }) => void;
-  runLogic?: ({
-    inputs,
-    envsId,
-    stepId,
-  }: {
-    inputs: Record<string, unknown>;
-    envsId?: string;
-    stepId?: string;
-  }) => void;
+  initValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
+  runLogic?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   beforeFunctions?: ({ args, stepId }: { args: TestArgsType; stepId?: string }) => void;
-  afterResults?: ({
-    args,
-    results,
-    stepId,
-  }: {
-    args: TestArgsType;
-    results: Record<string, unknown>;
-    stepId?: string;
-  }) => void;
-  afterRepeat?: ({
-    args,
-    allData,
-    results,
-    stepId,
-  }: {
-    args: TestArgsType;
-    allData: Record<string, unknown>;
-    results: Record<string, unknown>;
-    stepId?: string;
-  }) => void;
+  afterResults?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
+  afterRepeat?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
 };
 
 export interface PluginType<T> {

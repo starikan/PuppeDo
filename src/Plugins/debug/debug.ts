@@ -2,7 +2,7 @@ import { PluginDocumentation, PluginFunction, PluginModule } from '../../global'
 import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
-function setDebugValue(
+function setValue(
   this: Plugin<PluginDebug>,
   { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
 ): void {
@@ -19,8 +19,8 @@ const plugin: PluginFunction<PluginDebug> = (plugins) => {
     propogation: { debug: 'lastParent' },
     plugins,
     hooks: {
-      initValues: setDebugValue,
-      runLogic: setDebugValue,
+      initValues: setValue,
+      runLogic: setValue,
     },
   });
   return pluginInstance;
