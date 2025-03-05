@@ -1,62 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        display: grid;
+        padding: 10px;
+        margin: 0;
+        background: rgb(2, 0, 36);
+        background: linear-gradient(
+          90deg,
+          rgba(2, 0, 36, 1) 0%,
+          rgba(168, 167, 252, 0.28335084033613445) 0%,
+          rgba(6, 5, 86, 1) 0%,
+          rgba(9, 9, 121, 1) 0%,
+          rgba(54, 200, 238, 0.47942927170868344) 0%,
+          rgba(1, 181, 234, 0.7987570028011204) 100%,
+          rgba(0, 212, 255, 1) 100%
+        );
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      display: grid;
-      padding: 10px;
-      margin: 0;
-      background: rgb(2, 0, 36);
-      background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(168, 167, 252, 0.28335084033613445) 0%, rgba(6, 5, 86, 1) 0%, rgba(9, 9, 121, 1) 0%, rgba(54, 200, 238, 0.47942927170868344) 0%, rgba(1, 181, 234, 0.7987570028011204) 100%, rgba(0, 212, 255, 1) 100%);
-    }
+      * {
+        margin: 0;
+        padding: 0;
+      }
 
-    * {
-      margin: 0;
-      padding: 0;
-    }
+      .container {
+        width: 50%;
+        display: grid;
+        justify-self: center;
+        justify-items: center;
+        row-gap: 10px;
+      }
 
-    .container {
-      width: 50%;
-      display: grid;
-      justify-self: center;
-      justify-items: center;
-      row-gap: 10px;
-    }
+      .hide {
+        display: none;
+      }
+    </style>
+    <title>Test Document</title>
+  </head>
 
-    .hide {
-      display: none;
-    }
+  <body>
+    <div class="container">
+      <p id="simple-text">Simple Text</p>
+      <a id="main-link">Main Link</a>
+      <a id="child-link" class="hide">Child Link</a>
+      <button id="main-button">Main Button</button>
+      <input id="main-input" />
+      <span id="span-with-attr" data-test="attribute"></span>
+      <p id="tag-with-text">Text</p>
 
-  </style>
-  <title>Test Document</title>
-</head>
+      <iframe id="named-frame" name="namedFrame" width="300" height="200" src="frame.html"></iframe>
+    </div>
+    <script>
+      document.getElementById('main-link').addEventListener('click', () => {
+        setTimeout(() => {
+          document.getElementById('child-link').classList.remove('hide');
+        }, 200);
+      });
 
-<body>
-  <div class="container">
-    <p>Simple Text</p>
-    <a id="main-link">Main Link</a>
-    <a id="child-link"
-       class="hide">Child Link</a>
-    <button id="main-button">Main Button</button>
-    <input id="main-input">
-    <span id="span-with-attr" data-test='attribute'></span>
-    <p id="tag-with-text">Text</p>
-  </div>
-  <script>
-    document.getElementById('main-link').addEventListener('click', () => {
-      setTimeout(() => {
-        document.getElementById('child-link').classList.remove('hide');
-      }, 200);
-    })
-
-    document.getElementById('child-link').addEventListener('click', () => {
-      document.getElementById('child-link').classList.add('hide');
-    })
-  </script>
-</body>
-
+      document.getElementById('child-link').addEventListener('click', () => {
+        document.getElementById('child-link').classList.add('hide');
+      });
+    </script>
+  </body>
 </html>

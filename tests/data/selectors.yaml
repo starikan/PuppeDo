@@ -9,3 +9,5 @@ data:
   mainLink: '#main-link'
   mainLinkChild: '#child-link'
   mainButton: '#main-button'
+  mainText: '#simple-text'
+  frameText: '#frame-text'
