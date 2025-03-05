@@ -1,4 +1,4 @@
-import { CreateStepParams, TreeEntryType } from './global.d';
+import { CreateStepParams, TreeEntryType } from './global';
 
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."
@@ -9,7 +9,7 @@ The class has two public methods:
 is no stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array.
 * `updateStep`: It takes a stepId and a payload, finds the node in the tree with that stepId, and updates it with the
 payload */
-export class TestTree {
+export class AgentTree {
   private tree: TreeEntryType[] = [];
 
   private errorRoute: TreeEntryType[] = [];

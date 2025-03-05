@@ -16,7 +16,7 @@ import { Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
-import { TestTree } from './TestTree';
+import { AgentTree } from './AgentTree';
 import { PliginsFields } from './Plugins';
 
 // ================ BROWSERS ====================
@@ -412,7 +412,7 @@ export interface PluginType<T> {
   name: string;
   defaultValues: T;
   plugins: Plugins;
-  agentTree: TestTree;
+  agentTree: AgentTree;
   hook: (name: keyof PluginHooks) => (_: unknown) => void;
   hooks: PluginHooks;
   propogation: PluginPropogations<T>;

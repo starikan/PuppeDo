@@ -23,7 +23,7 @@ import { Plugins } from './PluginsCore';
 import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine, PluginDebug } from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
-import { TestTree } from './TestTree';
+import { AgentTree } from './AgentTree';
 import globalExportPPD from './index';
 
 /**
@@ -299,7 +299,7 @@ export class Test {
 
   logger: Log;
 
-  agentTree: TestTree;
+  agentTree: AgentTree;
 
   constructor(initValues: TestExtendType) {
     const { testTree, plugins } = new Environment().getEnvInstance(initValues.envsId);

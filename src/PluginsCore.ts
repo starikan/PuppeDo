@@ -13,7 +13,7 @@ import {
 import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
-import { TestTree } from './TestTree';
+import { AgentTree } from './AgentTree';
 
 /**
  * A class for managing plugins.
@@ -179,9 +179,9 @@ export class Plugins {
 
   envsId: string;
 
-  agentTree: TestTree;
+  agentTree: AgentTree;
 
-  constructor(envsId: string, agentTree: TestTree) {
+  constructor(envsId: string, agentTree: AgentTree) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
 
     this.envsId = envsId;
@@ -220,7 +220,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   plugins: Plugins;
 
-  agentTree: TestTree;
+  agentTree: AgentTree;
 
   hooks: PluginHooks = {};
 

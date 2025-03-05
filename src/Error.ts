@@ -6,7 +6,7 @@ import { Environment, Runner } from './Environment';
 import { AgentData, LogInputType, SocketType } from './global.d';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 import { Plugins } from './PluginsCore';
-import { TestTree } from './TestTree';
+import { AgentTree } from './AgentTree';
 
 export interface ErrorType extends Error {
   envsId: string;
@@ -59,7 +59,7 @@ export class TestError extends AbstractError {
   breadcrumbs: string[];
   breadcrumbsDescriptions: string[];
   plugins: Plugins;
-  testTree: TestTree;
+  testTree: AgentTree;
 
   // TODO: избавиться от test тут
   constructor({ logger, parentError, agent, plugins }: ErrorTestConstructor) {
