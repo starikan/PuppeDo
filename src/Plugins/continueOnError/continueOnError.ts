@@ -1,11 +1,19 @@
 import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
-
 import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
 
-export type PluginContinueOnError = { continueOnError: boolean };
+function setValue(
+  this: Plugin<PluginContinueOnError>,
+  { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
+): void {
+  const { PPD_CONTINUE_ON_ERROR_ENABLED } = this.plugins
+    .getPlugins<PluginArgsRedefine>('argsRedefine')
+    .getValue(stepId, 'argsRedefine');
 
-const name = 'continueOnError';
+  this.setValues(stepId, {
+    continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED && ((inputs.continueOnError as boolean) || false),
+  });
+}
 
 const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
   const pluginInstance = new Plugin({
@@ -13,31 +21,18 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
     defaultValues: { continueOnError: false },
     propogation: { continueOnError: 'lastParent' },
     hooks: {
-      initValues({ inputs, stepId }): void {
-        const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
-          .getPlugins<PluginArgsRedefine>('argsRedefine')
-          .getValue(stepId, 'argsRedefine');
-
-        pluginInstance.setValues(stepId, {
-          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED ? ((inputs.continueOnError as boolean) ?? false) : false,
-        });
-      },
-
-      resolveValues: ({ inputs, stepId }): void => {
-        const { PPD_CONTINUE_ON_ERROR_ENABLED } = plugins
-          .getPlugins<PluginArgsRedefine>('argsRedefine')
-          .getValue(stepId, 'argsRedefine');
-
-        pluginInstance.setValues(stepId, {
-          continueOnError: PPD_CONTINUE_ON_ERROR_ENABLED ? ((inputs.continueOnError as boolean) ?? false) : false,
-        });
-      },
+      initValues: setValue,
+      resolveValues: setValue,
     },
     plugins,
   });
 
   return pluginInstance;
 };
+
+export type PluginContinueOnError = { continueOnError: boolean };
+
+const name = 'continueOnError';
 
 const documentation: PluginDocumentation = {
   description: {

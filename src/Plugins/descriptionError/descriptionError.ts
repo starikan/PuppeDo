@@ -2,21 +2,20 @@ import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.
 import { Plugin } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
-export type PluginDescriptionError = { descriptionError: string };
-
-const name = 'descriptionError';
+function setValue(
+  this: Plugin<PluginDescriptionError>,
+  { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
+): void {
+  this.setValues(stepId, inputs);
+}
 
 const plugin: PluginFunction<PluginDescriptionError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { descriptionError: '' },
     hooks: {
-      initValues: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
-      runLogic: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
+      initValues: setValue,
+      runLogic: setValue,
       beforeFunctions: ({ args, stepId }): void => {
         try {
           const newValue = runScriptInContext(
@@ -52,6 +51,10 @@ const plugin: PluginFunction<PluginDescriptionError> = (plugins) => {
 
   return pluginInstance;
 };
+
+export type PluginDescriptionError = { descriptionError: string };
+
+const name = 'descriptionError';
 
 const documentation: PluginDocumentation = {
   description: {

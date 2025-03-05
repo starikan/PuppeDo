@@ -602,6 +602,7 @@ export class Test {
         }
       }
 
+      // todo: перенести логику в хук
       if (this.agent.debugInfo) {
         logDebug(this.logger.log.bind(this.logger), args);
         if (this.agent.debug) {

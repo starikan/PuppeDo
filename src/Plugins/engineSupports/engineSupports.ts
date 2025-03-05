@@ -2,21 +2,20 @@ import { Environment } from '../../Environment';
 import { BrowserEngineType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
 import { Plugin } from '../../PluginsCore';
 
-export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
-
-const name = 'engineSupports';
+function setValue(
+  this: Plugin<PluginEngineSupports>,
+  { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
+): void {
+  this.setValues(stepId, inputs);
+}
 
 const plugin: PluginFunction<PluginEngineSupports> = (plugins) => {
   const pluginInstance = new Plugin<PluginEngineSupports>({
     name,
     defaultValues: { engineSupports: [] },
     hooks: {
-      initValues: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
-      runLogic: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
+      initValues: setValue,
+      runLogic: setValue,
       resolveValues: ({ inputs, stepId }): void => {
         const { allRunners } = new Environment().getEnvInstance(plugins.envsId);
         const current = new Environment().getCurrent(plugins.envsId);
@@ -37,6 +36,10 @@ const plugin: PluginFunction<PluginEngineSupports> = (plugins) => {
   });
   return pluginInstance;
 };
+
+export type PluginEngineSupports = { engineSupports: BrowserEngineType[] };
+
+const name = 'engineSupports';
 
 const documentation: PluginDocumentation = {
   description: {

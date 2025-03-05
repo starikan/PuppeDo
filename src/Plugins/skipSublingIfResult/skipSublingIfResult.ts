@@ -2,9 +2,12 @@ import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.
 import { Plugin } from '../../PluginsCore';
 import { runScriptInContext } from '../../Test';
 
-export type PluginSkipSublingIfResult = { skipSublingIfResult: string; skipMeBecausePrevSublingResults: boolean };
-
-const name = 'skipSublingIfResult';
+function setValue(
+  this: Plugin<PluginSkipSublingIfResult>,
+  { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
+): void {
+  this.setValues(stepId, inputs);
+}
 
 const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
   const pluginInstance = new Plugin({
@@ -12,12 +15,8 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
     defaultValues: { skipSublingIfResult: '', skipMeBecausePrevSublingResults: false },
     propogation: { skipMeBecausePrevSublingResults: 'lastSubling' },
     hooks: {
-      initValues: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
-      runLogic: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
+      initValues: setValue,
+      runLogic: setValue,
       afterRepeat({ allData, results, stepId }): void {
         const { skipSublingIfResult, skipMeBecausePrevSublingResults } = pluginInstance.getValues(stepId);
 
@@ -35,6 +34,10 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
   });
   return pluginInstance;
 };
+
+export type PluginSkipSublingIfResult = { skipSublingIfResult: string; skipMeBecausePrevSublingResults: boolean };
+
+const name = 'skipSublingIfResult';
 
 const documentation: PluginDocumentation = {
   description: {

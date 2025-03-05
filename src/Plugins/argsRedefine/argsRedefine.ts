@@ -2,10 +2,12 @@ import { Arguments } from '../../Arguments';
 import { ArgumentsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
 import { Plugin } from '../../PluginsCore';
 
-export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
-
-// todo: переименовать в args
-const name = 'argsRedefine';
+function setValue(
+  this: Plugin<PluginArgsRedefine>,
+  { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
+): void {
+  this.setValues(stepId, inputs);
+}
 
 const plugin: PluginFunction<PluginArgsRedefine> = (plugins) => {
   const pluginInstance = new Plugin({
@@ -13,17 +15,18 @@ const plugin: PluginFunction<PluginArgsRedefine> = (plugins) => {
     defaultValues: { argsRedefine: new Arguments().args },
     propogation: { argsRedefine: 'lastParent' },
     hooks: {
-      initValues: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
-      runLogic: ({ inputs, stepId }): void => {
-        pluginInstance.setValues(stepId, inputs);
-      },
+      initValues: setValue,
+      runLogic: setValue,
     },
     plugins,
   });
   return pluginInstance;
 };
+
+export type PluginArgsRedefine = { argsRedefine: Partial<ArgumentsType> };
+
+// todo: переименовать в args
+const name = 'argsRedefine';
 
 const documentation: PluginDocumentation = {
   description: {
