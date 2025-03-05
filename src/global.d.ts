@@ -16,6 +16,7 @@ import { Plugins } from './PluginsCore';
 import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
+import { TestTree } from './TestTree';
 
 // ================ BROWSERS ====================
 
@@ -405,14 +406,20 @@ export type PluginHooks = {
   afterRepeat?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
 };
 
+export type PluginPropogations<T> = Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
+
 export interface PluginType<T> {
+  id: string;
   name: string;
+  defaultValues: T;
+  plugins: Plugins;
+  agentTree: TestTree;
   hook: (name: keyof PluginHooks) => (_: unknown) => void;
   hooks: PluginHooks;
-  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
-  getValue?: (stepId: string, value?: keyof T) => T[keyof T];
-  getValues?: (stepId: string) => T;
-  setValues?: (stepId: string, values?: Partial<T>) => T;
+  propogation: PluginPropogations<T>;
+  getValue: (stepId: string, value?: keyof T) => T[keyof T];
+  getValues: (stepId: string) => T;
+  setValues: (stepId: string, values?: Partial<T>) => T;
 }
 
 export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;

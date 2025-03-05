@@ -6,6 +6,7 @@ import {
   PluginHooks,
   PluginList,
   PluginModule,
+  PluginPropogations,
   PluginType,
   TreeEntryType,
 } from './global.d';
@@ -180,10 +181,6 @@ export class Plugins {
 
   agentTree: TestTree;
 
-  blankHook: () => {
-    // Blank
-  };
-
   constructor(envsId: string, agentTree: TestTree) {
     const plugins = new PluginsFabric().getAllPluginsScratch();
 
@@ -225,19 +222,18 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   agentTree: TestTree;
 
-  hooks: Required<PluginHooks> = {
-    initValues: () => {},
-    runLogic: () => {},
-    resolveValues: () => {},
-    beforeFunctions: () => {},
-    afterResults: () => {},
-    afterRepeat: () => {},
-  };
+  hooks: PluginHooks = {};
 
-  blankHook: () => {};
+  propogation: Partial<PluginPropogations<T>>;
 
-  propogation: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
-
+  /**
+   * Constructor for the Plugin class.
+   * @param {string} name - The name of the plugin.
+   * @param {T} defaultValues - Default values for the plugin.
+   * @param {Partial<PluginPropogations<T>>} [propogation] - Rules for value propagation.
+   * @param {Plugins} plugins - Instance of the Plugins class.
+   * @param {PluginHooks} [hooks={}] - Hooks for the plugin.
+   */
   constructor({
     name,
     defaultValues,
@@ -247,9 +243,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }: {
     name: string;
     defaultValues: T;
-    propogation?: Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
+    propogation?: Partial<PluginPropogations<T>>;
     plugins: Plugins;
-    hooks?: PluginHooks;
+    hooks: PluginHooks;
   }) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
@@ -260,30 +256,52 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     this.agentTree = plugins.agentTree;
   }
 
+  /**
+   * Executes a hook with the given name.
+   * @param {keyof PluginHooks} name - The name of the hook.
+   * @returns {Function} - The hook function.
+   */
   hook(name: keyof PluginHooks): (unknown) => void {
     try {
       if (Object.keys(this.hooks).includes(name)) {
         return this.hooks[name].bind(this);
       }
-      return this.blankHook;
+      return () => {};
     } catch (error) {
       console.log(error);
       // eslint-disable-next-line no-debugger
       debugger;
     }
-    return this.blankHook;
+    return () => {};
   }
 
+  /**
+   * Retrieves a value by key for a given step.
+   * @param {string} stepId - The step identifier.
+   * @param {keyof T} value - The key of the value.
+   * @returns {T[keyof T]} - The value associated with the key.
+   */
   getValue(stepId: string, value: keyof T): T[keyof T] {
     return this.getValues(stepId)[value];
   }
 
+  /**
+   * Retrieves all values for a given step.
+   * @param {string} stepId - The step identifier.
+   * @returns {T} - All values for the step.
+   */
   getValues(stepId: string): T {
     const step = this.agentTree.findNode(stepId);
 
     return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
   }
 
+  /**
+   * Sets values for a given step.
+   * @param {string} stepId - The step identifier.
+   * @param {Partial<T>} [values={}] - The values to set.
+   * @returns {T} - The new values for the step.
+   */
   setValues(stepId: string, values: Partial<T> = {}): T {
     let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
 
