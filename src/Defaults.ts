@@ -71,7 +71,6 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   bindSelectors: {},
   data: {},
   dataExt: [],
-  debug: false,
   debugInfo: false,
   description: '',
   descriptionExtend: [],

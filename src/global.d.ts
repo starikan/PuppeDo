@@ -17,6 +17,7 @@ import { Environment, Runner, Runners } from './Environment';
 import { argsDefault } from './Defaults';
 import { colors } from './Helpers';
 import { TestTree } from './TestTree';
+import { PliginsFields } from './Plugins';
 
 // ================ BROWSERS ====================
 
@@ -279,7 +280,6 @@ export type TestArgsType = {
   levelIndent: number;
   repeat: number;
   stepId: string;
-  debug: boolean;
   disable: boolean;
   logOptions: LogOptionsType;
   frame: string;
@@ -322,7 +322,6 @@ export type TestTypeYaml = {
   allowResults?: string[];
   allowOptions?: string[];
   todo?: string;
-  debug?: boolean;
   debugInfo?: boolean | 'data' | 'selectors';
   disable?: boolean;
   logOptions?: LogOptionsType;
@@ -367,7 +366,7 @@ export type TestExtendType = {
 
 export type TestType = Required<TestTypeYaml>;
 
-export type AgentData = Required<TestExtendType>;
+export type AgentData = Required<TestExtendType> & PliginsFields;
 
 export type AllDataType = {
   allFiles: string[];
