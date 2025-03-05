@@ -282,7 +282,6 @@ export type TestArgsType = {
   stepId: string;
   disable: boolean;
   logOptions: LogOptionsType;
-  frame: string;
   tags: string[];
   ppd: {
     runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
@@ -325,7 +324,6 @@ export type TestTypeYaml = {
   debugInfo?: boolean | 'data' | 'selectors';
   disable?: boolean;
   logOptions?: LogOptionsType;
-  frame?: string;
   data?: Record<string, unknown>;
   bindData?: Record<string, string>;
   selectors?: Record<string, unknown>;

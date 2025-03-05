@@ -1,0 +1,30 @@
+00:00:00.000 - timer  Test 'frame' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Frame support test (frame)
+   Using parent frame (blank)
+      Inherited frame from parent (blank)
+   Override frame (blank)
+      Using child frame (blank)
+   Reset frame (blank)
+      No frame specified (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(frame) Frame support test[0m
+00:00:00.000 - test   |   [32m(blank) Using parent frame[0m
+00:00:00.000 - test   |   |   [32m(blank) Inherited frame from parent[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Override frame[0m
+00:00:00.000 - test   |   |   [32m(blank) Using child frame[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Reset frame[0m
+00:00:00.000 - test   |   |   [32m(blank) No frame specified[0m
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (frame)
+00:00:00.000 - timer  Test 'frame' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "frame": {}
+}

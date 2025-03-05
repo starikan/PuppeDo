@@ -1,0 +1,24 @@
+name: frame
+description: Frame support test
+frame: mainFrame
+
+runTest:
+  - blank:
+      description: Using parent frame
+      runTest:
+        - blank:
+            description: Inherited frame from parent
+
+  - blank:
+      description: Override frame
+      frame: childFrame
+      runTest:
+        - blank:
+            description: Using child frame
+
+  - blank:
+      description: Reset frame
+      frame: ''
+      runTest:
+        - blank:
+            description: No frame specified

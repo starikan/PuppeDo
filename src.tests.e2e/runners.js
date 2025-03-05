@@ -140,6 +140,9 @@ const testsE2E = {
   debug: {
     params: { PPD_TESTS: 'debug' },
   },
+  frame: {
+    params: { PPD_TESTS: 'frame' },
+  },
 };
 
 module.exports = testsE2E;

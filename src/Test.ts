@@ -412,7 +412,6 @@ export class Test {
     this.agent.if = inputs.if || this.agent.if;
     this.agent.errorIf = inputs.errorIf || this.agent.errorIf;
     this.agent.errorIfResult = inputs.errorIfResult || this.agent.errorIfResult;
-    this.agent.frame = inputs.frame || this.agent.frame;
     this.agent.resultsFromPrevSubling = inputs.resultsFromPrevSubling || this.agent.resultsFromPrevSubling;
     this.agent.dataExt = [...new Set([...this.agent.dataExt, ...(inputs.dataExt || [])])];
     this.agent.selectorsExt = [...new Set([...this.agent.selectorsExt, ...(inputs.selectorsExt || [])])];

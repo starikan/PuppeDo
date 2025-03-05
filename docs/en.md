@@ -727,6 +727,69 @@ run:
 }
 
 ```
+## frame
+Frame support. Allows to specify target frame for actions.
+
+```yaml
+name: frame
+description: Frame support test
+frame: mainFrame
+
+runTest:
+  - blank:
+      description: Using parent frame
+      runTest:
+        - blank:
+            description: Inherited frame from parent
+
+  - blank:
+      description: Override frame
+      frame: childFrame
+      runTest:
+        - blank:
+            description: Using child frame
+
+  - blank:
+      description: Reset frame
+      frame: ''
+      runTest:
+        - blank:
+            description: No frame specified
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'frame' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+Frame support test (frame)
+   Using parent frame (blank)
+      Inherited frame from parent (blank)
+   Override frame (blank)
+      Using child frame (blank)
+   Reset frame (blank)
+      No frame specified (blank)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (frame) Frame support test
+00:00:00.000 - test   |   (blank) Using parent frame
+00:00:00.000 - test   |   |   (blank) Inherited frame from parent
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Override frame
+00:00:00.000 - test   |   |   (blank) Using child frame
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (blank) Reset frame
+00:00:00.000 - test   |   |   (blank) No frame specified
+                      |   |   🕝: 00.000 s. (blank)
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (frame)
+00:00:00.000 - timer  Test 'frame' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "frame": {}
+}
+
+```
 ## debug
 Debugger for stopping the agent at the desired location
 

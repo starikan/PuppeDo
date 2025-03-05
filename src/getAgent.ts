@@ -116,12 +116,6 @@ const getAgent = ({
   return stepResolver(agentJson, parentStepMetaCollector);
 };
 
-const propagateArgumentsSimpleOnAir = (
-  source: TestExtendType,
-  args: TestArgsType | undefined,
-  list: string[] = [],
-): TestExtendType => ({ ...source, ...pick(args || {}, list) });
-
 const stepResolver = (
   agentJson: TestExtendType,
   parentStepMetaCollector: Partial<TestExtendType>,
@@ -139,14 +133,12 @@ const stepResolver = (
       parentStepMetaCollector.resultsFromPrevSubling = {};
     }
 
-    let updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
+    const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
       'options',
       'data',
       'selectors',
       'logOptions',
     ]);
-
-    updatedAgentJson = propagateArgumentsSimpleOnAir(updatedAgentJson, { ...args }, ['frame']);
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
 
