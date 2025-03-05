@@ -503,8 +503,6 @@ export class Test {
         allRunners,
         data: dataLocal,
         selectors: selectorsLocal,
-        dataTest: this.agent.data,
-        selectorsTest: this.agent.selectors,
         logOptions: logForChild,
         ppd: globalExportPPD,
         argsEnv: this.plugins
@@ -579,7 +577,6 @@ export class Test {
             stepId: this.agent.stepId,
             logOptions: { ...this.agent.logOptions, logShowFlag },
             logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
-            args,
           });
         }
 
@@ -595,7 +592,6 @@ export class Test {
                 textColor: 'cyan' as ColorsType,
               },
               logMeta: { repeat: this.agent.repeat, breadcrumbs: this.agent.breadcrumbs },
-              args,
             });
           }
         }
@@ -611,7 +607,7 @@ export class Test {
         }
       }
 
-      this.plugins.hook('beforeFunctions', { args, stepId: this.agent.stepId });
+      this.plugins.hook('beforeFunctions', { stepId: this.agent.stepId });
 
       // LIFE CYCLE
       let resultFromLifeCycle = {};

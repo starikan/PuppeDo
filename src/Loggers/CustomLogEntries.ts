@@ -6,9 +6,9 @@ import { ErrorType } from '../Error';
 import { LogFunctionType, TestArgsType } from '../global.d';
 import { getTimer } from '../Helpers';
 
-export const logExtendFileInfo = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
-  if (args?.envsId) {
-    const output = new Environment().getOutput(args.envsId);
+export const logExtendFileInfo = async (log: LogFunctionType, { envsId }: { envsId: string }): Promise<void> => {
+  if (envsId) {
+    const output = new Environment().getOutput(envsId);
     const outputFile = path.join(output.folderFull || '.', 'output.log');
     const text = ['=============== EXTEND FILE ===============', `file:///${outputFile}`, ''];
     await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
@@ -49,16 +49,31 @@ export const logTimer = async (
 
 export const logExtend = async (
   log: LogFunctionType,
-  args: TestArgsType | undefined,
+  {
+    data,
+    bindData,
+    selectors,
+    bindSelectors,
+    bindResults,
+    options,
+    levelIndent = 0,
+  }: {
+    data: Record<string, unknown>;
+    bindData: Record<string, unknown>;
+    selectors: Record<string, unknown>;
+    bindSelectors: Record<string, unknown>;
+    bindResults: Record<string, unknown>;
+    options: Record<string, unknown>;
+    levelIndent: number;
+  },
   isError = false,
 ): Promise<void> => {
   const { PPD_LOG_EXTEND } = new Arguments().args;
-  const { dataTest, bindData, selectorsTest, bindSelectors, bindResults, options, levelIndent = 0 } = args || {};
   if (PPD_LOG_EXTEND || isError) {
     let text = [
-      ['📋 (data):', dataTest],
+      ['📋 (data):', data],
       ['📌📋 (bD):', bindData],
-      ['☸️ (selectors):', selectorsTest],
+      ['☸️ (selectors):', selectors],
       ['📌☸️ (bS):', bindSelectors],
       ['↩️ (results):', bindResults],
       ['⚙️ (options):', options],
@@ -100,6 +115,4 @@ export const logDebug = async (log: LogFunctionType, args: TestArgsType | undefi
   }
 
   await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
-
-  // console.log(args);
 };

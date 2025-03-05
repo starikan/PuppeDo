@@ -269,8 +269,6 @@ export type TestArgsType = {
   environment: Environment;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
-  dataTest: Record<string, unknown>;
-  selectorsTest: Record<string, unknown>;
   options: Record<string, string | number>;
   allowResults: string[];
   bindResults: Record<string, string>;
@@ -398,7 +396,7 @@ export type PluginHooks = {
   initValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   runLogic?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
-  beforeFunctions?: ({ args, stepId }: { args: TestArgsType; stepId?: string }) => void;
+  beforeFunctions?: ({ stepId }: { stepId?: string }) => void;
   afterResults?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   afterRepeat?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
 };
