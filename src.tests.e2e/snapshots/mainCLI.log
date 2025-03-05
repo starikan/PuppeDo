@@ -57,9 +57,7 @@ Main test (main)
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
                       |    [36m👣[main -> beforeRun[0].runnerSwitch][0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"runnerName":"mainRunner","runner":null}[0m
                       |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
-                      |   |   [36m☸️ (selectors): {"repeat":1,"$loop":1,"runnerName":"mainRunner","runner":null}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
@@ -70,9 +68,7 @@ Main test (main)
 00:00:00.000 - test   |   |   [32m(goTo) Going on page http://localhost:3000/[0m
                       |   |    [36m👣[main -> run[1].case -> run[0].goTo][0m
 00:00:00.000 - raw    |   |   |   Go to: http://localhost:3000/
-                      |   |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","url":"http://localhost:3000/","timeout":null}[0m
                       |   |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
-                      |   |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","url":"http://localhost:3000/","timeout":null}[0m
                       |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (goTo)
 00:00:00.000 - test   |   |   [41m[32m(checkSelector) TODO: Fill description[0m[0m
@@ -83,8 +79,7 @@ Main test (main)
 00:00:00.000 - test   |   [32m(blank) Input some text in field INPUT[0m
                       |    [36m👣[main -> run[2].blank][0m
 00:00:00.000 - raw    |   |   Type in selector: '#main-input', text: 'myDataBinded'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","text":"myDataBinded"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","selector":"#main-input","text":"myDataBinded"}[0m
+                      |   |   [36m📋 (data): {"text":"myDataBinded"}[0m
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (blank)
@@ -111,8 +106,6 @@ Main test (main)
 00:00:00.000 - test   |   [32m(getText) Get text from selector: '#main-input'[0m
                       |    [36m👣[main -> run[9].getText][0m
 00:00:00.000 - raw    |   |   Get text: '01' from selector: '#main-input'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":{"$i":2},"selectorNumber":null,"getAll":null,"selector":"#main-input"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":{"$i":2},"selector":"#main-input","selectorNumber":null,"getAll":null}[0m
                       |   |   [36m📌☸️ (bS): {"selector":"mainInput"}[0m
                       |   |   [36m↩️ (results): {"result":"text"}[0m
                       |   |   ⌛: 00.000 s.
@@ -122,8 +115,6 @@ Main test (main)
 00:00:00.000 - test   |   |   [32m(waitForSelector) Wait for: '#main-input'[0m
                       |   |    [36m👣[main -> run[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
 00:00:00.000 - raw    |   |   |   Wait for selector: '#main-input'
-                      |   |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"01","array":["01"],"mainInputInside":"#main-input","selector":"#main-input"}[0m
-                      |   |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"01","array":["01"],"mainInputInside":"#main-input","selector":"#main-input"}[0m
                       |   |   |   [36m📌☸️ (bS): {"selector":"mainInputInside"}[0m
                       |   |   |   [36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
                       |   |   |   ⌛: 00.000 s.
@@ -138,8 +129,7 @@ Main test (main)
                       |    [36m👣[main -> run[12].getText][0m
                       |    [36m🔆 repeats left: 2[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":3,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"01","array":["01"],"selectorNumber":null,"getAll":null,"selector":"title"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":3,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"01","array":["01"],"selector":"title","selectorNumber":null,"getAll":null}[0m
+                      |   |   [36m☸️ (selectors): {"selector":"title"}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
@@ -147,16 +137,16 @@ Main test (main)
                       |    [36m👣[main -> run[12].getText][0m
                       |    [36m🔆 repeats left: 1[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":2,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"Test Document","array":["Test Document"],"titleText":"Test Document","selectorNumber":null,"getAll":null,"selector":"title"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":2,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"Test Document","array":["Test Document"],"selector":"title","titleText":"Test Document","selectorNumber":null,"getAll":null}[0m
+                      |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+                      |   |   [36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
                       |    [36m👣[main -> run[12].getText][0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"Test Document","array":["Test Document"],"titleText":"Test Document","selectorNumber":null,"getAll":null,"selector":"title"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":"01","text":"Test Document","array":["Test Document"],"selector":"title","titleText":"Test Document","selectorNumber":null,"getAll":null}[0m
+                      |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
+                      |   |   [36m☸️ (selectors): {"selector":"title","titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
@@ -197,8 +187,6 @@ Main test (main)
                       |   🕝: 00.000 s. (subTest)
 00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m
                       |    [36m👣[main -> run[18].blank][0m
-                      |   |   [41m[36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","dataExtMain":"dataExtMain","mainTestData":"foo","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":{"titleText":"Test Document","text":"Test Document","array":["Test Document"],"result":{"titleText":"Test Document","text":"Test Document","array":["Test Document"]}},"text":"Test Document","array":["Test Document"],"titleText":"Test Document","myDataFunction":"Title of HTML: Test Document","myDataBinded":"Title of HTML: Test Document","x":"x"}[0m[0m
-                      |   |   [41m[36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"directValue":"direct","bindedValue":"mainRunner","$i":1,"result":{"titleText":"Test Document","text":"Test Document","array":["Test Document"],"result":{"titleText":"Test Document","text":"Test Document","array":["Test Document"]}},"text":"Test Document","array":["Test Document"],"titleText":"Test Document","myDataFunction":"Title of HTML: Test Document","myDataBinded":"Title of HTML: Test Document","x":"x"}[0m[0m
                       |   |   [41m⌛: 00.000 s.[0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [41m[32m(blank) TODO: Fill description[0m[0m

@@ -149,17 +149,20 @@ export default class Atom {
       }
     });
 
+    const { agent } = args;
+
     const logOptionsDefault: LogOptionsType = {
       screenshot: false,
       fullpage: false,
     };
 
-    const { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent, envsId, stepId } = args;
+    const { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent, envsId, stepId, breadcrumbs } =
+      agent;
 
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
         const logOptions = { ...logOptionsDefault, ...(args.logOptions ?? {}), ...(customLog.logOptions ?? {}) };
-        const logMeta = { ...{ breadcrumbs: args.breadcrumbs ?? [] }, ...(customLog.logMeta ?? {}) };
+        const logMeta = { ...{ breadcrumbs: breadcrumbs ?? [] }, ...(customLog.logMeta ?? {}) };
         const logData = {
           level: 'raw' as ColorsType,
           levelIndent: (levelIndent ?? 0) + 1,

@@ -24,7 +24,6 @@ import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine, P
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
 import { AgentTree } from './AgentTree';
-import globalExportPPD from './index';
 
 /**
  * Resolves aliases for a given key in the inputs object.
@@ -492,28 +491,8 @@ export class Test {
       }
 
       // Extend with data passed to functions
-      const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
       const current = new Environment().getCurrent(this.agent.envsId);
       const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
-
-      const args: TestArgsType = {
-        ...this.agent,
-        environment: new Environment(),
-        runner: this.runner,
-        allRunners,
-        data: dataLocal,
-        selectors: selectorsLocal,
-        logOptions: logForChild,
-        ppd: globalExportPPD,
-        argsEnv: this.plugins
-          .getPlugins<PluginArgsRedefine>('argsRedefine')
-          .getValue(this.agent.stepId, 'argsRedefine'),
-        browser: this.runner && this.runner.getState().browser,
-        page: pageCurrent, // If there is no page it`s might be API
-        log: this.logger.log.bind(this.logger),
-        allData: new AgentContent().allData,
-        plugins: this.plugins,
-      };
 
       // IF
       if (this.agent.if) {
@@ -608,6 +587,37 @@ export class Test {
       }
 
       this.plugins.hook('beforeFunctions', { stepId: this.agent.stepId });
+
+      const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
+
+      // Use in atoms
+      // this.allData
+      // this.allRunners
+      // this.browser
+      // this.data
+      // this.environment
+      // this.envsId
+      // this.log
+      // this.options
+      // this.page
+      // this.runner
+      // this.selectors
+
+      const args: TestArgsType = {
+        agent: this.agent,
+        options: this.agent.options,
+        environment: new Environment(),
+        runner: this.runner,
+        allRunners,
+        data: dataLocal,
+        selectors: selectorsLocal,
+        browser: this.runner && this.runner.getState().browser,
+        page: pageCurrent, // If there is no page it`s might be API
+        allData: new AgentContent().allData,
+        log: this.logger.log.bind(this.logger),
+        logOptions: logForChild,
+        plugins: this.plugins,
+      };
 
       // LIFE CYCLE
       let resultFromLifeCycle = {};

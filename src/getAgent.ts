@@ -121,7 +121,7 @@ const stepResolver = (
   parentStepMetaCollector: Partial<TestExtendType>,
 ): TestLifeCycleFunctionType => {
   const stepFunction = async (args?: TestArgsType): Promise<Record<string, unknown>> => {
-    agentJson.stepIdParent = args?.stepId;
+    agentJson.stepIdParent = args?.agent?.stepId;
 
     const step = new Test(agentJson);
 

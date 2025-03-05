@@ -265,38 +265,20 @@ export interface DataType extends DataYamlType {
 // ================ TESTS / ATOMS ====================
 
 export type TestArgsType = {
-  envsId: string;
   environment: Environment;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
-  options: Record<string, string | number>;
-  allowResults: string[];
-  bindResults: Record<string, string>;
-  bindSelectors: Record<string, string>;
-  bindData: Record<string, string>;
-  bindDescription: string;
-  levelIndent: number;
-  repeat: number;
-  stepId: string;
-  disable: boolean;
   logOptions: LogOptionsType;
-  tags: string[];
-  ppd: {
-    runScriptInContext: (source: string, context: Record<string, unknown>) => unknown;
-  };
-  argsEnv: Record<string, unknown>;
   runner: Runner;
   allRunners: Runners;
   browser?: BrowserType;
   page?: BrowserPageType | BrowserFrame;
   log: LogFunctionType;
-  description: string;
-  socket: SocketType;
-  descriptionExtend: string[];
   allData: AllDataType;
   plugins: Plugins;
-  breadcrumbs: string[];
-} & AgentData;
+  options: AgentData['options'];
+  agent: AgentData;
+};
 
 export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
 

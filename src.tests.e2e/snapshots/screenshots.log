@@ -53,17 +53,13 @@ screenshots (screenshots)
 00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
                       |    [36m👣[screenshots -> beforeTest[0].runnerSwitch][0m
 00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","repeat":1,"$loop":1,"runnerName":"mainRunner","runner":null}[0m
                       |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
-                      |   |   [36m☸️ (selectors): {"repeat":1,"$loop":1,"runnerName":"mainRunner","runner":null}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (runnerSwitch)
 00:00:00.000 - test   |   [32m(goTo) Going on page http://localhost:3000/[0m
                       |    [36m👣[screenshots -> beforeTest[1].goTo][0m
 00:00:00.000 - raw    |   |   Go to: http://localhost:3000/
-                      |   |   [36m📋 (data): {"myEnv":"mainRunner","CHECK_DATA":"ENV_DATA_EXT","data":"test","baseUrl":"http://localhost:3000/","repeat":1,"$loop":1,"url":"http://localhost:3000/","timeout":null}[0m
                       |   |   [36m📌📋 (bD): {"url":"baseUrl"}[0m
-                      |   |   [36m☸️ (selectors): {"nested":{"mainInput":"#main-input"},"mainInput":"#main-input","mainLink":"#main-link","mainLinkChild":"#child-link","mainButton":"#main-button","mainText":"#simple-text","frameText":"#frame-text","repeat":1,"$loop":1,"url":"http://localhost:3000/","timeout":null}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (goTo)
 00:00:00.000 - test   |   [32m(blank) No screenshot[0m
