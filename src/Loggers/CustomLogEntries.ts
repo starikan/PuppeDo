@@ -3,7 +3,7 @@ import path from 'path';
 import { Arguments } from '../Arguments';
 import { Environment } from '../Environment';
 import { ErrorType } from '../Error';
-import { LogFunctionType, TestArgsType } from '../global.d';
+import { LogFunctionType } from '../global.d';
 import { getTimer } from '../Helpers';
 
 export const logExtendFileInfo = async (log: LogFunctionType, { envsId }: { envsId: string }): Promise<void> => {
@@ -31,9 +31,8 @@ export const logTimer = async (
   log: LogFunctionType,
   startTime: bigint,
   endTime: bigint,
-  args: TestArgsType,
+  { levelIndent = 0, stepId }: { levelIndent: number; stepId: string },
 ): Promise<void> => {
-  const { levelIndent = 0, stepId } = args;
   const { PPD_LOG_EXTEND, PPD_LOG_STEPID } = new Arguments().args;
   if (PPD_LOG_EXTEND) {
     const { timeStart, timeEnd, deltaStr } = getTimer({ timeStartBigInt: startTime, timeEndBigInt: endTime });
@@ -100,9 +99,11 @@ export const logArgs = async (log: LogFunctionType): Promise<void> => {
   await log({ text, levelIndent: 0, level: 'error', logMeta: { extendInfo: true } });
 };
 
-export const logDebug = async (log: LogFunctionType, args: TestArgsType | undefined): Promise<void> => {
+export const logDebug = async (
+  log: LogFunctionType,
+  { data, selectors }: { data: Record<string, unknown>; selectors: Record<string, unknown> },
+): Promise<void> => {
   let text: string[] = [];
-  const { data, selectors } = args || {};
 
   if (data && Object.keys(data).length) {
     const dataDebug = JSON.stringify(data, null, 2).split('\n');

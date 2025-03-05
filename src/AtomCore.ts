@@ -154,7 +154,7 @@ export default class Atom {
       fullpage: false,
     };
 
-    const { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent, envsId } = args;
+    const { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent, envsId, stepId } = args;
 
     this.log = async (customLog: LogInputType): Promise<void> => {
       if (args) {
@@ -162,7 +162,7 @@ export default class Atom {
         const logMeta = { ...{ breadcrumbs: args.breadcrumbs ?? [] }, ...(customLog.logMeta ?? {}) };
         const logData = {
           level: 'raw' as ColorsType,
-          levelIndent: (args.levelIndent ?? 0) + 1,
+          levelIndent: (levelIndent ?? 0) + 1,
           logOptions,
           logMeta,
           ...customLog,
@@ -179,13 +179,13 @@ export default class Atom {
       await logExtend(this.log, { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent });
 
       const endTime = process.hrtime.bigint();
-      await logTimer(this.log, startTime, endTime, args);
+      await logTimer(this.log, startTime, endTime, { levelIndent, stepId });
       return result;
     } catch (error) {
       await logError(this.log, error);
       await logExtend(this.log, { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent }, true);
       await logArgs(this.log);
-      await logDebug(this.log, args);
+      await logDebug(this.log, { data, selectors });
       await logExtendFileInfo(this.log, { envsId });
 
       throw new AtomError('Error in Atom');
