@@ -701,8 +701,6 @@ export class Test {
         localResults = { ...localResults, ...repeatResult };
       }
 
-      this.plugins.hook('afterRepeat', { inputs: { ...allData, ...localResults }, stepId: this.agent.stepId });
-
       if (this.agent.breakParentIfResult) {
         const breakParentIfResult = runScriptInContext(this.agent.breakParentIfResult, {
           ...allData,
@@ -718,6 +716,8 @@ export class Test {
           });
         }
       }
+
+      this.plugins.hook('afterRepeat', { inputs: { ...allData, ...localResults }, stepId: this.agent.stepId });
 
       return { result: localResults };
     } catch (error) {
