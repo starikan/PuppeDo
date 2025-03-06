@@ -73,4 +73,9 @@ for (const testName of testsResolved) {
   }
 }
 
-console.log('All E2E tests passed');
+console.log(
+  `
+┏┓┏┓┏┓  ┏┓┏┓┏┓┏┓
+┣ ┏┛┣   ┃┃┣┫┗┓┗┓
+┗┛┗━┗┛  ┣┛┛┗┗┛┗┛`,
+);

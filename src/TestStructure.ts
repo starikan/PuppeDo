@@ -65,7 +65,7 @@ export default class TestStructure {
     const agentSource = agents.find((v) => v.name === name);
 
     if (!agentSource) {
-      throw new Error(`Agent with name '${name}' not found in root folder and additional folders`);
+      return resolveTest({ name: String(name) });
     }
 
     return JSON.parse(JSON.stringify(agentSource));

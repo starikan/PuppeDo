@@ -132,7 +132,7 @@ export default class AgentContent extends Singleton {
   };
 
   /**
-   * Resolving the agent file, checking for the presence of a name and test type.
+   * Resolving the agent file, checking for the presence of a name.
    *
    * @param agentContent - Partial YAML agent type.
    * @param filePath - Path to the agent file.
@@ -147,7 +147,7 @@ export default class AgentContent extends Singleton {
     const { name } = agentContent;
 
     if (!name && !PPD_IGNORE_AGENTS_WITHOUT_NAME) {
-      throw new Error('Every test need name');
+      throw new Error('Every agent need name');
     }
 
     if (!name) {

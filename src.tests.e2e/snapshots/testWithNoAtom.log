@@ -1,1 +1,21 @@
 00:00:00.000 - timer  Test 'testWithNoAtom' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Test if some atom undefined (testWithNoAtom)
+   Next undefined (todo)
+   (fakeUndefinedTest)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(testWithNoAtom) Test if some atom undefined[0m
+                       [36m👣[testWithNoAtom][0m
+00:00:00.000 - test   |   [41m[37m(todo) Next undefined[0m[0m
+                      |    [36m👣[testWithNoAtom -> runTest[0].todo][0m
+                      |   🕝: 00.000 s. (todo)
+00:00:00.000 - test   |   [41m[32m(fakeUndefinedTest) TODO: Fill description[0m[0m
+                      |    [36m👣[testWithNoAtom -> runTest[1].fakeUndefinedTest][0m
+                      |   🕝: 00.000 s. (fakeUndefinedTest)
+                      🕝: 00.000 s. (testWithNoAtom)
+00:00:00.000 - timer  Test 'testWithNoAtom' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "testWithNoAtom": {}
+}
