@@ -22,7 +22,7 @@ browser:
   runtime: run
   args:
   - "--window-size=1024,918"
-  headless: false
+  headless: true
   slowMo: 5
   windowSize:
     width: 1024
