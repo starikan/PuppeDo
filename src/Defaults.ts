@@ -57,7 +57,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_TIMER_SHOW: true,
   PPD_LOG_INDENT_LENGTH: 4,
   PPD_LOG_STEPID: false,
-  PPD_IGNORE_TESTS_WITHOUT_NAME: true,
+  PPD_IGNORE_AGENTS_WITHOUT_NAME: true,
   PPD_FILES_EXTENSIONS_AVAILABLE: ['.yaml', '.yml', '.ppd', '.json'],
   PPD_ALIASES: {},
   PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],

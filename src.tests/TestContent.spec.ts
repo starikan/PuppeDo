@@ -694,7 +694,7 @@ describe('AgentContent.getAllData (AI generated)', () => {
   let agentContent: AgentContent;
 
   const DEFAULT_ARGS = {
-    PPD_IGNORE_TESTS_WITHOUT_NAME: false,
+    PPD_IGNORE_AGENTS_WITHOUT_NAME: false,
     PPD_ROOT: 'tests',
     PPD_ROOT_ADDITIONAL: ['bar'],
     PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
@@ -741,10 +741,10 @@ describe('AgentContent.getAllData (AI generated)', () => {
     expect(allData).toBeDefined();
   });
 
-  test('should not throw error if test has no name and PPD_IGNORE_TESTS_WITHOUT_NAME is true', () => {
+  test('should not throw error if test has no name and PPD_IGNORE_AGENTS_WITHOUT_NAME is true', () => {
     jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({
       ...DEFAULT_ARGS,
-      PPD_IGNORE_TESTS_WITHOUT_NAME: true,
+      PPD_IGNORE_AGENTS_WITHOUT_NAME: true,
     });
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ name: '' }]));

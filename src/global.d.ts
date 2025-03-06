@@ -72,7 +72,7 @@ export type ArgumentsType = {
   PPD_LOG_INDENT_LENGTH: number;
   PPD_LOG_STEPID: boolean;
   PPD_CONTINUE_ON_ERROR_ENABLED: boolean;
-  PPD_IGNORE_TESTS_WITHOUT_NAME: boolean;
+  PPD_IGNORE_AGENTS_WITHOUT_NAME: boolean;
   PPD_FILES_EXTENSIONS_AVAILABLE: string[];
   PPD_ALIASES: Record<Partial<AliasesKeysType>, string[]>;
   PPD_LIFE_CYCLE_FUNCTIONS: string[];

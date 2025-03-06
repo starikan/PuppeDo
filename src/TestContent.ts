@@ -67,27 +67,27 @@ export default class AgentContent extends Singleton {
   }
 
   /**
-   * Checks array of tests for duplicates and empty names
+   * Checks array of agents for duplicates and empty names
    *
-   * @param tests Array of tests to check
-   * @returns Original array of tests if no duplicates found
+   * @param agents Array of agents to check
+   * @returns Original array of agents if no duplicates found
    * @throws {Error} If empty names or duplicates are found
    */
-  static checkDuplicates<T extends TestExtendType | RunnerType | DataType>(tests: Array<T>): Array<T> {
-    const blankNames = tests.filter((v) => !v.name);
+  static checkDuplicates<T extends TestExtendType | RunnerType | DataType>(agents: Array<T>): Array<T> {
+    const blankNames = agents.filter((v) => !v.name);
     if (blankNames.length) {
       throw new Error(`There is blank 'name' value in files:\n${blankNames.map((v) => v.testFile).join('\n')}`);
     }
 
     const dubs: Record<string, string[]> = {};
-    tests.forEach((test) => {
+    agents.forEach((test) => {
       if (test.testFile) {
         (dubs[test.name] = dubs[test.name] || []).push(test.testFile);
       }
     });
 
     if (Object.values(dubs).some((v) => v.length > 1)) {
-      const key = tests[0].type;
+      const key = agents[0].type;
       const files = Object.entries(dubs)
         .filter(([, valueDub]) => valueDub.length > 1)
         .map(([keyDub, valueDub]) => `- Name: '${keyDub}'.\n${valueDub.map((v) => `    * '${v}'\n`).join('')}`)
@@ -96,24 +96,24 @@ export default class AgentContent extends Singleton {
       throw new Error(message);
     }
 
-    return tests;
+    return agents;
   }
 
   /**
-   * Reads the file and returns its content as an array of partially typed tests.
+   * Reads the file and returns its content as an array of partially typed agents.
    *
    * @param filePath - The path to the file.
-   * @returns An array of partially typed tests.
+   * @returns An array of partially typed agents.
    */
   static readFile = (filePath: string): Partial<TestTypeYaml>[] => {
-    let testData: Partial<TestTypeYaml>[] = [];
+    let agentData: Partial<TestTypeYaml>[] = [];
 
     try {
       const fileContent = fs.readFileSync(filePath, 'utf8');
       if (filePath.endsWith('.json')) {
-        testData = JSON.parse(fileContent);
+        agentData = JSON.parse(fileContent);
       } else {
-        testData = yaml.loadAll(fileContent) as Partial<TestTypeYaml>[];
+        agentData = yaml.loadAll(fileContent) as Partial<TestTypeYaml>[];
       }
     } catch {
       const errorType = filePath.endsWith('.json') ? 'JSON' : 'YAML';
@@ -124,11 +124,11 @@ export default class AgentContent extends Singleton {
       );
     }
 
-    if (!Array.isArray(testData)) {
-      return [testData];
+    if (!Array.isArray(agentData)) {
+      return [agentData];
     }
 
-    return testData;
+    return agentData;
   };
 
   /**
@@ -142,11 +142,11 @@ export default class AgentContent extends Singleton {
     agentContent: Partial<TestTypeYaml>,
     filePath: string,
   ): Required<TestTypeYaml> | RunnerType | DataType => {
-    const { PPD_IGNORE_TESTS_WITHOUT_NAME } = new Arguments().args;
+    const { PPD_IGNORE_AGENTS_WITHOUT_NAME } = new Arguments().args;
 
     const { name } = agentContent;
 
-    if (!name && !PPD_IGNORE_TESTS_WITHOUT_NAME) {
+    if (!name && !PPD_IGNORE_AGENTS_WITHOUT_NAME) {
       throw new Error('Every test need name');
     }
 
