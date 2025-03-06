@@ -11,19 +11,13 @@ import {
   ColorsType,
   BrowserFrame,
   AgentData,
+  EnginesType,
+  AtomInit,
 } from './global.d';
 import { Environment, Runner } from './Environment';
 import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
 import { PluginFrame } from './Plugins';
-
-type EnginesType = 'puppeteer' | 'playwright';
-
-type AtomInit = {
-  runner?: Runner;
-  page?: BrowserPageType | BrowserFrame;
-};
-
-const enginesAvailable: EnginesType[] = ['puppeteer', 'playwright'];
+import { ENGINES_AVAILABLE } from './Defaults';
 
 class AtomError extends Error {
   constructor(message: string) {
@@ -48,8 +42,8 @@ export default class Atom {
   getEngine(engine: EnginesType | null): boolean | EnginesType {
     const atomEngine = this.runner.getRunnerData().browser.engine;
 
-    if (!enginesAvailable.includes(atomEngine)) {
-      throw new Error(`There is unknown engine: ${atomEngine}. Use this engines: ${enginesAvailable}`);
+    if (!ENGINES_AVAILABLE.includes(atomEngine)) {
+      throw new Error(`There is unknown engine: ${atomEngine}. Use this engines: ${ENGINES_AVAILABLE}`);
     }
 
     return engine ? atomEngine === engine : atomEngine;

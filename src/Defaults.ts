@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AgentData, ArgumentsType, LogPipe, PluginList, RunOptions, TestTypeYaml } from './global.d';
+import { AgentData, ArgumentsType, EnginesType, LogPipe, PluginList, RunOptions, TestTypeYaml } from './global.d';
 
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
 import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
@@ -119,6 +119,9 @@ export const EXTEND_BLANK_AGENT = (): AgentData => {
 
   return result;
 };
+
+// TODO: pass this parameter to RunOptions
+export const ENGINES_AVAILABLE: EnginesType[] = ['puppeteer', 'playwright'];
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
   const configGlobal = __non_webpack_require__(

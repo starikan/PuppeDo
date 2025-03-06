@@ -38,6 +38,8 @@ export type PagesType = Record<string, BrowserPageType | BrowserFrame>;
 
 export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
+export type EnginesType = 'puppeteer' | 'playwright';
+
 // ================ HELPERS ====================
 
 export type ColorsType = keyof typeof colors;
@@ -455,3 +457,8 @@ export type DeepMergeable =
   | Function
   | Record<string, unknown>
   | unknown;
+
+export type AtomInit = {
+  runner?: Runner;
+  page?: BrowserPageType | BrowserFrame;
+};
