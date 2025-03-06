@@ -6,10 +6,7 @@ function setValue(
   this: Plugin<PluginDebug>,
   { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
 ): void {
-  const { PPD_DEBUG_MODE } = this.plugins
-    .getPlugins<PluginArgsRedefine>('argsRedefine')
-    .getValue(stepId, 'argsRedefine');
-  this.setValues(stepId, { debug: PPD_DEBUG_MODE && ((inputs.debug as boolean) || false) });
+  this.setValues(stepId, inputs);
 }
 
 const plugin: PluginFunction<PluginDebug> = (plugins) => {
@@ -21,6 +18,13 @@ const plugin: PluginFunction<PluginDebug> = (plugins) => {
     hooks: {
       initValues: setValue,
       runLogic: setValue,
+    },
+    isActive: ({ stepId }): boolean => {
+      const { PPD_DEBUG_MODE } = plugins
+        .getPlugins<PluginArgsRedefine>('argsRedefine')
+        .getValue(stepId, 'argsRedefine');
+
+      return PPD_DEBUG_MODE;
     },
   });
   return pluginInstance;

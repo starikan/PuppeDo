@@ -4,6 +4,7 @@ import {
   PluginDocumentation,
   PluginFunction,
   PluginHooks,
+  PluginInitType,
   PluginList,
   PluginModule,
   PluginPropogations,
@@ -226,6 +227,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
 
   propogation: Partial<PluginPropogations<T>>;
 
+  isActive: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => boolean;
+
   /**
    * Constructor for the Plugin class.
    * @param {string} name - The name of the plugin.
@@ -240,18 +243,14 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
     propogation,
     plugins,
     hooks = {},
-  }: {
-    name: string;
-    defaultValues: T;
-    propogation?: Partial<PluginPropogations<T>>;
-    plugins: Plugins;
-    hooks: PluginHooks;
-  }) {
+    isActive = (): boolean => true,
+  }: PluginInitType<T>) {
     this.name = name;
     this.defaultValues = { ...defaultValues };
     this.propogation = propogation;
     this.plugins = plugins;
     this.hooks = { ...this.hooks, ...hooks };
+    this.isActive = isActive;
 
     this.agentTree = plugins.agentTree;
   }
@@ -303,6 +302,12 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
    * @returns {T} - The new values for the step.
    */
   setValues(stepId: string, values: Partial<T> = {}): T {
+    if (!this.isActive({ stepId, inputs: values })) {
+      this.agentTree.updateStep({ stepId, payload: this.defaultValues });
+
+      return this.defaultValues;
+    }
+
     let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
 
     try {

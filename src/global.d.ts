@@ -385,19 +385,23 @@ export type PluginHooks = {
 
 export type PluginPropogations<T> = Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
 
-export interface PluginType<T> {
+export type PluginType<T> = {
   id: string;
-  name: string;
-  defaultValues: T;
-  plugins: Plugins;
-  agentTree: AgentTree;
   hook: (name: keyof PluginHooks) => (_: unknown) => void;
-  hooks: PluginHooks;
-  propogation: PluginPropogations<T>;
   getValue: (stepId: string, value?: keyof T) => T[keyof T];
   getValues: (stepId: string) => T;
   setValues: (stepId: string, values?: Partial<T>) => T;
-}
+  agentTree: AgentTree;
+} & Required<PluginInitType<T>>;
+
+export type PluginInitType<T> = {
+  name: string;
+  defaultValues: T;
+  plugins: Plugins;
+  hooks: PluginHooks;
+  propogation?: Partial<PluginPropogations<T>>;
+  isActive?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => boolean;
+};
 
 export type PluginFunction<T> = (plugins: Plugins) => PluginType<T>;
 
