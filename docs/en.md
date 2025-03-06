@@ -733,53 +733,81 @@ Frame support. Allows to specify target frame for actions.
 ```yaml
 name: frame
 description: Frame support test
-frame: mainFrame
+dataExt:
+  - data
+  - selectors
 
-runTest:
+beforeRun:
+  - runnerSwitch:
+      bindData: { runnerName: mainRunner }
+
+  - goTo:
+      bindDescription: "'Going on page ' + url"
+      bD: { url: baseUrl }
+
+run:
   - blank:
-      description: Using parent frame
-      runTest:
-        - blank:
-            description: Inherited frame from parent
+      description: No frame
+      run:
+        - getText:
+            bindSelector: { selector: mainText }
+            r: { result: text }
+            errorIfResult: "result !== 'Simple Text'"
 
   - blank:
-      description: Override frame
-      frame: childFrame
-      runTest:
-        - blank:
-            description: Using child frame
+      description: Get text from frame
+      stepId: 'frame'
+      frame: 'namedFrame'
+      run:
+        - getText:
+            stepId: 'get'
+            bindSelector: { selector: frameText }
+            result: { result: text }
+            errorIfResult: "result !== 'Text block inside the frame'"
 
-  - blank:
-      description: Reset frame
-      frame: ''
-      runTest:
         - blank:
-            description: No frame specified
+            description: Nested agent frame available
+            run:
+              - getText:
+                  bindSelector: { selector: frameText }
+                  result: { result: text }
+                  errorIfResult: "result !== 'Text block inside the frame'"
 ```
 #### Output:
 ```
 00:00:00.000 - timer  Test 'frame' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    
 Frame support test (frame)
-   Using parent frame (blank)
-      Inherited frame from parent (blank)
-   Override frame (blank)
-      Using child frame (blank)
-   Reset frame (blank)
-      No frame specified (blank)
+   (runnerSwitch)
+   (goTo)
+   No frame (blank)
+      (getText)
+   Get text from frame (blank)
+      (getText)
+      Nested agent frame available (blank)
+         (getText)
 
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   (frame) Frame support test
-00:00:00.000 - test   |   (blank) Using parent frame
-00:00:00.000 - test   |   |   (blank) Inherited frame from parent
-                      |   |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   (runnerSwitch) Switch on runner: 'mainRunner'
+00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
+                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   (goTo) Going on page http://localhost:3000/
+00:00:00.000 - raw    |   |   Go to: http://localhost:3000/
+                      |   🕝: 00.000 s. (goTo)
+00:00:00.000 - test   |   (blank) No frame
+00:00:00.000 - test   |   |   (getText) Get text from selector: '#simple-text'
+00:00:00.000 - raw    |   |   |   Get text: 'Simple Text' from selector: '#simple-text'
+                      |   |   🕝: 00.000 s. (getText)
                       |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   (blank) Override frame
-00:00:00.000 - test   |   |   (blank) Using child frame
-                      |   |   🕝: 00.000 s. (blank)
-                      |   🕝: 00.000 s. (blank)
-00:00:00.000 - test   |   (blank) Reset frame
-00:00:00.000 - test   |   |   (blank) No frame specified
+00:00:00.000 - test   |   (blank) Get text from frame
+00:00:00.000 - test   |   |   (getText) Get text from selector: '#frame-text'
+00:00:00.000 - raw    |   |   |   Get text: 'Text block inside the frame' from selector: '#frame-text'
+                      |   |   🕝: 00.000 s. (getText)
+00:00:00.000 - test   |   |   (blank) Nested agent frame available
+00:00:00.000 - test   |   |   |   (getText) Get text from selector: '#frame-text'
+00:00:00.000 - raw    |   |   |   |   Get text: 'Text block inside the frame' from selector: '#frame-text'
+                      |   |   |   🕝: 00.000 s. (getText)
                       |   |   🕝: 00.000 s. (blank)
                       |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (frame)

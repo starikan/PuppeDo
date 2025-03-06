@@ -10,9 +10,11 @@ import {
   LogInputType,
   ColorsType,
   BrowserFrame,
+  AgentData,
 } from './global.d';
-import { Runner } from './Environment';
+import { Environment, Runner } from './Environment';
 import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
+import { PluginFrame } from './Plugins';
 
 type EnginesType = 'puppeteer' | 'playwright';
 
@@ -37,7 +39,6 @@ export default class Atom {
   levelIndent: number;
   logOptions: LogOptionsType;
   options: Record<string, string>;
-  frame: string;
 
   constructor(init: AtomInit = {}) {
     this.page = init.page || this.page;
@@ -114,8 +115,11 @@ export default class Atom {
     throw new AtomError('Empty Atom Run');
   }
 
-  async updateFrame(): Promise<void> {
-    if (!this.frame) {
+  async updateFrame(agent: AgentData): Promise<void> {
+    const { plugins } = new Environment().getEnvInstance(agent.envsId);
+
+    const { frame } = plugins.getPlugins<PluginFrame>('frame').getValues(agent.stepId);
+    if (!frame) {
       return;
     }
 
@@ -123,18 +127,18 @@ export default class Atom {
 
     if (this.getEngine('puppeteer')) {
       const page = this.page as FramePuppeteer;
-      elementHandle = await page.$$(`iframe[name="${this.frame}"]`);
+      elementHandle = await page.$$(`iframe[name="${frame}"]`);
     }
 
     if (this.getEngine('playwright')) {
       const page = this.page as FramePlaywright;
-      elementHandle = await page.$$(`iframe[name="${this.frame}"]`);
+      elementHandle = await page.$$(`iframe[name="${frame}"]`);
     }
 
-    const frame = elementHandle && (await elementHandle.contentFrame());
+    const frameElem = elementHandle?.length && (await elementHandle[0].contentFrame());
 
-    if (frame) {
-      this.page = frame;
+    if (frameElem) {
+      this.page = frameElem;
     }
   }
 
@@ -176,7 +180,7 @@ export default class Atom {
     };
 
     try {
-      await this.updateFrame();
+      await this.updateFrame(agent);
       const result = await this.atomRun();
 
       await logExtend(this.log, { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent });

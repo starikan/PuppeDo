@@ -301,24 +301,22 @@ export class Test {
   agentTree: AgentTree;
 
   constructor(initValues: TestExtendType) {
-    const { testTree, plugins } = new Environment().getEnvInstance(initValues.envsId);
+    const { testTree, plugins, allRunners, logger } = new Environment().getEnvInstance(initValues.envsId);
     testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
 
     this.plugins = plugins;
-    this.plugins.hook('initValues', { inputs: initValues, stepId: initValues.stepId });
-
     this.agentTree = testTree;
+    this.logger = logger;
+
+    this.plugins.hook('initValues', { inputs: initValues, stepId: initValues.stepId });
 
     // TODO: Нужна какая то проверка тут initValues
     for (const key of Object.keys(this.agent)) {
       this.agent[key] = initValues[key] ?? this.agent[key];
     }
 
-    const { allRunners, logger } = new Environment().getEnvInstance(this.agent.envsId);
     const current = new Environment().getCurrent(this.agent.envsId);
-
     this.runner = allRunners.getRunnerByName(current.name || '');
-    this.logger = logger;
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [

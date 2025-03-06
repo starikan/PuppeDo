@@ -5,7 +5,7 @@ function setValue(
   this: Plugin<PluginFrame>,
   { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
 ): void {
-  this.setValues(stepId, { frame: inputs.frame as string });
+  this.setValues(stepId, inputs);
 }
 
 const plugin: PluginFunction<PluginFrame> = (plugins) => {

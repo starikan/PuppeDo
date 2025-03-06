@@ -1,24 +1,41 @@
 name: frame
 description: Frame support test
-frame: mainFrame
+dataExt:
+  - data
+  - selectors
 
-runTest:
+beforeRun:
+  - runnerSwitch:
+      bindData: { runnerName: mainRunner }
+
+  - goTo:
+      bindDescription: "'Going on page ' + url"
+      bD: { url: baseUrl }
+
+run:
   - blank:
-      description: Using parent frame
-      runTest:
-        - blank:
-            description: Inherited frame from parent
+      description: No frame
+      run:
+        - getText:
+            bindSelector: { selector: mainText }
+            r: { result: text }
+            errorIfResult: "result !== 'Simple Text'"
 
   - blank:
-      description: Override frame
-      frame: childFrame
-      runTest:
-        - blank:
-            description: Using child frame
+      description: Get text from frame
+      stepId: 'frame'
+      frame: 'namedFrame'
+      run:
+        - getText:
+            stepId: 'get'
+            bindSelector: { selector: frameText }
+            result: { result: text }
+            errorIfResult: "result !== 'Text block inside the frame'"
 
-  - blank:
-      description: Reset frame
-      frame: ''
-      runTest:
         - blank:
-            description: No frame specified
+            description: Nested agent frame available
+            run:
+              - getText:
+                  bindSelector: { selector: frameText }
+                  result: { result: text }
+                  errorIfResult: "result !== 'Text block inside the frame'"

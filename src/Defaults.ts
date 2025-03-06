@@ -78,7 +78,6 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   disable: false,
   errorIf: '',
   errorIfResult: '',
-  frame: '',
   if: '',
   inlineJS: '',
   logOptions: {},
