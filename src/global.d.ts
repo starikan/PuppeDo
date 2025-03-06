@@ -62,7 +62,7 @@ export type ArgumentsType = {
   PPD_LOG_LEVEL_TYPE_IGNORE: ColorsType[];
   PPD_LOG_SCREENSHOT: boolean;
   PPD_LOG_FULLPAGE: boolean;
-  PPD_LOG_TEST_NAME: boolean;
+  PPD_LOG_AGENT_NAME: boolean;
   PPD_LOG_IGNORE_HIDE_LOG: boolean;
   PPD_TAGS_TO_RUN: string[];
   PPD_LOG_DOCUMENTATION_MODE: boolean;

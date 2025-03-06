@@ -41,7 +41,7 @@ PPD_LOG_LEVEL_NESTED | Log only nested levels of log bellow this. `0` - log all 
 PPD_LOG_LEVEL_TYPE_IGNORE | Log ignore types. [`raw`, `debug`, `info`, `test`, `warn`, `error`, `env`] | `[]` | `String[]`
 PPD_LOG_SCREENSHOT | Screenshot of elements enable | `false` | `Boolean`
 PPD_LOG_FULLPAGE | Full screen screenshot enable | `false` | `Boolean`
-PPD_LOG_TEST_NAME | Show in log name of test on every line | `true` | `Boolean`
+PPD_LOG_AGENT_NAME | Show in log name of test on every line | `true` | `Boolean`
 PPD_LOG_IGNORE_HIDE_LOG | Show all log even if it ignore inline | `false` | `Boolean`
 PPD_LOG_DOCUMENTATION_MODE | Show documentation in descriptionExtend | `false` | `Boolean`
 PPD_LOG_NAMES_ONLY | Show only names in list/ All by default | `[]` | `String[]`

@@ -49,7 +49,7 @@ export const argsDefault: ArgumentsType = {
   PPD_LOG_LEVEL_TYPE_IGNORE: [],
   PPD_LOG_SCREENSHOT: false,
   PPD_LOG_FULLPAGE: false,
-  PPD_LOG_TEST_NAME: true,
+  PPD_LOG_AGENT_NAME: true,
   PPD_LOG_IGNORE_HIDE_LOG: false,
   PPD_LOG_DOCUMENTATION_MODE: false,
   PPD_LOG_NAMES_ONLY: [],

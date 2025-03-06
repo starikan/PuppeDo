@@ -107,7 +107,7 @@ const resolveDataFunctions = (
   return funcEval;
 };
 
-// TODO: 2021-12-07 S.Starodubov move to class and improve with ${getLogText(text, this.name, PPD_LOG_TEST_NAME)}
+// TODO: 2021-12-07 S.Starodubov move to class and improve with ${getLogText(text, this.name, PPD_LOG_AGENT_NAME)}
 export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
@@ -266,8 +266,8 @@ const fetchData = (
   return { dataLocal, selectorsLocal };
 };
 
-const getLogText = (text: string, nameTest = '', PPD_LOG_TEST_NAME = false): string => {
-  const nameTestResolved = nameTest && (PPD_LOG_TEST_NAME || !text) ? `(${nameTest}) ` : '';
+const getLogText = (text: string, nameTest = '', PPD_LOG_AGENT_NAME = false): string => {
+  const nameTestResolved = nameTest && (PPD_LOG_AGENT_NAME || !text) ? `(${nameTest}) ` : '';
   const descriptionTest = text || 'TODO: Fill description';
   return `${nameTestResolved}${descriptionTest}`;
 };
@@ -333,7 +333,7 @@ export class Test {
 
     const {
       PPD_LOG_EXTEND,
-      PPD_LOG_TEST_NAME,
+      PPD_LOG_AGENT_NAME,
       PPD_TAGS_TO_RUN,
       PPD_LOG_DOCUMENTATION_MODE,
       PPD_LOG_NAMES_ONLY,
@@ -362,7 +362,7 @@ export class Test {
       }
 
       await this.logger.log({
-        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_TEST_NAME)}${
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${
           PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
         }`,
         level: 'raw',
@@ -387,7 +387,7 @@ export class Test {
         text: `Skip with tags: ${JSON.stringify(this.agent.tags)} => ${getLogText(
           this.agent.description,
           this.agent.name,
-          PPD_LOG_TEST_NAME,
+          PPD_LOG_AGENT_NAME,
         )}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''}`,
         level: 'raw',
         levelIndent: this.agent.levelIndent,
@@ -545,7 +545,7 @@ export class Test {
 
         for (const element of elements) {
           await this.logger.log({
-            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_TEST_NAME)}${
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${
               PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
             }`,
             level: 'test',

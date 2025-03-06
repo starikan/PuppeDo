@@ -710,7 +710,7 @@ describe('AgentContent.getAllData (AI generated)', () => {
     PPD_LOG_LEVEL_TYPE_IGNORE: [],
     PPD_LOG_SCREENSHOT: false,
     PPD_LOG_FULLPAGE: false,
-    PPD_LOG_TEST_NAME: false,
+    PPD_LOG_AGENT_NAME: false,
     PPD_LOG_IGNORE_HIDE_LOG: false,
     PPD_TAGS_TO_RUN: [],
     PPD_LOG_DOCUMENTATION_MODE: false,
