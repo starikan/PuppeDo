@@ -15,6 +15,7 @@ import { blankSocket } from './Helpers';
 
 export const pluginsListDefault: PluginList = {
   argsRedefine: { plugin: 'argsRedefine', order: 100 },
+  logOptions: { plugin: 'logOptions', order: 150 },
   descriptionError: { plugin: 'descriptionError', order: 200 },
   continueOnError: { plugin: 'continueOnError', order: 300 },
   skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },
@@ -111,7 +112,6 @@ export const EXTEND_BLANK_AGENT = (): AgentData => {
     dataParent: {},
     selectorsParent: {},
     optionsParent: {},
-    logOptionsParent: {},
     socket: blankSocket,
     // atomRun: () => {},
   } as AgentData;

@@ -285,12 +285,23 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }
 
   /**
+   * Retrieves all values for a parent step.
+   * @param {string} stepId - The step identifier.
+   * @returns {T} - All values for the step.
+   */
+  getValuesParent(stepId: string): T {
+    const step = this.agentTree.findParent(stepId) ?? {};
+
+    return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
+  }
+
+  /**
    * Retrieves all values for a given step.
    * @param {string} stepId - The step identifier.
    * @returns {T} - All values for the step.
    */
   getValues(stepId: string): T {
-    const step = this.agentTree.findNode(stepId);
+    const step = this.agentTree.findNode(stepId) ?? {};
 
     return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
   }

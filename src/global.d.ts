@@ -340,7 +340,6 @@ export type TestExtendType = {
   funcFile?: string;
   testFile?: string;
   optionsParent?: Record<string, string | number>;
-  logOptionsParent?: LogOptionsType;
   atomRun?: TestLifeCycleFunctionType[];
 } & Required<TestTypeYaml>;
 
@@ -392,6 +391,7 @@ export type PluginType<T> = {
   hook: (name: keyof PluginHooks) => (_: unknown) => void;
   getValue: (stepId: string, value?: keyof T) => T[keyof T];
   getValues: (stepId: string) => T;
+  getValuesParent: (stepId: string) => T;
   setValues: (stepId: string, values?: Partial<T>) => T;
   agentTree: AgentTree;
 } & Required<PluginInitType<T>>;

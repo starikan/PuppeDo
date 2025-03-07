@@ -127,7 +127,7 @@
       "request": "launch",
       "name": "Custom run",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["breakParentIfResult"],
+      "args": ["logs"],
       "env": { "PPD_DEBUG_MODE": true, "PPD_LOG_TIMESTAMP_SHOW": false },
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }

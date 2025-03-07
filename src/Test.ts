@@ -20,7 +20,13 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
-import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine, PluginDebug } from './Plugins';
+import {
+  PluginContinueOnError,
+  PluginSkipSublingIfResult,
+  PluginArgsRedefine,
+  PluginDebug,
+  PluginLogOptions,
+} from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
 import { AgentTree } from './AgentTree';
@@ -176,38 +182,18 @@ const updateDataWithNeeds = (
   return { dataLocal: dataLocalCopy, selectorsLocal: selectorsLocalCopy };
 };
 
-const resolveLogOptions = (
-  logOptionsParent: LogOptionsType,
-  logOptions: LogOptionsType,
-): { logShowFlag: boolean; logForChild: LogOptionsType } => {
+const resolveLogOptions = (logOptions: LogOptionsType, logOptionsParent: LogOptionsType = {}): LogOptionsType => {
   const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
-  const { logChildren: logChildrenParent = true } = logOptionsParent;
 
   const logForChild: LogOptionsType = {
-    ...{ logChildren: logChildrenParent },
-    ...{ logThis: logChildrenParent },
+    logChildren: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
+    logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
     textColor: 'sane' as ColorsType,
     backgroundColor: 'sane' as ColorsType,
     ...logOptions,
   };
 
-  let logShowFlag = true;
-
-  if (logChildrenParent === false) {
-    logShowFlag = false;
-  }
-
-  if (typeof logOptions.logThis === 'boolean') {
-    logShowFlag = logOptions.logThis;
-  }
-
-  if (PPD_LOG_IGNORE_HIDE_LOG) {
-    logForChild.logThis = true;
-    logForChild.logChildren = true;
-    logShowFlag = true;
-  }
-
-  return { logShowFlag, logForChild };
+  return logForChild;
 };
 
 const fetchData = (
@@ -329,8 +315,6 @@ export class Test {
     this.plugins.hook('runLogic', { inputs, stepId: inputs.stepId });
     const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
-    const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
-
     const {
       PPD_LOG_EXTEND,
       PPD_LOG_AGENT_NAME,
@@ -339,6 +323,7 @@ export class Test {
       PPD_LOG_NAMES_ONLY,
       PPD_LOG_TIMER_SHOW,
       PPD_LOG_STEPID,
+      PPD_LOG_IGNORE_HIDE_LOG,
     } = this.plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValue(this.agent.stepId, 'argsRedefine');
 
     const { debug } = this.plugins.getPlugins<PluginDebug>('debug').getValues(this.agent.stepId);
@@ -348,6 +333,13 @@ export class Test {
       // eslint-disable-next-line no-debugger
       debugger;
     }
+
+    const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
+    const { logOptions: logOptionsParent } = this.plugins
+      .getPlugins<PluginLogOptions>('logOptions')
+      .getValuesParent(this.agent.stepId);
+
+    const logShowFlag = (PPD_LOG_IGNORE_HIDE_LOG || logOptions.logThis) ?? logOptionsParent.logChildren ?? true;
 
     const { skipMeBecausePrevSublingResults } = this.plugins
       .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
@@ -430,6 +422,7 @@ export class Test {
       ...inputs.optionsParent,
     } as Record<string, string | number>;
 
+    const logForChild = resolveLogOptions(logOptions, logOptionsParent);
     this.agent.logOptions = logForChild;
 
     try {

@@ -5,6 +5,7 @@ import descriptionError, { PluginDescriptionError } from './descriptionError/des
 import engineSupports, { PluginEngineSupports } from './engineSupports/engineSupports';
 import debug, { PluginDebug } from './debug/debug';
 import frame, { PluginFrame } from './frame/frame';
+import logOptions, { PluginLogOptions } from './logOptions/logOptions';
 
 export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginDebug> &
@@ -12,6 +13,7 @@ export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginDescriptionError> &
   Partial<PluginEngineSupports> &
   Partial<PluginFrame> &
+  Partial<PluginLogOptions> &
   Partial<PluginContinueOnError>;
 
 export type { PluginContinueOnError };
@@ -21,6 +23,7 @@ export type { PluginDescriptionError };
 export type { PluginEngineSupports };
 export type { PluginArgsRedefine };
 export type { PluginFrame };
+export type { PluginLogOptions };
 
 export default {
   continueOnError,
@@ -30,4 +33,5 @@ export default {
   descriptionError,
   engineSupports,
   frame,
+  logOptions,
 };
