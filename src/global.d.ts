@@ -384,7 +384,9 @@ export type PluginHooks = {
   afterRepeat?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
 };
 
-export type PluginPropogations<T> = Partial<Record<keyof T, 'lastParent' | 'lastSubling'>>;
+export type PluginPropogations<T> = Partial<Record<keyof T, PluginPropogationsEntry>>;
+
+export type PluginPropogationsEntry = { type: 'lastParent' | 'lastSubling'; fieldsOnly?: string[] };
 
 export type PluginType<T> = {
   id: string;

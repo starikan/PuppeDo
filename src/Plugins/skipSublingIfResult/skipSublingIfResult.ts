@@ -13,7 +13,7 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { skipSublingIfResult: '', skipMeBecausePrevSublingResults: false },
-    propogation: { skipMeBecausePrevSublingResults: 'lastSubling' },
+    propogation: { skipMeBecausePrevSublingResults: { type: 'lastSubling' } },
     hooks: {
       initValues: setValue,
       runLogic: setValue,

@@ -8,6 +8,7 @@ import {
   PluginList,
   PluginModule,
   PluginPropogations,
+  PluginPropogationsEntry,
   PluginType,
   TreeEntryType,
 } from './global.d';
@@ -327,9 +328,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
         lastSubling: (): TreeEntryType => this.agentTree.findPreviousSibling(stepId),
       };
 
-      Object.entries(this.propogation ?? {}).forEach(([key, source]) => {
+      Object.entries(this.propogation ?? {}).forEach(([key, source]: [string, PluginPropogationsEntry]) => {
         if (!Object.keys(pick(values, [key])).length) {
-          const sourceNode = propagationSources[source as keyof typeof propagationSources]();
+          const sourceNode = propagationSources[source.type as keyof typeof propagationSources]();
           if (sourceNode) {
             const sourceValues = pick(sourceNode, [key]) as Partial<T>;
             newValues = { ...newValues, ...sourceValues };

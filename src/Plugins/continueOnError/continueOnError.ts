@@ -19,7 +19,7 @@ const plugin: PluginFunction<PluginContinueOnError> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { continueOnError: false },
-    propogation: { continueOnError: 'lastParent' },
+    propogation: { continueOnError: { type: 'lastParent' } },
     hooks: {
       initValues: setValue,
       resolveValues: setValue,

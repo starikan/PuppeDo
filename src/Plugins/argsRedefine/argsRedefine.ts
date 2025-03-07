@@ -13,7 +13,7 @@ const plugin: PluginFunction<PluginArgsRedefine> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { argsRedefine: new Arguments().args },
-    propogation: { argsRedefine: 'lastParent' },
+    propogation: { argsRedefine: { type: 'lastParent' } },
     hooks: {
       initValues: setValue,
       runLogic: setValue,

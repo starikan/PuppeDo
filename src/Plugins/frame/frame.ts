@@ -12,7 +12,7 @@ const plugin: PluginFunction<PluginFrame> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { frame: '' },
-    propogation: { frame: 'lastParent' },
+    propogation: { frame: { type: 'lastParent' } },
     hooks: {
       initValues: setValue,
       runLogic: setValue,
