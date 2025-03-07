@@ -386,7 +386,7 @@ export type PluginHooks = {
 
 export type PluginPropogations<T> = Partial<Record<keyof T, PluginPropogationsEntry>>;
 
-export type PluginPropogationsEntry = { type: 'lastParent' | 'lastSubling'; fieldsOnly?: string[] };
+export type PluginPropogationsEntry = { type: 'lastParent' | 'lastSubling'; fieldsOnly?: string[]; force?: boolean };
 
 export type PluginType<T> = {
   id: string;

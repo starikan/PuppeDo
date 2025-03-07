@@ -320,7 +320,8 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       return this.defaultValues;
     }
 
-    let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
+    const valuesPick = pick(values, Object.keys(this.defaultValues));
+    let newValues = mergeObjects<Partial<T>>([this.defaultValues, valuesPick]);
 
     try {
       const propagationSources = {
@@ -329,11 +330,16 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       };
 
       Object.entries(this.propogation ?? {}).forEach(([key, source]: [string, PluginPropogationsEntry]) => {
-        if (!Object.keys(pick(values, [key])).length) {
-          const sourceNode = propagationSources[source.type as keyof typeof propagationSources]();
+        if (!Object.keys(pick(values, [key])).length || source.force) {
+          const sourceNode = (
+            propagationSources[source.type as keyof typeof propagationSources] ?? ((): TreeEntryType => null)
+          )();
           if (sourceNode) {
             const sourceValues = pick(sourceNode, [key]) as Partial<T>;
-            newValues = { ...newValues, ...sourceValues };
+            newValues = {
+              ...newValues,
+              ...(sourceValues && source.fieldsOnly?.length ? pick(sourceValues, source.fieldsOnly) : sourceValues),
+            };
           }
         }
       });

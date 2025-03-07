@@ -188,8 +188,6 @@ const resolveLogOptions = (logOptions: LogOptionsType, logOptionsParent: LogOpti
   const logForChild: LogOptionsType = {
     logChildren: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
     logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
-    textColor: 'sane' as ColorsType,
-    backgroundColor: 'sane' as ColorsType,
     ...logOptions,
   };
 

@@ -1,5 +1,5 @@
 import { Plugin } from '../../PluginsCore';
-import { LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global';
+import { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global';
 
 function setValue(
   this: Plugin<PluginLogOptions>,
@@ -11,11 +11,17 @@ function setValue(
 const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { logOptions: {} },
+    defaultValues: {
+      logOptions: {
+        textColor: 'sane' as ColorsType,
+        backgroundColor: 'sane' as ColorsType,
+      },
+    },
     hooks: {
       initValues: setValue,
       runLogic: setValue,
     },
+    propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'] } },
     plugins,
   });
   return pluginInstance;

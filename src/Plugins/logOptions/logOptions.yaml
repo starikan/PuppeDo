@@ -1,0 +1,580 @@
+name: logOptions
+description: logOptions test
+
+runTest:
+  - blank:
+      description: 'Let logOptions.logThis = 🧑 and logOptions.logChildren = 👨‍👦‍👦'
+
+  - blank:
+      description: Check logOptions.logThis and logOptions.logChildren
+      runTest:
+        - blank:
+            description: '[1] I am no logOptions block and I am visible'
+
+        - blank:
+            description: "[2] I am '🧑 = ✔️' and I am visible"
+            logOptions: { logThis: true }
+
+        - blank:
+            description: "[3] I am '👨‍👦‍👦 = ✔️' and I am visible"
+            logOptions: { logChildren: true }
+
+        - blank:
+            description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
+            logOptions: { logThis: false, backgroundColor: red }
+
+        - blank:
+            description: "[4] I am '👨‍👦‍👦 = ❌' and I am visible"
+            logOptions: { logChildren: false }
+
+        - blank:
+            description: "[5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
+            logOptions: { logThis: true, logChildren: true }
+
+        - blank:
+            description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
+            logOptions: { logThis: false, logChildren: false, backgroundColor: red }
+
+        - blank:
+            description: "[6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+            logOptions: { logThis: true, logChildren: false }
+
+        - blank:
+            description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
+            logOptions: { logThis: false, logChildren: true, backgroundColor: red }
+
+        - blank:
+            description: I am no logOptions parent block
+            runTest:
+              - blank:
+                  description: '[1] I am no logOptions block and I am visible'
+
+              - blank:
+                  description: "[2] I am '🧑 = ✔️' and I am visible"
+                  logOptions: { logThis: true }
+
+              - blank:
+                  description: "[3] I am '👨‍👦‍👦 = ✔️' and I am visible"
+                  logOptions: { logChildren: true }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, backgroundColor: red }
+
+              - blank:
+                  description: "[4] I am '👨‍👦‍👦 = ❌' and I am visible"
+                  logOptions: { logChildren: false }
+
+              - blank:
+                  description: "[5] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
+                  logOptions: { logThis: true, logChildren: true }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, logChildren: false, backgroundColor: red }
+
+              - blank:
+                  description: "[6] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+                  logOptions: { logThis: true, logChildren: false }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, logChildren: true, backgroundColor: red }
+
+        - blank:
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
+            logOptions: { logChildren: false }
+            runTest:
+              - blank:
+                  description: '[-] I am no logOptions visible block and I am NOT🔴 visible'
+                  logOptions: { backgroundColor: red }
+
+              - blank:
+                  description: "[1] I am '🧑 = ✔️' and I am visible"
+                  logOptions: { logThis: true }
+
+              - blank:
+                  description: "[-] I am '👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
+                  logOptions: { logChildren: true, backgroundColor: red }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, backgroundColor: red }
+
+              - blank:
+                  description: "[-] I am '👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
+                  logOptions: { logChildren: false, backgroundColor: red }
+
+              - blank:
+                  description: "[2] I am '🧑 = ✔️ + 👨‍👦‍👦 = ✔️' and I am visible"
+                  logOptions: { logThis: true, logChildren: true }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ❌' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, logChildren: false, backgroundColor: red }
+
+              - blank:
+                  description: "[3] I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+                  logOptions: { logThis: true, logChildren: false }
+
+              - blank:
+                  description: "[-] I am '🧑 = ❌ + 👨‍👦‍👦 = ✔️' and I am NOT🔴 visible"
+                  logOptions: { logThis: false, logChildren: true, backgroundColor: red }
+
+  - blank:
+      description: Check logOptions visible into loop with nested blocks
+      runTest:
+        - blank:
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
+            logOptions: { logChildren: false }
+            runTest:
+              - loop:
+                  description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                  repeat: 2
+                  logOptions: { backgroundColor: red }
+                  runTest:
+                    - blank:
+                        description: "I am '🧑 = ✔️ + 👨‍👦‍👦 = ❌' and I am visible"
+                        logOptions: { logThis: true, logChildren: false }
+                        runTest:
+                          - blank:
+                              description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                              logOptions: { backgroundColor: red }
+
+        - blank:
+            description: I am '👨‍👦‍👦 = ❌' parent block and I am visible
+            logOptions: { logChildren: false }
+            runTest:
+              - loop:
+                  description: 'I am no logOptions visible block and I am NOT🔴 visible'
+                  repeat: 2
+                  logOptions: { backgroundColor: red }
+                  runTest:
+                    - blank:
+                        description: "I am '🧑 = ✔️' and I am visible"
+                        logOptions: { logThis: true }
+                        runTest:
+                          - blank:
+                              description: '44I am no logOptions visible block and I am NOT🔴 visible'
+                              stepId: '44'
+                              logOptions: { backgroundColor: red }
+
+  - blank:
+      description: "logOptions colors: sane, black, red, green, yellow, blue, magenta, cyan, white"
+      runTest:
+        - blank:
+            description: 'Text: none + Background: none'
+
+        - blank:
+            description: 'Text: sane + Background: none'
+            logOptions: { textColor: sane }
+
+        - blank:
+            description: 'Text: black + Background: none'
+            logOptions: { textColor: black }
+
+        - blank:
+            description: 'Text: red + Background: none'
+            logOptions: { textColor: red }
+
+        - blank:
+            description: 'Text: green + Background: none'
+            logOptions: { textColor: green }
+
+        - blank:
+            description: 'Text: yellow + Background: none'
+            logOptions: { textColor: yellow }
+
+        - blank:
+            description: 'Text: blue + Background: none'
+            logOptions: { textColor: blue }
+
+        - blank:
+            description: 'Text: magenta + Background: none'
+            logOptions: { textColor: magenta }
+
+        - blank:
+            description: 'Text: cyan + Background: none'
+            logOptions: { textColor: cyan }
+
+        - blank:
+            description: 'Text: white + Background: none'
+            logOptions: { textColor: white }
+
+        - blank:
+            description: 'Text: none + Background: black'
+            logOptions: { backgroundColor: black }
+
+        - blank:
+            description: 'Text: sane + Background: black'
+            logOptions: { textColor: sane, backgroundColor: black }
+
+        - blank:
+            description: 'Text: black + Background: black'
+            logOptions: { textColor: black, backgroundColor: black }
+
+        - blank:
+            description: 'Text: red + Background: black'
+            logOptions: { textColor: red, backgroundColor: black }
+
+        - blank:
+            description: 'Text: green + Background: black'
+            logOptions: { textColor: green, backgroundColor: black }
+
+        - blank:
+            description: 'Text: yellow + Background: black'
+            logOptions: { textColor: yellow, backgroundColor: black }
+
+        - blank:
+            description: 'Text: blue + Background: black'
+            logOptions: { textColor: blue, backgroundColor: black }
+
+        - blank:
+            description: 'Text: magenta + Background: black'
+            logOptions: { textColor: magenta, backgroundColor: black }
+
+        - blank:
+            description: 'Text: cyan + Background: black'
+            logOptions: { textColor: cyan, backgroundColor: black }
+
+        - blank:
+            description: 'Text: white + Background: black'
+            logOptions: { textColor: white, backgroundColor: black }
+
+        - blank:
+            description: 'Text: none + Background: red'
+            logOptions: { backgroundColor: red }
+
+        - blank:
+            description: 'Text: sane + Background: red'
+            logOptions: { textColor: sane, backgroundColor: red }
+
+        - blank:
+            description: 'Text: black + Background: red'
+            logOptions: { textColor: black, backgroundColor: red }
+
+        - blank:
+            description: 'Text: red + Background: red'
+            logOptions: { textColor: red, backgroundColor: red }
+
+        - blank:
+            description: 'Text: green + Background: red'
+            logOptions: { textColor: green, backgroundColor: red }
+
+        - blank:
+            description: 'Text: yellow + Background: red'
+            logOptions: { textColor: yellow, backgroundColor: red }
+
+        - blank:
+            description: 'Text: blue + Background: red'
+            logOptions: { textColor: blue, backgroundColor: red }
+
+        - blank:
+            description: 'Text: magenta + Background: red'
+            logOptions: { textColor: magenta, backgroundColor: red }
+
+        - blank:
+            description: 'Text: cyan + Background: red'
+            logOptions: { textColor: cyan, backgroundColor: red }
+
+        - blank:
+            description: 'Text: white + Background: red'
+            logOptions: { textColor: white, backgroundColor: red }
+
+        - blank:
+            description: 'Text: none + Background: green'
+            logOptions: { backgroundColor: green }
+
+        - blank:
+            description: 'Text: sane + Background: green'
+            logOptions: { textColor: sane, backgroundColor: green }
+
+        - blank:
+            description: 'Text: black + Background: green'
+            logOptions: { textColor: black, backgroundColor: green }
+
+        - blank:
+            description: 'Text: red + Background: green'
+            logOptions: { textColor: red, backgroundColor: green }
+
+        - blank:
+            description: 'Text: green + Background: green'
+            logOptions: { textColor: green, backgroundColor: green }
+
+        - blank:
+            description: 'Text: yellow + Background: green'
+            logOptions: { textColor: yellow, backgroundColor: green }
+
+        - blank:
+            description: 'Text: blue + Background: green'
+            logOptions: { textColor: blue, backgroundColor: green }
+
+        - blank:
+            description: 'Text: magenta + Background: green'
+            logOptions: { textColor: magenta, backgroundColor: green }
+
+        - blank:
+            description: 'Text: cyan + Background: green'
+            logOptions: { textColor: cyan, backgroundColor: green }
+
+        - blank:
+            description: 'Text: white + Background: green'
+            logOptions: { textColor: white, backgroundColor: green }
+
+        - blank:
+            description: 'Text: none + Background: yellow'
+            logOptions: { backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: sane + Background: yellow'
+            logOptions: { textColor: sane, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: black + Background: yellow'
+            logOptions: { textColor: black, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: red + Background: yellow'
+            logOptions: { textColor: red, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: green + Background: yellow'
+            logOptions: { textColor: green, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: yellow + Background: yellow'
+            logOptions: { textColor: yellow, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: blue + Background: yellow'
+            logOptions: { textColor: blue, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: magenta + Background: yellow'
+            logOptions: { textColor: magenta, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: cyan + Background: yellow'
+            logOptions: { textColor: cyan, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: white + Background: yellow'
+            logOptions: { textColor: white, backgroundColor: yellow }
+
+        - blank:
+            description: 'Text: none + Background: blue'
+            logOptions: { backgroundColor: blue }
+
+        - blank:
+            description: 'Text: sane + Background: blue'
+            logOptions: { textColor: sane, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: black + Background: blue'
+            logOptions: { textColor: black, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: red + Background: blue'
+            logOptions: { textColor: red, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: green + Background: blue'
+            logOptions: { textColor: green, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: yellow + Background: blue'
+            logOptions: { textColor: yellow, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: blue + Background: blue'
+            logOptions: { textColor: blue, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: magenta + Background: blue'
+            logOptions: { textColor: magenta, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: cyan + Background: blue'
+            logOptions: { textColor: cyan, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: white + Background: blue'
+            logOptions: { textColor: white, backgroundColor: blue }
+
+        - blank:
+            description: 'Text: none + Background: magenta'
+            logOptions: { backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: sane + Background: magenta'
+            logOptions: { textColor: sane, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: black + Background: magenta'
+            logOptions: { textColor: black, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: red + Background: magenta'
+            logOptions: { textColor: red, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: green + Background: magenta'
+            logOptions: { textColor: green, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: yellow + Background: magenta'
+            logOptions: { textColor: yellow, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: blue + Background: magenta'
+            logOptions: { textColor: blue, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: magenta + Background: magenta'
+            logOptions: { textColor: magenta, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: cyan + Background: magenta'
+            logOptions: { textColor: cyan, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: white + Background: magenta'
+            logOptions: { textColor: white, backgroundColor: magenta }
+
+        - blank:
+            description: 'Text: none + Background: white'
+            logOptions: { backgroundColor: white }
+
+        - blank:
+            description: 'Text: sane + Background: white'
+            logOptions: { textColor: sane, backgroundColor: white }
+
+        - blank:
+            description: 'Text: black + Background: white'
+            logOptions: { textColor: black, backgroundColor: white }
+
+        - blank:
+            description: 'Text: red + Background: white'
+            logOptions: { textColor: red, backgroundColor: white }
+
+        - blank:
+            description: 'Text: green + Background: white'
+            logOptions: { textColor: green, backgroundColor: white }
+
+        - blank:
+            description: 'Text: yellow + Background: white'
+            logOptions: { textColor: yellow, backgroundColor: white }
+
+        - blank:
+            description: 'Text: blue + Background: white'
+            logOptions: { textColor: blue, backgroundColor: white }
+
+        - blank:
+            description: 'Text: magenta + Background: white'
+            logOptions: { textColor: magenta, backgroundColor: white }
+
+        - blank:
+            description: 'Text: cyan + Background: white'
+            logOptions: { textColor: cyan, backgroundColor: white }
+
+        - blank:
+            description: 'Text: white + Background: white'
+            logOptions: { textColor: white, backgroundColor: white }
+
+        - blank:
+            description: 'Text: none + Background: cyan'
+            logOptions: { backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: sane + Background: cyan'
+            logOptions: { textColor: sane, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: black + Background: cyan'
+            logOptions: { textColor: black, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: red + Background: cyan'
+            logOptions: { textColor: red, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: green + Background: cyan'
+            logOptions: { textColor: green, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: yellow + Background: cyan'
+            logOptions: { textColor: yellow, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: blue + Background: cyan'
+            logOptions: { textColor: blue, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: magenta + Background: cyan'
+            logOptions: { textColor: magenta, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: cyan + Background: cyan'
+            logOptions: { textColor: cyan, backgroundColor: cyan }
+
+        - blank:
+            description: 'Text: white + Background: cyan'
+            logOptions: { textColor: white, backgroundColor: cyan }
+
+        - blank:
+            description: You can add to backgroundColor 'Background' word like 'whiteBackground'
+            runTest:
+              - blank:
+                  description: 'Background: blackBackground'
+                  logOptions: { textColor: sane, backgroundColor: blackBackground }
+
+              - blank:
+                  description: 'Background: redBackground'
+                  logOptions: { textColor: black, backgroundColor: redBackground }
+
+              - blank:
+                  description: 'Background: greenBackground'
+                  logOptions: { textColor: black, backgroundColor: greenBackground }
+
+              - blank:
+                  description: 'Background: yellowBackground'
+                  logOptions: { textColor: black, backgroundColor: yellowBackground }
+
+              - blank:
+                  description: 'Background: blueBackground'
+                  logOptions: { textColor: black, backgroundColor: blueBackground }
+
+              - blank:
+                  description: 'Background: magentaBackground'
+                  logOptions: { textColor: black, backgroundColor: magentaBackground }
+
+              - blank:
+                  description: 'Background: cyanBackground'
+                  logOptions: { textColor: black, backgroundColor: cyanBackground }
+
+              - blank:
+                  description: 'Background: whiteBackground'
+                  logOptions: { textColor: black, backgroundColor: whiteBackground }
+
+
+  - blank:
+      description: Redefine colors in nested blocks
+      runTest:
+        - blank:
+            description: 'Text: white + Background: green'
+            logOptions: { textColor: white, backgroundColor: green }
+            runTest:
+              - blank:
+                  description: 'I am not colored'
+
+              - loop:
+                  description: 'Text: red + Background: white'
+                  repeat: 2
+                  logOptions: { textColor: red, backgroundColor: white }
+                  runTest:
+                    - blank:
+                        description: 'I am not colored'
+                        runTest:
+                          - blank:
+                              description: 'Text: yellow + Background: magenta'
+                              logOptions: { textColor: yellow, backgroundColor: magenta }
