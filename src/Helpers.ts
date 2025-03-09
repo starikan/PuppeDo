@@ -1,4 +1,6 @@
 /* eslint-disable implicit-arrow-linebreak */
+
+import vm from 'vm';
 import crypto from 'crypto';
 import dayjs from 'dayjs';
 import { ColorsType, DeepMergeable, SocketType } from './global.d';
@@ -241,3 +243,28 @@ export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-m
   dayjs(now).format(format);
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
+
+export const runScriptInContext = (
+  source: string,
+  context: Record<string, unknown>,
+  defaultValue: unknown = null,
+): unknown => {
+  let result: unknown;
+
+  if (source === '{}') {
+    return {};
+  }
+
+  try {
+    const script = new vm.Script(source);
+    vm.createContext(context);
+    result = script.runInContext(context);
+  } catch (error) {
+    if (defaultValue !== null && defaultValue !== undefined) {
+      return defaultValue;
+    }
+    throw new Error(`Can't evaluate ${source} = '${error.message}'`);
+  }
+
+  return result;
+};

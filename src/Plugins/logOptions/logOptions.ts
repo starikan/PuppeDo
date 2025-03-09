@@ -41,7 +41,7 @@ const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
       runLogic: setValue,
       resolveValues: setValue,
     },
-    propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'], force: true } },
+    propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'] } },
     plugins,
   });
   return pluginInstance;
@@ -69,7 +69,7 @@ const documentation: PluginDocumentation = {
 
 const order = 700;
 
-const depends = [];
+const depends = ['argsRedefine'];
 
 const pluginModule: PluginModule<PluginLogOptions> = { name, documentation, plugin, order, depends };
 

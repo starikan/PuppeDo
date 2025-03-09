@@ -1,5 +1,4 @@
-import vm from 'vm';
-import { getTimer, pick, mergeObjects } from './Helpers';
+import { getTimer, pick, mergeObjects, runScriptInContext } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -55,31 +54,6 @@ export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
   return result as T;
 };
 
-export const runScriptInContext = (
-  source: string,
-  context: Record<string, unknown>,
-  defaultValue: unknown = null,
-): unknown => {
-  let result: unknown;
-
-  if (source === '{}') {
-    return {};
-  }
-
-  try {
-    const script = new vm.Script(source);
-    vm.createContext(context);
-    result = script.runInContext(context);
-  } catch (error) {
-    if (defaultValue !== null && defaultValue !== undefined) {
-      return defaultValue;
-    }
-    throw new Error(`Can't evaluate ${source} = '${error.message}'`);
-  }
-
-  return result;
-};
-
 const checkNeeds = (needs: string[], data: Record<string, unknown>, agentName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
   const keysData = new Set(Object.keys(data));
@@ -117,45 +91,48 @@ export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
   log: LogFunctionType,
-  levelIndent = 0,
+  plugins: Plugins,
+  agent: AgentData,
   allData: Record<string, unknown> = {},
-  logShowFlag = true,
-  continueOnError = false,
-  breadcrumbs = [],
-  textAddition = '',
 ): Promise<boolean> => {
-  const exprResult = runScriptInContext(expr, allData);
+  let { levelIndent = 0 } = agent;
+  const { breadcrumbs = [], stepId } = agent;
 
-  if (!exprResult && ifType === 'if') {
-    if (logShowFlag && !continueOnError) {
-      await log({
-        text: `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`,
-        level: 'info',
-        levelIndent,
-        logOptions: {
-          screenshot: false,
-          fullpage: false,
-        },
-        logMeta: { breadcrumbs },
-      });
-    }
-    return true;
+  const { continueOnError } = plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(stepId);
+  const { PPD_LOG_STEPID } = plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValues(stepId).argsRedefine;
+
+  const textAddition = PPD_LOG_STEPID ? ` [${stepId}]` : '';
+
+  if (ifType === 'errorIfResult') {
+    levelIndent += 1;
   }
 
-  if (exprResult && ifType !== 'if') {
-    if (!continueOnError) {
+  const exprResult = runScriptInContext(expr, allData);
+
+  if ((!exprResult && ifType === 'if') || (exprResult && ifType !== 'if')) {
+    const logLevel = exprResult ? 'error' : 'info';
+    const logText = exprResult
+      ? `Test stopped with expr ${ifType} = '${expr}'`
+      : `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`;
+
+    if (!continueOnError || logLevel === 'info') {
       await log({
-        text: `Test stopped with expr ${ifType} = '${expr}'`,
-        level: 'error',
+        text: logText,
+        level: logLevel,
         levelIndent,
         logOptions: {
-          screenshot: true,
-          fullpage: true,
+          screenshot: !!exprResult,
+          fullpage: !!exprResult,
         },
         logMeta: { breadcrumbs },
       });
     }
-    throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
+
+    if (exprResult) {
+      throw new Error(logText);
+    }
+
+    return true;
   }
 
   return false;
@@ -308,7 +285,6 @@ export class Test {
       PPD_LOG_NAMES_ONLY,
       PPD_LOG_TIMER_SHOW,
       PPD_LOG_STEPID,
-      // PPD_LOG_IGNORE_HIDE_LOG,
     } = this.plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValue(this.agent.stepId, 'argsRedefine');
 
     const { debug } = this.plugins.getPlugins<PluginDebug>('debug').getValues(this.agent.stepId);
@@ -473,13 +449,9 @@ export class Test {
           this.agent.if,
           'if',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent,
+          this.plugins,
+          this.agent,
           allData,
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
         if (skipIf) {
           return { result: {} };
@@ -492,13 +464,9 @@ export class Test {
           this.agent.errorIf,
           'errorIf',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent,
+          this.plugins,
+          this.agent,
           allData,
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
       }
 
@@ -628,13 +596,9 @@ export class Test {
           this.agent.errorIfResult,
           'errorIfResult',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent + 1,
+          this.plugins,
+          this.agent,
           { ...allData, ...localResults },
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
       }
 

@@ -1,6 +1,6 @@
 import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { runScriptInContext } from '../../Helpers';
 import { Plugin } from '../../PluginsCore';
-import { runScriptInContext } from '../../Test';
 
 function setValue(
   this: Plugin<PluginSkipSublingIfResult>,
