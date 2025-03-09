@@ -7,7 +7,6 @@ import AgentContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
 import {
-  LogOptionsType,
   ColorsType,
   TestArgsType,
   LogFunctionType,
@@ -259,17 +258,6 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
-const resolveLogOptions = (logOptions: LogOptionsType, logOptionsParent: LogOptionsType = {}): LogOptionsType => {
-  const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
-
-  const logForChild: LogOptionsType = {
-    logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
-    ...logOptions,
-  };
-
-  return logForChild;
-};
-
 export class Test {
   runner!: Runner;
 
@@ -417,11 +405,7 @@ export class Test {
     } as Record<string, string | number>;
 
     const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
-    const { logOptions: logOptionsParent } = this.plugins
-      .getPlugins<PluginLogOptions>('logOptions')
-      .getValuesParent(this.agent.stepId);
-    const logForChild = resolveLogOptions(logOptions, logOptionsParent);
-    this.agent.logOptions = logForChild;
+    this.agent.logOptions = logOptions;
 
     try {
       this.plugins.hook('resolveValues', { inputs, stepId: this.agent.stepId });
@@ -604,7 +588,7 @@ export class Test {
         page: pageCurrent, // If there is no page it`s might be API
         allData: new AgentContent().allData,
         log: this.logger.log.bind(this.logger),
-        logOptions: logForChild,
+        logOptions: this.agent.logOptions,
         plugins: this.plugins,
       };
 

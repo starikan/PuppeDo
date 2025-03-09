@@ -16,7 +16,13 @@ function setValue(
 
   const logShowFlag = (PPD_LOG_IGNORE_HIDE_LOG || logOptions.logThis) ?? logOptionsParent.logChildren ?? true;
 
-  this.setValues(stepId, { logOptions: { ...logOptions, logShowFlag } });
+  this.setValues(stepId, {
+    logOptions: {
+      logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
+      ...logOptions,
+      logShowFlag,
+    },
+  });
 }
 
 const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
@@ -33,6 +39,7 @@ const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
     hooks: {
       initValues: setValue,
       runLogic: setValue,
+      resolveValues: setValue,
     },
     propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'], force: true } },
     plugins,
