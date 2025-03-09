@@ -320,7 +320,7 @@ export class Test {
       PPD_LOG_NAMES_ONLY,
       PPD_LOG_TIMER_SHOW,
       PPD_LOG_STEPID,
-      PPD_LOG_IGNORE_HIDE_LOG,
+      // PPD_LOG_IGNORE_HIDE_LOG,
     } = this.plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValue(this.agent.stepId, 'argsRedefine');
 
     const { debug } = this.plugins.getPlugins<PluginDebug>('debug').getValues(this.agent.stepId);
@@ -331,12 +331,9 @@ export class Test {
       debugger;
     }
 
-    const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
-    const { logOptions: logOptionsParent } = this.plugins
+    const { logShowFlag } = this.plugins
       .getPlugins<PluginLogOptions>('logOptions')
-      .getValuesParent(this.agent.stepId);
-
-    const logShowFlag = (PPD_LOG_IGNORE_HIDE_LOG || logOptions.logThis) ?? logOptionsParent.logChildren ?? true;
+      .getValues(this.agent.stepId).logOptions;
 
     const { skipMeBecausePrevSublingResults } = this.plugins
       .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
@@ -419,6 +416,10 @@ export class Test {
       ...inputs.optionsParent,
     } as Record<string, string | number>;
 
+    const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
+    const { logOptions: logOptionsParent } = this.plugins
+      .getPlugins<PluginLogOptions>('logOptions')
+      .getValuesParent(this.agent.stepId);
     const logForChild = resolveLogOptions(logOptions, logOptionsParent);
     this.agent.logOptions = logForChild;
 

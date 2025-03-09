@@ -1,11 +1,22 @@
 import { Plugin } from '../../PluginsCore';
 import { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global';
+import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
 function setValue(
   this: Plugin<PluginLogOptions>,
   { inputs, stepId }: { inputs: Record<string, unknown>; stepId: string },
 ): void {
   this.setValues(stepId, inputs);
+
+  const { logOptions } = this.getValues(stepId);
+  const { logOptions: logOptionsParent } = this.getValuesParent(stepId);
+  const { PPD_LOG_IGNORE_HIDE_LOG } = this.plugins
+    .getPlugins<PluginArgsRedefine>('argsRedefine')
+    .getValue(stepId, 'argsRedefine');
+
+  const logShowFlag = (PPD_LOG_IGNORE_HIDE_LOG || logOptions.logThis) ?? logOptionsParent.logChildren ?? true;
+
+  this.setValues(stepId, { logOptions: { ...logOptions, logShowFlag } });
 }
 
 const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
@@ -16,6 +27,7 @@ const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
         textColor: 'sane' as ColorsType,
         backgroundColor: 'sane' as ColorsType,
         logChildren: true,
+        logShowFlag: true,
       },
     },
     hooks: {
