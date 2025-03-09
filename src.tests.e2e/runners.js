@@ -85,7 +85,7 @@ const testsE2E = {
   descriptions: {
     params: { PPD_TESTS: 'descriptionTest' },
   },
-  logs: {
+  logOptions: {
     params: { PPD_TESTS: 'logOptions' },
   },
   continueOnError: {

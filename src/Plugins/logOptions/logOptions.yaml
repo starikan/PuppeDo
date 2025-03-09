@@ -155,8 +155,7 @@ runTest:
                         logOptions: { logThis: true }
                         runTest:
                           - blank:
-                              description: '44I am no logOptions visible block and I am NOT🔴 visible'
-                              stepId: '44'
+                              description: 'I am no logOptions visible block and I am NOT🔴 visible'
                               logOptions: { backgroundColor: red }
 
   - blank:

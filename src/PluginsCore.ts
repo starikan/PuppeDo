@@ -313,15 +313,15 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
    * @param {Partial<T>} [values={}] - The values to set.
    * @returns {T} - The new values for the step.
    */
-  setValues(stepId: string, values: Partial<T> = {}): T {
-    if (!this.isActive({ stepId, inputs: values })) {
+  setValues(stepId: string, inputs: Partial<T> = {}): T {
+    if (!this.isActive({ stepId, inputs })) {
       this.agentTree.updateStep({ stepId, payload: this.defaultValues });
 
       return this.defaultValues;
     }
 
-    const valuesPick = pick(values, Object.keys(this.defaultValues));
-    let newValues = mergeObjects<Partial<T>>([this.defaultValues, valuesPick]);
+    const inputValues = pick(inputs, Object.keys(this.defaultValues));
+    let newValues = mergeObjects<Partial<T>>([this.defaultValues, inputValues]);
 
     try {
       const propagationSources = {
@@ -330,16 +330,32 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       };
 
       Object.entries(this.propogation ?? {}).forEach(([key, source]: [string, PluginPropogationsEntry]) => {
-        if (!Object.keys(pick(values, [key])).length || source.force) {
-          const sourceNode = (
-            propagationSources[source.type as keyof typeof propagationSources] ?? ((): TreeEntryType => null)
-          )();
-          if (sourceNode) {
-            const sourceValues = pick(sourceNode, [key]) as Partial<T>;
-            newValues = {
-              ...newValues,
-              ...(sourceValues && source.fieldsOnly?.length ? pick(sourceValues, source.fieldsOnly) : sourceValues),
-            };
+        const propogateNode = (
+          propagationSources[source.type as keyof typeof propagationSources] ?? ((): TreeEntryType => null)
+        )();
+        if (propogateNode) {
+          const propogateValues = pick(propogateNode, [key]) as Partial<T>;
+          if (!Object.keys(pick(inputs, [key])).length) {
+            newValues = { ...newValues, ...propogateValues };
+          }
+
+          if (source.fieldsOnly?.length) {
+            try {
+              if (
+                ![...new Set(Object.keys(inputValues[key]))].filter((x) => new Set(source.fieldsOnly).has(x)).length &&
+                [...new Set(Object.keys(propogateValues[key]))].filter((x) => new Set(source.fieldsOnly).has(x))
+                  .length &&
+                typeof propogateValues[key] === 'object' &&
+                !Array.isArray(propogateValues[key])
+              ) {
+                newValues[key] = mergeObjects([
+                  newValues[key],
+                  pick(propogateValues[key] as Record<string, unknown>, source.fieldsOnly),
+                ]);
+              }
+            } catch {
+              // debugger;
+            }
           }
         }
       });

@@ -182,18 +182,6 @@ const updateDataWithNeeds = (
   return { dataLocal: dataLocalCopy, selectorsLocal: selectorsLocalCopy };
 };
 
-const resolveLogOptions = (logOptions: LogOptionsType, logOptionsParent: LogOptionsType = {}): LogOptionsType => {
-  const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
-
-  const logForChild: LogOptionsType = {
-    logChildren: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
-    logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
-    ...logOptions,
-  };
-
-  return logForChild;
-};
-
 const fetchData = (
   dataExt: string[],
   selectorsExt: string[],
@@ -269,6 +257,17 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
       }
     });
   }
+};
+
+const resolveLogOptions = (logOptions: LogOptionsType, logOptionsParent: LogOptionsType = {}): LogOptionsType => {
+  const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
+
+  const logForChild: LogOptionsType = {
+    logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
+    ...logOptions,
+  };
+
+  return logForChild;
 };
 
 export class Test {

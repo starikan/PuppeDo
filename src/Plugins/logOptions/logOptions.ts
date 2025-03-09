@@ -15,13 +15,14 @@ const plugin: PluginFunction<PluginLogOptions> = (plugins) => {
       logOptions: {
         textColor: 'sane' as ColorsType,
         backgroundColor: 'sane' as ColorsType,
+        logChildren: true,
       },
     },
     hooks: {
       initValues: setValue,
       runLogic: setValue,
     },
-    propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'] } },
+    propogation: { logOptions: { type: 'lastParent', fieldsOnly: ['logChildren'], force: true } },
     plugins,
   });
   return pluginInstance;

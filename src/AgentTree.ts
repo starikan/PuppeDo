@@ -18,8 +18,28 @@ export class AgentTree {
    * It returns the tree
    * @returns The tree property of the class.
    */
-  getTree(): TreeEntryType[] {
-    return this.tree;
+  getTree(fieldsOnly?: string[]): TreeEntryType[] {
+    if (!fieldsOnly) {
+      return this.tree;
+    }
+    const filterFields = (node: TreeEntryType): TreeEntryType => {
+      const filteredNode: TreeEntryType = {
+        stepId: node.stepId,
+        stepIdParent: node.stepIdParent,
+      };
+
+      fieldsOnly.forEach((field) => {
+        if (node[field] !== undefined) {
+          filteredNode[field] = node[field];
+        }
+      });
+
+      filteredNode.steps = node.steps ? node.steps.map(filterFields) : [];
+
+      return filteredNode;
+    };
+
+    return this.tree.map(filterFields);
   }
 
   /**
