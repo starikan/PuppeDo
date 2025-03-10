@@ -1,5 +1,4 @@
-import vm from 'vm';
-import { getTimer, pick, mergeObjects } from './Helpers';
+import { getTimer, pick, mergeObjects, runScriptInContext } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -7,7 +6,6 @@ import AgentContent from './TestContent';
 import { ContinueParentError, TestError } from './Error';
 import { logDebug } from './Loggers/CustomLogEntries';
 import {
-  LogOptionsType,
   ColorsType,
   TestArgsType,
   LogFunctionType,
@@ -20,7 +18,13 @@ import {
 } from './global.d';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
-import { PluginContinueOnError, PluginSkipSublingIfResult, PluginArgsRedefine, PluginDebug } from './Plugins';
+import {
+  PluginContinueOnError,
+  PluginSkipSublingIfResult,
+  PluginArgsRedefine,
+  PluginDebug,
+  PluginLogOptions,
+} from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
 import { AgentTree } from './AgentTree';
@@ -48,31 +52,6 @@ export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
   const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
   const result = values.length ? mergeObjects<T>(values) : [];
   return result as T;
-};
-
-export const runScriptInContext = (
-  source: string,
-  context: Record<string, unknown>,
-  defaultValue: unknown = null,
-): unknown => {
-  let result: unknown;
-
-  if (source === '{}') {
-    return {};
-  }
-
-  try {
-    const script = new vm.Script(source);
-    vm.createContext(context);
-    result = script.runInContext(context);
-  } catch (error) {
-    if (defaultValue !== null && defaultValue !== undefined) {
-      return defaultValue;
-    }
-    throw new Error(`Can't evaluate ${source} = '${error.message}'`);
-  }
-
-  return result;
 };
 
 const checkNeeds = (needs: string[], data: Record<string, unknown>, agentName: string): boolean => {
@@ -112,45 +91,48 @@ export const checkIf = async (
   expr: string,
   ifType: 'if' | 'errorIf' | 'errorIfResult',
   log: LogFunctionType,
-  levelIndent = 0,
+  plugins: Plugins,
+  agent: AgentData,
   allData: Record<string, unknown> = {},
-  logShowFlag = true,
-  continueOnError = false,
-  breadcrumbs = [],
-  textAddition = '',
 ): Promise<boolean> => {
-  const exprResult = runScriptInContext(expr, allData);
+  let { levelIndent = 0 } = agent;
+  const { breadcrumbs = [], stepId } = agent;
 
-  if (!exprResult && ifType === 'if') {
-    if (logShowFlag && !continueOnError) {
-      await log({
-        text: `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`,
-        level: 'info',
-        levelIndent,
-        logOptions: {
-          screenshot: false,
-          fullpage: false,
-        },
-        logMeta: { breadcrumbs },
-      });
-    }
-    return true;
+  const { continueOnError } = plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(stepId);
+  const { PPD_LOG_STEPID } = plugins.getPlugins<PluginArgsRedefine>('argsRedefine').getValues(stepId).argsRedefine;
+
+  const textAddition = PPD_LOG_STEPID ? ` [${stepId}]` : '';
+
+  if (ifType === 'errorIfResult') {
+    levelIndent += 1;
   }
 
-  if (exprResult && ifType !== 'if') {
-    if (!continueOnError) {
+  const exprResult = runScriptInContext(expr, allData);
+
+  if ((!exprResult && ifType === 'if') || (exprResult && ifType !== 'if')) {
+    const logLevel = exprResult ? 'error' : 'info';
+    const logText = exprResult
+      ? `Test stopped with expr ${ifType} = '${expr}'`
+      : `Skip with IF expr '${expr}' === '${exprResult}'${textAddition}`;
+
+    if (!continueOnError || logLevel === 'info') {
       await log({
-        text: `Test stopped with expr ${ifType} = '${expr}'`,
-        level: 'error',
+        text: logText,
+        level: logLevel,
         levelIndent,
         logOptions: {
-          screenshot: true,
-          fullpage: true,
+          screenshot: !!exprResult,
+          fullpage: !!exprResult,
         },
         logMeta: { breadcrumbs },
       });
     }
-    throw new Error(`Test stopped with expr ${ifType} = '${expr}'`);
+
+    if (exprResult) {
+      throw new Error(logText);
+    }
+
+    return true;
   }
 
   return false;
@@ -174,40 +156,6 @@ const updateDataWithNeeds = (
     });
 
   return { dataLocal: dataLocalCopy, selectorsLocal: selectorsLocalCopy };
-};
-
-const resolveLogOptions = (
-  logOptionsParent: LogOptionsType,
-  logOptions: LogOptionsType,
-): { logShowFlag: boolean; logForChild: LogOptionsType } => {
-  const { PPD_LOG_IGNORE_HIDE_LOG } = new Arguments().args;
-  const { logChildren: logChildrenParent = true } = logOptionsParent;
-
-  const logForChild: LogOptionsType = {
-    ...{ logChildren: logChildrenParent },
-    ...{ logThis: logChildrenParent },
-    textColor: 'sane' as ColorsType,
-    backgroundColor: 'sane' as ColorsType,
-    ...logOptions,
-  };
-
-  let logShowFlag = true;
-
-  if (logChildrenParent === false) {
-    logShowFlag = false;
-  }
-
-  if (typeof logOptions.logThis === 'boolean') {
-    logShowFlag = logOptions.logThis;
-  }
-
-  if (PPD_LOG_IGNORE_HIDE_LOG) {
-    logForChild.logThis = true;
-    logForChild.logChildren = true;
-    logShowFlag = true;
-  }
-
-  return { logShowFlag, logForChild };
 };
 
 const fetchData = (
@@ -329,8 +277,6 @@ export class Test {
     this.plugins.hook('runLogic', { inputs, stepId: inputs.stepId });
     const { timeStartBigInt, timeStart: timeStartDate } = getTimer();
 
-    const { logShowFlag, logForChild } = resolveLogOptions(inputs.logOptionsParent || {}, this.agent.logOptions);
-
     const {
       PPD_LOG_EXTEND,
       PPD_LOG_AGENT_NAME,
@@ -348,6 +294,10 @@ export class Test {
       // eslint-disable-next-line no-debugger
       debugger;
     }
+
+    const { logShowFlag } = this.plugins
+      .getPlugins<PluginLogOptions>('logOptions')
+      .getValues(this.agent.stepId).logOptions;
 
     const { skipMeBecausePrevSublingResults } = this.plugins
       .getPlugins<PluginSkipSublingIfResult>('skipSublingIfResult')
@@ -430,7 +380,8 @@ export class Test {
       ...inputs.optionsParent,
     } as Record<string, string | number>;
 
-    this.agent.logOptions = logForChild;
+    const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
+    this.agent.logOptions = logOptions;
 
     try {
       this.plugins.hook('resolveValues', { inputs, stepId: this.agent.stepId });
@@ -498,13 +449,9 @@ export class Test {
           this.agent.if,
           'if',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent,
+          this.plugins,
+          this.agent,
           allData,
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
         if (skipIf) {
           return { result: {} };
@@ -517,13 +464,9 @@ export class Test {
           this.agent.errorIf,
           'errorIf',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent,
+          this.plugins,
+          this.agent,
           allData,
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
       }
 
@@ -613,7 +556,7 @@ export class Test {
         page: pageCurrent, // If there is no page it`s might be API
         allData: new AgentContent().allData,
         log: this.logger.log.bind(this.logger),
-        logOptions: logForChild,
+        logOptions: this.agent.logOptions,
         plugins: this.plugins,
       };
 
@@ -653,13 +596,9 @@ export class Test {
           this.agent.errorIfResult,
           'errorIfResult',
           this.logger.log.bind(this.logger),
-          this.agent.levelIndent + 1,
+          this.plugins,
+          this.agent,
           { ...allData, ...localResults },
-          logShowFlag,
-          this.plugins.getPlugins<PluginContinueOnError>('continueOnError').getValues(this.agent.stepId)
-            .continueOnError,
-          this.agent.breadcrumbs,
-          PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : '',
         );
       }
 

@@ -1,6 +1,6 @@
 import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { runScriptInContext } from '../../Helpers';
 import { Plugin } from '../../PluginsCore';
-import { runScriptInContext } from '../../Test';
 
 function setValue(
   this: Plugin<PluginSkipSublingIfResult>,
@@ -13,7 +13,7 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { skipSublingIfResult: '', skipMeBecausePrevSublingResults: false },
-    propogation: { skipMeBecausePrevSublingResults: 'lastSubling' },
+    propogation: { skipMeBecausePrevSublingResults: { type: 'lastSubling' } },
     hooks: {
       initValues: setValue,
       runLogic: setValue,

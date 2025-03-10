@@ -9,8 +9,7 @@ import Blocker from './Blocker';
 import { Environment } from './Environment';
 import { Log } from './Log';
 import Singleton from './Singleton';
-import { paintString, blankSocket } from './Helpers';
-import { runScriptInContext } from './Test';
+import { paintString, blankSocket, runScriptInContext } from './Helpers';
 import Screenshot from './Screenshot';
 import { Plugin, Plugins } from './PluginsCore';
 

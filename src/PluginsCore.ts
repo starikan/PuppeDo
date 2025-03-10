@@ -8,6 +8,7 @@ import {
   PluginList,
   PluginModule,
   PluginPropogations,
+  PluginPropogationsEntry,
   PluginType,
   TreeEntryType,
 } from './global.d';
@@ -285,12 +286,23 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
   }
 
   /**
+   * Retrieves all values for a parent step.
+   * @param {string} stepId - The step identifier.
+   * @returns {T} - All values for the step.
+   */
+  getValuesParent(stepId: string): T {
+    const step = this.agentTree.findParent(stepId) ?? {};
+
+    return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
+  }
+
+  /**
    * Retrieves all values for a given step.
    * @param {string} stepId - The step identifier.
    * @returns {T} - All values for the step.
    */
   getValues(stepId: string): T {
-    const step = this.agentTree.findNode(stepId);
+    const step = this.agentTree.findNode(stepId) ?? {};
 
     return { ...this.defaultValues, ...(pick(step, Object.keys(this.defaultValues)) ?? {}) };
   }
@@ -301,14 +313,15 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
    * @param {Partial<T>} [values={}] - The values to set.
    * @returns {T} - The new values for the step.
    */
-  setValues(stepId: string, values: Partial<T> = {}): T {
-    if (!this.isActive({ stepId, inputs: values })) {
+  setValues(stepId: string, inputs: Partial<T> = {}): T {
+    if (!this.isActive({ stepId, inputs })) {
       this.agentTree.updateStep({ stepId, payload: this.defaultValues });
 
       return this.defaultValues;
     }
 
-    let newValues = mergeObjects<Partial<T>>([this.defaultValues, pick(values, Object.keys(this.defaultValues))]);
+    const inputValues = pick(inputs, Object.keys(this.defaultValues));
+    let newValues = mergeObjects<Partial<T>>([this.defaultValues, inputValues]);
 
     try {
       const propagationSources = {
@@ -316,12 +329,33 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
         lastSubling: (): TreeEntryType => this.agentTree.findPreviousSibling(stepId),
       };
 
-      Object.entries(this.propogation ?? {}).forEach(([key, source]) => {
-        if (!Object.keys(pick(values, [key])).length) {
-          const sourceNode = propagationSources[source as keyof typeof propagationSources]();
-          if (sourceNode) {
-            const sourceValues = pick(sourceNode, [key]) as Partial<T>;
-            newValues = { ...newValues, ...sourceValues };
+      Object.entries(this.propogation ?? {}).forEach(([key, source]: [string, PluginPropogationsEntry]) => {
+        const propogateNode = (
+          propagationSources[source.type as keyof typeof propagationSources] ?? ((): TreeEntryType => null)
+        )();
+        if (propogateNode) {
+          const propogateValues = pick(propogateNode, [key]) as Partial<T>;
+          if (!Object.keys(pick(inputs, [key])).length) {
+            newValues = { ...newValues, ...propogateValues };
+          }
+
+          if (source.fieldsOnly?.length) {
+            try {
+              if (
+                ![...new Set(Object.keys(inputValues[key]))].filter((x) => new Set(source.fieldsOnly).has(x)).length &&
+                [...new Set(Object.keys(propogateValues[key]))].filter((x) => new Set(source.fieldsOnly).has(x))
+                  .length &&
+                typeof propogateValues[key] === 'object' &&
+                !Array.isArray(propogateValues[key])
+              ) {
+                newValues[key] = mergeObjects([
+                  newValues[key],
+                  pick(propogateValues[key] as Record<string, unknown>, source.fieldsOnly),
+                ]);
+              }
+            } catch {
+              // debugger;
+            }
           }
         }
       });

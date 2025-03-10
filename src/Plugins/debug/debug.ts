@@ -13,7 +13,7 @@ const plugin: PluginFunction<PluginDebug> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
     defaultValues: { debug: false },
-    propogation: { debug: 'lastParent' },
+    propogation: { debug: { type: 'lastParent' } },
     plugins,
     hooks: {
       initValues: setValue,

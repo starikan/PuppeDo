@@ -250,8 +250,7 @@ export class Log {
         return logEntry;
       });
 
-      // todo: надо сделать
-      // this.updateTree(logEntries);
+      this.updateTree(logEntries);
       await this.runPipes(logEntries, manualSkipEntry);
     } catch (err) {
       const { PPD_DEBUG_MODE } = new Arguments().args;

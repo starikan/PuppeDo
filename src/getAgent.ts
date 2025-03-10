@@ -65,20 +65,6 @@ const resolveJS = (agentJson: TestExtendType): TestExtendType => {
   return agentJsonNew;
 };
 
-// todo навести порядок в этих типах
-const propagateArgumentsObjectsOnAir = (
-  source: TestExtendType,
-  args: TestArgsType | undefined,
-  list: string[] = [],
-): TestExtendType => {
-  const sourceValues = pick(source || {}, list);
-  const argsValues = pick(args || {}, list);
-  const renamedKeys = Object.fromEntries(
-    Object.entries({ ...sourceValues, ...argsValues }).map((v) => [`${v[0]}Parent`, v[1]]),
-  );
-  return { ...source, ...renamedKeys };
-};
-
 const getAgent = ({
   agentJsonIncome,
   envsId,
@@ -116,6 +102,20 @@ const getAgent = ({
   return stepResolver(agentJson, parentStepMetaCollector);
 };
 
+// todo навести порядок в этих типах
+const propagateArgumentsObjectsOnAir = (
+  source: TestExtendType,
+  args: TestArgsType | undefined,
+  list: string[] = [],
+): TestExtendType => {
+  const sourceValues = pick(source || {}, list);
+  const argsValues = pick(args || {}, list);
+  const renamedKeys = Object.fromEntries(
+    Object.entries({ ...sourceValues, ...argsValues }).map((v) => [`${v[0]}Parent`, v[1]]),
+  );
+  return { ...source, ...renamedKeys };
+};
+
 const stepResolver = (
   agentJson: TestExtendType,
   parentStepMetaCollector: Partial<TestExtendType>,
@@ -129,7 +129,6 @@ const stepResolver = (
       'options',
       'data',
       'selectors',
-      'logOptions',
     ]);
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
