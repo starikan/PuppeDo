@@ -126,7 +126,6 @@ const stepResolver = (
     const step = new Test(agentJson);
 
     const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
-      'options',
       'data',
       'selectors',
     ]);

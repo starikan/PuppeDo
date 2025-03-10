@@ -1,0 +1,12 @@
+00:00:00.000 - timer  Test 'options' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Options inheritance test (options)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(options) Options inheritance test[0m
+                      🕝: 00.000 s. (options)
+00:00:00.000 - timer  Test 'options' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "options": {}
+}

@@ -270,6 +270,7 @@ export type TestArgsType = {
   environment: Environment;
   data: Record<string, unknown>;
   selectors: Record<string, unknown>;
+  // todo: get it from plugin
   logOptions: LogOptionsType;
   runner: Runner;
   allRunners: Runners;
@@ -278,6 +279,7 @@ export type TestArgsType = {
   log: LogFunctionType;
   allData: AllDataType;
   plugins: Plugins;
+  // todo: get it from plugin
   options: AgentData['options'];
   agent: AgentData;
 };
@@ -297,15 +299,14 @@ export type TestTypeYaml = {
   needData?: string[];
   needSelectors?: string[];
   needEnvParams?: string[];
-  options?: Record<string, string | number>;
   dataExt?: string[];
   selectorsExt?: string[];
   allowResults?: string[];
+  // todo
   allowOptions?: string[];
   todo?: string;
   debugInfo?: boolean | 'data' | 'selectors';
   disable?: boolean;
-  logOptions?: LogOptionsType;
   data?: Record<string, unknown>;
   bindData?: Record<string, string>;
   selectors?: Record<string, unknown>;
@@ -339,7 +340,6 @@ export type TestExtendType = {
   selectorsParent?: Record<string, unknown>;
   funcFile?: string;
   testFile?: string;
-  optionsParent?: Record<string, string | number>;
   atomRun?: TestLifeCycleFunctionType[];
 } & Required<TestTypeYaml>;
 

@@ -143,6 +143,9 @@ const testsE2E = {
   frame: {
     params: { PPD_TESTS: 'frame' },
   },
+  options: {
+    params: { PPD_TESTS: 'options' },
+  },
 };
 
 module.exports = testsE2E;

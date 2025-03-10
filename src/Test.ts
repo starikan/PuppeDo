@@ -24,6 +24,7 @@ import {
   PluginArgsRedefine,
   PluginDebug,
   PluginLogOptions,
+  PluginOptions,
 } from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
@@ -374,12 +375,6 @@ export class Test {
 
     this.agent.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
 
-    this.agent.options = {
-      ...this.agent.options,
-      ...resolveAliases<Record<string, string>>('options', inputs),
-      ...inputs.optionsParent,
-    } as Record<string, string | number>;
-
     const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
     this.agent.logOptions = logOptions;
 
@@ -531,6 +526,9 @@ export class Test {
 
       const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
 
+      const { options } = this.plugins.getPlugins<PluginOptions>('options').getValues(this.agent.stepId);
+      this.agent.options = options;
+
       // Use in atoms
       // this.allData
       // this.allRunners
@@ -546,7 +544,7 @@ export class Test {
 
       const args: TestArgsType = {
         agent: this.agent,
-        options: this.agent.options,
+        options,
         environment: new Environment(),
         runner: this.runner,
         allRunners,
