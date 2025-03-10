@@ -1,5 +1,5 @@
 import { Plugin } from '../../PluginsCore';
-import { resolveAliases } from '../../Test';
+import { resolveAliases } from '../../Helpers';
 import { PluginDocumentation, PluginFunction, PluginModule, TestExtendType } from '../../model';
 
 function setValue(

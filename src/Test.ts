@@ -1,4 +1,4 @@
-import { getTimer, pick, mergeObjects, runScriptInContext } from './Helpers';
+import { getTimer, pick, resolveAliases, runScriptInContext } from './Helpers';
 import Blocker from './Blocker';
 import { Arguments } from './Arguments';
 import { Environment, Runner } from './Environment';
@@ -12,8 +12,6 @@ import {
   TestLifeCycleFunctionType,
   TestExtendType,
   Element,
-  AliasesKeysType,
-  DeepMergeable,
   AgentData,
 } from './model';
 import Atom from './AtomCore';
@@ -29,31 +27,6 @@ import {
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
 import { AgentTree } from './AgentTree';
-
-/**
- * Resolves aliases for a given key in the inputs object.
- *
- * @param alias The alias key to resolve.
- * @param inputs The inputs object to search for alias values.
- * @returns The resolved alias value.
- */
-export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
-  alias: AliasesKeysType,
-  inputs: TestExtendType,
-): T => {
-  const { PPD_ALIASES } = new Arguments().args;
-  const allValues = [...Object.keys(PPD_ALIASES), ...Object.values(PPD_ALIASES)].flat();
-  const duplicateValues = allValues.filter((value, index) => allValues.indexOf(value) !== index);
-
-  if (duplicateValues.length) {
-    throw new Error(`PPD_ALIASES contains duplicate keys: ${duplicateValues.join(', ')}`);
-  }
-
-  const variants = [...(PPD_ALIASES[alias] ?? []), alias];
-  const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
-  const result = values.length ? mergeObjects<T>(values) : [];
-  return result as T;
-};
 
 const checkNeeds = (needs: string[], data: Record<string, unknown>, agentName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']

@@ -3,7 +3,8 @@
 import vm from 'vm';
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import { ColorsType, DeepMergeable, SocketType } from './model';
+import { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './model';
+import { Arguments } from './Arguments';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
@@ -267,4 +268,29 @@ export const runScriptInContext = (
   }
 
   return result;
+};
+/**
+ * Resolves aliases for a given key in the inputs object.
+ *
+ * @param alias The alias key to resolve.
+ * @param inputs The inputs object to search for alias values.
+ * @returns The resolved alias value.
+ */
+
+export const resolveAliases = <T extends DeepMergeable = DeepMergeable>(
+  alias: AliasesKeysType,
+  inputs: TestExtendType,
+): T => {
+  const { PPD_ALIASES } = new Arguments().args;
+  const allValues = [...Object.keys(PPD_ALIASES), ...Object.values(PPD_ALIASES)].flat();
+  const duplicateValues = allValues.filter((value, index) => allValues.indexOf(value) !== index);
+
+  if (duplicateValues.length) {
+    throw new Error(`PPD_ALIASES contains duplicate keys: ${duplicateValues.join(', ')}`);
+  }
+
+  const variants = [...(PPD_ALIASES[alias] ?? []), alias];
+  const values = (Object.values(pick(inputs, variants)) as T[]).map((v) => v || ({} as T));
+  const result = values.length ? mergeObjects<T>(values) : [];
+  return result as T;
 };
