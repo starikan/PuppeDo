@@ -223,7 +223,7 @@ export class Test {
   agentTree: AgentTree;
 
   constructor(initValues: TestExtendType) {
-    const { testTree, plugins, allRunners, logger } = new Environment().getEnvInstance(initValues.envsId);
+    const { testTree, plugins, logger } = new Environment().getEnvInstance(initValues.envsId);
     testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
 
     this.plugins = plugins;
@@ -236,9 +236,6 @@ export class Test {
     for (const key of Object.keys(this.agent)) {
       this.agent[key] = initValues[key] ?? this.agent[key];
     }
-
-    const current = new Environment().getCurrent(this.agent.envsId);
-    this.runner = allRunners.getRunnerByName(current.name || '');
 
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     this.lifeCycleFunctions = [
@@ -364,6 +361,10 @@ export class Test {
 
       checkIntersection(this.agent.data, this.agent.selectors);
 
+      const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
+      const current = new Environment().getCurrent(this.agent.envsId);
+      this.runner = allRunners.getRunnerByName(current.name || '');
+
       let { dataLocal, selectorsLocal } = fetchData(
         this.agent.dataExt,
         this.agent.selectorsExt,
@@ -408,7 +409,6 @@ export class Test {
       }
 
       // Extend with data passed to functions
-      const current = new Environment().getCurrent(this.agent.envsId);
       const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
 
       // IF
@@ -497,27 +497,13 @@ export class Test {
 
       this.plugins.hook('beforeFunctions', { stepId: this.agent.stepId });
 
-      const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
-
       const { options } = this.plugins.getPlugins<PluginOptions>('options').getValues(this.agent.stepId);
       this.agent.options = options;
 
-      // Use in atoms
-      // this.allData
-      // this.allRunners
-      // this.browser
-      // this.data
-      // this.environment
-      // this.envsId
-      // this.log
-      // this.options
-      // this.page
-      // this.runner
-      // this.selectors
-
       const args: TestArgsType = {
         agent: this.agent,
-        options,
+        options: this.agent.options,
+        logOptions: this.agent.logOptions,
         environment: new Environment(),
         runner: this.runner,
         allRunners,
@@ -527,7 +513,6 @@ export class Test {
         page: pageCurrent, // If there is no page it`s might be API
         allData: new AgentContent().allData,
         log: this.logger.log.bind(this.logger),
-        logOptions: this.agent.logOptions,
         plugins: this.plugins,
       };
 

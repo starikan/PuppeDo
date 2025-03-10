@@ -139,6 +139,19 @@ export default class Atom {
   async runAtom(args?: TestArgsType): Promise<Record<string, unknown>> {
     const startTime = process.hrtime.bigint();
 
+    // Use in atoms
+    // this.allData
+    // this.allRunners
+    // this.browser
+    // this.data
+    // this.environment
+    // this.envsId
+    // this.log
+    // this.options
+    // this.page
+    // this.runner
+    // this.selectors
+
     const testArgs = Object.entries(args || {});
     testArgs.forEach((entry) => {
       const [key, value] = entry;
@@ -147,17 +160,15 @@ export default class Atom {
       }
     });
 
-    const { agent } = args;
-
-    const logOptionsDefault: LogOptionsType = {
-      screenshot: false,
-      fullpage: false,
-    };
-
     const { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent, envsId, stepId, breadcrumbs } =
-      agent;
+      args.agent;
 
     this.log = async (customLog: LogInputType): Promise<void> => {
+      const logOptionsDefault: LogOptionsType = {
+        screenshot: false,
+        fullpage: false,
+      };
+
       if (args) {
         const logOptions = { ...logOptionsDefault, ...(args.logOptions ?? {}), ...(customLog.logOptions ?? {}) };
         const logMeta = { ...{ breadcrumbs: breadcrumbs ?? [] }, ...(customLog.logMeta ?? {}) };
@@ -174,7 +185,7 @@ export default class Atom {
     };
 
     try {
-      await this.updateFrame(agent);
+      await this.updateFrame(args.agent);
       const result = await this.atomRun();
 
       await logExtend(this.log, { data, bindData, selectors, bindSelectors, bindResults, options, levelIndent });
