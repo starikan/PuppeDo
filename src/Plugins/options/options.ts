@@ -8,7 +8,7 @@ function setValue(
 ): void {
   this.setValues(stepId, inputs);
 
-  const { options } = this.getValues(stepId);
+  const { options, allowOptions } = this.getValues(stepId);
   const { options: optionsParent } = this.getValuesParent(stepId);
 
   const result: PluginOptions = {
@@ -17,6 +17,7 @@ function setValue(
       ...resolveAliases<PluginOptions['options']>('options', inputs as TestExtendType),
       ...optionsParent,
     },
+    allowOptions,
   };
 
   // Merge parent options with current options
@@ -26,7 +27,7 @@ function setValue(
 const plugin: PluginFunction<PluginOptions> = (plugins) => {
   const pluginInstance = new Plugin({
     name,
-    defaultValues: { options: {} },
+    defaultValues: { options: {}, allowOptions: [] },
     propogation: { options: { type: 'lastParent' } },
     hooks: {
       initValues: setValue,
@@ -40,6 +41,7 @@ const plugin: PluginFunction<PluginOptions> = (plugins) => {
 
 export type PluginOptions = {
   options: Record<string, string | number>;
+  allowOptions: string[];
 };
 
 const name = 'options';
@@ -50,11 +52,15 @@ const documentation: PluginDocumentation = {
       'Плагин для управления опциями агентов.',
       'Опции наследуются от родительского агента к дочерним.',
       'Дочерние агенты могут переопределять унаследованные опции.',
+      'Позволяет агентам указывать, какие опции разрешены для использования.',
+      'Опции, указанные в allowOptions, могут быть использованы в дочерних агентах.',
     ],
     en: [
       'Plugin for managing agent options.',
-      'Options are inherited from parent agent to children.',
+      'Options are inherited from the parent agent to the child agents.',
       'Child agents can override inherited options.',
+      'Allows agents to specify which options are permitted for use.',
+      'Options specified in allowOptions can be used in child agents.',
     ],
   },
   examples: [

@@ -57,7 +57,6 @@ export const argsDefault: ArgumentsType = {
 };
 
 export const BLANK_AGENT: Required<TestTypeYaml> = {
-  allowOptions: [],
   allowResults: [],
   bindData: {},
   bindDescription: '',
@@ -73,12 +72,10 @@ export const BLANK_AGENT: Required<TestTypeYaml> = {
   errorIfResult: '',
   if: '',
   inlineJS: '',
-  logOptions: {},
   name: '',
   needData: [],
   needSelectors: [],
   needEnvParams: [],
-  options: {},
   repeat: 1,
   selectors: {},
   selectorsExt: [],

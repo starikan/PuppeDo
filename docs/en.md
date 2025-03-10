@@ -1154,6 +1154,37 @@ logOptions test (logOptions)
 }
 
 ```
+## options
+Plugin for managing agent options.
+
+Options are inherited from the parent agent to the child agents.
+
+Child agents can override inherited options.
+
+Allows agents to specify which options are permitted for use.
+
+Options specified in allowOptions can be used in child agents.
+
+```yaml
+name: options
+description: Options inheritance test
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'options' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+Options inheritance test (options)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (options) Options inheritance test
+                      🕝: 00.000 s. (options)
+00:00:00.000 - timer  Test 'options' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "options": {}
+}
+
+```
 ## descriptionError
 TODO
 

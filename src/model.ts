@@ -302,8 +302,6 @@ export type TestTypeYaml = {
   dataExt?: string[];
   selectorsExt?: string[];
   allowResults?: string[];
-  // todo
-  allowOptions?: string[];
   todo?: string;
   debugInfo?: boolean | 'data' | 'selectors';
   disable?: boolean;
