@@ -1,6 +1,6 @@
 import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
-import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 
 function setValue(
   this: Plugin<PluginContinueOnError>,

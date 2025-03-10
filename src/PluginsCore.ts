@@ -11,7 +11,7 @@ import {
   PluginPropogationsEntry,
   PluginType,
   TreeEntryType,
-} from './global.d';
+} from './model';
 import { mergeObjects, pick } from './Helpers';
 import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';

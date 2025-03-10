@@ -1,5 +1,5 @@
 import Singleton from './Singleton';
-import { ArgumentsKeysType, ArgumentsType } from './global.d';
+import { ArgumentsKeysType, ArgumentsType } from './model';
 import { argsDefault } from './Defaults';
 import { mergeObjects } from './Helpers';
 

@@ -1,7 +1,7 @@
 import path from 'path';
 import yaml from 'js-yaml';
 import { Arguments } from '../Arguments';
-import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../global.d';
+import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../model';
 import { colors, getNowDateTime } from '../Helpers';
 
 const resolveBackColor = (backgroundColor: ColorsType): ColorsType => {

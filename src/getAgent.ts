@@ -10,7 +10,7 @@ import { pick } from './Helpers';
 import { Test } from './Test';
 import Atom from './AtomCore';
 
-import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType } from './global';
+import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType } from './model';
 import { Environment } from './Environment';
 import { Arguments } from './Arguments';
 

@@ -1,4 +1,4 @@
-import { PluginDocumentation, PluginFunction, PluginModule } from '../../global';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { Plugin } from '../../PluginsCore';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 

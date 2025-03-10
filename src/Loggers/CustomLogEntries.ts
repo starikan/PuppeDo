@@ -3,7 +3,7 @@ import path from 'path';
 import { Arguments } from '../Arguments';
 import { Environment } from '../Environment';
 import { ErrorType } from '../Error';
-import { LogFunctionType } from '../global.d';
+import { LogFunctionType } from '../model';
 import { getTimer } from '../Helpers';
 
 export const logExtendFileInfo = async (log: LogFunctionType, { envsId }: { envsId: string }): Promise<void> => {

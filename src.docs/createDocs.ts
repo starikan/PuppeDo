@@ -2,8 +2,8 @@ import path from 'path';
 import fs from 'fs';
 
 import { pluginsListDefault } from '../src/Defaults';
-import { DocumentationLanguages } from '../src/global.d';
 import { PluginsFabric } from '../src/PluginsCore';
+import { DocumentationLanguages } from '../src/model';
 
 const languageDefault = 'en';
 const languages: DocumentationLanguages[] = ['en', 'ru'];

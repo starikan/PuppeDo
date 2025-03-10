@@ -1,4 +1,4 @@
-import { PluginList } from '../global';
+import { PluginList } from '../model';
 import continueOnError, { PluginContinueOnError } from './continueOnError/continueOnError';
 import skipSublingIfResult, { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
 import argsRedefine, { PluginArgsRedefine } from './argsRedefine/argsRedefine';

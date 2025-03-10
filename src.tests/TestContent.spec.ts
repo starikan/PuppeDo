@@ -1,7 +1,7 @@
 import fs from 'fs';
 import AgentContent from '../src/TestContent';
 import { Arguments } from '../src/Arguments';
-import { DataType, EnvBrowserType, RunnerType, TestExtendType } from '../src/global.d';
+import { DataType, EnvBrowserType, RunnerType, TestExtendType } from '../src/model';
 
 const DEFAULT_BROWSER: EnvBrowserType = {
   type: 'browser',

@@ -1,5 +1,5 @@
 import { Plugin } from '../../PluginsCore';
-import { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global';
+import { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
 function setValue(

@@ -1,5 +1,5 @@
 import { Environment } from '../Environment';
-import { LogEntrieType, LogEntry, LogExporter, LogExporterOptions } from '../global.d';
+import { LogEntrieType, LogEntry, LogExporter, LogExporterOptions } from '../model';
 import { paintString } from '../Helpers';
 
 export const consoleLog = (entries: LogEntrieType[][]): void => {

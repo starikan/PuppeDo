@@ -15,7 +15,7 @@ import {
   RunnerCurrentType,
   LogPipe,
   TestExtendType,
-} from './global.d';
+} from './model';
 import Singleton from './Singleton';
 import { DEFAULT_BROWSER, Engines } from './Engines';
 import TestStructure from './TestStructure';

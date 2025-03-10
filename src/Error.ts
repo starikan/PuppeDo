@@ -3,7 +3,7 @@ import { Test } from './Test';
 import { Log } from './Log';
 import { Environment, Runner } from './Environment';
 
-import { AgentData, LogInputType, SocketType } from './global.d';
+import { AgentData, LogInputType, SocketType } from './model';
 import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
 import { Plugins } from './PluginsCore';
 import { AgentTree } from './AgentTree';

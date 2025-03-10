@@ -9,7 +9,7 @@ import Singleton from './Singleton';
 import { Arguments } from './Arguments';
 import { mergeObjects } from './Helpers';
 
-import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './global.d';
+import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './model';
 import { BLANK_AGENT } from './Defaults';
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {

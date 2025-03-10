@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { getNowDateTime } from './Helpers';
 
-import { Element, BrowserPageType } from './global.d';
+import { Element, BrowserPageType } from './model';
 import { Environment } from './Environment';
 
 export default class Screenshot {

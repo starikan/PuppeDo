@@ -6,7 +6,7 @@ import { Log } from '../src/Log';
 import { Arguments } from '../src/Arguments';
 import { getNowDateTime } from '../src/Helpers';
 import { Environment } from '../src/Environment';
-import { Outputs } from '../src/global.d';
+import { Outputs } from '../src/model';
 import { consoleLog, fileLog } from '../src/Loggers/Exporters';
 import { formatterEntry } from '../src/Loggers/Formatters';
 

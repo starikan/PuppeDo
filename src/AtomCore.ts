@@ -13,7 +13,7 @@ import {
   AgentData,
   EnginesType,
   AtomInit,
-} from './global.d';
+} from './model';
 import { Environment, Runner } from './Environment';
 import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
 import { PluginFrame } from './Plugins';

@@ -1,6 +1,6 @@
 import { Arguments, parser } from '../src/Arguments';
 import { argsDefault } from '../src/Defaults';
-import { ArgumentsKeysType, ArgumentsType, ArgumentsValuesType } from '../src/global.d';
+import { ArgumentsKeysType, ArgumentsType, ArgumentsValuesType } from '../src/model';
 
 const argsModify: ArgumentsType = {
   PPD_DATA: { foo: 'bar' },

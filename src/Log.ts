@@ -13,7 +13,7 @@ import {
   LogPipe,
   Outputs,
   TreeEntryDataType,
-} from './global.d';
+} from './model';
 import { Environment } from './Environment';
 import Singleton from './Singleton';
 import { getNowDateTime } from './Helpers';

@@ -1,4 +1,4 @@
-import { PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { runScriptInContext } from '../../Helpers';
 import { Plugin } from '../../PluginsCore';
 

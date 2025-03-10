@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AgentData, ArgumentsType, EnginesType, LogPipe, RunOptions, TestTypeYaml } from './global.d';
+import { AgentData, ArgumentsType, EnginesType, LogPipe, RunOptions, TestTypeYaml } from './model';
 
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
 import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';

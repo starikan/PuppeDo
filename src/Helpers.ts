@@ -3,7 +3,7 @@
 import vm from 'vm';
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import { ColorsType, DeepMergeable, SocketType } from './global.d';
+import { ColorsType, DeepMergeable, SocketType } from './model';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console

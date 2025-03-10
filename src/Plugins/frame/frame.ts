@@ -1,5 +1,5 @@
 import { Plugin } from '../../PluginsCore';
-import { PluginDocumentation, PluginFunction, PluginModule } from '../../global';
+import { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 
 function setValue(
   this: Plugin<PluginFrame>,

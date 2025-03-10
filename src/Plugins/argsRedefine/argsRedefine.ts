@@ -1,5 +1,5 @@
 import { Arguments } from '../../Arguments';
-import { ArgumentsType, PluginDocumentation, PluginFunction, PluginModule } from '../../global.d';
+import { ArgumentsType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { Plugin } from '../../PluginsCore';
 
 function setValue(

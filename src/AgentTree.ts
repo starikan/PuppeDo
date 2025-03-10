@@ -1,4 +1,4 @@
-import { CreateStepParams, TreeEntryType } from './global';
+import { CreateStepParams, TreeEntryType } from './model';
 
 /* "It takes a stepIdParent, stepId, and payload, and then it either pushes a new step to the tree if there is no
 stepIdParent, or it finds the stepIdParent and pushes a new step to its steps array."

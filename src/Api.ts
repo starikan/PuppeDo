@@ -5,7 +5,7 @@ import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { Environment } from './Environment';
 import { getTimer, getNowDateTime } from './Helpers';
-import { ArgumentsType, LogEntry, RunOptions } from './global.d';
+import { ArgumentsType, LogEntry, RunOptions } from './model';
 import { PluginsFabric } from './PluginsCore';
 
 import { resolveOptions } from './Defaults';

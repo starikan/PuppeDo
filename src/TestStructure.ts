@@ -1,6 +1,6 @@
 import AgentContent, { resolveTest } from './TestContent';
 
-import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './global.d';
+import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './model';
 import { generateId, deepMergeField } from './Helpers';
 import { Arguments } from './Arguments';
 import { BLANK_AGENT } from './Defaults';

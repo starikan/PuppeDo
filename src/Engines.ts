@@ -14,7 +14,7 @@ import {
   EnvBrowserType,
   RunnerStateType,
   RunnerType,
-} from './global.d';
+} from './model';
 import { sleep } from './Helpers';
 import { Environment } from './Environment';
 

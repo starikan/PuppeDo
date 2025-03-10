@@ -15,7 +15,7 @@ import {
   AliasesKeysType,
   DeepMergeable,
   AgentData,
-} from './global.d';
+} from './model';
 import Atom from './AtomCore';
 import { Plugins } from './PluginsCore';
 import {
