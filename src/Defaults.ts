@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AgentData, ArgumentsType, EnginesType, LogPipe, PluginList, RunOptions, TestTypeYaml } from './global.d';
+import { AgentData, ArgumentsType, EnginesType, LogPipe, RunOptions, TestTypeYaml } from './global.d';
 
 import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
 import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
@@ -12,17 +12,9 @@ import {
   exporterYamlLog,
 } from './Loggers/Exporters';
 import { blankSocket } from './Helpers';
+import { pluginsListDefault } from './Plugins';
 
-export const pluginsListDefault: PluginList = {
-  argsRedefine: { plugin: 'argsRedefine', order: 100 },
-  logOptions: { plugin: 'logOptions', order: 150 },
-  descriptionError: { plugin: 'descriptionError', order: 200 },
-  continueOnError: { plugin: 'continueOnError', order: 300 },
-  skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },
-  engineSupports: { plugin: 'engineSupports', order: 500 },
-  frame: { plugin: 'frame', order: 600 },
-  debug: { plugin: 'debug' },
-};
+export { pluginsListDefault };
 
 export const loggerPipesDefault: LogPipe[] = [
   { transformer: transformerEquity, formatter: formatterEmpty, exporter: exporterLogInMemory },

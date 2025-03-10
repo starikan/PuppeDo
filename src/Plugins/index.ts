@@ -1,3 +1,4 @@
+import { PluginList } from '../global';
 import continueOnError, { PluginContinueOnError } from './continueOnError/continueOnError';
 import skipSublingIfResult, { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
 import argsRedefine, { PluginArgsRedefine } from './argsRedefine/argsRedefine';
@@ -34,4 +35,15 @@ export default {
   engineSupports,
   frame,
   logOptions,
+};
+
+export const pluginsListDefault: PluginList = {
+  argsRedefine: { plugin: 'argsRedefine', order: 100 },
+  logOptions: { plugin: 'logOptions', order: 150 },
+  descriptionError: { plugin: 'descriptionError', order: 200 },
+  continueOnError: { plugin: 'continueOnError', order: 300 },
+  skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },
+  engineSupports: { plugin: 'engineSupports', order: 500 },
+  frame: { plugin: 'frame', order: 600 },
+  debug: { plugin: 'debug' },
 };
