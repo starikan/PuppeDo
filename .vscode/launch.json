@@ -125,10 +125,17 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Custom run",
+      "name": "Custom run agent",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
       "args": ["logs"],
       "env": { "PPD_DEBUG_MODE": true, "PPD_LOG_TIMESTAMP_SHOW": false },
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug run",
+      "program": "${workspaceFolder}\\src.tests.e2e\\start-debugger.js",
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     }
   ]
