@@ -1,0 +1,6 @@
+name: runRunner
+description: Runner
+
+run:
+  - runnerSwitch:
+      bindData: { runnerName: myEnv }

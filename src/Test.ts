@@ -222,12 +222,15 @@ export class Test {
 
   agentTree: AgentTree;
 
+  testsStruct: Record<string, TestExtendType>;
+
   constructor(initValues: TestExtendType) {
-    const { testTree, plugins, logger } = new Environment().getEnvInstance(initValues.envsId);
+    const { testTree, plugins, logger, testsStruct } = new Environment().getEnvInstance(initValues.envsId);
     testTree.createStep({ stepIdParent: initValues.stepIdParent, stepId: initValues.stepId, payload: {} });
 
     this.plugins = plugins;
     this.agentTree = testTree;
+    this.testsStruct = testsStruct;
     this.logger = logger;
 
     this.plugins.hook('initValues', { inputs: initValues, stepId: initValues.stepId });

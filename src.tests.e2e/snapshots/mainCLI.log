@@ -1,7 +1,8 @@
 00:00:00.000 - timer  Test 'main' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
 Main test (main)
-   (runnerSwitch)
+   Runner (runRunner)
+      (runnerSwitch)
    (initData)
    Colored Case atom (case)
       (goTo)
@@ -54,12 +55,15 @@ Main test (main)
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
 00:00:00.000 - test   [32m(main) Main test[0m
                        [36m👣[main][0m
-00:00:00.000 - test   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
-                      |    [36m👣[main -> beforeRun[0].runnerSwitch][0m
-00:00:00.000 - raw    |   |   Runner switch on 'mainRunner'
-                      |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
-                      |   |   ⌛: 00.000 s.
-                      |   🕝: 00.000 s. (runnerSwitch)
+00:00:00.000 - test   |   [32m(runRunner) Runner[0m
+                      |    [36m👣[main -> beforeRun[0].runRunner][0m
+00:00:00.000 - test   |   |   [32m(runnerSwitch) Switch on runner: 'mainRunner'[0m
+                      |   |    [36m👣[main -> beforeRun[0].runRunner -> run[0].runnerSwitch][0m
+00:00:00.000 - raw    |   |   |   Runner switch on 'mainRunner'
+                      |   |   |   [36m📌📋 (bD): {"runnerName":"myEnv"}[0m
+                      |   |   |   ⌛: 00.000 s.
+                      |   |   🕝: 00.000 s. (runnerSwitch)
+                      |   🕝: 00.000 s. (runRunner)
 00:00:00.000 - test   |   [41m[32m(initData) TODO: Fill description[0m[0m
                       |    [36m👣[main -> run[0].initData][0m
                       |   🕝: 00.000 s. (initData)
@@ -113,14 +117,14 @@ Main test (main)
 00:00:00.000 - test   |   [43m[35m(clickWithNestedWait) Nested Click Atom[0m[0m
                       |    [36m👣[main -> run[10].clickWithNestedWait][0m
 00:00:00.000 - test   |   |   [32m(waitForSelector) Wait for: '#main-input'[0m
-                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> runTest[0].waitForSelector][0m
+                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> run[0].waitForSelector][0m
 00:00:00.000 - raw    |   |   |   Wait for selector: '#main-input'
                       |   |   |   [36m📌☸️ (bS): {"selector":"mainInputInside"}[0m
                       |   |   |   [36m⚙️ (options): {"hidden":false,"visible":true,"timeDelay":0,"count":1,"delay":0,"button":"left","logAfter":false}[0m
                       |   |   |   ⌛: 00.000 s.
                       |   |   🕝: 00.000 s. (waitForSelector)
 00:00:00.000 - test   |   |   [41m[32m(clickSelector) TODO: Fill description[0m[0m
-                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> runTest[1].clickSelector][0m
+                      |   |    [36m👣[main -> run[10].clickWithNestedWait -> run[1].clickSelector][0m
                       |   |   🕝: 00.000 s. (clickSelector)
                       |   🕝: 00.000 s. (clickWithNestedWait)
 00:00:00.000 - info   |   [36mSkip with IF expr '1 !== 1' === 'false'[0m

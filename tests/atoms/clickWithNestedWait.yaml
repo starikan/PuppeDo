@@ -6,7 +6,7 @@ logOptions:
   textColor: magenta
   backgroundColor: yellow
 
-runTest:
+run:
   - waitForSelector:
       bS: { selector: mainInputInside }
 

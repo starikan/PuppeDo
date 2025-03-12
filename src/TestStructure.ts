@@ -71,9 +71,18 @@ export default class TestStructure {
     return JSON.parse(JSON.stringify(agentSource));
   }
 
-  static getFullDepthJSON(testName: string, testBody: TestTypeYaml | null = null, levelIndent = 0): TestExtendType {
+  static getFullDepthJSON(
+    testName: string,
+    testBody: TestTypeYaml | null = null,
+    levelIndent = 0,
+    resolved = true,
+  ): TestExtendType {
     const rawTest = TestStructure.getAgentRaw(testName);
-    const fullJSON: TestExtendType = deepMergeField<TestExtendType>(rawTest, testBody ?? {}, ['logOptions']);
+
+    // TODO: 2025-03-11 S.Starodubov logOptions
+    const fullJSON: TestExtendType = resolved
+      ? deepMergeField<TestExtendType>(rawTest, testBody ?? {}, ['logOptions'])
+      : JSON.parse(JSON.stringify({ ...testBody, ...rawTest }));
 
     fullJSON.breadcrumbs = fullJSON.breadcrumbs || [testName];
     fullJSON.breadcrumbsDescriptions = fullJSON.breadcrumbsDescriptions || [];
@@ -103,7 +112,12 @@ export default class TestStructure {
         runner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${lifeCycleFunctionName}[${runnerNum}].${name}`];
         runner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
 
-        const fullJSONResponce = TestStructure.getFullDepthJSON(name, runner, levelIndent + 1);
+        const fullJSONResponce = TestStructure.getFullDepthJSON(
+          name,
+          runner,
+          levelIndent + 1,
+          !!Object.values(runnerValue)[0],
+        );
         fullJSON[lifeCycleFunctionName][runnerNum] = fullJSONResponce;
       });
     });

@@ -47,9 +47,11 @@ Some runners manipulations (runnersManipulations)
                       |   |   🕝: 00.000 s. (runnerClose)
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(blank) Blank Runner[0m
-00:00:00.000 - test   |   |   [41m[32m(runnerSwitch) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   |   [32m(runnerSwitch) Switch on runner: 'null'[0m
+00:00:00.000 - raw    |   |   |   Runner switch on 'null'
                       |   |   🕝: 00.000 s. (runnerSwitch)
-00:00:00.000 - test   |   |   [41m[32m(runnerClose) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   |   [32m(runnerClose) Close runner: 'null'[0m
+00:00:00.000 - raw    |   |   |   All Runners closed.
                       |   |   🕝: 00.000 s. (runnerClose)
                       |   🕝: 00.000 s. (blank)
                       🕝: 00.000 s. (runnersManipulations)
