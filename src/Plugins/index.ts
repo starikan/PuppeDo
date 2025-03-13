@@ -8,6 +8,7 @@ import debug, { PluginDebug } from './debug/debug';
 import frame, { PluginFrame } from './frame/frame';
 import logOptions, { PluginLogOptions } from './logOptions/logOptions';
 import options, { PluginOptions } from './options/options';
+import selectors, { PluginSelectors } from './selectors/selectors';
 
 export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginDebug> &
@@ -17,7 +18,8 @@ export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginFrame> &
   Partial<PluginLogOptions> &
   Partial<PluginContinueOnError> &
-  Partial<PluginOptions>;
+  Partial<PluginOptions> &
+  Partial<PluginSelectors>;
 
 export type { PluginContinueOnError };
 export type { PluginDebug };
@@ -28,6 +30,7 @@ export type { PluginArgsRedefine };
 export type { PluginFrame };
 export type { PluginLogOptions };
 export type { PluginOptions };
+export type { PluginSelectors };
 
 export default {
   continueOnError,
@@ -39,12 +42,14 @@ export default {
   frame,
   logOptions,
   options,
+  selectors,
 };
 
 export const pluginsListDefault: PluginList = {
   argsRedefine: { plugin: 'argsRedefine', order: 100 },
   logOptions: { plugin: 'logOptions', order: 150 },
   options: { plugin: 'options', order: 160 },
+  selectors: { plugin: 'selectors', order: 170 },
   descriptionError: { plugin: 'descriptionError', order: 200 },
   continueOnError: { plugin: 'continueOnError', order: 300 },
   skipSublingIfResult: { plugin: 'skipSublingIfResult', order: 400 },

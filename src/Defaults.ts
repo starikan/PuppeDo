@@ -99,7 +99,6 @@ export const EXTEND_BLANK_AGENT = (): AgentData => {
     testFile: '',
     levelIndent: 0,
     dataParent: {},
-    selectorsParent: {},
     socket: blankSocket,
     // atomRun: () => {},
   } as AgentData;

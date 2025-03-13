@@ -146,6 +146,9 @@ const testsE2E = {
   options: {
     params: { PPD_TESTS: 'options' },
   },
+  selectors: {
+    params: { PPD_TESTS: 'selectors' },
+  },
 };
 
 module.exports = testsE2E;

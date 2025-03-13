@@ -125,10 +125,7 @@ const stepResolver = (
 
     const step = new Test(agentJson);
 
-    const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, [
-      'data',
-      'selectors',
-    ]);
+    const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, ['data']);
 
     updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
 

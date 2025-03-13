@@ -335,7 +335,6 @@ export type TestExtendType = {
   envsId?: string;
   resultsFromPrevSubling?: Record<string, unknown>;
   dataParent?: Record<string, unknown>;
-  selectorsParent?: Record<string, unknown>;
   funcFile?: string;
   testFile?: string;
   atomRun?: TestLifeCycleFunctionType[];

@@ -23,6 +23,7 @@ import {
   PluginDebug,
   PluginLogOptions,
   PluginOptions,
+  PluginSelectors,
 } from './Plugins';
 import { EXTEND_BLANK_AGENT } from './Defaults';
 import { Log } from './Log';
@@ -139,7 +140,6 @@ const fetchData = (
   dataParent: Record<string, unknown>,
   data: Record<string, unknown>,
   bindData: Record<string, string>,
-  selectorsParent: Record<string, unknown>,
   selectors: Record<string, unknown>,
   bindSelectors: Record<string, string>,
   runner: Runner,
@@ -169,7 +169,6 @@ const fetchData = (
     ...PPD_SELECTORS,
     ...((runner && runner.getRunnerData().selectors) || {}),
     ...selectorsExtResolved,
-    ...selectorsParent,
     ...(resultsFromParent || {}),
     ...selectors,
   };
@@ -340,16 +339,15 @@ export class Test {
 
     this.agent.data = resolveAliases<Record<string, string>>('data', inputs);
     this.agent.dataParent = { ...(this.agent.dataParent || {}), ...inputs.dataParent };
+
     this.agent.bindData = resolveAliases<Record<string, string>>('bindData', inputs);
-
-    this.agent.selectors = resolveAliases<Record<string, string>>('selectors', inputs);
-    this.agent.selectorsParent = { ...(this.agent.selectorsParent || {}), ...inputs.selectorsParent };
     this.agent.bindSelectors = resolveAliases<Record<string, string>>('bindSelectors', inputs);
-
     this.agent.bindResults = resolveAliases<Record<string, string>>('bindResults', inputs);
 
     const { logOptions } = this.plugins.getPlugins<PluginLogOptions>('logOptions').getValues(this.agent.stepId);
+    const { selectors } = this.plugins.getPlugins<PluginSelectors>('selectors').getValues(this.agent.stepId);
     this.agent.logOptions = logOptions;
+    this.agent.selectors = selectors;
 
     try {
       this.plugins.hook('resolveValues', { inputs, stepId: this.agent.stepId });
@@ -375,7 +373,6 @@ export class Test {
         this.agent.dataParent,
         this.agent.data,
         this.agent.bindData,
-        this.agent.selectorsParent,
         this.agent.selectors,
         this.agent.bindSelectors,
         this.runner,
@@ -447,8 +444,8 @@ export class Test {
         if (this.agent.logOptions.screenshot) {
           // Create Atom for get elements only
           const atom = new Atom({ page: pageCurrent, runner: this.runner });
-          const selectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
-          for (const selector of selectors) {
+          const needSelectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
+          for (const selector of needSelectors) {
             elements.push(await atom.getElement(selector));
           }
         }
