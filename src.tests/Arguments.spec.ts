@@ -98,14 +98,14 @@ test('Arguments check', () => {
   [argData, argResult] = setArg('PPD_DATA', {});
   expect(argData).toEqual(argResult);
 
-  expect(() => setArg('PPD_DATA', false)).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', true)).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', [])).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', ['foo'])).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', 'foo')).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', '')).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', 1)).toThrowError(errors('PPD_DATA', 'object'));
-  expect(() => setArg('PPD_DATA', 0)).toThrowError(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', false)).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', true)).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', [])).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', ['foo'])).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 'foo')).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', '')).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 1)).toThrow(errors('PPD_DATA', 'object'));
+  expect(() => setArg('PPD_DATA', 0)).toThrow(errors('PPD_DATA', 'object'));
 
   // Boolean
   [argData, argResult] = setArg('PPD_DEBUG_MODE', false);
@@ -117,14 +117,14 @@ test('Arguments check', () => {
   [, argResult] = setArg('PPD_DEBUG_MODE', 'true');
   expect(argResult).toEqual(true);
 
-  expect(() => setArg('PPD_DEBUG_MODE', {})).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', { foo: 'bar' })).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', [])).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', ['foo'])).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', 'foo')).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', '')).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', 1)).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
-  expect(() => setArg('PPD_DEBUG_MODE', 0)).toThrowError(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', {})).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', { foo: 'bar' })).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', [])).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', ['foo'])).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 'foo')).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', '')).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 1)).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
+  expect(() => setArg('PPD_DEBUG_MODE', 0)).toThrow(errors('PPD_DEBUG_MODE', 'boolean'));
 
   // Array
   [argData, argResult] = setArg('PPD_ROOT_ADDITIONAL', ['boo']);
@@ -140,26 +140,26 @@ test('Arguments check', () => {
   [, argResult] = setArg('PPD_ROOT_ADDITIONAL', '');
   expect(argResult).toEqual([]);
 
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', false)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', true)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', {})).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', { foo: 'bar' })).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', 1)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
-  expect(() => setArg('PPD_ROOT_ADDITIONAL', 0)).toThrowError(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', false)).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', true)).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', {})).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', { foo: 'bar' })).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', 1)).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
+  expect(() => setArg('PPD_ROOT_ADDITIONAL', 0)).toThrow(errors('PPD_ROOT_ADDITIONAL', 'array'));
 
   // String
   [argData, argResult] = setArg('PPD_OUTPUT', 'output');
   expect(argData).toEqual(argResult);
   [argData, argResult] = setArg('PPD_OUTPUT', '');
   expect(argData).toEqual(argResult);
-  expect(() => setArg('PPD_OUTPUT', false)).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', true)).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', {})).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', { foo: 'bar' })).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', [])).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', ['bar'])).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', 1)).toThrowError(errors('PPD_OUTPUT', 'string'));
-  expect(() => setArg('PPD_OUTPUT', 0)).toThrowError(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', false)).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', true)).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', {})).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', { foo: 'bar' })).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', [])).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', ['bar'])).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', 1)).toThrow(errors('PPD_OUTPUT', 'string'));
+  expect(() => setArg('PPD_OUTPUT', 0)).toThrow(errors('PPD_OUTPUT', 'string'));
 
   // Number
   [argData, argResult] = setArg('PPD_LOG_LEVEL_NESTED', 0);
@@ -170,14 +170,14 @@ test('Arguments check', () => {
   expect(argResult).toEqual(0);
   [, argResult] = setArg('PPD_LOG_LEVEL_NESTED', '1');
   expect(argResult).toEqual(1);
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', false)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', true)).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', {})).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', { foo: 'bar' })).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', [])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', ['bar'])).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', 'foo')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
-  expect(() => setArg('PPD_LOG_LEVEL_NESTED', '')).toThrowError(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', false)).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', true)).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', {})).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', { foo: 'bar' })).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', [])).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', ['bar'])).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', 'foo')).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
+  expect(() => setArg('PPD_LOG_LEVEL_NESTED', '')).toThrow(errors('PPD_LOG_LEVEL_NESTED', 'number'));
 
   [argData, argResult] = setArg('PPD_LOG_DISABLED', false);
   expect(argData).toEqual(argResult);
