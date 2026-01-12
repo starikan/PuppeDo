@@ -32,7 +32,7 @@ const runAgent = async (agentName: string, envsId: string): Promise<Record<strin
   await logger.log({ level: 'timer', text: `Test '${agentName}' start on '${getNowDateTime()}'` });
 
   const fullJSON = new Environment().getStruct(envsId, agentName);
-  const textDescription = FlowStructure.generateDescription(fullJSON);
+  const textDescription = FlowStructure.generateFlowDescription(fullJSON);
   new Environment().setCurrent(envsId, { name: agentName });
 
   new Blocker().reset();

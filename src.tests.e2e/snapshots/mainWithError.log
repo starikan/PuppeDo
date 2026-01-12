@@ -29,8 +29,6 @@
 [31m00:00:00.000 - error  [0m[31m[2m  - waiting for locator('.mainInputFake') to be visible[22m[0m
 [31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m    at Atom.atomRun (\@puppedo\atoms\src\main\waitForSelector)[0m
-[31m00:00:00.000 - error  [0m[31m    at runTest (\runAllTests)[0m
-[31m00:00:00.000 - error  [0m[31m    at start (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m[0m
 [31m00:00:00.000 - error  [0m[31m=============== EXTEND FILE ===============[0m
 [31m00:00:00.000 - error  [0m[31mfile:///output.log[0m
@@ -58,7 +56,6 @@
 [31m                      [0m[31merror in test = mainWithError[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mAtomError: Error in Atom[0m
-[31m                      [0m[31mat runTest (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Error in Atom

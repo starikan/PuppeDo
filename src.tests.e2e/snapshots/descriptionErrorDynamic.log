@@ -24,8 +24,6 @@ descriptionErrorDynamic (descriptionErrorDynamic)
 [31m                      [0m[31merror in test = descriptionErrorDynamic[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Test stopped with expr errorIfResult = 'apples < 5'[0m
-[31m                      [0m[31mat runTest (\runAllTests)[0m
-[31m                      [0m[31mat start (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = 'apples < 5'

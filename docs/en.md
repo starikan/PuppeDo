@@ -1251,8 +1251,6 @@ descriptionError (descriptionError)
                       error in test = descriptionError
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
-                      at runTest (\runAllTests)
-                      at start (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
@@ -1363,8 +1361,6 @@ descriptionErrorDynamic (descriptionErrorDynamic)
                       error in test = descriptionErrorDynamic
                       ================================================================================================
                       Error: Test stopped with expr errorIfResult = 'apples < 5'
-                      at runTest (\runAllTests)
-                      at start (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = 'apples < 5'

@@ -15,6 +15,7 @@ const logClean = (text) => {
     .split('\n')
     .filter((v) => !/webpack:/g.test(v))
     .filter((v) => !/node:internal/g.test(v))
+    .filter((v) => !/runAllTests/g.test(v))
     .map((line) =>
       line
         .replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000')

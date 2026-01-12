@@ -262,7 +262,7 @@ export class Environment extends Singleton {
       return existsStruct;
     }
 
-    const fullStruct = FlowStructure.getFullDepthJSON(name);
+    const fullStruct = FlowStructure.getFlowFullJSON(name);
     this.instances[envsId].testsStruct[name] = fullStruct;
 
     return fullStruct;

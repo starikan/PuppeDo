@@ -24,7 +24,6 @@
 [31m                      [0m[31merror in test = engineSupportsFakeEngine[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Current engine: 'playwright' not supported with this agent. You need to use: fakeEngine[0m
-[31m                      [0m[31mat runTest (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Current engine: 'playwright' not supported with this agent. You need to use: fakeEngine
