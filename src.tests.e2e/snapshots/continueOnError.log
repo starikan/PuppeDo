@@ -98,16 +98,6 @@ continueOnError (continueOnError)
 [31m                      [0m[31merror in test = continueOnError[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Test stopped with expr errorIfResult = '2 === 2'[0m
-[31m                      [0m[31mat checkIf (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat processTicksAndRejections (node:internal/process/task_queues)[0m
-[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
-[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
-[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
-[31m                      [0m[31mat runAgent (\@puppedo\core\src\Api)[0m
-[31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = '2 === 2'

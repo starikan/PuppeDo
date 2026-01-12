@@ -11,22 +11,27 @@ const testsResolved = tests ? tests.split(',').map((v) => v.trim()) : Object.key
 const createResolved = create ? create === 'true' : false;
 
 const logClean = (text) => {
-  const newText = text
-    .replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000')
-    .replace(/: \d+\.\d+ s./g, ': 00.000 s.')
-    .replace(/start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g, "start on '0000-00-00_00-00-00.000'")
-    .replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]')
-    .replace(/\([^f].+?PuppeDo\\node_modules/g, '(')
-    .replace(/file:\/\/\/.+?node_modules/g, 'file:///')
-    .replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log')
-    .replace(/file:\/\/\/.+?tests/g, 'file:///')
-    .replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins')
-    .replace(/\(.+?webpack:/g, '(')
-    .replace(/\.[jt]s.+?\)/g, ')')
-    .replace(/:\d+:\d+\)/g, ')')
-    .replace(/\(.+?src\.tests\.e2e/g, '(');
+  const splitedText = text
+    .split('\n')
+    .filter((v) => !/webpack:/g.test(v))
+    .filter((v) => !/node:internal/g.test(v))
+    .map((line) =>
+      line
+        .replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000')
+        .replace(/: \d+\.\d+ s./g, ': 00.000 s.')
+        .replace(/start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g, "start on '0000-00-00_00-00-00.000'")
+        .replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]')
+        .replace(/\([^f].+?PuppeDo\\node_modules/g, '(')
+        .replace(/file:\/\/\/.+?node_modules/g, 'file:///')
+        .replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log')
+        .replace(/file:\/\/\/.+?tests/g, 'file:///')
+        .replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins')
+        .replace(/\(.+?webpack:/g, '(')
+        .replace(/\.[jt]s.+?\)/g, ')')
+        .replace(/:\d+:\d+\)/g, ')')
+        .replace(/\(.+?src\.tests\.e2e/g, '('),
+    );
 
-  const splitedText = newText.split('\n');
   const startIndex = splitedText.indexOf(
     splitedText.find((v) => v.search('============== ALL DATA ==============') > 0),
   );

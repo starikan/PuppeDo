@@ -24,15 +24,6 @@
 [31m                      [0m[31merror in test = engineSupportsFakeEngine[0m
 [31m                      [0m[31m================================================================================================[0m
 [31m                      [0m[31mError: Current engine: 'playwright' not supported with this agent. You need to use: fakeEngine[0m
-[31m                      [0m[31mat Plugin.resolveValues (\@puppedo\core\src\Plugins\engineSupports\engineSupports)[0m
-[31m                      [0m[31mat PluginsCore_Plugins.hook (\@puppedo\core\src\PluginsCore)[0m
-[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat Test.run (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat func (\@puppedo\core\src\getAgent)[0m
-[31m                      [0m[31mat Test.runLogic (\@puppedo\core\src\Test)[0m
-[31m                      [0m[31mat stepFunction (\@puppedo\core\src\getAgent)[0m
-[31m                      [0m[31mat runAgent (\@puppedo\core\src\Api)[0m
-[31m                      [0m[31mat Object.run (\@puppedo\core\src\Api)[0m
 [31m                      [0m[31mat runTest (\runAllTests)[0m
 [31m00:00:00.000 - error  [0m[31m█ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀

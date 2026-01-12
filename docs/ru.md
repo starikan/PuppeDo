@@ -1255,14 +1255,6 @@ descriptionError (descriptionError)
                       error in test = descriptionError
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
                       at runTest (\runAllTests)
                       at start (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
@@ -1324,16 +1316,6 @@ descriptionErrorNested (descriptionErrorNested)
                       error in test = descriptionErrorNested
                       ================================================================================================
                       Error: Test stopped with expr errorIf = 'true'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIf = 'true'
@@ -1385,14 +1367,6 @@ descriptionErrorDynamic (descriptionErrorDynamic)
                       error in test = descriptionErrorDynamic
                       ================================================================================================
                       Error: Test stopped with expr errorIfResult = 'apples < 5'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
                       at runTest (\runAllTests)
                       at start (\runAllTests)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
@@ -1564,16 +1538,6 @@ continueOnError (continueOnError)
                       error in test = continueOnError
                       ================================================================================================
                       Error: Test stopped with expr errorIfResult = '2 === 2'
-                      at checkIf (\@puppedo\core\src\Test)
-                      at processTicksAndRejections (node:internal/process/task_queues)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at Test.runLogic (\@puppedo\core\src\Test)
-                      at stepFunction (\@puppedo\core\src\getAgent)
-                      at runAgent (\@puppedo\core\src\Api)
-                      at Object.run (\@puppedo\core\src\Api)
 00:00:00.000 - error  █ SUMMARY ERROR INFO:
                       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
                       █ Message:     Test stopped with expr errorIfResult = '2 === 2'
