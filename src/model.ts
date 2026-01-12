@@ -376,7 +376,7 @@ export type PluginHooks = {
   initValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   runLogic?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   resolveValues?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
-  beforeFunctions?: ({ stepId }: { stepId?: string }) => void;
+  beforeFunctions?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   afterResults?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
   afterRepeat?: ({ inputs, stepId }: { inputs: Record<string, unknown>; stepId?: string }) => void;
 };

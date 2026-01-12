@@ -16,3 +16,4 @@ yarn.lock
 /dist/**/*.js
 /dist/**/*.map
 /atoms
+/.specstory

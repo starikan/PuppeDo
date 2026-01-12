@@ -1185,6 +1185,32 @@ Options inheritance test (options)
 }
 
 ```
+## selectors
+Plugin for managing selectors. Allows using selectors from parent blocks.
+
+Selectors are available in child blocks and are passed down the agent tree.
+
+```yaml
+name: selectors
+description: "Selectors propagation test"
+
+```
+#### Output:
+```
+00:00:00.000 - timer  Test 'selectors' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    
+Selectors propagation test (selectors)
+
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   (selectors) Selectors propagation test
+                      🕝: 00.000 s. (selectors)
+00:00:00.000 - timer  Test 'selectors' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "selectors": {}
+}
+
+```
 ## descriptionError
 TODO
 

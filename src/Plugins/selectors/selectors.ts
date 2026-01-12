@@ -31,13 +31,16 @@ const plugin: PluginFunction<PluginSelectors> = (plugins) => {
     hooks: {
       initValues: setValue,
       runLogic: setValue,
+      beforeFunctions({ inputs, stepId }): void {
+        this.setValues(stepId, inputs);
+      },
     },
     plugins,
   });
   return pluginInstance;
 };
 
-export type PluginSelectors = { selectors: Record<string, string | number | boolean> };
+export type PluginSelectors = { selectors: Record<string, unknown> };
 
 const name = 'selectors';
 

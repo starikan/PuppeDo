@@ -42,7 +42,7 @@
     "automatization"
   ],
   "dependencies": {
-    "@puppedo/walk-sync": "1.0.4",
+    "@puppedo/walk-sync": "1.0.6",
     "axios": "1.8.2",
     "dayjs": "1.11.13",
     "js-yaml": "4.1.0",

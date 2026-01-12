@@ -495,8 +495,6 @@ export class Test {
         }
       }
 
-      this.plugins.hook('beforeFunctions', { stepId: this.agent.stepId });
-
       const { options } = this.plugins.getPlugins<PluginOptions>('options').getValues(this.agent.stepId);
       this.agent.options = options;
 
@@ -515,6 +513,8 @@ export class Test {
         log: this.logger.log.bind(this.logger),
         plugins: this.plugins,
       };
+
+      this.plugins.hook('beforeFunctions', { inputs: this.agent, stepId: this.agent.stepId });
 
       // LIFE CYCLE
       let resultFromLifeCycle = {};
