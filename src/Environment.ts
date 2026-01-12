@@ -2,6 +2,7 @@ import { execSync, spawnSync } from 'child_process';
 import os from 'os';
 import { AgentTree } from './AgentTree';
 import { DEFAULT_BROWSER, Engines } from './Engines';
+import FlowStructure from './FlowStructure';
 import { blankSocket, generateId } from './Helpers';
 import { Log, LogOptions } from './Log';
 import type {
@@ -20,7 +21,6 @@ import type {
 import { Plugins } from './PluginsCore';
 import Singleton from './Singleton';
 import AgentContent from './TestContent';
-import TestStructure from './TestStructure';
 
 type EnvsInstanceType = {
   allRunners: Runners;
@@ -262,7 +262,7 @@ export class Environment extends Singleton {
       return existsStruct;
     }
 
-    const fullStruct = TestStructure.getFullDepthJSON(name);
+    const fullStruct = FlowStructure.getFullDepthJSON(name);
     this.instances[envsId].testsStruct[name] = fullStruct;
 
     return fullStruct;

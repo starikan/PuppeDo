@@ -4,7 +4,7 @@ import { deepMergeField, generateId } from './Helpers';
 import type { LifeCycleFunction, TestExtendType, TestTypeYaml } from './model';
 import AgentContent, { resolveTest } from './TestContent';
 
-export default class TestStructure {
+export default class FlowStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     const keys = Object.keys(BLANK_AGENT);
@@ -28,7 +28,7 @@ export default class TestStructure {
       if ((fullJSONFiltered[lifeCycleFunction] as LifeCycleFunction[])?.length) {
         fullJSONFiltered[lifeCycleFunction] = (fullJSONFiltered[lifeCycleFunction] as TestExtendType[]).map(
           (v: TestExtendType) => {
-            const result = TestStructure.filteredFullJSON(v);
+            const result = FlowStructure.filteredFullJSON(v);
             return result;
           },
         );
@@ -51,7 +51,7 @@ export default class TestStructure {
 
     const blocks = PPD_LIFE_CYCLE_FUNCTIONS.flatMap((v) => fullJSON[v] || [])
       .filter((v) => typeof v !== 'function')
-      .map((v) => TestStructure.generateDescription(v as TestExtendType))
+      .map((v) => FlowStructure.generateDescription(v as TestExtendType))
       .join('');
     const result = `${descriptionString}\n${blocks}`;
 
@@ -75,7 +75,7 @@ export default class TestStructure {
     levelIndent = 0,
     resolved = true,
   ): TestExtendType {
-    const rawTest = TestStructure.getAgentRaw(testName);
+    const rawTest = FlowStructure.getAgentRaw(testName);
 
     // TODO: 2025-03-11 S.Starodubov logOptions
     const fullJSON: TestExtendType = resolved
@@ -110,7 +110,7 @@ export default class TestStructure {
         runner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${lifeCycleFunctionName}[${runnerNum}].${name}`];
         runner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
 
-        const fullJSONResponce = TestStructure.getFullDepthJSON(
+        const fullJSONResponce = FlowStructure.getFullDepthJSON(
           name,
           runner,
           levelIndent + 1,

@@ -2,11 +2,11 @@ import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { resolveOptions } from './Defaults';
 import { Environment } from './Environment';
+import FlowStructure from './FlowStructure';
 import getAgent from './getAgent';
 import { getNowDateTime, getTimer } from './Helpers';
 import type { ArgumentsType, LogEntry, RunOptions } from './model';
 import { PluginsFabric } from './PluginsCore';
-import TestStructure from './TestStructure';
 
 const initEnvironment = (options: RunOptions, argsInput): string => {
   const { loggerPipes, pluginsList, argsConfig, stdOut, socket } = options;
@@ -32,7 +32,7 @@ const runAgent = async (agentName: string, envsId: string): Promise<Record<strin
   await logger.log({ level: 'timer', text: `Test '${agentName}' start on '${getNowDateTime()}'` });
 
   const fullJSON = new Environment().getStruct(envsId, agentName);
-  const textDescription = TestStructure.generateDescription(fullJSON);
+  const textDescription = FlowStructure.generateDescription(fullJSON);
   new Environment().setCurrent(envsId, { name: agentName });
 
   new Blocker().reset();

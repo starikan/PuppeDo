@@ -3,7 +3,7 @@ require('source-map-support').install();
 const {
   run,
   errorHandler,
-  TestStructure,
+  FlowStructure,
   getTest,
   AgentContent,
   Environment,
@@ -29,14 +29,9 @@ if (!module.parent) {
   module.exports = {
     run,
     errorHandler,
-    TestStructure,
+    FlowStructure,
     getTest,
     AgentContent,
-
-    /**
-     * @deprecated
-     */
-    TestsContent: AgentContent,
     Environment,
     Arguments,
     Blocker,
