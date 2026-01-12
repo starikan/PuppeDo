@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-
 import { walkSync } from '@puppedo/walk-sync';
 import fs from 'fs';
 

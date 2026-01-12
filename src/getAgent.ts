@@ -1,6 +1,3 @@
-/* eslint-disable function-paren-newline */
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-param-reassign */
 import path from 'path';
 
 import requireFromString from 'require-from-string';

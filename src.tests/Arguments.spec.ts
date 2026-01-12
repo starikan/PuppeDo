@@ -68,7 +68,6 @@ const argsENV: Record<ArgumentsKeysType, string> = {
 
 // Reset Arguments
 function setArg<T>(argName: ArgumentsKeysType, argData: T): [T, ArgumentsValuesType] {
-  // eslint-disable-next-line no-new
   new Arguments({}, {}, true);
 
   const argMock = { [argName]: argData };

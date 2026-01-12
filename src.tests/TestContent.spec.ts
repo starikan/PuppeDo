@@ -14,7 +14,6 @@ const DEFAULT_BROWSER: EnvBrowserType = {
 
 describe('TestContent', () => {
   beforeAll(() => {
-    // eslint-disable-next-line no-new
     new Arguments(
       {
         PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
@@ -46,7 +45,6 @@ describe('TestContent', () => {
   });
 
   test('getAllData with args', () => {
-    // eslint-disable-next-line no-new
     new Arguments(
       {
         PPD_ROOT_ADDITIONAL: [],

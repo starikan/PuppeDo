@@ -1,5 +1,3 @@
-/* eslint-disable no-new */
-
 import { Arguments } from './Arguments';
 import Blocker from './Blocker';
 import { resolveOptions } from './Defaults';

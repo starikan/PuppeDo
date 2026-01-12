@@ -1,5 +1,3 @@
-/* eslint-disable implicit-arrow-linebreak */
-
 import crypto from 'crypto';
 import dayjs from 'dayjs';
 import vm from 'vm';

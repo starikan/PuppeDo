@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 import fs from 'fs';
 import path from 'path';
 

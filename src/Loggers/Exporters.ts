@@ -25,7 +25,6 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
     textsJoin = texts.toString();
   }
 
-  // eslint-disable-next-line no-control-regex
   textsJoin = textsJoin.replace(/\[\d+m/gi, '');
 
   new Environment().getLogger(envsId).exporter.appendToFile(fileName, `${textsJoin}\n`);

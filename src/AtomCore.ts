@@ -103,7 +103,6 @@ export default class Atom {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async atomRun(): Promise<Record<string, unknown>> {
     throw new AtomError('Empty Atom Run');
   }

@@ -10,7 +10,6 @@ export default class Singleton {
       Class[singleton] = this;
     }
 
-    // eslint-disable-next-line no-constructor-return
     return Class[singleton];
   }
 }

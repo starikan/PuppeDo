@@ -220,7 +220,6 @@ export class Environment extends Singleton {
     const { envsId = generateId(), socket = blankSocket, loggerOptions } = data;
 
     if (!this.instances[envsId]) {
-      // eslint-disable-next-line no-new
       new LogOptions(loggerOptions);
       const logger = new Log(envsId);
 

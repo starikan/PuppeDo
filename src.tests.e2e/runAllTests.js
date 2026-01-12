@@ -4,7 +4,6 @@ const runServer = require('./server');
 
 const testsE2E = require('./runners');
 
-// eslint-disable-next-line global-require
 const runBeforeTest = () => require('@puppedo/atoms');
 
 const runTest = async (runner, options = {}) => {
