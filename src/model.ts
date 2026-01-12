@@ -1,23 +1,22 @@
-import {
-  Page as PagePuppeteer,
-  Browser as BrowserPuppeteer,
-  // ElementHandle as ElementHandlePuppeteer,
-  Frame as FramePuppeteer,
-} from 'puppeteer';
-import {
-  Page as PagePlaywright,
+import type {
   Browser as BrowserPlaywright,
   // ElementHandle as ElementHandlePlaywright,
   Frame as FramePlaywright,
+  Page as PagePlaywright,
 } from 'playwright';
-
-import { ErrorType } from './Error';
-import { Plugins } from './PluginsCore';
-import { Environment, Runner, Runners } from './Environment';
-import { argsDefault } from './Defaults';
-import { colors } from './Helpers';
-import { AgentTree } from './AgentTree';
-import { PliginsFields } from './Plugins';
+import type {
+  Browser as BrowserPuppeteer,
+  // ElementHandle as ElementHandlePuppeteer,
+  Frame as FramePuppeteer,
+  Page as PagePuppeteer,
+} from 'puppeteer';
+import type { AgentTree } from './AgentTree';
+import type { argsDefault } from './Defaults';
+import type { Environment, Runner, Runners } from './Environment';
+import type { ErrorType } from './Error';
+import type { colors } from './Helpers';
+import type { PliginsFields } from './Plugins';
+import type { Plugins } from './PluginsCore';
 
 // ================ BROWSERS ====================
 

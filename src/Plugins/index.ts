@@ -1,14 +1,14 @@
-import { PluginList } from '../model';
-import continueOnError, { PluginContinueOnError } from './continueOnError/continueOnError';
-import skipSublingIfResult, { PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
-import argsRedefine, { PluginArgsRedefine } from './argsRedefine/argsRedefine';
-import descriptionError, { PluginDescriptionError } from './descriptionError/descriptionError';
-import engineSupports, { PluginEngineSupports } from './engineSupports/engineSupports';
-import debug, { PluginDebug } from './debug/debug';
-import frame, { PluginFrame } from './frame/frame';
-import logOptions, { PluginLogOptions } from './logOptions/logOptions';
-import options, { PluginOptions } from './options/options';
-import selectors, { PluginSelectors } from './selectors/selectors';
+import type { PluginList } from '../model';
+import argsRedefine, { type PluginArgsRedefine } from './argsRedefine/argsRedefine';
+import continueOnError, { type PluginContinueOnError } from './continueOnError/continueOnError';
+import debug, { type PluginDebug } from './debug/debug';
+import descriptionError, { type PluginDescriptionError } from './descriptionError/descriptionError';
+import engineSupports, { type PluginEngineSupports } from './engineSupports/engineSupports';
+import frame, { type PluginFrame } from './frame/frame';
+import logOptions, { type PluginLogOptions } from './logOptions/logOptions';
+import options, { type PluginOptions } from './options/options';
+import selectors, { type PluginSelectors } from './selectors/selectors';
+import skipSublingIfResult, { type PluginSkipSublingIfResult } from './skipSublingIfResult/skipSublingIfResult';
 
 export type PliginsFields = Partial<PluginSkipSublingIfResult> &
   Partial<PluginDebug> &

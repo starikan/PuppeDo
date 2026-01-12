@@ -1,6 +1,6 @@
-import { Plugin } from '../../PluginsCore';
 import { resolveAliases } from '../../Helpers';
-import { PluginDocumentation, PluginFunction, PluginModule, TestExtendType } from '../../model';
+import type { PluginDocumentation, PluginFunction, PluginModule, TestExtendType } from '../../model';
+import { Plugin } from '../../PluginsCore';
 
 function setValue(
   this: Plugin<PluginOptions>,

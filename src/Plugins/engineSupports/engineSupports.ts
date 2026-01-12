@@ -1,5 +1,5 @@
 import { Environment } from '../../Environment';
-import { BrowserEngineType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
+import type { BrowserEngineType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { Plugin } from '../../PluginsCore';
 
 function setValue(

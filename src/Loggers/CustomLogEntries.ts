@@ -2,9 +2,9 @@ import path from 'path';
 
 import { Arguments } from '../Arguments';
 import { Environment } from '../Environment';
-import { ErrorType } from '../Error';
-import { LogFunctionType } from '../model';
+import type { ErrorType } from '../Error';
 import { getTimer } from '../Helpers';
+import type { LogFunctionType } from '../model';
 
 export const logExtendFileInfo = async (log: LogFunctionType, { envsId }: { envsId: string }): Promise<void> => {
   if (envsId) {

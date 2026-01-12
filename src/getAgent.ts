@@ -4,15 +4,13 @@
 import path from 'path';
 
 import requireFromString from 'require-from-string';
-
-import Blocker from './Blocker';
-import { pick } from './Helpers';
-import { Test } from './Test';
-import Atom from './AtomCore';
-
-import { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType } from './model';
-import { Environment } from './Environment';
 import { Arguments } from './Arguments';
+import Atom from './AtomCore';
+import Blocker from './Blocker';
+import { Environment } from './Environment';
+import { pick } from './Helpers';
+import type { LifeCycleFunction, TestArgsType, TestExtendType, TestLifeCycleFunctionType } from './model';
+import { Test } from './Test';
 
 const atoms: Record<string, TestLifeCycleFunctionType> = {};
 

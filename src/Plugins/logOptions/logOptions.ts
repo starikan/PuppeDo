@@ -1,6 +1,6 @@
+import type { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { Plugin } from '../../PluginsCore';
-import { ColorsType, LogOptionsType, PluginDocumentation, PluginFunction, PluginModule } from '../../model';
-import { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
+import type { PluginArgsRedefine } from '../argsRedefine/argsRedefine';
 
 function setValue(
   this: Plugin<PluginLogOptions>,

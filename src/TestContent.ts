@@ -1,16 +1,16 @@
 /* eslint-disable consistent-return */
-import path from 'path';
+
+import { walkSync } from '@puppedo/walk-sync';
 import fs from 'fs';
 
 import yaml from 'js-yaml';
-import { walkSync } from '@puppedo/walk-sync';
-
-import Singleton from './Singleton';
+import path from 'path';
 import { Arguments } from './Arguments';
+import { BLANK_AGENT } from './Defaults';
 import { mergeObjects } from './Helpers';
 
-import { TestType, RunnerType, DataType, TestTypeYaml, TestExtendType, AllDataType } from './model';
-import { BLANK_AGENT } from './Defaults';
+import type { AllDataType, DataType, RunnerType, TestExtendType, TestType, TestTypeYaml } from './model';
+import Singleton from './Singleton';
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
@@ -54,14 +54,12 @@ export default class AgentContent extends Singleton {
 
     const folders = [rootFolder, ...additionalFolders].map((v) => path.normalize(v));
 
-    const paths = folders
-      .map((folder) => {
-        if (fs.existsSync(folder)) {
-          return walkSync(folder, { ignoreFolders, ignoreFiles, includeExtensions: PPD_FILES_EXTENSIONS_AVAILABLE });
-        }
-        return [];
-      })
-      .flat();
+    const paths = folders.flatMap((folder) => {
+      if (fs.existsSync(folder)) {
+        return walkSync(folder, { ignoreFolders, ignoreFiles, includeExtensions: PPD_FILES_EXTENSIONS_AVAILABLE });
+      }
+      return [];
+    });
 
     return paths;
   }
@@ -82,7 +80,9 @@ export default class AgentContent extends Singleton {
     const dubs: Record<string, string[]> = {};
     agents.forEach((test) => {
       if (test.testFile) {
-        (dubs[test.name] = dubs[test.name] || []).push(test.testFile);
+        const arr = dubs[test.name] || [];
+        arr.push(test.testFile);
+        dubs[test.name] = arr;
       }
     });
 
@@ -178,9 +178,9 @@ export default class AgentContent extends Singleton {
     if (force || !this.allData) {
       const allFiles = AgentContent.getPaths();
 
-      const allContent: Array<TestType | RunnerType | DataType> = allFiles
-        .map((filePath) => AgentContent.readFile(filePath).map((v) => AgentContent.fileResolver(v, filePath)))
-        .flat();
+      const allContent: Array<TestType | RunnerType | DataType> = allFiles.flatMap((filePath) =>
+        AgentContent.readFile(filePath).map((v) => AgentContent.fileResolver(v, filePath)),
+      );
 
       const agents: Array<TestType> = AgentContent.checkDuplicates(
         allContent.filter((v): v is TestType => !['data', 'selectors', 'runner'].includes(v.type)),

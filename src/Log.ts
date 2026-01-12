@@ -1,9 +1,9 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { Arguments } from './Arguments';
-import Screenshot from './Screenshot';
-
-import {
+import { Environment } from './Environment';
+import { getNowDateTime } from './Helpers';
+import type {
   ColorsType,
   Element,
   LogEntrieType,
@@ -14,9 +14,8 @@ import {
   Outputs,
   TreeEntryDataType,
 } from './model';
-import { Environment } from './Environment';
+import Screenshot from './Screenshot';
 import Singleton from './Singleton';
-import { getNowDateTime } from './Helpers';
 
 const LEVELS: ColorsType[] = ['raw', 'timer', 'debug', 'info', 'test', 'warn', 'error', 'env'];
 

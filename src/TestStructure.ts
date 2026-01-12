@@ -1,9 +1,8 @@
-import AgentContent, { resolveTest } from './TestContent';
-
-import { LifeCycleFunction, TestExtendType, TestTypeYaml } from './model';
-import { generateId, deepMergeField } from './Helpers';
 import { Arguments } from './Arguments';
 import { BLANK_AGENT } from './Defaults';
+import { deepMergeField, generateId } from './Helpers';
+import type { LifeCycleFunction, TestExtendType, TestTypeYaml } from './model';
+import AgentContent, { resolveTest } from './TestContent';
 
 export default class TestStructure {
   static filteredFullJSON(fullJSON: TestExtendType): TestExtendType {
@@ -50,8 +49,7 @@ export default class TestStructure {
       name ? `(${name})` : '',
     ].join('');
 
-    const blocks = PPD_LIFE_CYCLE_FUNCTIONS.map((v) => fullJSON[v] || [])
-      .flat()
+    const blocks = PPD_LIFE_CYCLE_FUNCTIONS.flatMap((v) => fullJSON[v] || [])
       .filter((v) => typeof v !== 'function')
       .map((v) => TestStructure.generateDescription(v as TestExtendType))
       .join('');

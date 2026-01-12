@@ -1,10 +1,8 @@
-import path from 'path';
 import fs from 'fs';
-
-import { getNowDateTime } from './Helpers';
-
-import { Element, BrowserPageType } from './model';
+import path from 'path';
 import { Environment } from './Environment';
+import { getNowDateTime } from './Helpers';
+import type { BrowserPageType, Element } from './model';
 
 export default class Screenshot {
   envsId: string;

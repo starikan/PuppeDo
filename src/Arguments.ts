@@ -1,7 +1,7 @@
-import Singleton from './Singleton';
-import { ArgumentsKeysType, ArgumentsType } from './model';
 import { argsDefault } from './Defaults';
 import { mergeObjects } from './Helpers';
+import type { ArgumentsKeysType, ArgumentsType } from './model';
+import Singleton from './Singleton';
 
 const DELIMITER = ',';
 
@@ -114,8 +114,7 @@ export const parser = (args: Partial<ArgumentsType> = {}): Partial<ArgumentsType
 const parseCLI = (): Partial<ArgumentsType> => {
   const params = Object.keys(argsDefault);
   const argsRaw = process.argv
-    .map((v: string) => v.split(/\s+/))
-    .flat()
+    .flatMap((v: string) => v.split(/\s+/))
     .map((v: string) => v.replace(/'/g, '"'))
     .map((v: string) => v.split('='))
     .filter((v: string[]) => v.length > 1)

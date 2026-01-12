@@ -44,6 +44,6 @@ export default class Blocker extends Singleton {
   }
 
   getBlock(stepId: string): boolean {
-    return Boolean((this.blocks.find((v) => v.stepId === stepId) || {}).block);
+    return Boolean(this.blocks.find((v) => v.stepId === stepId)?.block);
   }
 }

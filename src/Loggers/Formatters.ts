@@ -1,8 +1,8 @@
-import path from 'path';
 import yaml from 'js-yaml';
+import path from 'path';
 import { Arguments } from '../Arguments';
-import { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../model';
 import { colors, getNowDateTime } from '../Helpers';
+import type { ColorsType, LogEntrieType, LogEntry, LogFormatter } from '../model';
 
 const resolveBackColor = (backgroundColor: ColorsType): ColorsType => {
   let backColor =
@@ -138,7 +138,7 @@ export const formatterEntry: LogFormatter = async ({
 export const formatterEmpty: LogFormatter = async (): Promise<string> => '';
 
 export const formatterYamlToString: LogFormatter = async (
-  logEntry: LogEntry,
+  _logEntry: LogEntry,
   logEntryTransformed: Partial<LogEntry>,
 ): Promise<string> => {
   const yamlString = `-\n${yaml

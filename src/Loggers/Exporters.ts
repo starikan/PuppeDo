@@ -1,6 +1,6 @@
 import { Environment } from '../Environment';
-import { LogEntrieType, LogEntry, LogExporter, LogExporterOptions } from '../model';
 import { paintString } from '../Helpers';
+import type { LogEntrieType, LogEntry, LogExporter, LogExporterOptions } from '../model';
 
 export const consoleLog = (entries: LogEntrieType[][]): void => {
   entries.forEach((entry) => {
@@ -32,9 +32,9 @@ export const fileLog = (envsId: string, texts: string | LogEntrieType[][] = [], 
 };
 
 export const exporterConsole: LogExporter = async (
-  logEntry: LogEntry,
+  _logEntry: LogEntry,
   logEntryFormated: LogEntrieType[][],
-  logString: string,
+  _logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
   if (options.skipThis) {
@@ -44,9 +44,9 @@ export const exporterConsole: LogExporter = async (
 };
 
 export const exporterLogFile: LogExporter = async (
-  logEntry: LogEntry,
+  _logEntry: LogEntry,
   logEntryFormated: LogEntrieType[][],
-  logString: string,
+  _logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
   if (options.skipThis) {
@@ -57,8 +57,8 @@ export const exporterLogFile: LogExporter = async (
 
 export const exporterSocket: LogExporter = async (
   logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
+  _logEntryFormated: LogEntrieType[][],
+  _logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
   const socket = new Environment().getSocket(options.envsId);
@@ -66,8 +66,8 @@ export const exporterSocket: LogExporter = async (
 };
 
 export const exporterYamlLog: LogExporter = async (
-  logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
+  _logEntry: LogEntry,
+  _logEntryFormated: LogEntrieType[][],
   logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
@@ -76,8 +76,8 @@ export const exporterYamlLog: LogExporter = async (
 
 export const exporterLogInMemory: LogExporter = async (
   logEntry: LogEntry,
-  logEntryFormated: LogEntrieType[][],
-  logString: string,
+  _logEntryFormated: LogEntrieType[][],
+  _logString: string,
   options: LogExporterOptions,
 ): Promise<void> => {
   const { log } = new Environment().getEnvInstance(options.envsId);

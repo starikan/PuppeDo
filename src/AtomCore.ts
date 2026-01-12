@@ -1,23 +1,22 @@
-import { Page as PagePuppeteer, Frame as FramePuppeteer } from 'puppeteer';
-import { Page as PagePlaywright, Frame as FramePlaywright } from 'playwright';
-
-import {
+import type { Frame as FramePlaywright, Page as PagePlaywright } from 'playwright';
+import type { Frame as FramePuppeteer, Page as PagePuppeteer } from 'puppeteer';
+import { ENGINES_AVAILABLE } from './Defaults';
+import { Environment, type Runner } from './Environment';
+import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
+import type {
+  AgentData,
+  AtomInit,
+  BrowserFrame,
   BrowserPageType,
-  LogOptionsType,
+  ColorsType,
   Element,
-  TestArgsType,
+  EnginesType,
   LogFunctionType,
   LogInputType,
-  ColorsType,
-  BrowserFrame,
-  AgentData,
-  EnginesType,
-  AtomInit,
+  LogOptionsType,
+  TestArgsType,
 } from './model';
-import { Environment, Runner } from './Environment';
-import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from './Loggers/CustomLogEntries';
-import { PluginFrame } from './Plugins';
-import { ENGINES_AVAILABLE } from './Defaults';
+import type { PluginFrame } from './Plugins';
 
 class AtomError extends Error {
   constructor(message: string) {
@@ -155,7 +154,7 @@ export default class Atom {
     const testArgs = Object.entries(args || {});
     testArgs.forEach((entry) => {
       const [key, value] = entry;
-      if (Object.prototype.hasOwnProperty.call(args, key)) {
+      if (Object.hasOwn(args, key)) {
         this[key] = value;
       }
     });

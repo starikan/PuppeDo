@@ -1,5 +1,5 @@
-import { LogEntry, LogTransformer } from '../model';
 import { omit } from '../Helpers';
+import type { LogEntry, LogTransformer } from '../model';
 
 export const transformerEquity: LogTransformer = async (logEntry: LogEntry) => logEntry;
 

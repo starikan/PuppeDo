@@ -1,5 +1,5 @@
-import { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { runScriptInContext } from '../../Helpers';
+import type { PluginDocumentation, PluginFunction, PluginModule } from '../../model';
 import { Plugin } from '../../PluginsCore';
 
 function setValue(

@@ -1,12 +1,12 @@
+import type { AgentTree } from './AgentTree';
 import { Arguments } from './Arguments';
-import { Test } from './Test';
-import { Log } from './Log';
-import { Environment, Runner } from './Environment';
+import { Environment, type Runner } from './Environment';
+import type { Log } from './Log';
 
-import { AgentData, LogInputType, SocketType } from './model';
-import { PluginContinueOnError, PluginDescriptionError } from './Plugins';
-import { Plugins } from './PluginsCore';
-import { AgentTree } from './AgentTree';
+import type { AgentData, LogInputType, SocketType } from './model';
+import type { PluginContinueOnError, PluginDescriptionError } from './Plugins';
+import type { Plugins } from './PluginsCore';
+import type { Test } from './Test';
 
 export interface ErrorType extends Error {
   envsId: string;
@@ -92,7 +92,9 @@ export class TestError extends AbstractError {
       .getValues(this.stepId);
 
     // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
-    const text = `${descriptionError ? `${descriptionError} | ` : ' '}Description: ${this.agent.description || 'No test description'} (${this.agent.name})`;
+    const text = `${descriptionError ? `${descriptionError} | ` : ' '}Description: ${
+      this.agent.description || 'No test description'
+    } (${this.agent.name})`;
     const errorData: LogInputType = {
       level: 'error',
       text,
@@ -178,7 +180,7 @@ export class ContinueParentError extends AbstractError {
 export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
   const error = { ...errorIncome, ...{ message: errorIncome.message, stack: errorIncome.stack } };
   const { PPD_DEBUG_MODE = false } = new Arguments().args;
-  if (error.socket && error.socket.sendYAML) {
+  if (error.socket?.sendYAML) {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
 
@@ -188,7 +190,7 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
   }
 
   if (PPD_DEBUG_MODE) {
-    // eslint-disable-next-line no-debugger
+    // biome-ignore lint/suspicious/noDebugger: debug mode
     debugger;
   }
 

@@ -1,26 +1,26 @@
-import os from 'os';
 import { execSync, spawnSync } from 'child_process';
+import os from 'os';
+import { AgentTree } from './AgentTree';
+import { DEFAULT_BROWSER, Engines } from './Engines';
 import { blankSocket, generateId } from './Helpers';
-import AgentContent from './TestContent';
 import { Log, LogOptions } from './Log';
-import {
+import type {
   BrowserFrame,
   BrowserPageType,
-  RunnerStateType,
-  RunnerType,
   LogEntry,
-  SocketType,
-  RunnerYamlType,
+  LogPipe,
   Outputs,
   RunnerCurrentType,
-  LogPipe,
+  RunnerStateType,
+  RunnerType,
+  RunnerYamlType,
+  SocketType,
   TestExtendType,
 } from './model';
-import Singleton from './Singleton';
-import { DEFAULT_BROWSER, Engines } from './Engines';
-import TestStructure from './TestStructure';
-import { AgentTree } from './AgentTree';
 import { Plugins } from './PluginsCore';
+import Singleton from './Singleton';
+import AgentContent from './TestContent';
+import TestStructure from './TestStructure';
 
 type EnvsInstanceType = {
   allRunners: Runners;

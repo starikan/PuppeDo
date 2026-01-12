@@ -1,6 +1,8 @@
 import crypto, { randomUUID } from 'crypto';
+import type { AgentTree } from './AgentTree';
 import { Arguments } from './Arguments';
-import {
+import { mergeObjects, pick } from './Helpers';
+import type {
   PluginDocumentation,
   PluginFunction,
   PluginHooks,
@@ -12,10 +14,8 @@ import {
   PluginType,
   TreeEntryType,
 } from './model';
-import { mergeObjects, pick } from './Helpers';
-import Singleton from './Singleton';
 import DefaultPlugins from './Plugins';
-import { AgentTree } from './AgentTree';
+import Singleton from './Singleton';
 
 /**
  * A class for managing plugins.
@@ -269,7 +269,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       return () => {};
     } catch (error) {
       console.log(error);
-      // eslint-disable-next-line no-debugger
+      // biome-ignore lint/suspicious/noDebugger: need debug this
       debugger;
     }
     return () => {};

@@ -1,33 +1,33 @@
-import { getTimer, pick, resolveAliases, runScriptInContext } from './Helpers';
-import Blocker from './Blocker';
+import type { AgentTree } from './AgentTree';
 import { Arguments } from './Arguments';
-import { Environment, Runner } from './Environment';
-import AgentContent from './TestContent';
-import { ContinueParentError, TestError } from './Error';
-import { logDebug } from './Loggers/CustomLogEntries';
-import {
-  ColorsType,
-  TestArgsType,
-  LogFunctionType,
-  TestLifeCycleFunctionType,
-  TestExtendType,
-  Element,
-  AgentData,
-} from './model';
 import Atom from './AtomCore';
-import { Plugins } from './PluginsCore';
-import {
-  PluginContinueOnError,
-  PluginSkipSublingIfResult,
+import Blocker from './Blocker';
+import { EXTEND_BLANK_AGENT } from './Defaults';
+import { Environment, type Runner } from './Environment';
+import { ContinueParentError, TestError } from './Error';
+import { getTimer, pick, resolveAliases, runScriptInContext } from './Helpers';
+import type { Log } from './Log';
+import { logDebug } from './Loggers/CustomLogEntries';
+import type {
+  AgentData,
+  ColorsType,
+  Element,
+  LogFunctionType,
+  TestArgsType,
+  TestExtendType,
+  TestLifeCycleFunctionType,
+} from './model';
+import type {
   PluginArgsRedefine,
+  PluginContinueOnError,
   PluginDebug,
   PluginLogOptions,
   PluginOptions,
   PluginSelectors,
+  PluginSkipSublingIfResult,
 } from './Plugins';
-import { EXTEND_BLANK_AGENT } from './Defaults';
-import { Log } from './Log';
-import { AgentTree } from './AgentTree';
+import type { Plugins } from './PluginsCore';
+import AgentContent from './TestContent';
 
 const checkNeeds = (needs: string[], data: Record<string, unknown>, agentName: string): boolean => {
   // [['data', 'd'], 'another', 'optional?']
@@ -158,7 +158,7 @@ const fetchData = (
 
   let dataLocal = {
     ...PPD_DATA,
-    ...((runner && runner.getRunnerData().data) || {}),
+    ...(runner?.getRunnerData().data || {}),
     ...dataExtResolved,
     ...dataParent,
     ...(resultsFromParent || {}),
@@ -167,7 +167,7 @@ const fetchData = (
 
   let selectorsLocal = {
     ...PPD_SELECTORS,
-    ...((runner && runner.getRunnerData().selectors) || {}),
+    ...(runner?.getRunnerData().selectors || {}),
     ...selectorsExtResolved,
     ...(resultsFromParent || {}),
     ...selectors,
@@ -264,7 +264,7 @@ export class Test {
 
     if (debug) {
       console.log(this);
-      // eslint-disable-next-line no-debugger
+      // biome-ignore lint/suspicious/noDebugger: debug mode
       debugger;
     }
 
@@ -396,9 +396,9 @@ export class Test {
       allData.repeat = this.agent.repeat;
       dataLocal.repeat = this.agent.repeat;
       selectorsLocal.repeat = this.agent.repeat;
-      allData.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
-      dataLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
-      selectorsLocal.$loop = (inputs.dataParent || {}).repeat || this.agent.repeat;
+      allData.$loop = inputs.dataParent?.repeat || this.agent.repeat;
+      dataLocal.$loop = inputs.dataParent?.repeat || this.agent.repeat;
+      selectorsLocal.$loop = inputs.dataParent?.repeat || this.agent.repeat;
 
       const descriptionResolved = this.agent.bindDescription
         ? this.agent.description || String(runScriptInContext(this.agent.bindDescription, allData))
@@ -409,7 +409,7 @@ export class Test {
       }
 
       // Extend with data passed to functions
-      const pageCurrent = this.runner && this.runner.getState()?.pages?.[current?.page];
+      const pageCurrent = this.runner?.getState()?.pages?.[current?.page];
 
       // IF
       if (this.agent.if) {
@@ -490,7 +490,7 @@ export class Test {
         logDebug(this.logger.log.bind(this.logger), { data: dataLocal, selectors: selectorsLocal });
         if (this.agent.debug) {
           console.log(this);
-          // eslint-disable-next-line no-debugger
+          // biome-ignore lint/suspicious/noDebugger: debug mode
           debugger;
         }
       }
@@ -507,7 +507,7 @@ export class Test {
         allRunners,
         data: dataLocal,
         selectors: selectorsLocal,
-        browser: this.runner && this.runner.getState().browser,
+        browser: this.runner?.getState().browser,
         page: pageCurrent, // If there is no page it`s might be API
         allData: new AgentContent().allData,
         log: this.logger.log.bind(this.logger),

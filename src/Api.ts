@@ -1,14 +1,14 @@
 /* eslint-disable no-new */
-import TestStructure from './TestStructure';
-import getAgent from './getAgent';
+
 import { Arguments } from './Arguments';
 import Blocker from './Blocker';
-import { Environment } from './Environment';
-import { getTimer, getNowDateTime } from './Helpers';
-import { ArgumentsType, LogEntry, RunOptions } from './model';
-import { PluginsFabric } from './PluginsCore';
-
 import { resolveOptions } from './Defaults';
+import { Environment } from './Environment';
+import getAgent from './getAgent';
+import { getNowDateTime, getTimer } from './Helpers';
+import type { ArgumentsType, LogEntry, RunOptions } from './model';
+import { PluginsFabric } from './PluginsCore';
+import TestStructure from './TestStructure';
 
 const initEnvironment = (options: RunOptions, argsInput): string => {
   const { loggerPipes, pluginsList, argsConfig, stdOut, socket } = options;

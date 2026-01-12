@@ -1,10 +1,10 @@
 /* eslint-disable implicit-arrow-linebreak */
 
-import vm from 'vm';
 import crypto from 'crypto';
 import dayjs from 'dayjs';
-import { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './model';
+import vm from 'vm';
 import { Arguments } from './Arguments';
+import type { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './model';
 
 /*
 https://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console

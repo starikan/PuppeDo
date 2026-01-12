@@ -1,9 +1,5 @@
 import path from 'path';
-
-import { AgentData, ArgumentsType, EnginesType, LogPipe, RunOptions, TestTypeYaml } from './model';
-
-import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
-import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
+import { blankSocket } from './Helpers';
 import {
   exporterConsole,
   exporterLogFile,
@@ -11,7 +7,9 @@ import {
   exporterSocket,
   exporterYamlLog,
 } from './Loggers/Exporters';
-import { blankSocket } from './Helpers';
+import { formatterEmpty, formatterEntry, formatterYamlToString } from './Loggers/Formatters';
+import { transformerEquity, transformerYamlLog } from './Loggers/Transformers';
+import type { AgentData, ArgumentsType, EnginesType, LogPipe, RunOptions, TestTypeYaml } from './model';
 import { pluginsListDefault } from './Plugins';
 
 export { pluginsListDefault };

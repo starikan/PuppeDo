@@ -1,17 +1,17 @@
 import run from './Api';
-import { errorHandler } from './Error';
-import TestStructure from './TestStructure';
-import getAgent from './getAgent';
-import AgentContent from './TestContent';
 import { Arguments } from './Arguments';
-import { argsDefault } from './Defaults';
 import Blocker from './Blocker';
+import { argsDefault } from './Defaults';
 import { Environment } from './Environment';
+import { errorHandler } from './Error';
+import getAgent from './getAgent';
+import { blankSocket, paintString, runScriptInContext } from './Helpers';
 import { Log } from './Log';
-import Singleton from './Singleton';
-import { paintString, blankSocket, runScriptInContext } from './Helpers';
-import Screenshot from './Screenshot';
 import { Plugin, Plugins } from './PluginsCore';
+import Screenshot from './Screenshot';
+import Singleton from './Singleton';
+import AgentContent from './TestContent';
+import TestStructure from './TestStructure';
 
 export default {
   run,

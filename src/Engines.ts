@@ -1,11 +1,12 @@
-import { spawn } from 'child_process';
-
-import { Browser as BrowserPuppeteer } from 'puppeteer';
-import { Browser as BrowserPlaywright } from 'playwright';
 import axios from 'axios';
+import { spawn } from 'child_process';
+import type { Browser as BrowserPlaywright } from 'playwright';
+import type { Browser as BrowserPuppeteer } from 'puppeteer';
 
 import { Arguments } from './Arguments';
-import {
+import { Environment } from './Environment';
+import { sleep } from './Helpers';
+import type {
   BrouserLaunchOptions,
   BrowserEngineType,
   BrowserNameType,
@@ -15,8 +16,6 @@ import {
   RunnerStateType,
   RunnerType,
 } from './model';
-import { sleep } from './Helpers';
-import { Environment } from './Environment';
 
 export const DEFAULT_BROWSER: EnvBrowserType = {
   type: 'browser',
