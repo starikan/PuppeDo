@@ -18,3 +18,5 @@ yarn.lock
 /atoms
 /.specstory
 /dist/myapp.exe
+/dist/puppedo.exe
+/portable-node

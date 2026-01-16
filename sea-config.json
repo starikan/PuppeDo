@@ -1,0 +1,4 @@
+{
+  "main": "dist/sea.bundle.js",
+  "output": "sea-prep.blob"
+}

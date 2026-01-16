@@ -109,14 +109,17 @@ export const EXTEND_BLANK_AGENT = (): AgentData => {
 export const ENGINES_AVAILABLE: EnginesType[] = ['puppeteer', 'playwright'];
 
 export const resolveOptions = (options: Partial<RunOptions>): RunOptions => {
-  const configGlobal = __non_webpack_require__(
-    path.join(process.cwd(), options.globalConfigFile ?? 'puppedo.config.js'),
-  );
+  let configGlobal: Partial<RunOptions> = {};
+  try {
+    configGlobal = __non_webpack_require__(path.join(process.cwd(), options.globalConfigFile ?? 'puppedo.config.js'));
+  } catch {
+    // config not found, use defaults
+  }
 
   const config: RunOptions = {
-    pluginsList: { ...pluginsListDefault, ...(configGlobal.pluginsList ?? {}), ...(options.pluginsList ?? {}) },
-    loggerPipes: [...loggerPipesDefault, ...(configGlobal.loggerPipes ?? []), ...(options.loggerPipes ?? [])],
-    argsConfig: configGlobal.args ?? {},
+    pluginsList: { ...pluginsListDefault, ...(configGlobal?.pluginsList ?? {}), ...(options.pluginsList ?? {}) },
+    loggerPipes: [...loggerPipesDefault, ...(configGlobal?.loggerPipes ?? []), ...(options.loggerPipes ?? [])],
+    argsConfig: configGlobal?.argsConfig ?? {},
     closeAllEnvs: options.closeAllEnvs ?? true,
     closeProcess: options.closeProcess ?? true,
     stdOut: options.stdOut ?? true,
