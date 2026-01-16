@@ -45,7 +45,6 @@
   ],
   "dependencies": {
     "@puppedo/walk-sync": "1.1.0",
-    "dayjs": "1.11.19",
     "js-yaml": "4.1.1",
     "require-from-string": "2.0.2",
     "source-map-support": "0.5.21"

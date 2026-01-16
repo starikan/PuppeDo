@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import dayjs from 'dayjs';
 import vm from 'vm';
 import { Arguments } from './Arguments';
 import type { AliasesKeysType, ColorsType, DeepMergeable, SocketType, TestExtendType } from './model';
@@ -238,8 +237,27 @@ export const pick = <T extends Record<string, unknown>>(obj: T, fields: string[]
 export const omit = <T extends Record<string, unknown>>(obj: T, fields: string[]): Partial<T> =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => !fields.includes(key))) as Partial<T>;
 
-export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string =>
-  dayjs(now).format(format);
+export const getNowDateTime = (now: Date = new Date(), format = 'YYYY-MM-DD_HH-mm-ss.SSS'): string => {
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+
+  const formatMap: Record<string, string> = {
+    YYYY: year.toString(),
+    MM: month,
+    DD: day,
+    HH: hours,
+    mm: minutes,
+    ss: seconds,
+    SSS: milliseconds,
+  };
+
+  return format.replace(/YYYY|MM|DD|HH|mm|ss|SSS/g, (match) => formatMap[match]);
+};
 
 export const generateId = (length = 6): string => crypto.randomBytes(length).toString('hex');
 
