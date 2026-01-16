@@ -17,3 +17,4 @@ yarn.lock
 /dist/**/*.map
 /atoms
 /.specstory
+/dist/myapp.exe

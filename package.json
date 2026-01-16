@@ -65,12 +65,14 @@
     "babel-loader": "10.0.0",
     "core-js": "3.47.0",
     "jest": "30.2.0",
-    "playwright": "1.57.0",
-    "puppeteer": "24.34.0",
     "ts-jest": "29.4.6",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "webpack": "5.104.1",
     "webpack-cli": "6.0.1"
+  },
+  "optionalDependencies": {
+    "playwright": "1.57.0",
+    "puppeteer": "24.34.0"
   }
 }
