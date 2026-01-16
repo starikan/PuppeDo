@@ -1,42 +1,9 @@
 import { Arguments } from './Arguments';
-import { BLANK_AGENT } from './Defaults';
 import { deepMergeField, generateId } from './Helpers';
 import type { LifeCycleFunction, TestExtendType, TestTypeYaml } from './model';
 import AgentContent, { resolveTest } from './TestContent';
 
 export default class FlowStructure {
-  static getFlowJSONFiltered(flowJSON: TestExtendType): TestExtendType {
-    const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
-    const keys = Object.keys(BLANK_AGENT);
-    const result: Partial<TestExtendType> = {};
-    keys.forEach((v) => {
-      const value = flowJSON[v];
-
-      if (['string', 'boolean', 'number'].includes(typeof value) && value !== null && value !== BLANK_AGENT[v]) {
-        result[v] = flowJSON[v];
-      }
-
-      if (
-        ['object'].includes(typeof value) &&
-        value !== null &&
-        ((Array.isArray(value) && !value.length) || !Object.keys(value).length)
-      ) {
-        result[v] = value;
-      }
-    });
-
-    for (const lifeCycleFunction of PPD_LIFE_CYCLE_FUNCTIONS) {
-      if ((result[lifeCycleFunction] as LifeCycleFunction[])?.length) {
-        result[lifeCycleFunction] = (result[lifeCycleFunction] as TestExtendType[]).map((v: TestExtendType) => {
-          const result = FlowStructure.getFlowJSONFiltered(v);
-          return result;
-        });
-      }
-    }
-
-    return result as TestExtendType;
-  }
-
   static generateFlowDescription(flowJSON: TestExtendType, indentLength = 3): string {
     const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
     const { description, name, todo, levelIndent = 0 } = flowJSON;
