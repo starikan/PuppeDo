@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { spawn } from 'child_process';
 import type { Browser as BrowserPlaywright } from 'playwright';
 import type { Browser as BrowserPuppeteer } from 'puppeteer';
@@ -186,13 +185,17 @@ export class Engines {
     } = browserSettings || {};
 
     if (urlDevtoolsJson) {
-      const jsonPagesResponse = await axios(`${urlDevtoolsJson}json`, { method: 'GET' });
-      const jsonBrowserResponse = await axios(`${urlDevtoolsJson}json/version`, {
-        method: 'GET',
-      });
+      const jsonPagesResponse = await fetch(`${urlDevtoolsJson}json`);
+      if (!jsonPagesResponse.ok) {
+        throw new Error(`Failed to fetch pages JSON: ${jsonPagesResponse.statusText}`);
+      }
+      const jsonBrowserResponse = await fetch(`${urlDevtoolsJson}json/version`);
+      if (!jsonBrowserResponse.ok) {
+        throw new Error(`Failed to fetch browser version JSON: ${jsonBrowserResponse.statusText}`);
+      }
 
-      const jsonPages = await jsonPagesResponse.data;
-      const jsonBrowser = (await jsonBrowserResponse.data) as { webSocketDebuggerUrl: string };
+      const jsonPages = await jsonPagesResponse.json();
+      const jsonBrowser = (await jsonBrowserResponse.json()) as { webSocketDebuggerUrl: string };
 
       if (!jsonBrowser || !jsonPages) {
         throw new Error(`Can't connect to ${urlDevtoolsJson}`);
