@@ -20,3 +20,4 @@ yarn.lock
 /dist/myapp.exe
 /dist/puppedo.exe
 /portable-node
+/.sea

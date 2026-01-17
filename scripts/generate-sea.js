@@ -5,16 +5,19 @@ const path = require('path');
 try {
   console.log('Building SEA bundle...');
   execSync('npm run build-sea', { stdio: 'inherit' });
+  if (!fs.existsSync('.sea')) {
+    fs.mkdirSync('.sea');
+  }
 
   console.log('Creating sea-config.json...');
   const seaConfig = {
-    main: 'dist/sea.bundle.js',
-    output: 'sea-prep.blob'
+    main: path.resolve('dist/sea.bundle.js'),
+    output: path.resolve('.sea/sea-prep.blob')
   };
-  fs.writeFileSync('sea-config.json', JSON.stringify(seaConfig, null, 2));
+  fs.writeFileSync('.sea/sea-config.json', JSON.stringify(seaConfig, null, 2));
 
   console.log('Generating SEA blob...');
-  execSync('node --experimental-sea-config sea-config.json', { stdio: 'inherit' });
+  execSync('node --experimental-sea-config .sea/sea-config.json', { stdio: 'inherit' });
 
   console.log('Copying Node.js binary...');
   const portableDir = path.join(process.cwd(), 'portable-node');
@@ -32,7 +35,7 @@ try {
   fs.copyFileSync(nodePath, exePath);
 
   console.log('Injecting blob into executable...');
-  execSync(`npx postject "${exePath}" NODE_SEA_BLOB sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite`, { stdio: 'inherit' });
+  execSync(`npx postject "${exePath}" NODE_SEA_BLOB .sea/sea-prep.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite`, { stdio: 'inherit' });
 
   console.log('SEA executable created: dist/puppedo.exe');
 } catch (error) {
