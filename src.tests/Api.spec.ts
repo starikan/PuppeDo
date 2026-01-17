@@ -48,10 +48,7 @@ describe('Api.run', () => {
         log: jest.fn().mockResolvedValue(undefined),
         bulkLog: jest.fn().mockResolvedValue(undefined),
       },
-      log: [
-        { stepId: 'step-1' },
-        { stepId: 'step-2' },
-      ],
+      log: [{ stepId: 'step-1' }, { stepId: 'step-2' }],
       allRunners: {
         closeAllRunners: jest.fn().mockResolvedValue(undefined),
       },
@@ -149,10 +146,7 @@ describe('Api.run', () => {
       testB: { ok: true },
     });
     expect(result.logs).toEqual({
-      testA: [
-        { stepId: 'step-1' },
-        { stepId: 'step-2' },
-      ],
+      testA: [{ stepId: 'step-1' }, { stepId: 'step-2' }],
       testB: [],
     });
 

@@ -1,13 +1,6 @@
 import Atom from '../src/AtomCore';
 import { Environment } from '../src/Environment';
-import {
-  logArgs,
-  logDebug,
-  logError,
-  logExtend,
-  logExtendFileInfo,
-  logTimer,
-} from '../src/Loggers/CustomLogEntries';
+import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from '../src/Loggers/CustomLogEntries';
 
 jest.mock('../src/Environment');
 jest.mock('../src/Loggers/CustomLogEntries');
