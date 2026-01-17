@@ -440,7 +440,7 @@ export type TreeEntryDataType = TestExtendType & {
 
 export type TreeEntryType = Partial<TestExtendType> & {
   stepId: string;
-  stepIdParent: string;
+  stepIdParent?: string | null;
   steps?: TreeEntryType[];
   timeStart?: Date;
   timeEnd?: Date;

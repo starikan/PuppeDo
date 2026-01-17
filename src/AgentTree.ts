@@ -59,7 +59,7 @@ export class AgentTree {
         return entry;
       }
 
-      const found = this.findNode(stepId, entry.steps ?? []);
+      const found = this.findNode(stepId, entry.steps || []);
       if (found) {
         return found;
       }
@@ -96,7 +96,7 @@ export class AgentTree {
     if (!node) {
       steps = this.tree;
     } else {
-      steps = node.steps ?? [];
+      steps = node.steps || [];
     }
     const index = steps.findIndex((step) => step.stepId === stepId);
     if (index !== -1 && index > 0) {
@@ -121,7 +121,7 @@ export class AgentTree {
 
     // Top step
     if (!stepIdParent && stepId) {
-      this.tree.push({ stepId, stepIdParent, ...payload });
+      this.tree.push({ stepId, ...payload });
     } else {
       const entry = this.findNode(stepIdParent, this.tree);
       if (entry) {

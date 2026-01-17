@@ -10,7 +10,7 @@ describe('AgentTree', () => {
     test('getTree returns the correct tree after creating a single top-level step', () => {
       const tree = new AgentTree();
       tree.createStep({ stepId: 'step1', payload: { timeStart: new Date() } });
-      expect(tree.getTree()).toEqual([{ stepId: 'step1', stepIdParent: null, timeStart: expect.any(Date) }]);
+      expect(tree.getTree()).toEqual([{ stepId: 'step1', timeStart: expect.any(Date) }]);
     });
 
     test('getTree returns the correct tree after creating a top-level step and a child step', () => {
@@ -20,7 +20,6 @@ describe('AgentTree', () => {
       expect(tree.getTree()).toEqual([
         {
           stepId: 'step1',
-          stepIdParent: null,
           timeStart: expect.any(Date),
           steps: [{ stepId: 'step2', stepIdParent: 'step1', timeEnd: expect.any(Date) }],
         },
@@ -39,7 +38,7 @@ describe('AgentTree', () => {
       const payload = { timeStart: new Date(), timeEnd: new Date() };
       const stepId = '1';
       agentTree.createStep({ stepId, payload });
-      expect(agentTree.getTree()).toEqual([{ stepId, stepIdParent: null, ...payload }]);
+      expect(agentTree.getTree()).toEqual([{ stepId, ...payload }]);
     });
 
     test('adds a new step to the steps array of a parent step when stepIdParent is not null', () => {
@@ -52,7 +51,6 @@ describe('AgentTree', () => {
       expect(agentTree.getTree()).toEqual([
         {
           stepId: parentStepId,
-          stepIdParent: null,
           ...parentPayload,
           steps: [{ stepId: childStepId, stepIdParent: parentStepId, ...childPayload }],
         },
@@ -79,6 +77,11 @@ describe('AgentTree', () => {
       const updatedData = { timeStart: new Date() };
       const result = agentTree.updateStep({ stepId: 'root', payload: updatedData });
       expect(result[0]).toMatchObject(updatedData);
+    });
+
+    it('should update an existing step with stepIdParent (set if not set)', () => {
+      const result = agentTree.updateStep({ stepId: 'root', stepIdParent: 'newParent', payload: { timeStart: new Date() } });
+      expect(result[0]).toMatchObject({ timeStart: expect.any(Date), stepIdParent: 'newParent' });
     });
 
     it('should update an existing step with stepIdParent (no change if already set)', () => {
@@ -155,7 +158,7 @@ describe('AgentTree', () => {
 
     test('returns correct parent for child node', () => {
       const parent = agentTree.findParent('child1');
-      expect(parent).toEqual({ stepId: 'root', stepIdParent: null, steps: expect.any(Array) });
+      expect(parent).toEqual(expect.objectContaining({ stepId: 'root' }));
     });
 
     test('returns correct parent for grandchild node', () => {
@@ -206,6 +209,45 @@ describe('AgentTree', () => {
     });
   });
 
+  describe('findNode', () => {
+    let agentTree: AgentTree;
+
+    beforeEach(() => {
+      agentTree = new AgentTree();
+      agentTree.createStep({ stepId: 'root', payload: {} });
+      agentTree.createStep({ stepIdParent: 'root', stepId: 'child1', payload: {} });
+      agentTree.createStep({ stepIdParent: 'child1', stepId: 'grandchild', payload: {} });
+    });
+
+    test('finds root node', () => {
+      const node = agentTree.findNode('root');
+      expect(node).toEqual(expect.objectContaining({ stepId: 'root' }));
+    });
+
+    test('finds child node', () => {
+      const node = agentTree.findNode('child1');
+      expect(node).toEqual(expect.objectContaining({ stepId: 'child1', stepIdParent: 'root' }));
+    });
+
+    test('finds grandchild node', () => {
+      const node = agentTree.findNode('grandchild');
+      expect(node).toEqual(expect.objectContaining({ stepId: 'grandchild', stepIdParent: 'child1' }));
+    });
+
+    test('returns null for non-existent node', () => {
+      const node = agentTree.findNode('nonexistent');
+      expect(node).toBeNull();
+    });
+
+    test('handles node without steps property', () => {
+      const tree = new AgentTree();
+      tree.createStep({ stepId: 'root', payload: {} });
+      // root has no steps yet
+      const node = tree.findNode('nonexistent');
+      expect(node).toBeNull();
+    });
+  });
+
   describe('getTree with fieldsOnly', () => {
     test('filters fields correctly', () => {
       const tree = new AgentTree();
@@ -215,7 +257,7 @@ describe('AgentTree', () => {
       expect(filtered).toEqual([
         {
           stepId: 'step1',
-          stepIdParent: null,
+          stepIdParent: undefined,
           timeStart: expect.any(Date),
           custom: 'value',
           steps: [{ stepId: 'step2', stepIdParent: 'step1', timeStart: expect.any(Date), steps: [] }],

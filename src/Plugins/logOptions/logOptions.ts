@@ -18,7 +18,7 @@ function setValue(
 
   this.setValues(stepId, {
     logOptions: {
-      logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : logOptionsParent.logChildren ?? true,
+      logThis: PPD_LOG_IGNORE_HIDE_LOG ? true : (logOptionsParent.logChildren ?? true),
       ...logOptions,
       logShowFlag,
     },

@@ -27,7 +27,7 @@ describe('engineSupports plugin', () => {
             },
           })),
           getCurrent: jest.fn(() => ({ name: 'testRunner' })),
-        } as any),
+        }) as any,
     );
   });
 
@@ -102,7 +102,7 @@ describe('engineSupports plugin', () => {
           ({
             getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
             getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          } as any),
+          }) as any,
       );
 
       plugin({ envsId: 'test' } as any);
@@ -135,7 +135,7 @@ describe('engineSupports plugin', () => {
           ({
             getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
             getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          } as any),
+          }) as any,
       );
 
       plugin({ envsId: 'test' } as any);
