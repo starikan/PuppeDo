@@ -1,4 +1,23 @@
-import { sleep, paintString, blankSocket, mergeObjects, deepMergeField, getTimer } from '../src/Helpers';
+import crypto from 'crypto';
+import { Arguments } from '../src/Arguments';
+import {
+  sleep,
+  paintString,
+  blankSocket,
+  mergeObjects,
+  deepMergeField,
+  getTimer,
+  getNowDateTime,
+  generateId,
+  runScriptInContext,
+  resolveAliases,
+  pick,
+  omit,
+} from '../src/Helpers';
+
+jest.mock('../src/Arguments');
+
+const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
 
 test('Helpers.sleep', async () => {
   const start = process.hrtime.bigint();
@@ -29,6 +48,8 @@ test('Helpers.paintString', () => {
   expect(paintString('*******', 'error')).toEqual('\u001b[31m*******\u001b[0m');
   expect(paintString('*******', 'trace')).toEqual('\u001b[36m*******\u001b[0m');
   expect(paintString('*******', 'env')).toEqual('\u001b[34m*******\u001b[0m');
+
+  expect(paintString('*******', 'unknown' as any)).toEqual('\u001b[0m*******\u001b[0m');
 });
 
 test('Helpers.blankSocket', () => {
@@ -36,7 +57,7 @@ test('Helpers.blankSocket', () => {
   expect(typeof blankSocket.send === 'function').toBe(true);
   expect(typeof blankSocket.sendYAML === 'function').toBe(true);
   expect(blankSocket.send()).toBeFalsy();
-  // expect(blankSocket.sendYAML({ type: 'string', data: {}, envsId: 'string' })).toBeFalsy();
+  expect(blankSocket.sendYAML({ type: 'string', data: {} as any, envsId: 'string' })).toBeFalsy();
 });
 
 describe('Helpers.mergeObjects', () => {
@@ -472,5 +493,158 @@ describe('Helpers.getTimer', () => {
     const nowAfter = new Date();
     expect(result.timeStart.getTime()).toBeGreaterThanOrEqual(now.getTime());
     expect(result.timeEnd.getTime()).toBeLessThanOrEqual(nowAfter.getTime() + 10);
+  });
+});
+
+describe('Helpers.getNowDateTime', () => {
+  test('Форматирует дату по умолчанию', () => {
+    const date = new Date(2021, 0, 2, 3, 4, 5, 6);
+    expect(getNowDateTime(date)).toBe('2021-01-02_03-04-05.006');
+  });
+
+  test('Форматирует дату без аргументов (дефолтные значения)', () => {
+    jest.useFakeTimers().setSystemTime(new Date(2022, 1, 3, 4, 5, 6, 7));
+    try {
+      expect(getNowDateTime()).toBe('2022-02-03_04-05-06.007');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  test('Форматирует дату по кастомному формату', () => {
+    const date = new Date(2021, 11, 31, 23, 59, 58, 7);
+    expect(getNowDateTime(date, 'DD/MM/YYYY HH:mm:ss.SSS')).toBe('31/12/2021 23:59:58.007');
+  });
+});
+
+describe('Helpers.generateId', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('Генерирует id из crypto.randomBytes', () => {
+    jest
+      .spyOn(crypto, 'randomBytes')
+      .mockImplementation(() => Buffer.from([0xab, 0xcd]) as unknown as Buffer);
+    expect(generateId(2)).toBe('abcd');
+  });
+
+  test('Использует длину по умолчанию', () => {
+    jest
+      .spyOn(crypto, 'randomBytes')
+      .mockImplementation(() => Buffer.from('001122334455', 'hex') as unknown as Buffer);
+    expect(generateId()).toBe('001122334455');
+  });
+});
+
+describe('Helpers.runScriptInContext', () => {
+  test('Возвращает пустой объект, если source = {}', () => {
+    expect(runScriptInContext('{}', {})).toEqual({});
+  });
+
+  test('Выполняет скрипт в контексте', () => {
+    const result = runScriptInContext('a + b', { a: 1, b: 2 });
+    expect(result).toBe(3);
+  });
+
+  test('Возвращает defaultValue при ошибке выполнения', () => {
+    const result = runScriptInContext('throw new Error("boom")', {}, 'fallback');
+    expect(result).toBe('fallback');
+  });
+
+  test('Бросает ошибку при отсутствии defaultValue', () => {
+    expect(() => runScriptInContext('throw new Error("boom")', {})).toThrow(
+      "Can't evaluate throw new Error(\"boom\") = '",
+    );
+  });
+});
+
+describe('Helpers.pick/omit', () => {
+  test('pick выбирает только указанные поля', () => {
+    const result = pick({ a: 1, b: 2, c: 3 }, ['a', 'c']);
+    expect(result).toEqual({ a: 1, c: 3 });
+  });
+
+  test('omit исключает указанные поля', () => {
+    const result = omit({ a: 1, b: 2, c: 3 }, ['b']);
+    expect(result).toEqual({ a: 1, c: 3 });
+  });
+});
+
+describe('Helpers.resolveAliases', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('Объединяет значения по алиасам', () => {
+    mockArguments.mockImplementation(
+      () =>
+        ({
+          args: {
+            PPD_ALIASES: {
+              data: ['d1', 'd2'],
+            },
+          },
+        } as any),
+    );
+
+    const result = resolveAliases('data', {
+      data: { a: 1 },
+      d1: { b: 2 },
+      d2: { c: 3 },
+    } as any);
+
+    expect(result).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  test('Обрабатывает falsy значения, заменяя их на пустой объект', () => {
+    mockArguments.mockImplementation(
+      () =>
+        ({
+          args: {
+            PPD_ALIASES: {
+              data: ['d1'],
+            },
+          },
+        } as any),
+    );
+
+    const result = resolveAliases('data', {
+      data: null,
+      d1: { b: 2 },
+    } as any);
+
+    expect(result).toEqual({ b: 2 });
+  });
+
+  test('Возвращает пустой массив, если значений нет', () => {
+    mockArguments.mockImplementation(
+      () =>
+        ({
+          args: {
+            PPD_ALIASES: {},
+          },
+        } as any),
+    );
+
+    const result = resolveAliases('missing', {} as any);
+    expect(result).toEqual([]);
+  });
+
+  test('Бросает ошибку при дубликатах в алиасах', () => {
+    mockArguments.mockImplementation(
+      () =>
+        ({
+          args: {
+            PPD_ALIASES: {
+              data: ['data'],
+            },
+          },
+        } as any),
+    );
+
+    expect(() => resolveAliases('data', { data: { a: 1 } } as any)).toThrow(
+      'PPD_ALIASES contains duplicate keys: data',
+    );
   });
 });
