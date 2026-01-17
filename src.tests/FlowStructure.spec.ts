@@ -185,6 +185,8 @@ describe('FlowStructure', () => {
       expect(result.levelIndent).toBe(0);
       expect(result.stepId).toBe('generatedId');
       expect(result.source).toBeDefined();
+      expect(result.source).toContain('"name": "testFlow"');
+      expect(() => JSON.parse(result.source)).not.toThrow();
     });
 
     test('should build full JSON with resolved false', () => {
@@ -236,6 +238,7 @@ describe('FlowStructure', () => {
       const flowBody: TestTypeYaml = {
         ...BLANK_AGENT,
         name: 'testFlow',
+        description: 'test description',
         beforeRun: [{ agent1: { ...BLANK_AGENT, name: 'agent1' } }],
         run: [],
         afterRun: [],
@@ -252,6 +255,7 @@ describe('FlowStructure', () => {
       const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
 
       expect(result.beforeRun).toBeDefined();
+      expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['test description']);
       // The recursive call should have been made
     });
 
@@ -320,6 +324,7 @@ describe('FlowStructure', () => {
         false,
       );
       expect(result.beforeRun[0]).toBeDefined();
+      expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['']);
     });
 
     test('should handle runner with falsy value', () => {
@@ -343,6 +348,7 @@ describe('FlowStructure', () => {
         false,
       );
       expect(result.beforeRun[0]).toBeDefined();
+      expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['']);
     });
   });
 });
