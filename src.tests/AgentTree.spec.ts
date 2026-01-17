@@ -80,7 +80,11 @@ describe('AgentTree', () => {
     });
 
     it('should update an existing step with stepIdParent (set if not set)', () => {
-      const result = agentTree.updateStep({ stepId: 'root', stepIdParent: 'newParent', payload: { timeStart: new Date() } });
+      const result = agentTree.updateStep({
+        stepId: 'root',
+        stepIdParent: 'newParent',
+        payload: { timeStart: new Date() },
+      });
       expect(result[0]).toMatchObject({ timeStart: expect.any(Date), stepIdParent: 'newParent' });
     });
 
