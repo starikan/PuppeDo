@@ -149,9 +149,7 @@ describe('getAgent', () => {
   });
 
   test('loads atom from js file when inlineJS is missing', async () => {
-    (global as any).__non_webpack_require__ = jest
-      .fn()
-      .mockReturnValue({ fileAtom: async () => ({ file: true }) });
+    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ fileAtom: async () => ({ file: true }) });
 
     const agentJson = createAgent({
       name: 'fileAtom',
