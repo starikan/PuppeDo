@@ -81,3 +81,4 @@ const depends = [];
 const pluginModule: PluginModule<PluginOptions> = { name, documentation, plugin, order, depends };
 
 export default pluginModule;
+export { setValue, plugin };

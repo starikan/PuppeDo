@@ -74,3 +74,4 @@ const depends = ['argsRedefine'];
 const pluginModule: PluginModule<PluginLogOptions> = { name, documentation, plugin, order, depends };
 
 export default pluginModule;
+export { setValue, plugin };

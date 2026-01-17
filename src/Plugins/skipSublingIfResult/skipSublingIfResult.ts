@@ -20,14 +20,21 @@ const plugin: PluginFunction<PluginSkipSublingIfResult> = (plugins) => {
       afterRepeat({ inputs, stepId }): void {
         const { skipSublingIfResult, skipMeBecausePrevSublingResults } = pluginInstance.getValues(stepId);
 
-        const skipMeBecausePrevSublingResultsResolved = skipSublingIfResult
-          ? runScriptInContext(skipSublingIfResult, inputs)
-          : skipMeBecausePrevSublingResults;
+        try {
+          const skipMeBecausePrevSublingResultsResolved = skipSublingIfResult
+            ? runScriptInContext(skipSublingIfResult, inputs)
+            : skipMeBecausePrevSublingResults;
 
-        pluginInstance.setValues(stepId, {
-          skipSublingIfResult,
-          skipMeBecausePrevSublingResults: Boolean(skipMeBecausePrevSublingResultsResolved),
-        });
+          pluginInstance.setValues(stepId, {
+            skipSublingIfResult,
+            skipMeBecausePrevSublingResults: Boolean(skipMeBecausePrevSublingResultsResolved),
+          });
+        } catch {
+          pluginInstance.setValues(stepId, {
+            skipSublingIfResult,
+            skipMeBecausePrevSublingResults: false,
+          });
+        }
       },
     },
     plugins,
@@ -67,3 +74,4 @@ const depends = [];
 const pluginModule: PluginModule<PluginSkipSublingIfResult> = { name, documentation, plugin, order, depends };
 
 export default pluginModule;
+export { setValue, plugin };

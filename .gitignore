@@ -21,3 +21,4 @@ yarn.lock
 /dist/puppedo.exe
 /portable-node
 /.sea
+/coverage-plugins

@@ -55,3 +55,4 @@ const depends = ['argsRedefine'];
 const pluginModule: PluginModule<PluginDebug> = { name, documentation, plugin, depends };
 
 export default pluginModule;
+export { setValue, plugin };

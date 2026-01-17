@@ -5,7 +5,7 @@ module.exports = {
   bail: 1,
   // roots: ['<rootDir>/src'],
   // testResultsProcessor: '<rootDir>/node_modules/ts-jest/coverageprocessor.js',
-  testMatch: ['<rootDir>/src.tests/**/*.+(ts|tsx)'],
+  testMatch: ['<rootDir>/src.tests/**/*.+(ts|tsx)', '<rootDir>/src/Plugins/**/*.spec.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['./src/**/*.ts'],
   transform: {

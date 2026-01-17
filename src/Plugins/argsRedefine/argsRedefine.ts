@@ -51,3 +51,4 @@ const depends = [];
 const pluginModule: PluginModule<PluginArgsRedefine> = { name, documentation, plugin, order, depends };
 
 export default pluginModule;
+export { setValue, plugin };

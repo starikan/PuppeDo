@@ -63,3 +63,4 @@ const depends = ['argsRedefine'];
 const pluginModule: PluginModule<PluginContinueOnError> = { name, documentation, plugin, order, depends };
 
 export default pluginModule;
+export { setValue, plugin };
