@@ -131,6 +131,22 @@ describe('FlowStructure', () => {
       // Should not include the function
     });
 
+    test('should handle falsy life cycle function in description', () => {
+      const flowJSON: TestExtendType = {
+        ...BLANK_AGENT,
+        name: 'test',
+        description: 'desc',
+        levelIndent: 0,
+        beforeRun: null as any,
+        run: [],
+        afterRun: [],
+      };
+
+      const result = FlowStructure.generateFlowDescription(flowJSON);
+
+      expect(result).toBe('desc (test)\n');
+    });
+
     test('should use custom indentLength', () => {
       const flowJSON: TestExtendType = {
         ...BLANK_AGENT,
@@ -169,6 +185,19 @@ describe('FlowStructure', () => {
   });
 
   describe('getFlowFullJSON', () => {
+    test('should use default params when omitted', () => {
+      const result = FlowStructure.getFlowFullJSON('testFlow');
+
+      expect(mockDeepMergeField).toHaveBeenCalledWith(
+        { ...BLANK_AGENT, name: 'resolvedTest', description: 'Resolved Test' },
+        {},
+        ['logOptions'],
+      );
+      expect(result.levelIndent).toBe(0);
+      expect(result.breadcrumbs).toEqual(['testFlow']);
+      expect(result.breadcrumbsDescriptions).toEqual([]);
+    });
+
     test('should build full JSON with resolved true', () => {
       const flowName = 'testFlow';
       const flowBody: TestTypeYaml = { ...BLANK_AGENT, name: 'testFlow', description: 'body desc' };
@@ -216,6 +245,20 @@ describe('FlowStructure', () => {
       );
     });
 
+    test('should build full JSON with resolved false and null flowBody', () => {
+      const result = FlowStructure.getFlowFullJSON('testFlow', null, 0, false);
+
+      expect(mockDeepMergeField).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        ...{ ...BLANK_AGENT, name: 'resolvedTest', description: 'Resolved Test' },
+        breadcrumbs: ['testFlow'],
+        breadcrumbsDescriptions: [],
+        levelIndent: 0,
+        stepId: 'generatedId',
+        source: expect.any(String),
+      });
+    });
+
     test('should preserve existing stepId', () => {
       const flowBody: TestTypeYaml = { ...BLANK_AGENT, name: 'testFlow', stepId: 'existingId' };
 
@@ -238,7 +281,21 @@ describe('FlowStructure', () => {
       expect(result.breadcrumbs).toEqual(['existing', 'path']);
       expect(result.breadcrumbsDescriptions).toEqual(['existing desc']);
     });
+    test('should handle falsy life cycle function value', () => {
+      const flowBody: TestTypeYaml = {
+        ...BLANK_AGENT,
+        name: 'testFlow',
+        beforeRun: null as any,
+        run: [],
+        afterRun: [],
+      };
 
+      const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
+
+      expect(result.beforeRun).toBeNull();
+      expect(result.run).toEqual([]);
+      expect(result.afterRun).toEqual([]);
+    });
     test('should handle empty breadcrumbs', () => {
       const flowBody: TestTypeYaml = {
         ...BLANK_AGENT,
