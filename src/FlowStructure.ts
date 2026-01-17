@@ -73,8 +73,8 @@ export default class FlowStructure {
         const runner = Object.values(runnerValue)[0] ?? resolveTest({ name });
 
         runner.name = name;
-        runner.breadcrumbs = [...(fullJSON.breadcrumbs ?? []), `${lifeCycleFunctionName}[${runnerNum}].${name}`];
-        runner.breadcrumbsDescriptions = [...(fullJSON.breadcrumbsDescriptions ?? []), fullJSON.description];
+        runner.breadcrumbs = [...fullJSON.breadcrumbs, `${lifeCycleFunctionName}[${runnerNum}].${name}`];
+        runner.breadcrumbsDescriptions = [...fullJSON.breadcrumbsDescriptions, fullJSON.description];
 
         const fullJSONResponce = FlowStructure.getFlowFullJSON(
           name,

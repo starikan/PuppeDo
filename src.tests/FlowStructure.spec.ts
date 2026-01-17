@@ -225,13 +225,32 @@ describe('FlowStructure', () => {
       expect(mockGenerateId).not.toHaveBeenCalled();
     });
 
-    test('should generate stepId when not provided', () => {
-      const flowBody: TestTypeYaml = { ...BLANK_AGENT, name: 'testFlow' };
+    test('should preserve existing breadcrumbs', () => {
+      const flowBody: TestTypeYaml = {
+        ...BLANK_AGENT,
+        name: 'testFlow',
+        breadcrumbs: ['existing', 'path'],
+        breadcrumbsDescriptions: ['existing desc'],
+      };
 
       const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
 
-      expect(result.stepId).toBe('generatedId');
-      expect(mockGenerateId).toHaveBeenCalled();
+      expect(result.breadcrumbs).toEqual(['existing', 'path']);
+      expect(result.breadcrumbsDescriptions).toEqual(['existing desc']);
+    });
+
+    test('should handle empty breadcrumbs', () => {
+      const flowBody: TestTypeYaml = {
+        ...BLANK_AGENT,
+        name: 'testFlow',
+        breadcrumbs: [],
+        breadcrumbsDescriptions: [],
+      };
+
+      const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
+
+      expect(result.breadcrumbs).toEqual([]);
+      expect(result.breadcrumbsDescriptions).toEqual([]);
     });
 
     test('should process life cycle functions', () => {
@@ -256,6 +275,8 @@ describe('FlowStructure', () => {
 
       expect(result.beforeRun).toBeDefined();
       expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['test description']);
+      expect(result.beforeRun[0].name).toBe('agent1');
+      expect(result.beforeRun[0].breadcrumbs).toEqual(['testFlow', 'beforeRun[0].agent1']);
       // The recursive call should have been made
     });
 
@@ -325,6 +346,8 @@ describe('FlowStructure', () => {
       );
       expect(result.beforeRun[0]).toBeDefined();
       expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['']);
+      expect(result.beforeRun[0].name).toBe('agent1');
+      expect(result.beforeRun[0].breadcrumbs).toEqual(['testFlow', 'beforeRun[0].agent1']);
     });
 
     test('should handle runner with falsy value', () => {
@@ -349,6 +372,8 @@ describe('FlowStructure', () => {
       );
       expect(result.beforeRun[0]).toBeDefined();
       expect(result.beforeRun[0].breadcrumbsDescriptions).toEqual(['']);
+      expect(result.beforeRun[0].name).toBe('agent1');
+      expect(result.beforeRun[0].breadcrumbs).toEqual(['testFlow', 'beforeRun[0].agent1']);
     });
   });
 });
