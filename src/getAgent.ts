@@ -11,7 +11,7 @@ import { Test } from './Test';
 
 const atoms: Record<string, TestLifeCycleFunctionType> = {};
 
-const resolveJS = (agentJson: TestExtendType): TestExtendType => {
+export const resolveJS = (agentJson: TestExtendType): TestExtendType => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   const agentJsonNew = agentJson;
 
@@ -98,7 +98,7 @@ const getAgent = ({
 };
 
 // todo навести порядок в этих типах
-const propagateArgumentsObjectsOnAir = (
+export const propagateArgumentsObjectsOnAir = (
   source: TestExtendType,
   args: TestArgsType | undefined,
   list: string[] = [],
@@ -111,7 +111,7 @@ const propagateArgumentsObjectsOnAir = (
   return { ...source, ...renamedKeys };
 };
 
-const stepResolver = (
+export const stepResolver = (
   agentJson: TestExtendType,
   parentStepMetaCollector: Partial<TestExtendType>,
 ): TestLifeCycleFunctionType => {
@@ -128,7 +128,7 @@ const stepResolver = (
 
     if (parentStepMetaCollector) {
       parentStepMetaCollector.resultsFromPrevSubling = {
-        ...(parentStepMetaCollector?.resultsFromPrevSubling ?? {}),
+        ...(parentStepMetaCollector.resultsFromPrevSubling ?? {}),
         ...result,
       };
     }
