@@ -523,16 +523,12 @@ describe('Helpers.generateId', () => {
   });
 
   test('Генерирует id из crypto.randomBytes', () => {
-    jest
-      .spyOn(crypto, 'randomBytes')
-      .mockImplementation(() => Buffer.from([0xab, 0xcd]) as unknown as Buffer);
+    jest.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from([0xab, 0xcd]) as unknown as Buffer);
     expect(generateId(2)).toBe('abcd');
   });
 
   test('Использует длину по умолчанию', () => {
-    jest
-      .spyOn(crypto, 'randomBytes')
-      .mockImplementation(() => Buffer.from('001122334455', 'hex') as unknown as Buffer);
+    jest.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from('001122334455', 'hex') as unknown as Buffer);
     expect(generateId()).toBe('001122334455');
   });
 });
@@ -554,7 +550,7 @@ describe('Helpers.runScriptInContext', () => {
 
   test('Бросает ошибку при отсутствии defaultValue', () => {
     expect(() => runScriptInContext('throw new Error("boom")', {})).toThrow(
-      "Can't evaluate throw new Error(\"boom\") = '",
+      'Can\'t evaluate throw new Error("boom") = \'',
     );
   });
 });
