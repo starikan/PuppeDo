@@ -35,7 +35,12 @@ export type BrouserLaunchOptions = {
 
 export type PagesType = Record<string, BrowserPageType | BrowserFrame>;
 
-export type Element = any; // ElementHandlePlaywright | ElementHandlePuppeteer;
+export type ElementHandleLike = {
+  screenshot: (options: { path: string }) => Promise<unknown>;
+  contentFrame?: () => Promise<BrowserFrame | null>;
+};
+
+export type Element = ElementHandleLike | null; // ElementHandlePlaywright | ElementHandlePuppeteer;
 
 export type EnginesType = 'puppeteer' | 'playwright';
 
@@ -45,12 +50,15 @@ export type ColorsType = keyof typeof colors;
 
 export type AliasesKeysType = 'data' | 'bindData' | 'selectors' | 'bindSelectors' | 'bindResults' | 'options' | string; // Adding string to support any keys
 
+export type RawTestEntry = Partial<TestTypeYaml> | string | Array<Partial<TestTypeYaml> | string>;
+
 export type ArgumentsType = {
   PPD_ROOT: string;
   PPD_ROOT_ADDITIONAL: string[];
   PPD_ROOT_IGNORE: string[];
   PPD_FILES_IGNORE: string[];
   PPD_TESTS: string[];
+  PPD_TESTS_RAW: RawTestEntry[];
   PPD_OUTPUT: string;
   PPD_DATA: Record<string, unknown>;
   PPD_SELECTORS: Record<string, unknown>;

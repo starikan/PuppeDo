@@ -52,7 +52,7 @@ export default class Atom {
     selector: string,
     allElements = false,
     elementPatent: BrowserPageType | BrowserFrame = this.page,
-  ): Promise<Element[] | Element | boolean> {
+  ): Promise<Element[] | Element | false> {
     if (selector && typeof selector === 'string') {
       const isXPath = selector.match(/^xpath[:=]/);
       const isText = selector.match(/^text[:=]/);

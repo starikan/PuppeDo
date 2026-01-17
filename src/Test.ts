@@ -440,13 +440,18 @@ export class Test {
 
       // LOG TEST
       if (!PPD_LOG_NAMES_ONLY.length || PPD_LOG_NAMES_ONLY.includes(this.agent.name)) {
-        const elements: Element = [];
+        const elements: Element[] = [];
         if (this.agent.logOptions.screenshot) {
           // Create Atom for get elements only
           const atom = new Atom({ page: pageCurrent, runner: this.runner });
           const needSelectors = this.agent.needSelectors.map((v) => selectorsLocal[v]) as string[];
           for (const selector of needSelectors) {
-            elements.push(await atom.getElement(selector));
+            const found = await atom.getElement(selector);
+            if (Array.isArray(found)) {
+              elements.push(...found);
+            } else if (found) {
+              elements.push(found);
+            }
           }
         }
 

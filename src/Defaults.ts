@@ -28,6 +28,7 @@ export const argsDefault: ArgumentsType = {
   PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
   PPD_FILES_IGNORE: [],
   PPD_TESTS: [],
+  PPD_TESTS_RAW: [],
   PPD_DATA: {},
   PPD_SELECTORS: {},
   PPD_DEBUG_MODE: false,

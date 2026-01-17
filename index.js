@@ -31,6 +31,7 @@ if (!module.parent) {
     console.log('');
     console.log('Environment variables:');
     console.log('  PPD_TESTS          - Test files to run');
+    console.log('  PPD_TESTS_RAW      - Raw test objects or YAML/JSON strings (overrides file tests by name/type)');
     console.log('  PPD_ROOT           - Root directory for tests');
     console.log('  PPD_BROWSER        - Browser to use (chrome, firefox)');
     console.log('');

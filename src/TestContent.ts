@@ -7,7 +7,7 @@ import { Arguments } from './Arguments';
 import { BLANK_AGENT } from './Defaults';
 import { mergeObjects } from './Helpers';
 
-import type { AllDataType, DataType, RunnerType, TestExtendType, TestType, TestTypeYaml } from './model';
+import type { AllDataType, DataType, RawTestEntry, RunnerType, TestExtendType, TestType, TestTypeYaml } from './model';
 import Singleton from './Singleton';
 
 export const resolveTest = (test: TestTypeYaml): Required<TestTypeYaml> => {
@@ -166,6 +166,99 @@ export default class AgentContent extends Singleton {
   };
 
   /**
+   * Merges content from files and raw sources, prioritizing raw content over file content for duplicates.
+   * Maintains the order of first appearance.
+   *
+   * @param allContentFromFiles - Array of content loaded from files.
+   * @param allContentFromRaw - Array of content from raw arguments.
+   * @returns Merged array of content with duplicates resolved.
+   */
+  private static mergeContentWithRaw(
+    allContentFromFiles: Array<TestType | RunnerType | DataType>,
+    allContentFromRaw: Array<TestType | RunnerType | DataType>,
+  ): Array<TestType | RunnerType | DataType> {
+    const getContentKey = (item: TestType | RunnerType | DataType): string | null => {
+      if (!item?.name) return null;
+      const type = ['data', 'selectors', 'runner'].includes(item.type) ? item.type : 'agent';
+      return `${type}:${item.name}`;
+    };
+
+    const orderedKeys: string[] = [];
+    const contentMap = new Map<string, TestType | RunnerType | DataType>();
+
+    const upsert = (item: TestType | RunnerType | DataType): void => {
+      const key = getContentKey(item);
+      if (!key) return;
+      if (!contentMap.has(key)) {
+        orderedKeys.push(key);
+      }
+      contentMap.set(key, item);
+    };
+
+    allContentFromFiles.forEach(upsert);
+    allContentFromRaw.forEach(upsert);
+
+    return orderedKeys.map((key) => contentMap.get(key)).filter(Boolean) as Array<TestType | RunnerType | DataType>;
+  }
+
+  /**
+   * Normalizes raw entries from PPD_TESTS_RAW, parsing YAML/JSON strings and flattening arrays.
+   * @param raw - The raw entries array from arguments.
+   * @returns An array of partial TestTypeYaml objects.
+   */
+  private static normalizeRawEntries = (raw: RawTestEntry[]): Partial<TestTypeYaml>[] => {
+    const rawArray = (raw ?? []).flatMap((v) => (Array.isArray(v) ? v : [v]));
+    const result: Partial<TestTypeYaml>[] = [];
+
+    const pushParsed = (parsed: unknown): void => {
+      if (Array.isArray(parsed)) {
+        parsed.forEach((item) => {
+          if (item && typeof item === 'object') {
+            result.push(item as Partial<TestTypeYaml>);
+          } else {
+            throw new Error('PPD_TESTS_RAW contains non-object entry in array');
+          }
+        });
+        return;
+      }
+      if (parsed && typeof parsed === 'object') {
+        result.push(parsed as Partial<TestTypeYaml>);
+        return;
+      }
+      throw new Error('PPD_TESTS_RAW contains invalid YAML/JSON content');
+    };
+
+    rawArray.forEach((entry) => {
+      if (!entry) return;
+      if (typeof entry === 'string') {
+        const trimmed = entry.trim();
+        let parsed: unknown;
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+          try {
+            parsed = JSON.parse(trimmed);
+            pushParsed(parsed);
+            return;
+          } catch {
+            // fallback to YAML
+          }
+        }
+        try {
+          parsed = yaml.loadAll(entry);
+          pushParsed(parsed);
+        } catch {
+          throw new Error('PPD_TESTS_RAW contains invalid YAML/JSON string');
+        }
+        return;
+      }
+      if (typeof entry === 'object') {
+        result.push(entry as Partial<TestTypeYaml>);
+      }
+    });
+
+    return result.filter((v) => v && typeof v === 'object');
+  };
+
+  /**
    * Retrieves all data, including files, content, agents, runners, data, and selectors.
    * If force is true, the data will be retrieved anew; otherwise, it will be returned from the cache.
    *
@@ -174,10 +267,23 @@ export default class AgentContent extends Singleton {
    */
   getAllData(force = false): AllDataType {
     if (force || !this.allData) {
+      const { PPD_TESTS_RAW } = new Arguments().args;
       const allFiles = AgentContent.getPaths();
 
-      const allContent: Array<TestType | RunnerType | DataType> = allFiles.flatMap((filePath) =>
+      const allContentFromFiles: Array<TestType | RunnerType | DataType> = allFiles.flatMap((filePath) =>
         AgentContent.readFile(filePath).map((v) => AgentContent.fileResolver(v, filePath)),
+      );
+
+      const allContentFromRaw: Array<TestType | RunnerType | DataType> = AgentContent.normalizeRawEntries(PPD_TESTS_RAW)
+        .map((v) => {
+          const rawTestFile = typeof v.testFile === 'string' && v.testFile ? v.testFile : 'PPD_TESTS_RAW';
+          return AgentContent.fileResolver(v, rawTestFile);
+        })
+        .filter(Boolean) as Array<TestType | RunnerType | DataType>;
+
+      const allContent: Array<TestType | RunnerType | DataType> = AgentContent.mergeContentWithRaw(
+        allContentFromFiles,
+        allContentFromRaw,
       );
 
       const agents: Array<TestType> = AgentContent.checkDuplicates(

@@ -696,6 +696,7 @@ describe('AgentContent.getAllData (AI generated)', () => {
     PPD_ROOT_IGNORE: ['.git', 'node_modules', '.history', 'output', '.github', '.vscode'],
     PPD_FILES_IGNORE: ['tests\\broken.yaml'],
     PPD_TESTS: ['testName'],
+    PPD_TESTS_RAW: [],
     PPD_OUTPUT: 'output',
     PPD_DATA: {},
     PPD_SELECTORS: {},
