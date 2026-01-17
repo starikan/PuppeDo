@@ -1622,27 +1622,158 @@ module.exports = {
 
 ## Приложение B: Встроенные атомы
 
-| Атом | Описание |
-|------|----------|
-| `blank` | Пустой контейнер для lifecycle/inlineJS |
-| `goTo` | Переход по URL |
-| `runnerSwitch` | Запуск/переключение браузера |
-| `runnerClose` | Закрытие браузера |
-| `clickSelector` | Клик по элементу |
-| `typeInput` | Ввод текста |
-| `getText` | Получение текста |
-| `getValue` | Получение значения input |
-| `setValue` | Установка значения input |
-| `waitForSelector` | Ожидание появления элемента |
-| `waitForSelectorHidden` | Ожидание скрытия элемента |
-| `hover` | Наведение курсора |
-| `focus` | Фокус на элементе |
-| `scrollTo` | Прокрутка к элементу |
-| `pressKey` | Нажатие клавиши |
-| `selectOption` | Выбор в select |
-| `checkCheckbox` | Установка checkbox |
-| `getAttribute` | Получение атрибута |
-| `evaluateExpression` | Выполнение JS на странице |
+> ⚠️ **Важно:** В ядре PuppeDo встроенных атомов нет. Атомы поставляются отдельным пакетом [@puppedo/atoms](https://github.com/starikan/PuppeDoAtoms).
+
+### Подключение атомов
+
+**Способ 1: Через npm и конфигурацию (рекомендуется)**
+
+```bash
+npm install @puppedo/atoms
+```
+
+```javascript
+// puppedo.config.js
+module.exports = {
+  PPD_ROOT_ADDITIONAL: [
+    'node_modules/@puppedo/atoms/src',  // Подключаем папку с атомами
+    // ... другие папки с вашими атомами
+  ],
+};
+```
+
+**Способ 2: Программное подключение через require**
+
+```javascript
+// Автоматически добавляется в PPD_ROOT_ADDITIONAL
+require('@puppedo/atoms');
+```
+
+**Способ 3: Через аргументы командной строки**
+
+```bash
+ppd PPD_ROOT_ADDITIONAL=node_modules/@puppedo/atoms/src
+```
+
+---
+
+### Категории атомов
+
+Атомы из пакета `@puppedo/atoms` разделены на категории:
+
+#### 🔲 Базовые (blank)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `blank` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `case` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `if` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `initData` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `loop` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `test` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+| `todo` | Пустой контейнер для lifecycle/inlineJS | — | — | — |
+
+#### 🌐 Основные (main)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `goTo` | Переход по URL | `url`, `timeout?` | — | `success` |
+| `runnerSwitch` | Запуск/переключение браузера | `runnerName?`, `runner?` | — | — |
+| `runnerClose` | Закрытие браузера (или всех) | `runnerName?` | — | — |
+| `runnerCheck` | Проверка состояния runner | `runnerName` | — | `running`, `available` |
+| `runBrowser` | Запуск браузера (обёртка над runnerSwitch) | `runnerName?`, `runner?` | — | — |
+| `clickSelector` | Ожидание и клик по элементу | `selectorNumber?` | `selector` | — |
+| `clickSelectorRaw` | Клик по элементу без ожидания | `selectorNumber?` | `selector` | — |
+| `clickSelectorNative` | Нативный клик через JS в браузере | `selectorNumber?` | `selector` | — |
+| `typeInput` | Ожидание и ввод текста | `text` | `selector` | — |
+| `typeInputRaw` | Ввод текста без ожидания | `text` | `selector` | — |
+| `pasteInput` | Вставка текста в поле | `text` | `selector` | — |
+| `pasteInputRaw` | Вставка текста без ожидания | `text` | `selector` | — |
+| `getText` | Получение текста элемента | `selectorNumber?`, `getAll?` | `selector` | `text`, `array` |
+| `getAttribute` | Получение атрибута элемента | `attribute` | `selector` | `attributeValue` |
+| `setAttribute` | Установка атрибута элемента | `attribute`, `value` | `selector` | — |
+| `getElementObjectValue` | Получение свойства элемента из DOM | `key` | `selector` | `value` |
+| `getDateTime` | Получение даты/времени с форматированием | `format?`, `inputDate?`, `yearShift?`, `monthShift?`, `dateShift?`, `hoursShift?`, `minutesShift?`, `secondsShift?` | — | `datetime` |
+| `waitForSelector` | Ожидание появления элемента | — | `selector` | — |
+| `waitLoadPage` | Ожидание загрузки страницы | — | — | — |
+| `waitTime` | Пауза (встроенная в браузер) | `time` | — | — |
+| `waitTimeReal` | Пауза (реальная, останавливает процесс) | `time` | — | — |
+
+**allowOptions для основных атомов:**
+
+| Атом | allowOptions |
+|------|--------------|
+| `clickSelector` | `count`, `timeDelayBeforeClick`, `button`, `logAfter`, `hidden`, `visible`, `timeDelayBeforeWait`, `timeDelayAfterWait`, `timeDelayAfterClick`, `waitingTime` |
+| `typeInput` | `hidden`, `visible`, `timeDelayBeforeWait`, `timeDelayAfterWait`, `noClearInput`, `waitingTime` |
+| `waitForSelector` | `hidden`, `visible`, `timeDelayBeforeWait`, `timeDelayAfterWait`, `waitingTime`, `noThrow` |
+| `goTo` | `allowError` |
+
+#### ✅ Проверки (checks)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `checkSelector` | Проверка существования элемента | `selectorNumber?` | `selector` | `exists` |
+| `checkSelectorRaw` | Проверка существования без ожидания | `selectorNumber?` | `selector` | `exists` |
+| `checkText` | Проверка наличия текста в элементе | `text` | `selector` | `exists` |
+| `checkPageUrl` | Проверка текущего URL | `url` | — | `exists` |
+| `checkElementInViewport` | Проверка видимости элемента в viewport | — | `parent`, `target` | — |
+| `getCoordsElement` | Получение координат элемента | — | `selector` | `x`, `y`, `width`, `height` |
+| `getWindowParams` | Получение параметров окна браузера | — | — | `width`, `height`, `deviceScaleFactor`, `isMobile`, `hasTouch`, `isLandscape` |
+
+#### 🖱️ Мышь (mouse)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `mouseClick` | Клик мыши по координатам | `X`, `Y` | — | — |
+| `mouseMove` | Перемещение курсора | `X?`, `Y?`, `dX?`, `dY?` | — | — |
+| `mouseMoveOnSelector` | Перемещение курсора на элемент | `dX?`, `dY?` | `selector` | — |
+| `mouseDown` | Нажатие кнопки мыши | — | — | — |
+| `mouseUp` | Отпускание кнопки мыши | — | — | — |
+| `mouseScroll` | Прокрутка колёсиком | `deltaLeftRight?`, `deltaUpDown?` | `selector` | — |
+| `dragAndDrop` | Перетаскивание элемента | `dnd_offcetX`, `dnd_offcetY`, `dnd_dX`, `dnd_dY` | `dnd_selector` | — |
+
+#### 💠 Селекторы (selectors)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `hoverSelector` | Наведение курсора на элемент | — | `selector` | — |
+| `countSelectors` | Подсчёт количества элементов | — | `selector` | `count` |
+| `selectSelector` | Выбор опции в `<select>` | `option` | `selector` | — |
+| `keySend` | Отправка нажатия клавиши | `key`, `modificator?`, `modificator1?`, `modificator2?` | — | — |
+| `clickSelectorAndWait` | Клик и ожидание другого элемента | `time?` | `selector`, `selectorWait?` | — |
+| `clickSelectorIfExists` | Клик только если элемент существует | — | `selector` | — |
+
+#### 🔧 Модификация (modify)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `addCSS` | Инъекция CSS стилей на страницу | `css` | — | — |
+| `addJS` | Инъекция JavaScript на страницу | `js?`, `jsFile?` | — | — |
+| `evalJS` | Выполнение JS кода на странице | `js` | — | `data` |
+| `deleteSelector` | Удаление элемента из DOM | — | `selector` | — |
+| `debugger` | Включение отладчика | — | — | — |
+| `debuggerBrowser` | Отладчик в браузере | — | — | — |
+| `debuggerServer` | Отладчик на сервере | — | — | — |
+| `filterRequests` | Фильтрация сетевых запросов | `filters` | — | — |
+| `spoofRequest` | Подмена ответа запроса | `urlRegExp`, `fileName`, `outputFolderContext?` | — | — |
+| `setPageName` | Установка имени страницы/вкладки | `position`, `name` | — | — |
+| `jumpOnPage` | Переключение на страницу по имени | `name` | — | — |
+
+#### 📁 Файлы (files)
+
+| Атом | Описание | needData | needSelectors | allowResults |
+|------|----------|----------|---------------|--------------|
+| `fileAppend` | Добавление текста в файл | `fileName`, `string` | — | — |
+| `saveToFile` | Сохранение объекта в файл | `object`, `fileName`, `folder?` | — | — |
+| `saveCSV` | Сохранение данных в CSV | `csvData`, `headers?`, `fileName`, `folder?` | — | — |
+| `parseTable` | Парсинг HTML таблицы | `columns` | `maskSelector` | `json` |
+
+---
+
+### Обозначения в needData
+
+- `param` — обязательный параметр
+- `param?` — опциональный параметр
 
 ---
 
