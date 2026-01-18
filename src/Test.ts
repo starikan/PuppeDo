@@ -264,6 +264,7 @@ export class Test {
 
     if (debug) {
       console.log(this);
+      /* istanbul ignore next */
       if (!process.env.JEST_WORKER_ID) {
         // biome-ignore lint/suspicious/noDebugger: debug mode
         debugger;
@@ -498,6 +499,7 @@ export class Test {
         logDebug(this.logger.log.bind(this.logger), { data: dataLocal, selectors: selectorsLocal });
         if (this.agent.debug) {
           console.log(this);
+          /* istanbul ignore next */
           if (!process.env.JEST_WORKER_ID) {
             // biome-ignore lint/suspicious/noDebugger: debug mode
             debugger;

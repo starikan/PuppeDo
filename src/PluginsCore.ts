@@ -269,6 +269,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       return () => {};
     } catch (error) {
       console.log(error);
+      /* istanbul ignore next */
       if (!process.env.JEST_WORKER_ID) {
         // biome-ignore lint/suspicious/noDebugger: need debug this
         debugger;

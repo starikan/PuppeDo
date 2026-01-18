@@ -109,6 +109,18 @@ describe('Error handling', () => {
     );
   });
 
+  test('errorHandler exits process after cleanup', async () => {
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    await errorHandler({ envsId: 'env-1', message: 'm', stack: 's', socket: { sendYAML: jest.fn() } } as any);
+
+    expect(exitSpy).toHaveBeenCalledWith(1);
+
+    exitSpy.mockRestore();
+    logSpy.mockRestore();
+  });
+
   test('TestError uses parentError fields when missing in agent', async () => {
     const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
