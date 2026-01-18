@@ -302,7 +302,7 @@ export type LifeCycleFunction = Record<string, TestTypeYaml>;
  */
 export type TestTypeYaml = {
   name: string;
-  type?: 'runners' | 'data' | 'selectors' | string;
+  type?: 'runner' | 'data' | 'selectors' | 'test' | 'atom' | 'agent';
   needData?: string[];
   needSelectors?: string[];
   needEnvParams?: string[];
