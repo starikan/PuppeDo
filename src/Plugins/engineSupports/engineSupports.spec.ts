@@ -146,6 +146,92 @@ describe('engineSupports plugin', () => {
 
       expect(() => resolveValuesCall({ inputs, stepId })).not.toThrow();
     });
+
+    it('should not throw when engine is undefined', () => {
+      const mockPluginInstance = {
+        setValues: jest.fn().mockReturnValue({ engineSupports: ['chromium'] }),
+      };
+      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+
+      const mockEnvInstance = {
+        allRunners: {
+          getRunnerByName: jest.fn().mockReturnValue({
+            getRunnerData: jest.fn().mockReturnValue({ browser: {} }),
+          }),
+        },
+      };
+      const mockCurrent = { name: 'testRunner' };
+      mockEnvironment.mockImplementation(
+        () =>
+          ({
+            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
+            getCurrent: jest.fn().mockReturnValue(mockCurrent),
+          }) as any,
+      );
+
+      plugin({ envsId: 'test' } as any);
+
+      const resolveValuesCall = mockPlugin.mock.calls[0][0].hooks.resolveValues;
+      const inputs = {};
+      const stepId = 'testStep';
+
+      expect(() => resolveValuesCall({ inputs, stepId })).not.toThrow();
+    });
+
+    it('should not throw when runner is undefined', () => {
+      const mockPluginInstance = {
+        setValues: jest.fn().mockReturnValue({ engineSupports: ['chromium'] }),
+      };
+      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+
+      const mockEnvInstance = {
+        allRunners: {
+          getRunnerByName: jest.fn().mockReturnValue(undefined),
+        },
+      };
+      const mockCurrent = { name: 'testRunner' };
+      mockEnvironment.mockImplementation(
+        () =>
+          ({
+            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
+            getCurrent: jest.fn().mockReturnValue(mockCurrent),
+          }) as any,
+      );
+
+      plugin({ envsId: 'test' } as any);
+
+      const resolveValuesCall = mockPlugin.mock.calls[0][0].hooks.resolveValues;
+      const inputs = {};
+      const stepId = 'testStep';
+
+      expect(() => resolveValuesCall({ inputs, stepId })).not.toThrow();
+    });
+
+    it('should use default runner name when current is empty', () => {
+      const mockPluginInstance = {
+        setValues: jest.fn().mockReturnValue({ engineSupports: [] }),
+      };
+      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+
+      const mockEnvInstance = {
+        allRunners: {
+          getRunnerByName: jest.fn().mockReturnValue(undefined),
+        },
+      };
+      mockEnvironment.mockImplementation(
+        () =>
+          ({
+            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
+            getCurrent: jest.fn().mockReturnValue({}),
+          }) as any,
+      );
+
+      plugin({ envsId: 'test' } as any);
+
+      const resolveValuesCall = mockPlugin.mock.calls[0][0].hooks.resolveValues;
+
+      expect(() => resolveValuesCall({ inputs: {}, stepId: 'testStep' })).not.toThrow();
+    });
   });
 
   describe('pluginModule', () => {

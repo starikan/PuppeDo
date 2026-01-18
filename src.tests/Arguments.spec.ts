@@ -241,6 +241,24 @@ test('Arguments ENV', () => {
   Object.keys(argsModify).forEach((v) => delete process.env[v]);
 });
 
+test('Arguments keeps previous args without reInit', () => {
+  const firstArgs = new Arguments({ PPD_DEBUG_MODE: true }, {}, true).args;
+  const secondArgs = new Arguments({ PPD_DEBUG_MODE: false }, {}, false).args;
+
+  expect(secondArgs).toEqual(firstArgs);
+  expect(secondArgs.PPD_DEBUG_MODE).toBe(true);
+});
+
+test('Arguments handles undefined env values', () => {
+  const originalEnv = process.env;
+  process.env = { ...originalEnv, PPD_OUTPUT: undefined as unknown as string } as any;
+
+  const { args } = new Arguments({}, {}, true);
+  expect(args.PPD_OUTPUT).toBe('');
+
+  process.env = originalEnv;
+});
+
 describe('parser', () => {
   it('returns an object with no values when called with no arguments', () => {
     const parsedArgs = parser();

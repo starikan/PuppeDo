@@ -344,7 +344,7 @@ export default class AgentContent extends Singleton {
         const runnerExt = runnersAll.find((r) => r.name === runnerExtName);
         if (runnerExt) {
           if (runnerExt.browser) {
-            runnerResult.browser = mergeObjects([runnerResult.browser, runnerExt?.browser]);
+            runnerResult.browser = mergeObjects([runnerResult.browser, runnerExt.browser]);
           }
           ['log', 'data', 'selectors'].forEach((key) => {
             runnerResult[key] = { ...(runnerResult[key] ?? {}), ...(runnerExt[key] ?? {}) };

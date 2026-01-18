@@ -190,8 +190,10 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
   }
 
   if (PPD_DEBUG_MODE) {
-    // biome-ignore lint/suspicious/noDebugger: debug mode
-    debugger;
+    if (!process.env.JEST_WORKER_ID) {
+      // biome-ignore lint/suspicious/noDebugger: debug mode
+      debugger;
+    }
   }
 
   try {

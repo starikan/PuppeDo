@@ -164,6 +164,54 @@ describe('AtomCore', () => {
     expect(atom.page).toBe(frameObj);
   });
 
+  test('updateFrame does not change page when iframe not found', async () => {
+    const page = {
+      $$: jest.fn().mockResolvedValue([]),
+    };
+    const atom = createAtomWithEngine('puppeteer', page);
+
+    mockEnvironmentClass.mockImplementation(
+      () =>
+        ({
+          getEnvInstance: jest.fn().mockReturnValue({
+            plugins: {
+              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frameX' }) }),
+            },
+          }),
+        } as any),
+    );
+
+    const initialPage = atom.page;
+    await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
+
+    expect(page.$$).toHaveBeenCalledWith('iframe[name="frameX"]');
+    expect(atom.page).toBe(initialPage);
+  });
+
+  test('updateFrame keeps page when elementHandle is undefined', async () => {
+    const page = {
+      $$: jest.fn().mockResolvedValue(undefined),
+    };
+    const atom = createAtomWithEngine('puppeteer', page);
+
+    mockEnvironmentClass.mockImplementation(
+      () =>
+        ({
+          getEnvInstance: jest.fn().mockReturnValue({
+            plugins: {
+              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frameY' }) }),
+            },
+          }),
+        } as any),
+    );
+
+    const initialPage = atom.page;
+    await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
+
+    expect(page.$$).toHaveBeenCalledWith('iframe[name="frameY"]');
+    expect(atom.page).toBe(initialPage);
+  });
+
   test('runAtom executes atomRun and logs', async () => {
     const page = { $$: jest.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
@@ -214,6 +262,22 @@ describe('AtomCore', () => {
         text: 'fail',
       }),
     );
+
+    await atom.log({
+      level: 'info',
+      text: 'ok',
+      logOptions: { logThis: false },
+    } as any);
+
+    expect(log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        level: 'info',
+        logOptions: expect.objectContaining({ logThis: false }),
+        logMeta: { breadcrumbs: ['root'] },
+        levelIndent: 2,
+        text: 'ok',
+      }),
+    );
   });
 
   test('runAtom logs errors and throws AtomError', async () => {
@@ -247,5 +311,113 @@ describe('AtomCore', () => {
     expect(mockLogArgs).toHaveBeenCalled();
     expect(mockLogDebug).toHaveBeenCalled();
     expect(mockLogExtendFileInfo).toHaveBeenCalled();
+  });
+
+  test('runAtom default log options and breadcrumbs fallback', async () => {
+    const page = { $$: jest.fn() };
+    const atom = createAtomWithEngine('puppeteer', page);
+
+    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
+    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+
+    const log = jest.fn().mockResolvedValue(undefined);
+    const args = {
+      agent: {
+        data: {},
+        bindData: {},
+        selectors: {},
+        bindSelectors: {},
+        bindResults: {},
+        options: {},
+        levelIndent: undefined,
+        envsId: 'env-1',
+        stepId: 'step-1',
+        breadcrumbs: undefined,
+      },
+      log,
+    } as any;
+
+    await atom.runAtom(args);
+
+    await atom.log({ level: 'info', text: 'ok' } as any);
+
+    expect(log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        level: 'info',
+        logOptions: { screenshot: false, fullpage: false },
+        logMeta: { breadcrumbs: [] },
+        levelIndent: 1,
+        text: 'ok',
+      }),
+    );
+  });
+
+  test('runAtom skips arg assignment when Object.hasOwn is false', async () => {
+    const page = { $$: jest.fn() };
+    const atom = createAtomWithEngine('puppeteer', page);
+
+    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
+    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+
+    const log = jest.fn().mockResolvedValue(undefined);
+    const args = {
+      foo: 'bar',
+      agent: {
+        data: {},
+        bindData: {},
+        selectors: {},
+        bindSelectors: {},
+        bindResults: {},
+        options: {},
+        levelIndent: 0,
+        envsId: 'env-1',
+        stepId: 'step-1',
+        breadcrumbs: [],
+      },
+      log,
+    } as any;
+
+    const hasOwnSpy = jest.spyOn(Object, 'hasOwn').mockReturnValue(false);
+
+    await atom.runAtom(args);
+
+    expect((atom as any).foo).toBeUndefined();
+
+    hasOwnSpy.mockRestore();
+  });
+
+  test('runAtom handles falsy args branch in logger setup', async () => {
+    const page = { $$: jest.fn() };
+    const atom = createAtomWithEngine('puppeteer', page);
+
+    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
+    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+
+    const originalAgent = (Number.prototype as any).agent;
+    const originalLog = (Number.prototype as any).log;
+
+    (Number.prototype as any).agent = {
+      data: {},
+      bindData: {},
+      selectors: {},
+      bindSelectors: {},
+      bindResults: {},
+      options: {},
+      levelIndent: undefined,
+      envsId: 'env-1',
+      stepId: 'step-1',
+      breadcrumbs: [],
+    };
+    (Number.prototype as any).log = jest.fn();
+
+    const result = await atom.runAtom(0 as any);
+
+    await atom.log({ level: 'info', text: 'skip' } as any);
+
+    expect(result).toEqual({ ok: true });
+    expect((Number.prototype as any).log).not.toHaveBeenCalled();
+
+    (Number.prototype as any).agent = originalAgent;
+    (Number.prototype as any).log = originalLog;
   });
 });

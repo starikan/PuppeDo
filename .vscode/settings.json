@@ -11,5 +11,6 @@
   "files.associations": {
     "*.ppd": "yaml"
   },
-  "indentRainbow.ignoreErrorLanguages": ["markdown", "html", "yaml"]
+  "indentRainbow.ignoreErrorLanguages": ["markdown", "html", "yaml"],
+  "prettier.enable": false
 }

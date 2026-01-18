@@ -175,4 +175,91 @@ describe('Api.run', () => {
     expect(thrown.debug).toBe(true);
     expect(thrown.type).toBe('SyntaxError');
   });
+
+  test('does not set debug for non SyntaxError/TypeError', async () => {
+    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+
+    const mockAtomRun = jest.fn().mockRejectedValue(new Error('boom'));
+    mockGetAgent.mockReturnValue(mockAtomRun as any);
+
+    let thrown: any;
+    try {
+      await run({}, {});
+    } catch (error) {
+      thrown = error;
+    }
+
+    expect(thrown).toBeInstanceOf(Error);
+    expect(thrown.debug).toBeUndefined();
+    expect(thrown.type).toBeUndefined();
+  });
+
+  test('skips debug logging and close steps when disabled', async () => {
+    jest.useFakeTimers();
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+
+    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+    mockResolveOptions.mockReturnValue({
+      loggerPipes: [],
+      pluginsList: { mock: true },
+      argsConfig: {},
+      stdOut: true,
+      socket: {} as any,
+      closeAllEnvs: false,
+      closeProcess: false,
+      globalConfigFile: 'puppedo.config.js',
+      debug: false,
+    } as any);
+
+    const mockAtomRun = jest.fn().mockResolvedValue({ ok: true });
+    mockGetAgent.mockReturnValue(mockAtomRun as any);
+
+    const result = await run({ PPD_TESTS: ['testA'] }, { debug: false, closeAllEnvs: false, closeProcess: false });
+
+    jest.runAllTimers();
+
+    expect(envInstance.logger.log).not.toHaveBeenCalledWith(
+      expect.objectContaining({ text: expect.stringContaining('Args:') }),
+    );
+    expect(envInstance.allRunners.closeAllRunners).not.toHaveBeenCalled();
+    expect(exitSpy).not.toHaveBeenCalled();
+    expect(result.results).toEqual({ testA: { ok: true } });
+
+    exitSpy.mockRestore();
+    jest.useRealTimers();
+  });
+
+  test('uses default arguments when called without params', async () => {
+    jest.useFakeTimers();
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+
+    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+
+    mockResolveOptions.mockReturnValue({
+      loggerPipes: [],
+      pluginsList: { mock: true },
+      argsConfig: {},
+      stdOut: true,
+      socket: {} as any,
+      closeAllEnvs: true,
+      closeProcess: false,
+      globalConfigFile: 'puppedo.config.js',
+      debug: false,
+    } as any);
+
+    const mockAtomRun = jest.fn().mockResolvedValue({ ok: true });
+    mockGetAgent.mockReturnValue(mockAtomRun as any);
+
+    const result = await run();
+
+    jest.runAllTimers();
+
+    expect(createEnv).toHaveBeenCalledTimes(1);
+    expect(getStruct).toHaveBeenCalledWith('env-1', 'testA');
+    expect(result.results).toEqual({ testA: { ok: true } });
+
+    expect(exitSpy).not.toHaveBeenCalled();
+    exitSpy.mockRestore();
+    jest.useRealTimers();
+  });
 });

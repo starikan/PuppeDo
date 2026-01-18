@@ -211,6 +211,20 @@ describe('AgentTree', () => {
       const sibling = agentTree.findPreviousSibling('nonexistent');
       expect(sibling).toBeNull();
     });
+
+    test('returns previous sibling for top-level steps', () => {
+      agentTree.createStep({ stepId: 'root-2', payload: {} });
+      const sibling = agentTree.findPreviousSibling('root-2');
+      expect(sibling).toEqual(expect.objectContaining({ stepId: 'root' }));
+    });
+
+    test('returns null when parent has no steps array', () => {
+      const tree = new AgentTree() as any;
+      tree.tree = [{ stepId: 'root' }, { stepId: 'child', stepIdParent: 'root' }];
+
+      const sibling = tree.findPreviousSibling('child');
+      expect(sibling).toBeNull();
+    });
   });
 
   describe('findNode', () => {

@@ -264,8 +264,10 @@ export class Test {
 
     if (debug) {
       console.log(this);
-      // biome-ignore lint/suspicious/noDebugger: debug mode
-      debugger;
+      if (!process.env.JEST_WORKER_ID) {
+        // biome-ignore lint/suspicious/noDebugger: debug mode
+        debugger;
+      }
     }
 
     const { logShowFlag } = this.plugins
@@ -280,7 +282,8 @@ export class Test {
       let disableText = '';
       if (this.agent.disable) {
         disableText = 'disable';
-      } else if (skipMeBecausePrevSublingResults) {
+      }
+      if (!disableText && skipMeBecausePrevSublingResults) {
         disableText = 'skipMeBecausePrevSublingResults or skipSublingIfResult';
       }
 
@@ -364,7 +367,7 @@ export class Test {
 
       const { allRunners } = new Environment().getEnvInstance(this.agent.envsId);
       const current = new Environment().getCurrent(this.agent.envsId);
-      this.runner = allRunners.getRunnerByName(current.name || '');
+      this.runner = allRunners.getRunnerByName(current?.name || '');
 
       let { dataLocal, selectorsLocal } = fetchData(
         this.agent.dataExt,
@@ -495,8 +498,10 @@ export class Test {
         logDebug(this.logger.log.bind(this.logger), { data: dataLocal, selectors: selectorsLocal });
         if (this.agent.debug) {
           console.log(this);
-          // biome-ignore lint/suspicious/noDebugger: debug mode
-          debugger;
+          if (!process.env.JEST_WORKER_ID) {
+            // biome-ignore lint/suspicious/noDebugger: debug mode
+            debugger;
+          }
         }
       }
 

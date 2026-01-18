@@ -72,6 +72,52 @@ describe('logOptions plugin', () => {
         },
       });
     });
+
+    it('should set logShowFlag to false when logThis is false', () => {
+      const mockPluginInstance = {
+        setValues: jest.fn(),
+        getValues: jest.fn().mockReturnValue({
+          logOptions: { textColor: 'red', logThis: false },
+        }),
+        getValuesParent: jest.fn().mockReturnValue({
+          logOptions: { logChildren: true },
+        }),
+        plugins: {
+          getPlugins: jest.fn().mockReturnValue({
+            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
+          }),
+        },
+      } as unknown as Plugin<PluginLogOptions>;
+
+      setValue.call(mockPluginInstance, { inputs: { logOptions: { logThis: false } }, stepId: 'step' });
+
+      expect(mockPluginInstance.setValues).toHaveBeenCalledWith('step', {
+        logOptions: expect.objectContaining({ logShowFlag: false }),
+      });
+    });
+
+    it('should fallback to true when parent logChildren is undefined', () => {
+      const mockPluginInstance = {
+        setValues: jest.fn(),
+        getValues: jest.fn().mockReturnValue({
+          logOptions: {},
+        }),
+        getValuesParent: jest.fn().mockReturnValue({
+          logOptions: {},
+        }),
+        plugins: {
+          getPlugins: jest.fn().mockReturnValue({
+            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
+          }),
+        },
+      } as unknown as Plugin<PluginLogOptions>;
+
+      setValue.call(mockPluginInstance, { inputs: { logOptions: {} }, stepId: 'step' });
+
+      expect(mockPluginInstance.setValues).toHaveBeenCalledWith('step', {
+        logOptions: expect.objectContaining({ logShowFlag: true }),
+      });
+    });
   });
 
   describe('plugin function', () => {
