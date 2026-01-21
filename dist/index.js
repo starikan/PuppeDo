@@ -5449,8 +5449,12 @@ class LogExports {
         external_fs_default().unlinkSync(external_path_default().join(folderLatest, fileExists));
       }
     }
-    external_fs_default().copyFileSync(LogExports.resolveOutputHtmlFile(), external_path_default().join(folderLatest, 'output.html'));
-    external_fs_default().copyFileSync(LogExports.resolveOutputHtmlFile(), external_path_default().join(folder, 'output.html'));
+    try {
+      external_fs_default().copyFileSync(LogExports.resolveOutputHtmlFile(), external_path_default().join(folderLatest, 'output.html'));
+      external_fs_default().copyFileSync(LogExports.resolveOutputHtmlFile(), external_path_default().join(folder, 'output.html'));
+    } catch {
+      // Handle error if needed
+    }
     return {
       output,
       name: envsId,

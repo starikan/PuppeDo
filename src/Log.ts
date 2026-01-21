@@ -73,8 +73,12 @@ export class LogExports {
       }
     }
 
-    fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folderLatest, 'output.html'));
-    fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folder, 'output.html'));
+    try {
+      fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folderLatest, 'output.html'));
+      fs.copyFileSync(LogExports.resolveOutputHtmlFile(), path.join(folder, 'output.html'));
+    } catch {
+      // Handle error if needed
+    }
 
     return {
       output,
