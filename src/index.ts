@@ -1,5 +1,6 @@
 import run from './Api';
 import { Arguments } from './Arguments';
+import Atom from './AtomCore';
 import Blocker from './Blocker';
 import { argsDefault } from './Defaults';
 import { Environment } from './Environment';
@@ -36,4 +37,5 @@ export default {
   Screenshot,
   Plugin,
   Plugins,
+  Atom,
 };

@@ -18,6 +18,7 @@ const {
   Screenshot,
   Plugin,
   Plugins,
+  Atom,
 } = require('./dist/index').default;
 
 process.on('unhandledRejection', errorHandler);
@@ -60,5 +61,6 @@ if (!module.parent) {
     Screenshot,
     Plugin,
     Plugins,
+    Atom,
   };
 }
