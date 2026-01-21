@@ -13,12 +13,10 @@ yarn.lock
 /target
 /coverage
 /.temp
-/dist/**/*.js
-/dist/**/*.map
 /atoms
 /.specstory
-/dist/myapp.exe
-/dist/puppedo.exe
 /portable-node
 /.sea
 /coverage-plugins
+/dist/puppedo.exe
+/dist/sea.bundle.js
