@@ -8,7 +8,9 @@
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    "removeComments": true
+    "removeComments": true,
+    "declaration": true,
+    "declarationDir": "dist"
   },
   "lib": ["es2020", "es2020.array"],
   "include": ["src/**/*", "src.tests/**/*", "index.ts"],

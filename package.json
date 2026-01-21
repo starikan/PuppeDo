@@ -3,9 +3,10 @@
   "version": "2.0.0-beta.106",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
-  "typings": "./src/global.d.ts",
+  "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "npm run build:types && webpack --config webpack.config.js",
+    "build:types": "tsc --emitDeclarationOnly && api-extractor run",
     "build-sea": "esbuild index.js --bundle --platform=node --outfile=dist/sea.bundle.js --external:playwright --external:puppeteer --minify=false",
     "generate-sea": "node scripts/generate-sea.js",
     "watch": "npm run build --watch",
@@ -29,7 +30,10 @@
     "url": "https://github.com/starikan/PuppeDo/issues"
   },
   "files": [
-    "dist",
+    "./dist/index.d.ts",
+    "./dist/index.js",
+    "./dist/index.js.map",
+    "./dist/output.html",
     "src"
   ],
   "keywords": [
@@ -58,6 +62,7 @@
     "@babel/preset-env": "7.28.5",
     "@babel/preset-typescript": "7.28.5",
     "@biomejs/biome": "^2.3.11",
+    "@microsoft/api-extractor": "^7.55.2",
     "@puppedo/atoms": "6.1.1",
     "@types/jest": "30.0.0",
     "@types/js-yaml": "4.0.9",
