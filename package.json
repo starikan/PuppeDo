@@ -34,6 +34,7 @@
     "./dist/index.js",
     "./dist/index.js.map",
     "./dist/output.html",
+    "docs",
     "src"
   ],
   "keywords": [
