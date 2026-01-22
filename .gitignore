@@ -20,3 +20,6 @@ yarn.lock
 /coverage-plugins
 /dist/puppedo.exe
 /dist/sea.bundle.js
+/dist/index.d.ts
+/dist/index.js
+/dist/index.js.map
