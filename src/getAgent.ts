@@ -36,10 +36,10 @@ export const resolveJS = (agentJson: TestExtendType): TestExtendType => {
     } else {
       const testFileExt = path.parse(agentJsonNew.testFile).ext;
       const funcFile = path.resolve(agentJsonNew.testFile.replace(testFileExt, '.js'));
-      atoms[agentJsonNew.name] =
-        atoms[agentJsonNew.name] ||
-        __non_webpack_require__(funcFile)[agentJsonNew.name] ||
-        __non_webpack_require__(funcFile);
+      if (!atoms[agentJsonNew.name]) {
+        const imported = __non_webpack_require__(funcFile);
+        atoms[agentJsonNew.name] = imported[agentJsonNew.name] || imported.default || imported;
+      }
       agentJsonNew.funcFile = path.resolve(funcFile);
     }
 
