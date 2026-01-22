@@ -24,7 +24,7 @@ const {
 process.on('unhandledRejection', errorHandler);
 process.on('SyntaxError', errorHandler);
 
-if (!module.parent) {
+if (require.main === module) {
   if (process.argv.length <= 2) {
     console.log('PuppeDo - Any workflows runner');
     console.log('');
