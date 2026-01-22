@@ -1355,6 +1355,22 @@ allowResults:
 ```typescript
 import type { AtomRun } from 'puppedo';
 
+// Вариант 1: Функция с export default
+export default async function atomRun() {
+  // this.data - данные
+  // this.selectors - селекторы
+  // this.page - страница браузера
+  // this.options - опции
+
+  const result = this.data.inputValue * 2;
+
+  return {
+    processedValue: result,
+    success: true
+  };
+};
+
+// Вариант 2: Переменная с типизацией
 const atomRun: AtomRun = async function() {
   // this.data - данные
   // this.selectors - селекторы

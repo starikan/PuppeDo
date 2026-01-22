@@ -306,6 +306,14 @@ allowResults:
 ```typescript
 import type { AtomRun } from 'puppedo';
 
+// Вариант 1: Функция с export default
+export default async function atomRun() {
+  return {
+    outputValue: this.data.inputValue * 2
+  };
+};
+
+// Вариант 2: Переменная с типизацией
 const atomRun: AtomRun = async function() {
   return {
     outputValue: this.data.inputValue * 2
