@@ -1,6 +1,6 @@
 {
   "name": "@puppedo/core",
-  "version": "2.0.0-beta.106",
+  "version": "2.0.0-beta.107",
   "description": "PuppeDo is a runner for tests E2E in YAML style. With power of Playwright or Puppeteer.",
   "main": "index.js",
   "typings": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
     "generate-sea": "node scripts/generate-sea.js",
     "watch": "npm run build --watch",
     "check": "npm run build && npm run lint && npm test && npm run docs && npm run e2e",
-    "prepublishOnly": "npm install --force && npm check",
+    "prepublishOnly": "npm install --force && npm run check",
     "lint": "biome check",
     "lint:fix": "biome check --write && biome format --write",
     "test": "jest",
