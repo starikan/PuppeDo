@@ -81,7 +81,7 @@ export default class Screenshot {
   ): Promise<string[]> {
     const fullPageScreenshot = isFullpage ? await this.saveScreenshotFull(fullpageName) : [];
     const elementsScreenshots = isScreenshot ? await this.saveScreenshotElement(element, screenshotName) : [];
-    const screenshots = [fullPageScreenshot, elementsScreenshots].flat().filter((v) => !!v);
+    const screenshots = [fullPageScreenshot, elementsScreenshots].flat().filter((v) => Boolean(v));
     return screenshots;
   }
 }

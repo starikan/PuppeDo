@@ -139,7 +139,7 @@ export class PluginsFabric extends Singleton {
 
     const valuesOrdered = Object.entries(this.orders)
       .sort((a, b) => a[1] - b[1])
-      .filter((v) => !!v[1])
+      .filter((v) => Boolean(v[1]))
       .map((v) => v[0]);
     return [...valuesOrdered, ...valuesNull];
   }

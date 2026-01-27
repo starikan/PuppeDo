@@ -80,7 +80,7 @@ export default class FlowStructure {
           name,
           runner,
           levelIndent + 1,
-          !!Object.values(runnerValue)[0],
+          Boolean(Object.values(runnerValue)[0]),
         );
         fullJSON[lifeCycleFunctionName][runnerNum] = fullJSONResponce;
       });

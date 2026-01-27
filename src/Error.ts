@@ -124,7 +124,7 @@ export class TestError extends AbstractError {
       .map(
         (v) => this.plugins.getPlugins<PluginDescriptionError>('descriptionError').getValues(v.stepId).descriptionError,
       )
-      .filter((v) => !!v)
+      .filter((v) => Boolean(v))
       .join(' | ');
 
     // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work

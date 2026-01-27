@@ -96,8 +96,8 @@ export const checkIf = async (
         level: logLevel,
         levelIndent,
         logOptions: {
-          screenshot: !!exprResult,
-          fullpage: !!exprResult,
+          screenshot: Boolean(exprResult),
+          fullpage: Boolean(exprResult),
         },
         logMeta: { breadcrumbs },
       });

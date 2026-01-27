@@ -75,10 +75,11 @@ export const formatterEntry: LogFormatter = async ({
   const isExtend = level !== 'error' && extendInfo;
   const isError = level === 'error' && !extendInfo;
   const isErrorTopLevel = isError && levelIndent === 0;
-  const isBreadcrumbs = level !== 'error' && !extendInfo && !!breadcrumbs.length && level !== 'raw' && PPD_LOG_EXTEND;
+  const isBreadcrumbs =
+    level !== 'error' && !extendInfo && Boolean(breadcrumbs.length) && level !== 'raw' && PPD_LOG_EXTEND;
   const isRepeat = isBreadcrumbs && repeat > 1;
-  const isTestFile = isError && !!testFile;
-  const isFuncFile = isError && !!funcFile;
+  const isTestFile = isError && Boolean(testFile);
+  const isFuncFile = isError && Boolean(funcFile);
 
   const stringsLog: Array<LogEntrieType[] | null | boolean> = [
     [
