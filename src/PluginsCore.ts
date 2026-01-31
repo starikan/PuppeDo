@@ -267,7 +267,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       if (Object.keys(this.hooks).includes(name)) {
         return this.hooks[name].bind(this);
       }
-      return () => { };
+      return () => {};
     } catch (error) {
       /* istanbul ignore next */
       if (!process.env.JEST_WORKER_ID) {
@@ -276,7 +276,7 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
         debugger;
       }
     }
-    return () => { };
+    return () => {};
   }
 
   /**

@@ -69,7 +69,11 @@ export class LogExports {
     } else {
       const filesExists = fs.readdirSync(folderLatest);
       for (const fileExists of filesExists) {
-        fs.unlinkSync(path.join(folderLatest, fileExists));
+        try {
+          fs.unlinkSync(path.join(folderLatest, fileExists));
+        } catch {
+          // Ignore EBUSY errors in test environment
+        }
       }
     }
 

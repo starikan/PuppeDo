@@ -92,8 +92,9 @@ export class TestError extends AbstractError {
       .getValues(this.stepId);
 
     // TODO: 2022-10-06 S.Starodubov BUG bindDescription not work
-    const text = `${descriptionError ? `${descriptionError} | ` : ' '}Description: ${this.agent.description || 'No test description'
-      } (${this.agent.name})`;
+    const text = `${descriptionError ? `${descriptionError} | ` : ' '}Description: ${
+      this.agent.description || 'No test description'
+    } (${this.agent.name})`;
     const errorData: LogInputType = {
       level: 'error',
       text,
@@ -168,8 +169,9 @@ export class ContinueParentError extends AbstractError {
     await this.logger.log({
       level: 'warn',
       levelIndent,
-      text: `Continue: ${this.parentError?.message || `test with expr ${breakParentIfResult}'`}${PPD_LOG_STEPID ? `[${stepId}]` : ''
-        }`,
+      text: `Continue: ${this.parentError?.message || `test with expr ${breakParentIfResult}'`}${
+        PPD_LOG_STEPID ? `[${stepId}]` : ''
+      }`,
       logMeta: { breadcrumbs },
     });
   }

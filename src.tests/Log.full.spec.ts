@@ -17,13 +17,38 @@ const distOutput = path.join('dist', 'output.html');
 let outputDir: string;
 let outputLatest: string;
 
+// Helper to write file with retry for EBUSY errors
+const writeFileWithRetry = (filePath: string, content: string, retries = 3): void => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      fs.writeFileSync(filePath, content);
+      return;
+    } catch (err: any) {
+      if (err.code === 'EBUSY' && i < retries - 1) {
+        // Wait a bit and retry
+        const waitTime = 50 * (i + 1);
+        const start = Date.now();
+        while (Date.now() - start < waitTime) {
+          // Busy wait
+        }
+        continue;
+      }
+      throw err;
+    }
+  }
+};
+
 describe('Log full coverage', () => {
   let testTree: { updateStep: jest.Mock };
 
+  beforeAll(() => {
+    // Create dist output file once for all tests
+    fs.mkdirSync(path.dirname(distOutput), { recursive: true });
+    writeFileWithRetry(distOutput, 'html');
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
-    fs.mkdirSync(path.dirname(distOutput), { recursive: true });
-    fs.writeFileSync(distOutput, 'html');
 
     outputDir = path.join(outputFolder, 'exports');
     outputLatest = path.join(outputFolder, 'exports-latest');
