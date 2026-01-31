@@ -61,11 +61,11 @@ describe('getAgent', () => {
 
     mockArguments.mockImplementation(
       () =>
-        ({
-          args: {
-            PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
-          },
-        } as any),
+      ({
+        args: {
+          PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
+        },
+      } as any),
     );
 
     mockRequireFromString.mockReturnValue(async () => ({}));
@@ -290,7 +290,7 @@ describe('getAgent', () => {
     });
 
     const stepFn = getAgent({ agentJsonIncome: agentJson, envsId: 'env-11', parentStepMetaCollector });
-    await (stepFn as any)({ 
+    await (stepFn as any)({
       agent: { stepId: 'parent-11' } as any,
       resultsFromPrevSubling: { fromArgs: 'value' },
     });

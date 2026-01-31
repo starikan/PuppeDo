@@ -12,17 +12,17 @@ describe('Error handling', () => {
 
     mockEnvironmentClass.mockImplementation(
       () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
-            testTree: {
-              addError: jest.fn(),
-              getErrors: jest.fn().mockReturnValue([{ stepId: 's1' }]),
-              clearErrors: jest.fn(),
-            },
-          }),
-          getEnvRunners: jest.fn().mockReturnValue({ closeAllRunners: jest.fn() }),
-          getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-        } as any),
+      ({
+        getEnvInstance: jest.fn().mockReturnValue({
+          testTree: {
+            addError: jest.fn(),
+            getErrors: jest.fn().mockReturnValue([{ stepId: 's1' }]),
+            clearErrors: jest.fn(),
+          },
+        }),
+        getEnvRunners: jest.fn().mockReturnValue({ closeAllRunners: jest.fn() }),
+        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
+      } as any),
     );
   });
 
@@ -310,12 +310,12 @@ describe('Error handling', () => {
 
     mockEnvironmentClass.mockImplementation(
       () =>
-        ({
-          getEnvRunners: jest.fn().mockImplementation(() => {
-            throw new Error('fail');
-          }),
-          getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-        } as any),
+      ({
+        getEnvRunners: jest.fn().mockImplementation(() => {
+          throw new Error('fail');
+        }),
+        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
+      } as any),
     );
 
     await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);
@@ -338,10 +338,10 @@ describe('Error handling', () => {
 
     mockEnvironmentClass.mockImplementation(
       () =>
-        ({
-          getEnvRunners: jest.fn().mockReturnValue({}),
-          getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-        } as any),
+      ({
+        getEnvRunners: jest.fn().mockReturnValue({}),
+        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
+      } as any),
     );
 
     await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);

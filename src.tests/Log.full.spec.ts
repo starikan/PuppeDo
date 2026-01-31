@@ -34,21 +34,21 @@ describe('Log full coverage', () => {
 
     mockEnvironmentClass.mockImplementation(
       () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
-            testTree,
-            log: [],
-          }),
-          getSocket: jest.fn().mockReturnValue({ id: 'socket' }),
-          getOutput: jest.fn().mockReturnValue({ folder: outputDir, folderLatest: outputLatest }),
-        } as any),
+      ({
+        getEnvInstance: jest.fn().mockReturnValue({
+          testTree,
+          log: [],
+        }),
+        getSocket: jest.fn().mockReturnValue({ id: 'socket' }),
+        getOutput: jest.fn().mockReturnValue({ folder: outputDir, folderLatest: outputLatest }),
+      } as any),
     );
 
     mockScreenshotClass.mockImplementation(
       () =>
-        ({
-          getScreenshotsLogEntry: jest.fn().mockResolvedValue(['s1', 's2']),
-        } as any),
+      ({
+        getScreenshotsLogEntry: jest.fn().mockResolvedValue(['s1', 's2']),
+      } as any),
     );
   });
 
@@ -199,9 +199,9 @@ describe('Log full coverage', () => {
     const getScreenshotsLogEntry = jest.fn().mockResolvedValue([]);
     mockScreenshotClass.mockImplementationOnce(
       () =>
-        ({
-          getScreenshotsLogEntry,
-        } as any),
+      ({
+        getScreenshotsLogEntry,
+      } as any),
     );
     const log = new Log('env-1');
 

@@ -14,10 +14,10 @@ describe('PluginsCore', () => {
   test('PluginsFabric orders and dependencies', () => {
     const fabric = new PluginsFabric({}, true);
     fabric.addPlugin(
-      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => {} }) as any), order: 2, depends: [], documentation: doc('a') } as any,
+      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => { } }) as any), order: 2, depends: [], documentation: doc('a') } as any,
     );
     fabric.addPlugin(
-      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => {} }) as any), order: null, depends: ['a'], documentation: doc('b') } as any,
+      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => { } }) as any), order: null, depends: ['a'], documentation: doc('b') } as any,
     );
     fabric.normalizeOrders();
     fabric.checkDepends();
@@ -35,7 +35,7 @@ describe('PluginsCore', () => {
     const fabric = new PluginsFabric(
       {
         a: {
-          plugin: { name: 'a', plugin: () => (({ name: 'a', hook: () => () => {} }) as any), order: 1, depends: [], documentation: doc('a') },
+          plugin: { name: 'a', plugin: () => (({ name: 'a', hook: () => () => { } }) as any), order: 1, depends: [], documentation: doc('a') },
           order: 1,
         } as any,
       },
@@ -48,10 +48,10 @@ describe('PluginsCore', () => {
   test('PluginsFabric checkDepends throws when order missing', () => {
     const fabric = new PluginsFabric({}, true);
     fabric.addPlugin(
-      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => {} }) as any), order: null, depends: [], documentation: doc('a') } as any,
+      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => { } }) as any), order: null, depends: [], documentation: doc('a') } as any,
     );
     fabric.addPlugin(
-      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => {} }) as any), order: 2, depends: ['a'], documentation: doc('b') } as any,
+      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => { } }) as any), order: 2, depends: ['a'], documentation: doc('b') } as any,
     );
 
     expect(() => fabric.checkDepends()).toThrow('Plugin a not found in the execution order');
@@ -60,10 +60,10 @@ describe('PluginsCore', () => {
   test('PluginsFabric handles null orders and dependency order errors', () => {
     const fabric = new PluginsFabric({}, true);
     fabric.addPlugin(
-      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => {} }) as any), order: null, depends: [], documentation: doc('a') } as any,
+      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => { } }) as any), order: null, depends: [], documentation: doc('a') } as any,
     );
     fabric.addPlugin(
-      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => {} }) as any), order: 1, depends: ['a'], documentation: doc('b') } as any,
+      { name: 'b', plugin: () => (({ name: 'b', hook: () => () => { } }) as any), order: 1, depends: ['a'], documentation: doc('b') } as any,
     );
 
     const ordered = fabric.getPluginsOrderedNames();
@@ -76,7 +76,7 @@ describe('PluginsCore', () => {
   test('PluginsFabric normalizeOrders assigns values for null only', () => {
     const fabric = new PluginsFabric({}, true);
     fabric.addPlugin(
-      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => {} }) as any), order: null, depends: [], documentation: doc('a') } as any,
+      { name: 'a', plugin: () => (({ name: 'a', hook: () => () => { } }) as any), order: null, depends: [], documentation: doc('a') } as any,
     );
     fabric.normalizeOrders();
 
@@ -134,7 +134,7 @@ describe('PluginsCore', () => {
         order: 1,
         depends: [],
         documentation: doc('only'),
-        plugin: () => ({ name: 'only', hook: () => () => {} }),
+        plugin: () => ({ name: 'only', hook: () => () => { } }),
       } as any,
     );
     const plugins = new Plugins('env-1', { findNode: jest.fn(), findParent: jest.fn(), updateStep: jest.fn() } as any);

@@ -61,12 +61,12 @@ describe('Api.run', () => {
 
     mockEnvironmentClass.mockImplementation(
       () =>
-        ({
-          createEnv,
-          getEnvInstance,
-          getStruct,
-          setCurrent,
-        } as any),
+      ({
+        createEnv,
+        getEnvInstance,
+        getStruct,
+        setCurrent,
+      } as any),
     );
 
     mockBlocker.mockImplementation(() => ({ reset: jest.fn() } as any));

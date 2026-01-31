@@ -832,15 +832,15 @@ describe('executeLifeCycleFunctions', () => {
     const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'step3';
-    
+
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
-    
+
     const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
     step3.stepId = 'step3';
 
     const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(step3).toHaveBeenCalled();
     expect(result).toEqual({ a: 1, c: 3 });
@@ -850,12 +850,12 @@ describe('executeLifeCycleFunctions', () => {
     const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'nonExistent';
-    
+
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(step2).toHaveBeenCalled();
     expect(result).toEqual({ a: 1, b: 2 });
@@ -865,15 +865,15 @@ describe('executeLifeCycleFunctions', () => {
     const step1 = jest.fn().mockResolvedValue({ target: 'step3' }) as any;
     step1.stepId = 'step1';
     step1.bindStepIdNext = 'target';
-    
+
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
-    
+
     const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
     step3.stepId = 'step3';
 
     const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(step3).toHaveBeenCalled();
     expect(result).toEqual({ target: 'step3', c: 3 });
@@ -883,12 +883,12 @@ describe('executeLifeCycleFunctions', () => {
     const step1 = jest.fn().mockResolvedValue({ target: null }) as any;
     step1.stepId = 'step1';
     step1.bindStepIdNext = 'target'; // evaluates to null
-    
+
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(step2).toHaveBeenCalled();
     expect(result).toEqual({ target: null, b: 2 });
@@ -898,12 +898,12 @@ describe('executeLifeCycleFunctions', () => {
     const step1 = jest.fn().mockResolvedValue({ target: '' }) as any;
     step1.stepId = 'step1';
     step1.bindStepIdNext = 'target'; // evaluates to empty string
-    
+
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(step2).toHaveBeenCalled();
     expect(result).toEqual({ target: '', b: 2 });
@@ -916,7 +916,7 @@ describe('executeLifeCycleFunctions', () => {
     // step1 is the last step, so after failing to find nextStep, currentIndex + 1 >= allSteps.length
 
     const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
-    
+
     expect(step1).toHaveBeenCalled();
     expect(result).toEqual({ a: 1 });
   });
@@ -952,7 +952,7 @@ describe('executeLifeCycleFunctions', () => {
     }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'step2';
-    
+
     const step2 = jest.fn().mockResolvedValue({}) as any;
     step2.stepId = 'step2';
     step2.stepIdNext = 'step1'; // Back to step1 with same state
@@ -965,7 +965,7 @@ describe('executeLifeCycleFunctions', () => {
   test('handles function without stepId', async () => {
     const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
     // No stepId set
-    
+
     const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
     expect(result).toEqual({ a: 1 });
   });
@@ -973,7 +973,7 @@ describe('executeLifeCycleFunctions', () => {
   test('handles function returning undefined', async () => {
     const step1 = jest.fn().mockResolvedValue(undefined) as any;
     step1.stepId = 'step1';
-    
+
     const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
     expect(result).toEqual({});
   });
