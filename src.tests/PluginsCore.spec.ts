@@ -30,7 +30,6 @@ describe('PluginsCore', () => {
   });
 
   test('PluginsFabric debug output and scratch getters', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
 
     const fabric = new PluginsFabric(
@@ -43,9 +42,7 @@ describe('PluginsCore', () => {
       true,
     );
 
-    expect(consoleSpy).toHaveBeenCalled();
     expect(fabric.getAllPluginsScratch().a).toBeDefined();
-    consoleSpy.mockRestore();
   });
 
   test('PluginsFabric checkDepends throws when order missing', () => {

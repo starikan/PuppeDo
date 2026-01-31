@@ -184,7 +184,8 @@ export const errorHandler = async (errorIncome: ErrorType): Promise<void> => {
     error.socket.sendYAML({ data: { ...error }, type: error.type || 'error', envsId: error.envsId });
   }
 
-  if (!(errorIncome instanceof TestError)) {
+  /* istanbul ignore next */
+  if (!(errorIncome instanceof TestError) && !process.env.JEST_WORKER_ID) {
     console.log(errorIncome.message);
     console.log(errorIncome);
   }

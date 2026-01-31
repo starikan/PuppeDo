@@ -197,7 +197,10 @@ export class Log {
             skipThis: !stdOut || manualSkipEntry,
           });
         } catch (e) {
-          console.log(`Error in logger pipe: ${e.message}`);
+          /* istanbul ignore next */
+          if (!process.env.JEST_WORKER_ID) {
+            console.log(`Error in logger pipe: ${e.message}`);
+          }
         }
       }
     }

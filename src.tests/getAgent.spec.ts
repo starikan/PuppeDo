@@ -278,6 +278,28 @@ describe('getAgent', () => {
     expect(updatedAgentJson.resultsFromPrevSubling).toEqual({});
   });
 
+  test('uses resultsFromPrevSubling from args when provided', async () => {
+    mockRun.mockResolvedValue({ result: { done: true } });
+
+    const parentStepMetaCollector: Partial<TestExtendType> = {
+      resultsFromPrevSubling: { fromParent: 'ignored' },
+    };
+    const agentJson = createAgent({
+      name: 'argsResultsAgent',
+      inlineJS: 'return { computed: true };',
+    });
+
+    const stepFn = getAgent({ agentJsonIncome: agentJson, envsId: 'env-11', parentStepMetaCollector });
+    await (stepFn as any)({ 
+      agent: { stepId: 'parent-11' } as any,
+      resultsFromPrevSubling: { fromArgs: 'value' },
+    });
+
+    const updatedAgentJson = mockRun.mock.calls[0][0];
+    // Should use resultsFromPrevSubling from args, not from parentStepMetaCollector
+    expect(updatedAgentJson.resultsFromPrevSubling).toEqual({ fromArgs: 'value' });
+  });
+
   test('propagateArgumentsObjectsOnAir uses defaults for list and sources', () => {
     const result = propagateArgumentsObjectsOnAir(undefined as any, undefined);
     expect(result).toEqual({});

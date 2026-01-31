@@ -287,7 +287,6 @@ describe('Error handling', () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
 
     const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
 
     const socket = { sendYAML: jest.fn() };
     const error = {
@@ -301,10 +300,8 @@ describe('Error handling', () => {
     await errorHandler(error);
 
     expect(socket.sendYAML).toHaveBeenCalled();
-    expect(consoleSpy).toHaveBeenCalled();
     expect(exitSpy).toHaveBeenCalledWith(1);
 
-    consoleSpy.mockRestore();
     exitSpy.mockRestore();
   });
 

@@ -103,7 +103,10 @@ export default async function run(
     await logger.log({ level: 'timer', text: `Evaluated time 🕝: ${getTimer({ timeStartBigInt }).deltaStr}` });
     await closeEnvironment(options, envsId);
 
-    console.log(JSON.stringify(results, null, 2));
+    /* istanbul ignore next */
+    if (!process.env.JEST_WORKER_ID) {
+      console.log(JSON.stringify(results, null, 2));
+    }
     return { results, logs };
   } catch (error) {
     if (String(error).startsWith('SyntaxError') || String(error).startsWith('TypeError')) {

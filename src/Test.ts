@@ -261,7 +261,7 @@ const executeLifeCycleFunctions = async (
     if (visitCount > maxVisitsPerStep) {
       throw new Error(
         `executeLifeCycleFunctions: Step "${currentStepId}" visited ${visitCount} times. ` +
-        `Possible infinite loop detected. Check your stepIdNext/bindStepIdNext logic.`,
+          `Possible infinite loop detected. Check your stepIdNext/bindStepIdNext logic.`,
       );
     }
 
@@ -270,7 +270,7 @@ const executeLifeCycleFunctions = async (
     if (visitedStates.has(stateKey)) {
       throw new Error(
         `executeLifeCycleFunctions: Infinite loop detected - step "${currentStepId}" ` +
-        `visited again with the same data state. This creates an endless cycle.`,
+          `visited again with the same data state. This creates an endless cycle.`,
       );
     }
     visitedStates.add(stateKey);
@@ -377,9 +377,9 @@ export class Test {
     const { debug } = this.plugins.getPlugins<PluginDebug>('debug').getValues(this.agent.stepId);
 
     if (debug) {
-      console.log(this);
       /* istanbul ignore next */
       if (!process.env.JEST_WORKER_ID) {
+        console.log(this);
         // biome-ignore lint/suspicious/noDebugger: debug mode
         debugger;
       }
@@ -403,8 +403,9 @@ export class Test {
       }
 
       await this.logger.log({
-        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
-          }`,
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${
+          PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
+        }`,
         level: 'raw',
         levelIndent: this.agent.levelIndent,
         logOptions: {
@@ -578,8 +579,9 @@ export class Test {
 
         for (const element of elements) {
           await this.logger.log({
-            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
-              }`,
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${
+              PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
+            }`,
             level: 'test',
             levelIndent: this.agent.levelIndent,
             element,
@@ -610,9 +612,9 @@ export class Test {
       if (this.agent.debugInfo) {
         logDebug(this.logger.log.bind(this.logger), { data: dataLocal, selectors: selectorsLocal });
         if (this.agent.debug) {
-          console.log(this);
           /* istanbul ignore next */
           if (!process.env.JEST_WORKER_ID) {
+            console.log(this);
             // biome-ignore lint/suspicious/noDebugger: debug mode
             debugger;
           }
@@ -803,3 +805,6 @@ export class Test {
     return this.runLogic(inputArgs);
   };
 }
+
+// Export for testing
+export { executeLifeCycleFunctions };

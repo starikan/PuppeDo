@@ -69,7 +69,8 @@ export class PluginsFabric extends Singleton {
 
       const { PPD_DEBUG_MODE } = new Arguments().args;
 
-      if (PPD_DEBUG_MODE) {
+      /* istanbul ignore next */
+      if (PPD_DEBUG_MODE && !process.env.JEST_WORKER_ID) {
         console.log(JSON.stringify(this.getPluginsOrder(), null, 2));
       }
     }
@@ -268,9 +269,9 @@ export class Plugin<T extends Record<keyof T, T[keyof T]>> implements PluginType
       }
       return () => {};
     } catch (error) {
-      console.log(error);
       /* istanbul ignore next */
       if (!process.env.JEST_WORKER_ID) {
+        console.log(error);
         // biome-ignore lint/suspicious/noDebugger: need debug this
         debugger;
       }

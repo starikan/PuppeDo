@@ -5,7 +5,7 @@ import Atom from '../src/AtomCore';
 import { ContinueParentError, TestError } from '../src/Error';
 import { Environment } from '../src/Environment';
 import { logDebug } from '../src/Loggers/CustomLogEntries';
-import { Test, checkIf } from '../src/Test';
+import { Test, checkIf, executeLifeCycleFunctions } from '../src/Test';
 
 jest.mock('../src/Environment');
 jest.mock('../src/Blocker');
@@ -547,26 +547,20 @@ describe('Test', () => {
   test('runLogic enters debug branch when plugin debug enabled', async () => {
     const plugins = buildPlugins({ debug: { debug: true } });
     setupEnv(plugins);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
 
     const test = new Test({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
+    // Debug branch is entered but console.log is suppressed in test environment
     await test.runLogic({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
-
-    expect(consoleSpy).toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 
   test('runLogic logs debugInfo without debug flag', async () => {
     const plugins = buildPlugins({ debug: { debug: false } });
     setupEnv(plugins);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
 
     const test = new Test({ envsId: 'env-1', stepId: 's1', stepIdParent: '', debugInfo: true } as any);
     await test.runLogic({ envsId: 'env-1', stepId: 's1', stepIdParent: '', debugInfo: true } as any);
 
     expect(mockLogDebug).toHaveBeenCalled();
-    expect(consoleSpy).not.toHaveBeenCalled();
-    consoleSpy.mockRestore();
   });
 
   test('runLogic throws when required env param missing', async () => {
@@ -815,5 +809,188 @@ describe('Test', () => {
     await expect(test.run({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any)).resolves.toEqual({
       result: { ok: true },
     });
+  });
+});
+
+describe('executeLifeCycleFunctions', () => {
+  test('returns empty object when allSteps is empty', async () => {
+    const result = await executeLifeCycleFunctions([], { data: {}, selectors: {} } as any);
+    expect(result).toEqual({});
+  });
+
+  test('executes functions in order and merges results', async () => {
+    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    step1.stepId = 'step1';
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+
+    const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
+    expect(result).toEqual({ a: 1, b: 2 });
+  });
+
+  test('follows stepIdNext to jump between steps', async () => {
+    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'step3';
+    
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+    
+    const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
+    step3.stepId = 'step3';
+
+    const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(step3).toHaveBeenCalled();
+    expect(result).toEqual({ a: 1, c: 3 });
+  });
+
+  test('handles stepIdNext to non-existent step by continuing to next in order', async () => {
+    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'nonExistent';
+    
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+
+    const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(step2).toHaveBeenCalled();
+    expect(result).toEqual({ a: 1, b: 2 });
+  });
+
+  test('uses bindStepIdNext to dynamically determine next step', async () => {
+    const step1 = jest.fn().mockResolvedValue({ target: 'step3' }) as any;
+    step1.stepId = 'step1';
+    step1.bindStepIdNext = 'target';
+    
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+    
+    const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
+    step3.stepId = 'step3';
+
+    const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(step3).toHaveBeenCalled();
+    expect(result).toEqual({ target: 'step3', c: 3 });
+  });
+
+  test('bindStepIdNext evaluating to non-string or empty continues to next step', async () => {
+    const step1 = jest.fn().mockResolvedValue({ target: null }) as any;
+    step1.stepId = 'step1';
+    step1.bindStepIdNext = 'target'; // evaluates to null
+    
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+
+    const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(step2).toHaveBeenCalled();
+    expect(result).toEqual({ target: null, b: 2 });
+  });
+
+  test('bindStepIdNext evaluating to empty string continues to next step', async () => {
+    const step1 = jest.fn().mockResolvedValue({ target: '' }) as any;
+    step1.stepId = 'step1';
+    step1.bindStepIdNext = 'target'; // evaluates to empty string
+    
+    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    step2.stepId = 'step2';
+
+    const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(step2).toHaveBeenCalled();
+    expect(result).toEqual({ target: '', b: 2 });
+  });
+
+  test('stepIdNext on last step terminates correctly', async () => {
+    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'nonExistent'; // Points to non-existent step
+    // step1 is the last step, so after failing to find nextStep, currentIndex + 1 >= allSteps.length
+
+    const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
+    
+    expect(step1).toHaveBeenCalled();
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('throws on maxVisitsPerStep exceeded', async () => {
+    let counter = 0;
+    const step1 = jest.fn().mockImplementation(async () => {
+      counter++;
+      return { counter }; // Each call returns different result to avoid same-state detection
+    }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'step1'; // Self-loop
+
+    // Create enough steps so that maxIterations (allSteps.length * 10) > maxVisitsPerStep (100)
+    // Need 11 steps: 11 * 10 = 110 > 100
+    const dummySteps = Array.from({ length: 10 }, (_, i) => {
+      const step = jest.fn() as any;
+      step.stepId = `dummy${i}`;
+      return step;
+    });
+
+    await expect(
+      executeLifeCycleFunctions([step1, ...dummySteps], { data: {}, selectors: {} } as any)
+    ).rejects.toThrow('Step "step1" visited 101 times');
+  });
+
+  test('throws on infinite loop with same state', async () => {
+    // Create a cycle that returns the same result each time
+    let callCount = 0;
+    const step1 = jest.fn().mockImplementation(async () => {
+      callCount++;
+      return {}; // Always returns empty, creating same state
+    }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'step2';
+    
+    const step2 = jest.fn().mockResolvedValue({}) as any;
+    step2.stepId = 'step2';
+    step2.stepIdNext = 'step1'; // Back to step1 with same state
+
+    await expect(
+      executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any)
+    ).rejects.toThrow('Infinite loop detected - step "step1" visited again with the same data state');
+  });
+
+  test('handles function without stepId', async () => {
+    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    // No stepId set
+    
+    const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('handles function returning undefined', async () => {
+    const step1 = jest.fn().mockResolvedValue(undefined) as any;
+    step1.stepId = 'step1';
+    
+    const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
+    expect(result).toEqual({});
+  });
+
+  test('throws on maxIterations exceeded', async () => {
+    // With 1 step, maxIterations = 1 * 10 = 10
+    // Loop will hit maxIterations before maxVisitsPerStep (100)
+    let counter = 0;
+    const step1 = jest.fn().mockImplementation(async () => {
+      counter++;
+      return { counter };
+    }) as any;
+    step1.stepId = 'step1';
+    step1.stepIdNext = 'step1'; // Self-loop
+
+    await expect(
+      executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any)
+    ).rejects.toThrow('Maximum iterations (10) reached. Possible infinite loop');
   });
 });

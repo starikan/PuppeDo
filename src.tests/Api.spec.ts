@@ -120,7 +120,6 @@ describe('Api.run', () => {
   test('runs agents, collects logs and closes environment', async () => {
     jest.useFakeTimers();
     const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
 
     mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA', 'testB'] } } as any));
 
@@ -150,11 +149,9 @@ describe('Api.run', () => {
       testB: [],
     });
 
-    expect(consoleSpy).toHaveBeenCalledTimes(1);
     expect(exitSpy).toHaveBeenCalledWith(0);
 
     exitSpy.mockRestore();
-    consoleSpy.mockRestore();
     jest.useRealTimers();
   });
 

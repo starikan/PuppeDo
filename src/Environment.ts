@@ -189,7 +189,10 @@ export class Runner {
         } else if (platform === 'linux') {
           execSync(`pkill ${killProcessName}`);
         } else {
-          console.error(`Quitting a process is not supported on '${platform}' platform.`);
+          /* istanbul ignore next */
+          if (!process.env.JEST_WORKER_ID) {
+            console.error(`Quitting a process is not supported on '${platform}' platform.`);
+          }
         }
       }
     } catch {

@@ -10,7 +10,7 @@
     "build-sea": "esbuild index.js --bundle --platform=node --outfile=dist/sea.bundle.js --external:playwright --external:puppeteer --minify=false",
     "generate-sea": "node scripts/generate-sea.js",
     "watch": "webpack --config webpack.config.js --watch",
-    "check": "npm run build && npm run lint && npm test && npm run docs && npm run e2e",
+    "check": "npm run lint:fix && npm run build && npm run lint && npm test && npm run docs && npm run e2e",
     "prepublishOnly": "npm install --force && npm run check",
     "lint": "biome check",
     "lint:fix": "biome check --write && biome format --write",

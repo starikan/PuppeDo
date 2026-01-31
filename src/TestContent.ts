@@ -114,12 +114,15 @@ export default class AgentContent extends Singleton {
         agentData = yaml.loadAll(fileContent) as Partial<TestTypeYaml>[];
       }
     } catch {
-      const errorType = filePath.endsWith('.json') ? 'JSON' : 'YAML';
-      const errorLink = filePath.endsWith('.json') ? 'https://jsonlint.com/' : 'https://yamlchecker.com/';
-      console.log(
-        `\u001B[41mError ${errorType} read. File: '${filePath}'. Try to check it on ${errorLink}
-          or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
-      );
+      /* istanbul ignore next */
+      if (!process.env.JEST_WORKER_ID) {
+        const errorType = filePath.endsWith('.json') ? 'JSON' : 'YAML';
+        const errorLink = filePath.endsWith('.json') ? 'https://jsonlint.com/' : 'https://yamlchecker.com/';
+        console.log(
+          `\u001B[41mError ${errorType} read. File: '${filePath}'. Try to check it on ${errorLink}
+            or add this file into PPD_FILES_IGNORE of folder into PPD_ROOT_IGNORE`,
+        );
+      }
     }
 
     if (!Array.isArray(agentData)) {
