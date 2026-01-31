@@ -192,6 +192,9 @@ const testsE2E = {
     params: { PPD_TESTS: 'stepIdInfiniteLoop' },
     isError: true,
   },
+  stepIdNextNotFound: {
+    params: { PPD_TESTS: 'stepIdNextNotFound' },
+  },
 };
 
 module.exports = testsE2E;

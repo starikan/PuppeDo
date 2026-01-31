@@ -297,8 +297,15 @@ const executeLifeCycleFunctions = async (
     }
 
     if (nextStepId) {
-      // Переходим к указанному шагу
-      currentFunc = stepMap.get(nextStepId);
+      // Переходим к указанному шагу, если он существует
+      const nextFunc = stepMap.get(nextStepId);
+      if (nextFunc) {
+        currentFunc = nextFunc;
+      } else {
+        // Если указанный stepIdNext не существует - игнорируем и берём следующий по порядку
+        const currentIndex = allSteps.indexOf(currentFunc);
+        currentFunc = currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : undefined;
+      }
     } else {
       // Если stepIdNext не указан - берём следующий по порядку в массиве
       const currentIndex = allSteps.indexOf(currentFunc);

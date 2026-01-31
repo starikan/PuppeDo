@@ -1,0 +1,27 @@
+name: stepIdNextNotFound
+description: "Тест игнорирования несуществующего stepIdNext"
+descriptionExtend:
+  - stepIdNext указывает на несуществующий шаг
+  - Должен просто перейти к следующему шагу по порядку
+  - Не должен падать с ошибкой
+
+run:
+  - blank:
+      stepId: "step1"
+      stepIdNext: "nonExistentStep"
+      data:
+        value: 1
+      bindDescription: "`Шаг 1: value=${value}, stepIdNext указывает на несуществующий шаг`"
+      results:
+        value: "value"
+
+  - blank:
+      stepId: "step2"
+      stepIdNext: "alsoNotExists"
+      bindDescription: "`Шаг 2: value=${value}, тоже несуществующий stepIdNext`"
+      results:
+        value: "value + 10"
+
+  - blank:
+      stepId: "step3"
+      bindDescription: "`Шаг 3: финальный value=${value}`"
