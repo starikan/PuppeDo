@@ -152,6 +152,9 @@ const testsE2E = {
   stepId: {
     params: { PPD_TESTS: 'stepId' },
   },
+  stepIdWithResults: {
+    params: { PPD_TESTS: 'stepIdWithResults' },
+  },
 };
 
 module.exports = testsE2E;

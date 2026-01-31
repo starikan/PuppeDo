@@ -294,6 +294,7 @@ export type TestArgsType = {
 export type TestLifeCycleFunctionType = ((args?: TestArgsType) => Promise<Record<string, unknown>>) & {
   stepId?: string;
   stepIdNext?: string;
+  bindStepIdNext?: string;
 };
 
 export type LifeCycleFunction = Record<string, TestTypeYaml>;
@@ -341,6 +342,7 @@ export type TestExtendType = {
   stepIdParent?: string;
   stepId?: string;
   stepIdNext?: string;
+  bindStepIdNext?: string;
   source?: string;
   socket?: SocketType;
   envsId?: string;

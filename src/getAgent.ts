@@ -122,7 +122,14 @@ export const stepResolver = (
 
     const updatedAgentJson: TestExtendType = propagateArgumentsObjectsOnAir(agentJson, { ...args }, ['data']);
 
-    updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
+    // Для stepIdNext: если в args есть resultsFromPrevSubling, используем его (приоритет для stepIdNext)
+    // Иначе используем из parentStepMetaCollector (стандартное линейное выполнение)
+    const argsWithResults = args as TestArgsType & { resultsFromPrevSubling?: Record<string, unknown> };
+    if (argsWithResults?.resultsFromPrevSubling) {
+      updatedAgentJson.resultsFromPrevSubling = argsWithResults.resultsFromPrevSubling;
+    } else {
+      updatedAgentJson.resultsFromPrevSubling = parentStepMetaCollector?.resultsFromPrevSubling ?? {};
+    }
 
     const { result = {} } = await step.run(updatedAgentJson);
 
@@ -139,6 +146,7 @@ export const stepResolver = (
   // Добавляем метаданные к функции для управления порядком выполнения
   stepFunction.stepId = agentJson.stepId;
   stepFunction.stepIdNext = agentJson.stepIdNext;
+  stepFunction.bindStepIdNext = agentJson.bindStepIdNext;
 
   return stepFunction;
 };

@@ -26,7 +26,7 @@
       "request": "launch",
       "name": "Create snapshot for stepId",
       "program": "${workspaceFolder}\\src.tests.e2e\\start.js",
-      "args": ["stepId", "true"],
+      "args": ["stepIdWithResults", "true"],
       "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
     },
     {

@@ -1,0 +1,29 @@
+name: stepIdWithResults
+description: "Тест передачи данных между шагами"
+run:
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"
+      data:
+        counter: 1
+      bindDescription: "`Шаг 1: counter=${counter}`"
+      results:
+        counter: "counter"
+
+  - blank:
+      stepId: "step2"
+      stepIdNext: "step4"
+      bindDescription: "`Шаг 2: counter=${counter}`"
+      results:
+        counter: "counter + 10"
+
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"
+      bindDescription: "`Шаг 3: counter=${counter}`"
+      results:
+        counter: "counter + 100"
+
+  - blank:
+      stepId: "step4"
+      bindDescription: "`Шаг 4: финальный counter=${counter}`"

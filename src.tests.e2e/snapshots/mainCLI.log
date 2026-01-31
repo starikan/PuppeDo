@@ -141,16 +141,16 @@ Main test (main)
                       |    [36m👣[main -> run[12].getText][0m
                       |    [36m🔆 repeats left: 1[0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
-                      |   |   [36m☸️ (selectors): {"titleText":"Test Document","text":"Test Document","array":["Test Document"],"selector":"title"}[0m
+                      |   |   [36m📋 (data): {"text":"Test Document","array":["Test Document"],"titleText":"Test Document"}[0m
+                      |   |   [36m☸️ (selectors): {"text":"Test Document","array":["Test Document"],"titleText":"Test Document","selector":"title"}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)
 00:00:00.000 - test   |   [32m(getText) Get text with repeat[0m
                       |    [36m👣[main -> run[12].getText][0m
 00:00:00.000 - raw    |   |   Get text: 'Test Document' from selector: 'title'
-                      |   |   [36m📋 (data): {"titleText":"Test Document","text":"Test Document","array":["Test Document"]}[0m
-                      |   |   [36m☸️ (selectors): {"titleText":"Test Document","text":"Test Document","array":["Test Document"],"selector":"title"}[0m
+                      |   |   [36m📋 (data): {"text":"Test Document","array":["Test Document"],"titleText":"Test Document"}[0m
+                      |   |   [36m☸️ (selectors): {"text":"Test Document","array":["Test Document"],"titleText":"Test Document","selector":"title"}[0m
                       |   |   [36m↩️ (results): {"titleText":"text"}[0m
                       |   |   ⌛: 00.000 s.
                       |   🕝: 00.000 s. (getText)

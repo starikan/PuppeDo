@@ -209,8 +209,9 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
 };
 
 /**
- * Executes lifecycle functions in order, following stepIdNext if present.
- * If any function has stepIdNext, it creates a map and executes in sequence based on stepIdNext.
+ * Executes lifecycle functions in order, following stepIdNext or bindStepIdNext if present.
+ * If any function has stepIdNext/bindStepIdNext, it creates a map and executes in sequence based on stepIdNext.
+ * bindStepIdNext is evaluated dynamically after each step execution using the combined results.
  * Otherwise, executes all functions in the provided order for backward compatibility.
  * @param allSteps - Array of lifecycle functions to execute.
  * @param args - Arguments to pass to each function.
@@ -220,10 +221,10 @@ const executeLifeCycleFunctions = async (
   allSteps: TestLifeCycleFunctionType[],
   args: TestArgsType,
 ): Promise<Record<string, unknown>> => {
-  let resultFromLifeCycle = {};
+  let resultFromLifeCycle: Record<string, unknown> = {};
 
-  // Проверяем, есть ли хотя бы один шаг с stepIdNext
-  const hasStepIdNext = allSteps.some((func) => func.stepIdNext);
+  // Проверяем, есть ли хотя бы один шаг с stepIdNext или bindStepIdNext
+  const hasStepIdNext = allSteps.some((func) => func.stepIdNext || func.bindStepIdNext);
 
   if (hasStepIdNext) {
     // Создаём карту stepId -> функция для быстрого доступа
@@ -234,12 +235,26 @@ const executeLifeCycleFunctions = async (
       }
     }
 
-    // Находим первый шаг (первый с stepId или просто первый)
+    // Защита от бесконечных циклов
+    const maxIterations = allSteps.length * 10;
+    let iterations = 0;
+
     const executedStepIds = new Set<string>();
     let currentFunc: TestLifeCycleFunctionType | undefined = allSteps[0];
 
-    while (currentFunc) {
-      const funResult = (await currentFunc(args)) || {};
+    // Создаём копию args для модификации с результатами
+    const argsWithResults: TestArgsType & { resultsFromPrevSubling?: Record<string, unknown> } = { ...args };
+
+    while (currentFunc && iterations < maxIterations) {
+      iterations++;
+
+      // Обновляем data и selectors с накопленными результатами
+      argsWithResults.data = { ...args.data, ...resultFromLifeCycle };
+      argsWithResults.selectors = { ...args.selectors, ...resultFromLifeCycle };
+      // Передаём накопленные результаты для использования в дочерних шагах
+      argsWithResults.resultsFromPrevSubling = resultFromLifeCycle;
+
+      const funResult = (await currentFunc(argsWithResults)) || {};
       resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
 
       // Запоминаем выполненный stepId
@@ -248,12 +263,27 @@ const executeLifeCycleFunctions = async (
       }
 
       // Определяем следующий шаг
-      if (currentFunc.stepIdNext) {
-        currentFunc = stepMap.get(currentFunc.stepIdNext);
+      let nextStepId: string | undefined = currentFunc.stepIdNext;
+
+      // Если есть bindStepIdNext, вычисляем его динамически
+      if (currentFunc.bindStepIdNext) {
+        const allData = { ...argsWithResults.data, ...argsWithResults.selectors, ...resultFromLifeCycle };
+        const evaluatedNextStepId = runScriptInContext(currentFunc.bindStepIdNext, allData);
+        if (typeof evaluatedNextStepId === 'string' && evaluatedNextStepId) {
+          nextStepId = evaluatedNextStepId;
+        }
+      }
+
+      if (nextStepId) {
+        currentFunc = stepMap.get(nextStepId);
       } else {
         // Если stepIdNext не указан, ищем следующий не выполненный шаг
         currentFunc = allSteps.find((func) => func.stepId && !executedStepIds.has(func.stepId));
       }
+    }
+
+    if (iterations >= maxIterations) {
+      throw new Error(`executeLifeCycleFunctions: Maximum iterations (${maxIterations}) reached. Possible infinite loop.`);
     }
   } else {
     // Оригинальная логика для обратной совместимости
@@ -606,8 +636,9 @@ export class Test {
         throw new Error('Can`t get results from test');
       }
       const allowResultsObject = this.agent.allowResults.reduce((collect, v) => ({ ...collect, ...{ [v]: v } }), {});
+      // bindResults имеет приоритет над allowResultsObject для вычисляемых значений
       let localResults = resolveDataFunctions(
-        { ...this.agent.bindResults, ...allowResultsObject },
+        { ...allowResultsObject, ...this.agent.bindResults },
         { ...selectorsLocal, ...dataLocal, ...results },
       );
 

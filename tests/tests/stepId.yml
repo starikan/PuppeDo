@@ -1,4 +1,9 @@
 name: stepId
+description: "Тест ветвления с stepIdNext"
+descriptionExtend:
+  - Базовый тест - простое ветвление
+  - Порядок выполнения: step1 -> step3 -> step2 -> step4 -> step5
+
 run:
   - blank:
       stepId: "step1"
@@ -6,23 +11,27 @@ run:
       data:
         random: "step1data"
       bindDescription: "`Шаг с случайными данными ${random}`"
+
   - blank:
       stepId: "step2"
       stepIdNext: "step4"
       data:
         random: "step2data"
       bindDescription: "`Шаг с случайными данными ${random}`"
+
   - blank:
       stepId: "step3"
       stepIdNext: "step2"
       data:
         random: "step3data"
       bindDescription: "`Шаг с случайными данными ${random}`"
+
   - blank:
       stepId: "step4"
       data:
         random: "step4data"
       bindDescription: "`Шаг с случайными данными ${random}`"
+
   - blank:
       stepId: "step5"
       data:
