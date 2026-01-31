@@ -209,9 +209,9 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
 };
 
 /**
- * Executes lifecycle functions in order, following stepIdNext or bindStepIdNext if present.
- * If any function has stepIdNext/bindStepIdNext, it creates a map and executes in sequence based on stepIdNext.
- * bindStepIdNext is evaluated dynamically after each step execution using the combined results.
+ * Executes lifecycle functions in order, following stepIdNext if present.
+ * If any function has stepIdNext, it creates a map and executes in sequence based on stepIdNext.
+ * stepIdNext is evaluated dynamically after each step execution using the combined results.
  * Otherwise, executes all functions in the provided order for backward compatibility.
  * @param allSteps - Array of lifecycle functions to execute.
  * @param args - Arguments to pass to each function.
@@ -261,7 +261,7 @@ const executeLifeCycleFunctions = async (
     if (visitCount > maxVisitsPerStep) {
       throw new Error(
         `executeLifeCycleFunctions: Step "${currentStepId}" visited ${visitCount} times. ` +
-          `Possible infinite loop detected. Check your stepIdNext/bindStepIdNext logic.`,
+          `Possible infinite loop detected. Check your stepIdNext logic.`,
       );
     }
 
@@ -284,13 +284,12 @@ const executeLifeCycleFunctions = async (
     const funResult = (await currentFunc(argsWithResults)) || {};
     resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
 
-    // Определяем следующий шаг
-    let nextStepId: string | undefined = currentFunc.stepIdNext;
+    // Определяем следующий шаг - stepIdNext всегда проходит через резолвер
+    let nextStepId: string | undefined;
 
-    // Если есть bindStepIdNext, вычисляем его динамически
-    if (currentFunc.bindStepIdNext) {
+    if (currentFunc.stepIdNext) {
       const allData = { ...argsWithResults.data, ...argsWithResults.selectors, ...resultFromLifeCycle };
-      const evaluatedNextStepId = runScriptInContext(currentFunc.bindStepIdNext, allData);
+      const evaluatedNextStepId = runScriptInContext(currentFunc.stepIdNext, allData, currentFunc.stepIdNext);
       if (typeof evaluatedNextStepId === 'string' && evaluatedNextStepId) {
         nextStepId = evaluatedNextStepId;
       }

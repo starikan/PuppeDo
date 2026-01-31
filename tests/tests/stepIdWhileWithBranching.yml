@@ -1,5 +1,5 @@
 name: stepIdWhileWithBranching
-description: "Тест while с динамическим ветвлением bindStepIdNext"
+description: "Тест while с динамическим ветвлением stepIdNext"
 descriptionExtend:
   - while увеличивает значение
   - После выхода из while - ветвление по результату
@@ -22,12 +22,12 @@ run:
       results:
         value: "value + 3"
       while: "value < target"
-      bindStepIdNext: "value >= target ? 'checkResult' : 'increment'"
+      stepIdNext: "value >= target ? 'checkResult' : 'increment'"
 
   - blank:
       stepId: "checkResult"
       bindDescription: "`Проверка результата: value=${value}`"
-      bindStepIdNext: "value > 10 ? 'overflow' : 'exact'"
+      stepIdNext: "value > 10 ? 'overflow' : 'exact'"
 
   - blank:
       stepId: "overflow"

@@ -13,7 +13,7 @@ run:
         mode: "mode"
         score: "score"
         attempts: "attempts"
-      bindStepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
+      stepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
 
   # === SIMPLE FLOW ===
   - blank:

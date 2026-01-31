@@ -253,24 +253,22 @@ allowResults:
     stepId: "step1"
 ```
 
-### stepIdNext — переход к конкретному шагу
+### stepIdNext — переход к шагу
 
-Указывает следующий шаг по `stepId` (вместо последовательного выполнения).
+Указывает следующий шаг по `stepId`. Поддерживает как статические значения, так и JavaScript-выражения.
 
+**Статический переход:**
 ```yaml
 - blank:
     stepId: "step1"
     stepIdNext: "step3"    # После step1 выполнится step3
 ```
 
-### bindStepIdNext — динамическое ветвление
-
-Вычисляет следующий шаг через JavaScript-выражение.
-
+**Динамический переход (выражение):**
 ```yaml
 - blank:
     stepId: "router"
-    bindStepIdNext: "status === 'ok' ? 'success' : 'error'"
+    stepIdNext: "status === 'ok' ? 'success' : 'error'"
 ```
 
 ### Пример ветвления
@@ -462,7 +460,7 @@ browser:
 
 ## Контекст выражений
 
-Доступны в `bindData`, `bindSelectors`, `result`, `if`, `while`, `errorIf`, `errorIfResult`, `bindStepIdNext`:
+Доступны в `bindData`, `bindSelectors`, `result`, `if`, `while`, `errorIf`, `errorIfResult`, `stepIdNext`:
 
 - Все ключи из `data`
 - Все ключи из `selectors`

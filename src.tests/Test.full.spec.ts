@@ -861,10 +861,10 @@ describe('executeLifeCycleFunctions', () => {
     expect(result).toEqual({ a: 1, b: 2 });
   });
 
-  test('uses bindStepIdNext to dynamically determine next step', async () => {
+  test('uses stepIdNext with expression to dynamically determine next step', async () => {
     const step1 = jest.fn().mockResolvedValue({ target: 'step3' }) as any;
     step1.stepId = 'step1';
-    step1.bindStepIdNext = 'target';
+    step1.stepIdNext = 'target';
 
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
@@ -879,10 +879,10 @@ describe('executeLifeCycleFunctions', () => {
     expect(result).toEqual({ target: 'step3', c: 3 });
   });
 
-  test('bindStepIdNext evaluating to non-string or empty continues to next step', async () => {
+  test('stepIdNext expression evaluating to non-string or empty continues to next step', async () => {
     const step1 = jest.fn().mockResolvedValue({ target: null }) as any;
     step1.stepId = 'step1';
-    step1.bindStepIdNext = 'target'; // evaluates to null
+    step1.stepIdNext = 'target'; // evaluates to null
 
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
@@ -894,10 +894,10 @@ describe('executeLifeCycleFunctions', () => {
     expect(result).toEqual({ target: null, b: 2 });
   });
 
-  test('bindStepIdNext evaluating to empty string continues to next step', async () => {
+  test('stepIdNext expression evaluating to empty string continues to next step', async () => {
     const step1 = jest.fn().mockResolvedValue({ target: '' }) as any;
     step1.stepId = 'step1';
-    step1.bindStepIdNext = 'target'; // evaluates to empty string
+    step1.stepIdNext = 'target'; // evaluates to empty string
 
     const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';

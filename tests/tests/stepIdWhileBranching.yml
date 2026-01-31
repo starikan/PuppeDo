@@ -1,9 +1,9 @@
 name: stepIdWhileBranching
-description: "Тест while с динамическим ветвлением bindStepIdNext"
+description: "Тест while с динамическим ветвлением stepIdNext"
 descriptionExtend:
-  - Комбинация while и bindStepIdNext
+  - Комбинация while и stepIdNext
   - while увеличивает score до порога
-  - bindStepIdNext выбирает ветку после достижения порога
+  - stepIdNext выбирает ветку после достижения порога
 
 run:
   # Инициализация
@@ -38,7 +38,7 @@ run:
         level: "level"
         score: "score"
       # Если уровень < maxLevel, повышаем и продолжаем гринд
-      bindStepIdNext: "level < maxLevel ? 'levelUp' : 'victory'"
+      stepIdNext: "level < maxLevel ? 'levelUp' : 'victory'"
 
   # Повышение уровня
   - blank:

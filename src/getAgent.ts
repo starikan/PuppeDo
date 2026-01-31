@@ -146,7 +146,6 @@ export const stepResolver = (
   // Добавляем метаданные к функции для управления порядком выполнения
   stepFunction.stepId = agentJson.stepId;
   stepFunction.stepIdNext = agentJson.stepIdNext;
-  stepFunction.bindStepIdNext = agentJson.bindStepIdNext;
 
   return stepFunction;
 };

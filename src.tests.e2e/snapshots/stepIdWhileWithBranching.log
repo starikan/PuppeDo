@@ -1,6 +1,6 @@
 00:00:00.000 - timer  Test 'stepIdWhileWithBranching' start on '0000-00-00_00-00-00.000'
 00:00:00.000 - env    [34m
-Тест while с динамическим ветвлением bindStepIdNext (stepIdWhileWithBranching)
+Тест while с динамическим ветвлением stepIdNext (stepIdWhileWithBranching)
    (blank)
    (blank)
    (blank)
@@ -9,7 +9,7 @@
    (blank)
 [0m
 00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
-00:00:00.000 - test   [32m(stepIdWhileWithBranching) Тест while с динамическим ветвлением bindStepIdNext[0m
+00:00:00.000 - test   [32m(stepIdWhileWithBranching) Тест while с динамическим ветвлением stepIdNext[0m
 00:00:00.000 - test   |   [32m(blank) Старт: value=0, target=10[0m
                       |   🕝: 00.000 s. (blank)
 00:00:00.000 - test   |   [32m(blank) Инкремент: value=0 -> 3[0m

@@ -13,7 +13,7 @@ run:
         mode: "mode"
         score: "score"
         attempts: "attempts"
-      bindStepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
+      stepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
 
   # === SIMPLE FLOW (не выполнится) ===
   - blank:
@@ -28,7 +28,7 @@ run:
       results:
         score: "score"
         attempts: "attempts"
-      bindStepIdNext: "score >= 90 ? 'excellent' : (score >= 70 ? 'good' : 'needImprovement')"
+      stepIdNext: "score >= 90 ? 'excellent' : (score >= 70 ? 'good' : 'needImprovement')"
 
   # Ветка "отлично" (не выполнится в этом тесте)
   - blank:
@@ -54,7 +54,7 @@ run:
         badge: "'bronze'"
         attempts: "attempts + 1"
       # Проверяем количество попыток (макс 3)
-      bindStepIdNext: "attempts < 3 ? 'retry' : 'giveUp'"
+      stepIdNext: "attempts < 3 ? 'retry' : 'giveUp'"
 
   # Повторная попытка - увеличиваем score на 15
   - blank:

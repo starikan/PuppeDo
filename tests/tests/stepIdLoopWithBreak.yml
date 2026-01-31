@@ -2,7 +2,7 @@ name: stepIdLoopWithBreak
 description: "Тест цикла с условным выходом через stepIdNext"
 descriptionExtend:
   - Симулируем поиск элемента с повторными попытками
-  - Используем bindStepIdNext для выхода из цикла по условию
+  - Используем stepIdNext для выхода из цикла по условию
   - Демонстрация паттерна "retry until success"
 
 run:
@@ -30,7 +30,7 @@ run:
         attempt: "attempt + 1"
         found: "attempt + 1 >= targetAttempt"
       # Ветвление: нашли -> success, не нашли и есть попытки -> retry, иначе -> fail
-      bindStepIdNext: "found ? 'success' : (attempt < maxAttempts ? 'wait' : 'fail')"
+      stepIdNext: "found ? 'success' : (attempt < maxAttempts ? 'wait' : 'fail')"
 
   # Ожидание перед следующей попыткой
   - blank:
