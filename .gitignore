@@ -27,3 +27,5 @@ yarn.lock
 /docker-compose.dev.yml
 /docker-dev.bat
 /.opencode-data
+/dist/src
+/dist/src.tests

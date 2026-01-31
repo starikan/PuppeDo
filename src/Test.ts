@@ -285,7 +285,9 @@ const executeLifeCycleFunctions = async (
     }
 
     if (iterations >= maxIterations) {
-      throw new Error(`executeLifeCycleFunctions: Maximum iterations (${maxIterations}) reached. Possible infinite loop.`);
+      throw new Error(
+        `executeLifeCycleFunctions: Maximum iterations (${maxIterations}) reached. Possible infinite loop.`,
+      );
     }
   } else {
     // Оригинальная логика для обратной совместимости
