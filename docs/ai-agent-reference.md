@@ -242,6 +242,71 @@ allowResults:
     disable: true
 ```
 
+## Ветвление выполнения (stepId / stepIdNext)
+
+### stepId — идентификатор шага
+
+Уникальный идентификатор шага для ветвления.
+
+```yaml
+- blank:
+    stepId: "step1"
+```
+
+### stepIdNext — переход к конкретному шагу
+
+Указывает следующий шаг по `stepId` (вместо последовательного выполнения).
+
+```yaml
+- blank:
+    stepId: "step1"
+    stepIdNext: "step3"    # После step1 выполнится step3
+```
+
+### bindStepIdNext — динамическое ветвление
+
+Вычисляет следующий шаг через JavaScript-выражение.
+
+```yaml
+- blank:
+    stepId: "router"
+    bindStepIdNext: "status === 'ok' ? 'success' : 'error'"
+```
+
+### Пример ветвления
+
+```yaml
+name: branchingExample
+description: "Порядок: step1 → step3 → step2 → step4"
+
+run:
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"
+      data: { value: 1 }
+
+  - blank:
+      stepId: "step2"
+      stepIdNext: "step4"
+      data: { value: 2 }
+
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"
+      data: { value: 3 }
+
+  - blank:
+      stepId: "step4"
+      data: { value: 4 }
+```
+
+### Правила ветвления
+
+1. **stepIdNext указывает на несуществующий stepId** — берётся следующий шаг по порядку
+2. **stepIdNext не указан** — берётся следующий шаг по порядку
+3. **Защита от циклов** — максимум 100 посещений одного stepId
+4. **Результаты передаются** — каждый шаг видит результаты всех предыдущих
+
 ## Валидация
 
 ### needData — обязательные данные
@@ -397,7 +462,7 @@ browser:
 
 ## Контекст выражений
 
-Доступны в `bindData`, `bindSelectors`, `result`, `if`, `while`, `errorIf`, `errorIfResult`:
+Доступны в `bindData`, `bindSelectors`, `result`, `if`, `while`, `errorIf`, `errorIfResult`, `bindStepIdNext`:
 
 - Все ключи из `data`
 - Все ключи из `selectors`

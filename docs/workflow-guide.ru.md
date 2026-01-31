@@ -54,6 +54,7 @@
   - [8.2 skipSublingIfResult — пропуск шагов](#82-skipsublingifresult--пропуск-шагов)
   - [8.3 disable — отключение шага](#83-disable--отключение-шага)
   - [8.4 tags — фильтрация по тегам](#84-tags--фильтрация-по-тегам)
+  - [8.5 Ветвление выполнения (stepId / stepIdNext)](#85-ветвление-выполнения-stepid--stepidnext)
 
 ### Часть V: Продвинутые темы
 - [9. Плагины](#9-плагины)
@@ -1199,6 +1200,217 @@ ppd --tags smoke
 # Запустить smoke ИЛИ critical
 ppd --tags smoke,critical
 ```
+
+### 8.5 Ветвление выполнения (stepId / stepIdNext)
+
+По умолчанию шаги выполняются последовательно сверху вниз. Но иногда нужно **изменить порядок выполнения** — например, пропустить шаги, вернуться назад или реализовать условное ветвление как в блок-схемах.
+
+Для этого используются три поля:
+- `stepId` — уникальный идентификатор шага
+- `stepIdNext` — статический переход к шагу по его stepId
+- `bindStepIdNext` — динамический переход (вычисляется через выражение)
+
+#### Зачем это нужно?
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   ОБЫЧНОЕ ВЫПОЛНЕНИЕ                        │
+│                                                             │
+│    step1 → step2 → step3 → step4 → step5                    │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│                   С ВЕТВЛЕНИЕМ (stepIdNext)                 │
+│                                                             │
+│    step1 ──────────────┐                                    │
+│              (skip)    ↓                                    │
+│    step2 ←──────────── step3                                │
+│      │                                                      │
+│      └───────────────→ step4 → step5                        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### stepId — идентификатор шага
+
+`stepId` — это **уникальная метка** для шага, на которую можно ссылаться.
+
+```yaml
+- blank:
+    stepId: "login"           # ← Теперь на этот шаг можно ссылаться
+    run:
+      - typeInput:
+          selectors: { selector: "#username" }
+```
+
+> ⚠️ **Важно:** `stepId` должен быть уникальным в пределах одного блока `run` / `beforeRun` / `afterRun`.
+
+#### stepIdNext — статический переход
+
+`stepIdNext` указывает, какой шаг выполнить **следующим** (вместо следующего по порядку).
+
+```yaml
+run:
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"     # ← После step1 выполнится step3 (не step2!)
+      data: { msg: "Первый" }
+
+  - blank:
+      stepId: "step2"         # ← Этот шаг будет пропущен при первом проходе
+      data: { msg: "Второй" }
+
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"     # ← После step3 вернёмся к step2
+      data: { msg: "Третий" }
+```
+
+**Порядок выполнения:** step1 → step3 → step2 → (конец, т.к. у step2 нет stepIdNext)
+
+#### bindStepIdNext — динамическое ветвление
+
+`bindStepIdNext` вычисляет следующий шаг **во время выполнения** через JavaScript-выражение.
+
+```yaml
+run:
+  - checkStatus:
+      stepId: "router"
+      result: { status: status }
+      bindStepIdNext: "status === 'ok' ? 'success' : 'error'"
+
+  - handleSuccess:
+      stepId: "success"
+      data: { msg: "Всё хорошо!" }
+
+  - handleError:
+      stepId: "error"
+      data: { msg: "Что-то пошло не так" }
+```
+
+**Контекст выражения:** В `bindStepIdNext` доступны все данные (`data`), селекторы (`selectors`) и результаты предыдущих шагов.
+
+#### Полный пример: workflow с ветвлением
+
+```yaml
+name: branchingWorkflow
+description: "Демонстрация ветвления: step1 → step3 → step2 → step4 → step5"
+
+run:
+  # Шаг 1: Начало, переход к step3
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"
+      data: { value: 1 }
+      bindDescription: "`Шаг 1, value=${value}`"
+
+  # Шаг 2: Будет выполнен после step3
+  - blank:
+      stepId: "step2"
+      stepIdNext: "step4"
+      data: { value: 2 }
+      bindDescription: "`Шаг 2, value=${value}`"
+
+  # Шаг 3: Выполняется после step1, затем переход к step2
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"
+      data: { value: 3 }
+      bindDescription: "`Шаг 3, value=${value}`"
+
+  # Шаг 4: Выполняется после step2
+  - blank:
+      stepId: "step4"
+      data: { value: 4 }
+      bindDescription: "`Шаг 4, value=${value}`"
+
+  # Шаг 5: Выполняется последним (следующий по порядку после step4)
+  - blank:
+      stepId: "step5"
+      data: { value: 5 }
+      bindDescription: "`Шаг 5, value=${value}`"
+```
+
+#### Пример: условный роутинг
+
+```yaml
+name: conditionalRouting
+description: "Выбор пути в зависимости от статуса"
+
+run:
+  # Получаем статус
+  - getStatus:
+      stepId: "check"
+      result: { userStatus: status }
+      bindStepIdNext: |
+        userStatus === 'admin' ? 'adminPath' :
+        userStatus === 'user' ? 'userPath' : 'guestPath'
+
+  # Путь для админа
+  - blank:
+      stepId: "adminPath"
+      stepIdNext: "finish"    # После админского пути — на финиш
+      run:
+        - goTo:
+            data: { url: "/admin/dashboard" }
+
+  # Путь для пользователя
+  - blank:
+      stepId: "userPath"
+      stepIdNext: "finish"
+      run:
+        - goTo:
+            data: { url: "/user/profile" }
+
+  # Путь для гостя
+  - blank:
+      stepId: "guestPath"
+      stepIdNext: "finish"
+      run:
+        - goTo:
+            data: { url: "/login" }
+
+  # Общий финиш
+  - blank:
+      stepId: "finish"
+      run:
+        - waitForSelector:
+            selectors: { selector: ".page-loaded" }
+```
+
+#### Правила и ограничения
+
+| Правило | Описание |
+|---------|----------|
+| **stepId уникален** | Два шага не могут иметь одинаковый stepId в одном блоке |
+| **Несуществующий stepIdNext** | Если указанный stepId не найден — берётся следующий шаг по порядку |
+| **Без stepIdNext** | Если stepIdNext не указан — выполняется следующий шаг по порядку |
+| **Защита от циклов** | Максимум 100 посещений одного stepId (защита от бесконечных циклов) |
+| **Передача результатов** | Каждый шаг видит результаты всех предыдущих выполненных шагов |
+
+#### Отличие от repeat/while
+
+| Механизм | Когда использовать |
+|----------|-------------------|
+| `repeat` / `while` | Повторение **одного и того же** блока шагов |
+| `stepId` / `stepIdNext` | Изменение **порядка выполнения** разных шагов |
+
+```yaml
+# repeat — повторяет ОДИН блок
+- blank:
+    repeat: 3
+    run:
+      - doSomething:
+
+# stepIdNext — переходы между РАЗНЫМИ шагами
+- step1:
+    stepIdNext: "step3"
+- step2:
+    # ...
+- step3:
+    stepIdNext: "step2"
+```
+
+> 💡 **Совет:** Используйте `stepIdNext` для реализации state-machine паттернов, wizard-ов с условными переходами, и сложной логики маршрутизации.
 
 ---
 
