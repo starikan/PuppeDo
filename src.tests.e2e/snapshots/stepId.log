@@ -1,0 +1,27 @@
+00:00:00.000 - timer  Test 'stepId' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+(stepId)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [41m[32m(stepId) TODO: Fill description[0m[0m
+00:00:00.000 - test   |   [32m(blank) Шаг с случайными данными step1data[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг с случайными данными step3data[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг с случайными данными step2data[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг с случайными данными step4data[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг с случайными данными step5data[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepId)
+00:00:00.000 - timer  Test 'stepId' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepId": {}
+}

@@ -149,6 +149,9 @@ const testsE2E = {
   selectors: {
     params: { PPD_TESTS: 'selectors' },
   },
+  stepId: {
+    params: { PPD_TESTS: 'stepId' },
+  },
 };
 
 module.exports = testsE2E;

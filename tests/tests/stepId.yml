@@ -1,0 +1,30 @@
+name: stepId
+run:
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"
+      data:
+        random: "step1data"
+      bindDescription: "`Шаг с случайными данными ${random}`"
+  - blank:
+      stepId: "step2"
+      stepIdNext: "step4"
+      data:
+        random: "step2data"
+      bindDescription: "`Шаг с случайными данными ${random}`"
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"
+      data:
+        random: "step3data"
+      bindDescription: "`Шаг с случайными данными ${random}`"
+  - blank:
+      stepId: "step4"
+      data:
+        random: "step4data"
+      bindDescription: "`Шаг с случайными данными ${random}`"
+  - blank:
+      stepId: "step5"
+      data:
+        random: "step5data"
+      bindDescription: "`Шаг с случайными данными ${random}`"

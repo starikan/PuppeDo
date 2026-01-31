@@ -291,7 +291,10 @@ export type TestArgsType = {
   agent: AgentData;
 };
 
-export type TestLifeCycleFunctionType = (args?: TestArgsType) => Promise<Record<string, unknown>>;
+export type TestLifeCycleFunctionType = ((args?: TestArgsType) => Promise<Record<string, unknown>>) & {
+  stepId?: string;
+  stepIdNext?: string;
+};
 
 export type LifeCycleFunction = Record<string, TestTypeYaml>;
 
@@ -337,6 +340,7 @@ export type TestExtendType = {
   breadcrumbsDescriptions?: string[];
   stepIdParent?: string;
   stepId?: string;
+  stepIdNext?: string;
   source?: string;
   socket?: SocketType;
   envsId?: string;

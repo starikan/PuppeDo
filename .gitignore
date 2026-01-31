@@ -23,3 +23,7 @@ yarn.lock
 /dist/index.d.ts
 /dist/index.js
 /dist/index.js.map
+/.env
+/docker-compose.dev.yml
+/docker-dev.bat
+/.opencode-data

@@ -136,6 +136,10 @@ export const stepResolver = (
     return result;
   };
 
+  // Добавляем метаданные к функции для управления порядком выполнения
+  stepFunction.stepId = agentJson.stepId;
+  stepFunction.stepIdNext = agentJson.stepIdNext;
+
   return stepFunction;
 };
 

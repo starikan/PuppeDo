@@ -208,6 +208,64 @@ const checkIntersection = (dataLocal: Record<string, unknown>, selectorsLocal: R
   }
 };
 
+/**
+ * Executes lifecycle functions in order, following stepIdNext if present.
+ * If any function has stepIdNext, it creates a map and executes in sequence based on stepIdNext.
+ * Otherwise, executes all functions in the provided order for backward compatibility.
+ * @param allSteps - Array of lifecycle functions to execute.
+ * @param args - Arguments to pass to each function.
+ * @returns Merged results from all executed functions.
+ */
+const executeLifeCycleFunctions = async (
+  allSteps: TestLifeCycleFunctionType[],
+  args: TestArgsType,
+): Promise<Record<string, unknown>> => {
+  let resultFromLifeCycle = {};
+
+  // Проверяем, есть ли хотя бы один шаг с stepIdNext
+  const hasStepIdNext = allSteps.some((func) => func.stepIdNext);
+
+  if (hasStepIdNext) {
+    // Создаём карту stepId -> функция для быстрого доступа
+    const stepMap = new Map<string, TestLifeCycleFunctionType>();
+    for (const func of allSteps) {
+      if (func.stepId) {
+        stepMap.set(func.stepId, func);
+      }
+    }
+
+    // Находим первый шаг (первый с stepId или просто первый)
+    const executedStepIds = new Set<string>();
+    let currentFunc: TestLifeCycleFunctionType | undefined = allSteps[0];
+
+    while (currentFunc) {
+      const funResult = (await currentFunc(args)) || {};
+      resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
+
+      // Запоминаем выполненный stepId
+      if (currentFunc.stepId) {
+        executedStepIds.add(currentFunc.stepId);
+      }
+
+      // Определяем следующий шаг
+      if (currentFunc.stepIdNext) {
+        currentFunc = stepMap.get(currentFunc.stepIdNext);
+      } else {
+        // Если stepIdNext не указан, ищем следующий не выполненный шаг
+        currentFunc = allSteps.find((func) => func.stepId && !executedStepIds.has(func.stepId));
+      }
+    }
+  } else {
+    // Оригинальная логика для обратной совместимости
+    for (const func of allSteps) {
+      const funResult = (await func(args)) || {};
+      resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
+    }
+  }
+
+  return resultFromLifeCycle;
+};
+
 export class Test {
   runner!: Runner;
 
@@ -289,9 +347,8 @@ export class Test {
       }
 
       await this.logger.log({
-        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${
-          PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
-        }`,
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
+          }`,
         level: 'raw',
         levelIndent: this.agent.levelIndent,
         logOptions: {
@@ -465,9 +522,8 @@ export class Test {
 
         for (const element of elements) {
           await this.logger.log({
-            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${
-              PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
-            }`,
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
+              }`,
             level: 'test',
             levelIndent: this.agent.levelIndent,
             element,
@@ -529,15 +585,14 @@ export class Test {
       this.plugins.hook('beforeFunctions', { inputs: this.agent, stepId: this.agent.stepId });
 
       // LIFE CYCLE
-      let resultFromLifeCycle = {};
-
+      // Собираем все шаги из lifeCycleFunctions в плоский массив с метаданными
+      const allSteps: TestLifeCycleFunctionType[] = [];
       for (const funcs of this.lifeCycleFunctions) {
         const funcsArray = [funcs].flat();
-        for (const func of funcsArray) {
-          const funResult = (await func(args)) || {};
-          resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
-        }
+        allSteps.push(...funcsArray);
       }
+
+      const resultFromLifeCycle = await executeLifeCycleFunctions(allSteps, args);
 
       // RESULTS
       const results = this.agent.allowResults.length
