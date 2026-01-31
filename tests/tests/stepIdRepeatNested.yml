@@ -1,0 +1,37 @@
+name: stepIdRepeatNested
+description: "Тест вложенных repeat с stepIdNext"
+descriptionExtend:
+  - Внешний цикл с repeat переходит к внутреннему
+  - Внутренний цикл возвращается к внешнему
+  - Проверка корректной работы счётчиков
+
+run:
+  # Внешний цикл
+  - blank:
+      stepId: "outer"
+      stepIdNext: "inner"
+      repeat: 2
+      data:
+        outerCount: 0
+        innerCount: 0
+        total: 0
+      bindDescription: "`Внешний цикл: outerCount=${outerCount}, repeat=${repeat}`"
+      results:
+        outerCount: "outerCount + 1"
+        innerCount: "0"
+        total: "total"
+
+  # Внутренний цикл
+  - blank:
+      stepId: "inner"
+      stepIdNext: "summary"
+      repeat: 3
+      bindDescription: "`  Внутренний: outer=${outerCount}, inner=${innerCount}, repeat=${repeat}`"
+      results:
+        innerCount: "innerCount + 1"
+        total: "total + 1"
+
+  # Итог после внутреннего цикла
+  - blank:
+      stepId: "summary"
+      bindDescription: "`Итог: outer=${outerCount}, inner=${innerCount}, total=${total}`"

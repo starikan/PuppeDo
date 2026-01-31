@@ -1,0 +1,61 @@
+00:00:00.000 - timer  Test 'stepIdWhileBranching' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест while с динамическим ветвлением bindStepIdNext (stepIdWhileBranching)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdWhileBranching) Тест while с динамическим ветвлением bindStepIdNext[0m
+00:00:00.000 - test   |   [32m(blank) Инициализация: score=0, level=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 1: score=0/30[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 1: score=10/30[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 1: score=20/30[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка: level=1, score=10[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Уровень повышен! 1 -> 2[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 2: score=10/60[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 2: score=20/60[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 2: score=30/60[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 2: score=40/60[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 2: score=50/60[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка: level=2, score=20[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Уровень повышен! 2 -> 3[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=20/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=30/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=40/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=50/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=60/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=70/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Гринд уровня 3: score=80/90[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка: level=3, score=30[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) 🏆 Победа! Финальный level=3, score=30[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdWhileBranching)
+00:00:00.000 - timer  Test 'stepIdWhileBranching' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdWhileBranching": {}
+}

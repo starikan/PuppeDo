@@ -164,6 +164,30 @@ const testsE2E = {
   stepIdBranchingRetry: {
     params: { PPD_TESTS: 'stepIdBranchingRetry' },
   },
+  stepIdRepeat: {
+    params: { PPD_TESTS: 'stepIdRepeat' },
+  },
+  stepIdWhile: {
+    params: { PPD_TESTS: 'stepIdWhile' },
+  },
+  stepIdWhileBranching: {
+    params: { PPD_TESTS: 'stepIdWhileBranching' },
+  },
+  stepIdRepeatWhile: {
+    params: { PPD_TESTS: 'stepIdRepeatWhile' },
+  },
+  stepIdLoopWithBreak: {
+    params: { PPD_TESTS: 'stepIdLoopWithBreak' },
+  },
+  stepIdRepeatNested: {
+    params: { PPD_TESTS: 'stepIdRepeatNested' },
+  },
+  stepIdRepeatWithResults: {
+    params: { PPD_TESTS: 'stepIdRepeatWithResults' },
+  },
+  stepIdWhileWithBranching: {
+    params: { PPD_TESTS: 'stepIdWhileWithBranching' },
+  },
 };
 
 module.exports = testsE2E;

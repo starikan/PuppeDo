@@ -1,0 +1,32 @@
+00:00:00.000 - timer  Test 'stepIdRepeat' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест комбинации stepId/stepIdNext с repeat (stepIdRepeat)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdRepeat) Тест комбинации stepId/stepIdNext с repeat[0m
+00:00:00.000 - test   |   [32m(blank) Шаг 1 (repeat=2): counter=0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 1 (repeat=1): counter=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 3 (repeat=3): counter=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 3 (repeat=2): counter=101[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 3 (repeat=1): counter=201[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 2: counter=101[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 4 (финал, repeat=2): counter=111[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Шаг 4 (финал, repeat=1): counter=1111[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdRepeat)
+00:00:00.000 - timer  Test 'stepIdRepeat' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdRepeat": {}
+}

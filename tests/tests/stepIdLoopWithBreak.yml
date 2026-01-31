@@ -1,0 +1,49 @@
+name: stepIdLoopWithBreak
+description: "Тест цикла с условным выходом через stepIdNext"
+descriptionExtend:
+  - Симулируем поиск элемента с повторными попытками
+  - Используем bindStepIdNext для выхода из цикла по условию
+  - Демонстрация паттерна "retry until success"
+
+run:
+  # Инициализация поиска
+  - blank:
+      stepId: "startSearch"
+      stepIdNext: "search"
+      data:
+        attempt: 0
+        maxAttempts: 5
+        found: false
+        targetAttempt: 3
+      bindDescription: "`Начинаем поиск. Макс. попыток: ${maxAttempts}`"
+      results:
+        attempt: "attempt"
+        maxAttempts: "maxAttempts"
+        found: "found"
+        targetAttempt: "targetAttempt"
+
+  # Шаг поиска
+  - blank:
+      stepId: "search"
+      bindDescription: "`Попытка ${attempt + 1}/${maxAttempts}: ищем элемент...`"
+      results:
+        attempt: "attempt + 1"
+        found: "attempt + 1 >= targetAttempt"
+      # Ветвление: нашли -> success, не нашли и есть попытки -> retry, иначе -> fail
+      bindStepIdNext: "found ? 'success' : (attempt < maxAttempts ? 'wait' : 'fail')"
+
+  # Ожидание перед следующей попыткой
+  - blank:
+      stepId: "wait"
+      stepIdNext: "search"
+      bindDescription: "`Не найдено. Ждём перед попыткой ${attempt + 1}...`"
+
+  # Успешно найден
+  - blank:
+      stepId: "success"
+      bindDescription: "`✅ Элемент найден на попытке ${attempt}!`"
+
+  # Превышено количество попыток
+  - blank:
+      stepId: "fail"
+      bindDescription: "`❌ Элемент не найден после ${attempt} попыток`"

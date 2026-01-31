@@ -1,0 +1,27 @@
+00:00:00.000 - timer  Test 'stepIdRepeatNested' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест вложенных repeat с stepIdNext (stepIdRepeatNested)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdRepeatNested) Тест вложенных repeat с stepIdNext[0m
+00:00:00.000 - test   |   [32m(blank) Внешний цикл: outerCount=0, repeat=2[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Внешний цикл: outerCount=1, repeat=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank)   Внутренний: outer=1, inner=0, repeat=3[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank)   Внутренний: outer=1, inner=1, repeat=2[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank)   Внутренний: outer=1, inner=2, repeat=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Итог: outer=1, inner=1, total=1[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdRepeatNested)
+00:00:00.000 - timer  Test 'stepIdRepeatNested' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdRepeatNested": {}
+}

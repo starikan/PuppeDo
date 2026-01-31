@@ -1,0 +1,27 @@
+name: stepIdRepeatWithResults
+description: "Тест repeat с передачей результатов между шагами"
+descriptionExtend:
+  - repeat накапливает результаты между итерациями
+  - Проверяем что результаты передаются через stepIdNext
+
+run:
+  - blank:
+      stepId: "accumulator"
+      stepIdNext: "multiplier"
+      repeat: 3
+      data:
+        sum: 0
+      bindDescription: "`Аккумулятор: sum=${sum}, $loop=${$loop}`"
+      results:
+        sum: "sum + $loop"
+
+  - blank:
+      stepId: "multiplier"
+      stepIdNext: "finish"
+      bindDescription: "`Умножитель: sum=${sum}, result=${sum * 2}`"
+      results:
+        result: "sum * 2"
+
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Финиш: sum=${sum}, result=${result}`"

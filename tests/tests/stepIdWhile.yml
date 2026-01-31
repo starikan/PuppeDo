@@ -1,0 +1,33 @@
+name: stepIdWhile
+description: "Тест комбинации stepId/stepIdNext с while"
+descriptionExtend:
+  - Проверяем что while работает корректно с stepIdNext
+  - Шаг повторяется пока условие while истинно
+  - Порядок: start -> accumulator(while) -> finish
+
+run:
+  # Начальный шаг - инициализация
+  - blank:
+      stepId: "start"
+      stepIdNext: "accumulator"
+      data:
+        value: 0
+        target: 50
+      bindDescription: "`Старт: value=${value}, target=${target}`"
+      results:
+        value: "value"
+        target: "target"
+
+  # Шаг с while - накапливаем значение пока < target
+  - blank:
+      stepId: "accumulator"
+      stepIdNext: "finish"
+      while: "value < target"
+      bindDescription: "`Аккумулятор: value=${value} (target=${target})`"
+      results:
+        value: "value + 10"
+
+  # Финальный шаг
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Завершено! Финальное value=${value}`"

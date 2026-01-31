@@ -375,8 +375,9 @@ export class Test {
       }
 
       await this.logger.log({
-        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
-          }`,
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${
+          PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
+        }`,
         level: 'raw',
         levelIndent: this.agent.levelIndent,
         logOptions: {
@@ -550,8 +551,9 @@ export class Test {
 
         for (const element of elements) {
           await this.logger.log({
-            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
-              }`,
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${
+              PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
+            }`,
             level: 'test',
             levelIndent: this.agent.levelIndent,
             element,

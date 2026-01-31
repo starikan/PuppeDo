@@ -1,0 +1,32 @@
+name: stepIdRepeatWhile
+description: "Тест комбинации repeat и while со stepId"
+descriptionExtend:
+  - repeat задаёт начальное количество повторений
+  - while продлевает выполнение пока условие истинно
+  - Простой тест без циклических переходов между шагами
+
+run:
+  # Инициализация
+  - blank:
+      stepId: "init"
+      stepIdNext: "processor"
+      data:
+        processed: 0
+      bindDescription: "`Инициализация: processed=${processed}`"
+      results:
+        processed: "processed"
+
+  # Обработка с repeat=2 и while для дополнительных итераций
+  - blank:
+      stepId: "processor"
+      stepIdNext: "finish"
+      repeat: 2
+      while: "processed < 5"
+      bindDescription: "`Обработка: processed=${processed}`"
+      results:
+        processed: "processed + 1"
+
+  # Финиш
+  - blank:
+      stepId: "finish"
+      bindDescription: "`✅ Завершено! Обработано: ${processed}`"

@@ -1,0 +1,54 @@
+name: stepIdWhileBranching
+description: "Тест while с динамическим ветвлением bindStepIdNext"
+descriptionExtend:
+  - Комбинация while и bindStepIdNext
+  - while увеличивает score до порога
+  - bindStepIdNext выбирает ветку после достижения порога
+
+run:
+  # Инициализация
+  - blank:
+      stepId: "init"
+      stepIdNext: "grinder"
+      data:
+        score: 0
+        level: 1
+        maxLevel: 3
+      bindDescription: "`Инициализация: score=${score}, level=${level}`"
+      results:
+        score: "score"
+        level: "level"
+        maxLevel: "maxLevel"
+
+  # Цикл прокачки score - работает пока score < level * 30
+  - blank:
+      stepId: "grinder"
+      while: "score < level * 30"
+      bindDescription: "`Гринд уровня ${level}: score=${score}/${level * 30}`"
+      results:
+        score: "score + 10"
+      # После завершения while переходим к проверке уровня
+      stepIdNext: "checkLevel"
+
+  # Проверка уровня - решаем куда идти дальше
+  - blank:
+      stepId: "checkLevel"
+      bindDescription: "`Проверка: level=${level}, score=${score}`"
+      results:
+        level: "level"
+        score: "score"
+      # Если уровень < maxLevel, повышаем и продолжаем гринд
+      bindStepIdNext: "level < maxLevel ? 'levelUp' : 'victory'"
+
+  # Повышение уровня
+  - blank:
+      stepId: "levelUp"
+      bindDescription: "`Уровень повышен! ${level} -> ${level + 1}`"
+      results:
+        level: "level + 1"
+      stepIdNext: "grinder"
+
+  # Победа
+  - blank:
+      stepId: "victory"
+      bindDescription: "`🏆 Победа! Финальный level=${level}, score=${score}`"

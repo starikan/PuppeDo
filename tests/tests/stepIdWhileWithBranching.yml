@@ -1,0 +1,48 @@
+name: stepIdWhileWithBranching
+description: "Тест while с динамическим ветвлением bindStepIdNext"
+descriptionExtend:
+  - while увеличивает значение
+  - После выхода из while - ветвление по результату
+
+run:
+  - blank:
+      stepId: "start"
+      stepIdNext: "increment"
+      data:
+        value: 0
+        target: 10
+      bindDescription: "`Старт: value=${value}, target=${target}`"
+      results:
+        value: "value"
+        target: "target"
+
+  - blank:
+      stepId: "increment"
+      bindDescription: "`Инкремент: value=${value} -> ${value + 3}`"
+      results:
+        value: "value + 3"
+      while: "value < target"
+      bindStepIdNext: "value >= target ? 'checkResult' : 'increment'"
+
+  - blank:
+      stepId: "checkResult"
+      bindDescription: "`Проверка результата: value=${value}`"
+      bindStepIdNext: "value > 10 ? 'overflow' : 'exact'"
+
+  - blank:
+      stepId: "overflow"
+      stepIdNext: "finish"
+      bindDescription: "`Превышение: value=${value} > target`"
+      results:
+        status: "'overflow'"
+
+  - blank:
+      stepId: "exact"
+      stepIdNext: "finish"
+      bindDescription: "`Точное попадание: value=${value}`"
+      results:
+        status: "'exact'"
+
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Финиш: value=${value}, status=${status}`"

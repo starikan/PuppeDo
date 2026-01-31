@@ -1,0 +1,29 @@
+00:00:00.000 - timer  Test 'stepIdWhile' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест комбинации stepId/stepIdNext с while (stepIdWhile)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdWhile) Тест комбинации stepId/stepIdNext с while[0m
+00:00:00.000 - test   |   [32m(blank) Старт: value=0, target=50[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Аккумулятор: value=0 (target=50)[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Аккумулятор: value=10 (target=50)[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Аккумулятор: value=20 (target=50)[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Аккумулятор: value=30 (target=50)[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Аккумулятор: value=40 (target=50)[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Завершено! Финальное value=10[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdWhile)
+00:00:00.000 - timer  Test 'stepIdWhile' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdWhile": {}
+}

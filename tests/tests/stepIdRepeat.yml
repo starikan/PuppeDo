@@ -1,0 +1,43 @@
+name: stepIdRepeat
+description: "Тест комбинации stepId/stepIdNext с repeat"
+descriptionExtend:
+  - Проверяем что repeat работает корректно с stepIdNext
+  - Каждый шаг с repeat должен выполниться указанное количество раз
+  - Порядок: step1(x2) -> step3(x3) -> step2(x1) -> step4(x2)
+
+run:
+  # Шаг 1: выполняется 2 раза, затем переходит к step3
+  - blank:
+      stepId: "step1"
+      stepIdNext: "step3"
+      repeat: 2
+      data:
+        counter: 0
+      bindDescription: "`Шаг 1 (repeat=${repeat}): counter=${counter}`"
+      results:
+        counter: "counter + 1"
+
+  # Шаг 2: выполняется 1 раз (по умолчанию), затем к step4
+  - blank:
+      stepId: "step2"
+      stepIdNext: "step4"
+      bindDescription: "`Шаг 2: counter=${counter}`"
+      results:
+        counter: "counter + 10"
+
+  # Шаг 3: выполняется 3 раза, затем к step2
+  - blank:
+      stepId: "step3"
+      stepIdNext: "step2"
+      repeat: 3
+      bindDescription: "`Шаг 3 (repeat=${repeat}): counter=${counter}`"
+      results:
+        counter: "counter + 100"
+
+  # Шаг 4: финальный, выполняется 2 раза
+  - blank:
+      stepId: "step4"
+      repeat: 2
+      bindDescription: "`Шаг 4 (финал, repeat=${repeat}): counter=${counter}`"
+      results:
+        counter: "counter + 1000"

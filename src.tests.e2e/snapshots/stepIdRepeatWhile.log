@@ -1,0 +1,31 @@
+00:00:00.000 - timer  Test 'stepIdRepeatWhile' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест комбинации repeat и while со stepId (stepIdRepeatWhile)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdRepeatWhile) Тест комбинации repeat и while со stepId[0m
+00:00:00.000 - test   |   [32m(blank) Инициализация: processed=0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=2[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=3[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=4[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Обработка: processed=5[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) ✅ Завершено! Обработано: 1[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdRepeatWhile)
+00:00:00.000 - timer  Test 'stepIdRepeatWhile' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdRepeatWhile": {}
+}

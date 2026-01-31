@@ -1,0 +1,33 @@
+00:00:00.000 - timer  Test 'stepIdLoopWithBreak' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест цикла с условным выходом через stepIdNext (stepIdLoopWithBreak)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdLoopWithBreak) Тест цикла с условным выходом через stepIdNext[0m
+00:00:00.000 - test   |   [32m(blank) Начинаем поиск. Макс. попыток: 5[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Попытка 1/5: ищем элемент...[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Не найдено. Ждём перед попыткой 2...[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Попытка 2/5: ищем элемент...[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Не найдено. Ждём перед попыткой 3...[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Попытка 3/5: ищем элемент...[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) ✅ Элемент найден на попытке 3![0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) ❌ Элемент не найден после 3 попыток[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdLoopWithBreak)
+00:00:00.000 - timer  Test 'stepIdLoopWithBreak' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdLoopWithBreak": {}
+}
