@@ -223,78 +223,72 @@ const executeLifeCycleFunctions = async (
 ): Promise<Record<string, unknown>> => {
   let resultFromLifeCycle: Record<string, unknown> = {};
 
-  // Проверяем, есть ли хотя бы один шаг с stepIdNext или bindStepIdNext
-  const hasStepIdNext = allSteps.some((func) => func.stepIdNext || func.bindStepIdNext);
+  // Если нет шагов для выполнения, возвращаем пустой результат
+  if (!allSteps.length) {
+    return resultFromLifeCycle;
+  }
 
-  if (hasStepIdNext) {
-    // Создаём карту stepId -> функция для быстрого доступа
-    const stepMap = new Map<string, TestLifeCycleFunctionType>();
-    for (const func of allSteps) {
-      if (func.stepId) {
-        stepMap.set(func.stepId, func);
+  // Создаём карту stepId -> функция для быстрого доступа
+  const stepMap = new Map<string, TestLifeCycleFunctionType>();
+  for (const func of allSteps) {
+    if (func.stepId) {
+      stepMap.set(func.stepId, func);
+    }
+  }
+
+  // Защита от бесконечных циклов
+  const maxIterations = allSteps.length * 10;
+  let iterations = 0;
+
+  const executedStepIds = new Set<string>();
+  let currentFunc: TestLifeCycleFunctionType | undefined = allSteps[0];
+
+  // Создаём копию args для модификации с результатами
+  const argsWithResults: TestArgsType & { resultsFromPrevSubling?: Record<string, unknown> } = { ...args };
+
+  while (currentFunc && iterations < maxIterations) {
+    iterations++;
+
+    // Обновляем data и selectors с накопленными результатами
+    argsWithResults.data = { ...args.data, ...resultFromLifeCycle };
+    argsWithResults.selectors = { ...args.selectors, ...resultFromLifeCycle };
+    // Передаём накопленные результаты для использования в дочерних шагах
+    argsWithResults.resultsFromPrevSubling = resultFromLifeCycle;
+
+    const funResult = (await currentFunc(argsWithResults)) || {};
+    resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
+
+    // Запоминаем выполненный stepId
+    if (currentFunc.stepId) {
+      executedStepIds.add(currentFunc.stepId);
+    }
+
+    // Определяем следующий шаг
+    let nextStepId: string | undefined = currentFunc.stepIdNext;
+
+    // Если есть bindStepIdNext, вычисляем его динамически
+    if (currentFunc.bindStepIdNext) {
+      const allData = { ...argsWithResults.data, ...argsWithResults.selectors, ...resultFromLifeCycle };
+      const evaluatedNextStepId = runScriptInContext(currentFunc.bindStepIdNext, allData);
+      if (typeof evaluatedNextStepId === 'string' && evaluatedNextStepId) {
+        nextStepId = evaluatedNextStepId;
       }
     }
 
-    // Защита от бесконечных циклов
-    const maxIterations = allSteps.length * 10;
-    let iterations = 0;
-
-    const executedStepIds = new Set<string>();
-    let currentFunc: TestLifeCycleFunctionType | undefined = allSteps[0];
-
-    // Создаём копию args для модификации с результатами
-    const argsWithResults: TestArgsType & { resultsFromPrevSubling?: Record<string, unknown> } = { ...args };
-
-    while (currentFunc && iterations < maxIterations) {
-      iterations++;
-
-      // Обновляем data и selectors с накопленными результатами
-      argsWithResults.data = { ...args.data, ...resultFromLifeCycle };
-      argsWithResults.selectors = { ...args.selectors, ...resultFromLifeCycle };
-      // Передаём накопленные результаты для использования в дочерних шагах
-      argsWithResults.resultsFromPrevSubling = resultFromLifeCycle;
-
-      const funResult = (await currentFunc(argsWithResults)) || {};
-      resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
-
-      // Запоминаем выполненный stepId
-      if (currentFunc.stepId) {
-        executedStepIds.add(currentFunc.stepId);
-      }
-
-      // Определяем следующий шаг
-      let nextStepId: string | undefined = currentFunc.stepIdNext;
-
-      // Если есть bindStepIdNext, вычисляем его динамически
-      if (currentFunc.bindStepIdNext) {
-        const allData = { ...argsWithResults.data, ...argsWithResults.selectors, ...resultFromLifeCycle };
-        const evaluatedNextStepId = runScriptInContext(currentFunc.bindStepIdNext, allData);
-        if (typeof evaluatedNextStepId === 'string' && evaluatedNextStepId) {
-          nextStepId = evaluatedNextStepId;
-        }
-      }
-
-      if (nextStepId) {
-        // Переходим к указанному шагу
-        currentFunc = stepMap.get(nextStepId);
-      } else {
-        // Если stepIdNext не указан - берём следующий по порядку в массиве
-        const currentIndex = allSteps.indexOf(currentFunc);
-        currentFunc = currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : undefined;
-      }
+    if (nextStepId) {
+      // Переходим к указанному шагу
+      currentFunc = stepMap.get(nextStepId);
+    } else {
+      // Если stepIdNext не указан - берём следующий по порядку в массиве
+      const currentIndex = allSteps.indexOf(currentFunc);
+      currentFunc = currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : undefined;
     }
+  }
 
-    if (iterations >= maxIterations) {
-      throw new Error(
-        `executeLifeCycleFunctions: Maximum iterations (${maxIterations}) reached. Possible infinite loop.`,
-      );
-    }
-  } else {
-    // Оригинальная логика для обратной совместимости
-    for (const func of allSteps) {
-      const funResult = (await func(args)) || {};
-      resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
-    }
+  if (iterations >= maxIterations) {
+    throw new Error(
+      `executeLifeCycleFunctions: Maximum iterations (${maxIterations}) reached. Possible infinite loop.`,
+    );
   }
 
   return resultFromLifeCycle;
