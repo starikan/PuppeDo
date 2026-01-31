@@ -9,7 +9,7 @@
     "build:types": "dts-bundle-generator --project ./tsconfig.json --out-file ./dist/index.d.ts ./src/index.ts",
     "build-sea": "esbuild index.js --bundle --platform=node --outfile=dist/sea.bundle.js --external:playwright --external:puppeteer --minify=false",
     "generate-sea": "node scripts/generate-sea.js",
-    "watch": "npm run build --watch",
+    "watch": "webpack --config webpack.config.js --watch",
     "check": "npm run build && npm run lint && npm test && npm run docs && npm run e2e",
     "prepublishOnly": "npm install --force && npm run check",
     "lint": "biome check",
