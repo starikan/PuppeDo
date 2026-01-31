@@ -1,0 +1,44 @@
+00:00:00.000 - timer  Test 'stepIdBranchingRetry' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест ветвления с повторными попытками (низкий score) (stepIdBranchingRetry)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdBranchingRetry) Тест ветвления с повторными попытками (низкий score)[0m
+00:00:00.000 - test   |   [32m(blank) Старт: mode=advanced, score=40, attempts=0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка score: 40, attempts: 0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Нужно улучшение. Score: 40, attempts: 0[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Попытка #1: улучшаем score 40 -> 55[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка score: 55, attempts: 1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Нужно улучшение. Score: 55, attempts: 1[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Попытка #2: улучшаем score 55 -> 70[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка score: 70, attempts: 2[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Хороший результат. Score: 70[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Применяем бонус. Badge: silver[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Завершение. Score: 70, Badge: silver, Attempts: 2[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdBranchingRetry)
+00:00:00.000 - timer  Test 'stepIdBranchingRetry' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdBranchingRetry": {}
+}

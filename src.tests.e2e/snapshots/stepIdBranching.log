@@ -1,0 +1,44 @@
+00:00:00.000 - timer  Test 'stepIdBranching' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест сложного ветвления с if и bindStepIdNext (stepIdBranching)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdBranching) Тест сложного ветвления с if и bindStepIdNext[0m
+00:00:00.000 - test   |   [32m(blank) Старт: mode=advanced, score=75[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка score: 75[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Хороший результат. Score: 75[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверяем возможность улучшить результат[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Бустим score: 75 -> 85[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверка score: 85[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Хороший результат. Score: 85[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Проверяем возможность улучшить результат[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Применяем бонус. Badge: silver, Score: 85[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Завершение. Final score: 110, Badge: silver[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdBranching)
+00:00:00.000 - timer  Test 'stepIdBranching' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdBranching": {}
+}

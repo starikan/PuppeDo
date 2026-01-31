@@ -1,0 +1,33 @@
+name: stepIdBranchingSimple
+description: "Тест простого режима ветвления"
+run:
+  # Начальный шаг - простой режим
+  - blank:
+      stepId: "start"
+      data:
+        mode: "simple"
+        score: 50
+        attempts: 0
+      bindDescription: "`Старт: mode=${mode}, score=${score}`"
+      results:
+        mode: "mode"
+        score: "score"
+        attempts: "attempts"
+      bindStepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
+
+  # === SIMPLE FLOW ===
+  - blank:
+      stepId: "simpleFlow"
+      bindDescription: "`Простой режим: пропускаем все проверки`"
+      stepIdNext: "finish"
+
+  # === ADVANCED FLOW (не выполнится) ===
+  - blank:
+      stepId: "checkScore"
+      bindDescription: "`Проверка score: ${score}`"
+      stepIdNext: "finish"
+
+  # Финальный шаг (без stepIdNext - выполнение завершается)
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Завершение в простом режиме. Score: ${score}`"

@@ -1,0 +1,22 @@
+00:00:00.000 - timer  Test 'stepIdBranchingSimple' start on '0000-00-00_00-00-00.000'
+00:00:00.000 - env    [34m
+Тест простого режима ветвления (stepIdBranchingSimple)
+   (blank)
+   (blank)
+   (blank)
+   (blank)
+[0m
+00:00:00.000 - timer  Prepare time 🕝: 00.000 s.
+00:00:00.000 - test   [32m(stepIdBranchingSimple) Тест простого режима ветвления[0m
+00:00:00.000 - test   |   [32m(blank) Старт: mode=simple, score=50[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Простой режим: пропускаем все проверки[0m
+                      |   🕝: 00.000 s. (blank)
+00:00:00.000 - test   |   [32m(blank) Завершение в простом режиме. Score: 50[0m
+                      |   🕝: 00.000 s. (blank)
+                      🕝: 00.000 s. (stepIdBranchingSimple)
+00:00:00.000 - timer  Test 'stepIdBranchingSimple' time 🕝: 00.000 s.
+00:00:00.000 - timer  Evaluated time 🕝: 00.000 s.
+{
+  "stepIdBranchingSimple": {}
+}

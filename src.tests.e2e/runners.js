@@ -155,6 +155,15 @@ const testsE2E = {
   stepIdWithResults: {
     params: { PPD_TESTS: 'stepIdWithResults' },
   },
+  stepIdBranching: {
+    params: { PPD_TESTS: 'stepIdBranching' },
+  },
+  stepIdBranchingSimple: {
+    params: { PPD_TESTS: 'stepIdBranchingSimple' },
+  },
+  stepIdBranchingRetry: {
+    params: { PPD_TESTS: 'stepIdBranchingRetry' },
+  },
 };
 
 module.exports = testsE2E;

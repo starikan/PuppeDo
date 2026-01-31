@@ -275,10 +275,12 @@ const executeLifeCycleFunctions = async (
       }
 
       if (nextStepId) {
+        // Переходим к указанному шагу
         currentFunc = stepMap.get(nextStepId);
       } else {
-        // Если stepIdNext не указан, ищем следующий не выполненный шаг
-        currentFunc = allSteps.find((func) => func.stepId && !executedStepIds.has(func.stepId));
+        // Если stepIdNext не указан - берём следующий по порядку в массиве
+        const currentIndex = allSteps.indexOf(currentFunc);
+        currentFunc = currentIndex < allSteps.length - 1 ? allSteps[currentIndex + 1] : undefined;
       }
     }
 

@@ -1,0 +1,106 @@
+name: stepIdBranching
+description: "Тест сложного ветвления с if и bindStepIdNext"
+run:
+  # Начальный шаг - устанавливаем режим работы
+  - blank:
+      stepId: "start"
+      data:
+        mode: "advanced"
+        score: 75
+        attempts: 0
+      bindDescription: "`Старт: mode=${mode}, score=${score}`"
+      results:
+        mode: "mode"
+        score: "score"
+        attempts: "attempts"
+      # Динамический выбор ветки на основе режима
+      bindStepIdNext: "mode === 'simple' ? 'simpleFlow' : 'checkScore'"
+
+  # === SIMPLE FLOW ===
+  - blank:
+      stepId: "simpleFlow"
+      bindDescription: "`Простой режим: выполняем минимум действий`"
+      stepIdNext: "finish"
+
+  # === ADVANCED FLOW - проверка score ===
+  - blank:
+      stepId: "checkScore"
+      bindDescription: "`Проверка score: ${score}`"
+      results:
+        score: "score"
+        attempts: "attempts"
+      # Ветвление по score
+      bindStepIdNext: "score >= 90 ? 'excellent' : (score >= 70 ? 'good' : 'needImprovement')"
+
+  # Ветка "отлично"
+  - blank:
+      stepId: "excellent"
+      bindDescription: "`Отличный результат! Score: ${score}`"
+      results:
+        badge: "'gold'"
+      stepIdNext: "applyBonus"
+
+  # Ветка "хорошо"
+  - blank:
+      stepId: "good"
+      bindDescription: "`Хороший результат. Score: ${score}`"
+      results:
+        badge: "'silver'"
+      stepIdNext: "checkRetry"
+
+  # Ветка "нужно улучшение"
+  - blank:
+      stepId: "needImprovement"
+      bindDescription: "`Нужно улучшение. Score: ${score}`"
+      results:
+        badge: "'bronze'"
+        attempts: "attempts + 1"
+      # Проверяем количество попыток
+      bindStepIdNext: "attempts < 3 ? 'retry' : 'giveUp'"
+
+  # Повторная попытка - увеличиваем score
+  - blank:
+      stepId: "retry"
+      bindDescription: "`Попытка #${attempts}: улучшаем score`"
+      results:
+        score: "score + 15"
+        attempts: "attempts"
+      # Возвращаемся к проверке score
+      stepIdNext: "checkScore"
+
+  # Сдаёмся после 3 попыток
+  - blank:
+      stepId: "giveUp"
+      bindDescription: "`Сдаёмся после ${attempts} попыток. Финальный score: ${score}`"
+      stepIdNext: "finish"
+
+  # Проверка на возможность повторить для "хорошего" результата
+  - blank:
+      stepId: "checkRetry"
+      bindDescription: "`Проверяем возможность улучшить результат`"
+      results:
+        score: "score"
+        attempts: "attempts + 1"
+      # Если попытки остались и score < 90, пробуем улучшить
+      bindStepIdNext: "attempts < 2 && score < 90 ? 'boostScore' : 'applyBonus'"
+
+  # Улучшаем score
+  - blank:
+      stepId: "boostScore"
+      bindDescription: "`Бустим score: ${score} -> ${score + 10}`"
+      results:
+        score: "score + 10"
+      stepIdNext: "checkScore"
+
+  # Применяем бонус
+  - blank:
+      stepId: "applyBonus"
+      bindDescription: "`Применяем бонус. Badge: ${badge}, Score: ${score}`"
+      results:
+        finalScore: "score + (badge === 'gold' ? 50 : (badge === 'silver' ? 25 : 10))"
+      stepIdNext: "finish"
+
+  # Финальный шаг (без stepIdNext - выполнение завершается)
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Завершение. Final score: ${finalScore || score}, Badge: ${badge || 'none'}`"
