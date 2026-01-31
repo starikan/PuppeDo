@@ -236,11 +236,14 @@ const executeLifeCycleFunctions = async (
     }
   }
 
-  // Защита от бесконечных циклов
+  // Защита от бесконечных циклов - отслеживаем пары (stepId, hash данных)
   const maxIterations = allSteps.length * 10;
+  const maxVisitsPerStep = 100; // Максимальное количество посещений одного stepId
   let iterations = 0;
 
-  const executedStepIds = new Set<string>();
+  const stepVisitCounts = new Map<string, number>();
+  const visitedStates = new Set<string>();
+
   let currentFunc: TestLifeCycleFunctionType | undefined = allSteps[0];
 
   // Создаём копию args для модификации с результатами
@@ -248,6 +251,29 @@ const executeLifeCycleFunctions = async (
 
   while (currentFunc && iterations < maxIterations) {
     iterations++;
+
+    const currentStepId = currentFunc.stepId || `anonymous-${iterations}`;
+
+    // Проверяем количество посещений данного stepId
+    const visitCount = (stepVisitCounts.get(currentStepId) || 0) + 1;
+    stepVisitCounts.set(currentStepId, visitCount);
+
+    if (visitCount > maxVisitsPerStep) {
+      throw new Error(
+        `executeLifeCycleFunctions: Step "${currentStepId}" visited ${visitCount} times. ` +
+        `Possible infinite loop detected. Check your stepIdNext/bindStepIdNext logic.`,
+      );
+    }
+
+    // Создаём хэш состояния для обнаружения точных циклов (тот же stepId с теми же данными)
+    const stateKey = `${currentStepId}:${JSON.stringify(resultFromLifeCycle)}`;
+    if (visitedStates.has(stateKey)) {
+      throw new Error(
+        `executeLifeCycleFunctions: Infinite loop detected - step "${currentStepId}" ` +
+        `visited again with the same data state. This creates an endless cycle.`,
+      );
+    }
+    visitedStates.add(stateKey);
 
     // Обновляем data и selectors с накопленными результатами
     argsWithResults.data = { ...args.data, ...resultFromLifeCycle };
@@ -257,11 +283,6 @@ const executeLifeCycleFunctions = async (
 
     const funResult = (await currentFunc(argsWithResults)) || {};
     resultFromLifeCycle = { ...resultFromLifeCycle, ...funResult };
-
-    // Запоминаем выполненный stepId
-    if (currentFunc.stepId) {
-      executedStepIds.add(currentFunc.stepId);
-    }
 
     // Определяем следующий шаг
     let nextStepId: string | undefined = currentFunc.stepIdNext;
@@ -375,9 +396,8 @@ export class Test {
       }
 
       await this.logger.log({
-        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${
-          PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
-        }`,
+        text: `Skip with ${disableText}: ${getLogText(this.agent.description, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? `[${this.agent.stepId}]` : ''
+          }`,
         level: 'raw',
         levelIndent: this.agent.levelIndent,
         logOptions: {
@@ -551,9 +571,8 @@ export class Test {
 
         for (const element of elements) {
           await this.logger.log({
-            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${
-              PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
-            }`,
+            text: `${getLogText(descriptionResolved, this.agent.name, PPD_LOG_AGENT_NAME)}${PPD_LOG_STEPID ? ` [${this.agent.stepId}]` : ''
+              }`,
             level: 'test',
             levelIndent: this.agent.levelIndent,
             element,

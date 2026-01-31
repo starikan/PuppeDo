@@ -1,0 +1,24 @@
+name: stepIdInfiniteLoop
+description: "Тест защиты от бесконечного цикла в stepIdNext"
+descriptionExtend:
+  - Этот тест ДОЛЖЕН упасть с ошибкой о бесконечном цикле
+  - stepA -> stepB -> stepA (цикл без изменения данных)
+  - Защита должна обнаружить что stepId посещается с теми же данными
+
+run:
+  # stepA переходит к stepB
+  - blank:
+      stepId: "stepA"
+      stepIdNext: "stepB"
+      bindDescription: "`Шаг A`"
+
+  # stepB возвращается к stepA - создаёт бесконечный цикл
+  - blank:
+      stepId: "stepB"
+      stepIdNext: "stepA"
+      bindDescription: "`Шаг B`"
+
+  # Этот шаг никогда не будет достигнут
+  - blank:
+      stepId: "finish"
+      bindDescription: "`Финиш`"

@@ -188,6 +188,10 @@ const testsE2E = {
   stepIdWhileWithBranching: {
     params: { PPD_TESTS: 'stepIdWhileWithBranching' },
   },
+  stepIdInfiniteLoop: {
+    params: { PPD_TESTS: 'stepIdInfiniteLoop' },
+    isError: true,
+  },
 };
 
 module.exports = testsE2E;
