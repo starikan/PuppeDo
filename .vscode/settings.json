@@ -12,5 +12,6 @@
     "*.ppd": "yaml"
   },
   "indentRainbow.ignoreErrorLanguages": ["markdown", "html", "yaml"],
-  "prettier.enable": false
+  "prettier.enable": false,
+  "specstory.cloudSync.enabled": "never"
 }
