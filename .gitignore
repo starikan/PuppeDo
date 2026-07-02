@@ -30,3 +30,5 @@ yarn.lock
 /dist/src
 /dist/src.tests
 .agents-data
+/.agents-sessions
+/.tasks
