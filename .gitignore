@@ -32,3 +32,10 @@ yarn.lock
 .agents-data
 /.agents-sessions
 /.tasks
+/.agents-sessions/
+
+/.tasks/
+
+/.agents-data
+
+/.worktrees

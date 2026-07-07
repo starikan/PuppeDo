@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "path": ".agents-sessions",
+      "kind": "protected-worktree",
+      "branch": "agents-sessions",
+      "lockReason": "Важные сессии агентов. Не удалять!",
+      "symlinkInTaskWorktree": true,
+      "gitignore": true,
+      "roles": [
+        "sessions-output"
+      ]
+    },
+    {
+      "path": ".agents-data",
+      "kind": "shared-folder",
+      "symlinkInTaskWorktree": true,
+      "gitignore": true
+    },
+    {
+      "path": ".data",
+      "kind": "shared-folder",
+      "symlinkInTaskWorktree": true,
+      "gitignore": true
+    },
+    {
+      "path": ".tasks",
+      "kind": "protected-worktree",
+      "branch": "tasks",
+      "lockReason": "Obsidian-хранилище задач проекта. Не удалять!",
+      "symlinkInTaskWorktree": true,
+      "gitignore": true,
+      "roles": [
+        "tasks-vault"
+      ],
+      "postInit": "install-tasks-vault-bootstrap.sh"
+    }
+  ]
+}
