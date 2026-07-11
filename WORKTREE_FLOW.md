@@ -107,7 +107,8 @@
 При создании `.worktrees/<имя>/` скрипт создания worktree читает манифест и подключает
 symlink для записей с `symlinkInTaskWorktree` не равным `false`; если поле не задано, оно считается `true`.
 
-Подробнее о формате: `apps/agents/scripts/git-project-manifest.defaults.json`.
+Подробнее о формате: `git-project-manifest.defaults.json`.
+Шаблон `.walk-ignore`.
 
 Стандартный набор после инициализации:
 
@@ -115,6 +116,7 @@ symlink для записей с `symlinkInTaskWorktree` не равным `fals
 - `.tasks` — worktree-источник задач (protected-worktree, роль `tasks-vault`, postInit)
 - `.agents-data` — shared-folder (только symlink)
 - `.data` — shared-folder (только symlink)
+- `.worktrees` — shared-folder (каталог task-worktree, gitignore)
 
 ## Git: Gitea основной, GitHub только master
 

@@ -35,6 +35,12 @@
         "tasks-vault"
       ],
       "postInit": "install-tasks-vault-bootstrap.sh"
+    },
+    {
+      "path": ".worktrees",
+      "kind": "shared-folder",
+      "symlinkInTaskWorktree": false,
+      "gitignore": true
     }
   ]
 }

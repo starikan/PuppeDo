@@ -1,0 +1,22 @@
+# Имена директорий, которые нужно пропускать при рекурсивном обходе дерева проекта.
+.agents-data
+.agents-sessions
+.codex
+.git
+.history
+.next
+.opencode
+.opencode-data
+.qwen
+.specstory
+.turbo
+.venv
+.vscode
+build
+coverage
+dist
+node_modules
+storybook-static
+temp
+*.exe
+.data

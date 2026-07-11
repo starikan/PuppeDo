@@ -39,3 +39,5 @@ yarn.lock
 /.agents-data
 
 /.worktrees
+
+/.data
