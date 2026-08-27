@@ -19,6 +19,8 @@ browser:
   runtime: run
   args:
   - "--window-size=1024,918"
+  - "--no-sandbox"
+  - "--disable-setuid-sandbox"
   headless: false
   slowMo: 5
   windowSize:

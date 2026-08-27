@@ -1,0 +1,69 @@
+{
+  "$schema": "https://puppedoagent.local/schemas/project.check.schema.json",
+  "schemaVersion": 1,
+  "name": "PuppeDo core",
+  "requirements": {
+    "checks": [
+      {
+        "name": "Node.js",
+        "command": ["node", "--version"],
+        "result": { "equals": "v24.16.0" }
+      }
+    ]
+  },
+  "projectDir": ".",
+  "entrypoint": "project.check.sh",
+  "timeoutSeconds": 1800,
+  "include": [
+    ".gitignore",
+    "babel.config.js",
+    "biome.json",
+    "docs",
+    "index.js",
+    "jest.config.js",
+    "package-lock.json",
+    "package.json",
+    "puppedo.config.js",
+    "src",
+    "src.docs",
+    "src.tests",
+    "src.tests.e2e",
+    "tests",
+    "tsconfig.json",
+    "tsconfig.scripts.json",
+    "webpack.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "coverage-plugins",
+    ".agents-data",
+    ".agents-sessions",
+    ".tasks",
+    ".worktrees",
+    ".data",
+    ".git",
+    "output",
+    "settings",
+    ".history",
+    ".sea",
+    "portable-node",
+    ".specstory"
+  ],
+  "firecracker": {
+    "imageTemplate": "node24",
+    "imageBuild": {
+      "prewarm": false
+    },
+    "vm": {
+      "sandboxName": "puppedo-check",
+      "guestIp": "10.66.0.10",
+      "memMiB": 4096,
+      "vcpus": 2
+    }
+  },
+  "artifacts": {
+    "dir": ".agents-data/project-check-runs"
+  }
+}

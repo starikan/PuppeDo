@@ -19,7 +19,7 @@ const testsE2E = {
   },
   mainENV: {
     env: {
-      PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')],
+      PPD_ROOT_ADDITIONAL: [path.join(__dirname, '..', 'node_modules', '@puppedo', 'atoms')],
       PPD_TESTS: 'main',
       PPD_DATA: '{ "myEnv": "mainRunner" }',
       PPD_LOG_LEVEL_NESTED: 1,
@@ -31,7 +31,7 @@ const testsE2E = {
   mainCLI: {
     args: [
       'PPD_ROOT=tests',
-      `PPD_ROOT_ADDITIONAL=${path.join(__dirname, '..', 'node_modules\\@puppedo\\atoms')}`,
+      `PPD_ROOT_ADDITIONAL=${path.join(__dirname, '..', 'node_modules', '@puppedo', 'atoms')}`,
       'PPD_TESTS=main',
       "PPD_DATA={'myEnv':'mainRunner'}",
       'PPD_LOG_EXTEND=true',

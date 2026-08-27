@@ -19,14 +19,20 @@ const logClean = (text) => {
     .map((line) =>
       line
         .replace(/\d{2}:\d{2}:\d{2}.\d{3}/g, '00:00:00.000')
+        .replace(/\u001B\[2m|\u001B\[22m/g, '')
         .replace(/: \d+\.\d+ s./g, ': 00.000 s.')
         .replace(/start on '\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}.\d{3}'/g, "start on '0000-00-00_00-00-00.000'")
         .replace(/screenshot: \[.+?\]/g, 'screenshot: [screenshot_path]')
         .replace(/\([^f].+?PuppeDo\\node_modules/g, '(')
-        .replace(/file:\/\/\/.+?node_modules/g, 'file:///')
         .replace(/file:\/\/\/.+?output\.log/g, 'file:///output.log')
-        .replace(/file:\/\/\/.+?tests/g, 'file:///')
-        .replace(/file:\/\/\/.+?Plugins/g, 'file:///Plugins')
+        .replace(/file:\/{3,}(?:.*?[\\/])?(@puppedo[\\/]+atoms|tests|Plugins)[\\/]([^\)]+)/g, (_, root, suffix) => {
+          const normalizedRoot = root.replace(/\//g, '\\');
+          const normalizedSuffix = suffix.replace(/\//g, '\\');
+          return `file:///${root === 'Plugins' ? '' : '\\'}${normalizedRoot}\\${normalizedSuffix}`;
+        })
+        .replace(/file:\/\/\/\\tests\\tests\\/g, 'file:///\\tests\\')
+        .replace(/\((?!file:\/\/\/)[^)]*node_modules[\\/]+@puppedo[\\/]+atoms[\\/]+/g, '(\\@puppedo\\atoms\\')
+        .replace(/\\@puppedo\\atoms\\[^)\n]*/g, (filePath) => filePath.replace(/\//g, '\\'))
         .replace(/\(.+?webpack:/g, '(')
         .replace(/\.[jt]s.+?\)/g, ')')
         .replace(/:\d+:\d+\)/g, ')')
@@ -71,7 +77,7 @@ for (const testName of testsResolved) {
     const filePath = path.join(__dirname, 'snapshots', `${testName}.log`);
     const snapshotData = fs.readFileSync(filePath).toString();
 
-    if (snapshotData !== logClean(outData)) {
+    if (logClean(snapshotData) !== logClean(outData)) {
       console.log(snapshotData);
       console.log(logClean(outData));
       throw new Error(`E2E test error: ${testName}`);

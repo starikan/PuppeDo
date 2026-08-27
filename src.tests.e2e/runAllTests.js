@@ -6,6 +6,8 @@ const testsE2E = require('./runners');
 
 const runBeforeTest = () => require('@puppedo/atoms');
 
+const E2E_FILES_IGNORE = ['broken.yaml'];
+
 const runTest = async (runner, options = {}) => {
   if (!runner) {
     return [];
@@ -17,7 +19,15 @@ const runTest = async (runner, options = {}) => {
     runBeforeTest();
   }
 
-  await ppd.run(runner.params || {}, options);
+  const params = runner.params || {};
+  const filesIgnore = Array.isArray(params.PPD_FILES_IGNORE) ? params.PPD_FILES_IGNORE : [];
+  await ppd.run(
+    {
+      ...params,
+      PPD_FILES_IGNORE: [...new Set([...filesIgnore, ...E2E_FILES_IGNORE])],
+    },
+    options,
+  );
 
   if (runner.runAfterTest) {
     await runner.runAfterTest();

@@ -11,6 +11,14 @@ import { Test } from './Test';
 
 const atoms: Record<string, TestLifeCycleFunctionType> = {};
 
+const resolveFilePath = (filePath: string): string => {
+  if (path.isAbsolute(filePath) || path.win32.isAbsolute(filePath)) {
+    return filePath;
+  }
+
+  return path.resolve(filePath);
+};
+
 export const resolveJS = (agentJson: TestExtendType): TestExtendType => {
   const { PPD_LIFE_CYCLE_FUNCTIONS } = new Arguments().args;
   const agentJsonNew = agentJson;
@@ -33,14 +41,16 @@ export const resolveJS = (agentJson: TestExtendType): TestExtendType => {
         error.message = `Some errors in inlineJS: ${agentJsonNew.inlineJS}`;
         throw error;
       }
-    } else {
+    } else if (agentJsonNew.testFile) {
       const testFileExt = path.parse(agentJsonNew.testFile).ext;
-      const funcFile = path.resolve(agentJsonNew.testFile.replace(testFileExt, '.js'));
+      const funcFile = resolveFilePath(agentJsonNew.testFile.replace(testFileExt, '.js'));
       if (!atoms[agentJsonNew.name]) {
         const imported = __non_webpack_require__(funcFile);
         atoms[agentJsonNew.name] = imported[agentJsonNew.name] || imported.default || imported;
       }
-      agentJsonNew.funcFile = path.resolve(funcFile);
+      agentJsonNew.funcFile = funcFile;
+    } else {
+      agentJsonNew.atomRun = [];
     }
 
     const instance = new Atom();
