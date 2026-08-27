@@ -84,9 +84,10 @@ export class Engines {
       args = [],
       browserName = 'chromium',
       windowSize = {},
-      executablePath = '',
+      executablePath: configuredExecutablePath = '',
       timeout = 30000,
     } = browserSettings || {};
+    const executablePath = configuredExecutablePath || process.env.PLAYWRIGHT_EXECUTABLE_PATH || '';
     const { width = 1024, height = 768 } = windowSize;
 
     const options: BrouserLaunchOptions = { headless, slowMo, args, executablePath, timeout };
