@@ -1,37 +1,37 @@
+import type { MockedClass, MockedFunction } from 'vitest';
 import { spawn } from 'child_process';
 import { Arguments } from '../src/Arguments';
 import { Engines, DEFAULT_BROWSER } from '../src/Engines';
 import { Environment } from '../src/Environment';
 import { sleep } from '../src/Helpers';
 
-jest.mock('child_process', () => ({ spawn: jest.fn() }));
-jest.mock('../src/Environment');
-jest.mock('../src/Helpers', () => ({
-  ...jest.requireActual('../src/Helpers'),
-  sleep: jest.fn().mockResolvedValue(undefined),
+vi.mock('child_process', () => ({ spawn: vi.fn() }));
+vi.mock('../src/Environment');
+vi.mock('../src/Helpers', async () => ({
+  ...(await vi.importActual<typeof import('../src/Helpers')>('../src/Helpers')),
+  sleep: vi.fn().mockResolvedValue(undefined),
 }));
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockSpawn = spawn as jest.MockedFunction<typeof spawn>;
-const mockSleep = sleep as jest.MockedFunction<typeof sleep>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockSpawn = spawn as MockedFunction<typeof spawn>;
+const mockSleep = sleep as MockedFunction<typeof sleep>;
 
 describe('Engines', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (global as any).__non_webpack_require__ = jest.fn();
+    vi.clearAllMocks();
+    (global as any).__non_webpack_require__ = vi.fn();
     (global as any).fetch = undefined;
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getLogger: jest.fn().mockReturnValue({
-            exporter: {
-              saveToFile: jest.fn(),
-              appendToFile: jest.fn(),
-            },
-          }),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getLogger: vi.fn().mockReturnValue({
+          exporter: {
+            saveToFile: vi.fn(),
+            appendToFile: vi.fn(),
+          },
+        }),
+      } as any;
+    });
   });
 
   test('resolveBrowser validates options', () => {
@@ -114,9 +114,9 @@ describe('Engines', () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
 
     const page = { id: 'page' } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const launch = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ launch });
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const launch = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ launch });
 
     await Engines.runPuppeteer(
       {
@@ -133,13 +133,13 @@ describe('Engines', () => {
   });
 
   test('runPlaywright uses default debug mode when args missing', async () => {
-    const argsSpy = jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
-    const launch = jest.fn().mockResolvedValue({});
-    (global as any).__non_webpack_require__ = jest
+    const argsSpy = vi.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
+    const launch = vi.fn().mockResolvedValue({});
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { launch }, firefox: { launch }, webkit: { launch } });
 
-    const addPageSpy = jest.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
+    const addPageSpy = vi.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
 
     await Engines.runPlaywright(
       {
@@ -160,12 +160,12 @@ describe('Engines', () => {
   });
 
   test('runPuppeteer uses default debug mode when args missing', async () => {
-    const argsSpy = jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
+    const argsSpy = vi.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
 
     const page = { id: 'page' } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const launch = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ launch });
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const launch = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ launch });
 
     await Engines.runPuppeteer(
       {
@@ -208,9 +208,9 @@ describe('Engines', () => {
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
 
     const page = { id: 'page' } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const launch = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ launch });
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const launch = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ launch });
 
     const state = await Engines.runPuppeteer(
       {
@@ -235,10 +235,10 @@ describe('Engines', () => {
   });
 
   test('connectPuppeteer connects and sets viewport', async () => {
-    const page = { setViewport: jest.fn() } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ connect });
+    const page = { setViewport: vi.fn() } as any;
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ connect });
 
     const result = await Engines.connectPuppeteer('ws://debug', 0, { width: 100, height: 200 }, 1000);
     expect(result.pages.main).toBe(page);
@@ -246,9 +246,9 @@ describe('Engines', () => {
   });
 
   test('connectPuppeteer throws when no pages', async () => {
-    const browser = { pages: jest.fn().mockResolvedValue([]) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ connect });
+    const browser = { pages: vi.fn().mockResolvedValue([]) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ connect });
 
     await expect(Engines.connectPuppeteer('ws://debug', 0, {}, 1000)).rejects.toThrow(
       'Can`t find any pages in connection',
@@ -257,12 +257,12 @@ describe('Engines', () => {
 
   test('runPlaywright launches and adds page', async () => {
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
-    const launch = jest.fn().mockResolvedValue({});
-    (global as any).__non_webpack_require__ = jest
+    const launch = vi.fn().mockResolvedValue({});
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { launch }, firefox: { launch }, webkit: { launch } });
 
-    const addPageSpy = jest.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
+    const addPageSpy = vi.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
 
     const state = await Engines.runPlaywright(
       {
@@ -291,12 +291,12 @@ describe('Engines', () => {
 
   test('runPlaywright does not set devtools for non-chromium', async () => {
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
-    const launch = jest.fn().mockResolvedValue({});
-    (global as any).__non_webpack_require__ = jest
+    const launch = vi.fn().mockResolvedValue({});
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { launch }, firefox: { launch }, webkit: { launch } });
 
-    const addPageSpy = jest.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
+    const addPageSpy = vi.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
 
     await Engines.runPlaywright(
       {
@@ -317,12 +317,12 @@ describe('Engines', () => {
 
   test('runPlaywright uses defaults when browser settings missing', async () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
-    const launch = jest.fn().mockResolvedValue({});
-    (global as any).__non_webpack_require__ = jest
+    const launch = vi.fn().mockResolvedValue({});
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { launch }, firefox: { launch }, webkit: { launch } });
 
-    const addPageSpy = jest.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
+    const addPageSpy = vi.spyOn(Engines, 'addPage').mockResolvedValue({ pages: { main: { id: 1 } } } as any);
 
     const state = await Engines.runPlaywright({ name: 'runner', type: 'runner' } as any, {});
 
@@ -333,11 +333,11 @@ describe('Engines', () => {
   });
 
   test('connectPlaywright connects and sets viewport', async () => {
-    const page = { setViewportSize: jest.fn() } as any;
-    const contexts = { pages: jest.fn().mockResolvedValue([page]) };
-    const browser = { contexts: jest.fn().mockResolvedValue(contexts) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest
+    const page = { setViewportSize: vi.fn() } as any;
+    const contexts = { pages: vi.fn().mockResolvedValue([page]) };
+    const browser = { contexts: vi.fn().mockResolvedValue(contexts) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { connect }, firefox: { connect }, webkit: { connect } });
 
@@ -347,11 +347,11 @@ describe('Engines', () => {
   });
 
   test('connectPlaywright skips viewport when size missing', async () => {
-    const page = { setViewportSize: jest.fn() } as any;
-    const contexts = { pages: jest.fn().mockResolvedValue([page]) };
-    const browser = { contexts: jest.fn().mockResolvedValue(contexts) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest
+    const page = { setViewportSize: vi.fn() } as any;
+    const contexts = { pages: vi.fn().mockResolvedValue([page]) };
+    const browser = { contexts: vi.fn().mockResolvedValue(contexts) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { connect }, firefox: { connect }, webkit: { connect } });
 
@@ -361,10 +361,10 @@ describe('Engines', () => {
   });
 
   test('connectPlaywright throws when no pages', async () => {
-    const contexts = { pages: jest.fn().mockResolvedValue([]) };
-    const browser = { contexts: jest.fn().mockResolvedValue(contexts) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest
+    const contexts = { pages: vi.fn().mockResolvedValue([]) };
+    const browser = { contexts: vi.fn().mockResolvedValue(contexts) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi
       .fn()
       .mockReturnValue({ chromium: { connect }, firefox: { connect }, webkit: { connect } });
 
@@ -376,57 +376,57 @@ describe('Engines', () => {
   test('connectElectron handles errors and engines', async () => {
     await expect(Engines.connectElectron({} as any)).rejects.toThrow("Can't connect to Electron");
 
-    (global as any).fetch = jest.fn().mockImplementation(async () => ({
+    (global as any).fetch = vi.fn().mockImplementation(async () => ({
       ok: false,
       statusText: 'bad',
-      json: jest.fn(),
+      json: vi.fn(),
     }));
 
     await expect(Engines.connectElectron({ urlDevtoolsJson: 'http://x/' } as any)).rejects.toThrow(
       'Failed to fetch pages JSON: bad',
     );
 
-    (global as any).fetch = jest.fn().mockImplementation(async (url: string) => {
+    (global as any).fetch = vi.fn().mockImplementation(async (url: string) => {
       if (url.endsWith('json')) {
-        return { ok: true, json: jest.fn().mockResolvedValue([]) };
+        return { ok: true, json: vi.fn().mockResolvedValue([]) };
       }
-      return { ok: false, statusText: 'version-bad', json: jest.fn() };
+      return { ok: false, statusText: 'version-bad', json: vi.fn() };
     });
 
     await expect(Engines.connectElectron({ urlDevtoolsJson: 'http://x/' } as any)).rejects.toThrow(
       'Failed to fetch browser version JSON: version-bad',
     );
 
-    (global as any).fetch = jest.fn().mockImplementation(async (url: string) => {
+    (global as any).fetch = vi.fn().mockImplementation(async (url: string) => {
       if (url.endsWith('json')) {
-        return { ok: true, json: jest.fn().mockResolvedValue(null) };
+        return { ok: true, json: vi.fn().mockResolvedValue(null) };
       }
-      return { ok: true, json: jest.fn().mockResolvedValue(null) };
+      return { ok: true, json: vi.fn().mockResolvedValue(null) };
     });
 
     await expect(Engines.connectElectron({ urlDevtoolsJson: 'http://x/' } as any)).rejects.toThrow(
       "Can't connect to http://x/",
     );
 
-    (global as any).fetch = jest.fn().mockImplementation(async (url: string) => {
+    (global as any).fetch = vi.fn().mockImplementation(async (url: string) => {
       if (url.endsWith('json')) {
-        return { ok: true, json: jest.fn().mockResolvedValue([]) };
+        return { ok: true, json: vi.fn().mockResolvedValue([]) };
       }
-      return { ok: true, json: jest.fn().mockResolvedValue({}) };
+      return { ok: true, json: vi.fn().mockResolvedValue({}) };
     });
 
     await expect(Engines.connectElectron({ urlDevtoolsJson: 'http://x/' } as any)).rejects.toThrow(
       'webSocketDebuggerUrl empty. Possibly wrong Electron version running',
     );
 
-    (global as any).fetch = jest.fn().mockImplementation(async (url: string) => {
+    (global as any).fetch = vi.fn().mockImplementation(async (url: string) => {
       if (url.endsWith('json')) {
-        return { ok: true, json: jest.fn().mockResolvedValue([]) };
+        return { ok: true, json: vi.fn().mockResolvedValue([]) };
       }
-      return { ok: true, json: jest.fn().mockResolvedValue({ webSocketDebuggerUrl: 'ws://debug' }) };
+      return { ok: true, json: vi.fn().mockResolvedValue({ webSocketDebuggerUrl: 'ws://debug' }) };
     });
 
-    const puppeteerSpy = jest
+    const puppeteerSpy = vi
       .spyOn(Engines, 'connectPuppeteer')
       .mockResolvedValue({ browser: {} as any, pages: { main: {} as any } });
 
@@ -442,7 +442,7 @@ describe('Engines', () => {
     expect(resultPuppeteer.pages.main).toBeDefined();
     expect(puppeteerSpy).toHaveBeenCalled();
 
-    const playwrightSpy = jest
+    const playwrightSpy = vi
       .spyOn(Engines, 'connectPlaywright')
       .mockResolvedValue({ browser: {} as any, pages: { main: {} as any } });
 
@@ -468,7 +468,7 @@ describe('Engines', () => {
 
   test('runElectron runs and connects', async () => {
     const stdout = {
-      on: jest.fn().mockImplementation((event: string, cb: (data: string) => void) => {
+      on: vi.fn().mockImplementation((event: string, cb: (data: string) => void) => {
         if (event === 'data') {
           cb('log-data');
         }
@@ -476,7 +476,7 @@ describe('Engines', () => {
     };
     mockSpawn.mockReturnValue({ pid: 123, stdout } as any);
 
-    const connectSpy = jest
+    const connectSpy = vi
       .spyOn(Engines, 'connectElectron')
       .mockRejectedValueOnce(new Error('fail'))
       .mockResolvedValue({ browser: {} as any, pages: { main: {} as any } });
@@ -535,11 +535,11 @@ describe('Engines', () => {
   });
 
   test('addPage adds page based on engine', async () => {
-    const puppeteerPage = { setViewport: jest.fn() } as any;
+    const puppeteerPage = { setViewport: vi.fn() } as any;
     const playwrightPage = { id: 'pw' } as any;
 
-    const puppeteerBrowser = { newPage: jest.fn().mockResolvedValue(puppeteerPage) } as any;
-    const playwrightBrowser = { newPage: jest.fn().mockResolvedValue(playwrightPage) } as any;
+    const puppeteerBrowser = { newPage: vi.fn().mockResolvedValue(puppeteerPage) } as any;
+    const playwrightBrowser = { newPage: vi.fn().mockResolvedValue(playwrightPage) } as any;
 
     const statePuppeteer = await Engines.addPage(
       { browser: puppeteerBrowser, pages: {} } as any,
@@ -567,9 +567,9 @@ describe('Engines', () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
 
     const page = { id: 'page' } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const launch = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ launch });
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const launch = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ launch });
 
     const state = await Engines.runPuppeteer(
       {
@@ -591,9 +591,9 @@ describe('Engines', () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
 
     const page = { id: 'page' } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const launch = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ launch });
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const launch = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ launch });
 
     const state = await Engines.runPuppeteer({ name: 'runner', type: 'runner', browser: {} } as any, {});
 
@@ -602,10 +602,10 @@ describe('Engines', () => {
   });
 
   test('connectPuppeteer skips viewport when size missing', async () => {
-    const page = { setViewport: jest.fn() } as any;
-    const browser = { pages: jest.fn().mockResolvedValue([page]) } as any;
-    const connect = jest.fn().mockResolvedValue(browser);
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ connect });
+    const page = { setViewport: vi.fn() } as any;
+    const browser = { pages: vi.fn().mockResolvedValue([page]) } as any;
+    const connect = vi.fn().mockResolvedValue(browser);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ connect });
 
     const result = await Engines.connectPuppeteer('ws://debug', 0, { width: 0, height: 0 }, 1000);
     expect(result.pages.main).toBe(page);
@@ -613,8 +613,8 @@ describe('Engines', () => {
   });
 
   test('addPage does not set viewport when size missing', async () => {
-    const puppeteerPage = { setViewport: jest.fn() } as any;
-    const puppeteerBrowser = { newPage: jest.fn().mockResolvedValue(puppeteerPage) } as any;
+    const puppeteerPage = { setViewport: vi.fn() } as any;
+    const puppeteerBrowser = { newPage: vi.fn().mockResolvedValue(puppeteerPage) } as any;
 
     const state = await Engines.addPage(
       { browser: puppeteerBrowser, pages: {} } as any,

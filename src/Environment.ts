@@ -208,7 +208,7 @@ export class Runner {
 }
 
 export class Environment extends Singleton {
-  private instances!: Record<string, EnvsInstanceType>;
+  private declare instances: Record<string, EnvsInstanceType>;
 
   constructor(reInit = false) {
     super();

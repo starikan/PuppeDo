@@ -98,7 +98,7 @@ export class LogExports {
 type LogOptionsOptionsType = { stdOut?: boolean; loggerPipes?: LogPipe[] };
 
 export class LogOptions extends Singleton {
-  options!: LogOptionsOptionsType;
+  declare options: LogOptionsOptionsType;
 
   constructor(options: LogOptionsOptionsType = {}, reInit = false) {
     super();

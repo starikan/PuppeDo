@@ -13,7 +13,7 @@ describe('Defaults', () => {
 
   test('resolveOptions uses defaults when config missing', () => {
     const originalRequire = (global as any).__non_webpack_require__;
-    (global as any).__non_webpack_require__ = jest.fn(() => {
+    (global as any).__non_webpack_require__ = vi.fn(() => {
       throw new Error('missing');
     });
 
@@ -36,15 +36,15 @@ describe('Defaults', () => {
 
   test('resolveOptions merges config and overrides', () => {
     const originalRequire = (global as any).__non_webpack_require__;
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({
       pluginsList: { pluginA: { enabled: true } },
-      loggerPipes: [{ transformer: jest.fn(), formatter: jest.fn(), exporter: jest.fn() }],
+      loggerPipes: [{ transformer: vi.fn(), formatter: vi.fn(), exporter: vi.fn() }],
       argsConfig: { PPD_LOG_DISABLED: true },
     });
 
     const options = resolveOptions({
       pluginsList: { pluginB: { plugin: 'mock' } },
-      loggerPipes: [{ transformer: jest.fn(), formatter: jest.fn(), exporter: jest.fn() }],
+      loggerPipes: [{ transformer: vi.fn(), formatter: vi.fn(), exporter: vi.fn() }],
       argsConfig: { PPD_DEBUG_MODE: true },
       debug: false,
     });
@@ -64,7 +64,7 @@ describe('Defaults', () => {
 
   test('resolveOptions handles null config', () => {
     const originalRequire = (global as any).__non_webpack_require__;
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue(null);
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue(null);
 
     const options = resolveOptions({});
 

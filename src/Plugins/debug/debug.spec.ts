@@ -3,19 +3,19 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginDebug, plugin, setValue } from './debug';
 
 // Mock dependencies
-jest.mock('../../PluginsCore');
+vi.mock('../../PluginsCore');
 
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('debug plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginDebug>;
 
       const inputs = { debug: true };
@@ -30,12 +30,14 @@ describe('debug plugin', () => {
   describe('plugin function', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {
-        getPlugins: jest.fn().mockReturnValue({
-          getValue: jest.fn().mockReturnValue({ argsRedefine: { PPD_DEBUG_MODE: true } }),
+        getPlugins: vi.fn().mockReturnValue({
+          getValue: vi.fn().mockReturnValue({ argsRedefine: { PPD_DEBUG_MODE: true } }),
         }),
       } as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -56,11 +58,13 @@ describe('debug plugin', () => {
 
     it('should have isActive function that returns PPD_DEBUG_MODE', () => {
       const mockPlugins = {
-        getPlugins: jest.fn().mockReturnValue({
-          getValue: jest.fn().mockReturnValue({ PPD_DEBUG_MODE: true }),
+        getPlugins: vi.fn().mockReturnValue({
+          getValue: vi.fn().mockReturnValue({ PPD_DEBUG_MODE: true }),
         }),
       } as any;
-      mockPlugin.mockImplementation(() => ({}) as any);
+      mockPlugin.mockImplementation(function () {
+        return {} as any;
+      });
 
       plugin(mockPlugins);
 
@@ -70,11 +74,13 @@ describe('debug plugin', () => {
 
     it('should have isActive function that returns false when PPD_DEBUG_MODE is false', () => {
       const mockPlugins = {
-        getPlugins: jest.fn().mockReturnValue({
-          getValue: jest.fn().mockReturnValue({ PPD_DEBUG_MODE: false }),
+        getPlugins: vi.fn().mockReturnValue({
+          getValue: vi.fn().mockReturnValue({ PPD_DEBUG_MODE: false }),
         }),
       } as any;
-      mockPlugin.mockImplementation(() => ({}) as any);
+      mockPlugin.mockImplementation(function () {
+        return {} as any;
+      });
 
       plugin(mockPlugins);
 

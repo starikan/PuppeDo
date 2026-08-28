@@ -4,37 +4,36 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginEngineSupports, plugin, setValue } from './engineSupports';
 
 // Mock dependencies
-jest.mock('../../Environment');
-jest.mock('../../PluginsCore');
+vi.mock('../../Environment');
+vi.mock('../../PluginsCore');
 
-const mockEnvironment = Environment as jest.MockedClass<typeof Environment>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockEnvironment = Environment as MockedClass<typeof Environment>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('engineSupports plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockEnvironment.mockImplementation(
-      () =>
-        ({
-          getEngine: jest.fn(),
-          getEnvInstance: jest.fn(() => ({
-            allRunners: {
-              getRunnerByName: jest.fn(() => ({
-                getRunnerData: jest.fn(() => ({
-                  browser: { engine: 'webkit' },
-                })),
+    vi.clearAllMocks();
+    mockEnvironment.mockImplementation(function () {
+      return {
+        getEngine: vi.fn(),
+        getEnvInstance: vi.fn(() => ({
+          allRunners: {
+            getRunnerByName: vi.fn(() => ({
+              getRunnerData: vi.fn(() => ({
+                browser: { engine: 'webkit' },
               })),
-            },
-          })),
-          getCurrent: jest.fn(() => ({ name: 'testRunner' })),
-        }) as any,
-    );
+            })),
+          },
+        })),
+        getCurrent: vi.fn(() => ({ name: 'testRunner' })),
+      } as any;
+    });
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginEngineSupports>;
 
       const inputs = { engineSupports: ['chromium'] };
@@ -50,7 +49,9 @@ describe('engineSupports plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = { envsId: 'testEnv' } as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -70,9 +71,11 @@ describe('engineSupports plugin', () => {
 
     it('should have resolveValues hook that does nothing if engineSupports is empty', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: [] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: [] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       plugin({} as any);
 
@@ -85,25 +88,26 @@ describe('engineSupports plugin', () => {
 
     it('should have resolveValues hook that throws error if engine not supported', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: ['webkit'] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: ['webkit'] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const mockEnvInstance = {
         allRunners: {
-          getRunnerByName: jest.fn().mockReturnValue({
-            getRunnerData: jest.fn().mockReturnValue({ browser: { engine: 'chromium' } }),
+          getRunnerByName: vi.fn().mockReturnValue({
+            getRunnerData: vi.fn().mockReturnValue({ browser: { engine: 'chromium' } }),
           }),
         },
       };
       const mockCurrent = { name: 'testRunner' };
-      mockEnvironment.mockImplementation(
-        () =>
-          ({
-            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
-            getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          }) as any,
-      );
+      mockEnvironment.mockImplementation(function () {
+        return {
+          getEnvInstance: vi.fn().mockReturnValue(mockEnvInstance),
+          getCurrent: vi.fn().mockReturnValue(mockCurrent),
+        } as any;
+      });
 
       plugin({ envsId: 'test' } as any);
 
@@ -118,25 +122,26 @@ describe('engineSupports plugin', () => {
 
     it('should have resolveValues hook that does nothing if engine is supported', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: ['chromium'] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: ['chromium'] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const mockEnvInstance = {
         allRunners: {
-          getRunnerByName: jest.fn().mockReturnValue({
-            getRunnerData: jest.fn().mockReturnValue({ browser: { engine: 'chromium' } }),
+          getRunnerByName: vi.fn().mockReturnValue({
+            getRunnerData: vi.fn().mockReturnValue({ browser: { engine: 'chromium' } }),
           }),
         },
       };
       const mockCurrent = { name: 'testRunner' };
-      mockEnvironment.mockImplementation(
-        () =>
-          ({
-            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
-            getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          }) as any,
-      );
+      mockEnvironment.mockImplementation(function () {
+        return {
+          getEnvInstance: vi.fn().mockReturnValue(mockEnvInstance),
+          getCurrent: vi.fn().mockReturnValue(mockCurrent),
+        } as any;
+      });
 
       plugin({ envsId: 'test' } as any);
 
@@ -149,25 +154,26 @@ describe('engineSupports plugin', () => {
 
     it('should not throw when engine is undefined', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: ['chromium'] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: ['chromium'] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const mockEnvInstance = {
         allRunners: {
-          getRunnerByName: jest.fn().mockReturnValue({
-            getRunnerData: jest.fn().mockReturnValue({ browser: {} }),
+          getRunnerByName: vi.fn().mockReturnValue({
+            getRunnerData: vi.fn().mockReturnValue({ browser: {} }),
           }),
         },
       };
       const mockCurrent = { name: 'testRunner' };
-      mockEnvironment.mockImplementation(
-        () =>
-          ({
-            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
-            getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          }) as any,
-      );
+      mockEnvironment.mockImplementation(function () {
+        return {
+          getEnvInstance: vi.fn().mockReturnValue(mockEnvInstance),
+          getCurrent: vi.fn().mockReturnValue(mockCurrent),
+        } as any;
+      });
 
       plugin({ envsId: 'test' } as any);
 
@@ -180,23 +186,24 @@ describe('engineSupports plugin', () => {
 
     it('should not throw when runner is undefined', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: ['chromium'] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: ['chromium'] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const mockEnvInstance = {
         allRunners: {
-          getRunnerByName: jest.fn().mockReturnValue(undefined),
+          getRunnerByName: vi.fn().mockReturnValue(undefined),
         },
       };
       const mockCurrent = { name: 'testRunner' };
-      mockEnvironment.mockImplementation(
-        () =>
-          ({
-            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
-            getCurrent: jest.fn().mockReturnValue(mockCurrent),
-          }) as any,
-      );
+      mockEnvironment.mockImplementation(function () {
+        return {
+          getEnvInstance: vi.fn().mockReturnValue(mockEnvInstance),
+          getCurrent: vi.fn().mockReturnValue(mockCurrent),
+        } as any;
+      });
 
       plugin({ envsId: 'test' } as any);
 
@@ -209,22 +216,23 @@ describe('engineSupports plugin', () => {
 
     it('should use default runner name when current is empty', () => {
       const mockPluginInstance = {
-        setValues: jest.fn().mockReturnValue({ engineSupports: [] }),
+        setValues: vi.fn().mockReturnValue({ engineSupports: [] }),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const mockEnvInstance = {
         allRunners: {
-          getRunnerByName: jest.fn().mockReturnValue(undefined),
+          getRunnerByName: vi.fn().mockReturnValue(undefined),
         },
       };
-      mockEnvironment.mockImplementation(
-        () =>
-          ({
-            getEnvInstance: jest.fn().mockReturnValue(mockEnvInstance),
-            getCurrent: jest.fn().mockReturnValue({}),
-          }) as any,
-      );
+      mockEnvironment.mockImplementation(function () {
+        return {
+          getEnvInstance: vi.fn().mockReturnValue(mockEnvInstance),
+          getCurrent: vi.fn().mockReturnValue({}),
+        } as any;
+      });
 
       plugin({ envsId: 'test' } as any);
 

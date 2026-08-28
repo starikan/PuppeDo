@@ -1,3 +1,4 @@
+import type { MockedClass } from 'vitest';
 import crypto from 'crypto';
 import { Arguments } from '../src/Arguments';
 import {
@@ -15,9 +16,9 @@ import {
   omit,
 } from '../src/Helpers';
 
-jest.mock('../src/Arguments');
+vi.mock('../src/Arguments');
 
-const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
+const mockArguments = Arguments as MockedClass<typeof Arguments>;
 
 test('Helpers.sleep', async () => {
   const start = process.hrtime.bigint();
@@ -422,7 +423,7 @@ describe('Helpers.deepMergeField', () => {
 
 describe('Helpers.getTimer', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('Возвращает корректные данные при передаче явных параметров (delta ≤ 60)', () => {
@@ -472,7 +473,7 @@ describe('Helpers.getTimer', () => {
 
   test('Работает корректно с дефолтными параметрами (используем замоканные значения)', () => {
     // Замокаем process.hrtime.bigint, чтобы вернуть предсказуемые значения
-    const hrtimeBigIntMock = jest
+    const hrtimeBigIntMock = vi
       .spyOn(process.hrtime, 'bigint')
       .mockReturnValueOnce(BigInt(5_000_000_000))
       .mockReturnValueOnce(BigInt(8_000_000_000)); // Разница = 3 сек.
@@ -503,11 +504,11 @@ describe('Helpers.getNowDateTime', () => {
   });
 
   test('Форматирует дату без аргументов (дефолтные значения)', () => {
-    jest.useFakeTimers().setSystemTime(new Date(2022, 1, 3, 4, 5, 6, 7));
+    vi.useFakeTimers().setSystemTime(new Date(2022, 1, 3, 4, 5, 6, 7));
     try {
       expect(getNowDateTime()).toBe('2022-02-03_04-05-06.007');
     } finally {
-      jest.useRealTimers();
+      vi.useRealTimers();
     }
   });
 
@@ -519,16 +520,16 @@ describe('Helpers.getNowDateTime', () => {
 
 describe('Helpers.generateId', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('Генерирует id из crypto.randomBytes', () => {
-    jest.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from([0xab, 0xcd]) as unknown as Buffer);
+    vi.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from([0xab, 0xcd]) as unknown as Buffer);
     expect(generateId(2)).toBe('abcd');
   });
 
   test('Использует длину по умолчанию', () => {
-    jest.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from('001122334455', 'hex') as unknown as Buffer);
+    vi.spyOn(crypto, 'randomBytes').mockImplementation(() => Buffer.from('001122334455', 'hex') as unknown as Buffer);
     expect(generateId()).toBe('001122334455');
   });
 });
@@ -569,20 +570,19 @@ describe('Helpers.pick/omit', () => {
 
 describe('Helpers.resolveAliases', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('Объединяет значения по алиасам', () => {
-    mockArguments.mockImplementation(
-      () =>
-        ({
-          args: {
-            PPD_ALIASES: {
-              data: ['d1', 'd2'],
-            },
+    mockArguments.mockImplementation(function () {
+      return {
+        args: {
+          PPD_ALIASES: {
+            data: ['d1', 'd2'],
           },
-        } as any),
-    );
+        },
+      } as any;
+    });
 
     const result = resolveAliases('data', {
       data: { a: 1 },
@@ -594,16 +594,15 @@ describe('Helpers.resolveAliases', () => {
   });
 
   test('Обрабатывает falsy значения, заменяя их на пустой объект', () => {
-    mockArguments.mockImplementation(
-      () =>
-        ({
-          args: {
-            PPD_ALIASES: {
-              data: ['d1'],
-            },
+    mockArguments.mockImplementation(function () {
+      return {
+        args: {
+          PPD_ALIASES: {
+            data: ['d1'],
           },
-        } as any),
-    );
+        },
+      } as any;
+    });
 
     const result = resolveAliases('data', {
       data: null,
@@ -614,30 +613,28 @@ describe('Helpers.resolveAliases', () => {
   });
 
   test('Возвращает пустой массив, если значений нет', () => {
-    mockArguments.mockImplementation(
-      () =>
-        ({
-          args: {
-            PPD_ALIASES: {},
-          },
-        } as any),
-    );
+    mockArguments.mockImplementation(function () {
+      return {
+        args: {
+          PPD_ALIASES: {},
+        },
+      } as any;
+    });
 
     const result = resolveAliases('missing', {} as any);
     expect(result).toEqual([]);
   });
 
   test('Бросает ошибку при дубликатах в алиасах', () => {
-    mockArguments.mockImplementation(
-      () =>
-        ({
-          args: {
-            PPD_ALIASES: {
-              data: ['data'],
-            },
+    mockArguments.mockImplementation(function () {
+      return {
+        args: {
+          PPD_ALIASES: {
+            data: ['data'],
           },
-        } as any),
-    );
+        },
+      } as any;
+    });
 
     expect(() => resolveAliases('data', { data: { a: 1 } } as any)).toThrow(
       'PPD_ALIASES contains duplicate keys: data',

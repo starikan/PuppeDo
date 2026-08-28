@@ -20,7 +20,7 @@
     "biome.json",
     "docs",
     "index.js",
-    "jest.config.js",
+    "vitest.config.js",
     "package-lock.json",
     "package.json",
     "puppedo.config.js",

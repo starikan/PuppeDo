@@ -4,26 +4,26 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginSelectors, plugin, setValue } from './selectors';
 
 // Mock dependencies
-jest.mock('../../Helpers');
-jest.mock('../../PluginsCore');
+vi.mock('../../Helpers');
+vi.mock('../../PluginsCore');
 
-const mockResolveAliases = resolveAliases as jest.MockedFunction<typeof resolveAliases>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockResolveAliases = resolveAliases as MockedFunction<typeof resolveAliases>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('selectors plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockResolveAliases.mockReturnValue({});
   });
 
   describe('setValue function', () => {
     it('should merge selectors with parent selectors and resolved aliases', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           selectors: { sel1: '.class1' },
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           selectors: { sel2: '.class2' },
         }),
       } as unknown as Plugin<PluginSelectors>;
@@ -51,7 +51,9 @@ describe('selectors plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -72,9 +74,11 @@ describe('selectors plugin', () => {
 
     it('should have beforeFunctions hook that sets values', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       plugin({} as any);
 

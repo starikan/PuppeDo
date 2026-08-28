@@ -11,6 +11,6 @@ module.exports = {
         // debug: true,
       },
     ],
-    '@babel/preset-typescript',
+    ['@babel/preset-typescript', { allowDeclareFields: true }],
   ],
 };

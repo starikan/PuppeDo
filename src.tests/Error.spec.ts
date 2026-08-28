@@ -1,43 +1,43 @@
+import type { MockedClass } from 'vitest';
 import { Arguments } from '../src/Arguments';
 import { Environment } from '../src/Environment';
 import { ContinueParentError, TestError, errorHandler } from '../src/Error';
 
-jest.mock('../src/Environment');
+vi.mock('../src/Environment');
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
 
 describe('Error handling', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-      ({
-        getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getEnvInstance: vi.fn().mockReturnValue({
           testTree: {
-            addError: jest.fn(),
-            getErrors: jest.fn().mockReturnValue([{ stepId: 's1' }]),
-            clearErrors: jest.fn(),
+            addError: vi.fn(),
+            getErrors: vi.fn().mockReturnValue([{ stepId: 's1' }]),
+            clearErrors: vi.fn(),
           },
         }),
-        getEnvRunners: jest.fn().mockReturnValue({ closeAllRunners: jest.fn() }),
-        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-      } as any),
-    );
+        getEnvRunners: vi.fn().mockReturnValue({ closeAllRunners: vi.fn() }),
+        getSocket: vi.fn().mockReturnValue({ sendYAML: vi.fn() }),
+      } as any;
+    });
   });
 
   test('TestError logs and summarizes', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockImplementation((name: string) => {
+      getPlugins: vi.fn().mockImplementation((name: string) => {
         if (name === 'continueOnError') {
-          return { getValues: jest.fn().mockReturnValue({ continueOnError: false }) };
+          return { getValues: vi.fn().mockReturnValue({ continueOnError: false }) };
         }
         if (name === 'descriptionError') {
-          return { getValues: jest.fn().mockReturnValue({ descriptionError: 'desc' }) };
+          return { getValues: vi.fn().mockReturnValue({ descriptionError: 'desc' }) };
         }
-        return { getValues: jest.fn().mockReturnValue({}) };
+        return { getValues: vi.fn().mockReturnValue({}) };
       }),
     } as any;
 
@@ -61,17 +61,17 @@ describe('Error handling', () => {
   });
 
   test('TestError skips log when continueOnError true', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockImplementation((name: string) => {
+      getPlugins: vi.fn().mockImplementation((name: string) => {
         if (name === 'continueOnError') {
-          return { getValues: jest.fn().mockReturnValue({ continueOnError: true }) };
+          return { getValues: vi.fn().mockReturnValue({ continueOnError: true }) };
         }
         if (name === 'descriptionError') {
-          return { getValues: jest.fn().mockReturnValue({ descriptionError: '' }) };
+          return { getValues: vi.fn().mockReturnValue({ descriptionError: '' }) };
         }
-        return { getValues: jest.fn().mockReturnValue({}) };
+        return { getValues: vi.fn().mockReturnValue({}) };
       }),
     } as any;
 
@@ -97,7 +97,7 @@ describe('Error handling', () => {
   test('ContinueParentError logs with stepId when enabled', async () => {
     new Arguments({ PPD_LOG_STEPID: true }, {}, true);
 
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const test = {} as any;
     const agent = { stepId: 's1', breadcrumbs: ['a'], breakParentIfResult: 'expr', levelIndent: 0 } as any;
 
@@ -110,10 +110,10 @@ describe('Error handling', () => {
   });
 
   test('errorHandler exits process after cleanup', async () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
-    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-    await errorHandler({ envsId: 'env-1', message: 'm', stack: 's', socket: { sendYAML: jest.fn() } } as any);
+    await errorHandler({ envsId: 'env-1', message: 'm', stack: 's', socket: { sendYAML: vi.fn() } } as any);
 
     expect(exitSpy).toHaveBeenCalledWith(1);
 
@@ -122,17 +122,17 @@ describe('Error handling', () => {
   });
 
   test('TestError uses parentError fields when missing in agent', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockImplementation((name: string) => {
+      getPlugins: vi.fn().mockImplementation((name: string) => {
         if (name === 'continueOnError') {
-          return { getValues: jest.fn().mockReturnValue({ continueOnError: false }) };
+          return { getValues: vi.fn().mockReturnValue({ continueOnError: false }) };
         }
         if (name === 'descriptionError') {
-          return { getValues: jest.fn().mockReturnValue({ descriptionError: '' }) };
+          return { getValues: vi.fn().mockReturnValue({ descriptionError: '' }) };
         }
-        return { getValues: jest.fn().mockReturnValue({}) };
+        return { getValues: vi.fn().mockReturnValue({}) };
       }),
     } as any;
 
@@ -151,7 +151,7 @@ describe('Error handling', () => {
 
     const parentError = { envsId: 'env-1', socket: {}, stepId: 'parent-step', message: 'p', stack: 's' } as any;
     const error = new TestError({ logger, agent, plugins, parentError } as any);
-    const summarySpy = jest.spyOn(error, 'summaryInfo');
+    const summarySpy = vi.spyOn(error, 'summaryInfo');
 
     await error.log();
 
@@ -160,17 +160,17 @@ describe('Error handling', () => {
   });
 
   test('TestError prefers agent stepId and calls summary on top level', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockImplementation((name: string) => {
+      getPlugins: vi.fn().mockImplementation((name: string) => {
         if (name === 'continueOnError') {
-          return { getValues: jest.fn().mockReturnValue({ continueOnError: false }) };
+          return { getValues: vi.fn().mockReturnValue({ continueOnError: false }) };
         }
         if (name === 'descriptionError') {
-          return { getValues: jest.fn().mockReturnValue({ descriptionError: '' }) };
+          return { getValues: vi.fn().mockReturnValue({ descriptionError: '' }) };
         }
-        return { getValues: jest.fn().mockReturnValue({}) };
+        return { getValues: vi.fn().mockReturnValue({}) };
       }),
     } as any;
 
@@ -189,7 +189,7 @@ describe('Error handling', () => {
 
     const parentError = { envsId: 'env-1', socket: {}, stepId: 'parent-step', message: 'p', stack: 's' } as any;
     const error = new TestError({ logger, agent, plugins, parentError } as any);
-    const summarySpy = jest.spyOn(error, 'summaryInfo').mockResolvedValue(undefined);
+    const summarySpy = vi.spyOn(error, 'summaryInfo').mockResolvedValue(undefined);
 
     await error.log();
 
@@ -198,10 +198,10 @@ describe('Error handling', () => {
   });
 
   test('TestError constructor sets stepId from agent', () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({}) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({}) }),
     } as any;
 
     const agent = { envsId: 'env-1', socket: {}, stepId: 's1', description: '', name: '' } as any;
@@ -211,10 +211,10 @@ describe('Error handling', () => {
   });
 
   test('TestError uses parent stepId when agent stepId is null', () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({}) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({}) }),
     } as any;
 
     const agent = { envsId: 'env-1', socket: {}, stepId: null, description: '', name: 'agent' } as any;
@@ -225,10 +225,10 @@ describe('Error handling', () => {
   });
 
   test('TestError keeps stepId undefined when no parent and agent has none', () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({}) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({}) }),
     } as any;
 
     const agent = { envsId: 'env-1', socket: {}, stepId: undefined, description: '', name: 'agent' } as any;
@@ -238,10 +238,10 @@ describe('Error handling', () => {
   });
 
   test('TestError keeps empty stepId when provided', () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({}) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({}) }),
     } as any;
 
     const agent = { envsId: 'env-1', socket: {}, stepId: '', description: '', name: 'agent' } as any;
@@ -252,10 +252,10 @@ describe('Error handling', () => {
   });
 
   test('TestError summaryInfo logs summary', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ descriptionError: '' }) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ descriptionError: '' }) }),
     } as any;
     const agent = { envsId: 'env-1', socket: {}, stepId: 's1', description: '', name: '' } as any;
     const error = new TestError({ logger, agent, plugins } as any);
@@ -266,10 +266,10 @@ describe('Error handling', () => {
   });
 
   test('TestError summaryInfo uses defaults for empty fields', async () => {
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ descriptionError: '' }) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ descriptionError: '' }) }),
     } as any;
     const agent = { envsId: 'env-1', socket: {}, stepId: 's1', description: '', name: '' } as any;
     const error = new TestError({ logger, agent, plugins } as any);
@@ -286,9 +286,9 @@ describe('Error handling', () => {
   test('errorHandler sends yaml and exits', async () => {
     new Arguments({ PPD_DEBUG_MODE: false }, {}, true);
 
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    const socket = { sendYAML: jest.fn() };
+    const socket = { sendYAML: vi.fn() };
     const error = {
       envsId: 'env-1',
       socket,
@@ -306,26 +306,25 @@ describe('Error handling', () => {
   });
 
   test('errorHandler ignores closeAllRunners errors', async () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-      ({
-        getEnvRunners: jest.fn().mockImplementation(() => {
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getEnvRunners: vi.fn().mockImplementation(() => {
           throw new Error('fail');
         }),
-        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-      } as any),
-    );
+        getSocket: vi.fn().mockReturnValue({ sendYAML: vi.fn() }),
+      } as any;
+    });
 
-    await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);
+    await errorHandler({ envsId: 'env-1', socket: { sendYAML: vi.fn() }, message: 'm', stack: 's' } as any);
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     exitSpy.mockRestore();
   });
 
   test('errorHandler skips sendYAML when socket missing', async () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await errorHandler({ envsId: 'env-1', message: 'm', stack: 's' } as any);
 
@@ -334,17 +333,16 @@ describe('Error handling', () => {
   });
 
   test('errorHandler skips closeAllRunners when missing', async () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-      ({
-        getEnvRunners: jest.fn().mockReturnValue({}),
-        getSocket: jest.fn().mockReturnValue({ sendYAML: jest.fn() }),
-      } as any),
-    );
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getEnvRunners: vi.fn().mockReturnValue({}),
+        getSocket: vi.fn().mockReturnValue({ sendYAML: vi.fn() }),
+      } as any;
+    });
 
-    await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);
+    await errorHandler({ envsId: 'env-1', socket: { sendYAML: vi.fn() }, message: 'm', stack: 's' } as any);
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     exitSpy.mockRestore();
@@ -353,14 +351,14 @@ describe('Error handling', () => {
   test('errorHandler handles TestError with debug mode', async () => {
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
 
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
     const plugins = {
       envsId: 'env-1',
-      getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({}) }),
+      getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({}) }),
     } as any;
 
-    const agent = { envsId: 'env-1', socket: { sendYAML: jest.fn() }, stepId: 's1', description: '', name: '' } as any;
+    const agent = { envsId: 'env-1', socket: { sendYAML: vi.fn() }, stepId: 's1', description: '', name: '' } as any;
     const testError = new TestError({ logger, agent, plugins } as any);
 
     await errorHandler(testError as any);
@@ -370,19 +368,19 @@ describe('Error handling', () => {
   });
 
   test('errorHandler works with default args', async () => {
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);
+    await errorHandler({ envsId: 'env-1', socket: { sendYAML: vi.fn() }, message: 'm', stack: 's' } as any);
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     exitSpy.mockRestore();
   });
 
   test('errorHandler uses default debug mode when args missing', async () => {
-    const argsSpy = jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const argsSpy = vi.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({} as any);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    await errorHandler({ envsId: 'env-1', socket: { sendYAML: jest.fn() }, message: 'm', stack: 's' } as any);
+    await errorHandler({ envsId: 'env-1', socket: { sendYAML: vi.fn() }, message: 'm', stack: 's' } as any);
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     exitSpy.mockRestore();

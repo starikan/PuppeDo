@@ -4,23 +4,25 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginArgsRedefine, plugin, setValue } from './argsRedefine';
 
 // Mock dependencies
-jest.mock('../../Arguments');
-jest.mock('../../PluginsCore');
+vi.mock('../../Arguments');
+vi.mock('../../PluginsCore');
 
-const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockArguments = Arguments as MockedClass<typeof Arguments>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('argsRedefine plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Mock Arguments constructor to return an object with args
-    mockArguments.mockImplementation(() => ({ args: { PPD_LOG_EXTEND: true } }) as any);
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_LOG_EXTEND: true } } as any;
+    });
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginArgsRedefine>;
 
       const inputs = { argsRedefine: { PPD_LOG_EXTEND: false } };
@@ -36,7 +38,9 @@ describe('argsRedefine plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -56,7 +60,9 @@ describe('argsRedefine plugin', () => {
 
     it('should initialize defaultValues with Arguments().args', () => {
       const mockArgs = { PPD_LOG_EXTEND: true };
-      mockArguments.mockImplementation(() => ({ args: mockArgs }) as any);
+      mockArguments.mockImplementation(function () {
+        return { args: mockArgs } as any;
+      });
 
       plugin({} as any);
 

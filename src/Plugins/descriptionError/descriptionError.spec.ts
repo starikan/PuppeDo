@@ -4,21 +4,21 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginDescriptionError, plugin, setValue } from './descriptionError';
 
 // Mock dependencies
-jest.mock('../../Helpers');
-jest.mock('../../PluginsCore');
+vi.mock('../../Helpers');
+vi.mock('../../PluginsCore');
 
-const mockRunScriptInContext = runScriptInContext as jest.MockedFunction<typeof runScriptInContext>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockRunScriptInContext = runScriptInContext as MockedFunction<typeof runScriptInContext>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('descriptionError plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginDescriptionError>;
 
       const inputs = { descriptionError: 'test error' };
@@ -34,7 +34,9 @@ describe('descriptionError plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -54,10 +56,12 @@ describe('descriptionError plugin', () => {
 
     it('should have afterResults hook that runs script and sets value', () => {
       const mockPluginInstance = {
-        getValue: jest.fn().mockReturnValue('script'),
-        setValues: jest.fn(),
+        getValue: vi.fn().mockReturnValue('script'),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
       mockRunScriptInContext.mockReturnValue('new value');
 
       plugin({} as any);
@@ -75,10 +79,12 @@ describe('descriptionError plugin', () => {
 
     it('should not set value if runScriptInContext returns falsy', () => {
       const mockPluginInstance = {
-        getValue: jest.fn().mockReturnValue('script'),
-        setValues: jest.fn(),
+        getValue: vi.fn().mockReturnValue('script'),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
       mockRunScriptInContext.mockReturnValue(null);
 
       plugin({} as any);
@@ -94,10 +100,12 @@ describe('descriptionError plugin', () => {
 
     it('should catch errors in runScriptInContext', () => {
       const mockPluginInstance = {
-        getValue: jest.fn().mockReturnValue('script'),
-        setValues: jest.fn(),
+        getValue: vi.fn().mockReturnValue('script'),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
       mockRunScriptInContext.mockImplementation(() => {
         throw new Error('script error');
       });

@@ -1,3 +1,4 @@
+import type { Mock, MockedClass } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { Arguments } from '../src/Arguments';
@@ -6,11 +7,11 @@ import { Environment } from '../src/Environment';
 import { Log, LogExports, LogOptions } from '../src/Log';
 import Screenshot from '../src/Screenshot';
 
-jest.mock('../src/Environment');
-jest.mock('../src/Screenshot');
+vi.mock('../src/Environment');
+vi.mock('../src/Screenshot');
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockScreenshotClass = Screenshot as jest.MockedClass<typeof Screenshot>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockScreenshotClass = Screenshot as MockedClass<typeof Screenshot>;
 
 const outputFolder = '.temp/log-full';
 const distOutput = path.join('dist', 'output.html');
@@ -39,7 +40,7 @@ const writeFileWithRetry = (filePath: string, content: string, retries = 3): voi
 };
 
 describe('Log full coverage', () => {
-  let testTree: { updateStep: jest.Mock };
+  let testTree: { updateStep: Mock };
 
   beforeAll(() => {
     // Create dist output file once for all tests
@@ -48,33 +49,31 @@ describe('Log full coverage', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     outputDir = path.join(outputFolder, 'exports');
     outputLatest = path.join(outputFolder, 'exports-latest');
     fs.mkdirSync(outputDir, { recursive: true });
     fs.mkdirSync(outputLatest, { recursive: true });
 
-    testTree = { updateStep: jest.fn() };
+    testTree = { updateStep: vi.fn() };
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-      ({
-        getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getEnvInstance: vi.fn().mockReturnValue({
           testTree,
           log: [],
         }),
-        getSocket: jest.fn().mockReturnValue({ id: 'socket' }),
-        getOutput: jest.fn().mockReturnValue({ folder: outputDir, folderLatest: outputLatest }),
-      } as any),
-    );
+        getSocket: vi.fn().mockReturnValue({ id: 'socket' }),
+        getOutput: vi.fn().mockReturnValue({ folder: outputDir, folderLatest: outputLatest }),
+      } as any;
+    });
 
-    mockScreenshotClass.mockImplementation(
-      () =>
-      ({
-        getScreenshotsLogEntry: jest.fn().mockResolvedValue(['s1', 's2']),
-      } as any),
-    );
+    mockScreenshotClass.mockImplementation(function () {
+      return {
+        getScreenshotsLogEntry: vi.fn().mockResolvedValue(['s1', 's2']),
+      } as any;
+    });
   });
 
   test('LogExports.resolveOutputHtmlFile picks dist output', () => {
@@ -82,7 +81,7 @@ describe('Log full coverage', () => {
   });
 
   test('LogExports.resolveOutputHtmlFile falls back to module output', () => {
-    const existsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+    const existsSpy = vi.spyOn(fs, 'existsSync').mockReturnValue(false);
 
     const resolved = LogExports.resolveOutputHtmlFile();
     expect(resolved).toContain(path.join('node_modules', '@puppedo', 'core', 'dist', 'output.html'));
@@ -100,7 +99,7 @@ describe('Log full coverage', () => {
   });
 
   test('LogExports.initOutput skips creating existing folder', () => {
-    const nowSpy = jest.spyOn(Helpers, 'getNowDateTime').mockReturnValue('fixed');
+    const nowSpy = vi.spyOn(Helpers, 'getNowDateTime').mockReturnValue('fixed');
     new Arguments({ PPD_OUTPUT: outputFolder }, {}, true);
 
     const expectedFolder = path.join(outputFolder, 'fixed_env-1');
@@ -151,7 +150,7 @@ describe('Log full coverage', () => {
     const options = new LogOptions({ stdOut: true }, true);
     options.bindOptions({ stdOut: false });
     options.bindOptions();
-    options.addLogPipe({ transformer: jest.fn(), formatter: jest.fn(), exporter: jest.fn() } as any);
+    options.addLogPipe({ transformer: vi.fn(), formatter: vi.fn(), exporter: vi.fn() } as any);
 
     expect(options.options.stdOut).toBe(false);
     expect(options.options.loggerPipes.length).toBe(1);
@@ -221,13 +220,12 @@ describe('Log full coverage', () => {
 
   test('Log.getScreenshots disables screenshots for extendInfo', async () => {
     new Arguments({ PPD_LOG_SCREENSHOT: true, PPD_LOG_FULLPAGE: true }, {}, true);
-    const getScreenshotsLogEntry = jest.fn().mockResolvedValue([]);
-    mockScreenshotClass.mockImplementationOnce(
-      () =>
-      ({
+    const getScreenshotsLogEntry = vi.fn().mockResolvedValue([]);
+    mockScreenshotClass.mockImplementationOnce(function () {
+      return {
         getScreenshotsLogEntry,
-      } as any),
-    );
+      } as any;
+    });
     const log = new Log('env-1');
 
     await log.getScreenshots({ screenshot: true, fullpage: true }, 'info', 0, true, null as any);
@@ -241,9 +239,9 @@ describe('Log full coverage', () => {
         stdOut: true,
         loggerPipes: [
           {
-            transformer: jest.fn().mockRejectedValue(new Error('fail')),
-            formatter: jest.fn(),
-            exporter: jest.fn(),
+            transformer: vi.fn().mockRejectedValue(new Error('fail')),
+            formatter: vi.fn(),
+            exporter: vi.fn(),
           },
         ],
       },
@@ -260,9 +258,9 @@ describe('Log full coverage', () => {
         stdOut: true,
         loggerPipes: [
           {
-            transformer: jest.fn().mockRejectedValue(new Error('boom')),
-            formatter: jest.fn(),
-            exporter: jest.fn(),
+            transformer: vi.fn().mockRejectedValue(new Error('boom')),
+            formatter: vi.fn(),
+            exporter: vi.fn(),
           },
         ],
       },
@@ -275,14 +273,14 @@ describe('Log full coverage', () => {
   });
 
   test('Log.runPipes executes exporter on success', async () => {
-    const exporter = jest.fn().mockResolvedValue(undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
     new LogOptions(
       {
         stdOut: true,
         loggerPipes: [
           {
-            transformer: jest.fn().mockResolvedValue({}),
-            formatter: jest.fn().mockResolvedValue('ok'),
+            transformer: vi.fn().mockResolvedValue({}),
+            formatter: vi.fn().mockResolvedValue('ok'),
             exporter,
           },
         ],
@@ -297,14 +295,14 @@ describe('Log full coverage', () => {
   });
 
   test('Log.runPipes sets skipThis when stdOut is false', async () => {
-    const exporter = jest.fn().mockResolvedValue(undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
     new LogOptions(
       {
         stdOut: false,
         loggerPipes: [
           {
-            transformer: jest.fn().mockResolvedValue({}),
-            formatter: jest.fn().mockResolvedValue('ok'),
+            transformer: vi.fn().mockResolvedValue({}),
+            formatter: vi.fn().mockResolvedValue('ok'),
             exporter,
           },
         ],
@@ -324,13 +322,13 @@ describe('Log full coverage', () => {
   });
 
   test('Log.runPipes uses default stdOut when not set', async () => {
-    const exporter = jest.fn().mockResolvedValue(undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
     new LogOptions(
       {
         loggerPipes: [
           {
-            transformer: jest.fn().mockResolvedValue({}),
-            formatter: jest.fn().mockResolvedValue('ok'),
+            transformer: vi.fn().mockResolvedValue({}),
+            formatter: vi.fn().mockResolvedValue('ok'),
             exporter,
           },
         ],
@@ -350,14 +348,14 @@ describe('Log full coverage', () => {
   });
 
   test('Log.runPipes sets skipThis when manualSkipEntry is true', async () => {
-    const exporter = jest.fn().mockResolvedValue(undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
     new LogOptions(
       {
         stdOut: true,
         loggerPipes: [
           {
-            transformer: jest.fn().mockResolvedValue({}),
-            formatter: jest.fn().mockResolvedValue('ok'),
+            transformer: vi.fn().mockResolvedValue({}),
+            formatter: vi.fn().mockResolvedValue('ok'),
             exporter,
           },
         ],
@@ -377,13 +375,13 @@ describe('Log full coverage', () => {
   });
 
   test('Log.updateTree fills timer payload', async () => {
-    const exporter = jest.fn().mockResolvedValue(undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
     new LogOptions(
       {
         loggerPipes: [
           {
-            transformer: jest.fn().mockResolvedValue({}),
-            formatter: jest.fn().mockResolvedValue('ok'),
+            transformer: vi.fn().mockResolvedValue({}),
+            formatter: vi.fn().mockResolvedValue('ok'),
             exporter,
           },
         ],
@@ -424,7 +422,7 @@ describe('Log full coverage', () => {
 
   test('Log.log uses default breadcrumbs and repeat', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({ text: 'x', level: 'info' } as any);
 
@@ -435,7 +433,7 @@ describe('Log full coverage', () => {
 
   test('Log.log keeps provided breadcrumbs', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({ text: 'x', level: 'info', logMeta: { breadcrumbs: ['a'] } } as any);
 
@@ -445,7 +443,7 @@ describe('Log full coverage', () => {
 
   test('Log.log applies default text and level', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({} as any);
 
@@ -456,7 +454,7 @@ describe('Log full coverage', () => {
 
   test('Log.log propagates error context defaults on failure', async () => {
     const log = new Log('env-1');
-    jest.spyOn(log, 'runPipes').mockRejectedValue(new Error('boom'));
+    vi.spyOn(log, 'runPipes').mockRejectedValue(new Error('boom'));
 
     let thrown: any;
     try {
@@ -487,7 +485,7 @@ describe('Log full coverage', () => {
 
   test('Log.log handles pipe error and augments error', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockRejectedValue(new Error('boom'));
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockRejectedValue(new Error('boom'));
 
     new Arguments({ PPD_DEBUG_MODE: true }, {}, true);
 
@@ -501,7 +499,7 @@ describe('Log full coverage', () => {
 
   test('Log.log uses raw level for null and overrides error background', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({ text: 'x', level: null as any, stepId: 's1' });
     expect(runPipesSpy.mock.calls[0][0][0].level).toBe('raw');
@@ -515,7 +513,7 @@ describe('Log full coverage', () => {
 
   test('Log.log uses default stepId and logMeta fallbacks', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({ text: 'x', level: 'info', logMeta: {} as any } as any);
 
@@ -529,7 +527,7 @@ describe('Log full coverage', () => {
 
   test('Log.log keeps repeat when logMeta.repeat is zero', async () => {
     const log = new Log('env-1');
-    const runPipesSpy = jest.spyOn(log, 'runPipes').mockResolvedValue(undefined);
+    const runPipesSpy = vi.spyOn(log, 'runPipes').mockResolvedValue(undefined);
 
     await log.log({ text: 'x', level: 'info', stepId: 's1', logMeta: { repeat: 0 } } as any);
 

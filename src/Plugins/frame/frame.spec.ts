@@ -3,19 +3,19 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginFrame, plugin, setValue } from './frame';
 
 // Mock dependencies
-jest.mock('../../PluginsCore');
+vi.mock('../../PluginsCore');
 
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('frame plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginFrame>;
 
       const inputs = { frame: 'main' };
@@ -31,7 +31,9 @@ describe('frame plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 

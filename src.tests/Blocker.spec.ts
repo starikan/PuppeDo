@@ -25,7 +25,7 @@ describe('Blocker', () => {
 
   test('setAll replaces blocks and emits updates', () => {
     const blocker = new Blocker();
-    const listener = jest.fn();
+    const listener = vi.fn();
     blocker.blockEmitter.on('updateBlock', listener);
 
     blocker.setAll([
@@ -40,7 +40,7 @@ describe('Blocker', () => {
 
   test('setBlock emits only for matching step', () => {
     const blocker = new Blocker();
-    const listener = jest.fn();
+    const listener = vi.fn();
     blocker.blockEmitter.on('updateBlock', listener);
 
     blocker.setAll([

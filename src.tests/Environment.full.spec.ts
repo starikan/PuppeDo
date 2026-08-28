@@ -1,3 +1,4 @@
+import type { Mocked, MockedClass, MockedFunction } from 'vitest';
 import { execSync, spawnSync } from 'child_process';
 import os from 'os';
 import { Environment, Runner, Runners } from '../src/Environment';
@@ -5,48 +6,60 @@ import { Engines } from '../src/Engines';
 import FlowStructure from '../src/FlowStructure';
 import AgentContent from '../src/TestContent';
 
-jest.mock('../src/Engines', () => ({
+vi.mock('../src/Engines', () => ({
   DEFAULT_BROWSER: { type: 'browser', engine: 'puppeteer', runtime: 'run', browserName: 'chrome' },
   Engines: {
-    resolveBrowser: jest.fn((b) => b),
-    runPuppeteer: jest.fn().mockResolvedValue({ browser: { id: 'bp' }, pages: { main: { id: 'p1' } } }),
-    runPlaywright: jest.fn().mockResolvedValue({ browser: { id: 'bw' }, pages: { main: { id: 'p2' } } }),
-    connectElectron: jest.fn().mockResolvedValue({ browser: { id: 'be' }, pages: { main: { id: 'p3' } } }),
-    runElectron: jest.fn().mockResolvedValue({ browser: { id: 'be' }, pages: { main: { id: 'p4' } }, pid: 1 }),
+    resolveBrowser: vi.fn((b) => b),
+    runPuppeteer: vi.fn().mockResolvedValue({ browser: { id: 'bp' }, pages: { main: { id: 'p1' } } }),
+    runPlaywright: vi.fn().mockResolvedValue({ browser: { id: 'bw' }, pages: { main: { id: 'p2' } } }),
+    connectElectron: vi.fn().mockResolvedValue({ browser: { id: 'be' }, pages: { main: { id: 'p3' } } }),
+    runElectron: vi.fn().mockResolvedValue({ browser: { id: 'be' }, pages: { main: { id: 'p4' } }, pid: 1 }),
   },
 }));
 
-jest.mock('../src/Log', () => ({
-  LogOptions: jest.fn(),
-  Log: jest.fn().mockImplementation(() => ({ output: { name: 'env', folder: 'f', folderLatest: 'l' }, exporter: {} })),
+vi.mock('../src/Log', () => ({
+  LogOptions: vi.fn(),
+  Log: vi.fn(function () {
+    return { output: { name: 'env', folder: 'f', folderLatest: 'l' }, exporter: {} };
+  }),
 }));
 
-jest.mock('../src/PluginsCore', () => ({
-  Plugins: jest.fn().mockImplementation(() => ({ hook: jest.fn(), getPlugins: jest.fn() })),
+vi.mock('../src/PluginsCore', () => ({
+  Plugins: vi.fn(function () {
+    return { hook: vi.fn(), getPlugins: vi.fn() };
+  }),
 }));
 
-jest.mock('../src/AgentTree', () => ({
-  AgentTree: jest.fn().mockImplementation(() => ({ updateStep: jest.fn(), findParent: jest.fn(), findNode: jest.fn() })),
+vi.mock('../src/AgentTree', () => ({
+  AgentTree: vi.fn(function () {
+    return { updateStep: vi.fn(), findParent: vi.fn(), findNode: vi.fn() };
+  }),
 }));
 
-jest.mock('../src/TestContent');
+vi.mock('../src/TestContent', () => ({
+  default: vi.fn(function () {
+    return { allData: { runners: [] } };
+  }),
+}));
 
-jest.mock('../src/FlowStructure');
+vi.mock('../src/FlowStructure');
 
-jest.mock('os');
-jest.mock('child_process', () => ({ execSync: jest.fn(), spawnSync: jest.fn() }));
+vi.mock('os');
+vi.mock('child_process', () => ({ execSync: vi.fn(), spawnSync: vi.fn() }));
 
-const mockFlowStructure = FlowStructure as jest.Mocked<typeof FlowStructure>;
-const mockAgentContent = AgentContent as jest.MockedClass<typeof AgentContent>;
-const mockOs = os as jest.Mocked<typeof os>;
-const mockSpawnSync = spawnSync as jest.MockedFunction<typeof spawnSync>;
-const mockExecSync = execSync as jest.MockedFunction<typeof execSync>;
+const mockFlowStructure = FlowStructure as Mocked<typeof FlowStructure>;
+const mockAgentContent = AgentContent as MockedClass<typeof AgentContent>;
+const mockOs = os as Mocked<typeof os>;
+const mockSpawnSync = spawnSync as MockedFunction<typeof spawnSync>;
+const mockExecSync = execSync as MockedFunction<typeof execSync>;
 
 describe('Environment (full)', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockAgentContent.mockImplementation(() => ({ allData: { runners: [] } } as any));
-    mockFlowStructure.getFlowFullJSON = jest.fn().mockReturnValue({ name: 'test', stepId: 's1' } as any);
+    vi.clearAllMocks();
+    mockAgentContent.mockImplementation(function () {
+      return { allData: { runners: [] } } as any;
+    });
+    mockFlowStructure.getFlowFullJSON = vi.fn().mockReturnValue({ name: 'test', stepId: 's1' } as any);
     mockOs.platform.mockReturnValue('win32' as any);
   });
 
@@ -90,14 +103,13 @@ describe('Environment (full)', () => {
   });
 
   test('Runners switchRunner with existing runner', async () => {
-    mockAgentContent.mockImplementation(
-      () =>
-        ({
-          allData: {
-            runners: [{ name: 'r1', type: 'runner', browser: { engine: 'puppeteer' } }],
-          },
-        } as any),
-    );
+    mockAgentContent.mockImplementation(function () {
+      return {
+        allData: {
+          runners: [{ name: 'r1', type: 'runner', browser: { engine: 'puppeteer' } }],
+        },
+      } as any;
+    });
 
     const env = new Environment(true);
     env.createEnv({ envsId: 'env-1' });
@@ -147,8 +159,8 @@ describe('Environment (full)', () => {
 
     (runners as any).runners = {
       r1: {
-        getState: jest.fn().mockReturnValue({}),
-        runEngine: jest.fn().mockResolvedValue(undefined),
+        getState: vi.fn().mockReturnValue({}),
+        runEngine: vi.fn().mockResolvedValue(undefined),
       },
     };
 
@@ -165,8 +177,8 @@ describe('Environment (full)', () => {
 
     (runners as any).runners = {
       r1: {
-        getState: jest.fn().mockReturnValue({ pages: { custom: { id: 1 }, main: { id: 2 } }, browser: {} }),
-        runEngine: jest.fn().mockResolvedValue(undefined),
+        getState: vi.fn().mockReturnValue({ pages: { custom: { id: 1 }, main: { id: 2 } }, browser: {} }),
+        runEngine: vi.fn().mockResolvedValue(undefined),
       },
     };
 
@@ -182,8 +194,8 @@ describe('Environment (full)', () => {
 
     (runners as any).runners = {
       r1: {
-        getState: jest.fn().mockReturnValue({ pages: {}, browser: {} }),
-        runEngine: jest.fn().mockResolvedValue(undefined),
+        getState: vi.fn().mockReturnValue({ pages: {}, browser: {} }),
+        runEngine: vi.fn().mockResolvedValue(undefined),
       },
     };
 
@@ -209,7 +221,7 @@ describe('Environment (full)', () => {
 
     (runners as any).runners = {
       r1: {
-        getState: jest.fn().mockReturnValue({ pages: {} }),
+        getState: vi.fn().mockReturnValue({ pages: {} }),
       },
     };
     env.setCurrent('env-1', { name: 'r1', page: 'main' });
@@ -225,7 +237,7 @@ describe('Environment (full)', () => {
     const page = { id: 'p1' } as any;
     (runners as any).runners = {
       r1: {
-        getState: jest.fn().mockReturnValue({ pages: { main: page } }),
+        getState: vi.fn().mockReturnValue({ pages: { main: page } }),
       },
     };
     env.setCurrent('env-1', { name: 'r1', page: 'main' });
@@ -241,7 +253,7 @@ describe('Environment (full)', () => {
     const page = { id: 'p1' } as any;
     (runners as any).runners = {
       '': {
-        getState: jest.fn().mockReturnValue({ pages: { '': page } }),
+        getState: vi.fn().mockReturnValue({ pages: { '': page } }),
       },
     };
     env.setCurrent('env-1', {} as any);
@@ -265,7 +277,7 @@ describe('Environment (full)', () => {
     env.createEnv({ envsId: 'env-1' });
     const runners = env.getEnvRunners('env-1');
 
-    const stopEngine = jest.fn().mockResolvedValue(undefined);
+    const stopEngine = vi.fn().mockResolvedValue(undefined);
     (runners as any).runners = {
       r1: { stopEngine },
       r2: { stopEngine },
@@ -315,7 +327,7 @@ describe('Environment (full)', () => {
       browser: { killOnEnd: true, killProcessName: 'app.exe' },
     } as any);
 
-    (runner as any).state = { browser: { close: jest.fn().mockRejectedValue(new Error('x')) } };
+    (runner as any).state = { browser: { close: vi.fn().mockRejectedValue(new Error('x')) } };
 
     mockOs.platform.mockReturnValue('win32' as any);
     await runner.stopEngine();
@@ -335,7 +347,7 @@ describe('Environment (full)', () => {
 
   test('Runner stopEngine skips kill when process name missing', async () => {
     const runner = new Runner({ name: 'r', type: 'runner', browser: { killOnEnd: true } } as any);
-    (runner as any).state = { browser: { close: jest.fn().mockResolvedValue(undefined) } };
+    (runner as any).state = { browser: { close: vi.fn().mockResolvedValue(undefined) } };
 
     await runner.stopEngine();
     expect(mockSpawnSync).not.toHaveBeenCalled();
@@ -348,7 +360,7 @@ describe('Environment (full)', () => {
       browser: { killOnEnd: false, killProcessName: 'app.exe' },
     } as any);
 
-    (runner as any).state = { browser: { close: jest.fn().mockResolvedValue(undefined) } };
+    (runner as any).state = { browser: { close: vi.fn().mockResolvedValue(undefined) } };
 
     mockOs.platform.mockReturnValue('win32' as any);
     await runner.stopEngine();
@@ -358,7 +370,7 @@ describe('Environment (full)', () => {
 
   test('Runner stopEngine skips kill when browser config missing', async () => {
     const runner = new Runner({ name: 'r', type: 'runner' } as any);
-    (runner as any).state = { browser: { close: jest.fn().mockResolvedValue(undefined) } };
+    (runner as any).state = { browser: { close: vi.fn().mockResolvedValue(undefined) } };
 
     await runner.stopEngine();
 

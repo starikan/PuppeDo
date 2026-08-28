@@ -119,7 +119,7 @@ describe('PluginsCore', () => {
     );
     fabric.normalizeOrders();
     fabric.checkDepends();
-    const plugins = new Plugins('env-1', { findNode: jest.fn(), findParent: jest.fn(), updateStep: jest.fn() } as any);
+    const plugins = new Plugins('env-1', { findNode: vi.fn(), findParent: vi.fn(), updateStep: vi.fn() } as any);
 
     plugins.hook('initValues', { stepId: 's1' });
 
@@ -137,7 +137,7 @@ describe('PluginsCore', () => {
         plugin: () => ({ name: 'only', hook: () => () => { } }),
       } as any,
     );
-    const plugins = new Plugins('env-1', { findNode: jest.fn(), findParent: jest.fn(), updateStep: jest.fn() } as any);
+    const plugins = new Plugins('env-1', { findNode: vi.fn(), findParent: vi.fn(), updateStep: vi.fn() } as any);
 
     expect(() => plugins.getPlugins('missing')).toThrow("Can't find plugin missing");
   });
@@ -155,7 +155,7 @@ describe('PluginsCore', () => {
       } as any,
     );
 
-    const plugins = new Plugins('env-1', { findNode: jest.fn(), findParent: jest.fn(), updateStep: jest.fn() } as any);
+    const plugins = new Plugins('env-1', { findNode: vi.fn(), findParent: vi.fn(), updateStep: vi.fn() } as any);
     const plugin = plugins.getPlugins('a');
     plugins.hook('initValues', { stepId: 's1' });
 
@@ -165,10 +165,10 @@ describe('PluginsCore', () => {
 
   test('Plugin hook/getValues/setValues', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({ a: 2 }),
-      findParent: jest.fn().mockReturnValue({ a: 3 }),
-      findPreviousSibling: jest.fn().mockReturnValue({ a: 4, nested: { foo: 1, bar: 2 } }),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({ a: 2 }),
+      findParent: vi.fn().mockReturnValue({ a: 3 }),
+      findPreviousSibling: vi.fn().mockReturnValue({ a: 4, nested: { foo: 1, bar: 2 } }),
+      updateStep: vi.fn(),
     } as any;
 
     const plugins = { agentTree } as any;
@@ -203,10 +203,10 @@ describe('PluginsCore', () => {
 
   test('Plugin getValues handles null nodes and default id', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue(null),
-      findParent: jest.fn().mockReturnValue(null),
-      findPreviousSibling: jest.fn().mockReturnValue(null),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue(null),
+      findParent: vi.fn().mockReturnValue(null),
+      findPreviousSibling: vi.fn().mockReturnValue(null),
+      updateStep: vi.fn(),
     } as any;
 
     const plugin = new Plugin({
@@ -222,8 +222,8 @@ describe('PluginsCore', () => {
   });
 
   test('Plugin hook handles invalid hook implementation', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    const plugins = { agentTree: { findNode: jest.fn(), findParent: jest.fn(), updateStep: jest.fn() } } as any;
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    const plugins = { agentTree: { findNode: vi.fn(), findParent: vi.fn(), updateStep: vi.fn() } } as any;
 
     const plugin = new Plugin({
       name: 'p',
@@ -241,10 +241,10 @@ describe('PluginsCore', () => {
 
   test('Plugin setValues propagates fieldsOnly and ignores errors', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({}),
-      findParent: jest.fn().mockReturnValue({}),
-      findPreviousSibling: jest.fn().mockReturnValue({ config: { a: 10, b: 20 } }),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({ config: { a: 10, b: 20 } }),
+      updateStep: vi.fn(),
     } as any;
 
     const plugins = { agentTree } as any;
@@ -267,10 +267,10 @@ describe('PluginsCore', () => {
 
   test('Plugin setValues propagates when inputs empty', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({}),
-      findParent: jest.fn().mockReturnValue({ config: { a: 5 } }),
-      findPreviousSibling: jest.fn().mockReturnValue(null),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({ config: { a: 5 } }),
+      findPreviousSibling: vi.fn().mockReturnValue(null),
+      updateStep: vi.fn(),
     } as any;
 
     const plugins = { agentTree } as any;
@@ -288,10 +288,10 @@ describe('PluginsCore', () => {
 
   test('Plugin setValues works without propogation rules', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({ a: 3 }),
-      findParent: jest.fn().mockReturnValue({}),
-      findPreviousSibling: jest.fn().mockReturnValue({}),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({ a: 3 }),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({}),
+      updateStep: vi.fn(),
     } as any;
 
     const plugin = new Plugin({
@@ -306,68 +306,66 @@ describe('PluginsCore', () => {
     expect(agentTree.updateStep).toHaveBeenCalled();
   });
 
-  test('Plugin id falls back when randomUUID is missing', () => {
-    jest.isolateModules(() => {
-      const randomBytes = jest.fn(() => Buffer.from('abcd', 'hex'));
-      jest.doMock('crypto', () => ({
-        __esModule: true,
-        randomUUID: undefined,
-        randomBytes,
-        default: { randomBytes },
-      }));
+  test('Plugin id falls back when randomUUID is missing', async () => {
+    vi.resetModules();
+    const randomBytes = vi.fn(() => Buffer.from('abcd', 'hex'));
+    vi.doMock('crypto', () => ({
+      __esModule: true,
+      randomUUID: undefined,
+      randomBytes,
+      default: { randomBytes },
+    }));
 
-      const { Plugin } = require('../src/PluginsCore');
-      const agentTree = {
-        findNode: jest.fn().mockReturnValue({}),
-        findParent: jest.fn().mockReturnValue({}),
-        findPreviousSibling: jest.fn().mockReturnValue({}),
-        updateStep: jest.fn(),
-      } as any;
+    const { Plugin } = await import('../src/PluginsCore');
+    const agentTree = {
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({}),
+      updateStep: vi.fn(),
+    } as any;
 
-      const plugin = new Plugin({
-        name: 'p',
-        defaultValues: { a: 1 },
-        plugins: { agentTree } as any,
-        hooks: {},
-      });
-
-      expect(typeof plugin.id).toBe('string');
+    const plugin = new Plugin({
+      name: 'p',
+      defaultValues: { a: 1 },
+      plugins: { agentTree } as any,
+      hooks: {},
     });
+
+    expect(typeof plugin.id).toBe('string');
   });
 
-  test('Plugin uses fallback when pick returns undefined', () => {
-    jest.isolateModules(() => {
-      jest.doMock('../src/Helpers', () => {
-        const actual = jest.requireActual('../src/Helpers');
-        return { ...actual, pick: jest.fn().mockReturnValue(undefined) };
-      });
-
-      const { Plugin } = require('../src/PluginsCore');
-      const agentTree = {
-        findNode: jest.fn().mockReturnValue({}),
-        findParent: jest.fn().mockReturnValue({}),
-        findPreviousSibling: jest.fn().mockReturnValue({}),
-        updateStep: jest.fn(),
-      } as any;
-
-      const plugin = new Plugin({
-        name: 'p',
-        defaultValues: { a: 1 },
-        plugins: { agentTree } as any,
-        hooks: {},
-      });
-
-      expect(plugin.getValues('s1')).toEqual({ a: 1 });
-      expect(plugin.getValuesParent('s1')).toEqual({ a: 1 });
+  test('Plugin uses fallback when pick returns undefined', async () => {
+    vi.resetModules();
+    vi.doMock('../src/Helpers', async () => {
+      const actual = await vi.importActual<typeof import('../src/Helpers')>('../src/Helpers');
+      return { ...actual, pick: vi.fn().mockReturnValue(undefined) };
     });
+
+    const { Plugin } = await import('../src/PluginsCore');
+    const agentTree = {
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({}),
+      updateStep: vi.fn(),
+    } as any;
+
+    const plugin = new Plugin({
+      name: 'p',
+      defaultValues: { a: 1 },
+      plugins: { agentTree } as any,
+      hooks: {},
+    });
+
+    expect(plugin.getValues('s1')).toEqual({ a: 1 });
+    expect(plugin.getValuesParent('s1')).toEqual({ a: 1 });
   });
 
   test('Plugin uses default hooks and inputs in setValues', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({}),
-      findParent: jest.fn().mockReturnValue({}),
-      findPreviousSibling: jest.fn().mockReturnValue({}),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({}),
+      updateStep: vi.fn(),
     } as any;
 
     const plugin = new Plugin({
@@ -382,10 +380,10 @@ describe('PluginsCore', () => {
 
   test('Plugin setValues skips unknown propagation source', () => {
     const agentTree = {
-      findNode: jest.fn().mockReturnValue({}),
-      findParent: jest.fn().mockReturnValue({}),
-      findPreviousSibling: jest.fn().mockReturnValue({}),
-      updateStep: jest.fn(),
+      findNode: vi.fn().mockReturnValue({}),
+      findParent: vi.fn().mockReturnValue({}),
+      findPreviousSibling: vi.fn().mockReturnValue({}),
+      updateStep: vi.fn(),
     } as any;
 
     const plugins = { agentTree } as any;

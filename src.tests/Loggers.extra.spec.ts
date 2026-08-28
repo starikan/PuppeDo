@@ -1,3 +1,4 @@
+import type { Mock, MockedClass } from 'vitest';
 import { Arguments } from '../src/Arguments';
 import { Environment } from '../src/Environment';
 import {
@@ -20,31 +21,30 @@ import {
 } from '../src/Loggers/CustomLogEntries';
 import { transformerEquity, transformerYamlLog } from '../src/Loggers/Transformers';
 
-jest.mock('../src/Environment');
+vi.mock('../src/Environment');
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
 
 describe('Loggers extra coverage', () => {
-  let appendToFile: jest.Mock;
-  let socket: { sendYAML: jest.Mock };
+  let appendToFile: Mock;
+  let socket: { sendYAML: Mock };
   let envLog: Array<unknown>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    appendToFile = jest.fn();
-    socket = { sendYAML: jest.fn() };
+    appendToFile = vi.fn();
+    socket = { sendYAML: vi.fn() };
     envLog = [];
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getLogger: jest.fn().mockReturnValue({ exporter: { appendToFile } }),
-          getSocket: jest.fn().mockReturnValue(socket),
-          getEnvInstance: jest.fn().mockReturnValue({ log: envLog }),
-          getOutput: jest.fn().mockReturnValue({ folderFull: 'C:/out', folderLatest: 'C:/latest', folder: 'C:/out' }),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getLogger: vi.fn().mockReturnValue({ exporter: { appendToFile } }),
+        getSocket: vi.fn().mockReturnValue(socket),
+        getEnvInstance: vi.fn().mockReturnValue({ log: envLog }),
+        getOutput: vi.fn().mockReturnValue({ folderFull: 'C:/out', folderLatest: 'C:/latest', folder: 'C:/out' }),
+      } as any;
+    });
   });
 
   test('transformers', async () => {
@@ -58,7 +58,7 @@ describe('Loggers extra coverage', () => {
     const logEntry = { level: 'info', text: 'hi' } as any;
     const logEntryFormated = [[{ text: 'hi', textColor: 'sane', backgroundColor: 'sane' }]] as any;
 
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     await exporterConsole(logEntry, logEntryFormated, '', { envsId: 'env', skipThis: false });
     await exporterConsole(logEntry, logEntryFormated, '', { envsId: 'env', skipThis: true });
 
@@ -80,14 +80,14 @@ describe('Loggers extra coverage', () => {
   });
 
   test('consoleLog handles missing background color', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     consoleLog([[{ text: 'a', textColor: 'sane', backgroundColor: undefined as any }]] as any);
     expect(consoleSpy).toHaveBeenCalledWith('a');
     consoleSpy.mockRestore();
   });
 
   test('consoleLog applies background color', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     consoleLog([[{ text: 'a', textColor: 'sane', backgroundColor: 'redBackground' }]] as any);
     expect(consoleSpy).toHaveBeenCalled();
     consoleSpy.mockRestore();
@@ -217,7 +217,7 @@ describe('Loggers extra coverage', () => {
   });
 
   test('custom log entries helpers', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
     await logExtendFileInfo(log, { envsId: 'env' });
     await logExtendFileInfo(log, { envsId: '' });
@@ -266,14 +266,13 @@ describe('Loggers extra coverage', () => {
   });
 
   test('custom log entries handle defaults and empty data', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
-    mockEnvironmentClass.mockImplementationOnce(
-      () =>
-        ({
-          getOutput: jest.fn().mockReturnValue({}),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementationOnce(function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({}),
+      } as any;
+    });
 
     await logExtendFileInfo(log, { envsId: 'env' });
 
@@ -298,7 +297,7 @@ describe('Loggers extra coverage', () => {
   });
 
   test('logExtend logs when extend enabled', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
     new Arguments({ PPD_LOG_EXTEND: true }, {}, true);
     await logExtend(
@@ -319,7 +318,7 @@ describe('Loggers extra coverage', () => {
   });
 
   test('logExtend uses default levelIndent', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
     new Arguments({ PPD_LOG_EXTEND: true }, {}, true);
     await logExtend(
@@ -340,7 +339,7 @@ describe('Loggers extra coverage', () => {
   });
 
   test('logExtend uses default isError parameter', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
     new Arguments({ PPD_LOG_EXTEND: true }, {}, true);
     await logExtend(log, {
@@ -357,26 +356,26 @@ describe('Loggers extra coverage', () => {
   });
 
   test('logError skips when message and stack missing', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     await logError(log, { message: '', stack: '' } as any);
     expect(log).not.toHaveBeenCalled();
   });
 
   test('logExtendFileInfo logs output path when envsId present', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     await logExtendFileInfo(log, { envsId: 'env' });
     expect(log).toHaveBeenCalledWith(expect.objectContaining({ text: expect.arrayContaining([expect.stringContaining('file:///')]) }));
   });
 
   test('logTimer includes stepId when enabled', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     new Arguments({ PPD_LOG_EXTEND: true, PPD_LOG_STEPID: true }, {}, true);
     await logTimer(log, 1n, 2n, { levelIndent: 0, stepId: 's1' });
     expect(log).toHaveBeenCalledWith(expect.objectContaining({ text: expect.stringContaining('[s1]') }));
   });
 
   test('logExtend respects extend flag with empty data', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     new Arguments({ PPD_LOG_EXTEND: true }, {}, true);
     await logExtend(
       log,
@@ -387,7 +386,7 @@ describe('Loggers extra coverage', () => {
   });
 
   test('custom log entries handle missing message/stack and empty extend', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
 
     await logError(log, { message: '', stack: 's1\n    s2' } as any);
     await logError(log, { message: 'm1', stack: '' } as any);

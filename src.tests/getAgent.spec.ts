@@ -1,3 +1,4 @@
+import type { Mock, MockedClass, MockedFunction } from 'vitest';
 import requireFromString from 'require-from-string';
 import Atom from '../src/AtomCore';
 import { Arguments } from '../src/Arguments';
@@ -8,24 +9,24 @@ import getAgent, { propagateArgumentsObjectsOnAir } from '../src/getAgent';
 import type { TestExtendType } from '../src/model';
 import { Test } from '../src/Test';
 
-jest.mock('require-from-string');
-jest.mock('../src/AtomCore');
-jest.mock('../src/Arguments');
-jest.mock('../src/Blocker');
-jest.mock('../src/Environment');
-jest.mock('../src/Test');
+vi.mock('require-from-string');
+vi.mock('../src/AtomCore');
+vi.mock('../src/Arguments');
+vi.mock('../src/Blocker');
+vi.mock('../src/Environment');
+vi.mock('../src/Test');
 
-const mockRequireFromString = requireFromString as jest.MockedFunction<typeof requireFromString>;
-const mockAtomClass = Atom as jest.MockedClass<typeof Atom>;
-const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
-const mockBlockerClass = Blocker as jest.MockedClass<typeof Blocker>;
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockTestClass = Test as jest.MockedClass<typeof Test>;
+const mockRequireFromString = requireFromString as MockedFunction<typeof requireFromString>;
+const mockAtomClass = Atom as MockedClass<typeof Atom>;
+const mockArguments = Arguments as MockedClass<typeof Arguments>;
+const mockBlockerClass = Blocker as MockedClass<typeof Blocker>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockTestClass = Test as MockedClass<typeof Test>;
 
-let mockRun: jest.Mock;
-let mockBlockerPush: jest.Mock;
-let mockAtomRun: jest.Mock;
-let mockGetSocket: jest.Mock;
+let mockRun: Mock;
+let mockBlockerPush: Mock;
+let mockAtomRun: Mock;
+let mockGetSocket: Mock;
 
 const createAgent = (overrides: Partial<TestExtendType> = {}): TestExtendType => ({
   ...BLANK_AGENT,
@@ -45,32 +46,39 @@ const createAgent = (overrides: Partial<TestExtendType> = {}): TestExtendType =>
 
 describe('getAgent', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    mockBlockerPush = jest.fn();
-    mockBlockerClass.mockImplementation(() => ({ push: mockBlockerPush } as any));
+    mockBlockerPush = vi.fn();
+    mockBlockerClass.mockImplementation(function () {
+      return { push: mockBlockerPush } as any;
+    });
 
-    mockGetSocket = jest.fn().mockReturnValue({ id: 'socket-1' });
-    mockEnvironmentClass.mockImplementation(() => ({ getSocket: mockGetSocket } as any));
+    mockGetSocket = vi.fn().mockReturnValue({ id: 'socket-1' });
+    mockEnvironmentClass.mockImplementation(function () {
+      return { getSocket: mockGetSocket } as any;
+    });
 
-    mockRun = jest.fn().mockResolvedValue({ result: {} });
-    mockTestClass.mockImplementation(() => ({ run: mockRun } as any));
+    mockRun = vi.fn().mockResolvedValue({ result: {} });
+    mockTestClass.mockImplementation(function () {
+      return { run: mockRun } as any;
+    });
 
-    mockAtomRun = jest.fn();
-    mockAtomClass.mockImplementation(() => ({ atomRun: undefined, runAtom: mockAtomRun } as any));
+    mockAtomRun = vi.fn();
+    mockAtomClass.mockImplementation(function () {
+      return { atomRun: undefined, runAtom: mockAtomRun } as any;
+    });
 
-    mockArguments.mockImplementation(
-      () =>
-      ({
+    mockArguments.mockImplementation(function () {
+      return {
         args: {
           PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
         },
-      } as any),
-    );
+      } as any;
+    });
 
     mockRequireFromString.mockReturnValue(async () => ({}));
 
-    (global as any).__non_webpack_require__ = jest.fn();
+    (global as any).__non_webpack_require__ = vi.fn();
   });
 
   test('resolves inlineJS and propagates args/results', async () => {
@@ -111,7 +119,7 @@ describe('getAgent', () => {
   });
 
   test('skips resolveJS when lifecycle functions already present', async () => {
-    const beforeRunFn = jest.fn(async () => ({}));
+    const beforeRunFn = vi.fn(async () => ({}));
     const agentJson = createAgent({
       name: 'lifecycleAgent',
       inlineJS: 'return { ok: true };',
@@ -149,7 +157,7 @@ describe('getAgent', () => {
   });
 
   test('loads atom from js file when inlineJS is missing', async () => {
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({ fileAtom: async () => ({ file: true }) });
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({ fileAtom: async () => ({ file: true }) });
 
     const agentJson = createAgent({
       name: 'fileAtom',
@@ -169,7 +177,7 @@ describe('getAgent', () => {
   });
 
   test('returns empty atomRun on non-syntax require error', async () => {
-    (global as any).__non_webpack_require__ = jest.fn(() => {
+    (global as any).__non_webpack_require__ = vi.fn(() => {
       const error = new Error('Not found');
       error.name = 'NotFoundError';
       throw error;
@@ -225,7 +233,7 @@ describe('getAgent', () => {
   });
 
   test('uses cached atom without повторного require', async () => {
-    const requireMock = jest.fn().mockReturnValue({ cachedAtom: async () => ({ cached: true }) });
+    const requireMock = vi.fn().mockReturnValue({ cachedAtom: async () => ({ cached: true }) });
     (global as any).__non_webpack_require__ = requireMock;
 
     const agentJson = createAgent({
@@ -244,7 +252,7 @@ describe('getAgent', () => {
   });
 
   test('does not set atomRun when resolved value is not a function', async () => {
-    (global as any).__non_webpack_require__ = jest.fn().mockReturnValue({});
+    (global as any).__non_webpack_require__ = vi.fn().mockReturnValue({});
 
     const agentJson = createAgent({
       name: 'nonFunctionAtom',

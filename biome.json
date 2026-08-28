@@ -85,6 +85,9 @@
       "includes": ["**/*.spec.ts"],
       "linter": {
         "rules": {
+          "complexity": {
+            "useArrowFunction": "off"
+          },
           "suspicious": {
             "noExplicitAny": "off"
           }

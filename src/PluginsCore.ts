@@ -26,25 +26,25 @@ export class PluginsFabric extends Singleton {
    * An object to store plugin functions.
    * Key - plugin name, value - plugin function.
    */
-  private plugins: Record<string, PluginFunction<unknown>>;
+  private declare plugins: Record<string, PluginFunction<unknown>>;
 
   /**
    * An object to store plugin documentation.
    * Key - plugin name, value - plugin documentation.
    */
-  private documentation: Record<string, PluginDocumentation>;
+  private declare documentation: Record<string, PluginDocumentation>;
 
   /**
    * An object to store the order of plugin execution.
    * Key - plugin name, value - order of execution or null.
    */
-  private orders: Record<string, number | null>;
+  private declare orders: Record<string, number | null>;
 
   /**
    * An object to store plugin dependencies.
    * Key - plugin name, value - array of dependent plugin names.
    */
-  private depends: Record<string, string[]>;
+  private declare depends: Record<string, string[]>;
 
   /**
    * Constructor.

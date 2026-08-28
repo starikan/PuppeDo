@@ -107,7 +107,7 @@ describe('TestContent extra', () => {
   });
 
   test('normalizeRawEntries throws on non-object items in array', () => {
-    const yamlSpy = jest.spyOn(yaml, 'loadAll').mockImplementation(() => {
+    const yamlSpy = vi.spyOn(yaml, 'loadAll').mockImplementation(() => {
       throw new Error('fail');
     });
 
@@ -119,7 +119,7 @@ describe('TestContent extra', () => {
   });
 
   test('normalizeRawEntries throws on invalid YAML/JSON content', () => {
-    const yamlSpy = jest.spyOn(yaml, 'loadAll').mockReturnValue(1 as any);
+    const yamlSpy = vi.spyOn(yaml, 'loadAll').mockReturnValue(1 as any);
 
     expect(() => (AgentContent as any).normalizeRawEntries(['1'] as any)).toThrow(
       'PPD_TESTS_RAW contains invalid YAML/JSON string',
@@ -173,7 +173,7 @@ describe('TestContent extra', () => {
   });
 
   test('getAllData uses raw entries', () => {
-    new Arguments({ PPD_TESTS_RAW: [{ name: 'rawTest' }] as any }, {}, true);
+    new Arguments({ PPD_ROOT: 'Z:/missing/path', PPD_TESTS_RAW: [{ name: 'rawTest' }] as any }, {}, true);
     const content = new AgentContent(true);
     const data = content.getAllData(true);
 
@@ -181,8 +181,12 @@ describe('TestContent extra', () => {
   });
 
   test('getAllData uses PPD_TESTS_RAW fallback file name', () => {
-    new Arguments({ PPD_TESTS_RAW: [{ name: 'rawTest', testFile: '' }] as any }, {}, true);
-    const fileResolverSpy = jest.spyOn(AgentContent, 'fileResolver');
+    new Arguments(
+      { PPD_ROOT: 'Z:/missing/path', PPD_TESTS_RAW: [{ name: 'rawTest', testFile: '' }] as any },
+      {},
+      true,
+    );
+    const fileResolverSpy = vi.spyOn(AgentContent, 'fileResolver');
 
     new AgentContent(true).getAllData(true);
 
@@ -191,8 +195,12 @@ describe('TestContent extra', () => {
   });
 
   test('getAllData uses provided testFile from raw entries', () => {
-    new Arguments({ PPD_TESTS_RAW: [{ name: 'rawTest', testFile: 'raw.yml' }] as any }, {}, true);
-    const fileResolverSpy = jest.spyOn(AgentContent, 'fileResolver');
+    new Arguments(
+      { PPD_ROOT: 'Z:/missing/path', PPD_TESTS_RAW: [{ name: 'rawTest', testFile: 'raw.yml' }] as any },
+      {},
+      true,
+    );
+    const fileResolverSpy = vi.spyOn(AgentContent, 'fileResolver');
 
     new AgentContent(true).getAllData(true);
 

@@ -2,9 +2,9 @@
   "compilerOptions": {
     // "strict": true,
     "target": "ESNext",
-    "types": ["node", "webpack-env", "jest"],
+    "types": ["node", "webpack-env", "vitest/globals"],
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "dist",
     "sourceMap": true,
     "esModuleInterop": true,

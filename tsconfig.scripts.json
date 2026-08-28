@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "types": ["node", "webpack-env", "jest"],
+    "types": ["node", "webpack-env"],
     "module": "CommonJS",
     "esModuleInterop": true,
   },

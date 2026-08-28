@@ -4,21 +4,21 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginSkipSublingIfResult, plugin, setValue } from './skipSublingIfResult';
 
 // Mock dependencies
-jest.mock('../../Helpers');
-jest.mock('../../PluginsCore');
+vi.mock('../../Helpers');
+vi.mock('../../PluginsCore');
 
-const mockRunScriptInContext = runScriptInContext as jest.MockedFunction<typeof runScriptInContext>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockRunScriptInContext = runScriptInContext as MockedFunction<typeof runScriptInContext>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('skipSublingIfResult plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setValue function', () => {
     it('should call setValues with correct parameters', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       } as unknown as Plugin<PluginSkipSublingIfResult>;
 
       const inputs = { skipSublingIfResult: 'true' };
@@ -34,7 +34,9 @@ describe('skipSublingIfResult plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 
@@ -55,13 +57,15 @@ describe('skipSublingIfResult plugin', () => {
 
     it('should have afterRepeat hook that evaluates skipSublingIfResult script', () => {
       const mockPluginInstance = {
-        getValues: jest.fn().mockReturnValue({
+        getValues: vi.fn().mockReturnValue({
           skipSublingIfResult: 'result > 5',
           skipMeBecausePrevSublingResults: false,
         }),
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
       mockRunScriptInContext.mockReturnValue(true);
 
       plugin({} as any);
@@ -82,13 +86,15 @@ describe('skipSublingIfResult plugin', () => {
 
     it('should have afterRepeat hook that uses skipMeBecausePrevSublingResults if no script', () => {
       const mockPluginInstance = {
-        getValues: jest.fn().mockReturnValue({
+        getValues: vi.fn().mockReturnValue({
           skipSublingIfResult: '',
           skipMeBecausePrevSublingResults: true,
         }),
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       plugin({} as any);
 
@@ -107,13 +113,15 @@ describe('skipSublingIfResult plugin', () => {
 
     it('should catch errors in runScriptInContext', () => {
       const mockPluginInstance = {
-        getValues: jest.fn().mockReturnValue({
+        getValues: vi.fn().mockReturnValue({
           skipSublingIfResult: 'invalid script',
           skipMeBecausePrevSublingResults: false,
         }),
-        setValues: jest.fn(),
+        setValues: vi.fn(),
       };
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
       mockRunScriptInContext.mockImplementation(() => {
         throw new Error('script error');
       });

@@ -1,3 +1,4 @@
+import type { Mock, MockedClass, MockedFunction } from 'vitest';
 import FlowStructure from '../src/FlowStructure';
 import { Arguments } from '../src/Arguments';
 import AgentContent from '../src/TestContent';
@@ -7,38 +8,36 @@ import { BLANK_AGENT } from '../src/Defaults';
 import type { TestExtendType, TestTypeYaml } from '../src/model';
 
 // Mock dependencies
-jest.mock('../src/Arguments');
-jest.mock('../src/TestContent');
-jest.mock('../src/Helpers');
+vi.mock('../src/Arguments');
+vi.mock('../src/TestContent');
+vi.mock('../src/Helpers');
 
-const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
-const mockAgentContent = AgentContent as jest.MockedClass<typeof AgentContent>;
-const mockResolveTest = resolveTest as jest.MockedFunction<typeof resolveTest>;
-const mockDeepMergeField = deepMergeField as jest.MockedFunction<typeof deepMergeField>;
-const mockGenerateId = generateId as jest.MockedFunction<typeof generateId>;
+const mockArguments = Arguments as MockedClass<typeof Arguments>;
+const mockAgentContent = AgentContent as MockedClass<typeof AgentContent>;
+const mockResolveTest = resolveTest as MockedFunction<typeof resolveTest>;
+const mockDeepMergeField = deepMergeField as MockedFunction<typeof deepMergeField>;
+const mockGenerateId = generateId as MockedFunction<typeof generateId>;
 
 describe('FlowStructure', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Setup default mocks
-    mockArguments.mockImplementation(
-      () =>
-        ({
-          args: {
-            PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
-          },
-        } as any),
-    );
+    mockArguments.mockImplementation(function () {
+      return {
+        args: {
+          PPD_LIFE_CYCLE_FUNCTIONS: ['beforeRun', 'run', 'afterRun'],
+        },
+      } as any;
+    });
 
-    mockAgentContent.mockImplementation(
-      () =>
-        ({
-          allData: {
-            agents: [{ name: 'testAgent', description: 'Test Agent' } as TestTypeYaml],
-          },
-        } as any),
-    );
+    mockAgentContent.mockImplementation(function () {
+      return {
+        allData: {
+          agents: [{ name: 'testAgent', description: 'Test Agent' } as TestTypeYaml],
+        },
+      } as any;
+    });
 
     mockResolveTest.mockReturnValue({
       ...BLANK_AGENT,
@@ -390,7 +389,7 @@ describe('FlowStructure', () => {
         afterRun: [],
       };
 
-      jest.spyOn(FlowStructure, 'getFlowFullJSON');
+      vi.spyOn(FlowStructure, 'getFlowFullJSON');
 
       const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
 
@@ -416,7 +415,7 @@ describe('FlowStructure', () => {
         afterRun: [],
       };
 
-      jest.spyOn(FlowStructure, 'getFlowFullJSON');
+      vi.spyOn(FlowStructure, 'getFlowFullJSON');
 
       const result = FlowStructure.getFlowFullJSON('testFlow', flowBody, 0, true);
 

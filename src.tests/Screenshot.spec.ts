@@ -1,14 +1,15 @@
+import type { MockedClass, MockedFunction } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import Screenshot from '../src/Screenshot';
 import { Environment } from '../src/Environment';
 import { getNowDateTime } from '../src/Helpers';
 
-jest.mock('../src/Environment');
-jest.mock('../src/Helpers');
+vi.mock('../src/Environment');
+vi.mock('../src/Helpers');
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockGetNowDateTime = getNowDateTime as jest.MockedFunction<typeof getNowDateTime>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockGetNowDateTime = getNowDateTime as MockedFunction<typeof getNowDateTime>;
 
 const tempRoot = path.join('.temp', 'screenshots');
 const folder = path.join(tempRoot, 'main');
@@ -28,7 +29,7 @@ const clearDir = (dir: string): void => {
 
 describe('Screenshot', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     ensureDir(folder);
     ensureDir(folderLatest);
     clearDir(folder);
@@ -36,19 +37,18 @@ describe('Screenshot', () => {
 
     mockGetNowDateTime.mockReturnValue('2025-01-01_00-00-00.000');
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getOutput: jest.fn().mockReturnValue({ folder, folderLatest }),
-          getEnvRunners: jest.fn().mockReturnValue({
-            getActivePage: jest.fn().mockReturnValue({
-              screenshot: jest.fn().mockImplementation(({ path: outPath }) => {
-                fs.writeFileSync(outPath, 'page');
-              }),
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({ folder, folderLatest }),
+        getEnvRunners: vi.fn().mockReturnValue({
+          getActivePage: vi.fn().mockReturnValue({
+            screenshot: vi.fn().mockImplementation(({ path: outPath }) => {
+              fs.writeFileSync(outPath, 'page');
             }),
           }),
-        } as any),
-    );
+        }),
+      } as any;
+    });
   });
 
   test('copyScreenshotToFolder copies file when exists', async () => {
@@ -103,12 +103,11 @@ describe('Screenshot', () => {
   });
 
   test('getScreenshotName uses default folder and timestamp', () => {
-    mockEnvironmentClass.mockImplementationOnce(
-      () =>
-        ({
-          getOutput: jest.fn().mockReturnValue({}),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementationOnce(function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({}),
+      } as any;
+    });
     mockGetNowDateTime.mockReturnValue('2025-01-02_00-00-00.000');
 
     const screenshot = new Screenshot('env-1');
@@ -128,12 +127,11 @@ describe('Screenshot', () => {
   });
 
   test('copyScreenshotToLatest uses default folder when missing', async () => {
-    mockEnvironmentClass.mockImplementationOnce(
-      () =>
-        ({
-          getOutput: jest.fn().mockReturnValue({}),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementationOnce(function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({}),
+      } as any;
+    });
 
     const src = path.join(tempRoot, 'latest-default.png');
     fs.writeFileSync(src, 'image');
@@ -148,7 +146,7 @@ describe('Screenshot', () => {
 
   test('saveScreenshotElement saves and copies to latest', async () => {
     const element = {
-      screenshot: jest.fn().mockImplementation(({ path: outPath }) => {
+      screenshot: vi.fn().mockImplementation(({ path: outPath }) => {
         fs.writeFileSync(outPath, 'element');
       }),
     };
@@ -163,7 +161,7 @@ describe('Screenshot', () => {
 
   test('saveScreenshotElement skips copy when disabled', async () => {
     const element = {
-      screenshot: jest.fn().mockImplementation(({ path: outPath }) => {
+      screenshot: vi.fn().mockImplementation(({ path: outPath }) => {
         fs.writeFileSync(outPath, 'element');
       }),
     };
@@ -184,7 +182,7 @@ describe('Screenshot', () => {
 
   test('saveScreenshotElement returns empty on error', async () => {
     const element = {
-      screenshot: jest.fn().mockRejectedValue(new Error('fail')),
+      screenshot: vi.fn().mockRejectedValue(new Error('fail')),
     };
 
     const screenshot = new Screenshot('env-1');
@@ -217,15 +215,14 @@ describe('Screenshot', () => {
   });
 
   test('saveScreenshotFull returns empty on error', async () => {
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getOutput: jest.fn().mockReturnValue({ folder, folderLatest }),
-          getEnvRunners: jest.fn().mockImplementation(() => {
-            throw new Error('no page');
-          }),
-        } as any),
-    );
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({ folder, folderLatest }),
+        getEnvRunners: vi.fn().mockImplementation(() => {
+          throw new Error('no page');
+        }),
+      } as any;
+    });
 
     const screenshot = new Screenshot('env-1');
     const pathSaved = await screenshot.saveScreenshotFull('full');
@@ -234,13 +231,14 @@ describe('Screenshot', () => {
   });
 
   test('saveScreenshotFull returns empty when page is null', async () => {
-    const envMock = () =>
-      ({
-        getOutput: jest.fn().mockReturnValue({ folder, folderLatest }),
-        getEnvRunners: jest.fn().mockReturnValue({
-          getActivePage: jest.fn().mockReturnValue(null),
+    const envMock = function () {
+      return {
+        getOutput: vi.fn().mockReturnValue({ folder, folderLatest }),
+        getEnvRunners: vi.fn().mockReturnValue({
+          getActivePage: vi.fn().mockReturnValue(null),
         }),
-      } as any);
+      } as any;
+    };
 
     mockEnvironmentClass.mockImplementationOnce(envMock).mockImplementationOnce(envMock);
 
@@ -252,7 +250,7 @@ describe('Screenshot', () => {
 
   test('getScreenshotsLogEntry returns both screenshots', async () => {
     const element = {
-      screenshot: jest.fn().mockImplementation(({ path: outPath }) => {
+      screenshot: vi.fn().mockImplementation(({ path: outPath }) => {
         fs.writeFileSync(outPath, 'element');
       }),
     };

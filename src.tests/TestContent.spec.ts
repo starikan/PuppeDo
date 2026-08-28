@@ -723,8 +723,9 @@ describe('AgentContent.getAllData (AI generated)', () => {
   };
 
   beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
     agentContent = new AgentContent();
-    jest.clearAllMocks();
   });
 
   test('should initialize allData when reInit is true', () => {
@@ -739,12 +740,12 @@ describe('AgentContent.getAllData (AI generated)', () => {
   });
 
   test('should not throw error if test has no name and PPD_IGNORE_AGENTS_WITHOUT_NAME is true', () => {
-    jest.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({
+    vi.spyOn(Arguments.prototype, 'args', 'get').mockReturnValue({
       ...DEFAULT_ARGS,
       PPD_IGNORE_AGENTS_WITHOUT_NAME: true,
     });
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ name: '' }]));
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ name: '' }]));
 
     expect(() => agentContent.getAllData()).not.toThrow();
   });
@@ -772,7 +773,7 @@ describe('AgentContent.getAllData (AI generated)', () => {
   });
 
   it('should not read file if it does not exist', () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
 
     const result = agentContent.getAllData();
 

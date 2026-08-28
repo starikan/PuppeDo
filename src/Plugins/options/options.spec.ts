@@ -4,27 +4,27 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginOptions, plugin, setValue } from './options';
 
 // Mock dependencies
-jest.mock('../../Helpers');
-jest.mock('../../PluginsCore');
+vi.mock('../../Helpers');
+vi.mock('../../PluginsCore');
 
-const mockResolveAliases = resolveAliases as jest.MockedFunction<typeof resolveAliases>;
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockResolveAliases = resolveAliases as MockedFunction<typeof resolveAliases>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('options plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockResolveAliases.mockReturnValue({});
   });
 
   describe('setValue function', () => {
     it('should merge options with parent options and resolved aliases', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           options: { key1: 'value1' },
           allowOptions: ['opt1'],
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           options: { key2: 'value2' },
         }),
       } as unknown as Plugin<PluginOptions>;
@@ -53,7 +53,9 @@ describe('options plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 

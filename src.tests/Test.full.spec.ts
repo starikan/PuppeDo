@@ -1,3 +1,4 @@
+import type { Mock, MockedClass, MockedFunction } from 'vitest';
 import { EventEmitter } from 'events';
 import { Arguments } from '../src/Arguments';
 import Blocker from '../src/Blocker';
@@ -7,25 +8,27 @@ import { Environment } from '../src/Environment';
 import { logDebug } from '../src/Loggers/CustomLogEntries';
 import { Test, checkIf, executeLifeCycleFunctions } from '../src/Test';
 
-jest.mock('../src/Environment');
-jest.mock('../src/Blocker');
-jest.mock('../src/AtomCore');
-jest.mock('../src/Loggers/CustomLogEntries', () => ({ logDebug: jest.fn() }));
-jest.mock('../src/TestContent', () => ({
+vi.mock('../src/Environment');
+vi.mock('../src/Blocker');
+vi.mock('../src/AtomCore');
+vi.mock('../src/Loggers/CustomLogEntries', () => ({ logDebug: vi.fn() }));
+vi.mock('../src/TestContent', () => ({
   __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    allData: {
-      data: [{ name: 'extData', data: { ext: 7 } }],
-      selectors: [{ name: 'extSel', data: { extSel: 'ext-selector' } }],
-      runners: [],
-    },
-  })),
+  default: vi.fn(function () {
+    return {
+      allData: {
+        data: [{ name: 'extData', data: { ext: 7 } }],
+        selectors: [{ name: 'extSel', data: { extSel: 'ext-selector' } }],
+        runners: [],
+      },
+    };
+  }),
 }));
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockBlockerClass = Blocker as jest.MockedClass<typeof Blocker>;
-const mockAtomClass = Atom as jest.MockedClass<typeof Atom>;
-const mockLogDebug = logDebug as jest.MockedFunction<typeof logDebug>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockBlockerClass = Blocker as MockedClass<typeof Blocker>;
+const mockAtomClass = Atom as MockedClass<typeof Atom>;
+const mockLogDebug = logDebug as MockedFunction<typeof logDebug>;
 
 const buildPlugins = (overrides: Record<string, any> = {}): any => {
   const argsRedefine = {
@@ -51,36 +54,36 @@ const buildPlugins = (overrides: Record<string, any> = {}): any => {
   };
 
   return {
-    hook: jest.fn(),
-    getPlugins: jest.fn((name: string) => {
+    hook: vi.fn(),
+    getPlugins: vi.fn((name: string) => {
       const entry = pluginsValues[name];
       if (name === 'argsRedefine') {
         return {
-          getValue: jest.fn().mockReturnValue(entry.argsRedefine),
-          getValues: jest.fn().mockReturnValue(entry),
+          getValue: vi.fn().mockReturnValue(entry.argsRedefine),
+          getValues: vi.fn().mockReturnValue(entry),
         };
       }
-      return { getValues: jest.fn().mockReturnValue(entry) };
+      return { getValues: vi.fn().mockReturnValue(entry) };
     }),
   };
 };
 
 const setupEnv = (plugins: any) => {
-  const logger = { log: jest.fn().mockResolvedValue(undefined) } as any;
+  const logger = { log: vi.fn().mockResolvedValue(undefined) } as any;
   const page = { id: 'page' } as any;
   const runner = {
-    getRunnerData: jest.fn().mockReturnValue({ data: { runnerData: 1 }, selectors: { runnerSel: 2 } }),
-    getState: jest.fn().mockReturnValue({ pages: { main: page }, browser: {} }),
+    getRunnerData: vi.fn().mockReturnValue({ data: { runnerData: 1 }, selectors: { runnerSel: 2 } }),
+    getState: vi.fn().mockReturnValue({ pages: { main: page }, browser: {} }),
   } as any;
-  const allRunners = { getRunnerByName: jest.fn().mockReturnValue(runner) } as any;
+  const allRunners = { getRunnerByName: vi.fn().mockReturnValue(runner) } as any;
   const testTree = {
-    createStep: jest.fn(),
-    updateStep: jest.fn(),
-    findNode: jest.fn(),
-    findParent: jest.fn(),
-    addError: jest.fn(),
-    getErrors: jest.fn().mockReturnValue([{ stepId: 's1' }]),
-    clearErrors: jest.fn(),
+    createStep: vi.fn(),
+    updateStep: vi.fn(),
+    findNode: vi.fn(),
+    findParent: vi.fn(),
+    addError: vi.fn(),
+    getErrors: vi.fn().mockReturnValue([{ stepId: 's1' }]),
+    clearErrors: vi.fn(),
   } as any;
 
   const envInstance = {
@@ -93,40 +96,41 @@ const setupEnv = (plugins: any) => {
   } as any;
 
   const envApi = {
-    getEnvInstance: jest.fn().mockReturnValue(envInstance),
-    getCurrent: jest.fn().mockReturnValue(envInstance.current),
-    setCurrent: jest.fn(),
-    getEnvRunners: jest.fn().mockReturnValue(allRunners),
+    getEnvInstance: vi.fn().mockReturnValue(envInstance),
+    getCurrent: vi.fn().mockReturnValue(envInstance.current),
+    setCurrent: vi.fn(),
+    getEnvRunners: vi.fn().mockReturnValue(allRunners),
   } as any;
 
-  mockEnvironmentClass.mockImplementation(() => envApi);
+  mockEnvironmentClass.mockImplementation(function () {
+    return envApi;
+  });
 
   return { logger, runner, testTree, envInstance, envApi };
 };
 
 describe('Test', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     new Arguments({ PPD_LIFE_CYCLE_FUNCTIONS: [] }, {}, true);
 
-    mockBlockerClass.mockImplementation(
-      () => ({
-        getBlock: jest.fn().mockReturnValue(null),
+    mockBlockerClass.mockImplementation(function () {
+      return {
+        getBlock: vi.fn().mockReturnValue(null),
         blockEmitter: new EventEmitter(),
-        setBlock: jest.fn(),
-      }) as any,
-    );
+        setBlock: vi.fn(),
+      } as any;
+    });
 
-    mockAtomClass.mockImplementation(
-      () =>
-        ({
-          getElement: jest.fn(async (selector: string) => (selector === 'arr' ? [{ id: 1 }, { id: 2 }] : { id: 3 })),
-        }) as any,
-    );
+    mockAtomClass.mockImplementation(function () {
+      return {
+        getElement: vi.fn(async (selector: string) => (selector === 'arr' ? [{ id: 1 }, { id: 2 }] : { id: 3 })),
+      } as any;
+    });
   });
 
   test('checkIf handles skip and error branches', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const plugins = buildPlugins({ argsRedefine: { PPD_LOG_STEPID: true } });
     const agent = { levelIndent: 0, breadcrumbs: ['b'], stepId: 's1' } as any;
 
@@ -140,7 +144,7 @@ describe('Test', () => {
   });
 
   test('checkIf skips logging when continueOnError and error', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const plugins = buildPlugins({
       continueOnError: { continueOnError: true },
       argsRedefine: { PPD_LOG_STEPID: false },
@@ -154,7 +158,7 @@ describe('Test', () => {
   });
 
   test('checkIf uses default agent fields', async () => {
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const plugins = buildPlugins({ argsRedefine: { PPD_LOG_STEPID: false } });
     const agent = { stepId: 's1' } as any;
 
@@ -214,7 +218,7 @@ describe('Test', () => {
   test('runLogic handles missing runner data', async () => {
     const plugins = buildPlugins();
     const { envInstance } = setupEnv(plugins);
-    envInstance.allRunners.getRunnerByName = jest.fn().mockReturnValue(undefined);
+    envInstance.allRunners.getRunnerByName = vi.fn().mockReturnValue(undefined);
 
     const test = new Test({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
     await test.runLogic({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
@@ -335,7 +339,7 @@ describe('Test', () => {
     const test = new Test(initValues as any);
 
     test.agent.debug = true;
-    test.run = jest.fn().mockResolvedValue({ result: { extra: 10 } }) as any;
+    test.run = vi.fn().mockResolvedValue({ result: { extra: 10 } }) as any;
 
     const result = await test.runLogic(initValues as any);
 
@@ -399,12 +403,11 @@ describe('Test', () => {
   test('runLogic logs element when Atom returns single element', async () => {
     const plugins = buildPlugins({ logOptions: { screenshot: true }, selectors: { selOne: 'one' } });
     const { logger } = setupEnv(plugins);
-    mockAtomClass.mockImplementationOnce(
-      () =>
-        ({
-          getElement: jest.fn().mockResolvedValue({ id: 1 }),
-        }) as any,
-    );
+    mockAtomClass.mockImplementationOnce(function () {
+      return {
+        getElement: vi.fn().mockResolvedValue({ id: 1 }),
+      } as any;
+    });
 
     const test = new Test({
       envsId: 'env-1',
@@ -421,12 +424,11 @@ describe('Test', () => {
   test('runLogic skips element push when Atom returns null', async () => {
     const plugins = buildPlugins({ logOptions: { screenshot: true }, selectors: { selOne: 'one' } });
     const { logger } = setupEnv(plugins);
-    mockAtomClass.mockImplementationOnce(
-      () =>
-        ({
-          getElement: jest.fn().mockResolvedValue(null),
-        }) as any,
-    );
+    mockAtomClass.mockImplementationOnce(function () {
+      return {
+        getElement: vi.fn().mockResolvedValue(null),
+      } as any;
+    });
 
     const test = new Test({
       envsId: 'env-1',
@@ -499,7 +501,7 @@ describe('Test', () => {
         throw new ContinueParentError({
           localResults: { ok: true },
           errorLevel: 0,
-          logger: { log: jest.fn() } as any,
+          logger: { log: vi.fn() } as any,
           test: {} as any,
           agent: { stepId: 's1', breadcrumbs: [], breakParentIfResult: '', levelIndent: 0 } as any,
         });
@@ -653,7 +655,7 @@ describe('Test', () => {
     setupEnv(plugins);
     const initValues = { envsId: 'env-1', stepId: 's1', stepIdParent: '', repeat: 2 } as any;
     const test = new Test(initValues);
-    test.run = jest.fn().mockResolvedValue({ result: {} }) as any;
+    test.run = vi.fn().mockResolvedValue({ result: {} }) as any;
 
     await test.runLogic({ ...initValues, repeat: 0 } as any);
 
@@ -666,7 +668,7 @@ describe('Test', () => {
     setupEnv(plugins);
     const initValues = { envsId: 'env-1', stepId: 's1', stepIdParent: '', repeat: 3 } as any;
     const test = new Test(initValues);
-    test.run = jest.fn().mockResolvedValue({ result: {} }) as any;
+    test.run = vi.fn().mockResolvedValue({ result: {} }) as any;
 
     await test.runLogic({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
 
@@ -772,7 +774,7 @@ describe('Test', () => {
 
     await test.runLogic({ envsId: 'env-1', stepId: 's1', stepIdParent: '', name: 'agent' } as any);
 
-    const timerCall = (logger.log as jest.Mock).mock.calls.find((call) => call[0]?.level === 'timer');
+    const timerCall = (logger.log as Mock).mock.calls.find((call) => call[0]?.level === 'timer');
     expect(timerCall?.[0].logOptions?.logShowFlag).toBe(false);
   });
 
@@ -782,14 +784,16 @@ describe('Test', () => {
     const emitter = new EventEmitter();
 
     mockBlockerClass.mockImplementation(
-      () => ({
-        getBlock: jest.fn().mockReturnValue({ stepId: 's1', block: true }),
+      function () {
+        return {
+        getBlock: vi.fn().mockReturnValue({ stepId: 's1', block: true }),
         blockEmitter: emitter,
-      }) as any,
+        } as any;
+      },
     );
 
     const test = new Test({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
-    test.runLogic = jest.fn().mockResolvedValue({ result: { done: true } }) as any;
+    test.runLogic = vi.fn().mockResolvedValue({ result: { done: true } }) as any;
 
     const runPromise = test.run({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
 
@@ -804,7 +808,7 @@ describe('Test', () => {
     const plugins = buildPlugins();
     setupEnv(plugins);
     const test = new Test({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any);
-    test.runLogic = jest.fn().mockResolvedValue({ result: { ok: true } }) as any;
+    test.runLogic = vi.fn().mockResolvedValue({ result: { ok: true } }) as any;
 
     await expect(test.run({ envsId: 'env-1', stepId: 's1', stepIdParent: '' } as any)).resolves.toEqual({
       result: { ok: true },
@@ -819,9 +823,9 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('executes functions in order and merges results', async () => {
-    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    const step1 = vi.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
@@ -829,14 +833,14 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('follows stepIdNext to jump between steps', async () => {
-    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    const step1 = vi.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'step3';
 
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
-    const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
+    const step3 = vi.fn().mockResolvedValue({ c: 3 }) as any;
     step3.stepId = 'step3';
 
     const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
@@ -847,11 +851,11 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('handles stepIdNext to non-existent step by continuing to next in order', async () => {
-    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    const step1 = vi.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'nonExistent';
 
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
@@ -862,14 +866,14 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('uses stepIdNext with expression to dynamically determine next step', async () => {
-    const step1 = jest.fn().mockResolvedValue({ target: 'step3' }) as any;
+    const step1 = vi.fn().mockResolvedValue({ target: 'step3' }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'target';
 
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
-    const step3 = jest.fn().mockResolvedValue({ c: 3 }) as any;
+    const step3 = vi.fn().mockResolvedValue({ c: 3 }) as any;
     step3.stepId = 'step3';
 
     const result = await executeLifeCycleFunctions([step1, step2, step3], { data: {}, selectors: {} } as any);
@@ -880,11 +884,11 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('stepIdNext expression evaluating to non-string or empty continues to next step', async () => {
-    const step1 = jest.fn().mockResolvedValue({ target: null }) as any;
+    const step1 = vi.fn().mockResolvedValue({ target: null }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'target'; // evaluates to null
 
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
@@ -895,11 +899,11 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('stepIdNext expression evaluating to empty string continues to next step', async () => {
-    const step1 = jest.fn().mockResolvedValue({ target: '' }) as any;
+    const step1 = vi.fn().mockResolvedValue({ target: '' }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'target'; // evaluates to empty string
 
-    const step2 = jest.fn().mockResolvedValue({ b: 2 }) as any;
+    const step2 = vi.fn().mockResolvedValue({ b: 2 }) as any;
     step2.stepId = 'step2';
 
     const result = await executeLifeCycleFunctions([step1, step2], { data: {}, selectors: {} } as any);
@@ -910,7 +914,7 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('stepIdNext on last step terminates correctly', async () => {
-    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    const step1 = vi.fn().mockResolvedValue({ a: 1 }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'nonExistent'; // Points to non-existent step
     // step1 is the last step, so after failing to find nextStep, currentIndex + 1 >= allSteps.length
@@ -923,7 +927,7 @@ describe('executeLifeCycleFunctions', () => {
 
   test('throws on maxVisitsPerStep exceeded', async () => {
     let counter = 0;
-    const step1 = jest.fn().mockImplementation(async () => {
+    const step1 = vi.fn().mockImplementation(async () => {
       counter++;
       return { counter }; // Each call returns different result to avoid same-state detection
     }) as any;
@@ -933,7 +937,7 @@ describe('executeLifeCycleFunctions', () => {
     // Create enough steps so that maxIterations (allSteps.length * 10) > maxVisitsPerStep (100)
     // Need 11 steps: 11 * 10 = 110 > 100
     const dummySteps = Array.from({ length: 10 }, (_, i) => {
-      const step = jest.fn() as any;
+      const step = vi.fn() as any;
       step.stepId = `dummy${i}`;
       return step;
     });
@@ -946,14 +950,14 @@ describe('executeLifeCycleFunctions', () => {
   test('throws on infinite loop with same state', async () => {
     // Create a cycle that returns the same result each time
     let callCount = 0;
-    const step1 = jest.fn().mockImplementation(async () => {
+    const step1 = vi.fn().mockImplementation(async () => {
       callCount++;
       return {}; // Always returns empty, creating same state
     }) as any;
     step1.stepId = 'step1';
     step1.stepIdNext = 'step2';
 
-    const step2 = jest.fn().mockResolvedValue({}) as any;
+    const step2 = vi.fn().mockResolvedValue({}) as any;
     step2.stepId = 'step2';
     step2.stepIdNext = 'step1'; // Back to step1 with same state
 
@@ -963,7 +967,7 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('handles function without stepId', async () => {
-    const step1 = jest.fn().mockResolvedValue({ a: 1 }) as any;
+    const step1 = vi.fn().mockResolvedValue({ a: 1 }) as any;
     // No stepId set
 
     const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
@@ -971,7 +975,7 @@ describe('executeLifeCycleFunctions', () => {
   });
 
   test('handles function returning undefined', async () => {
-    const step1 = jest.fn().mockResolvedValue(undefined) as any;
+    const step1 = vi.fn().mockResolvedValue(undefined) as any;
     step1.stepId = 'step1';
 
     const result = await executeLifeCycleFunctions([step1], { data: {}, selectors: {} } as any);
@@ -982,7 +986,7 @@ describe('executeLifeCycleFunctions', () => {
     // With 1 step, maxIterations = 1 * 10 = 10
     // Loop will hit maxIterations before maxVisitsPerStep (100)
     let counter = 0;
-    const step1 = jest.fn().mockImplementation(async () => {
+    const step1 = vi.fn().mockImplementation(async () => {
       counter++;
       return { counter };
     }) as any;

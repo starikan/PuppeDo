@@ -148,7 +148,7 @@ const parseCLI = (): Partial<ArgumentsType> => {
  *    const args = new Arguments(newArgs, {}, true);
  */
 export class Arguments extends Singleton {
-  private _args: ArgumentsType;
+  private declare _args: ArgumentsType;
 
   constructor(args: Partial<ArgumentsType> = {}, argsConfig: Partial<ArgumentsType> = {}, reInit = false) {
     super();

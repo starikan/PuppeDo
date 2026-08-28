@@ -1,28 +1,29 @@
+import type { MockedClass, MockedFunction } from 'vitest';
 import Atom from '../src/AtomCore';
 import { Environment } from '../src/Environment';
 import { logArgs, logDebug, logError, logExtend, logExtendFileInfo, logTimer } from '../src/Loggers/CustomLogEntries';
 
-jest.mock('../src/Environment');
-jest.mock('../src/Loggers/CustomLogEntries');
+vi.mock('../src/Environment');
+vi.mock('../src/Loggers/CustomLogEntries');
 
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockLogArgs = logArgs as jest.MockedFunction<typeof logArgs>;
-const mockLogDebug = logDebug as jest.MockedFunction<typeof logDebug>;
-const mockLogError = logError as jest.MockedFunction<typeof logError>;
-const mockLogExtend = logExtend as jest.MockedFunction<typeof logExtend>;
-const mockLogExtendFileInfo = logExtendFileInfo as jest.MockedFunction<typeof logExtendFileInfo>;
-const mockLogTimer = logTimer as jest.MockedFunction<typeof logTimer>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockLogArgs = logArgs as MockedFunction<typeof logArgs>;
+const mockLogDebug = logDebug as MockedFunction<typeof logDebug>;
+const mockLogError = logError as MockedFunction<typeof logError>;
+const mockLogExtend = logExtend as MockedFunction<typeof logExtend>;
+const mockLogExtendFileInfo = logExtendFileInfo as MockedFunction<typeof logExtendFileInfo>;
+const mockLogTimer = logTimer as MockedFunction<typeof logTimer>;
 
 const createAtomWithEngine = (engine: string, page: any) => {
   const runner = {
-    getRunnerData: jest.fn().mockReturnValue({ browser: { engine } }),
+    getRunnerData: vi.fn().mockReturnValue({ browser: { engine } }),
   } as any;
   return new Atom({ runner, page });
 };
 
 describe('AtomCore', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('atomRun throws by default', async () => {
@@ -43,7 +44,7 @@ describe('AtomCore', () => {
   test('getElement returns elements for puppeteer selectors', async () => {
     const elements = [{ id: 'css-1' }, { id: 'css-2' }];
     const page = {
-      $$: jest.fn().mockImplementation((selector: string) => {
+      $$: vi.fn().mockImplementation((selector: string) => {
         if (selector === '.item') return Promise.resolve(elements);
         if (selector === 'xpath/.//div') return Promise.resolve([{ id: 'xpath' }]);
         if (selector === '//*[text()[contains(.,"Hello")]]') return Promise.resolve([{ id: 'text' }]);
@@ -68,7 +69,7 @@ describe('AtomCore', () => {
 
   test('getElement returns elements for playwright selectors', async () => {
     const page = {
-      $$: jest.fn().mockImplementation((selector: string) => {
+      $$: vi.fn().mockImplementation((selector: string) => {
         if (selector === 'css=.item') return Promise.resolve([{ id: 'css' }]);
         if (selector === 'xpath=//div') return Promise.resolve([{ id: 'xpath' }]);
         if (selector === 'text=Hello') return Promise.resolve([{ id: 'text' }]);
@@ -92,25 +93,24 @@ describe('AtomCore', () => {
   });
 
   test('getElement returns false on empty selector', async () => {
-    const atom = createAtomWithEngine('puppeteer', { $$: jest.fn() });
+    const atom = createAtomWithEngine('puppeteer', { $$: vi.fn() });
     expect(await atom.getElement('')).toBe(false);
     expect(await atom.getElement(null as any)).toBe(false);
   });
 
   test('updateFrame skips when no frame provided', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return ({
+          getEnvInstance: vi.fn().mockReturnValue({
             plugins: {
-              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: undefined }) }),
+              getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ frame: undefined }) }),
             },
           }),
-        } as any),
-    );
+        } as any);
+    });
 
     const initialPage = atom.page;
     await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
@@ -121,20 +121,19 @@ describe('AtomCore', () => {
   test('updateFrame switches page for puppeteer frame', async () => {
     const frameObj = { frame: true };
     const page = {
-      $$: jest.fn().mockResolvedValue([{ contentFrame: jest.fn().mockResolvedValue(frameObj) }]),
+      $$: vi.fn().mockResolvedValue([{ contentFrame: vi.fn().mockResolvedValue(frameObj) }]),
     };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return ({
+          getEnvInstance: vi.fn().mockReturnValue({
             plugins: {
-              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frame1' }) }),
+              getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ frame: 'frame1' }) }),
             },
           }),
-        } as any),
-    );
+        } as any);
+    });
 
     await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
     expect(page.$$).toHaveBeenCalledWith('iframe[name="frame1"]');
@@ -144,20 +143,19 @@ describe('AtomCore', () => {
   test('updateFrame switches page for playwright frame', async () => {
     const frameObj = { frame: true };
     const page = {
-      $$: jest.fn().mockResolvedValue([{ contentFrame: jest.fn().mockResolvedValue(frameObj) }]),
+      $$: vi.fn().mockResolvedValue([{ contentFrame: vi.fn().mockResolvedValue(frameObj) }]),
     };
     const atom = createAtomWithEngine('playwright', page);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return ({
+          getEnvInstance: vi.fn().mockReturnValue({
             plugins: {
-              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frame2' }) }),
+              getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ frame: 'frame2' }) }),
             },
           }),
-        } as any),
-    );
+        } as any);
+    });
 
     await atom.updateFrame({ envsId: 'env-2', stepId: 'step-2' } as any);
     expect(page.$$).toHaveBeenCalledWith('iframe[name="frame2"]');
@@ -166,20 +164,19 @@ describe('AtomCore', () => {
 
   test('updateFrame does not change page when iframe not found', async () => {
     const page = {
-      $$: jest.fn().mockResolvedValue([]),
+      $$: vi.fn().mockResolvedValue([]),
     };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return ({
+          getEnvInstance: vi.fn().mockReturnValue({
             plugins: {
-              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frameX' }) }),
+              getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ frame: 'frameX' }) }),
             },
           }),
-        } as any),
-    );
+        } as any);
+    });
 
     const initialPage = atom.page;
     await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
@@ -190,20 +187,19 @@ describe('AtomCore', () => {
 
   test('updateFrame keeps page when elementHandle is undefined', async () => {
     const page = {
-      $$: jest.fn().mockResolvedValue(undefined),
+      $$: vi.fn().mockResolvedValue(undefined),
     };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-        ({
-          getEnvInstance: jest.fn().mockReturnValue({
+    mockEnvironmentClass.mockImplementation(function () {
+      return ({
+          getEnvInstance: vi.fn().mockReturnValue({
             plugins: {
-              getPlugins: jest.fn().mockReturnValue({ getValues: jest.fn().mockReturnValue({ frame: 'frameY' }) }),
+              getPlugins: vi.fn().mockReturnValue({ getValues: vi.fn().mockReturnValue({ frame: 'frameY' }) }),
             },
           }),
-        } as any),
-    );
+        } as any);
+    });
 
     const initialPage = atom.page;
     await atom.updateFrame({ envsId: 'env-1', stepId: 'step-1' } as any);
@@ -213,13 +209,13 @@ describe('AtomCore', () => {
   });
 
   test('runAtom executes atomRun and logs', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
-    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+    (atom as any).updateFrame = vi.fn().mockResolvedValue(undefined);
+    atom.atomRun = vi.fn().mockResolvedValue({ ok: true });
 
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const args = {
       foo: 'bar',
       agent: {
@@ -281,13 +277,13 @@ describe('AtomCore', () => {
   });
 
   test('runAtom logs errors and throws AtomError', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
-    atom.atomRun = jest.fn().mockRejectedValue(new Error('boom'));
+    (atom as any).updateFrame = vi.fn().mockResolvedValue(undefined);
+    atom.atomRun = vi.fn().mockRejectedValue(new Error('boom'));
 
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const args = {
       agent: {
         data: {},
@@ -314,13 +310,13 @@ describe('AtomCore', () => {
   });
 
   test('runAtom default log options and breadcrumbs fallback', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
-    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+    (atom as any).updateFrame = vi.fn().mockResolvedValue(undefined);
+    atom.atomRun = vi.fn().mockResolvedValue({ ok: true });
 
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const args = {
       agent: {
         data: {},
@@ -353,13 +349,13 @@ describe('AtomCore', () => {
   });
 
   test('runAtom skips arg assignment when Object.hasOwn is false', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
-    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+    (atom as any).updateFrame = vi.fn().mockResolvedValue(undefined);
+    atom.atomRun = vi.fn().mockResolvedValue({ ok: true });
 
-    const log = jest.fn().mockResolvedValue(undefined);
+    const log = vi.fn().mockResolvedValue(undefined);
     const args = {
       foo: 'bar',
       agent: {
@@ -377,7 +373,7 @@ describe('AtomCore', () => {
       log,
     } as any;
 
-    const hasOwnSpy = jest.spyOn(Object, 'hasOwn').mockReturnValue(false);
+    const hasOwnSpy = vi.spyOn(Object, 'hasOwn').mockReturnValue(false);
 
     await atom.runAtom(args);
 
@@ -387,11 +383,11 @@ describe('AtomCore', () => {
   });
 
   test('runAtom handles falsy args branch in logger setup', async () => {
-    const page = { $$: jest.fn() };
+    const page = { $$: vi.fn() };
     const atom = createAtomWithEngine('puppeteer', page);
 
-    (atom as any).updateFrame = jest.fn().mockResolvedValue(undefined);
-    atom.atomRun = jest.fn().mockResolvedValue({ ok: true });
+    (atom as any).updateFrame = vi.fn().mockResolvedValue(undefined);
+    atom.atomRun = vi.fn().mockResolvedValue({ ok: true });
 
     const originalAgent = (Number.prototype as any).agent;
     const originalLog = (Number.prototype as any).log;
@@ -408,7 +404,7 @@ describe('AtomCore', () => {
       stepId: 'step-1',
       breadcrumbs: [],
     };
-    (Number.prototype as any).log = jest.fn();
+    (Number.prototype as any).log = vi.fn();
 
     const result = await atom.runAtom(0 as any);
 

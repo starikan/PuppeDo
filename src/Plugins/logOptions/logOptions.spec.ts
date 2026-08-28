@@ -3,28 +3,28 @@ import { Plugin } from '../../PluginsCore';
 import pluginModule, { type PluginLogOptions, plugin, setValue } from './logOptions';
 
 // Mock dependencies
-jest.mock('../../PluginsCore');
+vi.mock('../../PluginsCore');
 
-const mockPlugin = Plugin as jest.MockedClass<typeof Plugin>;
+const mockPlugin = Plugin as MockedClass<typeof Plugin>;
 
 describe('logOptions plugin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setValue function', () => {
     it('should set logOptions with logShowFlag based on PPD_LOG_IGNORE_HIDE_LOG', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           logOptions: { textColor: 'red', logThis: true },
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           logOptions: { logChildren: false },
         }),
         plugins: {
-          getPlugins: jest.fn().mockReturnValue({
-            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: true }),
+          getPlugins: vi.fn().mockReturnValue({
+            getValue: vi.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: true }),
           }),
         },
       } as unknown as Plugin<PluginLogOptions>;
@@ -45,16 +45,16 @@ describe('logOptions plugin', () => {
 
     it('should set logOptions with logShowFlag based on parent logChildren when PPD_LOG_IGNORE_HIDE_LOG is false', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           logOptions: { textColor: 'red' },
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           logOptions: { logChildren: true },
         }),
         plugins: {
-          getPlugins: jest.fn().mockReturnValue({
-            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
+          getPlugins: vi.fn().mockReturnValue({
+            getValue: vi.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
           }),
         },
       } as unknown as Plugin<PluginLogOptions>;
@@ -75,16 +75,16 @@ describe('logOptions plugin', () => {
 
     it('should set logShowFlag to false when logThis is false', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           logOptions: { textColor: 'red', logThis: false },
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           logOptions: { logChildren: true },
         }),
         plugins: {
-          getPlugins: jest.fn().mockReturnValue({
-            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
+          getPlugins: vi.fn().mockReturnValue({
+            getValue: vi.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
           }),
         },
       } as unknown as Plugin<PluginLogOptions>;
@@ -98,16 +98,16 @@ describe('logOptions plugin', () => {
 
     it('should fallback to true when parent logChildren is undefined', () => {
       const mockPluginInstance = {
-        setValues: jest.fn(),
-        getValues: jest.fn().mockReturnValue({
+        setValues: vi.fn(),
+        getValues: vi.fn().mockReturnValue({
           logOptions: {},
         }),
-        getValuesParent: jest.fn().mockReturnValue({
+        getValuesParent: vi.fn().mockReturnValue({
           logOptions: {},
         }),
         plugins: {
-          getPlugins: jest.fn().mockReturnValue({
-            getValue: jest.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
+          getPlugins: vi.fn().mockReturnValue({
+            getValue: vi.fn().mockReturnValue({ PPD_LOG_IGNORE_HIDE_LOG: false }),
           }),
         },
       } as unknown as Plugin<PluginLogOptions>;
@@ -124,7 +124,9 @@ describe('logOptions plugin', () => {
     it('should create a Plugin instance with correct parameters', () => {
       const mockPlugins = {} as any;
       const mockPluginInstance = {};
-      mockPlugin.mockImplementation(() => mockPluginInstance as any);
+      mockPlugin.mockImplementation(function () {
+        return mockPluginInstance as any;
+      });
 
       const result = plugin(mockPlugins);
 

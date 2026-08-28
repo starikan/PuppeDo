@@ -33,7 +33,7 @@ const clearFiles = (fileName: string): void => {
 describe('Log', () => {
   describe('Write into console', () => {
     beforeEach(() => {
-      console.log = jest.fn();
+      console.log = vi.fn();
     });
 
     test('Console with colorization', () => {
@@ -538,14 +538,14 @@ describe('Log', () => {
   //   });
   // });
 
-  describe('saveScreenshot', () => {
+  describe.skip('saveScreenshot', () => {
     // let fs;
     // beforeEach(() => {
-    // fs = jest.genMockFromModule('fs');
+    // fs = await vi.importMock('fs');
     // logger.envs = {};
-    // logger.envs.getActivePage = jest.fn(() => ({ screenshot: jest.fn() }));
-    // logger.envs.getActivePage.screenshot = jest.fn();
-    // logger.envs.getOutputsFolders = jest.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
+    // logger.envs.getActivePage = vi.fn(() => ({ screenshot: vi.fn() }));
+    // logger.envs.getActivePage.screenshot = vi.fn();
+    // logger.envs.getOutputsFolders = vi.fn(() => ({ folder: 'foo', folderLatest: 'foobar' }));
     // });
     // test('should getOutputsFolders function to be called', async () => {
     //   await logger.screenshot.saveScreenshot();
@@ -556,7 +556,7 @@ describe('Log', () => {
     // });
     // test('should getActivePage function to be called', async () => {
     //   await logger.screenshot.saveScreenshot({ fullPage: true });
-    //   // fs.existsSync = jest.fn(() => true);
+    //   // fs.existsSync = vi.fn(() => true);
     //   expect(logger.envs.getActivePage).toHaveBeenCalled();
     // });
     // test('should page.screenshot function to be called', async () => {

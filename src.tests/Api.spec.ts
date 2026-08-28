@@ -1,3 +1,4 @@
+import type { Mock, Mocked, MockedClass, MockedFunction } from 'vitest';
 import run from '../src/Api';
 import { Arguments } from '../src/Arguments';
 import Blocker from '../src/Blocker';
@@ -9,67 +10,68 @@ import { getNowDateTime, getTimer } from '../src/Helpers';
 import { PluginsFabric } from '../src/PluginsCore';
 
 type MockedEnvInstance = {
-  logger: { log: jest.Mock; bulkLog: jest.Mock };
+  logger: { log: Mock; bulkLog: Mock };
   log: Array<{ stepId: string }>;
-  allRunners: { closeAllRunners: jest.Mock };
+  allRunners: { closeAllRunners: Mock };
 };
 
-jest.mock('../src/Arguments');
-jest.mock('../src/Blocker');
-jest.mock('../src/Defaults');
-jest.mock('../src/Environment');
-jest.mock('../src/FlowStructure');
-jest.mock('../src/getAgent');
-jest.mock('../src/Helpers');
-jest.mock('../src/PluginsCore');
+vi.mock('../src/Arguments');
+vi.mock('../src/Blocker');
+vi.mock('../src/Defaults');
+vi.mock('../src/Environment');
+vi.mock('../src/FlowStructure');
+vi.mock('../src/getAgent');
+vi.mock('../src/Helpers');
+vi.mock('../src/PluginsCore');
 
-const mockArguments = Arguments as jest.MockedClass<typeof Arguments>;
-const mockBlocker = Blocker as jest.MockedClass<typeof Blocker>;
-const mockResolveOptions = resolveOptions as jest.MockedFunction<typeof resolveOptions>;
-const mockEnvironmentClass = Environment as jest.MockedClass<typeof Environment>;
-const mockFlowStructure = FlowStructure as jest.Mocked<typeof FlowStructure>;
-const mockGetAgent = getAgent as jest.MockedFunction<typeof getAgent>;
-const mockGetTimer = getTimer as jest.MockedFunction<typeof getTimer>;
-const mockGetNowDateTime = getNowDateTime as jest.MockedFunction<typeof getNowDateTime>;
-const mockPluginsFabric = PluginsFabric as jest.MockedClass<typeof PluginsFabric>;
+const mockArguments = Arguments as MockedClass<typeof Arguments>;
+const mockBlocker = Blocker as MockedClass<typeof Blocker>;
+const mockResolveOptions = resolveOptions as MockedFunction<typeof resolveOptions>;
+const mockEnvironmentClass = Environment as MockedClass<typeof Environment>;
+const mockFlowStructure = FlowStructure as Mocked<typeof FlowStructure>;
+const mockGetAgent = getAgent as MockedFunction<typeof getAgent>;
+const mockGetTimer = getTimer as MockedFunction<typeof getTimer>;
+const mockGetNowDateTime = getNowDateTime as MockedFunction<typeof getNowDateTime>;
+const mockPluginsFabric = PluginsFabric as MockedClass<typeof PluginsFabric>;
 
 describe('Api.run', () => {
   let envInstance: MockedEnvInstance;
-  let createEnv: jest.Mock;
-  let getEnvInstance: jest.Mock;
-  let getStruct: jest.Mock;
-  let setCurrent: jest.Mock;
+  let createEnv: Mock;
+  let getEnvInstance: Mock;
+  let getStruct: Mock;
+  let setCurrent: Mock;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     envInstance = {
       logger: {
-        log: jest.fn().mockResolvedValue(undefined),
-        bulkLog: jest.fn().mockResolvedValue(undefined),
+        log: vi.fn().mockResolvedValue(undefined),
+        bulkLog: vi.fn().mockResolvedValue(undefined),
       },
       log: [{ stepId: 'step-1' }, { stepId: 'step-2' }],
       allRunners: {
-        closeAllRunners: jest.fn().mockResolvedValue(undefined),
+        closeAllRunners: vi.fn().mockResolvedValue(undefined),
       },
     };
 
-    createEnv = jest.fn().mockReturnValue({ envsId: 'env-1' });
-    getEnvInstance = jest.fn().mockReturnValue(envInstance);
-    getStruct = jest.fn().mockImplementation((_envsId: string, agentName: string) => ({ name: agentName }));
-    setCurrent = jest.fn();
+    createEnv = vi.fn().mockReturnValue({ envsId: 'env-1' });
+    getEnvInstance = vi.fn().mockReturnValue(envInstance);
+    getStruct = vi.fn().mockImplementation((_envsId: string, agentName: string) => ({ name: agentName }));
+    setCurrent = vi.fn();
 
-    mockEnvironmentClass.mockImplementation(
-      () =>
-      ({
+    mockEnvironmentClass.mockImplementation(function () {
+      return {
         createEnv,
         getEnvInstance,
         getStruct,
         setCurrent,
-      } as any),
-    );
+      } as any;
+    });
 
-    mockBlocker.mockImplementation(() => ({ reset: jest.fn() } as any));
+    mockBlocker.mockImplementation(function () {
+      return { reset: vi.fn() } as any;
+    });
 
     mockGetTimer.mockImplementation(
       ({
@@ -94,9 +96,11 @@ describe('Api.run', () => {
     );
     mockGetNowDateTime.mockReturnValue('2025-01-01 00:00:00');
 
-    mockFlowStructure.generateFlowDescription = jest.fn().mockReturnValue('flow');
+    mockFlowStructure.generateFlowDescription = vi.fn().mockReturnValue('flow');
 
-    mockPluginsFabric.mockImplementation(() => ({} as any));
+    mockPluginsFabric.mockImplementation(function () {
+      return {} as any;
+    });
 
     mockResolveOptions.mockReturnValue({
       loggerPipes: [],
@@ -112,23 +116,27 @@ describe('Api.run', () => {
   });
 
   test('throws when no tests provided', async () => {
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: [] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: [] } } as any;
+    });
 
     await expect(run({}, {})).rejects.toThrow('There is no tests to run. Pass any test in PPD_TESTS argument');
   });
 
   test('runs agents, collects logs and closes environment', async () => {
-    jest.useFakeTimers();
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    vi.useFakeTimers();
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA', 'testB'] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: ['testA', 'testB'] } } as any;
+    });
 
-    const mockAtomRun = jest.fn().mockResolvedValue({ ok: true });
+    const mockAtomRun = vi.fn().mockResolvedValue({ ok: true });
     mockGetAgent.mockReturnValue(mockAtomRun as any);
 
     const result = await run({ PPD_TESTS: ['testA', 'testB'] }, { debug: true });
 
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(mockPluginsFabric).toHaveBeenCalledWith({ mock: true }, true);
     expect(createEnv).toHaveBeenCalledTimes(1);
@@ -152,13 +160,15 @@ describe('Api.run', () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
 
     exitSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('marks SyntaxError/TypeError as debug and rethrows', async () => {
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: ['testA'] } } as any;
+    });
 
-    const mockAtomRun = jest.fn().mockRejectedValue(new TypeError('bad'));
+    const mockAtomRun = vi.fn().mockRejectedValue(new TypeError('bad'));
     mockGetAgent.mockReturnValue(mockAtomRun as any);
 
     let thrown: any;
@@ -174,9 +184,11 @@ describe('Api.run', () => {
   });
 
   test('does not set debug for non SyntaxError/TypeError', async () => {
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: ['testA'] } } as any;
+    });
 
-    const mockAtomRun = jest.fn().mockRejectedValue(new Error('boom'));
+    const mockAtomRun = vi.fn().mockRejectedValue(new Error('boom'));
     mockGetAgent.mockReturnValue(mockAtomRun as any);
 
     let thrown: any;
@@ -192,10 +204,12 @@ describe('Api.run', () => {
   });
 
   test('skips debug logging and close steps when disabled', async () => {
-    jest.useFakeTimers();
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    vi.useFakeTimers();
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: ['testA'] } } as any;
+    });
     mockResolveOptions.mockReturnValue({
       loggerPipes: [],
       pluginsList: { mock: true },
@@ -208,12 +222,12 @@ describe('Api.run', () => {
       debug: false,
     } as any);
 
-    const mockAtomRun = jest.fn().mockResolvedValue({ ok: true });
+    const mockAtomRun = vi.fn().mockResolvedValue({ ok: true });
     mockGetAgent.mockReturnValue(mockAtomRun as any);
 
     const result = await run({ PPD_TESTS: ['testA'] }, { debug: false, closeAllEnvs: false, closeProcess: false });
 
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(envInstance.logger.log).not.toHaveBeenCalledWith(
       expect.objectContaining({ text: expect.stringContaining('Args:') }),
@@ -223,14 +237,16 @@ describe('Api.run', () => {
     expect(result.results).toEqual({ testA: { ok: true } });
 
     exitSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('uses default arguments when called without params', async () => {
-    jest.useFakeTimers();
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    vi.useFakeTimers();
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    mockArguments.mockImplementation(() => ({ args: { PPD_TESTS: ['testA'] } } as any));
+    mockArguments.mockImplementation(function () {
+      return { args: { PPD_TESTS: ['testA'] } } as any;
+    });
 
     mockResolveOptions.mockReturnValue({
       loggerPipes: [],
@@ -244,12 +260,12 @@ describe('Api.run', () => {
       debug: false,
     } as any);
 
-    const mockAtomRun = jest.fn().mockResolvedValue({ ok: true });
+    const mockAtomRun = vi.fn().mockResolvedValue({ ok: true });
     mockGetAgent.mockReturnValue(mockAtomRun as any);
 
     const result = await run();
 
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(createEnv).toHaveBeenCalledTimes(1);
     expect(getStruct).toHaveBeenCalledWith('env-1', 'testA');
@@ -257,6 +273,6 @@ describe('Api.run', () => {
 
     expect(exitSpy).not.toHaveBeenCalled();
     exitSpy.mockRestore();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 });
